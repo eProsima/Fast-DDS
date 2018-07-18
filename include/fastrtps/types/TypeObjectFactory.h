@@ -16,6 +16,7 @@
 #define TYPE_OBJECT_TYPE_FACTORY_H
 
 #include <fastrtps/types/TypeObject.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <mutex>
 
@@ -31,22 +32,24 @@ public:
 
     ~TypeObjectFactory();
 
-    RTPS_DllAPI const TypeObject* GetTypeObject(const std::string &type_name) const;
+    RTPS_DllAPI const TypeObject* GetTypeObject(const std::string &type_name, bool complete = false) const;
     RTPS_DllAPI const TypeObject* GetTypeObject(const TypeIdentifier* identifier) const;
 
     RTPS_DllAPI TypeKind GetTypeKind(const std::string &type_name) const;
     RTPS_DllAPI std::string GetTypeName(const TypeKind kind) const;
+    RTPS_DllAPI std::string GetTypeName(const TypeIdentifier* identifier) const;
 
     RTPS_DllAPI const TypeIdentifier* GetPrimitiveTypeIdentifier(TypeKind kind);
     //RTPS_DllAPI TypeIdentifier* TryCreateTypeIdentifier(const std::string &type_name);
-    RTPS_DllAPI const TypeIdentifier* GetTypeIdentifier(const std::string &type_name) const;
+    RTPS_DllAPI const TypeIdentifier* GetTypeIdentifier(const std::string &type_name, bool complete = false) const;
+    RTPS_DllAPI const TypeIdentifier* GetTypeIdentifierTryingComplete(const std::string &type_name) const;
     RTPS_DllAPI const TypeIdentifier* GetStringIdentifier(uint32_t bound, bool wide = false);
     RTPS_DllAPI const TypeIdentifier* GetSequenceIdentifier(const std::string &type_name, uint32_t bound);
     RTPS_DllAPI const TypeIdentifier* GetArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound);
     RTPS_DllAPI const TypeIdentifier* GetMapIdentifier(const std::string &key_type_name,
         const std::string &value_type_name, uint32_t bound);
 
-    RTPS_DllAPI DynamicType_ptr BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+    RTPS_DllAPI DynamicTypeBuilder* BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
         const TypeObject* object = nullptr) const;
 
     RTPS_DllAPI void AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier);
@@ -54,18 +57,17 @@ public:
         const TypeObject* object);
 protected:
 	TypeObjectFactory();
-    std::map<const std::string, const TypeIdentifier*> m_Identifiers;
-    std::map<const TypeIdentifier*, const TypeObject*> m_Objects;
+    std::map<const std::string, const TypeIdentifier*> m_Identifiers; // Basic, builtin and EK_MINIMAL
+    std::map<const std::string, const TypeIdentifier*> m_CompleteIdentifiers; // Only EK_COMPLETE
+    std::map<const TypeIdentifier*, const TypeObject*> m_Objects; // EK_MINIMAL
+    std::map<const TypeIdentifier*, const TypeObject*> m_CompleteObjects; // EK_COMPLETE
 
-    //TODO: TypeDescriptor* BuildTypeDescriptorFromObject(TypeDescriptor* descriptor, const TypeObject* object) const;
-    //TODO: void BuildTypeDescriptorFromMinimalObject(TypeDescriptor* descriptor, const MinimalTypeObject &minimal) const;
-
-    DynamicType_ptr BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const;
-
-    //MemberDescriptor* BuildMemberDescriptor(const TypeIdentifier* identifier, const TypeObject* object = nullptr);
+    DynamicTypeBuilder* BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const;
+    const TypeIdentifier* GetStoredTypeIdentifier(const TypeIdentifier *identifier) const;
+    void nullifyAllEntries(const TypeIdentifier *identifier);
 private:
-    mutable std::mutex m_MutexIdentifiers;
-    mutable std::mutex m_MutexObjects;
+    mutable std::recursive_mutex m_MutexIdentifiers;
+    mutable std::recursive_mutex m_MutexObjects;
 };
 
 } // namespace types

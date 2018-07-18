@@ -50,7 +50,7 @@ ResponseCode TypeObjectFactory::DeleteInstance()
 
 TypeObjectFactory::TypeObjectFactory()
 {
-    std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // Generate basic TypeIdentifiers
     TypeIdentifier *auxIdent;
     // TK_BOOLEAN:
@@ -122,17 +122,29 @@ TypeObjectFactory::TypeObjectFactory()
 TypeObjectFactory::~TypeObjectFactory()
 {
     {
-        std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
+        std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
         auto id_it = m_Identifiers.begin();
         while (id_it != m_Identifiers.end())
         {
-            delete (id_it->second);
+            const TypeIdentifier* id = id_it->second;
+            nullifyAllEntries(id);
+            delete (id);
             ++id_it;
         }
         m_Identifiers.clear();
+
+        auto idc_it = m_CompleteIdentifiers.begin();
+        while (idc_it != m_CompleteIdentifiers.end())
+        {
+            const TypeIdentifier* id = idc_it->second;
+            nullifyAllEntries(id);
+            delete (id);
+            ++idc_it;
+        }
+        m_CompleteIdentifiers.clear();
     }
     {
-        std::unique_lock<std::mutex> scoped(m_MutexObjects);
+        std::unique_lock<std::recursive_mutex> scoped(m_MutexObjects);
         auto obj_it = m_Objects.begin();
         while (obj_it != m_Objects.end())
         {
@@ -140,12 +152,39 @@ TypeObjectFactory::~TypeObjectFactory()
             ++obj_it;
         }
         m_Objects.clear();
+
+        auto objc_it = m_CompleteObjects.begin();
+        while (objc_it != m_CompleteObjects.end())
+        {
+            delete (objc_it->second);
+            ++objc_it;
+        }
+        m_CompleteObjects.clear();
     }
 }
 
-const TypeObject* TypeObjectFactory::GetTypeObject(const std::string &type_name) const
+void TypeObjectFactory::nullifyAllEntries(const TypeIdentifier *identifier)
 {
-    const TypeIdentifier* identifier = GetTypeIdentifier(type_name);
+    for (auto it = m_Identifiers.begin(); it != m_Identifiers.end(); ++it)
+    {
+        if (it->second == identifier)
+        {
+            it->second = nullptr;
+        }
+    }
+
+    for (auto it = m_CompleteIdentifiers.begin(); it != m_CompleteIdentifiers.end(); ++it)
+    {
+        if (it->second == identifier)
+        {
+            it->second = nullptr;
+        }
+    }
+}
+
+const TypeObject* TypeObjectFactory::GetTypeObject(const std::string &type_name, bool complete) const
+{
+    const TypeIdentifier* identifier = GetTypeIdentifier(type_name, complete);
     if (identifier == nullptr)
     {
         return nullptr;
@@ -156,11 +195,33 @@ const TypeObject* TypeObjectFactory::GetTypeObject(const std::string &type_name)
 
 const TypeObject* TypeObjectFactory::GetTypeObject(const TypeIdentifier* identifier) const
 {
-    std::unique_lock<std::mutex> scoped(m_MutexObjects);
-    if (m_Objects.find(identifier) != m_Objects.end())
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexObjects);
+    if (identifier->_d() == EK_COMPLETE)
     {
-        return m_Objects.at(identifier);
+        if (m_CompleteObjects.find(identifier) != m_CompleteObjects.end())
+        {
+            return m_CompleteObjects.at(identifier);
+        }
     }
+    else
+    {
+        if (m_Objects.find(identifier) != m_Objects.end())
+        {
+            return m_Objects.at(identifier);
+        }
+    }
+
+    // Maybe they are using an external TypeIdentifier?
+    const TypeIdentifier* internalId = GetStoredTypeIdentifier(identifier);
+    if (internalId != nullptr)
+    {
+        if (internalId == identifier)
+        {
+            return nullptr; // Type without object
+        }
+        return GetTypeObject(internalId);
+    }
+
     return nullptr;
 }
 
@@ -310,133 +371,248 @@ const TypeIdentifier* TypeObjectFactory::GetPrimitiveTypeIdentifier(TypeKind kin
 /*
 const TypeIdentifier* TypeObjectFactory::TryCreateTypeIdentifier(const std::string &type_name)
 {
-    std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // TODO Makes sense here? I don't think so.
 }
 */
 
-const TypeIdentifier* TypeObjectFactory::GetTypeIdentifier(const std::string &type_name) const
+const TypeIdentifier* TypeObjectFactory::GetTypeIdentifier(const std::string &type_name, bool complete) const
 {
-    std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
-    if (m_Identifiers.find(type_name) != m_Identifiers.end())
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+    if (complete)
     {
-        return m_Identifiers.at(type_name);
+        if (m_CompleteIdentifiers.find(type_name) != m_CompleteIdentifiers.end())
+        {
+            return m_CompleteIdentifiers.at(type_name);
+        }
+        /*else // Try it with minimal
+        {
+            return GetTypeIdentifier(type_name, false);
+        }*/
+    }
+    else
+    {
+        if (m_Identifiers.find(type_name) != m_Identifiers.end())
+        {
+            return m_Identifiers.at(type_name);
+        }
     }
     return nullptr;
 }
 
+const TypeIdentifier* TypeObjectFactory::GetTypeIdentifierTryingComplete(const std::string &type_name) const
+{
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+    if (m_CompleteIdentifiers.find(type_name) != m_CompleteIdentifiers.end())
+    {
+        return m_CompleteIdentifiers.at(type_name);
+    }
+    else // Try it with minimal
+    {
+        return GetTypeIdentifier(type_name, false);
+    }
+}
+
+const TypeIdentifier* TypeObjectFactory::GetStoredTypeIdentifier(const TypeIdentifier *identifier) const
+{
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+    if (identifier == nullptr) return nullptr;
+    if (identifier->_d() == EK_COMPLETE)
+    {
+        for(auto& it : m_CompleteIdentifiers)
+        {
+            if (*(it.second) == *identifier) return it.second;
+        }
+    }
+    else
+    {
+        for(auto& it : m_Identifiers)
+        {
+            if (*(it.second) == *identifier) return it.second;
+        }
+    }
+    return nullptr;
+}
+
+std::string TypeObjectFactory::GetTypeName(const TypeIdentifier* identifier) const
+{
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+    if (identifier->_d() == EK_COMPLETE)
+    {
+        for(auto& it : m_CompleteIdentifiers)
+        {
+            if (*(it.second) == *identifier) return it.first;
+        }
+    }
+    else
+    {
+        for(auto& it : m_Identifiers)
+        {
+            if (*(it.second) == *identifier) return it.first;
+        }
+    }
+
+    // Maybe they are using an external TypeIdentifier?
+    const TypeIdentifier* internalId = GetStoredTypeIdentifier(identifier);
+    if (internalId != nullptr)
+    {
+        return GetTypeName(internalId);
+    }
+
+    return "UNDEF";
+}
+
 void TypeObjectFactory::AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier)
 {
-    std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
-    //m_Identifiers.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
-    if (m_Identifiers.find(type_name) == m_Identifiers.end())
+    const TypeIdentifier *alreadyExists = GetStoredTypeIdentifier(identifier);
+    if (alreadyExists != nullptr)
     {
-        TypeIdentifier* id = new TypeIdentifier;
-        *id = *identifier;
-        m_Identifiers[type_name] = id;
+        // Don't copy
+        if (alreadyExists->_d() == EK_COMPLETE)
+        {
+            m_CompleteIdentifiers[type_name] = alreadyExists;
+        }
+        else
+        {
+            m_Identifiers[type_name] = alreadyExists;
+        }
+        return;
+    }
+
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+    //m_Identifiers.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
+    if (identifier->_d() == EK_COMPLETE)
+    {
+        if (m_CompleteIdentifiers.find(type_name) == m_CompleteIdentifiers.end())
+        {
+            TypeIdentifier* id = new TypeIdentifier;
+            *id = *identifier;
+            m_CompleteIdentifiers[type_name] = id;
+        }
+    }
+    else
+    {
+        if (m_Identifiers.find(type_name) == m_Identifiers.end())
+        {
+            TypeIdentifier* id = new TypeIdentifier;
+            *id = *identifier;
+            m_Identifiers[type_name] = id;
+        }
     }
 }
 
 void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
         const TypeObject* object)
 {
-    std::unique_lock<std::mutex> scoped(m_MutexIdentifiers);
-    //m_Identifiers.insert(std::pair<std::string, const TypeIdentifier*>(type_name, identifier));
-    if (m_Identifiers.find(type_name) == m_Identifiers.end())
+    AddTypeIdentifier(type_name, identifier);
+
+    std::unique_lock<std::recursive_mutex> scopedObj(m_MutexObjects);
+
+    if (object != nullptr)
     {
-        TypeIdentifier* id = new TypeIdentifier;
-        *id = *identifier;
-        m_Identifiers[type_name] = id;
+        if (object->_d() == EK_MINIMAL)
+        {
+            const TypeIdentifier* typeId = m_Identifiers[type_name];
+            if(m_Objects.find(typeId) == m_Objects.end())
+            {
+                TypeObject* obj = new TypeObject;
+                *obj = *object;
+                m_Objects[typeId] = obj;
+            }
+        }
+        else if (object->_d() == EK_COMPLETE)
+        {
+            const TypeIdentifier* typeId = m_CompleteIdentifiers[type_name];
+            if(m_CompleteObjects.find(typeId) == m_CompleteObjects.end())
+            {
+                TypeObject* obj = new TypeObject;
+                *obj = *object;
+                m_CompleteObjects[typeId] = obj;
+            }
+        }
     }
-    std::unique_lock<std::mutex> scopedObj(m_MutexObjects);
-    //m_Objects.insert(std::pair<const TypeIdentifier*, const TypeObject*>(identifier, object));
-    const TypeIdentifier* typeId = m_Identifiers[type_name];
-    if (object != nullptr && m_Objects.find(typeId) == m_Objects.end())
-    {
-        TypeObject* obj = new TypeObject;
-        *obj = *object;
-        m_Objects[typeId] = obj;
-    }
-    //m_Objects[identifier] = object;
 }
 
 const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, bool wide)
 {
     std::string type = TypeNamesGenerator::getStringTypeName(bound, wide, false);
 
-    TypeIdentifier* auxIdent;
+    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(type);
 
-    if (m_Identifiers.find(type) != m_Identifiers.end())
+    if (c_auxIdent != nullptr)
     {
-        return m_Identifiers.at(type);
+        return c_auxIdent;
     }
     else
     {
-        auxIdent = new TypeIdentifier;
+        TypeIdentifier auxIdent;
         if (bound < 256)
         {
-            auxIdent->_d(wide ? TI_STRING16_SMALL : TI_STRING8_SMALL);
-            auxIdent->string_sdefn().bound(static_cast<octet>(bound));
+            auxIdent._d(wide ? TI_STRING16_SMALL : TI_STRING8_SMALL);
+            auxIdent.string_sdefn().bound(static_cast<octet>(bound));
         }
         else
         {
-            auxIdent->_d(wide ? TI_STRING16_LARGE : TI_STRING8_LARGE);
-            auxIdent->string_ldefn().bound(bound);
+            auxIdent._d(wide ? TI_STRING16_LARGE : TI_STRING8_LARGE);
+            auxIdent.string_ldefn().bound(bound);
         }
         //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
-        m_Identifiers[type] = auxIdent;
+        //m_Identifiers[type] = auxIdent;
+        AddTypeIdentifier(type, &auxIdent);
+        return GetTypeIdentifier(type);
     }
-    return auxIdent;
+    return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string &type_name, uint32_t bound)
 {
     std::string auxType = TypeNamesGenerator::getSequenceTypeName(type_name, bound, false);
 
-    TypeIdentifier* auxIdent;
+    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType);
 
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
+    if (c_auxIdent != nullptr)
     {
-        return m_Identifiers.at(auxType);
+        return c_auxIdent;
     }
     else
     {
         const TypeIdentifier* innerIdent = GetTypeIdentifier(type_name);
 
-        auxIdent = new TypeIdentifier;
+        TypeIdentifier auxIdent;
         if (bound < 256)
         {
-            auxIdent->_d(TI_PLAIN_SEQUENCE_SMALL);
-            auxIdent->seq_sdefn().bound(static_cast<octet>(bound));
-            auxIdent->seq_sdefn().element_identifier(innerIdent);
-            auxIdent->seq_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->seq_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->seq_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->seq_sdefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent._d(TI_PLAIN_SEQUENCE_SMALL);
+            auxIdent.seq_sdefn().bound(static_cast<octet>(bound));
+            auxIdent.seq_sdefn().element_identifier(innerIdent);
+            auxIdent.seq_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
+            auxIdent.seq_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
+            auxIdent.seq_sdefn().header().element_flags().IS_EXTERNAL(false);
+            auxIdent.seq_sdefn().header().element_flags().IS_OPTIONAL(false);
+            auxIdent.seq_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.seq_sdefn().header().element_flags().IS_KEY(false);
+            auxIdent.seq_sdefn().header().element_flags().IS_DEFAULT(false);
+            auxIdent.seq_sdefn().header().equiv_kind(GetTypeKind(type_name));
         }
         else
         {
-            auxIdent->_d(TI_PLAIN_SEQUENCE_LARGE);
-            auxIdent->seq_ldefn().bound(bound);
-            auxIdent->seq_ldefn().element_identifier(innerIdent);
-            auxIdent->seq_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->seq_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->seq_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->seq_ldefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent._d(TI_PLAIN_SEQUENCE_LARGE);
+            auxIdent.seq_ldefn().bound(bound);
+            auxIdent.seq_ldefn().element_identifier(innerIdent);
+            auxIdent.seq_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
+            auxIdent.seq_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
+            auxIdent.seq_ldefn().header().element_flags().IS_EXTERNAL(false);
+            auxIdent.seq_ldefn().header().element_flags().IS_OPTIONAL(false);
+            auxIdent.seq_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.seq_ldefn().header().element_flags().IS_KEY(false);
+            auxIdent.seq_ldefn().header().element_flags().IS_DEFAULT(false);
+            auxIdent.seq_ldefn().header().equiv_kind(GetTypeKind(type_name));
         }
         //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-        m_Identifiers[auxType] = auxIdent;
+        //m_Identifiers[auxType] = auxIdent;
+        AddTypeIdentifier(auxType, &auxIdent);
+        return GetTypeIdentifier(auxType);
     }
-
-    return auxIdent;
+    return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound)
@@ -444,56 +620,57 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
     uint32_t size;
     std::string auxType = TypeNamesGenerator::getArrayTypeName(type_name, bound, size, false);
 
-    TypeIdentifier* auxIdent;
+    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType);
 
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
+    if (c_auxIdent != nullptr)
     {
-        return m_Identifiers.at(auxType);
+        return c_auxIdent;
     }
     else
     {
         const TypeIdentifier* innerIdent = GetTypeIdentifier(type_name);
 
-        auxIdent = new TypeIdentifier;
+        TypeIdentifier auxIdent;
         if (size < 256)
         {
-            auxIdent->_d(TI_PLAIN_ARRAY_SMALL);
+            auxIdent._d(TI_PLAIN_ARRAY_SMALL);
             for (uint32_t b : bound)
             {
-                auxIdent->array_sdefn().array_bound_seq().push_back(static_cast<octet>(b));
+                auxIdent.array_sdefn().array_bound_seq().push_back(static_cast<octet>(b));
             }
-            auxIdent->array_sdefn().element_identifier(innerIdent);
-            auxIdent->array_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->array_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->array_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->array_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->array_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->array_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->array_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->array_sdefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent.array_sdefn().element_identifier(innerIdent);
+            auxIdent.array_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
+            auxIdent.array_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
+            auxIdent.array_sdefn().header().element_flags().IS_EXTERNAL(false);
+            auxIdent.array_sdefn().header().element_flags().IS_OPTIONAL(false);
+            auxIdent.array_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.array_sdefn().header().element_flags().IS_KEY(false);
+            auxIdent.array_sdefn().header().element_flags().IS_DEFAULT(false);
+            auxIdent.array_sdefn().header().equiv_kind(GetTypeKind(type_name));
         }
         else
         {
-            auxIdent->_d(TI_PLAIN_ARRAY_LARGE);
+            auxIdent._d(TI_PLAIN_ARRAY_LARGE);
             for (uint32_t b : bound)
             {
-                auxIdent->array_ldefn().array_bound_seq().push_back(b);
+                auxIdent.array_ldefn().array_bound_seq().push_back(b);
             }
-            auxIdent->array_ldefn().element_identifier(innerIdent);
-            auxIdent->array_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->array_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->array_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->array_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->array_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->array_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->array_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->array_ldefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent.array_ldefn().element_identifier(innerIdent);
+            auxIdent.array_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
+            auxIdent.array_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
+            auxIdent.array_ldefn().header().element_flags().IS_EXTERNAL(false);
+            auxIdent.array_ldefn().header().element_flags().IS_OPTIONAL(false);
+            auxIdent.array_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.array_ldefn().header().element_flags().IS_KEY(false);
+            auxIdent.array_ldefn().header().element_flags().IS_DEFAULT(false);
+            auxIdent.array_ldefn().header().equiv_kind(GetTypeKind(type_name));
         }
         //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-        m_Identifiers[auxType] = auxIdent;
+        //m_Identifiers[auxType] = auxIdent;
+        AddTypeIdentifier(auxType, &auxIdent);
+        return GetTypeIdentifier(auxType);
     }
-
-    return auxIdent;
+    return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key_type_name,
@@ -501,110 +678,101 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
 {
     std::string auxType = TypeNamesGenerator::getMapTypeName(key_type_name, value_type_name, bound, false);
 
-    TypeIdentifier* auxIdent;
+    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType);
 
-    if (m_Identifiers.find(auxType) != m_Identifiers.end())
+    if (c_auxIdent != nullptr)
     {
-        return m_Identifiers.at(auxType);
+        return c_auxIdent;
     }
     else
     {
         const TypeIdentifier* keyIdent = GetTypeIdentifier(key_type_name);
         const TypeIdentifier* valIdent = GetTypeIdentifier(value_type_name);
 
-        auxIdent = new TypeIdentifier;
+        TypeIdentifier auxIdent;
         if (bound < 256)
         {
-            auxIdent->_d(TI_PLAIN_MAP_SMALL);
-            auxIdent->map_sdefn().bound(static_cast<octet>(bound));
-            auxIdent->map_sdefn().element_identifier(valIdent);
-            auxIdent->map_sdefn().key_identifier(keyIdent);
-            auxIdent->map_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_sdefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->map_sdefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->map_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_sdefn().header().element_flags().IS_KEY(false);
-            auxIdent->map_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->map_sdefn().key_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_sdefn().key_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_sdefn().key_flags().IS_EXTERNAL(false);
-            auxIdent->map_sdefn().key_flags().IS_OPTIONAL(false);
-            auxIdent->map_sdefn().key_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_sdefn().key_flags().IS_KEY(false);
-            auxIdent->map_sdefn().key_flags().IS_DEFAULT(false);
-            auxIdent->map_sdefn().header().equiv_kind(GetTypeKind(value_type_name));
+            auxIdent._d(TI_PLAIN_MAP_SMALL);
+            auxIdent.map_sdefn().bound(static_cast<octet>(bound));
+            auxIdent.map_sdefn().element_identifier(valIdent);
+            auxIdent.map_sdefn().key_identifier(keyIdent);
+            auxIdent.map_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
+            auxIdent.map_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
+            auxIdent.map_sdefn().header().element_flags().IS_EXTERNAL(false);
+            auxIdent.map_sdefn().header().element_flags().IS_OPTIONAL(false);
+            auxIdent.map_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.map_sdefn().header().element_flags().IS_KEY(false);
+            auxIdent.map_sdefn().header().element_flags().IS_DEFAULT(false);
+            auxIdent.map_sdefn().key_flags().TRY_CONSTRUCT1(false);
+            auxIdent.map_sdefn().key_flags().TRY_CONSTRUCT2(false);
+            auxIdent.map_sdefn().key_flags().IS_EXTERNAL(false);
+            auxIdent.map_sdefn().key_flags().IS_OPTIONAL(false);
+            auxIdent.map_sdefn().key_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.map_sdefn().key_flags().IS_KEY(false);
+            auxIdent.map_sdefn().key_flags().IS_DEFAULT(false);
+            auxIdent.map_sdefn().header().equiv_kind(GetTypeKind(value_type_name));
         }
         else
         {
-            auxIdent->_d(TI_PLAIN_MAP_LARGE);
-            auxIdent->map_ldefn().bound(bound);
-            auxIdent->map_ldefn().element_identifier(valIdent);
-            auxIdent->map_ldefn().key_identifier(keyIdent);
-            auxIdent->map_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_ldefn().header().element_flags().IS_EXTERNAL(false);
-            auxIdent->map_ldefn().header().element_flags().IS_OPTIONAL(false);
-            auxIdent->map_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_ldefn().header().element_flags().IS_KEY(false);
-            auxIdent->map_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent->map_ldefn().key_flags().TRY_CONSTRUCT1(false);
-            auxIdent->map_ldefn().key_flags().TRY_CONSTRUCT2(false);
-            auxIdent->map_ldefn().key_flags().IS_EXTERNAL(false);
-            auxIdent->map_ldefn().key_flags().IS_OPTIONAL(false);
-            auxIdent->map_ldefn().key_flags().IS_MUST_UNDERSTAND(false);
-            auxIdent->map_ldefn().key_flags().IS_KEY(false);
-            auxIdent->map_ldefn().key_flags().IS_DEFAULT(false);
-            auxIdent->map_ldefn().header().equiv_kind(GetTypeKind(value_type_name));
+            auxIdent._d(TI_PLAIN_MAP_LARGE);
+            auxIdent.map_ldefn().bound(bound);
+            auxIdent.map_ldefn().element_identifier(valIdent);
+            auxIdent.map_ldefn().key_identifier(keyIdent);
+            auxIdent.map_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
+            auxIdent.map_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
+            auxIdent.map_ldefn().header().element_flags().IS_EXTERNAL(false);
+            auxIdent.map_ldefn().header().element_flags().IS_OPTIONAL(false);
+            auxIdent.map_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.map_ldefn().header().element_flags().IS_KEY(false);
+            auxIdent.map_ldefn().header().element_flags().IS_DEFAULT(false);
+            auxIdent.map_ldefn().key_flags().TRY_CONSTRUCT1(false);
+            auxIdent.map_ldefn().key_flags().TRY_CONSTRUCT2(false);
+            auxIdent.map_ldefn().key_flags().IS_EXTERNAL(false);
+            auxIdent.map_ldefn().key_flags().IS_OPTIONAL(false);
+            auxIdent.map_ldefn().key_flags().IS_MUST_UNDERSTAND(false);
+            auxIdent.map_ldefn().key_flags().IS_KEY(false);
+            auxIdent.map_ldefn().key_flags().IS_DEFAULT(false);
+            auxIdent.map_ldefn().header().equiv_kind(GetTypeKind(value_type_name));
         }
         //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-        m_Identifiers[auxType] = auxIdent;
+        //m_Identifiers[auxType] = auxIdent;
+        AddTypeIdentifier(auxType, &auxIdent);
+        return GetTypeIdentifier(auxType);
     }
-
-    return auxIdent;
+    return nullptr;
 }
 
 //static uint32_t s_typeNameCounter = 0;
-static std::string GenerateTypeName(const std::string &kind)
+/*static std::string GenerateTypeName(const std::string &kind)
 {
     return kind;// + "_" + std::to_string(++s_typeNameCounter);
-}
+}*/
 
 static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
 {
-
     switch(identifier->_d())
     {
         case TI_STRING8_SMALL:
         case TI_STRING8_LARGE:
             return TK_STRING8;
-            break;
         case TI_STRING16_SMALL:
         case TI_STRING16_LARGE:
             return TK_STRING16;
-            break;
         case TI_PLAIN_SEQUENCE_SMALL:
         case TI_PLAIN_SEQUENCE_LARGE:
             return TK_SEQUENCE;
-            break;
         case TI_PLAIN_ARRAY_SMALL:
         case TI_PLAIN_ARRAY_LARGE:
             return TK_ARRAY;
-            break;
         case TI_PLAIN_MAP_SMALL:
         case TI_PLAIN_MAP_LARGE:
             return TK_MAP;
-            break;
         case TI_STRONGLY_CONNECTED_COMPONENT:
-        case EK_COMPLETE:
             return TK_NONE;
-            break;
+        case EK_COMPLETE:
         case EK_MINIMAL:
-                return identifier->_d();
-            break;
         default:
             return identifier->_d();
-            break;
     }
 }
 
@@ -757,24 +925,32 @@ static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
 //    }
 //}
 
-DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
     const TypeObject* object) const
 {
-    DynamicType_ptr outputType = BuildDynamicType(identifier, object);
-    if (outputType != nullptr)
-    {
-        outputType->SetName(name);
-    }
-    return outputType;
-}
-
-DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identifier, const TypeObject* object) const
-{
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
-    TypeDescriptor descriptor = new TypeDescriptor(GenerateTypeName(GetTypeName(kind)), kind);
+    TypeDescriptor descriptor = new TypeDescriptor(name, kind);
     switch (kind)
     {
-    case TK_STRING8:
+    // Basic types goes as default!
+    /*
+    case TK_NONE:
+    case TK_BOOLEAN:
+    case TK_BYTE:
+    case TK_INT16:
+    case TK_INT32:
+    case TK_INT64:
+    case TK_UINT16:
+    case TK_UINT32:
+    case TK_UINT64:
+    case TK_FLOAT32:
+    case TK_FLOAT64:
+    case TK_FLOAT128:
+    case TK_CHAR8:
+    case TK_CHAR16:
+        break;
+    */
+    case TI_STRING8_SMALL:
     {
         if (identifier->_d() == TI_STRING8_SMALL)
         {
@@ -804,13 +980,13 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
         {
             const TypeIdentifier *aux = identifier->seq_sdefn().element_identifier();
             descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
-            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
         }
         else
         {
             const TypeIdentifier *aux = identifier->seq_ldefn().element_identifier();
             descriptor.mBound.emplace_back(identifier->seq_ldefn().bound());
-            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
         }
         break;
     }
@@ -823,13 +999,13 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
             {
                 descriptor.mBound.emplace_back(static_cast<uint32_t>(b));
             }
-            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
         }
         else
         {
             const TypeIdentifier *aux = identifier->array_ldefn().element_identifier();
             descriptor.mBound = identifier->array_ldefn().array_bound_seq();
-            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
+            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
         }
         break;
     }
@@ -840,111 +1016,128 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
             const TypeIdentifier *aux = identifier->map_sdefn().element_identifier();
             const TypeIdentifier *aux2 = identifier->map_sdefn().key_identifier();
             descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
-            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-            descriptor.mKeyElementType = BuildDynamicType(aux2, GetTypeObject(aux2));
+            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
         }
         else
         {
             const TypeIdentifier *aux = identifier->map_ldefn().element_identifier();
             const TypeIdentifier *aux2 = identifier->map_ldefn().key_identifier();
             descriptor.mBound.emplace_back(identifier->map_ldefn().bound());
-            descriptor.mElementType = BuildDynamicType(aux, GetTypeObject(aux));
-            descriptor.mKeyElementType = BuildDynamicType(aux2, GetTypeObject(aux2));
+            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
         }
         break;
     }
-    // From here, we need TypeObject
-    case TK_ALIAS:
-    {
-        if (object != nullptr)
+    case EK_MINIMAL:
+    case EK_COMPLETE:
+        // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
+        if (object != nullptr && object->_d() == EK_COMPLETE)
         {
-            const TypeIdentifier *aux = &object->minimal().alias_type().body().common().related_type();
-            descriptor.mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
+            return BuildDynamicType(descriptor, object);
         }
         break;
+    default:
+        break;
     }
-    case TK_STRUCTURE:
+
+    DynamicTypeBuilder* outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+    outputType->SetName(name);
+    return outputType;
+}
+
+// TODO annotations
+DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const
+{
+    if (object == nullptr || object->_d() != EK_COMPLETE)
     {
-        if (object != nullptr)
+        return nullptr;
+    }
+
+    // Change descriptor's kind
+    descriptor.SetKind(object->complete()._d());
+
+    switch(object->complete()._d())
+    {
+        // From here, we need TypeObject
+        case TK_ALIAS:
         {
-            const TypeIdentifier *aux = &object->minimal().struct_type().header().base_type();
-            descriptor.mBaseType = BuildDynamicType(aux, GetTypeObject(aux));
+            const TypeIdentifier *aux =
+                GetStoredTypeIdentifier(&object->complete().alias_type().body().common().related_type());
+            descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            descriptor.SetName(object->complete().alias_type().header().detail().type_name());
+            return DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+        }
+        case TK_STRUCTURE:
+        {
+            //const TypeIdentifier *aux = &object->complete().struct_type().header().base_type();
+            //const TypeIdentifier *aux = GetTypeIdentifierTryingComplete(descriptor.GetName());
+            // TODO Used for inheritance!
+            //descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
 
             DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            for (MinimalStructMember &member : object->minimal().struct_type().member_seq())
+            for (auto member = object->complete().struct_type().member_seq().begin();
+                    member != object->complete().struct_type().member_seq().end();
+                    ++member)
             {
-                const TypeIdentifier *auxMem = &member.common().member_type_id();
+                //const TypeIdentifier *auxMem = &member.common().member_type_id();
+                const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().member_type_id());
                 MemberDescriptor memDesc;
-                memDesc.mId = member.common().member_id();
-                memDesc.SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+                memDesc.mId = member->common().member_id();
+                memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
                 memDesc.SetIndex(order++);
-                memDesc.SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
+                memDesc.SetName(member->detail().name());
                 structType->AddMember(&memDesc);
             }
             return DynamicTypeBuilderFactory::GetInstance()->CreateType(structType.get());
         }
-        break;
-    }
-    case TK_ENUM:
-    {
-        if (object != nullptr)
+        case TK_ENUM:
         {
             DynamicTypeBuilder_ptr enumType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            for (MinimalEnumeratedLiteral &member : object->minimal().enumerated_type().literal_seq())
+            for (auto member = object->complete().enumerated_type().literal_seq().begin();
+                    member != object->complete().enumerated_type().literal_seq().end();
+                    ++member)
             {
-                std::stringstream ss;
-                ss << member.detail().name_hash()[0];
-                ss << member.detail().name_hash()[1];
-                ss << member.detail().name_hash()[2];
-                ss << member.detail().name_hash()[3];
-                enumType->AddEmptyMember(order++, ss.str());
+                enumType->AddEmptyMember(order++, member->detail().name());
             }
-            return DynamicTypeBuilderFactory::GetInstance()->CreateType(enumType.get());
-
+            return enumType;
         }
-        break;
-    }
-    case TK_BITMASK:
-    {
-        if (object != nullptr)
+        case TK_BITMASK:
         {
             // TODO To implement
+            return nullptr;
         }
-        break;
-    }
-    case TK_BITSET:
-    {
-        if (object != nullptr)
+        case TK_BITSET:
         {
             // TODO To implement
+            return nullptr;
         }
-        break;
-    }
-    case TK_UNION:
-    {
-        if (object != nullptr)
+        case TK_UNION:
         {
-            const TypeIdentifier *aux = &object->minimal().union_type().discriminator().common().type_id();
-            descriptor.mDiscriminatorType = BuildDynamicType(aux, GetTypeObject(aux));
+            const TypeIdentifier *aux =
+                GetStoredTypeIdentifier(&object->complete().union_type().discriminator().common().type_id());
+            descriptor.mDiscriminatorType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
 
             DynamicTypeBuilder_ptr unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            for (MinimalUnionMember &member : object->minimal().union_type().member_seq())
+            for (auto member = object->complete().union_type().member_seq().begin();
+                    member != object->complete().union_type().member_seq().end();
+                    ++member)
             {
-                const TypeIdentifier *auxMem = &member.common().type_id();
+                const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().type_id());
                 MemberDescriptor memDesc;
-                memDesc.SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
+                memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
                 memDesc.SetIndex(order++);
-                memDesc.mId = member.common().member_id();
-                memDesc.SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
-                memDesc.SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
+                memDesc.mId = member->common().member_id();
+                memDesc.SetName(member->detail().name());
+                memDesc.SetDefaultUnionValue(member->common().member_flags().IS_DEFAULT());
                 memDesc.mDefaultValue = std::to_string(memDesc.mIndex);
-                for (uint32_t lab : member.common().label_seq())
+                for (uint32_t lab : member->common().label_seq())
                 {
                     memDesc.AddUnionCaseIndex(lab);
                 }
@@ -953,14 +1146,11 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
 
             return DynamicTypeBuilderFactory::GetInstance()->CreateType(unionType.get());
         }
-        break;
-    }
-    case TK_ANNOTATION:
-    {
-        // TODO To implement
-
-        if (object != nullptr)
+        case TK_ANNOTATION:
         {
+            // TODO To implement
+            return nullptr;
+
             /*
             uint64_t order = 0;
             for (MinimalAnnotationParameter &member : object->minimal().annotation_type().member_seq())
@@ -984,21 +1174,10 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
             }
             */
         }
-        break;
+        default:
+            return nullptr;
     }
-    case EK_COMPLETE:
-    case EK_MINIMAL:
-        if (object != nullptr)
-        {
-            //TODO: TO IMPLEMENT FOR EK_COMPLETE, MINIMALS ONLY CAN BE USED TO CHECK THE INTEGRITY
-            //BuildTypeDescriptorFromObject(descriptor, object);
-        }
-        break;
-    default:
-        break;
-    }
-
-    return DynamicTypeBuilderFactory::GetInstance()->CreateType(&descriptor);
+    return nullptr;
 }
 
 } // namespace types
