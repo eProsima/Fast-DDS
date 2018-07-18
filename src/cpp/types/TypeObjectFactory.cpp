@@ -925,7 +925,7 @@ static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
 //    }
 //}
 
-DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
     const TypeObject* object) const
 {
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
@@ -1041,13 +1041,13 @@ DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(const std::string& name,
         break;
     }
 
-    DynamicTypeBuilder* outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+    DynamicTypeBuilder* outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
     outputType->SetName(name);
-    return outputType;
+    return outputType->Build();
 }
 
 // TODO annotations
-DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const
+DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const
 {
     if (object == nullptr || object->_d() != EK_COMPLETE)
     {
@@ -1066,7 +1066,7 @@ DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(TypeDescriptor &descript
                 GetStoredTypeIdentifier(&object->complete().alias_type().body().common().related_type());
             descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
             descriptor.SetName(object->complete().alias_type().header().detail().type_name());
-            return DynamicTypeBuilderFactory::GetInstance()->CreateCustomType(&descriptor);
+            return DynamicTypeBuilderFactory::GetInstance()->CreateType(&descriptor);
         }
         case TK_STRUCTURE:
         {
@@ -1091,7 +1091,7 @@ DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(TypeDescriptor &descript
                 memDesc.SetName(member->detail().name());
                 structType->AddMember(&memDesc);
             }
-            return DynamicTypeBuilderFactory::GetInstance()->CreateType(structType.get());
+            return structType->Build();
         }
         case TK_ENUM:
         {
@@ -1104,7 +1104,7 @@ DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(TypeDescriptor &descript
             {
                 enumType->AddEmptyMember(order++, member->detail().name());
             }
-            return enumType;
+            return enumType->Build();
         }
         case TK_BITMASK:
         {
@@ -1144,7 +1144,7 @@ DynamicTypeBuilder* TypeObjectFactory::BuildDynamicType(TypeDescriptor &descript
                 unionType->AddMember(&memDesc);
             }
 
-            return DynamicTypeBuilderFactory::GetInstance()->CreateType(unionType.get());
+            return unionType->Build();
         }
         case TK_ANNOTATION:
         {

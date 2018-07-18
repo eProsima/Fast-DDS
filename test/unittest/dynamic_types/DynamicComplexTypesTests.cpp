@@ -92,7 +92,7 @@ void DynamicComplexTypesTests::init()
 
     const TypeIdentifier *id = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CompleteStruct", true);
     const TypeObject *obj = TypeObjectFactory::GetInstance()->GetTypeObject(id);
-    m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType("CompleteStruct", id, obj)->Build();
+    m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType("CompleteStruct", id, obj);
     //m_DynAutoType = nullptr;
 
     // Manual creation
@@ -287,17 +287,18 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
 TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
 {
     // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubtype(m_DynAutoType);
     types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
-    uint32_t payloadSize = static_cast<uint32_t>(m_DynAutoType->getSerializedSizeProvider(dynData)());
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubtype.getSerializedSizeProvider(dynData)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(m_DynAutoType->serialize(dynData, &payload));
+    ASSERT_TRUE(pubsubtype.serialize(dynData, &payload));
 
     CompleteStruct staticData;
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload));
 
     types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
-    ASSERT_TRUE(m_DynAutoType->deserialize(&payload, dynData2));
+    ASSERT_TRUE(pubsubtype.deserialize(&payload, dynData2));
 
     ASSERT_TRUE(dynData2->Equals(dynData));
 

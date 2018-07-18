@@ -49,7 +49,7 @@ public:
     RTPS_DllAPI const TypeIdentifier* GetMapIdentifier(const std::string &key_type_name,
         const std::string &value_type_name, uint32_t bound);
 
-    RTPS_DllAPI DynamicTypeBuilder* BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+    RTPS_DllAPI DynamicType_ptr BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
         const TypeObject* object = nullptr) const;
 
     RTPS_DllAPI void AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier);
@@ -62,7 +62,7 @@ protected:
     std::map<const TypeIdentifier*, const TypeObject*> m_Objects; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> m_CompleteObjects; // EK_COMPLETE
 
-    DynamicTypeBuilder* BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const;
+    DynamicType_ptr BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const;
     const TypeIdentifier* GetStoredTypeIdentifier(const TypeIdentifier *identifier) const;
     void nullifyAllEntries(const TypeIdentifier *identifier);
 private:
