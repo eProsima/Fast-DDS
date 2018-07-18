@@ -1078,9 +1078,8 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
             DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            for (auto member = object->complete().struct_type().member_seq().begin();
-                    member != object->complete().struct_type().member_seq().end();
-                    ++member)
+            CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
+            for (auto member = structVector.begin(); member != structVector.end(); ++member)
             {
                 //const TypeIdentifier *auxMem = &member.common().member_type_id();
                 const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().member_type_id());
@@ -1098,9 +1097,8 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
             DynamicTypeBuilder_ptr enumType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            for (auto member = object->complete().enumerated_type().literal_seq().begin();
-                    member != object->complete().enumerated_type().literal_seq().end();
-                    ++member)
+            CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
+            for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
                 enumType->AddEmptyMember(order++, member->detail().name());
             }
@@ -1125,9 +1123,8 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
             DynamicTypeBuilder_ptr unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            for (auto member = object->complete().union_type().member_seq().begin();
-                    member != object->complete().union_type().member_seq().end();
-                    ++member)
+            CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
+            for (auto member = unionVector.begin(); member != unionVector.end(); ++member)
             {
                 const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().type_id());
                 MemberDescriptor memDesc;
@@ -1175,7 +1172,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
             */
         }
         default:
-            return nullptr;
+            break;
     }
     return nullptr;
 }
