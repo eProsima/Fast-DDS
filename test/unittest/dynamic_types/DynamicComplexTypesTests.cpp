@@ -22,6 +22,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -264,17 +265,18 @@ void DynamicComplexTypesTests::init()
 TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
 {
     // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(m_DynManualType);
     types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    uint32_t payloadSize = static_cast<uint32_t>(m_DynManualType->getSerializedSizeProvider(dynData)());
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData)());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(m_DynManualType->serialize(dynData, &payload));
+    ASSERT_TRUE(pubsubType.serialize(dynData, &payload));
 
     CompleteStruct staticData;
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload));
 
     types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    ASSERT_TRUE(m_DynManualType->deserialize(&payload, dynData2));
+    ASSERT_TRUE(pubsubType.deserialize(&payload, dynData2));
 
     ASSERT_TRUE(dynData2->Equals(dynData));
 

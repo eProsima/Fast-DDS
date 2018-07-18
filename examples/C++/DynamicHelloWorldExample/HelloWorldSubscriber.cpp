@@ -71,10 +71,11 @@ bool HelloWorldSubscriber::init(bool dynamic)
         struct_type_builder->AddMember(1, "message", created_type_string.get());
         struct_type_builder->SetName("HelloWorld");
 
-        m_DynType = struct_type_builder->Build();
-        m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
+        DynamicType_ptr dynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(dynType);
+        m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(dynType);
 
-        Domain::registerDynamicType(mp_participant, m_DynType);
+        Domain::registerDynamicType(mp_participant, &m_DynType);
     }
     else
     {
@@ -111,7 +112,6 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
 
     if (m_dynamic)
     {
-        m_DynType = nullptr;
         DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
     }
 

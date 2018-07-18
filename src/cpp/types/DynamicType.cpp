@@ -31,12 +31,12 @@ DynamicType::DynamicType()
     : mDescriptor(nullptr)
     , mName("")
     , mKind(TK_NONE)
-    , m_keyBuffer(nullptr)
+    , mIsKeyDefined(false)
 {
 }
 
 DynamicType::DynamicType(const TypeDescriptor* descriptor)
-: m_keyBuffer(nullptr)
+    : mIsKeyDefined(false)
 {
     mDescriptor = new TypeDescriptor(descriptor);
     try
@@ -59,25 +59,15 @@ DynamicType::DynamicType(const TypeDescriptor* descriptor)
             mMemberByName.insert(std::make_pair(it->second->GetName(), it->second));
         }
     }
-    setName(mName.c_str());
 }
 
 DynamicType::DynamicType(const DynamicTypeBuilder* other)
     : mDescriptor(nullptr)
     , mName("")
     , mKind(TK_NONE)
-    , m_keyBuffer(nullptr)
+    , mIsKeyDefined(false)
 {
     CopyFromBuilder(other);
-}
-
-DynamicType::DynamicType(const DynamicType* other)
-    : mDescriptor(nullptr)
-    , mName("")
-    , mKind(TK_NONE)
-    , m_keyBuffer(nullptr)
-{
-    CopyFromType(other);
 }
 
 DynamicType::~DynamicType()
@@ -85,14 +75,14 @@ DynamicType::~DynamicType()
     Clear();
 }
 
-ResponseCode DynamicType::_ApplyAnnotation(AnnotationDescriptor& descriptor)
+ResponseCode DynamicType::ApplyAnnotation(AnnotationDescriptor& descriptor)
 {
     if (descriptor.IsConsistent())
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->CopyFrom(&descriptor);
         mAnnotation.push_back(pNewDescriptor);
-        m_isGetKeyDefined = GetKeyAnnotation();
+        mIsKeyDefined = GetKeyAnnotation();
         return ResponseCode::RETCODE_OK;
     }
     else
@@ -102,7 +92,7 @@ ResponseCode DynamicType::_ApplyAnnotation(AnnotationDescriptor& descriptor)
     }
 }
 
-ResponseCode DynamicType::_ApplyAnnotation(const std::string& key, const std::string& value)
+ResponseCode DynamicType::ApplyAnnotation(const std::string& key, const std::string& value)
 {
     auto it = mAnnotation.begin();
     if (it != mAnnotation.end())
@@ -115,13 +105,13 @@ ResponseCode DynamicType::_ApplyAnnotation(const std::string& key, const std::st
         pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationPrimitive());
         pNewDescriptor->SetValue(key, value);
         mAnnotation.push_back(pNewDescriptor);
+        mIsKeyDefined = GetKeyAnnotation();
     }
 
-    m_isGetKeyDefined = GetKeyAnnotation();
     return ResponseCode::RETCODE_OK;
 }
 
-ResponseCode DynamicType::_ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor)
+ResponseCode DynamicType::ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor)
 {
     if (descriptor.IsConsistent())
     {
@@ -144,7 +134,7 @@ ResponseCode DynamicType::_ApplyAnnotationToMember(MemberId id, AnnotationDescri
     }
 }
 
-ResponseCode DynamicType::_ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value)
+ResponseCode DynamicType::ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value)
 {
     auto it = mMemberById.find(id);
     if (it != mMemberById.end())
@@ -161,11 +151,6 @@ ResponseCode DynamicType::_ApplyAnnotationToMember(MemberId id, const std::strin
 
 void DynamicType::Clear()
 {
-    if (m_keyBuffer != nullptr)
-    {
-        free(m_keyBuffer);
-    }
-
     mName = "";
     mKind = 0;
     if (mDescriptor != nullptr)
@@ -208,49 +193,11 @@ ResponseCode DynamicType::CopyFromBuilder(const DynamicTypeBuilder* other)
         {
             DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
             newMember->SetParent(this);
-            m_isGetKeyDefined |= newMember->GetKeyAnnotation();
+            mIsKeyDefined = newMember->GetKeyAnnotation();
             mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
             mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
         }
-        setName(mName.c_str());
 
-        RefreshMaxSerializeSize();
-        return ResponseCode::RETCODE_OK;
-    }
-    else
-    {
-        logError(DYN_TYPES, "Error copying DynamicType, invalid input type");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
-    }
-}
-
-ResponseCode DynamicType::CopyFromType(const DynamicType* other)
-{
-    if (other != nullptr)
-    {
-        Clear();
-
-        mName = other->mName;
-        mKind = other->mKind;
-        mDescriptor = new TypeDescriptor(other->mDescriptor);
-
-        for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
-        {
-            AnnotationDescriptor* newDescriptor = new AnnotationDescriptor(*it);
-            mAnnotation.push_back(newDescriptor);
-        }
-
-        for (auto it = other->mMemberById.begin(); it != other->mMemberById.end(); ++it)
-        {
-            DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
-            newMember->SetParent(this);
-            m_isGetKeyDefined |= newMember->GetKeyAnnotation();
-            mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
-            mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
-        }
-        setName(mName.c_str());
-
-        RefreshMaxSerializeSize();
         return ResponseCode::RETCODE_OK;
     }
     else
@@ -296,16 +243,6 @@ bool DynamicType::GetKeyAnnotation() const
         }
     }
     return false;
-}
-
-uint32_t DynamicType::GetKeyMaxCdrSerializedSize()
-{
-    return static_cast<uint32_t>(DynamicData::getKeyMaxCdrSerializedSize(this));
-}
-
-uint32_t DynamicType::GetMaxSerializedSize()
-{
-    return static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(this));
 }
 
 bool DynamicType::Equals(const DynamicType* other) const
@@ -526,112 +463,6 @@ void DynamicType::SetName(const std::string& name)
         mDescriptor->SetName(name);
     }
     mName = name;
-    setName(mName.c_str());
-}
-
-
-void* DynamicType::createData()
-{
-    return DynamicDataFactory::GetInstance()->CreateData(this);
-}
-
-void DynamicType::deleteData(void* data)
-{
-    DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)data);
-}
-
-bool DynamicType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data)
-{
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-                                          // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-    try
-    {
-        ((DynamicData*)data)->deserialize(deser); //Deserialize the object:
-    }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool DynamicType::getKey(void* data, eprosima::fastrtps::rtps::InstanceHandle_t* handle)
-{
-    if (!m_isGetKeyDefined)
-    {
-        return false;
-    }
-    DynamicData* pDynamicData = (DynamicData*)data;
-    size_t keyBufferSize = DynamicType::GetKeyMaxCdrSerializedSize();
-
-    if (m_keyBuffer == nullptr)
-    {
-        m_keyBuffer = (unsigned char*)malloc(keyBufferSize>16 ? keyBufferSize : 16);
-    }
-
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
-    pDynamicData->serializeKey(ser);
-    if (keyBufferSize > 16)
-    {
-        m_md5.init();
-        m_md5.update(m_keyBuffer, (unsigned int)ser.getSerializedDataLength());
-        m_md5.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle->value[i] = m_md5.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle->value[i] = m_keyBuffer[i];
-        }
-    }
-    return true;
-}
-
-std::function<uint32_t()> DynamicType::getSerializedSizeProvider(void* data)
-{
-    return [data]() -> uint32_t {
-        return (uint32_t)DynamicData::getCdrSerializedSize((DynamicData*)data) + 4 /*encapsulation*/;
-    };
-}
-
-void DynamicType::RefreshMaxSerializeSize()
-{
-    m_typeSize = GetMaxSerializedSize();
-}
-
-bool DynamicType::serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload)
-{
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
-
-    try
-    {
-        ((DynamicData*)data)->serialize(ser); // Serialize the object:
-    }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
-    {
-        return false;
-    }
-
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    return true;
 }
 
 } // namespace types

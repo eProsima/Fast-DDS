@@ -131,11 +131,6 @@ DynamicType_ptr DynamicTypeBuilderFactory::BuildType(DynamicType_ptr other)
     return other;
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::CreateType(const DynamicType* type)
-{
-    return new DynamicType(type);
-}
-
 DynamicType_ptr DynamicTypeBuilderFactory::CreateType(const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)

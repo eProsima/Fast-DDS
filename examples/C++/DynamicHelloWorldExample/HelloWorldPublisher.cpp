@@ -57,8 +57,9 @@ bool HelloWorldPublisher::init(bool dynamic)
         struct_type_builder->AddMember(1, "message", DynamicTypeBuilderFactory::GetInstance()->CreateStringType());
         struct_type_builder->SetName("HelloWorld");
 
-        m_DynType = struct_type_builder->Build();
-        m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
+        DynamicType_ptr dynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(dynType);
+        m_DynHello = DynamicDataFactory::GetInstance()->CreateData(dynType);
         m_DynHello->SetUint32Value(0, 0);
         m_DynHello->SetStringValue("HelloWorld", 1);
     }
@@ -86,7 +87,7 @@ bool HelloWorldPublisher::init(bool dynamic)
 
     if (m_dynamic)
     {
-        Domain::registerDynamicType(mp_participant, m_DynType);
+        Domain::registerDynamicType(mp_participant, &m_DynType);
     }
     else
     {
@@ -121,7 +122,6 @@ HelloWorldPublisher::~HelloWorldPublisher()
     // TODO Auto-generated destructor stub
     if (m_dynamic)
     {
-        m_DynType = nullptr;
         DynamicDataFactory::GetInstance()->DeleteData(m_DynHello);
     }
 

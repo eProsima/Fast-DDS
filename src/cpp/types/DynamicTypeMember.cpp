@@ -69,7 +69,7 @@ ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor
         mAnnotation.push_back(pNewDescriptor);
 
         // Update the annotations on the member Dynamic Type.
-        mDescriptor.mType->_ApplyAnnotation(descriptor);
+        mDescriptor.mType->ApplyAnnotation(descriptor);
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -78,7 +78,7 @@ ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor
 ResponseCode DynamicTypeMember::ApplyAnnotation(const std::string& key, const std::string& value)
 {
     // Update the annotations on the member Dynamic Type.
-    mDescriptor.mType->_ApplyAnnotation(key, value);
+    mDescriptor.mType->ApplyAnnotation(key, value);
 
     auto it = mAnnotation.begin();
     if (it != mAnnotation.end())

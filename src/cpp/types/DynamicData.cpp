@@ -15,6 +15,7 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeDescriptor.h>
@@ -4070,7 +4071,7 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4081,18 +4082,18 @@ size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType* type, size_t c
         {
             if (it->second->GetKeyAnnotation())
             {
-                current_alignment += getKeyMaxCdrSerializedSize(it->second->mDescriptor.mType.get(), current_alignment);
+                current_alignment += getKeyMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
             }
         }
     }
-    else if (type->m_isGetKeyDefined)
+    else if (type->mIsKeyDefined)
     {
         return getMaxCdrSerializedSize(type, current_alignment);
     }
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4158,7 +4159,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
         size_t max_element_size(0);
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            temp_size = getMaxCdrSerializedSize(it->second->mDescriptor.mType.get(), current_alignment);
+            temp_size = getMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
             if (temp_size > max_element_size)
             {
                 max_element_size = temp_size;
@@ -4171,7 +4172,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
     {
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor.mType.get(), current_alignment);
+            current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
         }
         break;
     }
@@ -4182,7 +4183,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Element size with the maximum size
-        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType().get()));
+        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType()));
         break;
     }
     case TK_MAP:
@@ -4191,10 +4192,10 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t curr
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Key Elements size with the maximum size
-        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetKeyElementType().get()));
+        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetKeyElementType()));
 
         // Value Elements size with the maximum size
-        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType().get()));
+        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType()));
         break;
     }
 
@@ -4481,7 +4482,7 @@ void DynamicData::serializeKey(eprosima::fastcdr::Cdr &cdr) const
         }
 #endif
     }
-    else if (mType->m_isGetKeyDefined)
+    else if (mType->mIsKeyDefined)
     {
         serialize(cdr);
     }
