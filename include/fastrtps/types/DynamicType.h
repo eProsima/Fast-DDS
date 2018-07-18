@@ -80,10 +80,12 @@ protected:
     DynamicType();
     DynamicType(const TypeDescriptor* descriptor);
     DynamicType(const DynamicTypeBuilder* other);
+    DynamicType(const DynamicType* other);
 
     virtual void Clear();
 
     ResponseCode CopyFromBuilder(const DynamicTypeBuilder* other);
+    ResponseCode CopyFromType(const DynamicType* other);
 
     bool GetKeyAnnotation() const;
     uint32_t GetKeyMaxCdrSerializedSize();

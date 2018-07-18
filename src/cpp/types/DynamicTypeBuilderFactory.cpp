@@ -131,6 +131,11 @@ DynamicType_ptr DynamicTypeBuilderFactory::BuildType(DynamicType_ptr other)
     return other;
 }
 
+DynamicType_ptr DynamicTypeBuilderFactory::CreateType(const DynamicType* type)
+{
+    return new DynamicType(type);
+}
+
 DynamicType_ptr DynamicTypeBuilderFactory::CreateType(const TypeDescriptor* descriptor)
 {
     if (descriptor != nullptr)
@@ -741,10 +746,6 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateWstringBuilder(uint32_t bou
     return pNewTypeBuilder;
 }
 
-//DynamicTypeBuilder DynamicTypeBuilderFactory::create_type_w_type_object(TypeObject type_object)
-//DynamicTypeBuilder DynamicTypeBuilderFactory::create_type_w_uri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
-//DynamicTypeBuilder DynamicTypeBuilderFactory::create_type_w_document(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
-
 ResponseCode DynamicTypeBuilderFactory::DeleteBuilder(DynamicTypeBuilder* builder)
 {
     if (builder != nullptr)
@@ -764,6 +765,15 @@ ResponseCode DynamicTypeBuilderFactory::DeleteBuilder(DynamicTypeBuilder* builde
 #else
         delete type;
 #endif
+    }
+    return ResponseCode::RETCODE_OK;
+}
+
+ResponseCode DynamicTypeBuilderFactory::DeleteType(DynamicType* type)
+{
+    if (type != nullptr)
+    {
+        delete type;
     }
     return ResponseCode::RETCODE_OK;
 }
