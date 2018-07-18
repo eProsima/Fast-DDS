@@ -41,6 +41,7 @@ public:
 
     RTPS_DllAPI DynamicType_ptr GetPrimitiveType(TypeKind kind);
     RTPS_DllAPI ResponseCode DeleteBuilder(DynamicTypeBuilder* builder);
+    RTPS_DllAPI ResponseCode DeleteType(DynamicType* type);
 
     RTPS_DllAPI DynamicTypeBuilder* CreateCustomBuilder(const TypeDescriptor* descriptor);
 	RTPS_DllAPI DynamicTypeBuilder* CreateBuilderCopy(const DynamicTypeBuilder* type);
@@ -79,6 +80,7 @@ public:
 	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
 
     RTPS_DllAPI DynamicType_ptr CreateAnnotationPrimitive();
+    RTPS_DllAPI DynamicType_ptr CreateType(const DynamicType* type);
     RTPS_DllAPI DynamicType_ptr CreateType(const TypeDescriptor* descriptor);
     RTPS_DllAPI DynamicType_ptr CreateType(const DynamicTypeBuilder* other);
     RTPS_DllAPI DynamicType_ptr CreateInt32Type();

@@ -72,6 +72,11 @@ DynamicData* DynamicDataFactory::CreateData(DynamicTypeBuilder* pBuilder)
     }
 }
 
+DynamicData* DynamicDataFactory::CreateData(DynamicType* pType)
+{
+    return CreateData(DynamicTypeBuilderFactory::GetInstance()->CreateType(pType));
+}
+
 DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
 {
     if (pType != nullptr && pType->IsConsistent())

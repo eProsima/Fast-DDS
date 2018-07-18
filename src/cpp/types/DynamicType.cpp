@@ -71,6 +71,15 @@ DynamicType::DynamicType(const DynamicTypeBuilder* other)
     CopyFromBuilder(other);
 }
 
+DynamicType::DynamicType(const DynamicType* other)
+    : mDescriptor(nullptr)
+    , mName("")
+    , mKind(TK_NONE)
+    , m_keyBuffer(nullptr)
+{
+    CopyFromType(other);
+}
+
 DynamicType::~DynamicType()
 {
     Clear();
@@ -180,6 +189,42 @@ void DynamicType::Clear()
 }
 
 ResponseCode DynamicType::CopyFromBuilder(const DynamicTypeBuilder* other)
+{
+    if (other != nullptr)
+    {
+        Clear();
+
+        mName = other->mName;
+        mKind = other->mKind;
+        mDescriptor = new TypeDescriptor(other->mDescriptor);
+
+        for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
+        {
+            AnnotationDescriptor* newDescriptor = new AnnotationDescriptor(*it);
+            mAnnotation.push_back(newDescriptor);
+        }
+
+        for (auto it = other->mMemberById.begin(); it != other->mMemberById.end(); ++it)
+        {
+            DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
+            newMember->SetParent(this);
+            m_isGetKeyDefined |= newMember->GetKeyAnnotation();
+            mMemberById.insert(std::make_pair(newMember->GetId(), newMember));
+            mMemberByName.insert(std::make_pair(newMember->GetName(), newMember));
+        }
+        setName(mName.c_str());
+
+        RefreshMaxSerializeSize();
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error copying DynamicType, invalid input type");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicType::CopyFromType(const DynamicType* other)
 {
     if (other != nullptr)
     {

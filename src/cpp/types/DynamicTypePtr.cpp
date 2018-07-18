@@ -21,7 +21,7 @@ namespace fastrtps {
 namespace types {
 
 DynamicType_ptr::DynamicType_ptr(DynamicType* pType)
-    : Base(pType)
+    : Base(pType)//, [](DynamicType* pType) { DynamicTypeBuilderFactory::GetInstance()->DeleteType(pType); })
 {
 }
 
