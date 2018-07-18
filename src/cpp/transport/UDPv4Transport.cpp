@@ -143,7 +143,7 @@ ip::udp::endpoint UDPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_
     return ip::udp::endpoint(asio::ip::address_v4(remoteAddress), port);
 }
 
-ip::udp::endpoint UDPv4Transport::GenerateEndpoint(const std::string sIp, uint16_t port)
+ip::udp::endpoint UDPv4Transport::GenerateEndpoint(const std::string& sIp, uint16_t port)
 {
     return asio::ip::udp::endpoint(ip::address_v4::from_string(sIp), port);
 }

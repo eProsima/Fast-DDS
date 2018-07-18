@@ -80,7 +80,7 @@ public:
 	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
 
     RTPS_DllAPI DynamicType_ptr CreateAnnotationPrimitive();
-    RTPS_DllAPI DynamicType_ptr CreateType(const TypeDescriptor* descriptor);
+    RTPS_DllAPI DynamicType_ptr CreateType(const TypeDescriptor* descriptor, const std::string& name = "");
     RTPS_DllAPI DynamicType_ptr CreateType(const DynamicTypeBuilder* other);
     RTPS_DllAPI DynamicType_ptr CreateInt32Type();
     RTPS_DllAPI DynamicType_ptr CreateUint32Type();

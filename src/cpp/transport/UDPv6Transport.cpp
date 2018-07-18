@@ -139,7 +139,7 @@ asio::ip::udp::endpoint UDPv6Transport::GenerateAnyAddressEndpoint(uint16_t port
     return ip::udp::endpoint(ip::address_v6::any(), port);
 }
 
-ip::udp::endpoint UDPv6Transport::GenerateEndpoint(const std::string sIp, uint16_t port)
+ip::udp::endpoint UDPv6Transport::GenerateEndpoint(const std::string& sIp, uint16_t port)
 {
     return asio::ip::udp::endpoint(ip::address_v6::from_string(sIp), port);
 }
