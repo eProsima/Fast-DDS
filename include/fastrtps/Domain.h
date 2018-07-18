@@ -39,7 +39,7 @@ class SubscriberListener;
 class TopicDataType;
 
 namespace types{
-class DynamicType;
+class DynamicPubSubType;
 }
 
 /**
@@ -162,7 +162,7 @@ public:
      * @param type Pointer to the Type.
      * @return True if correctly registered.
      */
-    RTPS_DllAPI static bool registerDynamicType(Participant* part, types::DynamicType_ptr type);
+    RTPS_DllAPI static bool registerDynamicType(Participant* part, types::DynamicPubSubType* type);
 
     /**
      * Unregister a type in a participant.

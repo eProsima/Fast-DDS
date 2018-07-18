@@ -16,7 +16,6 @@
 #define TYPES_DYNAMIC_TYPE_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/TopicDataType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
@@ -27,7 +26,7 @@ class AnnotationDescriptor;
 class TypeDescriptor;
 class DynamicTypeMember;
 
-class DynamicType : public eprosima::fastrtps::TopicDataType
+class DynamicType
 {
 public:
 
@@ -37,34 +36,24 @@ public:
 
     ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members);
     ResponseCode GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members);
-    ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
-    uint32_t GetAnnotationCount();
-    DynamicType_ptr GetBaseType() const;
+
     uint32_t GetBounds(uint32_t index = 0) const;
-    uint32_t GetTotalBounds() const;
     uint32_t GetBoundsSize() const;
+
     ResponseCode GetDescriptor(TypeDescriptor* descriptor) const;
-    DynamicType_ptr GetElementType() const;
-    DynamicType_ptr GetKeyElementType() const;
+
+    bool GetKeyAnnotation() const;
     inline TypeKind GetKind() const { return mKind; }
     std::string GetName() const;
-    ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
-    ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
     MemberId GetMembersCount() const;
-
-    bool HasChildren() const;
-    bool IsComplexKind() const;
-    bool IsConsistent() const;
-    bool IsDiscriminatorType() const;
-
-    void* createData();
-    void deleteData(void * data);
-    bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-    bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
-    std::function<uint32_t()> getSerializedSizeProvider(void* data);
-    bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+    uint32_t GetTotalBounds() const;
 
     const TypeDescriptor* getTypeDescriptor() const { return mDescriptor; }
+
+    bool HasChildren() const;
+    bool IsConsistent() const;
+    bool IsComplexKind() const;
+    bool IsDiscriminatorType() const;
 
 protected:
 
@@ -73,6 +62,7 @@ protected:
     friend class MemberDescriptor;
     friend class TypeDescriptor;
     friend class DynamicData;
+    friend class DynamicDataFactory;
     friend class AnnotationDescriptor;
     friend class TypeObjectFactory;
     friend class DynamicTypeMember;
@@ -80,29 +70,29 @@ protected:
     DynamicType();
     DynamicType(const TypeDescriptor* descriptor);
     DynamicType(const DynamicTypeBuilder* other);
-    DynamicType(const DynamicType* other);
 
     virtual void Clear();
 
     ResponseCode CopyFromBuilder(const DynamicTypeBuilder* other);
-    ResponseCode CopyFromType(const DynamicType* other);
-
-    bool GetKeyAnnotation() const;
-    uint32_t GetKeyMaxCdrSerializedSize();
-    uint32_t GetMaxSerializedSize();
 
     // Checks if there is a member with the given name.
     bool ExistsMemberByName(const std::string& name) const;
 
-    void RefreshMaxSerializeSize();
-
     // This method is used by Dynamic Data to override the name of the types based on ALIAS.
     void SetName(const std::string& name);
 
-    ResponseCode _ApplyAnnotation(AnnotationDescriptor& descriptor);
-    ResponseCode _ApplyAnnotation(const std::string& key, const std::string& value);
-    ResponseCode _ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor);
-    ResponseCode _ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value);
+    ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
+    ResponseCode ApplyAnnotation(const std::string& key, const std::string& value);
+    ResponseCode ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor);
+    ResponseCode ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value);
+
+    ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
+    uint32_t GetAnnotationCount();
+    DynamicType_ptr GetBaseType() const;
+    DynamicType_ptr GetElementType() const;
+    DynamicType_ptr GetKeyElementType() const;
+    ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
+    ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
 
     TypeDescriptor* mDescriptor;
 	std::vector<AnnotationDescriptor*> mAnnotation;
@@ -110,9 +100,7 @@ protected:
     std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
     std::string mName;
 	TypeKind mKind;
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
+    bool mIsKeyDefined;
 };
 
 } // namespace types

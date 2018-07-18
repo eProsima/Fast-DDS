@@ -32,6 +32,7 @@
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -278,7 +279,7 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
     return false;
 }
 
-bool Domain::registerDynamicType(Participant* part, types::DynamicType_ptr type)
+bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* type)
 {
     using namespace eprosima::fastrtps::types;
     TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
@@ -287,14 +288,14 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicType_ptr type)
     {
         DynamicTypeBuilderFactory *dynFactory = DynamicTypeBuilderFactory::GetInstance();
         std::map<MemberId, DynamicTypeMember*> membersMap;
-        type->GetAllMembers(membersMap);
+        type->GetDynamicType()->GetAllMembers(membersMap);
         std::vector<const MemberDescriptor*> members;
         for (auto it : membersMap)
         {
             members.push_back(it.second->GetDescriptor());
         }
         TypeObject typeObj;
-        dynFactory->BuildTypeObject(type->getTypeDescriptor(), typeObj, &members);
+        dynFactory->BuildTypeObject(type->GetDynamicType()->getTypeDescriptor(), typeObj, &members);
         const TypeIdentifier *type_id2 = typeFactory->GetTypeIdentifier(type->getName());
         const TypeObject *type_obj = typeFactory->GetTypeObject(type->getName());
         if (type_id2 == nullptr)
@@ -306,7 +307,7 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicType_ptr type)
             typeFactory->AddTypeObject(type->getName(), type_id2, type_obj);
         }
     }
-    return registerType(part, type.get());
+    return registerType(part, type);
 }
 
 bool Domain::unregisterType(Participant* part, const char* typeName)
