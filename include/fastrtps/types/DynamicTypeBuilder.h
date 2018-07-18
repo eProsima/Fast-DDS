@@ -44,6 +44,11 @@ public:
         const std::string& defaultValue);
     RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType,
         const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType_ptr mType = nullptr);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType_ptr mType,
+        const std::string& defaultValue);
+    RTPS_DllAPI ResponseCode AddMember(MemberId id, const std::string& name, DynamicType_ptr mType,
+        const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel);
 
     RTPS_DllAPI ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
     RTPS_DllAPI ResponseCode ApplyAnnotation(std::string key, std::string value);
@@ -54,8 +59,12 @@ public:
     RTPS_DllAPI DynamicType_ptr Build();
 
     RTPS_DllAPI ResponseCode CopyFrom(const DynamicTypeBuilder* other);
+
+    ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members);
     RTPS_DllAPI inline TypeKind GetKind() const { return mKind; }
     RTPS_DllAPI std::string GetName() const;
+    const TypeDescriptor* getTypeDescriptor() const { return mDescriptor; }
+
     bool IsConsistent() const;
     bool IsDiscriminatorType() const;
 

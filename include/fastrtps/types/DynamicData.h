@@ -233,9 +233,9 @@ public:
     // Serializes and deserializes the Dynamic Data.
     bool deserialize(eprosima::fastcdr::Cdr &cdr);
     static size_t getCdrSerializedSize(const DynamicData* data, size_t current_alignment = 0);
-    static size_t getEmptyCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
-    static size_t getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
-    static size_t getMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
+    static size_t getEmptyCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
+    static size_t getKeyMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
+    static size_t getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 

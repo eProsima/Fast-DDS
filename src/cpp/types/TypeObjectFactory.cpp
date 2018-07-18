@@ -883,7 +883,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
                 memDesc.SetName(GenerateTypeName(GetTypeName(GetTypeKindFromIdentifier(auxMem))));
                 structType->AddMember(&memDesc);
             }
-            return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(structType.get());
+            return DynamicTypeBuilderFactory::GetInstance()->CreateType(structType.get());
         }
         break;
     }
@@ -903,7 +903,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
                 ss << member.detail().name_hash()[3];
                 enumType->AddEmptyMember(order++, ss.str());
             }
-            return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(enumType.get());
+            return DynamicTypeBuilderFactory::GetInstance()->CreateType(enumType.get());
 
         }
         break;
@@ -951,7 +951,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
                 unionType->AddMember(&memDesc);
             }
 
-            return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(unionType.get());
+            return DynamicTypeBuilderFactory::GetInstance()->CreateType(unionType.get());
         }
         break;
     }
@@ -998,7 +998,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const TypeIdentifier* identi
         break;
     }
 
-    return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(&descriptor);
+    return DynamicTypeBuilderFactory::GetInstance()->CreateType(&descriptor);
 }
 
 } // namespace types
