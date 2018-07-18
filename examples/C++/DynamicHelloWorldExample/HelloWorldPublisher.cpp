@@ -49,28 +49,18 @@ bool HelloWorldPublisher::init(bool dynamic)
     m_dynamic = dynamic;
     if (dynamic)
     {
-        // Given
-        //DynamicTypeBuilder* created_type_ulong(nullptr);
-        //DynamicTypeBuilder* created_type_string(nullptr);
-        //DynamicTypeBuilder* struct_type_builder(nullptr);
-        // Create basic types
-        DynamicTypeBuilder_ptr created_type_ulong(DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder());
-        DynamicTypeBuilder_ptr created_type_string(DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder());
+        // Create basic builders
         DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
 
         // Add members to the struct.
-        struct_type_builder->AddMember(0, "index", created_type_ulong.get());
-        struct_type_builder->AddMember(1, "message", created_type_string.get());
+        struct_type_builder->AddMember(0, "index", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "message", DynamicTypeBuilderFactory::GetInstance()->CreateStringType());
         struct_type_builder->SetName("HelloWorld");
 
         m_DynType = struct_type_builder->Build();
         m_DynHello = DynamicDataFactory::GetInstance()->CreateData(m_DynType);
         m_DynHello->SetUint32Value(0, 0);
         m_DynHello->SetStringValue("HelloWorld", 1);
-
-        //DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_ulong);
-        //DynamicTypeBuilderFactory::GetInstance()->DeleteType(created_type_string);
-        //DynamicTypeBuilderFactory::GetInstance()->DeleteType(struct_type_builder);
     }
     else
     {
