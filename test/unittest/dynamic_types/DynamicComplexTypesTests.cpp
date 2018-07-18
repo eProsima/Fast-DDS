@@ -90,10 +90,10 @@ void DynamicComplexTypesTests::init()
 {
     m_factory = DynamicTypeBuilderFactory::GetInstance();
 
-    //const TypeIdentifier *id = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CompleteStruct");
-    //const TypeObject *obj = TypeObjectFactory::GetInstance()->GetTypeObject(id);
-    //m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType("CompleteStruct", id, obj);
-    m_DynAutoType = nullptr;
+    const TypeIdentifier *id = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CompleteStruct", true);
+    const TypeObject *obj = TypeObjectFactory::GetInstance()->GetTypeObject(id);
+    m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType("CompleteStruct", id, obj)->Build();
+    //m_DynAutoType = nullptr;
 
     // Manual creation
     // MyEnum
@@ -284,7 +284,6 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
 
-/*
 TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
 {
     // Serialize <-> Deserialize Test
@@ -305,7 +304,7 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
-
+/*
 TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
 {
     types::DynamicData* dynAutoData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);

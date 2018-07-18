@@ -274,15 +274,11 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn(const PlainSequenceSElemDefn &x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -293,15 +289,11 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn(PlainSequenceSElemDefn &&x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -435,15 +427,11 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn(const PlainSequenceLElemDefn &x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -454,15 +442,11 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn(PlainSequenceLElemDefn &&x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -597,15 +581,11 @@ PlainArraySElemDefn::PlainArraySElemDefn(const PlainArraySElemDefn &x)
     m_array_bound_seq = x.m_array_bound_seq;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -616,15 +596,11 @@ PlainArraySElemDefn::PlainArraySElemDefn(PlainArraySElemDefn &&x)
     m_array_bound_seq = std::move(x.m_array_bound_seq);
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -635,15 +611,11 @@ PlainArraySElemDefn& PlainArraySElemDefn::operator=(const PlainArraySElemDefn &x
     m_array_bound_seq = x.m_array_bound_seq;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 
@@ -763,15 +735,11 @@ PlainArrayLElemDefn::PlainArrayLElemDefn(const PlainArrayLElemDefn &x)
     m_array_bound_seq = x.m_array_bound_seq;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -782,15 +750,11 @@ PlainArrayLElemDefn::PlainArrayLElemDefn(PlainArrayLElemDefn &&x)
     m_array_bound_seq = std::move(x.m_array_bound_seq);
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -946,29 +910,21 @@ PlainMapSTypeDefn::PlainMapSTypeDefn(const PlainMapSTypeDefn &x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        if (m_key_identifier == nullptr)
-        {
-            m_key_identifier = new TypeIdentifier();
-        }
+        m_key_identifier = new TypeIdentifier();
         *m_key_identifier = *x.m_key_identifier;
     }
     else
     {
-        delete m_key_identifier;
         m_key_identifier = nullptr;
     }
 }
@@ -979,29 +935,21 @@ PlainMapSTypeDefn::PlainMapSTypeDefn(PlainMapSTypeDefn &&x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        if (m_key_identifier == nullptr)
-        {
-            m_key_identifier = new TypeIdentifier();
-        }
+        m_key_identifier = new TypeIdentifier();
         *m_key_identifier = *x.m_key_identifier;
     }
     else
     {
-        delete m_key_identifier;
         m_key_identifier = nullptr;
     }
 }
@@ -1208,29 +1156,21 @@ PlainMapLTypeDefn::PlainMapLTypeDefn(const PlainMapLTypeDefn &x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        if (m_key_identifier == nullptr)
-        {
-            m_key_identifier = new TypeIdentifier();
-        }
+        m_key_identifier = new TypeIdentifier();
         *m_key_identifier = *x.m_key_identifier;
     }
     else
     {
-        delete m_key_identifier;
         m_key_identifier = nullptr;
     }
 }
@@ -1241,29 +1181,21 @@ PlainMapLTypeDefn::PlainMapLTypeDefn(PlainMapLTypeDefn &&x)
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        if (m_element_identifier == nullptr)
-        {
-            m_element_identifier = new TypeIdentifier();
-        }
+        m_element_identifier = new TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
-        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        if (m_key_identifier == nullptr)
-        {
-            m_key_identifier = new TypeIdentifier();
-        }
+        m_key_identifier = new TypeIdentifier();
         *m_key_identifier = *x.m_key_identifier;
     }
     else
     {
-        delete m_key_identifier;
         m_key_identifier = nullptr;
     }
 }

@@ -48,6 +48,7 @@ TypeIdentifier::~TypeIdentifier()
 TypeIdentifier::TypeIdentifier(const TypeIdentifier &x)
 {
     m__d = x.m__d;
+    memset(&m_equivalence_hash, 0, 14);
 
     switch(m__d)
     {
@@ -93,6 +94,7 @@ TypeIdentifier::TypeIdentifier(const TypeIdentifier &x)
 TypeIdentifier::TypeIdentifier(TypeIdentifier &&x)
 {
     m__d = x.m__d;
+    memset(&m_equivalence_hash, 0, 14);
 
     switch(m__d)
     {

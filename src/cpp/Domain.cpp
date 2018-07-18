@@ -297,7 +297,7 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* ty
         TypeObject typeObj;
         dynFactory->BuildTypeObject(type->GetDynamicType()->getTypeDescriptor(), typeObj, &members);
         const TypeIdentifier *type_id2 = typeFactory->GetTypeIdentifier(type->getName());
-        const TypeObject *type_obj = typeFactory->GetTypeObject(type->getName());
+        const TypeObject *type_obj = typeFactory->GetTypeObject(type->getName()); // TODO GASCO Complete?
         if (type_id2 == nullptr)
         {
             logError(DYN_TYPES, "Cannot register dynamic type " << type->getName());
