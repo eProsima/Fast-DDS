@@ -150,7 +150,7 @@ ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name,
 {
     if (mType != nullptr)
     {
-        MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(mType));
+        MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreateType(mType));
         return AddMember(&descriptor);
     }
     else
@@ -163,15 +163,35 @@ ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name,
 ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType,
     const std::string& defaultValue)
 {
-    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(mType), defaultValue);
+    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreateType(mType), defaultValue);
     return AddMember(&descriptor);
 }
 
 ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicTypeBuilder* mType,
     const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
 {
-    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(mType),
+    MemberDescriptor descriptor(id, name, DynamicTypeBuilderFactory::GetInstance()->CreateType(mType),
         defaultValue, unionLabels, isDefaultLabel);
+    return AddMember(&descriptor);
+}
+
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType_ptr mType)
+{
+    MemberDescriptor descriptor(id, name, mType);
+    return AddMember(&descriptor);
+}
+
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType_ptr mType,
+    const std::string& defaultValue)
+{
+    MemberDescriptor descriptor(id, name, mType, defaultValue);
+    return AddMember(&descriptor);
+}
+
+ResponseCode DynamicTypeBuilder::AddMember(MemberId id, const std::string& name, DynamicType_ptr mType,
+    const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
+{
+    MemberDescriptor descriptor(id, name, mType, defaultValue, unionLabels, isDefaultLabel);
     return AddMember(&descriptor);
 }
 
@@ -199,7 +219,7 @@ DynamicType_ptr DynamicTypeBuilder::Build()
 {
     if (mDescriptor->IsConsistent())
     {
-        return DynamicTypeBuilderFactory::GetInstance()->CreatePrimitive(this);
+        return DynamicTypeBuilderFactory::GetInstance()->CreateType(this);
     }
     else
     {
@@ -317,6 +337,12 @@ bool DynamicTypeBuilder::ExistsMemberByName(const std::string& name) const
         }
     }
     return mMemberByName.find(name) != mMemberByName.end();
+}
+
+ResponseCode DynamicTypeBuilder::GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members)
+{
+    members = mMemberById;
+    return ResponseCode::RETCODE_OK;
 }
 
 std::string DynamicTypeBuilder::GetName() const

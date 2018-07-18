@@ -4038,7 +4038,7 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
             }
             else
             {
-                current_alignment += getEmptyCdrSerializedSize(data->mType->GetElementType(), current_alignment);
+                current_alignment += getEmptyCdrSerializedSize(data->mType->GetElementType().get(), current_alignment);
             }
         }
         break;
@@ -4070,7 +4070,7 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4081,7 +4081,7 @@ size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_
         {
             if (it->second->GetKeyAnnotation())
             {
-                current_alignment += getKeyMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
+                current_alignment += getKeyMaxCdrSerializedSize(it->second->mDescriptor.mType.get(), current_alignment);
             }
         }
     }
@@ -4092,7 +4092,7 @@ size_t DynamicData::getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getMaxCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4158,7 +4158,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
         size_t max_element_size(0);
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            temp_size = getMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
+            temp_size = getMaxCdrSerializedSize(it->second->mDescriptor.mType.get(), current_alignment);
             if (temp_size > max_element_size)
             {
                 max_element_size = temp_size;
@@ -4171,7 +4171,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
     {
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
+            current_alignment += getMaxCdrSerializedSize(it->second->mDescriptor.mType.get(), current_alignment);
         }
         break;
     }
@@ -4182,7 +4182,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Element size with the maximum size
-        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType()));
+        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType().get()));
         break;
     }
     case TK_MAP:
@@ -4191,10 +4191,10 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Key Elements size with the maximum size
-        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetKeyElementType()));
+        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetKeyElementType().get()));
 
         // Value Elements size with the maximum size
-        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType()));
+        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType().get()));
         break;
     }
 
@@ -4487,7 +4487,7 @@ void DynamicData::serializeKey(eprosima::fastcdr::Cdr &cdr) const
     }
 }
 
-size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment /*= 0*/)
+size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t current_alignment /*= 0*/)
 {
     size_t initial_alignment = current_alignment;
 
@@ -4553,7 +4553,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType_ptr type, size_t
     {
         for (auto it = type->mMemberById.begin(); it != type->mMemberById.end(); ++it)
         {
-            current_alignment += getEmptyCdrSerializedSize(it->second->mDescriptor.mType, current_alignment);
+            current_alignment += getEmptyCdrSerializedSize(it->second->mDescriptor.mType.get(), current_alignment);
         }
         break;
     }
@@ -4563,7 +4563,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType_ptr type, size_t
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Element size with the maximum size
-        current_alignment += type->GetTotalBounds() * (getEmptyCdrSerializedSize(type->mDescriptor->GetElementType()));
+        current_alignment += type->GetTotalBounds() * (getEmptyCdrSerializedSize(type->mDescriptor->GetElementType().get()));
         break;
     }
     case TK_SEQUENCE:
