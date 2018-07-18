@@ -25,6 +25,7 @@ namespace types{
 class AnnotationDescriptor;
 class TypeDescriptor;
 class DynamicTypeMember;
+class DynamicTypeBuilder;
 
 class DynamicType
 {
