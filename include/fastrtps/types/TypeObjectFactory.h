@@ -57,14 +57,22 @@ public:
     RTPS_DllAPI void AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier);
     RTPS_DllAPI void AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
         const TypeObject* object);
+    RTPS_DllAPI inline void AddAlias(const std::string &alias_name, const std::string &target_type)
+    {
+        std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+        m_Aliases.emplace(std::pair<std::string, std::string>(alias_name, target_type));
+    }
+
 protected:
 	TypeObjectFactory();
     std::map<const std::string, const TypeIdentifier*> m_Identifiers; // Basic, builtin and EK_MINIMAL
     std::map<const std::string, const TypeIdentifier*> m_CompleteIdentifiers; // Only EK_COMPLETE
     std::map<const TypeIdentifier*, const TypeObject*> m_Objects; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> m_CompleteObjects; // EK_COMPLETE
+    std::map<std::string, std::string> m_Aliases; // Aliases
 
     DynamicType_ptr BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const;
+    const TypeIdentifier* TryGetComplete(const TypeIdentifier* identifier) const;
     const TypeIdentifier* GetStoredTypeIdentifier(const TypeIdentifier *identifier) const;
     void nullifyAllEntries(const TypeIdentifier *identifier);
 private:
