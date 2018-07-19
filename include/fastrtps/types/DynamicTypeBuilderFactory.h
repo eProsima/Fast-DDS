@@ -43,7 +43,7 @@ public:
     RTPS_DllAPI ResponseCode DeleteBuilder(DynamicTypeBuilder* builder);
     RTPS_DllAPI ResponseCode DeleteType(DynamicType* type);
 
-    RTPS_DllAPI DynamicTypeBuilder* CreateCustomBuilder(const TypeDescriptor* descriptor);
+    RTPS_DllAPI DynamicTypeBuilder* CreateCustomBuilder(const TypeDescriptor* descriptor, const std::string& name = "");
 	RTPS_DllAPI DynamicTypeBuilder* CreateBuilderCopy(const DynamicTypeBuilder* type);
     RTPS_DllAPI DynamicTypeBuilder* CreateInt32Builder();
     RTPS_DllAPI DynamicTypeBuilder* CreateUint32Builder();
