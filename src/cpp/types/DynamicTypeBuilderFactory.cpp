@@ -604,7 +604,8 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStructBuilder()
     return pNewTypeBuilder;
 }
 
-DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateCustomBuilder(const TypeDescriptor* descriptor)
+DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateCustomBuilder(const TypeDescriptor* descriptor,
+    const std::string& name /*= ""*/)
 {
     if (descriptor != nullptr)
     {
@@ -617,6 +618,10 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateCustomBuilder(const TypeDes
             kind == TK_BITSET || kind == TK_SEQUENCE || kind == TK_ARRAY || kind == TK_MAP)
         {
             DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(descriptor);
+            if (pNewType != nullptr && name.length() > 0)
+            {
+                pNewType->SetName(name);
+            }
             AddBuilderToList(pNewType);
             return pNewType;
         }
