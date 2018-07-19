@@ -566,11 +566,12 @@ const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, boo
     return nullptr;
 }
 
-const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string &type_name, uint32_t bound)
+const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string &type_name,
+        uint32_t bound, bool complete)
 {
     std::string auxType = TypeNamesGenerator::getSequenceTypeName(type_name, bound, false);
 
-    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType);
+    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType, complete);
 
     if (c_auxIdent != nullptr)
     {
@@ -578,7 +579,7 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
     }
     else
     {
-        const TypeIdentifier* innerIdent = GetTypeIdentifier(type_name);
+        const TypeIdentifier* innerIdent = GetTypeIdentifier(type_name, complete);
 
         TypeIdentifier auxIdent;
         if (bound < 256)
@@ -612,17 +613,18 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
         //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //m_Identifiers[auxType] = auxIdent;
         AddTypeIdentifier(auxType, &auxIdent);
-        return GetTypeIdentifier(auxType);
+        return GetTypeIdentifier(auxType, complete);
     }
     return nullptr;
 }
 
-const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound)
+const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &type_name,
+        const std::vector<uint32_t> &bound, bool complete)
 {
     uint32_t size;
     std::string auxType = TypeNamesGenerator::getArrayTypeName(type_name, bound, size, false);
 
-    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType);
+    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType, complete);
 
     if (c_auxIdent != nullptr)
     {
@@ -630,7 +632,7 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
     }
     else
     {
-        const TypeIdentifier* innerIdent = GetTypeIdentifier(type_name);
+        const TypeIdentifier* innerIdent = GetTypeIdentifier(type_name, complete);
 
         TypeIdentifier auxIdent;
         if (size < 256)
@@ -670,17 +672,17 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
         //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //m_Identifiers[auxType] = auxIdent;
         AddTypeIdentifier(auxType, &auxIdent);
-        return GetTypeIdentifier(auxType);
+        return GetTypeIdentifier(auxType, complete);
     }
     return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key_type_name,
-    const std::string &value_type_name, uint32_t bound)
+        const std::string &value_type_name, uint32_t bound, bool complete)
 {
     std::string auxType = TypeNamesGenerator::getMapTypeName(key_type_name, value_type_name, bound, false);
 
-    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType);
+    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType, complete);
 
     if (c_auxIdent != nullptr)
     {
@@ -688,8 +690,8 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
     }
     else
     {
-        const TypeIdentifier* keyIdent = GetTypeIdentifier(key_type_name);
-        const TypeIdentifier* valIdent = GetTypeIdentifier(value_type_name);
+        const TypeIdentifier* keyIdent = GetTypeIdentifier(key_type_name, complete);
+        const TypeIdentifier* valIdent = GetTypeIdentifier(value_type_name, complete);
 
         TypeIdentifier auxIdent;
         if (bound < 256)
@@ -739,7 +741,7 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
         //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //m_Identifiers[auxType] = auxIdent;
         AddTypeIdentifier(auxType, &auxIdent);
-        return GetTypeIdentifier(auxType);
+        return GetTypeIdentifier(auxType, complete);
     }
     return nullptr;
 }

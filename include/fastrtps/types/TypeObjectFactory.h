@@ -44,10 +44,12 @@ public:
     RTPS_DllAPI const TypeIdentifier* GetTypeIdentifier(const std::string &type_name, bool complete = false) const;
     RTPS_DllAPI const TypeIdentifier* GetTypeIdentifierTryingComplete(const std::string &type_name) const;
     RTPS_DllAPI const TypeIdentifier* GetStringIdentifier(uint32_t bound, bool wide = false);
-    RTPS_DllAPI const TypeIdentifier* GetSequenceIdentifier(const std::string &type_name, uint32_t bound);
-    RTPS_DllAPI const TypeIdentifier* GetArrayIdentifier(const std::string &type_name, const std::vector<uint32_t> &bound);
+    RTPS_DllAPI const TypeIdentifier* GetSequenceIdentifier(const std::string &type_name, uint32_t bound,
+        bool complete = false);
+    RTPS_DllAPI const TypeIdentifier* GetArrayIdentifier(const std::string &type_name,
+        const std::vector<uint32_t> &bound, bool complete = false);
     RTPS_DllAPI const TypeIdentifier* GetMapIdentifier(const std::string &key_type_name,
-        const std::string &value_type_name, uint32_t bound);
+        const std::string &value_type_name, uint32_t bound, bool complete = false);
 
     RTPS_DllAPI DynamicType_ptr BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
         const TypeObject* object = nullptr) const;
