@@ -145,7 +145,7 @@ public:
      * @return Value of member string_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI StringSTypeDefn string_sdefn() const;
+    RTPS_DllAPI const StringSTypeDefn& string_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member string_sdefn
@@ -164,7 +164,7 @@ public:
      * @return Value of member string_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI StringLTypeDefn string_ldefn() const;
+    RTPS_DllAPI const StringLTypeDefn& string_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member string_ldefn
@@ -183,7 +183,7 @@ public:
      * @return Value of member seq_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn seq_sdefn() const;
+    RTPS_DllAPI const PlainSequenceSElemDefn& seq_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member seq_sdefn
@@ -202,7 +202,7 @@ public:
      * @return Value of member seq_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn seq_ldefn() const;
+    RTPS_DllAPI const PlainSequenceLElemDefn& seq_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member seq_ldefn
@@ -221,7 +221,7 @@ public:
      * @return Value of member array_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainArraySElemDefn array_sdefn() const;
+    RTPS_DllAPI const PlainArraySElemDefn& array_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member array_sdefn
@@ -240,7 +240,7 @@ public:
      * @return Value of member array_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainArrayLElemDefn array_ldefn() const;
+    RTPS_DllAPI const PlainArrayLElemDefn& array_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member array_ldefn
@@ -259,7 +259,7 @@ public:
      * @return Value of member map_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainMapSTypeDefn map_sdefn() const;
+    RTPS_DllAPI const PlainMapSTypeDefn& map_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member map_sdefn
@@ -278,7 +278,7 @@ public:
      * @return Value of member map_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainMapLTypeDefn map_ldefn() const;
+    RTPS_DllAPI const PlainMapLTypeDefn& map_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member map_ldefn
@@ -335,7 +335,7 @@ public:
      * @return Value of member extended_defn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI ExtendedTypeDefn extended_defn() const;
+    RTPS_DllAPI const ExtendedTypeDefn& extended_defn() const;
 
     /*!
      * @brief This function returns a reference to member extended_defn
