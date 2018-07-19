@@ -386,10 +386,10 @@ const TypeIdentifier* TypeObjectFactory::GetTypeIdentifier(const std::string &ty
         {
             return m_CompleteIdentifiers.at(type_name);
         }
-        /*else // Try it with minimal
+        else // Try it with minimal
         {
             return GetTypeIdentifier(type_name, false);
-        }*/
+        }
     }
     else
     {
