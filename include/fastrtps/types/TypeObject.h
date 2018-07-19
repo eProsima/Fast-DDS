@@ -2636,47 +2636,47 @@ public:
     RTPS_DllAPI octet& _d();
 
     RTPS_DllAPI void alias_type(CompleteAliasType _alias_type);
-    RTPS_DllAPI CompleteAliasType alias_type() const;
+    RTPS_DllAPI const CompleteAliasType& alias_type() const;
     RTPS_DllAPI CompleteAliasType& alias_type();
 
     RTPS_DllAPI void annotation_type(CompleteAnnotationType _annotation_type);
-    RTPS_DllAPI CompleteAnnotationType annotation_type() const;
+    RTPS_DllAPI const CompleteAnnotationType& annotation_type() const;
     RTPS_DllAPI CompleteAnnotationType& annotation_type();
 
     RTPS_DllAPI void struct_type(CompleteStructType _struct_type);
-    RTPS_DllAPI CompleteStructType struct_type() const;
+    RTPS_DllAPI const CompleteStructType& struct_type() const;
     RTPS_DllAPI CompleteStructType& struct_type();
 
     RTPS_DllAPI void union_type(CompleteUnionType _union_type);
-    RTPS_DllAPI CompleteUnionType union_type() const;
+    RTPS_DllAPI const CompleteUnionType& union_type() const;
     RTPS_DllAPI CompleteUnionType& union_type();
 
     RTPS_DllAPI void bitset_type(CompleteBitsetType _bitset_type);
-    RTPS_DllAPI CompleteBitsetType bitset_type() const;
+    RTPS_DllAPI const CompleteBitsetType& bitset_type() const;
     RTPS_DllAPI CompleteBitsetType& bitset_type();
 
     RTPS_DllAPI void sequence_type(CompleteSequenceType _sequence_type);
-    RTPS_DllAPI CompleteSequenceType sequence_type() const;
+    RTPS_DllAPI const CompleteSequenceType& sequence_type() const;
     RTPS_DllAPI CompleteSequenceType& sequence_type();
 
     RTPS_DllAPI void array_type(CompleteArrayType _array_type);
-    RTPS_DllAPI CompleteArrayType array_type() const;
+    RTPS_DllAPI const CompleteArrayType& array_type() const;
     RTPS_DllAPI CompleteArrayType& array_type();
 
     RTPS_DllAPI void map_type(CompleteMapType _map_type);
-    RTPS_DllAPI CompleteMapType map_type() const;
+    RTPS_DllAPI const CompleteMapType& map_type() const;
     RTPS_DllAPI CompleteMapType& map_type();
 
     RTPS_DllAPI void enumerated_type(CompleteEnumeratedType _enumerated_type);
-    RTPS_DllAPI CompleteEnumeratedType enumerated_type() const;
+    RTPS_DllAPI const CompleteEnumeratedType& enumerated_type() const;
     RTPS_DllAPI CompleteEnumeratedType& enumerated_type();
 
     RTPS_DllAPI void bitmask_type(CompleteBitmaskType _bitmask_type);
-    RTPS_DllAPI CompleteBitmaskType bitmask_type() const;
+    RTPS_DllAPI const CompleteBitmaskType& bitmask_type() const;
     RTPS_DllAPI CompleteBitmaskType& bitmask_type();
 
     RTPS_DllAPI void extended_type(CompleteExtendedType _extended_type);
-    RTPS_DllAPI CompleteExtendedType extended_type() const;
+    RTPS_DllAPI const CompleteExtendedType& extended_type() const;
     RTPS_DllAPI CompleteExtendedType& extended_type();
 
     // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
@@ -2713,47 +2713,47 @@ public:
     RTPS_DllAPI octet& _d();
 
     RTPS_DllAPI void alias_type(MinimalAliasType _alias_type);
-    RTPS_DllAPI MinimalAliasType alias_type() const;
+    RTPS_DllAPI const MinimalAliasType& alias_type() const;
     RTPS_DllAPI MinimalAliasType& alias_type();
 
     RTPS_DllAPI void annotation_type(MinimalAnnotationType _annotation_type);
-    RTPS_DllAPI MinimalAnnotationType annotation_type() const;
+    RTPS_DllAPI const MinimalAnnotationType& annotation_type() const;
     RTPS_DllAPI MinimalAnnotationType& annotation_type();
 
     RTPS_DllAPI void struct_type(MinimalStructType _struct_type);
-    RTPS_DllAPI MinimalStructType struct_type() const;
+    RTPS_DllAPI const MinimalStructType& struct_type() const;
     RTPS_DllAPI MinimalStructType& struct_type();
 
     RTPS_DllAPI void union_type(MinimalUnionType _union_type);
-    RTPS_DllAPI MinimalUnionType union_type() const;
+    RTPS_DllAPI const MinimalUnionType& union_type() const;
     RTPS_DllAPI MinimalUnionType& union_type();
 
     RTPS_DllAPI void bitset_type(MinimalBitsetType _bitset_type);
-    RTPS_DllAPI MinimalBitsetType bitset_type() const;
+    RTPS_DllAPI const MinimalBitsetType& bitset_type() const;
     RTPS_DllAPI MinimalBitsetType& bitset_type();
 
     RTPS_DllAPI void sequence_type(MinimalSequenceType _sequence_type);
-    RTPS_DllAPI MinimalSequenceType sequence_type() const;
+    RTPS_DllAPI const MinimalSequenceType& sequence_type() const;
     RTPS_DllAPI MinimalSequenceType& sequence_type();
 
     RTPS_DllAPI void array_type(MinimalArrayType _array_type);
-    RTPS_DllAPI MinimalArrayType array_type() const;
+    RTPS_DllAPI const MinimalArrayType& array_type() const;
     RTPS_DllAPI MinimalArrayType& array_type();
 
     RTPS_DllAPI void map_type(MinimalMapType _map_type);
-    RTPS_DllAPI MinimalMapType map_type() const;
+    RTPS_DllAPI const MinimalMapType& map_type() const;
     RTPS_DllAPI MinimalMapType& map_type();
 
     RTPS_DllAPI void enumerated_type(MinimalEnumeratedType _enumerated_type);
-    RTPS_DllAPI MinimalEnumeratedType enumerated_type() const;
+    RTPS_DllAPI const MinimalEnumeratedType& enumerated_type() const;
     RTPS_DllAPI MinimalEnumeratedType& enumerated_type();
 
     RTPS_DllAPI void bitmask_type(MinimalBitmaskType _bitmask_type);
-    RTPS_DllAPI MinimalBitmaskType bitmask_type() const;
+    RTPS_DllAPI const MinimalBitmaskType& bitmask_type() const;
     RTPS_DllAPI MinimalBitmaskType& bitmask_type();
 
     RTPS_DllAPI void extended_type(MinimalExtendedType _extended_type);
-    RTPS_DllAPI MinimalExtendedType extended_type() const;
+    RTPS_DllAPI const MinimalExtendedType& extended_type() const;
     RTPS_DllAPI MinimalExtendedType& extended_type();
 
     // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);

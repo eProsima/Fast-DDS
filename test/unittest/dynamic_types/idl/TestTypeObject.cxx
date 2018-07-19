@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/*! 
  * @file TestTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -1737,7 +1737,7 @@ const TypeObject* TestTypeFactory::GetMinimalMyOctetArray500Object()
 
     if (relatedType != nullptr)
     {
-        type_object->minimal().alias_type().body().common().related_type(*relatedType); // Make a copy
+        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
     }
     else
     {
