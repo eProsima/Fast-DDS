@@ -389,7 +389,7 @@ void TypeIdentifier::string_sdefn(StringSTypeDefn _string_sdefn)
     m__d = TI_STRING8_SMALL;
 }
 
-StringSTypeDefn TypeIdentifier::string_sdefn() const
+const StringSTypeDefn& TypeIdentifier::string_sdefn() const
 {
     bool b = false;
 
@@ -430,7 +430,7 @@ void TypeIdentifier::string_ldefn(StringLTypeDefn _string_ldefn)
     m__d = TI_STRING8_LARGE;
 }
 
-StringLTypeDefn TypeIdentifier::string_ldefn() const
+const StringLTypeDefn& TypeIdentifier::string_ldefn() const
 {
     bool b = false;
 
@@ -471,7 +471,7 @@ void TypeIdentifier::seq_sdefn(PlainSequenceSElemDefn _seq_sdefn)
     m__d = TI_PLAIN_SEQUENCE_SMALL;
 }
 
-PlainSequenceSElemDefn TypeIdentifier::seq_sdefn() const
+const PlainSequenceSElemDefn& TypeIdentifier::seq_sdefn() const
 {
     bool b = false;
 
@@ -510,7 +510,7 @@ void TypeIdentifier::seq_ldefn(PlainSequenceLElemDefn _seq_ldefn)
     m__d = TI_PLAIN_SEQUENCE_LARGE;
 }
 
-PlainSequenceLElemDefn TypeIdentifier::seq_ldefn() const
+const PlainSequenceLElemDefn& TypeIdentifier::seq_ldefn() const
 {
     bool b = false;
 
@@ -549,7 +549,7 @@ void TypeIdentifier::array_sdefn(PlainArraySElemDefn _array_sdefn)
     m__d = TI_PLAIN_ARRAY_SMALL;
 }
 
-PlainArraySElemDefn TypeIdentifier::array_sdefn() const
+const PlainArraySElemDefn& TypeIdentifier::array_sdefn() const
 {
     bool b = false;
 
@@ -588,7 +588,7 @@ void TypeIdentifier::array_ldefn(PlainArrayLElemDefn _array_ldefn)
     m__d = TI_PLAIN_ARRAY_LARGE;
 }
 
-PlainArrayLElemDefn TypeIdentifier::array_ldefn() const
+const PlainArrayLElemDefn& TypeIdentifier::array_ldefn() const
 {
     bool b = false;
 
@@ -627,7 +627,7 @@ void TypeIdentifier::map_sdefn(PlainMapSTypeDefn _map_sdefn)
     m__d = TI_PLAIN_MAP_SMALL;
 }
 
-PlainMapSTypeDefn TypeIdentifier::map_sdefn() const
+const PlainMapSTypeDefn& TypeIdentifier::map_sdefn() const
 {
     bool b = false;
 
@@ -666,7 +666,7 @@ void TypeIdentifier::map_ldefn(PlainMapLTypeDefn _map_ldefn)
     m__d = TI_PLAIN_MAP_LARGE;
 }
 
-PlainMapLTypeDefn TypeIdentifier::map_ldefn() const
+const PlainMapLTypeDefn& TypeIdentifier::map_ldefn() const
 {
     bool b = false;
 
@@ -786,7 +786,7 @@ void TypeIdentifier::extended_defn(ExtendedTypeDefn _extended_defn)
     m__d = 0x00; // Default
 }
 
-ExtendedTypeDefn TypeIdentifier::extended_defn() const
+const ExtendedTypeDefn& TypeIdentifier::extended_defn() const
 {
     bool b = false;
 
@@ -1148,11 +1148,11 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
 
         case TI_PLAIN_SEQUENCE_SMALL:
             return this->seq_sdefn().bound() == other.seq_sdefn().bound()
-                && this->seq_sdefn().element_identifier() == other.seq_sdefn().element_identifier();
+                && *this->seq_sdefn().element_identifier() == *other.seq_sdefn().element_identifier();
 
         case TI_PLAIN_SEQUENCE_LARGE:
             return this->seq_ldefn().bound() == this->seq_ldefn().bound()
-                && this->seq_ldefn().element_identifier() == other.seq_ldefn().element_identifier();
+                && *this->seq_ldefn().element_identifier() == *other.seq_ldefn().element_identifier();
 
         case TI_PLAIN_ARRAY_SMALL:
             {
@@ -1167,7 +1167,7 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
                         return false;
                     }
                 }
-                return this->array_sdefn().element_identifier() == other.array_sdefn().element_identifier();
+                return *this->array_sdefn().element_identifier() == *other.array_sdefn().element_identifier();
             }
 
         case TI_PLAIN_ARRAY_LARGE:
@@ -1183,18 +1183,18 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
                         return false;
                     }
                 }
-                return this->array_ldefn().element_identifier() == other.array_ldefn().element_identifier();
+                return *this->array_ldefn().element_identifier() == *other.array_ldefn().element_identifier();
             }
 
         case TI_PLAIN_MAP_SMALL:
             return this->map_sdefn().bound() == this->map_sdefn().bound()
-                && this->map_sdefn().key_identifier() == other.map_sdefn().key_identifier()
-                && this->map_sdefn().element_identifier() == other.map_sdefn().element_identifier();
+                && *this->map_sdefn().key_identifier() == *other.map_sdefn().key_identifier()
+                && *this->map_sdefn().element_identifier() == *other.map_sdefn().element_identifier();
 
         case TI_PLAIN_MAP_LARGE:
             return this->map_ldefn().bound() == this->map_ldefn().bound()
-                && this->map_ldefn().key_identifier() == other.map_ldefn().key_identifier()
-                && this->map_ldefn().element_identifier() == other.map_ldefn().element_identifier();
+                && *this->map_ldefn().key_identifier() == *other.map_ldefn().key_identifier()
+                && *this->map_ldefn().element_identifier() == *other.map_ldefn().element_identifier();
 
         case EK_MINIMAL:
         case EK_COMPLETE:
