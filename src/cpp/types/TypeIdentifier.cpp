@@ -1116,6 +1116,8 @@ void TypeIdentifier::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
 bool TypeIdentifier::operator==(const TypeIdentifier &other) const
 {
+    if (this == &other) return true; // Same memory!
+
     if (this->_d() != other._d())
     {
         return false;
@@ -1137,7 +1139,7 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
         case TK_FLOAT128:
         case TK_CHAR8:
         case TK_CHAR16:
-            return this->_d() == other._d();
+            return true;
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
             return this->string_sdefn().bound() == other.string_sdefn().bound();

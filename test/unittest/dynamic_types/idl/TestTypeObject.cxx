@@ -49,47 +49,44 @@ TestTypeFactory::~TestTypeFactory()
 void TestTypeFactory::registerTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
-    factory->AddTypeObject("MyEnum", GetMyEnumIdentifier(false), GetMyEnumObject(false));
     factory->AddTypeObject("MyEnum", GetMyEnumIdentifier(true), GetMyEnumObject(true));
-    factory->AddTypeObject("MyAliasEnum", GetMyAliasEnumIdentifier(false), GetMyAliasEnumObject(false));
+    factory->AddTypeObject("MyEnum", GetMyEnumIdentifier(false), GetMyEnumObject(false));
     factory->AddTypeObject("MyAliasEnum", GetMyAliasEnumIdentifier(true), GetMyAliasEnumObject(true));
-    factory->AddTypeObject("MyAliasEnum2", GetMyAliasEnum2Identifier(false), GetMyAliasEnum2Object(false));
+    factory->AddTypeObject("MyAliasEnum", GetMyAliasEnumIdentifier(false), GetMyAliasEnumObject(false));
     factory->AddTypeObject("MyAliasEnum2", GetMyAliasEnum2Identifier(true), GetMyAliasEnum2Object(true));
-    factory->AddTypeObject("MyAliasEnum3", GetMyAliasEnum3Identifier(false), GetMyAliasEnum3Object(false));
+    factory->AddTypeObject("MyAliasEnum2", GetMyAliasEnum2Identifier(false), GetMyAliasEnum2Object(false));
     factory->AddTypeObject("MyAliasEnum3", GetMyAliasEnum3Identifier(true), GetMyAliasEnum3Object(true));
-    factory->AddTypeObject("BasicStruct", GetBasicStructIdentifier(false), GetBasicStructObject(false));
+    factory->AddTypeObject("MyAliasEnum3", GetMyAliasEnum3Identifier(false), GetMyAliasEnum3Object(false));
     factory->AddTypeObject("BasicStruct", GetBasicStructIdentifier(true), GetBasicStructObject(true));
-    factory->AddTypeObject("MyOctetArray500", GetMyOctetArray500Identifier(false), GetMyOctetArray500Object(false));
+    factory->AddTypeObject("BasicStruct", GetBasicStructIdentifier(false), GetBasicStructObject(false));
     factory->AddTypeObject("MyOctetArray500", GetMyOctetArray500Identifier(true), GetMyOctetArray500Object(true));
-    factory->AddTypeObject("BSAlias5", GetBSAlias5Identifier(false), GetBSAlias5Object(false));
+    factory->AddTypeObject("MyOctetArray500", GetMyOctetArray500Identifier(false), GetMyOctetArray500Object(false));
     factory->AddTypeObject("BSAlias5", GetBSAlias5Identifier(true), GetBSAlias5Object(true));
-    factory->AddTypeObject("MA3", GetMA3Identifier(false), GetMA3Object(false));
+    factory->AddTypeObject("BSAlias5", GetBSAlias5Identifier(false), GetBSAlias5Object(false));
     factory->AddTypeObject("MA3", GetMA3Identifier(true), GetMA3Object(true));
-    factory->AddTypeObject("MyMiniArray", GetMyMiniArrayIdentifier(false), GetMyMiniArrayObject(false));
+    factory->AddTypeObject("MA3", GetMA3Identifier(false), GetMA3Object(false));
     factory->AddTypeObject("MyMiniArray", GetMyMiniArrayIdentifier(true), GetMyMiniArrayObject(true));
-    factory->AddTypeObject("MySequenceLong", GetMySequenceLongIdentifier(false), GetMySequenceLongObject(false));
+    factory->AddTypeObject("MyMiniArray", GetMyMiniArrayIdentifier(false), GetMyMiniArrayObject(false));
     factory->AddTypeObject("MySequenceLong", GetMySequenceLongIdentifier(true), GetMySequenceLongObject(true));
-    factory->AddTypeObject("ComplexStruct", GetComplexStructIdentifier(false), GetComplexStructObject(false));
+    factory->AddTypeObject("MySequenceLong", GetMySequenceLongIdentifier(false), GetMySequenceLongObject(false));
     factory->AddTypeObject("ComplexStruct", GetComplexStructIdentifier(true), GetComplexStructObject(true));
-    factory->AddTypeObject("MyUnion", GetMyUnionIdentifier(false), GetMyUnionObject(false));
+    factory->AddTypeObject("ComplexStruct", GetComplexStructIdentifier(false), GetComplexStructObject(false));
     factory->AddTypeObject("MyUnion", GetMyUnionIdentifier(true), GetMyUnionObject(true));
-    factory->AddTypeObject("MyUnion2", GetMyUnion2Identifier(false), GetMyUnion2Object(false));
+    factory->AddTypeObject("MyUnion", GetMyUnionIdentifier(false), GetMyUnionObject(false));
     factory->AddTypeObject("MyUnion2", GetMyUnion2Identifier(true), GetMyUnion2Object(true));
-    factory->AddTypeObject("CompleteStruct", GetCompleteStructIdentifier(false), GetCompleteStructObject(false));
+    factory->AddTypeObject("MyUnion2", GetMyUnion2Identifier(false), GetMyUnion2Object(false));
     factory->AddTypeObject("CompleteStruct", GetCompleteStructIdentifier(true), GetCompleteStructObject(true));
+    factory->AddTypeObject("CompleteStruct", GetCompleteStructIdentifier(false), GetCompleteStructObject(false));
 }
 
 const TypeIdentifier* TestTypeFactory::GetTypeIdentifier(const std::string &type_name, bool complete)
 {
     // Try general factory
-    const TypeIdentifier *type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type_name, complete);
+    const TypeIdentifier *type_id = (complete)
+            ? TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(type_name)
+            : TypeObjectFactory::GetInstance()->GetTypeIdentifier(type_name, false);
     if (type_id == nullptr) // For basic types, it's ok to accept non-complete
     {
-        if (m_Aliases.find(type_name) != m_Aliases.end())
-        {
-            return GetTypeIdentifier(m_Aliases.at(type_name), complete);
-        }
-
         // Try users types.
         if (type_name == "MyEnum") return GetMyEnumIdentifier(complete);
         if (type_name == "MyAliasEnum") return GetMyAliasEnumIdentifier(complete);
@@ -119,11 +116,6 @@ const TypeObject* TestTypeFactory::GetTypeObject(const std::string &type_name, b
     const TypeObject *type_id = TypeObjectFactory::GetInstance()->GetTypeObject(type_name, complete);
     if (type_id == nullptr || (complete && type_id->_d() == EK_MINIMAL))
     {
-        if (m_Aliases.find(type_name) != m_Aliases.end())
-        {
-            return GetTypeObject(m_Aliases.at(type_name), complete);
-        }
-
         // Try users types.
         if (type_name == "MyEnum")
         {
@@ -303,8 +295,8 @@ const TypeObject* TestTypeFactory::GetMinimalMyEnumObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_C);
 
 
-    TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
@@ -322,12 +314,11 @@ const TypeObject* TestTypeFactory::GetMinimalMyEnumObject()
     objectHash.finalize();
     for(int i = 0; i < 14; ++i)
     {
-        identifier->equivalence_hash()[i] = objectHash.digest[i];
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnum", identifier, type_object);
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnum", &identifier, type_object);
     delete type_object;
-    delete identifier;
     return GetTypeObject("MyEnum", false);
 }
 
@@ -401,8 +392,8 @@ const TypeObject* TestTypeFactory::GetCompleteMyEnumObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_C);
 
 
-    TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_COMPLETE);
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
@@ -420,25 +411,24 @@ const TypeObject* TestTypeFactory::GetCompleteMyEnumObject()
     objectHash.finalize();
     for(int i = 0; i < 14; ++i)
     {
-        identifier->equivalence_hash()[i] = objectHash.digest[i];
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnum", identifier, type_object);
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnum", &identifier, type_object);
     delete type_object;
-    delete identifier;
     return GetTypeObject("MyEnum", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetMyAliasEnumIdentifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MyAliasEnum", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return GetMyEnumIdentifier(true);
+        return c_identifier;
     }
-    else
-    {
-        return GetMyEnumIdentifier(false);
-    }
+
+    GetMyAliasEnumObject(complete); // Generated inside
+    return GetTypeIdentifier("MyAliasEnum", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMyAliasEnumObject(bool complete)
@@ -500,10 +490,32 @@ const TypeObject* TestTypeFactory::GetMinimalMyAliasEnumObject()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum", "MyEnum"));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum", "MyEnum");
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum", &identifier, type_object);
     delete type_object;
     return GetTypeObject("MyAliasEnum", false);
 }
@@ -557,24 +569,46 @@ const TypeObject* TestTypeFactory::GetCompleteMyAliasEnumObject()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum", "MyEnum"));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum", "MyEnum");
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("MyAliasEnum", false);
+    return GetTypeObject("MyAliasEnum", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetMyAliasEnum2Identifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MyAliasEnum2", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return GetMyAliasEnumIdentifier(true);
+        return c_identifier;
     }
-    else
-    {
-        return GetMyAliasEnumIdentifier(false);
-    }
+
+    GetMyAliasEnum2Object(complete); // Generated inside
+    return GetTypeIdentifier("MyAliasEnum2", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMyAliasEnum2Object(bool complete)
@@ -636,10 +670,32 @@ const TypeObject* TestTypeFactory::GetMinimalMyAliasEnum2Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum2", "MyAliasEnum"));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum2", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum2", "MyAliasEnum");
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum2", &identifier, type_object);
     delete type_object;
     return GetTypeObject("MyAliasEnum2", false);
 }
@@ -693,24 +749,46 @@ const TypeObject* TestTypeFactory::GetCompleteMyAliasEnum2Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum2", "MyAliasEnum"));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum2", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum2", "MyAliasEnum");
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum2", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("MyAliasEnum2", false);
+    return GetTypeObject("MyAliasEnum2", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetMyAliasEnum3Identifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MyAliasEnum3", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return GetMyAliasEnum2Identifier(true);
+        return c_identifier;
     }
-    else
-    {
-        return GetMyAliasEnum2Identifier(false);
-    }
+
+    GetMyAliasEnum3Object(complete); // Generated inside
+    return GetTypeIdentifier("MyAliasEnum3", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMyAliasEnum3Object(bool complete)
@@ -772,10 +850,32 @@ const TypeObject* TestTypeFactory::GetMinimalMyAliasEnum3Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum3", "MyAliasEnum2"));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum3", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum3", "MyAliasEnum2");
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum3", &identifier, type_object);
     delete type_object;
     return GetTypeObject("MyAliasEnum3", false);
 }
@@ -829,12 +929,34 @@ const TypeObject* TestTypeFactory::GetCompleteMyAliasEnum3Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyAliasEnum3", "MyAliasEnum2"));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum3", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum3", "MyAliasEnum2");
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum3", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("MyAliasEnum3", false);
+    return GetTypeObject("MyAliasEnum3", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetBasicStructIdentifier(bool complete)
@@ -1672,14 +1794,14 @@ const TypeObject* TestTypeFactory::GetCompleteBasicStructObject()
 
 const TypeIdentifier* TestTypeFactory::GetMyOctetArray500Identifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MyOctetArray500", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("uint8_t", {500}, true);
+        return c_identifier;
     }
-    else
-    {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("uint8_t", {500}, false);
-    }
+
+    GetMyOctetArray500Object(complete); // Generated inside
+    return GetTypeIdentifier("MyOctetArray500", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMyOctetArray500Object(bool complete)
@@ -1741,10 +1863,32 @@ const TypeObject* TestTypeFactory::GetMinimalMyOctetArray500Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyOctetArray500", TypeNamesGenerator::getArrayTypeName("uint8_t", {500})));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyOctetArray500", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyOctetArray500", TypeNamesGenerator::getArrayTypeName("uint8_t", {500}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyOctetArray500", &identifier, type_object);
     delete type_object;
     return GetTypeObject("MyOctetArray500", false);
 }
@@ -1798,24 +1942,46 @@ const TypeObject* TestTypeFactory::GetCompleteMyOctetArray500Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyOctetArray500", TypeNamesGenerator::getArrayTypeName("uint8_t", {500})));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyOctetArray500", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyOctetArray500", TypeNamesGenerator::getArrayTypeName("uint8_t", {500}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyOctetArray500", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("MyOctetArray500", false);
+    return GetTypeObject("MyOctetArray500", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetBSAlias5Identifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("BSAlias5", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}, true);
+        return c_identifier;
     }
-    else
-    {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}, false);
-    }
+
+    GetBSAlias5Object(complete); // Generated inside
+    return GetTypeIdentifier("BSAlias5", complete);
 }
 
 const TypeObject* TestTypeFactory::GetBSAlias5Object(bool complete)
@@ -1877,10 +2043,32 @@ const TypeObject* TestTypeFactory::GetMinimalBSAlias5Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("BSAlias5", TypeNamesGenerator::getArrayTypeName("BasicStruct", {5})));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("BSAlias5", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("BSAlias5", TypeNamesGenerator::getArrayTypeName("BasicStruct", {5}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("BSAlias5", &identifier, type_object);
     delete type_object;
     return GetTypeObject("BSAlias5", false);
 }
@@ -1934,24 +2122,46 @@ const TypeObject* TestTypeFactory::GetCompleteBSAlias5Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("BSAlias5", TypeNamesGenerator::getArrayTypeName("BasicStruct", {5})));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("BSAlias5", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("BSAlias5", TypeNamesGenerator::getArrayTypeName("BasicStruct", {5}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("BSAlias5", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("BSAlias5", false);
+    return GetTypeObject("BSAlias5", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetMA3Identifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MA3", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyAliasEnum3", {42}, true);
+        return c_identifier;
     }
-    else
-    {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyAliasEnum3", {42}, false);
-    }
+
+    GetMA3Object(complete); // Generated inside
+    return GetTypeIdentifier("MA3", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMA3Object(bool complete)
@@ -2013,10 +2223,32 @@ const TypeObject* TestTypeFactory::GetMinimalMA3Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MA3", TypeNamesGenerator::getArrayTypeName("MyAliasEnum3", {42})));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MA3", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MA3", TypeNamesGenerator::getArrayTypeName("MyAliasEnum3", {42}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MA3", &identifier, type_object);
     delete type_object;
     return GetTypeObject("MA3", false);
 }
@@ -2070,24 +2302,46 @@ const TypeObject* TestTypeFactory::GetCompleteMA3Object()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MA3", TypeNamesGenerator::getArrayTypeName("MyAliasEnum3", {42})));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MA3", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MA3", TypeNamesGenerator::getArrayTypeName("MyAliasEnum3", {42}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MA3", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("MA3", false);
+    return GetTypeObject("MA3", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetMyMiniArrayIdentifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MyMiniArray", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2}, true);
+        return c_identifier;
     }
-    else
-    {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2}, false);
-    }
+
+    GetMyMiniArrayObject(complete); // Generated inside
+    return GetTypeIdentifier("MyMiniArray", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMyMiniArrayObject(bool complete)
@@ -2149,10 +2403,32 @@ const TypeObject* TestTypeFactory::GetMinimalMyMiniArrayObject()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyMiniArray", TypeNamesGenerator::getArrayTypeName("int32_t", {2})));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyMiniArray", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyMiniArray", TypeNamesGenerator::getArrayTypeName("int32_t", {2}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyMiniArray", &identifier, type_object);
     delete type_object;
     return GetTypeObject("MyMiniArray", false);
 }
@@ -2206,24 +2482,46 @@ const TypeObject* TestTypeFactory::GetCompleteMyMiniArrayObject()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MyMiniArray", TypeNamesGenerator::getArrayTypeName("int32_t", {2})));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyMiniArray", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MyMiniArray", TypeNamesGenerator::getArrayTypeName("int32_t", {2}));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MyMiniArray", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("MyMiniArray", false);
+    return GetTypeObject("MyMiniArray", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetMySequenceLongIdentifier(bool complete)
 {
-    if (complete)
+    const TypeIdentifier* c_identifier = GetTypeIdentifier("MySequenceLong", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
-        return TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 100, true);
+        return c_identifier;
     }
-    else
-    {
-        return TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 100, false);
-    }
+
+    GetMySequenceLongObject(complete); // Generated inside
+    return GetTypeIdentifier("MySequenceLong", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMySequenceLongObject(bool complete)
@@ -2285,10 +2583,32 @@ const TypeObject* TestTypeFactory::GetMinimalMySequenceLongObject()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 100)));
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 100));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", &identifier, type_object);
     delete type_object;
     return GetTypeObject("MySequenceLong", false);
 }
@@ -2342,12 +2662,34 @@ const TypeObject* TestTypeFactory::GetCompleteMySequenceLongObject()
         return nullptr;
     }
 
-    // Don't add our TypeIdentifier but our alias
-    m_Aliases.emplace(std::pair<std::string, std::string>("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 100)));
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", relatedType, type_object);
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    // Don't add our TypeIdentifier but our alias
+    TypeObjectFactory::GetInstance()->AddAlias("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 100));
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("MySequenceLong", false);
+    return GetTypeObject("MySequenceLong", true);
 }
 
 const TypeIdentifier* TestTypeFactory::GetComplexStructIdentifier(bool complete)

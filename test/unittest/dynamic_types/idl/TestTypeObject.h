@@ -135,7 +135,6 @@ public:
 
 
 private:
-    std::map<std::string, std::string> m_Aliases;
 };
 
 #endif // _TEST_TYPE_OBJECT_H_
