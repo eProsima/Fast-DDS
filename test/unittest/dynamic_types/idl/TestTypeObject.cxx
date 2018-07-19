@@ -110,8 +110,6 @@ const TypeIdentifier* TestTypeFactory::GetTypeIdentifier(const std::string &type
     {
         return type_id;
     }
-
-    return nullptr;
 }
 
 const TypeObject* TestTypeFactory::GetTypeObject(const std::string &type_name, bool complete)
@@ -457,7 +455,6 @@ const TypeObject* TestTypeFactory::GetMyAliasEnumObject(bool complete)
     {
         return GetMinimalMyAliasEnumObject();
     }
-    return GetTypeObject("MyAliasEnum", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyAliasEnumObject()
@@ -594,7 +591,6 @@ const TypeObject* TestTypeFactory::GetMyAliasEnum2Object(bool complete)
     {
         return GetMinimalMyAliasEnum2Object();
     }
-    return GetTypeObject("MyAliasEnum2", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyAliasEnum2Object()
@@ -731,7 +727,6 @@ const TypeObject* TestTypeFactory::GetMyAliasEnum3Object(bool complete)
     {
         return GetMinimalMyAliasEnum3Object();
     }
-    return GetTypeObject("MyAliasEnum3", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyAliasEnum3Object()
@@ -1678,11 +1673,11 @@ const TypeIdentifier* TestTypeFactory::GetMyOctetArray500Identifier(bool complet
 {
     if (complete)
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("uint8_t", {500});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("uint8_t", {500}, true);
     }
     else
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("uint8_t", {500});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("uint8_t", {500}, false);
     }
 }
 
@@ -1701,7 +1696,6 @@ const TypeObject* TestTypeFactory::GetMyOctetArray500Object(bool complete)
     {
         return GetMinimalMyOctetArray500Object();
     }
-    return GetTypeObject("MyOctetArray500", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyOctetArray500Object()
@@ -1815,11 +1809,11 @@ const TypeIdentifier* TestTypeFactory::GetBSAlias5Identifier(bool complete)
 {
     if (complete)
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}, true);
     }
     else
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}, false);
     }
 }
 
@@ -1838,7 +1832,6 @@ const TypeObject* TestTypeFactory::GetBSAlias5Object(bool complete)
     {
         return GetMinimalBSAlias5Object();
     }
-    return GetTypeObject("BSAlias5", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalBSAlias5Object()
@@ -1952,11 +1945,11 @@ const TypeIdentifier* TestTypeFactory::GetMA3Identifier(bool complete)
 {
     if (complete)
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyAliasEnum3", {42});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyAliasEnum3", {42}, true);
     }
     else
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyAliasEnum3", {42});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyAliasEnum3", {42}, false);
     }
 }
 
@@ -1975,7 +1968,6 @@ const TypeObject* TestTypeFactory::GetMA3Object(bool complete)
     {
         return GetMinimalMA3Object();
     }
-    return GetTypeObject("MA3", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMA3Object()
@@ -2089,11 +2081,11 @@ const TypeIdentifier* TestTypeFactory::GetMyMiniArrayIdentifier(bool complete)
 {
     if (complete)
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2}, true);
     }
     else
     {
-        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2});
+        return TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2}, false);
     }
 }
 
@@ -2112,7 +2104,6 @@ const TypeObject* TestTypeFactory::GetMyMiniArrayObject(bool complete)
     {
         return GetMinimalMyMiniArrayObject();
     }
-    return GetTypeObject("MyMiniArray", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyMiniArrayObject()
@@ -2226,11 +2217,11 @@ const TypeIdentifier* TestTypeFactory::GetMySequenceLongIdentifier(bool complete
 {
     if (complete)
     {
-        return TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 100);
+        return TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 100, true);
     }
     else
     {
-        return TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 100);
+        return TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 100, false);
     }
 }
 
@@ -2249,7 +2240,6 @@ const TypeObject* TestTypeFactory::GetMySequenceLongObject(bool complete)
     {
         return GetMinimalMySequenceLongObject();
     }
-    return GetTypeObject("MySequenceLong", complete);
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMySequenceLongObject()
@@ -2493,7 +2483,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_sequence_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_octet.common().member_flags().IS_KEY(false);
     mst_my_sequence_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequence_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("uint8_t", 55));
+    mst_my_sequence_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("uint8_t", 55, false));
 
 
     MD5 my_sequence_octet_hash("my_sequence_octet");
@@ -2512,7 +2502,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_sequence_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_struct.common().member_flags().IS_KEY(false);
     mst_my_sequence_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 100));
+    mst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 100, false));
 
 
     MD5 my_sequence_struct_hash("my_sequence_struct");
@@ -2531,7 +2521,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_array_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_octet.common().member_flags().IS_KEY(false);
     mst_my_array_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("char", {500, 5, 4}));
+    mst_my_array_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("char", {500, 5, 4}, false));
 
 
     MD5 my_array_octet_hash("my_array_octet");
@@ -2567,7 +2557,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_array_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_struct.common().member_flags().IS_KEY(false);
     mst_my_array_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}));
+    mst_my_array_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}, false));
 
 
     MD5 my_array_struct_hash("my_array_struct");
@@ -2586,7 +2576,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_map_octet_short.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_octet_short.common().member_flags().IS_KEY(false);
     mst_my_map_octet_short.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_octet_short.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("uint8_t", "int16_t", 100));
+    mst_my_map_octet_short.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("uint8_t", "int16_t", 100, false));
 
 
     MD5 my_map_octet_short_hash("my_map_octet_short");
@@ -2605,7 +2595,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_map_long_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_struct.common().member_flags().IS_KEY(false);
     mst_my_map_long_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "BasicStruct", 100));
+    mst_my_map_long_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "BasicStruct", 100, false));
 
 
     MD5 my_map_long_struct_hash("my_map_long_struct");
@@ -2624,7 +2614,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_map_long_seq_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_KEY(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 100), 100), 100));
+    mst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 100), 100), 100, false));
 
 
     MD5 my_map_long_seq_octet_hash("my_map_long_seq_octet");
@@ -2643,7 +2633,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_map_long_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_octet_array_500.common().member_flags().IS_KEY(false);
     mst_my_map_long_octet_array_500.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_octet_array_500.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "MyOctetArray500", 100));
+    mst_my_map_long_octet_array_500.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "MyOctetArray500", 100, false));
 
 
     MD5 my_map_long_octet_array_500_hash("my_map_long_octet_array_500");
@@ -2662,7 +2652,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_map_long_lol_type.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_lol_type.common().member_flags().IS_KEY(false);
     mst_my_map_long_lol_type.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_lol_type.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getMapTypeName("uint8_t", "BSAlias5", 100), 100));
+    mst_my_map_long_lol_type.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getMapTypeName("uint8_t", "BSAlias5", 100), 100, false));
 
 
     MD5 my_map_long_lol_type_hash("my_map_long_lol_type");
@@ -2757,7 +2747,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_array_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_string.common().member_flags().IS_KEY(false);
     mst_my_array_string.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier(TypeNamesGenerator::getStringTypeName(75, false), {5, 5}));
+    mst_my_array_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier(TypeNamesGenerator::getStringTypeName(75, false), {5, 5}, false));
 
 
     MD5 my_array_string_hash("my_array_string");
@@ -2793,7 +2783,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_array_arrays.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_arrays.common().member_flags().IS_KEY(false);
     mst_my_array_arrays.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_arrays.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyMiniArray", {5}));
+    mst_my_array_arrays.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyMiniArray", {5}, false));
 
 
     MD5 my_array_arrays_hash("my_array_arrays");
@@ -2812,7 +2802,7 @@ const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
     mst_my_sequences_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequences_array.common().member_flags().IS_KEY(false);
     mst_my_sequences_array.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequences_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MySequenceLong", {23}));
+    mst_my_sequences_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MySequenceLong", {23}, false));
 
 
     MD5 my_sequences_array_hash("my_sequences_array");
@@ -2951,7 +2941,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_sequence_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_octet.common().member_flags().IS_KEY(false);
     cst_my_sequence_octet.common().member_flags().IS_DEFAULT(false);
-    cst_my_sequence_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("uint8_t", 55));
+    cst_my_sequence_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("uint8_t", 55, false));
 
 
     cst_my_sequence_octet.detail().name("my_sequence_octet");
@@ -2968,7 +2958,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_sequence_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_struct.common().member_flags().IS_KEY(false);
     cst_my_sequence_struct.common().member_flags().IS_DEFAULT(false);
-    cst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 100));
+    cst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 100, false));
 
 
     cst_my_sequence_struct.detail().name("my_sequence_struct");
@@ -2985,7 +2975,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_array_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array_octet.common().member_flags().IS_KEY(false);
     cst_my_array_octet.common().member_flags().IS_DEFAULT(false);
-    cst_my_array_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("char", {500, 5, 4}));
+    cst_my_array_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("char", {500, 5, 4}, false));
 
 
     cst_my_array_octet.detail().name("my_array_octet");
@@ -3017,7 +3007,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_array_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array_struct.common().member_flags().IS_KEY(false);
     cst_my_array_struct.common().member_flags().IS_DEFAULT(false);
-    cst_my_array_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}));
+    cst_my_array_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("BasicStruct", {5}, false));
 
 
     cst_my_array_struct.detail().name("my_array_struct");
@@ -3034,7 +3024,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_map_octet_short.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_octet_short.common().member_flags().IS_KEY(false);
     cst_my_map_octet_short.common().member_flags().IS_DEFAULT(false);
-    cst_my_map_octet_short.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("uint8_t", "int16_t", 100));
+    cst_my_map_octet_short.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("uint8_t", "int16_t", 100, false));
 
 
     cst_my_map_octet_short.detail().name("my_map_octet_short");
@@ -3051,7 +3041,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_map_long_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_long_struct.common().member_flags().IS_KEY(false);
     cst_my_map_long_struct.common().member_flags().IS_DEFAULT(false);
-    cst_my_map_long_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "BasicStruct", 100));
+    cst_my_map_long_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "BasicStruct", 100, false));
 
 
     cst_my_map_long_struct.detail().name("my_map_long_struct");
@@ -3068,7 +3058,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_map_long_seq_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_long_seq_octet.common().member_flags().IS_KEY(false);
     cst_my_map_long_seq_octet.common().member_flags().IS_DEFAULT(false);
-    cst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 100), 100), 100));
+    cst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 100), 100), 100, false));
 
 
     cst_my_map_long_seq_octet.detail().name("my_map_long_seq_octet");
@@ -3085,7 +3075,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_map_long_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_long_octet_array_500.common().member_flags().IS_KEY(false);
     cst_my_map_long_octet_array_500.common().member_flags().IS_DEFAULT(false);
-    cst_my_map_long_octet_array_500.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "MyOctetArray500", 100));
+    cst_my_map_long_octet_array_500.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "MyOctetArray500", 100, false));
 
 
     cst_my_map_long_octet_array_500.detail().name("my_map_long_octet_array_500");
@@ -3102,7 +3092,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_map_long_lol_type.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_long_lol_type.common().member_flags().IS_KEY(false);
     cst_my_map_long_lol_type.common().member_flags().IS_DEFAULT(false);
-    cst_my_map_long_lol_type.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getMapTypeName("uint8_t", "BSAlias5", 100), 100));
+    cst_my_map_long_lol_type.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getMapTypeName("uint8_t", "BSAlias5", 100), 100, false));
 
 
     cst_my_map_long_lol_type.detail().name("my_map_long_lol_type");
@@ -3187,7 +3177,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_array_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array_string.common().member_flags().IS_KEY(false);
     cst_my_array_string.common().member_flags().IS_DEFAULT(false);
-    cst_my_array_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier(TypeNamesGenerator::getStringTypeName(75, false), {5, 5}));
+    cst_my_array_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier(TypeNamesGenerator::getStringTypeName(75, false), {5, 5}, false));
 
 
     cst_my_array_string.detail().name("my_array_string");
@@ -3219,7 +3209,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_array_arrays.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array_arrays.common().member_flags().IS_KEY(false);
     cst_my_array_arrays.common().member_flags().IS_DEFAULT(false);
-    cst_my_array_arrays.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyMiniArray", {5}));
+    cst_my_array_arrays.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyMiniArray", {5}, false));
 
 
     cst_my_array_arrays.detail().name("my_array_arrays");
@@ -3236,7 +3226,7 @@ const TypeObject* TestTypeFactory::GetCompleteComplexStructObject()
     cst_my_sequences_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequences_array.common().member_flags().IS_KEY(false);
     cst_my_sequences_array.common().member_flags().IS_DEFAULT(false);
-    cst_my_sequences_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MySequenceLong", {23}));
+    cst_my_sequences_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MySequenceLong", {23}, false));
 
 
     cst_my_sequences_array.detail().name("my_sequences_array");
