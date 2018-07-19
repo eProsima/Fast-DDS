@@ -3742,12 +3742,20 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
         SetUnionId(mUnionId);
         if (mUnionId != MEMBER_ID_INVALID)
         {
+
 #ifdef DYNAMIC_TYPES_CHECKING
-            auto it = mComplexValues.at(mUnionId);
+            auto it = mComplexValues.find(mUnionId);
+            if (it != mComplexValues.end())
+            {
+                it->second->deserialize(cdr);
+            }
 #else
-            DynamicData* it = (DynamicData*) mValues.at(mUnionId);
+            auto it = mValues.find(mUnionId);
+            if (it != mValues.end())
+            {
+                DynamicData* it = (DynamicData*)it->second->deserialize(cdr);
+            }
 #endif
-            it->deserialize(cdr);
         }
         break;
     }

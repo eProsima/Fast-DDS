@@ -115,7 +115,7 @@ ResponseCode DynamicTypeBuilder::AddMember(const MemberDescriptor* descriptor)
                     // If the index of the new member is bigger than the current maximum, put it at the end.
                     if (newMember->GetIndex() > mMaxIndex)
                     {
-                        newMember->SetIndex(++mMaxIndex);
+                        newMember->SetIndex(mMaxIndex++);
                     }
                     else
                     {
@@ -253,7 +253,7 @@ bool DynamicTypeBuilder::CheckUnionConfiguration(const MemberDescriptor* descrip
 {
     if (mDescriptor->GetKind() == TK_UNION)
     {
-        if (descriptor->GetUnionLabels().size() == 0)
+        if (!descriptor->IsDefaultUnionValue() && descriptor->GetUnionLabels().size() == 0)
         {
             return false;
         }

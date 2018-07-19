@@ -230,15 +230,16 @@ void DynamicComplexTypesTests::init()
 
     // MyUnion
     DynamicTypeBuilder_ptr myUnion_builder = m_factory->CreateUnionBuilder(octet_builder.get());
-    myUnion_builder->AddMember(0, "basic", basicStruct_builder.get(), "", { 0 }, true);
-    myUnion_builder->AddMember(1, "complex", complexStruct_builder.get(), "", { 1, 2 }, false);
+    myUnion_builder->AddMember(0, "basic", basicStruct_builder.get(), "0", { 0 }, true);
+    myUnion_builder->AddMember(1, "complex", complexStruct_builder.get(), "1", { 1, 2 }, false);
     myUnion_builder->SetName("MyUnion");
 
     // MyUnion2
     DynamicTypeBuilder_ptr myUnion2_builder = m_factory->CreateUnionBuilder(octet_builder.get());
-    myUnion2_builder->AddMember(0, "uno", int32_builder.get(), "", { 0 }, true);
-    myUnion2_builder->AddMember(1, "imString", string_builder.get(), "", { 1 }, false);
-    myUnion2_builder->AddMember(2, "dos", int32_builder.get(), "", { 2 }, false);
+    myUnion2_builder->AddMember(0, "uno", int32_builder.get(), "0", { 0 }, false);
+    myUnion2_builder->AddMember(1, "imString", string_builder.get(), "1", { 1 }, false);
+    myUnion2_builder->AddMember(2, "tres", int32_builder.get(), "2", { 2 }, false);
+    myUnion2_builder->SetName("MyUnion2");
 
     // CompleteStruct
     DynamicTypeBuilder_ptr completeStruct_builder = m_factory->CreateStructBuilder();
@@ -261,7 +262,7 @@ void DynamicComplexTypesTests::init()
         DynamicData* m_DynManual;
         DynamicType* m_DynManualType;
 */
-
+/*
 TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
 {
     // Serialize <-> Deserialize Test
@@ -282,6 +283,17 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
 
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
+}
+*/
+TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
+{
+    types::DynamicData* dynAutoData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData* dynManualData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+
+    ASSERT_TRUE(dynManualData->Equals(dynAutoData));
+
+    DynamicDataFactory::GetInstance()->DeleteData(dynAutoData);
+    DynamicDataFactory::GetInstance()->DeleteData(dynManualData);
 }
 
 TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
@@ -306,16 +318,6 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
 /*
-TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
-{
-    types::DynamicData* dynAutoData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
-    types::DynamicData* dynManualData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-
-    ASSERT_TRUE(dynManualData->Equals(dynAutoData));
-
-    DynamicDataFactory::GetInstance()->DeleteData(dynAutoData);
-    DynamicDataFactory::GetInstance()->DeleteData(dynManualData);
-}
 
 TEST_F(DynamicComplexTypesTests, Conversions_Test)
 {

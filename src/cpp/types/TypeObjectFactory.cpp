@@ -958,7 +958,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
 
             DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
-            uint32_t order = 0;
+            //uint32_t order = 0;
             const CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
             for (auto member = structVector.begin(); member != structVector.end(); ++member)
             {
@@ -971,7 +971,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
                 MemberDescriptor memDesc;
                 memDesc.mId = member->common().member_id();
                 memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
-                memDesc.SetIndex(order++);
+                //memDesc.SetIndex(order++);
                 memDesc.SetName(member->detail().name());
                 structType->AddMember(&memDesc);
             }
@@ -1007,7 +1007,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
 
             DynamicTypeBuilder_ptr unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
-            uint32_t order = 0;
+            //uint32_t order = 0;
             const CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
             for (auto member = unionVector.begin(); member != unionVector.end(); ++member)
             {
@@ -1018,11 +1018,11 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
                 }
                 MemberDescriptor memDesc;
                 memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
-                memDesc.SetIndex(order++);
+                //memDesc.SetIndex(order++);
                 memDesc.mId = member->common().member_id();
                 memDesc.SetName(member->detail().name());
                 memDesc.SetDefaultUnionValue(member->common().member_flags().IS_DEFAULT());
-                memDesc.mDefaultValue = std::to_string(memDesc.mIndex);
+                memDesc.mDefaultValue = std::to_string(memDesc.mId);
                 for (uint32_t lab : member->common().label_seq())
                 {
                     memDesc.AddUnionCaseIndex(lab);
