@@ -800,10 +800,19 @@ bool DynamicTypeBuilderFactory::IsEmpty() const
 #endif
 }
 
-
-void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier) const
+void DynamicTypeBuilderFactory::BuildTypeIdentifier(const DynamicType_ptr type, TypeIdentifier& identifier,
+        bool complete) const
 {
-    const TypeIdentifier *id2 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetName());
+    const TypeDescriptor *descriptor = type->getTypeDescriptor();
+    BuildTypeIdentifier(descriptor, identifier, complete);
+}
+
+void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier,
+        bool complete) const
+{
+    const TypeIdentifier *id2 = (complete)
+        ? TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(descriptor->GetName())
+        : TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetName());
     if (id2 != nullptr)
     {
         identifier = *id2;
@@ -868,7 +877,7 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
                         identifier._d(TI_PLAIN_SEQUENCE_SMALL);
                         identifier.seq_sdefn().bound(static_cast<SBound>(descriptor->mBound[0]));
                         TypeIdentifier elem_id;
-                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id, complete);
                         identifier.seq_sdefn().element_identifier(&elem_id);
                     }
                     else
@@ -876,7 +885,7 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
                         identifier._d(TI_PLAIN_SEQUENCE_LARGE);
                         identifier.seq_ldefn().bound(descriptor->mBound[0]);
                         TypeIdentifier elem_id;
-                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id, complete);
                         identifier.seq_ldefn().element_identifier(&elem_id);
                     }
                 }
@@ -897,7 +906,7 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
                             identifier.array_sdefn().array_bound_seq().emplace_back(static_cast<SBound>(b));
                         }
                         TypeIdentifier elem_id;
-                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id, complete);
                         identifier.array_sdefn().element_identifier(&elem_id);
                     }
                     else
@@ -905,7 +914,7 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
                         identifier._d(TI_PLAIN_ARRAY_LARGE);
                         identifier.array_ldefn().array_bound_seq(descriptor->mBound);
                         TypeIdentifier elem_id;
-                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id, complete);
                         identifier.array_ldefn().element_identifier(&elem_id);
                     }
                 }
@@ -917,10 +926,10 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
                         identifier._d(TI_PLAIN_MAP_SMALL);
                         identifier.map_sdefn().bound(static_cast<SBound>(descriptor->mBound[0]));
                         TypeIdentifier elem_id;
-                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id, complete);
                         identifier.map_sdefn().element_identifier(&elem_id);
                         TypeIdentifier key_id;
-                        BuildTypeIdentifier(descriptor->GetKeyElementType()->mDescriptor, key_id);
+                        BuildTypeIdentifier(descriptor->GetKeyElementType()->mDescriptor, key_id, complete);
                         identifier.map_sdefn().key_identifier(&key_id);
                     }
                     else
@@ -928,10 +937,10 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
                         identifier._d(TI_PLAIN_MAP_LARGE);
                         identifier.map_ldefn().bound(static_cast<SBound>(descriptor->mBound[0]));
                         TypeIdentifier elem_id;
-                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id);
+                        BuildTypeIdentifier(descriptor->GetElementType()->mDescriptor, elem_id, complete);
                         identifier.map_ldefn().element_identifier(&elem_id);
                         TypeIdentifier key_id;
-                        BuildTypeIdentifier(descriptor->GetKeyElementType()->mDescriptor, key_id);
+                        BuildTypeIdentifier(descriptor->GetKeyElementType()->mDescriptor, key_id, complete);
                         identifier.map_ldefn().key_identifier(&key_id);
                     }
                 }
@@ -947,9 +956,9 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
             case TK_UNION:
             case TK_BITSET:
                 {
-                    // TODO
                     // Need to be registered as TypeObject first
-                    // and return the as EK_MINIMAL or EK_COMPLETE
+                    // and return them as EK_MINIMAL or EK_COMPLETE
+                    logInfo(DYN_TYPE_FACTORY, "Complex types must be built from CompleteTypeObjects.");
                 }
                 break;
         }
@@ -958,10 +967,27 @@ void DynamicTypeBuilderFactory::BuildTypeIdentifier(const TypeDescriptor* descri
     }
 }
 
-void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor, TypeObject &object,
-                                                const std::vector<const MemberDescriptor*> *members) const
+void DynamicTypeBuilderFactory::BuildTypeObject(const DynamicType_ptr type, TypeObject &object,
+                                                bool complete) const
 {
-    const TypeObject *obj2 = TypeObjectFactory::GetInstance()->GetTypeObject(descriptor->GetName());
+    const TypeDescriptor *descriptor = type->getTypeDescriptor();
+
+    std::map<MemberId, DynamicTypeMember*> membersMap;
+    type->GetAllMembers(membersMap);
+    std::vector<const MemberDescriptor*> members;
+    for (auto it : membersMap)
+    {
+        members.push_back(it.second->GetDescriptor());
+    }
+
+    BuildTypeObject(descriptor, object, &members, complete);
+}
+
+void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor, TypeObject &object,
+                                                const std::vector<const MemberDescriptor*> *members,
+                                                bool complete) const
+{
+    const TypeObject *obj2 = TypeObjectFactory::GetInstance()->GetTypeObject(descriptor->GetName(), complete);
     if (obj2 != nullptr)
     {
         object = *obj2;
@@ -997,13 +1023,13 @@ void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor
             // Constructed/Named types
             case TK_ALIAS:
                 {
-                    BuildAliasTypeObject(descriptor, object);
+                    BuildAliasTypeObject(descriptor, object, complete);
                 }
                 break;
             // Enumerated TKs
             case TK_ENUM:
                 {
-                    BuildEnumTypeObject(descriptor, object, *members);
+                    BuildEnumTypeObject(descriptor, object, *members, complete);
                 }
                 break;
             case TK_BITMASK:
@@ -1019,12 +1045,12 @@ void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor
                 break;
             case TK_STRUCTURE:
                 {
-                    BuildStructTypeObject(descriptor, object, *members);
+                    BuildStructTypeObject(descriptor, object, *members, complete);
                 }
                 break;
             case TK_UNION:
                 {
-                    BuildUnionTypeObject(descriptor, object, *members);
+                    BuildUnionTypeObject(descriptor, object, *members, complete);
                 }
                 break;
             case TK_BITSET:
@@ -1036,275 +1062,599 @@ void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor
     }
 }
 
-void DynamicTypeBuilderFactory::BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object) const
+void DynamicTypeBuilderFactory::BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        bool complete) const
 {
-    object._d(EK_MINIMAL);
-    object.minimal()._d(TK_ALIAS);
-    object.minimal().alias_type().alias_flags().IS_FINAL(false);
-    object.minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    object.minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    object.minimal().alias_type().alias_flags().IS_NESTED(false);
-    object.minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
+    if (complete)
+    {
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_ALIAS);
+        object.complete().alias_type().alias_flags().IS_FINAL(false);
+        object.complete().alias_type().alias_flags().IS_APPENDABLE(false);
+        object.complete().alias_type().alias_flags().IS_MUTABLE(false);
+        object.complete().alias_type().alias_flags().IS_NESTED(false);
+        object.complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
 
-    object.minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    object.minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    object.minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    object.minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    object.minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    object.minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    object.minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
+        object.complete().alias_type().header().detail().type_name(descriptor->GetName());
+        object.complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
+        object.complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
+        object.complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
+        object.complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
+        object.complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
+        object.complete().alias_type().body().common().related_flags().IS_KEY(false);
+        object.complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
-    //TypeIdentifier ident;
-    //BuildTypeIdentifier(descriptor->GetBaseType()->mDescriptor, ident);
-    TypeObject obj;
-    BuildTypeObject(descriptor->GetBaseType()->mDescriptor, obj);
-    TypeIdentifier ident = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetBaseType()->GetName());
+        //TypeIdentifier ident;
+        //BuildTypeIdentifier(descriptor->GetBaseType()->mDescriptor, ident);
+        TypeObject obj;
+        BuildTypeObject(descriptor->GetBaseType(), obj, complete);
+        TypeIdentifier ident = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(
+                                    descriptor->GetBaseType()->GetName());
 
-    object.minimal().alias_type().body().common().related_type(ident);
-    //object.minimal().alias_type().body().common().related_type() =
-    //    *(TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->GetBaseType()->GetName()));
+        object.complete().alias_type().body().common().related_type(ident);
 
-    TypeIdentifier *identifier = &object.minimal().alias_type().body().common().related_type();
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), identifier, &object);
+        SerializedPayload_t payload(static_cast<uint32_t>(
+            CompleteAliasType::getCdrSerializedSize(object.complete().alias_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+        // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+        eprosima::fastcdr::Cdr ser(
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+
+        object.serialize(ser);
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        // Add our alias
+        TypeObjectFactory::GetInstance()->AddAlias(descriptor->GetName(), descriptor->GetBaseType()->GetName());
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
+    else
+    {
+        object._d(EK_MINIMAL);
+        object.minimal()._d(TK_ALIAS);
+        object.minimal().alias_type().alias_flags().IS_FINAL(false);
+        object.minimal().alias_type().alias_flags().IS_APPENDABLE(false);
+        object.minimal().alias_type().alias_flags().IS_MUTABLE(false);
+        object.minimal().alias_type().alias_flags().IS_NESTED(false);
+        object.minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
+
+        object.minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
+        object.minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
+        object.minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
+        object.minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
+        object.minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
+        object.minimal().alias_type().body().common().related_flags().IS_KEY(false);
+        object.minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
+
+        //TypeIdentifier ident;
+        //BuildTypeIdentifier(descriptor->GetBaseType()->mDescriptor, ident);
+        TypeObject obj;
+        BuildTypeObject(descriptor->GetBaseType()->mDescriptor, obj);
+        TypeIdentifier ident = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(
+                                    descriptor->GetBaseType()->GetName());
+
+        object.minimal().alias_type().body().common().related_type(ident);
+
+        TypeIdentifier identifier;
+        identifier._d(EK_MINIMAL);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+            MinimalAliasType::getCdrSerializedSize(object.minimal().alias_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+        // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+        eprosima::fastcdr::Cdr ser(
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+
+        object.serialize(ser);
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        // Add our alias
+        TypeObjectFactory::GetInstance()->AddAlias(descriptor->GetName(), descriptor->GetBaseType()->GetName());
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
 }
 
 void DynamicTypeBuilderFactory::BuildEnumTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-                                                    const std::vector<const MemberDescriptor*> members) const
+                                                    const std::vector<const MemberDescriptor*> members,
+                                                    bool complete) const
 {
-    object._d(EK_MINIMAL);
-    object.minimal()._d(TK_ENUM);
-    object.minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
-
-    for (const MemberDescriptor* member : members)
+    if (complete)
     {
-        MinimalEnumeratedLiteral mel;
-        mel.common().flags().TRY_CONSTRUCT1(false);
-        mel.common().flags().TRY_CONSTRUCT2(false);
-        mel.common().flags().IS_EXTERNAL(false);
-        mel.common().flags().IS_OPTIONAL(false);
-        mel.common().flags().IS_MUST_UNDERSTAND(false);
-        mel.common().flags().IS_KEY(false);
-        mel.common().flags().IS_DEFAULT(false);
-        mel.common().value(member->GetIndex());
-        MD5 hash(member->GetName());
-        for(int i = 0; i < 4; ++i)
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_ENUM);
+        object.complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
+        object.complete().enumerated_type().header().detail().type_name(descriptor->GetName());
+
+        for (const MemberDescriptor* member : members)
         {
-            mel.detail().name_hash()[i] = hash.digest[i];
+            CompleteEnumeratedLiteral mel;
+            mel.common().flags().TRY_CONSTRUCT1(false);
+            mel.common().flags().TRY_CONSTRUCT2(false);
+            mel.common().flags().IS_EXTERNAL(false);
+            mel.common().flags().IS_OPTIONAL(false);
+            mel.common().flags().IS_MUST_UNDERSTAND(false);
+            mel.common().flags().IS_KEY(false);
+            mel.common().flags().IS_DEFAULT(false);
+            mel.common().value(member->GetIndex());
+            mel.detail().name(member->GetName());
+            object.complete().enumerated_type().literal_seq().emplace_back(mel);
         }
-        object.minimal().enumerated_type().literal_seq().emplace_back(mel);
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+            CompleteEnumeratedType::getCdrSerializedSize(object.complete().enumerated_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+        // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+        eprosima::fastcdr::Cdr ser(
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+
+        object.serialize(ser);
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
     }
-
-    TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    object.serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
+    else
     {
-        identifier->equivalence_hash()[i] = objectHash.digest[i];
-    }
+        object._d(EK_MINIMAL);
+        object.minimal()._d(TK_ENUM);
+        object.minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
-    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), identifier, &object);
+        for (const MemberDescriptor* member : members)
+        {
+            MinimalEnumeratedLiteral mel;
+            mel.common().flags().TRY_CONSTRUCT1(false);
+            mel.common().flags().TRY_CONSTRUCT2(false);
+            mel.common().flags().IS_EXTERNAL(false);
+            mel.common().flags().IS_OPTIONAL(false);
+            mel.common().flags().IS_MUST_UNDERSTAND(false);
+            mel.common().flags().IS_KEY(false);
+            mel.common().flags().IS_DEFAULT(false);
+            mel.common().value(member->GetIndex());
+            MD5 hash(member->GetName());
+            for(int i = 0; i < 4; ++i)
+            {
+                mel.detail().name_hash()[i] = hash.digest[i];
+            }
+            object.minimal().enumerated_type().literal_seq().emplace_back(mel);
+        }
+
+        TypeIdentifier identifier;
+        identifier._d(EK_MINIMAL);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+            MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+        // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+        eprosima::fastcdr::Cdr ser(
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+
+        object.serialize(ser);
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
 }
 
 void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-                                                    const std::vector<const MemberDescriptor*> members) const
+                                                    const std::vector<const MemberDescriptor*> members,
+                                                    bool complete) const
 {
-    object._d(EK_MINIMAL);
-    object.minimal()._d(TK_STRUCTURE);
-
-    object.minimal().struct_type().struct_flags().IS_FINAL(false);
-    object.minimal().struct_type().struct_flags().IS_APPENDABLE(false);
-    object.minimal().struct_type().struct_flags().IS_MUTABLE(false);
-    object.minimal().struct_type().struct_flags().IS_NESTED(false);
-    object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
-
-    for (const MemberDescriptor* member : members)
+    if (complete)
     {
-        MinimalStructMember msm;
-        msm.common().member_id(member->GetId());
-        msm.common().member_flags().TRY_CONSTRUCT1(false);
-        msm.common().member_flags().TRY_CONSTRUCT2(false);
-        msm.common().member_flags().IS_EXTERNAL(false);
-        msm.common().member_flags().IS_OPTIONAL(false);
-        msm.common().member_flags().IS_MUST_UNDERSTAND(false);
-        msm.common().member_flags().IS_KEY(false);
-        msm.common().member_flags().IS_DEFAULT(false);
-        //TypeIdentifier memIdent;
-        //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_STRUCTURE);
 
-        std::map<MemberId, DynamicTypeMember*> membersMap;
-        member->mType->GetAllMembers(membersMap);
-        std::vector<const MemberDescriptor*> innerMembers;
-        for (auto it : membersMap)
+        object.complete().struct_type().struct_flags().IS_FINAL(false);
+        object.complete().struct_type().struct_flags().IS_APPENDABLE(false);
+        object.complete().struct_type().struct_flags().IS_MUTABLE(false);
+        object.complete().struct_type().struct_flags().IS_NESTED(false);
+        object.complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+        for (const MemberDescriptor* member : members)
         {
-            innerMembers.push_back(it.second->GetDescriptor());
+            CompleteStructMember msm;
+            msm.common().member_id(member->GetId());
+            msm.common().member_flags().TRY_CONSTRUCT1(false);
+            msm.common().member_flags().TRY_CONSTRUCT2(false);
+            msm.common().member_flags().IS_EXTERNAL(false);
+            msm.common().member_flags().IS_OPTIONAL(false);
+            msm.common().member_flags().IS_MUST_UNDERSTAND(false);
+            msm.common().member_flags().IS_KEY(false);
+            msm.common().member_flags().IS_DEFAULT(false);
+            //TypeIdentifier memIdent;
+            //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+
+            std::map<MemberId, DynamicTypeMember*> membersMap;
+            member->mType->GetAllMembers(membersMap);
+            std::vector<const MemberDescriptor*> innerMembers;
+            for (auto it : membersMap)
+            {
+                innerMembers.push_back(it.second->GetDescriptor());
+            }
+
+            TypeObject memObj;
+            BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            if (typeId == nullptr)
+            {
+                logError(DYN_TYPES, "Member " << member->GetName() << " of struct " << descriptor->GetName() << " failed.");
+            }
+            else
+            {
+                TypeIdentifier memIdent = *typeId;
+                msm.common().member_type_id(memIdent);
+            }
+
+            msm.detail().name(member->GetName());
+            object.complete().struct_type().member_seq().emplace_back(msm);
         }
 
-        TypeObject memObj;
-        BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
-        const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
-        if (typeId == nullptr)
+        object.complete().struct_type().header().detail().type_name(descriptor->GetName());
+        //object.complete().struct_type().header().detail().ann_builtin()...
+        //object.complete().struct_type().header().detail().ann_custom()...
+        // TODO inheritance
+        //object.complete().struct_type().header().base_type()._d(EK_COMPLETE);
+        //object.complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           CompleteEnumeratedType::getCdrSerializedSize(object.complete().enumerated_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (CompleteStructMember &st : object.complete().struct_type().member_seq())
         {
-            logError(DYN_TYPES, "Member " << member->GetName() << " of struct " << descriptor->GetName() << " failed.");
+            ser << st;
         }
-        else
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
         {
-            TypeIdentifier memIdent = *typeId;
-            msm.common().member_type_id(memIdent);
+            object.complete().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
         }
-        //msm.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
-        MD5 hash(member->GetName());
-        for(int i = 0; i < 4; ++i)
-        {
-            msm.detail().name_hash()[i] = hash.digest[i];
-        }
-        object.minimal().struct_type().member_seq().emplace_back(msm);
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
     }
-
-    object.minimal().struct_type().header().base_type()._d(EK_MINIMAL);
-
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        object.minimal().struct_type().member_seq().size() * sizeof(MinimalStructMember) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
-
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-    // Serialize encapsulation
-
-    for (MinimalStructMember &st : object.minimal().struct_type().member_seq())
+    else
     {
-        ser << st;
-    }
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        object.minimal().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
-    }
+        object._d(EK_MINIMAL);
+        object.minimal()._d(TK_STRUCTURE);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(),
-        &object.minimal().struct_type().header().base_type(), &object);
+        object.minimal().struct_type().struct_flags().IS_FINAL(false);
+        object.minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+        object.minimal().struct_type().struct_flags().IS_MUTABLE(false);
+        object.minimal().struct_type().struct_flags().IS_NESTED(false);
+        object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+        for (const MemberDescriptor* member : members)
+        {
+            MinimalStructMember msm;
+            msm.common().member_id(member->GetId());
+            msm.common().member_flags().TRY_CONSTRUCT1(false);
+            msm.common().member_flags().TRY_CONSTRUCT2(false);
+            msm.common().member_flags().IS_EXTERNAL(false);
+            msm.common().member_flags().IS_OPTIONAL(false);
+            msm.common().member_flags().IS_MUST_UNDERSTAND(false);
+            msm.common().member_flags().IS_KEY(false);
+            msm.common().member_flags().IS_DEFAULT(false);
+            //TypeIdentifier memIdent;
+            //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+
+            std::map<MemberId, DynamicTypeMember*> membersMap;
+            member->mType->GetAllMembers(membersMap);
+            std::vector<const MemberDescriptor*> innerMembers;
+            for (auto it : membersMap)
+            {
+                innerMembers.push_back(it.second->GetDescriptor());
+            }
+
+            TypeObject memObj;
+            BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            if (typeId == nullptr)
+            {
+                logError(DYN_TYPES, "Member " << member->GetName() << " of struct " << descriptor->GetName() << " failed.");
+            }
+            else
+            {
+                TypeIdentifier memIdent = *typeId;
+                msm.common().member_type_id(memIdent);
+            }
+            //msm.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
+            MD5 hash(member->GetName());
+            for(int i = 0; i < 4; ++i)
+            {
+                msm.detail().name_hash()[i] = hash.digest[i];
+            }
+            object.minimal().struct_type().member_seq().emplace_back(msm);
+        }
+        // TODO Inheritance
+        //object.minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+        //object.minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+        TypeIdentifier identifier;
+        identifier._d(EK_MINIMAL);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (CompleteStructMember &st : object.complete().struct_type().member_seq())
+        {
+            ser << st;
+        }
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            object.complete().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(),
+            &object.minimal().struct_type().header().base_type(), &object);
+    }
 }
 
 
 void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-                                                    const std::vector<const MemberDescriptor*> members) const
+                                                    const std::vector<const MemberDescriptor*> members,
+                                                    bool complete) const
 {
-    object._d(EK_MINIMAL);
-    object.minimal()._d(TK_UNION);
-
-    object.minimal().union_type().union_flags().IS_FINAL(false);
-    object.minimal().union_type().union_flags().IS_APPENDABLE(false);
-    object.minimal().union_type().union_flags().IS_MUTABLE(false);
-    object.minimal().union_type().union_flags().IS_NESTED(false);
-    object.minimal().union_type().union_flags().IS_AUTOID_HASH(false);
-
-    object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
-    object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
-    object.minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
-    object.minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
-    object.minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-    object.minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
-    object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
-
-    TypeObject discObj;
-    BuildTypeObject(descriptor->mDiscriminatorType->mDescriptor, discObj);
-    TypeIdentifier discIdent =
-        *TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName());
-    object.minimal().union_type().discriminator().common().type_id(discIdent);
-        //*TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName()));
-
-    for (const MemberDescriptor* member : members)
+    if (complete)
     {
-        MinimalUnionMember mum;
-        mum.common().member_id(member->GetId());
-        mum.common().member_flags().TRY_CONSTRUCT1(false);
-        mum.common().member_flags().TRY_CONSTRUCT2(false);
-        mum.common().member_flags().IS_EXTERNAL(false);
-        mum.common().member_flags().IS_OPTIONAL(false);
-        mum.common().member_flags().IS_MUST_UNDERSTAND(false);
-        mum.common().member_flags().IS_KEY(false);
-        mum.common().member_flags().IS_DEFAULT(member->IsDefaultUnionValue());
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_UNION);
 
-        //TypeIdentifier memIdent;
-        //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+        object.complete().union_type().union_flags().IS_FINAL(false);
+        object.complete().union_type().union_flags().IS_APPENDABLE(false);
+        object.complete().union_type().union_flags().IS_MUTABLE(false);
+        object.complete().union_type().union_flags().IS_NESTED(false);
+        object.complete().union_type().union_flags().IS_AUTOID_HASH(false);
 
-        std::map<MemberId, DynamicTypeMember*> membersMap;
-        member->mType->GetAllMembers(membersMap);
-        std::vector<const MemberDescriptor*> innerMembers;
-        for (auto it : membersMap)
+        object.complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
+        object.complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
+        object.complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
+        object.complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
+        object.complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
+        object.complete().union_type().discriminator().common().member_flags().IS_KEY(false);
+        object.complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+
+        TypeObject discObj;
+        BuildTypeObject(descriptor->mDiscriminatorType->mDescriptor, discObj);
+        TypeIdentifier discIdent =
+            *TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName());
+        object.complete().union_type().discriminator().common().type_id(discIdent);
+            //*TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName()));
+
+        for (const MemberDescriptor* member : members)
         {
-            innerMembers.push_back(it.second->GetDescriptor());
+            CompleteUnionMember mum;
+            mum.common().member_id(member->GetId());
+            mum.common().member_flags().TRY_CONSTRUCT1(false);
+            mum.common().member_flags().TRY_CONSTRUCT2(false);
+            mum.common().member_flags().IS_EXTERNAL(false);
+            mum.common().member_flags().IS_OPTIONAL(false);
+            mum.common().member_flags().IS_MUST_UNDERSTAND(false);
+            mum.common().member_flags().IS_KEY(false);
+            mum.common().member_flags().IS_DEFAULT(member->IsDefaultUnionValue());
+
+            //TypeIdentifier memIdent;
+            //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+
+            std::map<MemberId, DynamicTypeMember*> membersMap;
+            member->mType->GetAllMembers(membersMap);
+            std::vector<const MemberDescriptor*> innerMembers;
+            for (auto it : membersMap)
+            {
+                innerMembers.push_back(it.second->GetDescriptor());
+            }
+
+            TypeObject memObj;
+            BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            if (typeId == nullptr)
+            {
+                logError(DYN_TYPES, "Member " << member->GetName() << " of union " << descriptor->GetName() << " failed.");
+            }
+            else
+            {
+                TypeIdentifier memIdent = *typeId;
+                mum.common().type_id(memIdent);
+            }
+            //TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            //mum.common().type_id(memIdent);
+            //mum.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
+            for (uint64_t lab : member->GetUnionLabels())
+            {
+                mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
+            }
+            mum.detail().name(member->GetName());
+            object.complete().union_type().member_seq().emplace_back(mum);
         }
 
-        TypeObject memObj;
-        BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
-        const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
-        if (typeId == nullptr)
+        object.complete().union_type().header().detail().type_name(descriptor->GetName());
+
+        TypeIdentifier identifier;
+        identifier._d(EK_MINIMAL);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+            CompleteUnionType::getCdrSerializedSize(object.complete().union_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+        // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+        eprosima::fastcdr::Cdr ser(
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+
+        object.serialize(ser);
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
         {
-            logError(DYN_TYPES, "Member " << member->GetName() << " of union " << descriptor->GetName() << " failed.");
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
         }
-        else
-        {
-            TypeIdentifier memIdent = *typeId;
-            mum.common().type_id(memIdent);
-        }
-        //TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
-        //mum.common().type_id(memIdent);
-        //mum.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
-        for (uint64_t lab : member->GetUnionLabels())
-        {
-            mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
-        }
-        MD5 hash(member->GetName());
-        for(int i = 0; i < 4; ++i)
-        {
-            mum.detail().name_hash()[i] = hash.digest[i];
-        }
-        object.minimal().union_type().member_seq().emplace_back(mum);
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
     }
-
-    TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    object.serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
+    else
     {
-        identifier->equivalence_hash()[i] = objectHash.digest[i];
-    }
+        object._d(EK_MINIMAL);
+        object.minimal()._d(TK_UNION);
 
-    TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), identifier, &object);
+        object.minimal().union_type().union_flags().IS_FINAL(false);
+        object.minimal().union_type().union_flags().IS_APPENDABLE(false);
+        object.minimal().union_type().union_flags().IS_MUTABLE(false);
+        object.minimal().union_type().union_flags().IS_NESTED(false);
+        object.minimal().union_type().union_flags().IS_AUTOID_HASH(false);
+
+        object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
+        object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT2(false);
+        object.minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
+        object.minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
+        object.minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
+        object.minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
+        object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+
+        TypeObject discObj;
+        BuildTypeObject(descriptor->mDiscriminatorType->mDescriptor, discObj);
+        TypeIdentifier discIdent =
+            *TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName());
+        object.minimal().union_type().discriminator().common().type_id(discIdent);
+            //*TypeObjectFactory::GetInstance()->GetTypeIdentifier(descriptor->mDiscriminatorType->GetName()));
+
+        for (const MemberDescriptor* member : members)
+        {
+            MinimalUnionMember mum;
+            mum.common().member_id(member->GetId());
+            mum.common().member_flags().TRY_CONSTRUCT1(false);
+            mum.common().member_flags().TRY_CONSTRUCT2(false);
+            mum.common().member_flags().IS_EXTERNAL(false);
+            mum.common().member_flags().IS_OPTIONAL(false);
+            mum.common().member_flags().IS_MUST_UNDERSTAND(false);
+            mum.common().member_flags().IS_KEY(false);
+            mum.common().member_flags().IS_DEFAULT(member->IsDefaultUnionValue());
+
+            //TypeIdentifier memIdent;
+            //BuildTypeIdentifier(member->mType->mDescriptor, memIdent);
+
+            std::map<MemberId, DynamicTypeMember*> membersMap;
+            member->mType->GetAllMembers(membersMap);
+            std::vector<const MemberDescriptor*> innerMembers;
+            for (auto it : membersMap)
+            {
+                innerMembers.push_back(it.second->GetDescriptor());
+            }
+
+            TypeObject memObj;
+            BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            if (typeId == nullptr)
+            {
+                logError(DYN_TYPES, "Member " << member->GetName() << " of union " << descriptor->GetName() << " failed.");
+            }
+            else
+            {
+                TypeIdentifier memIdent = *typeId;
+                mum.common().type_id(memIdent);
+            }
+            //TypeIdentifier memIdent = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            //mum.common().type_id(memIdent);
+            //mum.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName()));
+            for (uint64_t lab : member->GetUnionLabels())
+            {
+                mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
+            }
+            MD5 hash(member->GetName());
+            for(int i = 0; i < 4; ++i)
+            {
+                mum.detail().name_hash()[i] = hash.digest[i];
+            }
+            object.minimal().union_type().member_seq().emplace_back(mum);
+        }
+
+        TypeIdentifier identifier;
+        identifier._d(EK_MINIMAL);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+            MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+        // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+        eprosima::fastcdr::Cdr ser(
+            fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+
+        object.serialize(ser);
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::CreateInt32Type()

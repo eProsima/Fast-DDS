@@ -98,9 +98,15 @@ public:
     RTPS_DllAPI DynamicType_ptr CreateStringType(uint32_t bound = MAX_STRING_LENGTH);
     RTPS_DllAPI DynamicType_ptr CreateWstringType(uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI void BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier) const;
+    RTPS_DllAPI void BuildTypeIdentifier(const DynamicType_ptr type, TypeIdentifier& identifier,
+        bool complete = true) const;
+    RTPS_DllAPI void BuildTypeIdentifier(const TypeDescriptor* descriptor, TypeIdentifier& identifier,
+        bool complete = true) const;
+    RTPS_DllAPI void BuildTypeObject(const DynamicType_ptr type, TypeObject& object,
+        bool complete = true) const;
     RTPS_DllAPI void BuildTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<const MemberDescriptor*>* members = nullptr) const;
+        const std::vector<const MemberDescriptor*>* members = nullptr,
+        bool complete = true) const;
 
     RTPS_DllAPI bool IsEmpty() const;
 
@@ -111,13 +117,13 @@ protected:
 
     DynamicType_ptr BuildType(DynamicType_ptr other);
 
-    void BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object) const;
+    void BuildAliasTypeObject(const TypeDescriptor* descriptor, TypeObject& object, bool complete = true) const;
     void BuildEnumTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<const MemberDescriptor*> members) const;
+        const std::vector<const MemberDescriptor*> members, bool complete = true) const;
     void BuildStructTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<const MemberDescriptor*> members) const;
+        const std::vector<const MemberDescriptor*> members, bool complete = true) const;
     void BuildUnionTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
-        const std::vector<const MemberDescriptor*> members) const;
+        const std::vector<const MemberDescriptor*> members, bool complete = true) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicTypeBuilder*> mBuildersList;
