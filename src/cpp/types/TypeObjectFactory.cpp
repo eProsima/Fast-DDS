@@ -196,6 +196,7 @@ const TypeObject* TypeObjectFactory::GetTypeObject(const std::string &type_name,
 const TypeObject* TypeObjectFactory::GetTypeObject(const TypeIdentifier* identifier) const
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexObjects);
+    if (identifier == nullptr) return nullptr;
     if (identifier->_d() == EK_COMPLETE)
     {
         if (m_CompleteObjects.find(identifier) != m_CompleteObjects.end())
@@ -437,6 +438,7 @@ const TypeIdentifier* TypeObjectFactory::GetStoredTypeIdentifier(const TypeIdent
 std::string TypeObjectFactory::GetTypeName(const TypeIdentifier* identifier) const
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+    if (identifier == nullptr) return "<NULLPTR>";
     if (identifier->_d() == EK_COMPLETE)
     {
         for(auto& it : m_CompleteIdentifiers)
@@ -750,6 +752,7 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
 
 static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
 {
+    if (identifier == nullptr) return TK_NONE;
     switch(identifier->_d())
     {
         case TI_STRING8_SMALL:
@@ -929,7 +932,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
     const TypeObject* object) const
 {
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
-    TypeDescriptor descriptor = new TypeDescriptor(name, kind);
+    TypeDescriptor descriptor(name, kind);
     switch (kind)
     {
     // Basic types goes as default!
@@ -950,7 +953,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
     case TK_CHAR16:
         break;
     */
-    case TI_STRING8_SMALL:
+    case TK_STRING8:
     {
         if (identifier->_d() == TI_STRING8_SMALL)
         {
@@ -960,6 +963,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
         {
             descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
         }
+        descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Type();
         break;
     }
     case TK_STRING16:
@@ -972,6 +976,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
         {
             descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
         }
+        descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Type();
         break;
     }
     case TK_SEQUENCE:
@@ -1042,7 +1047,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
     }
 
     DynamicTypeBuilder* outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
-    outputType->SetName(name);
+    //outputType->SetName(name);
     return outputType->Build();
 }
 
@@ -1078,11 +1083,15 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
             DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
+            const CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
             for (auto member = structVector.begin(); member != structVector.end(); ++member)
             {
                 //const TypeIdentifier *auxMem = &member.common().member_type_id();
                 const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().member_type_id());
+                if (auxMem == nullptr)
+                {
+                    std::cout << "(Struct) auxMem is nullptr, but original member has " << (int)member->common().member_type_id()._d() << std::endl;
+                }
                 MemberDescriptor memDesc;
                 memDesc.mId = member->common().member_id();
                 memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
@@ -1097,7 +1106,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
             DynamicTypeBuilder_ptr enumType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
+            const CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
                 enumType->AddEmptyMember(order++, member->detail().name());
@@ -1123,10 +1132,14 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
             DynamicTypeBuilder_ptr unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
             uint32_t order = 0;
-            CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
+            const CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
             for (auto member = unionVector.begin(); member != unionVector.end(); ++member)
             {
                 const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().type_id());
+                if (auxMem == nullptr)
+                {
+                    std::cout << "(Union) auxMem is nullptr, but original member has " << (int)member->common().type_id()._d() << std::endl;
+                }
                 MemberDescriptor memDesc;
                 memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
                 memDesc.SetIndex(order++);

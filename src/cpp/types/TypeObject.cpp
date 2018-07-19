@@ -4958,7 +4958,7 @@ void CompleteTypeObject::alias_type(CompleteAliasType _alias_type)
     m__d = TK_ALIAS;
 }
 
-CompleteAliasType CompleteTypeObject::alias_type() const
+const CompleteAliasType& CompleteTypeObject::alias_type() const
 {
     bool b = false;
 
@@ -4998,7 +4998,7 @@ void CompleteTypeObject::annotation_type(CompleteAnnotationType _annotation_type
     m__d = TK_ANNOTATION;
 }
 
-CompleteAnnotationType CompleteTypeObject::annotation_type() const
+const CompleteAnnotationType& CompleteTypeObject::annotation_type() const
 {
     bool b = false;
 
@@ -5038,7 +5038,7 @@ void CompleteTypeObject::struct_type(CompleteStructType _struct_type)
     m__d = TK_STRUCTURE;
 }
 
-CompleteStructType CompleteTypeObject::struct_type() const
+const CompleteStructType& CompleteTypeObject::struct_type() const
 {
     bool b = false;
 
@@ -5078,7 +5078,7 @@ void CompleteTypeObject::union_type(CompleteUnionType _union_type)
     m__d = TK_UNION;
 }
 
-CompleteUnionType CompleteTypeObject::union_type() const
+const CompleteUnionType& CompleteTypeObject::union_type() const
 {
     bool b = false;
 
@@ -5118,7 +5118,7 @@ void CompleteTypeObject::bitset_type(CompleteBitsetType _bitset_type)
     m__d = TK_BITSET;
 }
 
-CompleteBitsetType CompleteTypeObject::bitset_type() const
+const CompleteBitsetType& CompleteTypeObject::bitset_type() const
 {
     bool b = false;
 
@@ -5158,7 +5158,7 @@ void CompleteTypeObject::sequence_type(CompleteSequenceType _sequence_type)
     m__d = TK_SEQUENCE;
 }
 
-CompleteSequenceType CompleteTypeObject::sequence_type() const
+const CompleteSequenceType& CompleteTypeObject::sequence_type() const
 {
     bool b = false;
 
@@ -5198,7 +5198,7 @@ void CompleteTypeObject::array_type(CompleteArrayType _array_type)
     m__d = TK_ARRAY;
 }
 
-CompleteArrayType CompleteTypeObject::array_type() const
+const CompleteArrayType& CompleteTypeObject::array_type() const
 {
     bool b = false;
 
@@ -5238,7 +5238,7 @@ void CompleteTypeObject::map_type(CompleteMapType _map_type)
     m__d = TK_MAP;
 }
 
-CompleteMapType CompleteTypeObject::map_type() const
+const CompleteMapType& CompleteTypeObject::map_type() const
 {
     bool b = false;
 
@@ -5278,7 +5278,7 @@ void CompleteTypeObject::enumerated_type(CompleteEnumeratedType _enumerated_type
     m__d = TK_ENUM;
 }
 
-CompleteEnumeratedType CompleteTypeObject::enumerated_type() const
+const CompleteEnumeratedType& CompleteTypeObject::enumerated_type() const
 {
     bool b = false;
 
@@ -5318,7 +5318,7 @@ void CompleteTypeObject::bitmask_type(CompleteBitmaskType _bitmask_type)
     m__d = TK_BITMASK;
 }
 
-CompleteBitmaskType CompleteTypeObject::bitmask_type() const
+const CompleteBitmaskType& CompleteTypeObject::bitmask_type() const
 {
     bool b = false;
 
@@ -5358,7 +5358,7 @@ void CompleteTypeObject::extended_type(CompleteExtendedType _extended_type)
     m__d = 0x00; // Default
 }
 
-CompleteExtendedType CompleteTypeObject::extended_type() const
+const CompleteExtendedType& CompleteTypeObject::extended_type() const
 {
     bool b = false;
 
@@ -5742,7 +5742,7 @@ void MinimalTypeObject::alias_type(MinimalAliasType _alias_type)
     m__d = TK_ALIAS;
 }
 
-MinimalAliasType MinimalTypeObject::alias_type() const
+const MinimalAliasType& MinimalTypeObject::alias_type() const
 {
     bool b = false;
 
@@ -5782,7 +5782,7 @@ void MinimalTypeObject::annotation_type(MinimalAnnotationType _annotation_type)
     m__d = TK_ANNOTATION;
 }
 
-MinimalAnnotationType MinimalTypeObject::annotation_type() const
+const MinimalAnnotationType& MinimalTypeObject::annotation_type() const
 {
     bool b = false;
 
@@ -5822,7 +5822,7 @@ void MinimalTypeObject::struct_type(MinimalStructType _struct_type)
     m__d = TK_STRUCTURE;
 }
 
-MinimalStructType MinimalTypeObject::struct_type() const
+const MinimalStructType& MinimalTypeObject::struct_type() const
 {
     bool b = false;
 
@@ -5862,7 +5862,7 @@ void MinimalTypeObject::union_type(MinimalUnionType _union_type)
     m__d = TK_UNION;
 }
 
-MinimalUnionType MinimalTypeObject::union_type() const
+const MinimalUnionType& MinimalTypeObject::union_type() const
 {
     bool b = false;
 
@@ -5902,7 +5902,7 @@ void MinimalTypeObject::bitset_type(MinimalBitsetType _bitset_type)
     m__d = TK_BITSET;
 }
 
-MinimalBitsetType MinimalTypeObject::bitset_type() const
+const MinimalBitsetType& MinimalTypeObject::bitset_type() const
 {
     bool b = false;
 
@@ -5942,7 +5942,7 @@ void MinimalTypeObject::sequence_type(MinimalSequenceType _sequence_type)
     m__d = TK_SEQUENCE;
 }
 
-MinimalSequenceType MinimalTypeObject::sequence_type() const
+const MinimalSequenceType& MinimalTypeObject::sequence_type() const
 {
     bool b = false;
 
@@ -5982,7 +5982,7 @@ void MinimalTypeObject::array_type(MinimalArrayType _array_type)
     m__d = TK_ARRAY;
 }
 
-MinimalArrayType MinimalTypeObject::array_type() const
+const MinimalArrayType& MinimalTypeObject::array_type() const
 {
     bool b = false;
 
@@ -6022,7 +6022,7 @@ void MinimalTypeObject::map_type(MinimalMapType _map_type)
     m__d = TK_MAP;
 }
 
-MinimalMapType MinimalTypeObject::map_type() const
+const MinimalMapType& MinimalTypeObject::map_type() const
 {
     bool b = false;
 
@@ -6062,7 +6062,7 @@ void MinimalTypeObject::enumerated_type(MinimalEnumeratedType _enumerated_type)
     m__d = TK_ENUM;
 }
 
-MinimalEnumeratedType MinimalTypeObject::enumerated_type() const
+const MinimalEnumeratedType& MinimalTypeObject::enumerated_type() const
 {
     bool b = false;
 
@@ -6102,7 +6102,7 @@ void MinimalTypeObject::bitmask_type(MinimalBitmaskType _bitmask_type)
     m__d = TK_BITMASK;
 }
 
-MinimalBitmaskType MinimalTypeObject::bitmask_type() const
+const MinimalBitmaskType& MinimalTypeObject::bitmask_type() const
 {
     bool b = false;
 
@@ -6142,7 +6142,7 @@ void MinimalTypeObject::extended_type(MinimalExtendedType _extended_type)
     m__d = 0x00; // Default
 }
 
-MinimalExtendedType MinimalTypeObject::extended_type() const
+const MinimalExtendedType& MinimalTypeObject::extended_type() const
 {
     bool b = false;
 
