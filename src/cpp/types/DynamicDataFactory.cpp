@@ -52,8 +52,10 @@ DynamicDataFactory::DynamicDataFactory()
 DynamicDataFactory::~DynamicDataFactory()
 {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    for (auto it = mDynamicDatas.begin(); it != mDynamicDatas.end(); ++it)
-        delete *it;
+    while (mDynamicDatas.size() > 0)
+    {
+        DeleteData(*mDynamicDatas.begin());
+    }
     mDynamicDatas.clear();
 #endif
 }
