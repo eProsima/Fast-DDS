@@ -90,15 +90,10 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 }
             }
 
-            RTPSParticipantDiscoveryInfo info;
-            info.m_guid = participant_data.m_guid;
-            info.m_RTPSParticipantName = participant_data.m_participantName;
-            info.m_propertyList = participant_data.m_properties.properties;
-            info.m_userData = participant_data.m_userData;
+            auto status = (pdata == nullptr) ? DISCOVERED_RTPSPARTICIPANT : CHANGED_QOS_RTPSPARTICIPANT;
 
             if(pdata == nullptr)
             {
-                info.m_status = DISCOVERED_RTPSPARTICIPANT;
                 //IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
                 pdata = new ParticipantProxyData(participant_data);
                 pdata->isAlive = true;
@@ -114,7 +109,6 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             }
             else
             {
-                info.m_status = CHANGED_QOS_RTPSPARTICIPANT;
                 pdata->updateData(participant_data);
                 pdata->isAlive = true;
                 lock.unlock();
@@ -123,10 +117,20 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                     mp_SPDP->mp_EDP->assignRemoteEndpoints(participant_data);
             }
 
-            if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
-                this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
-                        this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
-                        info);
+            auto listener = this->mp_SPDP->getRTPSParticipant()->getListener();
+            if (listener != nullptr)
+            {
+                RTPSParticipantDiscoveryInfo info;
+                info.m_guid = participant_data.m_guid;
+                info.m_RTPSParticipantName = participant_data.m_participantName.c_str();
+                info.m_propertyList = participant_data.m_properties.properties;
+                info.m_userData = participant_data.m_userData;
+                info.m_status = status;
+
+                listener->onRTPSParticipantDiscovery(
+                    this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
+                    info);
+            }
 
             // Take again the reader lock
             reader->getMutex()->lock();
@@ -139,15 +143,14 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
 
         if(this->mp_SPDP->removeRemoteParticipant(guid))
         {
-            if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
+            auto listener = this->mp_SPDP->getRTPSParticipant()->getListener();
+            if(listener != nullptr)
             {
                 RTPSParticipantDiscoveryInfo info;
                 info.m_status = REMOVED_RTPSPARTICIPANT;
                 info.m_guid = guid;
-                if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
-                    this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
-                            this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
-                            info);
+                if(listener != nullptr)
+                    listener->onRTPSParticipantDiscovery(this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(), info);
             }
         }
     }
