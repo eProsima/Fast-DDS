@@ -26,7 +26,8 @@ namespace fastrtps {
 namespace types {
 
 DynamicTypeBuilder::DynamicTypeBuilder()
-    : mCurrentMemberId(0)
+    : mDescriptor(nullptr)
+    , mCurrentMemberId(0)
     , mMaxIndex(0)
 {
 }
@@ -69,6 +70,26 @@ DynamicTypeBuilder::DynamicTypeBuilder(const TypeDescriptor* descriptor)
 
 DynamicTypeBuilder::~DynamicTypeBuilder()
 {
+    mName = "";
+    mKind = 0;
+    if (mDescriptor != nullptr)
+    {
+        delete mDescriptor;
+        mDescriptor = nullptr;
+    }
+
+    for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)
+    {
+        delete *it;
+    }
+    mAnnotation.clear();
+
+    for (auto it = mMemberById.begin(); it != mMemberById.end(); ++it)
+    {
+        delete it->second;
+    }
+    mMemberById.clear();
+    mMemberByName.clear();
 }
 
 ResponseCode DynamicTypeBuilder::AddEmptyMember(uint32_t index, const std::string& name)
