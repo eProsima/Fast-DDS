@@ -60,15 +60,16 @@ public:
 
     eProsima_user_DllExport void registerTypes();
 
-    eProsima_user_DllExport const TypeIdentifier* GetTypeIdentifier(const std::string &basic_type_name);
-    eProsima_user_DllExport const TypeObject* GetTypeObject(const std::string &basic_type_name);
+    eProsima_user_DllExport const TypeIdentifier* GetTypeIdentifier(const std::string &basic_type_name, bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetTypeObject(const std::string &basic_type_name, bool complete = false);
 
-    eProsima_user_DllExport const TypeIdentifier* GetHelloWorldIdentifier();
-    eProsima_user_DllExport const TypeObject* GetHelloWorldObject();
+    eProsima_user_DllExport const TypeIdentifier* GetHelloWorldIdentifier(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetHelloWorldObject(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetMinimalHelloWorldObject();
+    eProsima_user_DllExport const TypeObject* GetCompleteHelloWorldObject();
 
 
 private:
-    std::map<std::string, std::string> m_Aliases;
 };
 
 #endif // _HELLOWORLD_TYPE_OBJECT_H_

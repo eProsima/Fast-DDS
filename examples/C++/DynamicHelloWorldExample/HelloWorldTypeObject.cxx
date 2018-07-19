@@ -49,77 +49,78 @@ HelloWorldTypeFactory::~HelloWorldTypeFactory()
 void HelloWorldTypeFactory::registerTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
-    factory->AddTypeObject("HelloWorld", GetHelloWorldIdentifier(), GetHelloWorldObject());
+    factory->AddTypeObject("HelloWorld", GetHelloWorldIdentifier(true), GetHelloWorldObject(true));
+    factory->AddTypeObject("HelloWorld", GetHelloWorldIdentifier(false), GetHelloWorldObject(false));
 }
 
-const TypeIdentifier* HelloWorldTypeFactory::GetTypeIdentifier(const std::string &type_name)
+const TypeIdentifier* HelloWorldTypeFactory::GetTypeIdentifier(const std::string &type_name, bool complete)
 {
     // Try general factory
-    const TypeIdentifier *type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type_name);
-    if (type_id == nullptr)
+    const TypeIdentifier *type_id = (complete)
+            ? TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(type_name)
+            : TypeObjectFactory::GetInstance()->GetTypeIdentifier(type_name, false);
+    if (type_id == nullptr) // For basic types, it's ok to accept non-complete
     {
-        if (m_Aliases.find(type_name) != m_Aliases.end())
-        {
-            return GetTypeIdentifier(m_Aliases.at(type_name));
-        }
-
         // Try users types.
-        if (type_name == "HelloWorld") return GetHelloWorldIdentifier();
+        if (type_name == "HelloWorld") return GetHelloWorldIdentifier(complete);
     }
     else
     {
         return type_id;
     }
-
     return nullptr;
 }
 
-const TypeObject* HelloWorldTypeFactory::GetTypeObject(const std::string &type_name)
+const TypeObject* HelloWorldTypeFactory::GetTypeObject(const std::string &type_name, bool complete)
 {
     // Try general factory
-    const TypeObject *type_id = TypeObjectFactory::GetInstance()->GetTypeObject(type_name);
-    if (type_id == nullptr)
+    const TypeObject *type_id = TypeObjectFactory::GetInstance()->GetTypeObject(type_name, complete);
+    if (type_id == nullptr || (complete && type_id->_d() == EK_MINIMAL))
     {
-        if (m_Aliases.find(type_name) != m_Aliases.end())
-        {
-            return GetTypeObject(m_Aliases.at(type_name));
-        }
-
         // Try users types.
         if (type_name == "HelloWorld")
         {
-            GetHelloWorldIdentifier();
-            return GetTypeObject("HelloWorld");
+            GetHelloWorldIdentifier(complete);
+            return GetTypeObject("HelloWorld", complete);
         }
     }
 
     return type_id;
 }
 
-const TypeIdentifier* HelloWorldTypeFactory::GetHelloWorldIdentifier()
+const TypeIdentifier* HelloWorldTypeFactory::GetHelloWorldIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = GetTypeIdentifier("HelloWorld");
-    if (c_identifier != nullptr)
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("HelloWorld", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    const TypeObject* c_type_object = GetTypeObject("HelloWorld");
+    GetHelloWorldObject(complete); // Generated inside
+    return GetTypeIdentifier("HelloWorld", complete);
+}
+
+const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", complete);
     if (c_type_object != nullptr)
     {
-        return &(c_type_object->minimal().struct_type().header().base_type());
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteHelloWorldObject();
     }
     else
     {
-        const TypeObject* type_object = GetHelloWorldObject();
-        // Just for other methods
-        return &(type_object->minimal().struct_type().header().base_type());
+        return GetMinimalHelloWorldObject();
     }
+    return GetTypeObject("HelloWorld", complete);
 }
 
-const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject()
+const TypeObject* HelloWorldTypeFactory::GetMinimalHelloWorldObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld");
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -151,7 +152,7 @@ const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject()
         {
             cppType = "longdouble";
         }
-        mst_index.common().member_type_id(*GetTypeIdentifier(cppType));
+        mst_index.common().member_type_id(*GetTypeIdentifier(cppType, false));
     }
 
     MD5 index_hash("index");
@@ -182,33 +183,128 @@ const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject()
 
 
     // Header
-    type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
-    // TODO De momento lo haremos sólo con miembros... ¿también con flags?
-    // Como no soportamos de momento tipos recursivos, esto debería bastar.
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
     SerializedPayload_t payload(static_cast<uint32_t>(
-        type_object->minimal().struct_type().member_seq().size() * sizeof(MinimalStructMember) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
-
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
-    // Serialize encapsulation
 
-    for (MinimalStructMember &st : type_object->minimal().struct_type().member_seq())
-    {
-        ser << st;
-    }
+    type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
     for(int i = 0; i < 14; ++i)
     {
-        type_object->minimal().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("HelloWorld", &(type_object->minimal().struct_type().header().base_type()), type_object);
+    TypeObjectFactory::GetInstance()->AddTypeObject("HelloWorld", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("HelloWorld");
+    return GetTypeObject("HelloWorld", false);
+}
+
+const TypeObject* HelloWorldTypeFactory::GetCompleteHelloWorldObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_index;
+    cst_index.common().member_id(memberId++);
+    cst_index.common().member_flags().TRY_CONSTRUCT1(false);
+    cst_index.common().member_flags().TRY_CONSTRUCT2(false);
+    cst_index.common().member_flags().IS_EXTERNAL(false);
+    cst_index.common().member_flags().IS_OPTIONAL(false);
+    cst_index.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_index.common().member_flags().IS_KEY(false);
+    cst_index.common().member_flags().IS_DEFAULT(false);
+    {
+        std::string cppType = "uint32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        cst_index.common().member_type_id(*GetTypeIdentifier(cppType, false));
+    }
+
+    cst_index.detail().name("index");
+    //cst_index.detail().ann_builtin()...
+    //cst_index.detail().ann_custom()...
+    type_object->complete().struct_type().member_seq().emplace_back(cst_index);
+
+    CompleteStructMember cst_message;
+    cst_message.common().member_id(memberId++);
+    cst_message.common().member_flags().TRY_CONSTRUCT1(false);
+    cst_message.common().member_flags().TRY_CONSTRUCT2(false);
+    cst_message.common().member_flags().IS_EXTERNAL(false);
+    cst_message.common().member_flags().IS_OPTIONAL(false);
+    cst_message.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_message.common().member_flags().IS_KEY(false);
+    cst_message.common().member_flags().IS_DEFAULT(false);
+    cst_message.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
+
+
+    cst_message.detail().name("message");
+    //cst_message.detail().ann_builtin()...
+    //cst_message.detail().ann_custom()...
+    type_object->complete().struct_type().member_seq().emplace_back(cst_message);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("HelloWorld");
+    //type_object->complete().struct_type().header().detail().ann_builtin()...
+    //type_object->complete().struct_type().header().detail().ann_custom()...
+    // TODO inheritance
+    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
+    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("HelloWorld", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("HelloWorld", true);
 }
