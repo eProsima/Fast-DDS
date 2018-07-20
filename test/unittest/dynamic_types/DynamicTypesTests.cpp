@@ -1991,9 +1991,8 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
 TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
 {
     {
-        uint32_t length = 15;
         std::string name = "ALIAS";
-        DynamicTypeBuilder_ptr base_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder(length);
+        DynamicTypeBuilder_ptr base_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
         ASSERT_TRUE(base_builder != nullptr);
         DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::GetInstance()->CreateAliasBuilder(base_builder.get(), name);
         ASSERT_TRUE(alias_builder != nullptr);
@@ -2005,17 +2004,13 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
 
         ASSERT_FALSE(aliasData->SetInt32Value(10, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         ASSERT_FALSE(aliasData->SetStringValue("", 1) == ResponseCode::RETCODE_OK);
-        std::string sTest1 = "STRING_TEST";
-        ASSERT_TRUE(aliasData->SetStringValue(sTest1, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
-        int test = 0;
-        ASSERT_FALSE(aliasData->GetInt32Value(test, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
-        std::string sTest2 = "";
-        ASSERT_FALSE(aliasData->GetStringValue(sTest2, 0) == ResponseCode::RETCODE_OK);
-        ASSERT_TRUE(aliasData->GetStringValue(sTest2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
-        ASSERT_TRUE(sTest1 == sTest2);
+        uint32_t uTest1 = 2;
+        ASSERT_TRUE(aliasData->SetUint32Value(uTest1, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
-        ASSERT_FALSE(aliasData->SetStringValue("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+        uint32_t uTest2 = 0;
+        ASSERT_TRUE(aliasData->GetUint32Value(uTest2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(uTest1 == uTest2);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -2097,7 +2092,6 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         SerializedPayload_t payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(aliasData, &payload));
         ASSERT_TRUE(payload.length == payloadSize);
-
         types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(aliasData));
@@ -2195,7 +2189,6 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         SerializedPayload_t payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &payload));
         ASSERT_TRUE(payload.length == payloadSize);
-
         types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(created_type);
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(data));
@@ -2366,8 +2359,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
-
         // Remove the elements.
         ASSERT_TRUE(data->RemoveSequenceData(newId) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
@@ -2425,9 +2416,26 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
         std::string sEnumTest;
         ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
-        // Delete the sequence
+
+        // SERIALIZATION TEST
+        SequenceStruct seq;
+        SequenceStructPubSubType seqpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(seq_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -2492,8 +2500,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
-
         // Remove the elements.
         ASSERT_TRUE(data->RemoveSequenceData(newId) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
@@ -2551,9 +2557,25 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         std::string sEnumTest;
         ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
-        // Delete the sequence
+        // SERIALIZATION TEST
+        SequenceSequenceStruct seq;
+        SequenceSequenceStructPubSubType seqpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(seq_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
     }
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
@@ -2611,8 +2633,6 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
         types::DynamicData* data2 = DynamicDataFactory::GetInstance()->CreateData(array_type);
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(data));
-
-        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
         // Check items count before and after remove an element.
         ASSERT_TRUE(data->GetItemCount() == array_type->GetTotalBounds());
@@ -2680,9 +2700,25 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
         std::string sEnumTest;
         ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
-        // Delete the array
+        // SERIALIZATION TEST
+        ArraytStruct seq;
+        ArraytStructPubSubType seqpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(array_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -2754,8 +2790,6 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
-
         // Check items count before and after remove an element.
         ASSERT_TRUE(data->GetItemCount() == parent_array_type->GetTotalBounds());
         ASSERT_TRUE(data->ClearValue(testPos) == ResponseCode::RETCODE_OK);
@@ -2816,9 +2850,25 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
         std::string sEnumTest;
         ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
 
-        // Delete the array
+        // SERIALIZATION TEST
+        ArrayArrayStruct seq;
+        ArrayArrayStructPubSubType seqpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(array_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -2944,6 +2994,28 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
         ASSERT_FALSE(data->GetWstringValue(wsTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         std::string sEnumTest;
         ASSERT_FALSE(data->GetEnumValue(sEnumTest, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+        //// SERIALIZATION TEST
+        //MapStruct seq;
+        //MapStructPubSubType seqpb;
+
+        //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        //SerializedPayload_t dynamic_payload(payloadSize3);
+        //ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+        //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        //SerializedPayload_t static_payload(static_payloadSize);
+        //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        //ASSERT_TRUE(static_payload.length == static_payloadSize);
+        //types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(map_type);
+        //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        //ASSERT_TRUE(data3->Equals(data));
+
+        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
@@ -3078,11 +3150,27 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        //// SERIALIZATION TEST
+        //MapMapStruct seq;
+        //MapMapStructPubSubType seqpb;
 
-        // Delete the map
+        //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        //SerializedPayload_t dynamic_payload(payloadSize3);
+        //ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+        //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        //SerializedPayload_t static_payload(static_payloadSize);
+        //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        //ASSERT_TRUE(static_payload.length == static_payloadSize);
+        //types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(map_map_type);
+        //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        //ASSERT_TRUE(data3->Equals(data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -3137,11 +3225,31 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(struct_data));
 
+        // SERIALIZATION TEST
+        StructStruct seq;
+        StructStructPubSubType seqpb;
+
+        uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
+        SerializedPayload_t dynamic_payload(payloadSize3);
+        ASSERT_TRUE(pubsubType.serialize(struct_data, &dynamic_payload));
+        ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(struct_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(struct_data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
 
         // Delete the structure
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
         ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
+
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -3303,7 +3411,26 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(struct_data));
 
+        // SERIALIZATION TEST
+        StructStructStruct seq;
+        StructStructStructPubSubType seqpb;
+
+        uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
+        SerializedPayload_t dynamic_payload(payloadSize3);
+        ASSERT_TRUE(pubsubType.serialize(struct_data, &dynamic_payload));
+        ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(parent_struct_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(struct_data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
@@ -3384,7 +3511,26 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(union_data));
 
-        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        //// SERIALIZATION TEST
+        //UnionUnion seq;
+        //UnionUnionPubSubType seqpb;
+
+        //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
+        //SerializedPayload_t dynamic_payload(payloadSize3);
+        //ASSERT_TRUE(pubsubType.serialize(union_data, &dynamic_payload));
+        //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+        //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        //SerializedPayload_t static_payload(static_payloadSize);
+        //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        //ASSERT_TRUE(static_payload.length == static_payloadSize);
+        //types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(union_type);
+        //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        //ASSERT_TRUE(data3->Equals(union_data));
+
+        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);

@@ -236,7 +236,7 @@ void DynamicComplexTypesTests::init()
 
     // MyUnion2
     DynamicTypeBuilder_ptr myUnion2_builder = m_factory->CreateUnionBuilder(octet_builder.get());
-    myUnion2_builder->AddMember(0, "uno", int32_builder.get(), "0", { 0 }, true);
+    myUnion2_builder->AddMember(0, "uno", int32_builder.get(), "0", { 0 }, false);
     myUnion2_builder->AddMember(1, "imString", string_builder.get(), "1", { 1 }, false);
     myUnion2_builder->AddMember(2, "tres", int32_builder.get(), "2", { 2 }, false);
     myUnion2_builder->SetName("MyUnion2");
