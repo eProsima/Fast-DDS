@@ -242,8 +242,11 @@ protected:
     ResponseCode InsertArrayData(MemberId indexId);
     void SerializeEmptyData(const DynamicType_ptr pType, eprosima::fastcdr::Cdr &cdr) const;
     void SetDefaultValue(MemberId id);
+    void GetValue(std::string& sOutValue);
+    void SetValue(const std::string& sValue);
     void SetTypeName(const std::string& name);
     ResponseCode SetUnionId(MemberId id);
+    void UpdateUnionDiscriminator();
     void SortMemberIds(MemberId startId);
 
     // Serializes and deserializes the Dynamic Data.
@@ -283,6 +286,7 @@ protected:
     DynamicData* mDefaultArrayValue;
     uint64_t mUnionLabel;
     MemberId mUnionId;
+    DynamicData* mUnionDiscriminator;
 
     friend class DynamicDataFactory;
     friend class DynamicPubSubType;

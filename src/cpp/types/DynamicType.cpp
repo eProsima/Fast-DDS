@@ -400,6 +400,15 @@ uint32_t DynamicType::GetBoundsSize() const
     return 0;
 }
 
+DynamicType_ptr DynamicType::GetDiscriminatorType() const
+{
+    if (mDescriptor != nullptr)
+    {
+        return mDescriptor->GetDiscriminatorType();
+    }
+    return nullptr;
+}
+
 DynamicType_ptr DynamicType::GetElementType() const
 {
     if (mDescriptor != nullptr)

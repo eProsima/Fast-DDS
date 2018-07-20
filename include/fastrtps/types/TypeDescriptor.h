@@ -41,6 +41,7 @@ public:
     DynamicType_ptr GetBaseType() const;
     uint32_t GetBounds(uint32_t index = 0) const;
     uint32_t GetBoundsSize() const;
+    DynamicType_ptr GetDiscriminatorType() const;
     DynamicType_ptr GetElementType() const;
     DynamicType_ptr GetKeyElementType() const;
     TypeKind GetKind() const;

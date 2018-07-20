@@ -111,6 +111,13 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
                     mDynamicDatas.push_back(defaultArrayData);
                     newData->mDefaultArrayValue = defaultArrayData;
                 }
+                // Unions need a discriminator data
+                else if (pType->GetKind() == TK_UNION)
+                {
+                    DynamicData* discriminatorData = new DynamicData(pType->GetDiscriminatorType());
+                    mDynamicDatas.push_back(discriminatorData);
+                    newData->mUnionDiscriminator = discriminatorData;
+                }
             }
             return newData;
         }

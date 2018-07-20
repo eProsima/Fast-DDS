@@ -126,6 +126,11 @@ uint32_t TypeDescriptor::GetBoundsSize() const
     return static_cast<uint32_t>(mBound.size());
 }
 
+DynamicType_ptr TypeDescriptor::GetDiscriminatorType() const
+{
+    return mDiscriminatorType;
+}
+
 DynamicType_ptr TypeDescriptor::GetElementType() const
 {
     return mElementType;

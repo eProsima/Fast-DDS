@@ -71,6 +71,7 @@ DynamicData::DynamicData()
     , mDefaultArrayValue(nullptr)
     , mUnionLabel(UINT64_MAX)
     , mUnionId(MEMBER_ID_INVALID)
+    , mUnionDiscriminator(nullptr)
 {
 }
 
@@ -95,6 +96,7 @@ DynamicData::DynamicData(DynamicType_ptr pType)
     , mDefaultArrayValue(nullptr)
     , mUnionLabel(UINT64_MAX)
     , mUnionId(MEMBER_ID_INVALID)
+    , mUnionDiscriminator(nullptr)
 {
     CreateMembers(mType);
 }
@@ -485,6 +487,12 @@ void DynamicData::Clean()
         DynamicDataFactory::GetInstance()->DeleteData(mDefaultArrayValue);
         mDefaultArrayValue = nullptr;
     }
+
+    if (mUnionDiscriminator != nullptr)
+    {
+        DynamicDataFactory::GetInstance()->DeleteData(mUnionDiscriminator);
+        mUnionDiscriminator = nullptr;
+    }
 #ifdef DYNAMIC_TYPES_CHECKING
     for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
     {
@@ -765,6 +773,328 @@ bool DynamicData::CompareValues(TypeKind kind, void* left, void* right) const
     case TK_BITMASK:    {   return *((uint64_t*)left) == *((uint64_t*)right);    }
     }
     return false;
+}
+
+void DynamicData::GetValue(std::string& sOutValue)
+{
+    switch (mType->mKind)
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+        int32_t value(0);
+        GetInt32Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_UINT32:
+    {
+        uint32_t value(0);
+        GetUint32Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_INT16:
+    {
+        int16_t value(0);
+        GetInt16Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_UINT16:
+    {
+        uint16_t value(0);
+        GetUint16Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_INT64:
+    {
+        int64_t value(0);
+        GetInt64Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_UINT64:
+    {
+        uint64_t value(0);
+        GetUint64Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_FLOAT32:
+    {
+        float value(0.0f);
+        GetFloat32Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_FLOAT64:
+    {
+        double value(0.0f);
+        GetFloat64Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_FLOAT128:
+    {
+        long double value(0.0f);
+        GetFloat128Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_CHAR8:
+    {
+        char value = 0;
+        GetChar8Value(value, MEMBER_ID_INVALID);
+        sOutValue = value;
+    }
+    break;
+    case TK_CHAR16:
+    {
+        wchar_t value(0);
+        GetChar16Value(value, MEMBER_ID_INVALID);
+        std::wstring temp = L"" + value;
+        sOutValue = std::string(temp.begin(), temp.end());
+    }
+    break;
+    case TK_BOOLEAN:
+    {
+        bool value(false);
+        GetBoolValue(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value ? 1 : 0);
+    }
+    break;
+    case TK_BYTE:
+    {
+        uint8_t value(0);
+        GetByteValue(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_STRING8:
+    {
+        sOutValue = GetStringValue(MEMBER_ID_INVALID);
+    }
+    break;
+    case TK_STRING16:
+    {
+        std::wstring value;
+        GetWstringValue(value, MEMBER_ID_INVALID);
+        sOutValue = std::string(value.begin(), value.end());
+    }
+    break;
+    case TK_ENUM:
+    {
+        uint32_t value(0);
+        GetUint32Value(value, MEMBER_ID_INVALID);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+        int value(GetBoolValue(MEMBER_ID_INVALID) ? 1 : 0);
+        sOutValue = std::to_string(value);
+    }
+    break;
+    case TK_ARRAY:
+    case TK_SEQUENCE:
+    case TK_MAP:
+    {
+        // THESE TYPES DON'T MANAGE VALUES
+    }
+    break;
+    }
+}
+
+void DynamicData::SetValue(const std::string& sValue)
+{
+    switch (mType->mKind)
+    {
+    default:
+        break;
+    case TK_INT32:
+    {
+        int32_t value(0);
+        try
+        {
+            value = stoi(sValue);
+        }
+        catch (...) {}
+        SetInt32Value(value);
+    }
+    break;
+    case TK_UINT32:
+    {
+        uint32_t value(0);
+        try
+        {
+            value = stoul(sValue);
+        }
+        catch (...) {}
+        SetUint32Value(value);
+    }
+    break;
+    case TK_INT16:
+    {
+        int16_t value(0);
+        try
+        {
+            value = static_cast<int16_t>(stoi(sValue));
+        }
+        catch (...) {}
+        SetInt16Value(value);
+    }
+    break;
+    case TK_UINT16:
+    {
+        uint16_t value(0);
+        try
+        {
+            value = static_cast<uint16_t>(stoul(sValue));
+        }
+        catch (...) {}
+        SetUint16Value(value);
+    }
+    break;
+    case TK_INT64:
+    {
+        int64_t value(0);
+        try
+        {
+            value = stoll(sValue);
+        }
+        catch (...) {}
+        SetInt64Value(value);
+    }
+    break;
+    case TK_UINT64:
+    {
+        uint64_t value(0);
+        try
+        {
+            value = stoul(sValue);
+        }
+        catch (...) {}
+        SetUint64Value(value);
+    }
+    break;
+    case TK_FLOAT32:
+    {
+        float value(0.0f);
+        try
+        {
+            value = stof(sValue);
+        }
+        catch (...) {}
+        SetFloat32Value(value);
+    }
+    break;
+    case TK_FLOAT64:
+    {
+        double value(0.0f);
+        try
+        {
+            value = stod(sValue);
+        }
+        catch (...) {}
+        SetFloat64Value(value);
+    }
+    break;
+    case TK_FLOAT128:
+    {
+        long double value(0.0f);
+        try
+        {
+            value = stold(sValue);
+        }
+        catch (...) {}
+        SetFloat128Value(value);
+    }
+    break;
+    case TK_CHAR8:
+    {
+        if (sValue.length() >= 1)
+        {
+            SetChar8Value(sValue[0]);
+        }
+    }
+    break;
+    case TK_CHAR16:
+    {
+        wchar_t value(0);
+        try
+        {
+            std::wstring temp = std::wstring(sValue.begin(), sValue.end());
+            value = temp[0];
+        }
+        catch (...) {}
+
+        SetChar16Value(value);
+    }
+    break;
+    case TK_BOOLEAN:
+    {
+        int value(0);
+        try
+        {
+            value = stoi(sValue);
+        }
+        catch (...) {}
+        SetBoolValue(value == 1 ? true : false);
+    }
+    break;
+    case TK_BYTE:
+    {
+        if (sValue.length() >= 1)
+        {
+            SetByteValue(sValue[0]);
+        }
+    }
+    break;
+    case TK_STRING8:
+    {
+        SetStringValue(sValue);
+    }
+    break;
+    case TK_STRING16:
+    {
+        SetWstringValue(std::wstring(sValue.begin(), sValue.end()));
+    }
+    break;
+    case TK_ENUM:
+    {
+        uint32_t value(0);
+        try
+        {
+            value = stoul(sValue);
+        }
+        catch (...) {}
+        SetUint32Value(value);
+    }
+    break;
+    case TK_BITSET:
+    case TK_BITMASK:
+    {
+        int value(0);
+        try
+        {
+            value = stoi(sValue);
+        }
+        catch (...) {}
+        SetBoolValue(value == 1 ? true : false);
+    }
+    break;
+    case TK_ARRAY:
+    case TK_SEQUENCE:
+    case TK_MAP:
+    {
+        // THESE TYPES DON'T MANAGE VALUES
+    }
+    break;
+    }
 }
 
 void DynamicData::SetDefaultValue(MemberId id)
@@ -2837,6 +3167,32 @@ void DynamicData::SetTypeName(const std::string& name)
     }
 }
 
+void DynamicData::UpdateUnionDiscriminator()
+{
+    if (GetKind() == TK_UNION)
+    {
+        std::string sUnionValue;
+        mUnionDiscriminator->GetValue(sUnionValue);
+        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
+        {
+            std::vector<uint64_t> unionLabels = it->second->GetUnionLabels();
+            for (uint64_t label : unionLabels)
+            {
+                if (sUnionValue == std::to_string(label))
+                {
+                    mUnionId = it->first;
+                    mUnionLabel = label;
+                    break;
+                }
+            }
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error updating union id. The kind: " << GetKind() << " doesn't support it.");
+    }
+}
+
 ResponseCode DynamicData::SetUnionId(MemberId id)
 {
     if (GetKind() == TK_UNION)
@@ -2851,6 +3207,10 @@ ResponseCode DynamicData::SetUnionId(MemberId id)
                 if (unionLabels.size() > 0)
                 {
                     mUnionLabel = unionLabels[0];
+                    if (mUnionDiscriminator != nullptr)
+                    {
+                        mUnionDiscriminator->SetValue(std::to_string(mUnionLabel));
+                    }
                 }
             }
             return ResponseCode::RETCODE_OK;
@@ -3569,6 +3929,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mInt32Value;
+        std::cout << "DESERIALIZE: \tint32" << mInt32Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((int32_t*)it->second);
@@ -3579,6 +3941,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt32Value;
+        std::cout << "DESERIALIZE: \tuint32" << mUInt32Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((uint32_t*)it->second);
@@ -3589,6 +3953,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mInt16Value;
+        std::cout << "DESERIALIZE: \tint16" << mInt16Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((int16_t*)it->second);
@@ -3599,6 +3965,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt16Value;
+        std::cout << "DESERIALIZE: \tuint16" << mUInt16Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((uint16_t*)it->second);
@@ -3609,6 +3977,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mInt64Value;
+        std::cout << "DESERIALIZE: \tint64" << mInt64Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((int64_t*)it->second);
@@ -3619,6 +3989,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt64Value;
+        std::cout << "DESERIALIZE: \tuint64" << mUInt64Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((uint64_t*)it->second);
@@ -3629,6 +4001,7 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mFloat32Value;
+        std::cout << "DESERIALIZE: \tfloat32" << mFloat32Value << std::endl;
 #else
         auto it = mValues.begin();
         cdr >> *((float*)it->second);
@@ -3639,6 +4012,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mFloat64Value;
+        std::cout << "DESERIALIZE: \tfloat64" << mFloat64Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((double*)it->second);
@@ -3649,6 +4024,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mFloat128Value;
+        std::cout << "DESERIALIZE: \tfloat128" << mFloat128Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((long double*)it->second);
@@ -3659,6 +4036,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mChar8Value;
+        std::cout << "DESERIALIZE: \tchar8" << mChar8Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((char*)it->second);
@@ -3669,6 +4048,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mChar16Value;
+        std::cout << "DESERIALIZE: \tchar16" << mChar16Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((wchar_t*)it->second);
@@ -3679,6 +4060,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mBoolValue;
+        std::cout << "DESERIALIZE: \tbool" << mBoolValue << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((bool*)it->second);
@@ -3689,6 +4072,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mByteValue;
+        std::cout << "DESERIALIZE: \tbyte" << mByteValue << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((octet*)it->second);
@@ -3699,6 +4084,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mStringValue;
+        std::cout << "DESERIALIZE: \tstring" << mStringValue.c_str() << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((std::string*)it->second);
@@ -3709,6 +4096,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mWStringValue;
+        std::wcout << "DESERIALIZE: \twstring" << mWStringValue.c_str() << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((std::wstring*)it->second);
@@ -3719,6 +4108,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt32Value;
+        std::cout << "DESERIALIZE: \tenum" << mUInt32Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((uint32_t*)it->second);
@@ -3730,6 +4121,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt64Value;
+        std::cout << "DESERIALIZE: \tbitset" << mUInt64Value << std::endl;
+
 #else
         auto it = mValues.begin();
         cdr >> *((uint64_t*)it->second);
@@ -3738,7 +4131,9 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     }
     case TK_UNION:
     {
-        cdr >> mUnionId;
+        mUnionDiscriminator->deserialize(cdr);
+        UpdateUnionDiscriminator();
+        std::cout << "DESERIALIZE: \tunionid" << mUnionId << std::endl;
         SetUnionId(mUnionId);
         if (mUnionId != MEMBER_ID_INVALID)
         {
@@ -3800,8 +4195,10 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     break;
     case TK_ARRAY:
     {
-        uint32_t size(0);
-        cdr >> size;
+        uint32_t size(mType->GetTotalBounds());
+        //cdr >> size;
+        //std::cout << "DESERIALIZE: \tarraySize" << size << std::endl;
+
         if (size > 0)
         {
             DynamicData* inputData(nullptr);
@@ -3862,6 +4259,8 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
         uint32_t size(0);
         bool bKeyElement(false);
         cdr >> size;
+        std::cout << "DESERIALIZE: \tsequenceSize" << size << std::endl;
+
         for (uint32_t i = 0; i < size; ++i)
         {
             //cdr >> memberId;
@@ -3999,8 +4398,9 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     }
     case TK_UNION:
     {
-        // union id
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        // Union discriminator
+        current_alignment += getCdrSerializedSize(data->mUnionDiscriminator, current_alignment);
+
         if (data->mUnionId != MEMBER_ID_INVALID)
         {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -4030,7 +4430,7 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     case TK_ARRAY:
     {
         // Elements count
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        //current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         uint32_t arraySize = data->mType->GetTotalBounds();
         for (uint32_t idx = 0; idx < arraySize; ++idx)
@@ -4136,7 +4536,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
     }
     case TK_FLOAT128:
     {
-        current_alignment += sizeof(long double) + eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(long double));
+        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
         break;
     }
     case TK_CHAR8:
@@ -4161,7 +4561,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
     case TK_UNION:
     {
         // union id
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        current_alignment += getMaxCdrSerializedSize(type->GetDiscriminatorType(), current_alignment);
 
         // Check the size of all members and take the size of the biggest one.
         size_t temp_size(0);
@@ -4186,6 +4586,11 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
         break;
     }
     case TK_ARRAY:
+    {
+        // Element size with the maximum size
+        current_alignment += type->GetTotalBounds() * (getMaxCdrSerializedSize(type->mDescriptor->GetElementType()));
+        break;
+    }
     case TK_SEQUENCE:
     {
         // Elements count
@@ -4224,6 +4629,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_INT32:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tint32" << mInt32Value << std::endl;
         cdr << mInt32Value;
 #else
         auto it = mValues.begin();
@@ -4234,6 +4640,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_UINT32:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tuint32" << mUInt32Value << std::endl;
         cdr << mUInt32Value;
 #else
         auto it = mValues.begin();
@@ -4244,6 +4651,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_INT16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tint16" << mInt16Value << std::endl;
         cdr << mInt16Value;
 #else
         auto it = mValues.begin();
@@ -4254,6 +4662,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_UINT16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tuint16" << mUInt16Value << std::endl;
         cdr << mUInt16Value;
 #else
         auto it = mValues.begin();
@@ -4264,6 +4673,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_INT64:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tint64" << mInt64Value << std::endl;
         cdr << mInt64Value;
 #else
         auto it = mValues.begin();
@@ -4274,6 +4684,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_UINT64:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tuint64" << mUInt64Value << std::endl;
         cdr << mUInt64Value;
 #else
         auto it = mValues.begin();
@@ -4284,6 +4695,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_FLOAT32:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tfloat32" << mFloat32Value << std::endl;
         cdr << mFloat32Value;
 #else
         auto it = mValues.begin();
@@ -4294,6 +4706,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_FLOAT64:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tfloat64" << mFloat64Value << std::endl;
         cdr << mFloat64Value;
 #else
         auto it = mValues.begin();
@@ -4304,6 +4717,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_FLOAT128:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tfloat128" << mFloat128Value << std::endl;
         cdr << mFloat128Value;
 #else
         auto it = mValues.begin();
@@ -4314,6 +4728,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_CHAR8:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tchar8" << mChar8Value << std::endl;
         cdr << mChar8Value;
 #else
         auto it = mValues.begin();
@@ -4324,6 +4739,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_CHAR16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tchar16" << mChar16Value << std::endl;
         cdr << mChar16Value;
 #else
         auto it = mValues.begin();
@@ -4334,6 +4750,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_BOOLEAN:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tbool" << mBoolValue << std::endl;
         cdr << mBoolValue;
 #else
         auto it = mValues.begin();
@@ -4344,6 +4761,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_BYTE:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tbyte" << mByteValue << std::endl;
         cdr << mByteValue;
 #else
         auto it = mValues.begin();
@@ -4354,6 +4772,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_STRING8:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tstring" << mStringValue.c_str() << std::endl;
         cdr << mStringValue;
 #else
         auto it = mValues.begin();
@@ -4364,6 +4783,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_STRING16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::wcout << "SERIALIZE: \twstring" << mWStringValue.c_str() << std::endl;
         cdr << mWStringValue;
 #else
         auto it = mValues.begin();
@@ -4374,6 +4794,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_ENUM:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tenum" << mUInt32Value << std::endl;
         cdr << mUInt32Value;
 #else
         auto it = mValues.begin();
@@ -4385,6 +4806,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_BITMASK:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tbitset" << mUInt64Value << std::endl;
         cdr << mUInt64Value;
 #else
         auto it = mValues.begin();
@@ -4394,7 +4816,9 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     }
     case TK_UNION:
     {
-        cdr << mUnionId;
+        std::cout << "SERIALIZE: \tunionid" << mUnionId << std::endl;
+        mUnionDiscriminator->serialize(cdr);
+        //cdr << mUnionId;
         if (mUnionId != MEMBER_ID_INVALID)
         {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -4408,6 +4832,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     }
     case TK_SEQUENCE: // Sequence is like structure, but with size
 #ifdef DYNAMIC_TYPES_CHECKING
+        std::cout << "SERIALIZE: \tsequenceSize" << static_cast<uint32_t>(mComplexValues.size()) << std::endl;
         cdr << static_cast<uint32_t>(mComplexValues.size());
 #else
         cdr << static_cast<uint32_t>(mValues.size());
@@ -4432,7 +4857,8 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_ARRAY:
     {
         uint32_t arraySize = mType->GetTotalBounds();
-        cdr << arraySize;
+        //std::cout << "SERIALIZE: \tarraySize" << arraySize << std::endl;
+        //cdr << arraySize;
         for (uint32_t idx = 0; idx < arraySize; ++idx)
         {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -4531,7 +4957,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     }
     case TK_FLOAT128:
     {
-        current_alignment += sizeof(long double) + eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(long double));
+        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
         break;
     }
     case TK_CHAR8:
@@ -4555,8 +4981,8 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     }
     case TK_UNION:
     {
-        // union id
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        // union discriminator
+        current_alignment += getEmptyCdrSerializedSize(type->GetDiscriminatorType().get(), current_alignment);
         break;
     }
     case TK_STRUCTURE:
@@ -4570,7 +4996,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     case TK_ARRAY:
     {
         // Elements count
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        //current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         // Element size with the maximum size
         current_alignment += type->GetTotalBounds() * (getEmptyCdrSerializedSize(type->mDescriptor->GetElementType().get()));
@@ -4705,7 +5131,7 @@ void DynamicData::SerializeEmptyData(const DynamicType_ptr pType, eprosima::fast
     case TK_ARRAY:
     {
         uint32_t arraySize = pType->GetTotalBounds();
-        cdr << arraySize;
+        //cdr << arraySize;
         for (uint32_t i = 0; i < arraySize; ++i)
         {
             SerializeEmptyData(pType->GetElementType(), cdr);

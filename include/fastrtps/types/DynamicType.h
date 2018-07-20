@@ -90,6 +90,7 @@ protected:
     ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
     uint32_t GetAnnotationCount();
     DynamicType_ptr GetBaseType() const;
+    DynamicType_ptr GetDiscriminatorType() const;
     DynamicType_ptr GetElementType() const;
     DynamicType_ptr GetKeyElementType() const;
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);

@@ -229,14 +229,14 @@ void DynamicComplexTypesTests::init()
     complexStruct_builder->SetName("ComplexStruct");
 
     // MyUnion
-    DynamicTypeBuilder_ptr myUnion_builder = m_factory->CreateUnionBuilder(octet_builder.get());
+    DynamicTypeBuilder_ptr myUnion_builder = m_factory->CreateUnionBuilder(myEnum_builder.get());
     myUnion_builder->AddMember(0, "basic", basicStruct_builder.get(), "0", { 0 }, true);
     myUnion_builder->AddMember(1, "complex", complexStruct_builder.get(), "1", { 1, 2 }, false);
     myUnion_builder->SetName("MyUnion");
 
     // MyUnion2
     DynamicTypeBuilder_ptr myUnion2_builder = m_factory->CreateUnionBuilder(octet_builder.get());
-    myUnion2_builder->AddMember(0, "uno", int32_builder.get(), "0", { 0 }, false);
+    myUnion2_builder->AddMember(0, "uno", int32_builder.get(), "0", { 0 }, true);
     myUnion2_builder->AddMember(1, "imString", string_builder.get(), "1", { 1 }, false);
     myUnion2_builder->AddMember(2, "tres", int32_builder.get(), "2", { 2 }, false);
     myUnion2_builder->SetName("MyUnion2");
@@ -263,7 +263,7 @@ void DynamicComplexTypesTests::init()
         DynamicType* m_DynManualType;
 */
 
-TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
+TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
@@ -273,8 +273,11 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     ASSERT_TRUE(pubsubType.serialize(dynData, &payload));
 
     CompleteStruct staticData;
+    uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
+    ASSERT_TRUE(payloadSize == payloadSize2);
+    SerializedPayload_t payload2(payloadSize2);
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
-    ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload));
+    ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
 
     types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynData2));
