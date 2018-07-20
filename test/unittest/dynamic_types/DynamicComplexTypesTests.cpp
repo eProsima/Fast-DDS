@@ -262,7 +262,7 @@ void DynamicComplexTypesTests::init()
         DynamicData* m_DynManual;
         DynamicType* m_DynManualType;
 */
-/*
+
 TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
 {
     // Serialize <-> Deserialize Test
@@ -284,7 +284,7 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
-*/
+
 TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
 {
     types::DynamicData* dynAutoData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
@@ -320,30 +320,24 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
-/*
 
 TEST_F(DynamicComplexTypesTests, Conversions_Test)
 {
     TypeObject newObject;
-    DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(m_DynManualType, newObject);
+    DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(m_DynManualType, newObject, true);
+
+    const TypeIdentifier* identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier(m_DynManualType->GetName(),
+        true);
+    DynamicType_ptr newAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType(m_DynManualType->GetName(),
+        identifier, &newObject);
     types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(newAutoType);
 
-    TypeIdentifier* newIdentifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier(m_DynManualType->GetName());
-    DynamicType* newAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType(newIdentifier, &newObject);
-
-    ASSERT_TRUE(newAutoType->Equals(dynData));
+    ASSERT_TRUE(dynData2->Equals(dynData));
 
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
-    DynamicDataFactory::GetInstance()->DeleteData(newAutoType);
+    DynamicDataFactory::GetInstance()->DeleteData(dynData2);
 }
-*/
-
-// TODO
-/*
--> Static_Auto
--> Manual_Auto
--> Generate TypeObject from Manual and verify its correct generating another auto from it and comparing with the manual.
-*/
 
 TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
 {

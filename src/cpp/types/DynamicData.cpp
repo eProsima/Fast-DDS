@@ -239,7 +239,7 @@ bool DynamicData::Equals(const DynamicData* other) const
                     mFloat128Value != other->mFloat128Value || mChar8Value != other->mChar8Value ||
                     mChar16Value != other->mChar16Value || mByteValue != other->mByteValue ||
                     mBoolValue != other->mBoolValue || mStringValue != other->mStringValue ||
-                    mWStringValue != other->mWStringValue || mStringValue != other->mStringValue ||
+                    mWStringValue != other->mWStringValue ||
                     !map_compare(mComplexValues, other->mComplexValues))
                 {
                     return false;
