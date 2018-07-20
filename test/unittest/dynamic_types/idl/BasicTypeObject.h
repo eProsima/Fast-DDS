@@ -238,6 +238,21 @@ public:
     eProsima_user_DllExport const TypeObject* GetMinimalWCharUnionObject();
     eProsima_user_DllExport const TypeObject* GetCompleteWCharUnionObject();
 
+    eProsima_user_DllExport const TypeIdentifier* GetSimpleUnionStructIdentifier(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetSimpleUnionStructObject(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetMinimalSimpleUnionStructObject();
+    eProsima_user_DllExport const TypeObject* GetCompleteSimpleUnionStructObject();
+
+    eProsima_user_DllExport const TypeIdentifier* GetUnionUnionUnionStructIdentifier(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetUnionUnionUnionStructObject(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetMinimalUnionUnionUnionStructObject();
+    eProsima_user_DllExport const TypeObject* GetCompleteUnionUnionUnionStructObject();
+
+    eProsima_user_DllExport const TypeIdentifier* GetWCharUnionStructIdentifier(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetWCharUnionStructObject(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetMinimalWCharUnionStructObject();
+    eProsima_user_DllExport const TypeObject* GetCompleteWCharUnionStructObject();
+
 
 private:
 };

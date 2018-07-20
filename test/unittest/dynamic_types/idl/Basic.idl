@@ -175,3 +175,18 @@ union WCharUnion switch (wchar)
     case B:
         long long second;
 };
+
+struct SimpleUnionStruct
+{
+    SimpleUnion my_union;
+};
+
+struct UnionUnionUnionStruct
+{
+    UnionUnion my_union;
+};
+
+struct WCharUnionStruct
+{
+    WCharUnion my_union;
+};

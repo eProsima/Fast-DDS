@@ -566,5 +566,62 @@ public:
 
 
 
+/*!
+ * @brief This class represents the TopicDataType of the type SimpleUnionStruct defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class SimpleUnionStructPubSubType : public eprosima::fastrtps::TopicDataType {
+public:
+        typedef SimpleUnionStruct type;
+
+	SimpleUnionStructPubSubType();
+	virtual ~SimpleUnionStructPubSubType();
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+        std::function<uint32_t()> getSerializedSizeProvider(void* data);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+	void* createData();
+	void deleteData(void * data);
+	MD5 m_md5;
+	unsigned char* m_keyBuffer;
+};
+/*!
+ * @brief This class represents the TopicDataType of the type UnionUnionUnionStruct defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class UnionUnionUnionStructPubSubType : public eprosima::fastrtps::TopicDataType {
+public:
+        typedef UnionUnionUnionStruct type;
+
+	UnionUnionUnionStructPubSubType();
+	virtual ~UnionUnionUnionStructPubSubType();
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+        std::function<uint32_t()> getSerializedSizeProvider(void* data);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+	void* createData();
+	void deleteData(void * data);
+	MD5 m_md5;
+	unsigned char* m_keyBuffer;
+};
+/*!
+ * @brief This class represents the TopicDataType of the type WCharUnionStruct defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class WCharUnionStructPubSubType : public eprosima::fastrtps::TopicDataType {
+public:
+        typedef WCharUnionStruct type;
+
+	WCharUnionStructPubSubType();
+	virtual ~WCharUnionStructPubSubType();
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+        std::function<uint32_t()> getSerializedSizeProvider(void* data);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+	void* createData();
+	void deleteData(void * data);
+	MD5 m_md5;
+	unsigned char* m_keyBuffer;
+};
 
 #endif // _BASIC_PUBSUBTYPES_H_

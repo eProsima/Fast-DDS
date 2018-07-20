@@ -119,6 +119,12 @@ void BasicTypeFactory::registerTypes()
     factory->AddTypeObject("UnionUnion", GetUnionUnionIdentifier(false), GetUnionUnionObject(false));
     factory->AddTypeObject("WCharUnion", GetWCharUnionIdentifier(true), GetWCharUnionObject(true));
     factory->AddTypeObject("WCharUnion", GetWCharUnionIdentifier(false), GetWCharUnionObject(false));
+    factory->AddTypeObject("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true), GetSimpleUnionStructObject(true));
+    factory->AddTypeObject("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false), GetSimpleUnionStructObject(false));
+    factory->AddTypeObject("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(true), GetUnionUnionUnionStructObject(true));
+    factory->AddTypeObject("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(false), GetUnionUnionUnionStructObject(false));
+    factory->AddTypeObject("WCharUnionStruct", GetWCharUnionStructIdentifier(true), GetWCharUnionStructObject(true));
+    factory->AddTypeObject("WCharUnionStruct", GetWCharUnionStructIdentifier(false), GetWCharUnionStructObject(false));
 }
 
 const TypeIdentifier* BasicTypeFactory::GetTypeIdentifier(const std::string &type_name, bool complete)
@@ -165,6 +171,9 @@ const TypeIdentifier* BasicTypeFactory::GetTypeIdentifier(const std::string &typ
         if (type_name == "SimpleUnion") return GetSimpleUnionIdentifier(complete);
         if (type_name == "UnionUnion") return GetUnionUnionIdentifier(complete);
         if (type_name == "WCharUnion") return GetWCharUnionIdentifier(complete);
+        if (type_name == "SimpleUnionStruct") return GetSimpleUnionStructIdentifier(complete);
+        if (type_name == "UnionUnionUnionStruct") return GetUnionUnionUnionStructIdentifier(complete);
+        if (type_name == "WCharUnionStruct") return GetWCharUnionStructIdentifier(complete);
     }
     else
     {
@@ -354,6 +363,21 @@ const TypeObject* BasicTypeFactory::GetTypeObject(const std::string &type_name, 
         {
             GetWCharUnionIdentifier(complete);
             return GetTypeObject("WCharUnion", complete);
+        }
+        if (type_name == "SimpleUnionStruct")
+        {
+            GetSimpleUnionStructIdentifier(complete);
+            return GetTypeObject("SimpleUnionStruct", complete);
+        }
+        if (type_name == "UnionUnionUnionStruct")
+        {
+            GetUnionUnionUnionStructIdentifier(complete);
+            return GetTypeObject("UnionUnionUnionStruct", complete);
+        }
+        if (type_name == "WCharUnionStruct")
+        {
+            GetWCharUnionStructIdentifier(complete);
+            return GetTypeObject("WCharUnionStruct", complete);
         }
     }
 
@@ -6888,4 +6912,502 @@ const TypeObject* BasicTypeFactory::GetCompleteWCharUnionObject()
     delete type_object;
     delete identifier;
     return GetTypeObject("WCharUnion", true);
+}
+
+const TypeIdentifier* BasicTypeFactory::GetSimpleUnionStructIdentifier(bool complete)
+{
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("SimpleUnionStruct", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetSimpleUnionStructObject(complete); // Generated inside
+    return GetTypeIdentifier("SimpleUnionStruct", complete);
+}
+
+const TypeObject* BasicTypeFactory::GetSimpleUnionStructObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteSimpleUnionStructObject();
+    }
+    //else
+    return GetMinimalSimpleUnionStructObject();
+}
+
+const TypeObject* BasicTypeFactory::GetMinimalSimpleUnionStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_STRUCTURE);
+
+    type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    MinimalStructMember mst_my_union;
+    mst_my_union.common().member_id(memberId++);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
+    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().IS_OPTIONAL(false);
+    mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_my_union.common().member_flags().IS_KEY(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_type_id(*GetSimpleUnionIdentifier(false));
+    MD5 my_union_hash("my_union");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_my_union.detail().name_hash()[i] = my_union_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_my_union);
+
+
+    // Header
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleUnionStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("SimpleUnionStruct", false);
+}
+
+const TypeObject* BasicTypeFactory::GetCompleteSimpleUnionStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_my_union;
+    cst_my_union.common().member_id(memberId++);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
+    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().IS_OPTIONAL(false);
+    cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_my_union.common().member_flags().IS_KEY(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_type_id(*GetSimpleUnionIdentifier(true));
+    cst_my_union.detail().name("my_union");
+    //cst_my_union.detail().ann_builtin()...
+    //cst_my_union.detail().ann_custom()...
+    type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("SimpleUnionStruct");
+    //type_object->complete().struct_type().header().detail().ann_builtin()...
+    //type_object->complete().struct_type().header().detail().ann_custom()...
+    // TODO inheritance
+    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
+    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleUnionStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("SimpleUnionStruct", true);
+}
+
+const TypeIdentifier* BasicTypeFactory::GetUnionUnionUnionStructIdentifier(bool complete)
+{
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("UnionUnionUnionStruct", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetUnionUnionUnionStructObject(complete); // Generated inside
+    return GetTypeIdentifier("UnionUnionUnionStruct", complete);
+}
+
+const TypeObject* BasicTypeFactory::GetUnionUnionUnionStructObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteUnionUnionUnionStructObject();
+    }
+    //else
+    return GetMinimalUnionUnionUnionStructObject();
+}
+
+const TypeObject* BasicTypeFactory::GetMinimalUnionUnionUnionStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_STRUCTURE);
+
+    type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    MinimalStructMember mst_my_union;
+    mst_my_union.common().member_id(memberId++);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
+    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().IS_OPTIONAL(false);
+    mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_my_union.common().member_flags().IS_KEY(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_type_id(*GetUnionUnionIdentifier(false));
+    MD5 my_union_hash("my_union");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_my_union.detail().name_hash()[i] = my_union_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_my_union);
+
+
+    // Header
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("UnionUnionUnionStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("UnionUnionUnionStruct", false);
+}
+
+const TypeObject* BasicTypeFactory::GetCompleteUnionUnionUnionStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_my_union;
+    cst_my_union.common().member_id(memberId++);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
+    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().IS_OPTIONAL(false);
+    cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_my_union.common().member_flags().IS_KEY(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_type_id(*GetUnionUnionIdentifier(true));
+    cst_my_union.detail().name("my_union");
+    //cst_my_union.detail().ann_builtin()...
+    //cst_my_union.detail().ann_custom()...
+    type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("UnionUnionUnionStruct");
+    //type_object->complete().struct_type().header().detail().ann_builtin()...
+    //type_object->complete().struct_type().header().detail().ann_custom()...
+    // TODO inheritance
+    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
+    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("UnionUnionUnionStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("UnionUnionUnionStruct", true);
+}
+
+const TypeIdentifier* BasicTypeFactory::GetWCharUnionStructIdentifier(bool complete)
+{
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("WCharUnionStruct", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetWCharUnionStructObject(complete); // Generated inside
+    return GetTypeIdentifier("WCharUnionStruct", complete);
+}
+
+const TypeObject* BasicTypeFactory::GetWCharUnionStructObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteWCharUnionStructObject();
+    }
+    //else
+    return GetMinimalWCharUnionStructObject();
+}
+
+const TypeObject* BasicTypeFactory::GetMinimalWCharUnionStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_STRUCTURE);
+
+    type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    MinimalStructMember mst_my_union;
+    mst_my_union.common().member_id(memberId++);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
+    mst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
+    mst_my_union.common().member_flags().IS_EXTERNAL(false);
+    mst_my_union.common().member_flags().IS_OPTIONAL(false);
+    mst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_my_union.common().member_flags().IS_KEY(false);
+    mst_my_union.common().member_flags().IS_DEFAULT(false);
+    mst_my_union.common().member_type_id(*GetWCharUnionIdentifier(false));
+    MD5 my_union_hash("my_union");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_my_union.detail().name_hash()[i] = my_union_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_my_union);
+
+
+    // Header
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("WCharUnionStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("WCharUnionStruct", false);
+}
+
+const TypeObject* BasicTypeFactory::GetCompleteWCharUnionStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_my_union;
+    cst_my_union.common().member_id(memberId++);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT1(false);
+    cst_my_union.common().member_flags().TRY_CONSTRUCT2(false);
+    cst_my_union.common().member_flags().IS_EXTERNAL(false);
+    cst_my_union.common().member_flags().IS_OPTIONAL(false);
+    cst_my_union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_my_union.common().member_flags().IS_KEY(false);
+    cst_my_union.common().member_flags().IS_DEFAULT(false);
+    cst_my_union.common().member_type_id(*GetWCharUnionIdentifier(true));
+    cst_my_union.detail().name("my_union");
+    //cst_my_union.detail().ann_builtin()...
+    //cst_my_union.detail().ann_custom()...
+    type_object->complete().struct_type().member_seq().emplace_back(cst_my_union);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("WCharUnionStruct");
+    //type_object->complete().struct_type().header().detail().ann_builtin()...
+    //type_object->complete().struct_type().header().detail().ann_custom()...
+    // TODO inheritance
+    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
+    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("WCharUnionStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("WCharUnionStruct", true);
 }

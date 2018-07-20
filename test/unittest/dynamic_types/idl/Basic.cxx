@@ -3519,3 +3519,256 @@ void WCharUnion::deserialize(eprosima::fastcdr::Cdr &dcdr)
     }
 }
 
+
+SimpleUnionStruct::SimpleUnionStruct()
+{
+
+    // Just to register all known types
+    BasicTypeFactory factory;
+}
+
+SimpleUnionStruct::~SimpleUnionStruct()
+{
+}
+
+SimpleUnionStruct::SimpleUnionStruct(const SimpleUnionStruct &x)
+{
+    m_my_union = x.m_my_union;
+}
+
+SimpleUnionStruct::SimpleUnionStruct(SimpleUnionStruct &&x)
+{
+    m_my_union = std::move(x.m_my_union);
+}
+
+SimpleUnionStruct& SimpleUnionStruct::operator=(const SimpleUnionStruct &x)
+{
+    m_my_union = x.m_my_union;
+
+    return *this;
+}
+
+SimpleUnionStruct& SimpleUnionStruct::operator=(SimpleUnionStruct &&x)
+{
+    m_my_union = std::move(x.m_my_union);
+
+    return *this;
+}
+
+size_t SimpleUnionStruct::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    /* SimpleUnion */
+    current_alignment += SimpleUnion::getMaxCdrSerializedSize(current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t SimpleUnionStruct::getCdrSerializedSize(const SimpleUnionStruct& data, size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    /* SimpleUnion my_union */
+    current_alignment += SimpleUnion::getCdrSerializedSize(data.my_union(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+void SimpleUnionStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_my_union;
+}
+
+void SimpleUnionStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_my_union;
+}
+
+size_t SimpleUnionStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+            
+
+    return current_align;
+}
+
+bool SimpleUnionStruct::isKeyDefined()
+{
+    return false;
+}
+
+void SimpleUnionStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
+	 
+}
+UnionUnionUnionStruct::UnionUnionUnionStruct()
+{
+
+    // Just to register all known types
+    BasicTypeFactory factory;
+}
+
+UnionUnionUnionStruct::~UnionUnionUnionStruct()
+{
+}
+
+UnionUnionUnionStruct::UnionUnionUnionStruct(const UnionUnionUnionStruct &x)
+{
+    m_my_union = x.m_my_union;
+}
+
+UnionUnionUnionStruct::UnionUnionUnionStruct(UnionUnionUnionStruct &&x)
+{
+    m_my_union = std::move(x.m_my_union);
+}
+
+UnionUnionUnionStruct& UnionUnionUnionStruct::operator=(const UnionUnionUnionStruct &x)
+{
+    m_my_union = x.m_my_union;
+
+    return *this;
+}
+
+UnionUnionUnionStruct& UnionUnionUnionStruct::operator=(UnionUnionUnionStruct &&x)
+{
+    m_my_union = std::move(x.m_my_union);
+
+    return *this;
+}
+
+size_t UnionUnionUnionStruct::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    /* UnionUnion */
+    current_alignment += UnionUnion::getMaxCdrSerializedSize(current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t UnionUnionUnionStruct::getCdrSerializedSize(const UnionUnionUnionStruct& data, size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    /* UnionUnion my_union */
+    current_alignment += UnionUnion::getCdrSerializedSize(data.my_union(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+void UnionUnionUnionStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_my_union;
+}
+
+void UnionUnionUnionStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_my_union;
+}
+
+size_t UnionUnionUnionStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+            
+
+    return current_align;
+}
+
+bool UnionUnionUnionStruct::isKeyDefined()
+{
+    return false;
+}
+
+void UnionUnionUnionStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
+	 
+}
+WCharUnionStruct::WCharUnionStruct()
+{
+
+    // Just to register all known types
+    BasicTypeFactory factory;
+}
+
+WCharUnionStruct::~WCharUnionStruct()
+{
+}
+
+WCharUnionStruct::WCharUnionStruct(const WCharUnionStruct &x)
+{
+    m_my_union = x.m_my_union;
+}
+
+WCharUnionStruct::WCharUnionStruct(WCharUnionStruct &&x)
+{
+    m_my_union = std::move(x.m_my_union);
+}
+
+WCharUnionStruct& WCharUnionStruct::operator=(const WCharUnionStruct &x)
+{
+    m_my_union = x.m_my_union;
+
+    return *this;
+}
+
+WCharUnionStruct& WCharUnionStruct::operator=(WCharUnionStruct &&x)
+{
+    m_my_union = std::move(x.m_my_union);
+
+    return *this;
+}
+
+size_t WCharUnionStruct::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    /* WCharUnion */
+    current_alignment += WCharUnion::getMaxCdrSerializedSize(current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t WCharUnionStruct::getCdrSerializedSize(const WCharUnionStruct& data, size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    /* WCharUnion my_union */
+    current_alignment += WCharUnion::getCdrSerializedSize(data.my_union(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+void WCharUnionStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_my_union;
+}
+
+void WCharUnionStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_my_union;
+}
+
+size_t WCharUnionStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+            
+
+    return current_align;
+}
+
+bool WCharUnionStruct::isKeyDefined()
+{
+    return false;
+}
+
+void WCharUnionStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
+	 
+}

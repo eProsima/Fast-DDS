@@ -4118,5 +4118,398 @@ private:
     int32_t m_first;
     int64_t m_second;
 };
+/*!
+ * @brief This class represents the structure SimpleUnionStruct defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class SimpleUnionStruct
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport SimpleUnionStruct();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~SimpleUnionStruct();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object SimpleUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport SimpleUnionStruct(const SimpleUnionStruct &x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object SimpleUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport SimpleUnionStruct(SimpleUnionStruct &&x);
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object SimpleUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport SimpleUnionStruct& operator=(const SimpleUnionStruct &x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object SimpleUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport SimpleUnionStruct& operator=(SimpleUnionStruct &&x);
+
+    /*!
+     * @brief This function copies the value in member my_union
+     * @param _my_union New value to be copied in member my_union
+     */
+    inline eProsima_user_DllExport void my_union(const SimpleUnion &_my_union)
+    {
+        m_my_union = _my_union;
+    }
+
+    /*!
+     * @brief This function moves the value in member my_union
+     * @param _my_union New value to be moved in member my_union
+     */
+    inline eProsima_user_DllExport void my_union(SimpleUnion &&_my_union)
+    {
+        m_my_union = std::move(_my_union);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member my_union
+     * @return Constant reference to member my_union
+     */
+    inline eProsima_user_DllExport const SimpleUnion& my_union() const
+    {
+        return m_my_union;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_union
+     * @return Reference to member my_union
+     */
+    inline eProsima_user_DllExport SimpleUnion& my_union()
+    {
+        return m_my_union;
+    }
+
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const SimpleUnionStruct& data, size_t current_alignment = 0);
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    eProsima_user_DllExport static bool isKeyDefined();
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    SimpleUnion m_my_union;
+};
+/*!
+ * @brief This class represents the structure UnionUnionUnionStruct defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class UnionUnionUnionStruct
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport UnionUnionUnionStruct();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~UnionUnionUnionStruct();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object UnionUnionUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport UnionUnionUnionStruct(const UnionUnionUnionStruct &x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object UnionUnionUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport UnionUnionUnionStruct(UnionUnionUnionStruct &&x);
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object UnionUnionUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport UnionUnionUnionStruct& operator=(const UnionUnionUnionStruct &x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object UnionUnionUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport UnionUnionUnionStruct& operator=(UnionUnionUnionStruct &&x);
+
+    /*!
+     * @brief This function copies the value in member my_union
+     * @param _my_union New value to be copied in member my_union
+     */
+    inline eProsima_user_DllExport void my_union(const UnionUnion &_my_union)
+    {
+        m_my_union = _my_union;
+    }
+
+    /*!
+     * @brief This function moves the value in member my_union
+     * @param _my_union New value to be moved in member my_union
+     */
+    inline eProsima_user_DllExport void my_union(UnionUnion &&_my_union)
+    {
+        m_my_union = std::move(_my_union);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member my_union
+     * @return Constant reference to member my_union
+     */
+    inline eProsima_user_DllExport const UnionUnion& my_union() const
+    {
+        return m_my_union;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_union
+     * @return Reference to member my_union
+     */
+    inline eProsima_user_DllExport UnionUnion& my_union()
+    {
+        return m_my_union;
+    }
+
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const UnionUnionUnionStruct& data, size_t current_alignment = 0);
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    eProsima_user_DllExport static bool isKeyDefined();
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    UnionUnion m_my_union;
+};
+/*!
+ * @brief This class represents the structure WCharUnionStruct defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class WCharUnionStruct
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport WCharUnionStruct();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~WCharUnionStruct();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object WCharUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport WCharUnionStruct(const WCharUnionStruct &x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object WCharUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport WCharUnionStruct(WCharUnionStruct &&x);
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object WCharUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport WCharUnionStruct& operator=(const WCharUnionStruct &x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object WCharUnionStruct that will be copied.
+     */
+    eProsima_user_DllExport WCharUnionStruct& operator=(WCharUnionStruct &&x);
+
+    /*!
+     * @brief This function copies the value in member my_union
+     * @param _my_union New value to be copied in member my_union
+     */
+    inline eProsima_user_DllExport void my_union(const WCharUnion &_my_union)
+    {
+        m_my_union = _my_union;
+    }
+
+    /*!
+     * @brief This function moves the value in member my_union
+     * @param _my_union New value to be moved in member my_union
+     */
+    inline eProsima_user_DllExport void my_union(WCharUnion &&_my_union)
+    {
+        m_my_union = std::move(_my_union);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member my_union
+     * @return Constant reference to member my_union
+     */
+    inline eProsima_user_DllExport const WCharUnion& my_union() const
+    {
+        return m_my_union;
+    }
+
+    /*!
+     * @brief This function returns a reference to member my_union
+     * @return Reference to member my_union
+     */
+    inline eProsima_user_DllExport WCharUnion& my_union()
+    {
+        return m_my_union;
+    }
+
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const WCharUnionStruct& data, size_t current_alignment = 0);
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    eProsima_user_DllExport static bool isKeyDefined();
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    WCharUnion m_my_union;
+};
 
 #endif // _BASIC_H_
