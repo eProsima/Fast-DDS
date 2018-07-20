@@ -450,6 +450,7 @@ bool PDPSimple::createSPDPEndpoints()
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
     hatt.initialReservedCaches = 20;
     hatt.maximumReservedCaches = 100;
+    hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_SPDPWriterHistory = new WriterHistory(hatt);
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -480,6 +481,7 @@ bool PDPSimple::createSPDPEndpoints()
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
     hatt.initialReservedCaches = 250;
     hatt.maximumReservedCaches = 5000;
+    hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     mp_SPDPReaderHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;

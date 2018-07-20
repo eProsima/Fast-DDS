@@ -19,27 +19,19 @@
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include "EDPSimpleListeners.h"
-
-
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-
 #include "../../../participant/RTPSParticipantImpl.h"
-
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
-
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
-
-
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
-
-
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
 
 #include <fastrtps/log/Log.h>
@@ -152,6 +144,7 @@ bool EDPSimple::createSEDPEndpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 5000;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         mp_PubWriter.second = new WriterHistory(hatt);
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -183,6 +176,7 @@ bool EDPSimple::createSEDPEndpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 1000000;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         mp_SubReader.second = new ReaderHistory(hatt);
         //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
@@ -218,6 +212,7 @@ bool EDPSimple::createSEDPEndpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 1000000;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         mp_PubReader.second = new ReaderHistory(hatt);
         //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
@@ -251,6 +246,7 @@ bool EDPSimple::createSEDPEndpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 5000;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         mp_SubWriter.second = new WriterHistory(hatt);
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -300,6 +296,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 5000;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         sedp_builtin_publications_secure_writer_.second = new WriterHistory(hatt);
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -332,6 +329,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 1000000;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         sedp_builtin_subscriptions_secure_reader_.second = new ReaderHistory(hatt);
         //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
@@ -366,6 +364,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 1000000;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         sedp_builtin_publications_secure_reader_.second = new ReaderHistory(hatt);
         //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
@@ -397,6 +396,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         hatt.initialReservedCaches = 100;
         hatt.maximumReservedCaches = 5000;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         sedp_builtin_subscriptions_secure_writer_.second = new WriterHistory(hatt);
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
