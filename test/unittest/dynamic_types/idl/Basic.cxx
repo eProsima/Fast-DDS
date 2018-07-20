@@ -2229,6 +2229,8 @@ size_t MapStruct::getMaxCdrSerializedSize(size_t current_alignment)
     size_t initial_alignment = current_alignment;
 
     /* map<int32_t, int32_t, 2> */
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     current_alignment += (2 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     current_alignment += (2 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
@@ -2244,9 +2246,10 @@ size_t MapStruct::getCdrSerializedSize(const MapStruct& data, size_t current_ali
     size_t initial_alignment = current_alignment;
 
     /* map<int32_t, int32_t, 2> my_map */
-    current_alignment += (data.my_map().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (data.my_map().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+    current_alignment += (data.my_map().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += (data.my_map().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     return current_alignment - initial_alignment;
@@ -2320,10 +2323,14 @@ size_t MapMapStruct::getMaxCdrSerializedSize(size_t current_alignment)
     size_t initial_alignment = current_alignment;
 
     /* map<int32_t, std::map<int32_t, int32_t>, 2> */
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     current_alignment += (2 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(size_t a = 0; a < 2; ++a)
     {
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
             current_alignment += (2 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             current_alignment += (2 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
@@ -2341,17 +2348,10 @@ size_t MapMapStruct::getCdrSerializedSize(const MapMapStruct& data, size_t curre
     size_t initial_alignment = current_alignment;
 
     /* map<int32_t, std::map<int32_t, int32_t>, 2> my_map_map */
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     current_alignment += (data.my_map_map().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    for(auto a : data.my_map_map())
-    {
-        (void)a;
-        current_alignment += (a.second.size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-        current_alignment += (a.second.size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    }
-
+    // VALUE TYPE ISN'T PRIMITIVE std::map<int32_t, int32_t>
 
 
     return current_alignment - initial_alignment;
