@@ -307,6 +307,9 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
 
     CompleteStruct staticData;
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
+
+    uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
+    payload = SerializedPayload_t(payloadSize2);
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload));
 
     types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);

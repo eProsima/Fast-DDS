@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Test.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -204,7 +204,7 @@ size_t BasicStruct::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
     /* END std::string */
     /* BEGIN std::wstring */
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + ((255 + 1) * 4);
     /* END std::wstring */
 
     return current_alignment - initial_alignment;
@@ -242,7 +242,7 @@ size_t BasicStruct::getCdrSerializedSize(const BasicStruct& data, size_t current
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.my_string().size() + 1;
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.my_wstring().size() + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + ((data.my_wstring().size() + 1) * 4);
 
 
     return current_alignment - initial_alignment;
@@ -289,7 +289,7 @@ void BasicStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t BasicStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
 
 
@@ -317,21 +317,21 @@ bool BasicStruct::isKeyDefined()
 void BasicStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
@@ -768,7 +768,7 @@ void ComplexStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t ComplexStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
 
 
@@ -803,28 +803,28 @@ bool ComplexStruct::isKeyDefined()
 void ComplexStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 MyUnion::MyUnion()
 {
@@ -1071,7 +1071,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         /* BEGIN ComplexStruct */
@@ -1081,7 +1081,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -1440,7 +1440,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         /* BEGIN std::string */
@@ -1450,7 +1450,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         /* BEGIN int32_t */
@@ -1461,7 +1461,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -1614,7 +1614,7 @@ void CompleteStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t CompleteStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
 
 
@@ -1629,6 +1629,6 @@ bool CompleteStruct::isKeyDefined()
 void CompleteStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
+
+
 }
