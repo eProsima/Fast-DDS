@@ -3511,26 +3511,26 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(union_data));
 
-        //// SERIALIZATION TEST
-        //UnionUnion seq;
-        //UnionUnionPubSubType seqpb;
+        // SERIALIZATION TEST
+        SimpleUnionStruct seq;
+        SimpleUnionStructPubSubType seqpb;
 
-        //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
-        //SerializedPayload_t dynamic_payload(payloadSize3);
-        //ASSERT_TRUE(pubsubType.serialize(union_data, &dynamic_payload));
-        //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-        //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+        uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
+        SerializedPayload_t dynamic_payload(payloadSize3);
+        ASSERT_TRUE(pubsubType.serialize(union_data, &dynamic_payload));
+        ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
 
-        //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-        //SerializedPayload_t static_payload(static_payloadSize);
-        //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-        //ASSERT_TRUE(static_payload.length == static_payloadSize);
-        //types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(union_type);
-        //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-        //ASSERT_TRUE(data3->Equals(union_data));
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(union_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(union_data));
 
-        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
-        //ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);
