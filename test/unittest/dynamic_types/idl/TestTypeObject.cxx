@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/*! 
  * @file TestTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -3680,7 +3680,7 @@ const TypeObject* TestTypeFactory::GetMinimalMyUnionObject()
     mst_basic.common().member_flags().IS_OPTIONAL(false);
     mst_basic.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_basic.common().member_flags().IS_KEY(false);
-    mst_basic.common().member_flags().IS_DEFAULT(true);
+    mst_basic.common().member_flags().IS_DEFAULT(false);
     mst_basic.common().type_id(*GetBasicStructIdentifier(false));
     mst_basic.common().label_seq().emplace_back(::A);
     MD5 basic_hash("basic");
@@ -3780,7 +3780,7 @@ const TypeObject* TestTypeFactory::GetCompleteMyUnionObject()
     cst_basic.common().member_flags().IS_OPTIONAL(false);
     cst_basic.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_basic.common().member_flags().IS_KEY(false);
-    cst_basic.common().member_flags().IS_DEFAULT(true);
+    cst_basic.common().member_flags().IS_DEFAULT(false);
     cst_basic.common().type_id(*GetBasicStructIdentifier(true));
     cst_basic.common().label_seq().emplace_back(::A);
 

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/*! 
  * @file Test.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -151,41 +151,52 @@ size_t BasicStruct::getMaxCdrSerializedSize(size_t current_alignment)
     /* bool */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* uint8_t */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
     /* int16_t */
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
+
     /* int32_t */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     /* int64_t */
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
+
     /* uint16_t */
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
 
     /* uint32_t */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* uint64_t */
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
 
     /* float */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* double */
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
+
     /* long double */
-    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+    current_alignment += 128 + eprosima::fastcdr::Cdr::alignment(current_alignment, 128); // 128 bits
 
     /* char */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* wchar_t */
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // 32 bits
 
     /* std::string */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
@@ -204,41 +215,52 @@ size_t BasicStruct::getCdrSerializedSize(const BasicStruct& data, size_t current
     /* bool my_bool */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* uint8_t my_octet */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
     /* int16_t my_int16 */
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
+
     /* int32_t my_int32 */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     /* int64_t my_int64 */
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
+
     /* uint16_t my_uint16 */
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
 
     /* uint32_t my_uint32 */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* uint64_t my_uint64 */
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
 
     /* float my_float32 */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* double my_float64 */
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
+
     /* long double my_float128 */
-    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+    current_alignment += 128 + eprosima::fastcdr::Cdr::alignment(current_alignment, 128); // 128 bits
 
     /* char my_char */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* wchar_t my_wchar */
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // 32 bits
 
     /* std::string my_string */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.my_string().size() + 1;
@@ -291,7 +313,7 @@ void BasicStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t BasicStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-
+            
 
 
 
@@ -319,21 +341,21 @@ bool BasicStruct::isKeyDefined()
 void BasicStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 }
 
 
@@ -488,21 +510,28 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
     /* uint8_t */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* BasicStruct */
     current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);
     /* MyAliasEnum */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* MyEnum */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* std::vector<uint8_t> */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     current_alignment += (55 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
 
     /* std::vector<BasicStruct> */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
     for(size_t a = 0; a < 100; ++a)
     {
         current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);}
@@ -510,52 +539,67 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
     /* std::array<std::array<std::array<char, 4>, 5>, 500> */
     current_alignment += ((500 * 5 * 4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* MyOctetArray500 */
     current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* std::array<BasicStruct, 5> */
+
     for(size_t a = 0; a < (5); ++a)
     {
         current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);}
-    /* std::map<uint8_t, int16_t> */
-    current_alignment += (100 * 1)
-     + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);current_alignment += (100 * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    /* map<uint8_t, int16_t, 100> */
+    current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += (100 * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
 
-    /* std::map<int32_t, BasicStruct> */
-    current_alignment += (100 * 4)
-     + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);for(size_t a = 0; a < 100; ++a)
+
+    /* map<int32_t, BasicStruct, 100> */
+    current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
     {
             current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);
     }
 
-    /* std::map<int32_t, std::vector<std::vector<uint8_t>>> */
-    current_alignment += (100 * 4)
-     + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);for(size_t a = 0; a < 100; ++a)
+    /* map<int32_t, std::vector<std::vector<uint8_t>>, 100> */
+    current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
     {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
             for(size_t b = 0; b < 100; ++b)
             {
                 current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
                 current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
             }
     }
 
-    /* std::map<int32_t, MyOctetArray500> */
-    current_alignment += (100 * 4)
-     + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);for(size_t a = 0; a < 100; ++a)
+    /* map<int32_t, MyOctetArray500, 100> */
+    current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
     {
             current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
     }
 
-    /* std::map<int32_t, std::map<uint8_t, BSAlias5>> */
-    current_alignment += (100 * 4)
-     + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);for(size_t a = 0; a < 100; ++a)
+    /* map<int32_t, std::map<uint8_t, BSAlias5>, 100> */
+    current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    for(size_t a = 0; a < 100; ++a)
     {
-            current_alignment += (100 * 1)
-             + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);for(size_t b = 0; b < 100; ++b)
+            current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+            for(size_t b = 0; b < 100; ++b)
             {
+
                     for(size_t c = 0; c < (5); ++c)
                     {
                         current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);}}
@@ -575,6 +619,7 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (1024 + 1) * 4; // 32 bits
 
     /* std::array<std::array<std::string, 5>, 5> */
+
     for(size_t a = 0; a < (5 * 5); ++a)
     {
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 75 + 1;
@@ -582,16 +627,22 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
     /* MA3 */
     current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* std::array<MyMiniArray, 5> */
+
     for(size_t a = 0; a < (5); ++a)
     {
     current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     }
     /* std::array<MySequenceLong, 23> */
+
     for(size_t a = 0; a < (23); ++a)
     {
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
         current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     }
 
@@ -605,40 +656,52 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     /* uint8_t my_octet */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     /* BasicStruct my_basic_struct */
     current_alignment += BasicStruct::getCdrSerializedSize(data.my_basic_struct(), current_alignment);
     /* MyAliasEnum my_alias_enum */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* MyEnum my_enum */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
     /* std::vector<uint8_t> my_sequence_octet */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     current_alignment += (data.my_sequence_octet().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
 
     /* std::vector<BasicStruct> my_sequence_struct */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
     for(size_t a = 0; a < data.my_sequence_struct().size(); ++a)
     {
         current_alignment += BasicStruct::getCdrSerializedSize(data.my_sequence_struct().at(a), current_alignment);}
 
     /* std::array<std::array<std::array<char, 4>, 5>, 500> my_array_octet */
     current_alignment += ((500 * 5 * 4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
     /* MyOctetArray500 my_octet_array_500 */
     current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
     /* std::array<BasicStruct, 5> my_array_struct */
+
     for(size_t a = 0; a < data.my_array_struct().size(); ++a)
     {
             current_alignment += BasicStruct::getCdrSerializedSize(data.my_array_struct().at(a), current_alignment);
     }
-    /* std::map<uint8_t, int16_t> my_map_octet_short */
+    /* map<uint8_t, int16_t, 100> my_map_octet_short */
     current_alignment += (data.my_map_octet_short().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     current_alignment += (data.my_map_octet_short().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
-    /* std::map<int32_t, BasicStruct> my_map_long_struct */
+
+    /* map<int32_t, BasicStruct, 100> my_map_long_struct */
     current_alignment += (data.my_map_long_struct().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     for(auto a : data.my_map_long_struct())
     {
         (void)a;
@@ -647,40 +710,50 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     }
 
 
-    /* std::map<int32_t, std::vector<std::vector<uint8_t>>> my_map_long_seq_octet */
+    /* map<int32_t, std::vector<std::vector<uint8_t>>, 100> my_map_long_seq_octet */
     current_alignment += (data.my_map_long_seq_octet().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     for(auto a : data.my_map_long_seq_octet())
     {
         (void)a;
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
         for(size_t b = 0; b < a.second.size(); ++b)
         {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
             current_alignment += (a.second.at(b).size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
         }
 
     }
 
 
-    /* std::map<int32_t, MyOctetArray500> my_map_long_octet_array_500 */
+    /* map<int32_t, MyOctetArray500, 100> my_map_long_octet_array_500 */
     current_alignment += (data.my_map_long_octet_array_500().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     for(auto a : data.my_map_long_octet_array_500())
     {
         (void)a;
         current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
     }
 
 
-    /* std::map<int32_t, std::map<uint8_t, BSAlias5>> my_map_long_lol_type */
+    /* map<int32_t, std::map<uint8_t, BSAlias5>, 100> my_map_long_lol_type */
     current_alignment += (data.my_map_long_lol_type().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     for(auto a : data.my_map_long_lol_type())
     {
         (void)a;
         current_alignment += (a.second.size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
         for(auto b : a.second)
         {
             (void)b;
+
             for(size_t c = 0; c < b.second.size(); ++c)
             {
                     current_alignment += BasicStruct::getCdrSerializedSize(b.second.at(c), current_alignment);
@@ -704,8 +777,10 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (data.my_large_string_16().size() + 1) * 4; // 32 bits
 
     /* std::array<std::array<std::string, 5>, 5> my_array_string */
+
     for(size_t a = 0; a < data.my_array_string().size(); ++a)
     {
+
         for(size_t b = 0; b < data.my_array_string().at(a).size(); ++b)
         {
                 current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.my_array_string().at(a).at(b).size() + 1;
@@ -714,15 +789,21 @@ size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t cur
     }
     /* MA3 multi_alias_array_42 */
     current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     /* std::array<MyMiniArray, 5> my_array_arrays */
+
     for(size_t a = 0; a < data.my_array_arrays().size(); ++a)
     {
-            current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);}
+            current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
     /* std::array<MySequenceLong, 23> my_sequences_array */
+
     for(size_t a = 0; a < data.my_sequences_array().size(); ++a)
     {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
             current_alignment += (data.my_sequences_array().at(a).size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     }
 
@@ -788,7 +869,7 @@ void ComplexStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t ComplexStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-
+            
 
 
 
@@ -823,28 +904,28 @@ bool ComplexStruct::isKeyDefined()
 void ComplexStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 }
 MyUnion::MyUnion()
 {
@@ -1081,6 +1162,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
+
         reset_alignment = current_alignment;
 
         /* BasicStruct */
@@ -1089,7 +1171,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         /* ComplexStruct */
@@ -1098,7 +1180,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -1110,6 +1192,7 @@ size_t MyUnion::getCdrSerializedSize(const MyUnion& data, size_t current_alignme
 
     /* MyEnum */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     switch(data.m__d)
     {
@@ -1449,16 +1532,18 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
+
         reset_alignment = current_alignment;
 
         /* int32_t */
         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
 
 
+
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         /* std::string */
@@ -1468,17 +1553,18 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
         reset_alignment = current_alignment;
 
         /* int32_t */
         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
 
 
+
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-
+        
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -1491,11 +1577,13 @@ size_t MyUnion2::getCdrSerializedSize(const MyUnion2& data, size_t current_align
     /* uint8_t */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     switch(data.m__d)
     {
         case A:
         /* int32_t uno */
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
         break;
         case B:
@@ -1506,6 +1594,7 @@ size_t MyUnion2::getCdrSerializedSize(const MyUnion2& data, size_t current_align
         case C:
         /* int32_t tres */
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
         break;
         default:
@@ -1636,7 +1725,7 @@ void CompleteStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t CompleteStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-
+            
 
 
 
@@ -1651,6 +1740,6 @@ bool CompleteStruct::isKeyDefined()
 void CompleteStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-
-
+	 
+	 
 }
