@@ -54,6 +54,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(DYNAMIC_TYPES_TEST_SOURCE
             DynamicTypesTests.cpp
+            idl/Basic.cxx
+            idl/BasicPubSubTypes.cxx
+            idl/BasicTypeObject.cxx
             ${DYNAMIC_TYPES_SOURCE}
         )
 

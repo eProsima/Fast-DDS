@@ -25,6 +25,7 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/log/Log.h>
+#include "idl/BasicPubSubTypes.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
@@ -1265,8 +1266,24 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->Equals(data));
 
+        // SERIALIZATION TEST
+        WCharStruct wchar;
+        WCharStructPubSubType wcharpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wcharpb.deserialize(&dynamic_payload, &wchar));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wcharpb.getSerializedSizeProvider(&wchar)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wcharpb.serialize(&wchar, &static_payload));
+        types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(created_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->Equals(data));
+
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data3) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());

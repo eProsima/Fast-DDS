@@ -87,6 +87,7 @@ size_t EnumStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t EnumStruct::getCdrSerializedSize(const EnumStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* MyEnum my_enum */
@@ -176,6 +177,7 @@ size_t AliasStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t AliasStruct::getCdrSerializedSize(const AliasStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* MyAliasEnum my_alias */
@@ -265,6 +267,7 @@ size_t AliasAliasStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t AliasAliasStruct::getCdrSerializedSize(const AliasAliasStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* MyAliasAliasEnum my_alias_alias */
@@ -354,6 +357,7 @@ size_t BoolStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t BoolStruct::getCdrSerializedSize(const BoolStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* bool my_bool */
@@ -442,6 +446,7 @@ size_t OctetStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t OctetStruct::getCdrSerializedSize(const OctetStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* uint8_t my_octet */
@@ -530,6 +535,7 @@ size_t ShortStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t ShortStruct::getCdrSerializedSize(const ShortStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* int16_t my_int16 */
@@ -618,6 +624,7 @@ size_t LongStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t LongStruct::getCdrSerializedSize(const LongStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* int32_t my_int32 */
@@ -706,6 +713,7 @@ size_t LongLongStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t LongLongStruct::getCdrSerializedSize(const LongLongStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* int64_t my_int64 */
@@ -794,6 +802,7 @@ size_t UShortStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t UShortStruct::getCdrSerializedSize(const UShortStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* uint16_t my_uint16 */
@@ -882,6 +891,7 @@ size_t ULongStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t ULongStruct::getCdrSerializedSize(const ULongStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* uint32_t my_uint32 */
@@ -970,6 +980,7 @@ size_t ULongLongStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t ULongLongStruct::getCdrSerializedSize(const ULongLongStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* uint64_t my_uint64 */
@@ -1058,6 +1069,7 @@ size_t FloatStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t FloatStruct::getCdrSerializedSize(const FloatStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* float my_float32 */
@@ -1146,6 +1158,7 @@ size_t DoubleStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t DoubleStruct::getCdrSerializedSize(const DoubleStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* double my_float64 */
@@ -1233,6 +1246,7 @@ size_t LongDoubleStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t LongDoubleStruct::getCdrSerializedSize(const LongDoubleStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* long double my_float128 */
@@ -1320,6 +1334,7 @@ size_t CharStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t CharStruct::getCdrSerializedSize(const CharStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* char my_char */
@@ -1407,6 +1422,7 @@ size_t WCharStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t WCharStruct::getCdrSerializedSize(const WCharStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* wchar_t my_wchar */
@@ -1492,6 +1508,7 @@ size_t StringStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t StringStruct::getCdrSerializedSize(const StringStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::string my_string */
@@ -1577,6 +1594,7 @@ size_t WStringStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t WStringStruct::getCdrSerializedSize(const WStringStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::wstring my_wstring */
@@ -1662,6 +1680,7 @@ size_t LargeStringStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t LargeStringStruct::getCdrSerializedSize(const LargeStringStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::string my_large_string */
@@ -1747,6 +1766,7 @@ size_t LargeWStringStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t LargeWStringStruct::getCdrSerializedSize(const LargeWStringStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::wstring my_large_wstring */
@@ -1833,6 +1853,7 @@ size_t ArraytStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t ArraytStruct::getCdrSerializedSize(const ArraytStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::array<std::array<std::array<int32_t, 2>, 2>, 2> my_array */
@@ -1923,6 +1944,7 @@ size_t ArrayArrayStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t ArrayArrayStruct::getCdrSerializedSize(const ArrayArrayStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::array<std::array<MyArray, 2>, 2> my_array_array */
@@ -2019,6 +2041,7 @@ size_t SequenceStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t SequenceStruct::getCdrSerializedSize(const SequenceStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::vector<int32_t> my_sequence */
@@ -2118,6 +2141,7 @@ size_t SequenceSequenceStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t SequenceSequenceStruct::getCdrSerializedSize(const SequenceSequenceStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* std::vector<std::vector<int32_t>> my_sequence_sequence */
@@ -2216,6 +2240,7 @@ size_t MapStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t MapStruct::getCdrSerializedSize(const MapStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* map<int32_t, int32_t, 2> my_map */
@@ -2294,7 +2319,7 @@ size_t MapMapStruct::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
-    /* map<int32_t, std::map<int32_t, int32_t, 2>, 2> */
+    /* map<int32_t, std::map<int32_t, int32_t>, 2> */
     current_alignment += (2 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(size_t a = 0; a < 2; ++a)
@@ -2312,9 +2337,10 @@ size_t MapMapStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t MapMapStruct::getCdrSerializedSize(const MapMapStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
-    /* map<int32_t, std::map<int32_t, int32_t, 2>, 2> my_map_map */
+    /* map<int32_t, std::map<int32_t, int32_t>, 2> my_map_map */
     current_alignment += (data.my_map_map().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(auto a : data.my_map_map())
@@ -2418,6 +2444,7 @@ size_t StructStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t StructStruct::getCdrSerializedSize(const StructStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* int32_t int32 */
@@ -2522,6 +2549,7 @@ size_t StructStructStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t StructStructStruct::getCdrSerializedSize(const StructStructStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* StructStruct child_struct */
@@ -2812,6 +2840,7 @@ size_t SimpleUnion::getMaxCdrSerializedSize(size_t current_alignment)
 // TODO(Ricardo) Review
 size_t SimpleUnion::getCdrSerializedSize(const SimpleUnion& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* int32_t */
@@ -3123,6 +3152,7 @@ size_t UnionUnion::getMaxCdrSerializedSize(size_t current_alignment)
 // TODO(Ricardo) Review
 size_t UnionUnion::getCdrSerializedSize(const UnionUnion& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* int32_t */
@@ -3427,6 +3457,7 @@ size_t WCharUnion::getMaxCdrSerializedSize(size_t current_alignment)
 // TODO(Ricardo) Review
 size_t WCharUnion::getCdrSerializedSize(const WCharUnion& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* wchar_t */

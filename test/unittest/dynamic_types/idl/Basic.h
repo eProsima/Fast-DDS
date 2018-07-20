@@ -3121,7 +3121,7 @@ public:
      * @brief This function copies the value in member my_map
      * @param _my_map New value to be copied in member my_map
      */
-    inline eProsima_user_DllExport void my_map(const std::map<int32_t, int32_t, 2> &_my_map)
+    inline eProsima_user_DllExport void my_map(const std::map<int32_t, int32_t> &_my_map)
     {
         m_my_map = _my_map;
     }
@@ -3130,7 +3130,7 @@ public:
      * @brief This function moves the value in member my_map
      * @param _my_map New value to be moved in member my_map
      */
-    inline eProsima_user_DllExport void my_map(std::map<int32_t, int32_t, 2> &&_my_map)
+    inline eProsima_user_DllExport void my_map(std::map<int32_t, int32_t> &&_my_map)
     {
         m_my_map = std::move(_my_map);
     }
@@ -3139,7 +3139,7 @@ public:
      * @brief This function returns a constant reference to member my_map
      * @return Constant reference to member my_map
      */
-    inline eProsima_user_DllExport const std::map<int32_t, int32_t, 2>& my_map() const
+    inline eProsima_user_DllExport const std::map<int32_t, int32_t>& my_map() const
     {
         return m_my_map;
     }
@@ -3148,7 +3148,7 @@ public:
      * @brief This function returns a reference to member my_map
      * @return Reference to member my_map
      */
-    inline eProsima_user_DllExport std::map<int32_t, int32_t, 2>& my_map()
+    inline eProsima_user_DllExport std::map<int32_t, int32_t>& my_map()
     {
         return m_my_map;
     }
@@ -3204,7 +3204,7 @@ public:
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
 private:
-    std::map<int32_t, int32_t, 2> m_my_map;
+    std::map<int32_t, int32_t> m_my_map;
 };
 /*!
  * @brief This class represents the structure MapMapStruct defined by the user in the IDL file.
@@ -3252,7 +3252,7 @@ public:
      * @brief This function copies the value in member my_map_map
      * @param _my_map_map New value to be copied in member my_map_map
      */
-    inline eProsima_user_DllExport void my_map_map(const std::map<int32_t, std::map<int32_t, int32_t, 2>, 2> &_my_map_map)
+    inline eProsima_user_DllExport void my_map_map(const std::map<int32_t, std::map<int32_t, int32_t>> &_my_map_map)
     {
         m_my_map_map = _my_map_map;
     }
@@ -3261,7 +3261,7 @@ public:
      * @brief This function moves the value in member my_map_map
      * @param _my_map_map New value to be moved in member my_map_map
      */
-    inline eProsima_user_DllExport void my_map_map(std::map<int32_t, std::map<int32_t, int32_t, 2>, 2> &&_my_map_map)
+    inline eProsima_user_DllExport void my_map_map(std::map<int32_t, std::map<int32_t, int32_t>> &&_my_map_map)
     {
         m_my_map_map = std::move(_my_map_map);
     }
@@ -3270,7 +3270,7 @@ public:
      * @brief This function returns a constant reference to member my_map_map
      * @return Constant reference to member my_map_map
      */
-    inline eProsima_user_DllExport const std::map<int32_t, std::map<int32_t, int32_t, 2>, 2>& my_map_map() const
+    inline eProsima_user_DllExport const std::map<int32_t, std::map<int32_t, int32_t>>& my_map_map() const
     {
         return m_my_map_map;
     }
@@ -3279,7 +3279,7 @@ public:
      * @brief This function returns a reference to member my_map_map
      * @return Reference to member my_map_map
      */
-    inline eProsima_user_DllExport std::map<int32_t, std::map<int32_t, int32_t, 2>, 2>& my_map_map()
+    inline eProsima_user_DllExport std::map<int32_t, std::map<int32_t, int32_t>>& my_map_map()
     {
         return m_my_map_map;
     }
@@ -3335,7 +3335,7 @@ public:
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
 private:
-    std::map<int32_t, std::map<int32_t, int32_t, 2>, 2> m_my_map_map;
+    std::map<int32_t, std::map<int32_t, int32_t>> m_my_map_map;
 };
 /*!
  * @brief This class represents the structure StructStruct defined by the user in the IDL file.
