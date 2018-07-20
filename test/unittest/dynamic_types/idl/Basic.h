@@ -3380,56 +3380,56 @@ public:
     eProsima_user_DllExport StructStruct& operator=(StructStruct &&x);
 
     /*!
-     * @brief This function sets a value in member int32
-     * @param _int32 New value for member int32
+     * @brief This function sets a value in member a
+     * @param _a New value for member a
      */
-    inline eProsima_user_DllExport void int32(int32_t _int32)
+    inline eProsima_user_DllExport void a(int32_t _a)
     {
-        m_int32 = _int32;
+        m_a = _a;
     }
 
     /*!
-     * @brief This function returns the value of member int32
-     * @return Value of member int32
+     * @brief This function returns the value of member a
+     * @return Value of member a
      */
-    inline eProsima_user_DllExport int32_t int32() const
+    inline eProsima_user_DllExport int32_t a() const
     {
-        return m_int32;
+        return m_a;
     }
 
     /*!
-     * @brief This function returns a reference to member int32
-     * @return Reference to member int32
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
      */
-    inline eProsima_user_DllExport int32_t& int32()
+    inline eProsima_user_DllExport int32_t& a()
     {
-        return m_int32;
+        return m_a;
     }
     /*!
-     * @brief This function sets a value in member int64
-     * @param _int64 New value for member int64
+     * @brief This function sets a value in member b
+     * @param _b New value for member b
      */
-    inline eProsima_user_DllExport void int64(int64_t _int64)
+    inline eProsima_user_DllExport void b(int64_t _b)
     {
-        m_int64 = _int64;
-    }
-
-    /*!
-     * @brief This function returns the value of member int64
-     * @return Value of member int64
-     */
-    inline eProsima_user_DllExport int64_t int64() const
-    {
-        return m_int64;
+        m_b = _b;
     }
 
     /*!
-     * @brief This function returns a reference to member int64
-     * @return Reference to member int64
+     * @brief This function returns the value of member b
+     * @return Value of member b
      */
-    inline eProsima_user_DllExport int64_t& int64()
+    inline eProsima_user_DllExport int64_t b() const
     {
-        return m_int64;
+        return m_b;
+    }
+
+    /*!
+     * @brief This function returns a reference to member b
+     * @return Reference to member b
+     */
+    inline eProsima_user_DllExport int64_t& b()
+    {
+        return m_b;
     }
 
     /*!
@@ -3483,8 +3483,8 @@ public:
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
 private:
-    int32_t m_int32;
-    int64_t m_int64;
+    int32_t m_a;
+    int64_t m_b;
 };
 /*!
  * @brief This class represents the structure StructStructStruct defined by the user in the IDL file.

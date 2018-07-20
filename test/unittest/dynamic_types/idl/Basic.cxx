@@ -2387,8 +2387,8 @@ void MapMapStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 }
 StructStruct::StructStruct()
 {
-    m_int32 = 0;
-    m_int64 = 0;
+    m_a = 0;
+    m_b = 0;
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -2400,28 +2400,28 @@ StructStruct::~StructStruct()
 
 StructStruct::StructStruct(const StructStruct &x)
 {
-    m_int32 = x.m_int32;
-    m_int64 = x.m_int64;
+    m_a = x.m_a;
+    m_b = x.m_b;
 }
 
 StructStruct::StructStruct(StructStruct &&x)
 {
-    m_int32 = x.m_int32;
-    m_int64 = x.m_int64;
+    m_a = x.m_a;
+    m_b = x.m_b;
 }
 
 StructStruct& StructStruct::operator=(const StructStruct &x)
 {
-    m_int32 = x.m_int32;
-    m_int64 = x.m_int64;
+    m_a = x.m_a;
+    m_b = x.m_b;
 
     return *this;
 }
 
 StructStruct& StructStruct::operator=(StructStruct &&x)
 {
-    m_int32 = x.m_int32;
-    m_int64 = x.m_int64;
+    m_a = x.m_a;
+    m_b = x.m_b;
 
     return *this;
 }
@@ -2447,11 +2447,11 @@ size_t StructStruct::getCdrSerializedSize(const StructStruct& data, size_t curre
     (void)data;
     size_t initial_alignment = current_alignment;
 
-    /* int32_t int32 */
+    /* int32_t a */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    /* int64_t int64 */
+    /* int64_t b */
     current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
 
@@ -2461,14 +2461,14 @@ size_t StructStruct::getCdrSerializedSize(const StructStruct& data, size_t curre
 
 void StructStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << m_int32;
-    scdr << m_int64;
+    scdr << m_a;
+    scdr << m_b;
 }
 
 void StructStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> m_int32;
-    dcdr >> m_int64;
+    dcdr >> m_a;
+    dcdr >> m_b;
 }
 
 size_t StructStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)

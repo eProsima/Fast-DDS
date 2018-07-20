@@ -142,8 +142,8 @@ struct MapMapStruct
 
 struct StructStruct
 {
-    long int32;
-    long long int64;
+    long a;
+    long long b;
 };
 
 struct StructStructStruct
