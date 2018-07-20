@@ -215,11 +215,8 @@ const TypeObject* TestTypeFactory::GetMyEnumObject(bool complete)
     {
         return GetCompleteMyEnumObject();
     }
-    else
-    {
-        return GetMinimalMyEnumObject();
-    }
-    return GetTypeObject("MyEnum", complete);
+    // else
+    return GetMinimalMyEnumObject();
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyEnumObject()
@@ -982,11 +979,8 @@ const TypeObject* TestTypeFactory::GetBasicStructObject(bool complete)
     {
         return GetCompleteBasicStructObject();
     }
-    else
-    {
-        return GetMinimalBasicStructObject();
-    }
-    return GetTypeObject("BasicStruct", complete);
+    //else
+    return GetMinimalBasicStructObject();
 }
 
 const TypeObject* TestTypeFactory::GetMinimalBasicStructObject()
@@ -2715,11 +2709,8 @@ const TypeObject* TestTypeFactory::GetComplexStructObject(bool complete)
     {
         return GetCompleteComplexStructObject();
     }
-    else
-    {
-        return GetMinimalComplexStructObject();
-    }
-    return GetTypeObject("ComplexStruct", complete);
+    //else
+    return GetMinimalComplexStructObject();
 }
 
 const TypeObject* TestTypeFactory::GetMinimalComplexStructObject()
@@ -3636,11 +3627,8 @@ const TypeObject* TestTypeFactory::GetMyUnionObject(bool complete)
     {
         return GetCompleteMyUnionObject();
     }
-    else
-    {
-        return GetMinimalMyUnionObject();
-    }
-    return GetTypeObject("MyUnion", complete);
+    // else
+    return GetMinimalMyUnionObject();
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyUnionObject()
@@ -3867,11 +3855,8 @@ const TypeObject* TestTypeFactory::GetMyUnion2Object(bool complete)
     {
         return GetCompleteMyUnion2Object();
     }
-    else
-    {
-        return GetMinimalMyUnion2Object();
-    }
-    return GetTypeObject("MyUnion2", complete);
+    // else
+    return GetMinimalMyUnion2Object();
 }
 
 const TypeObject* TestTypeFactory::GetMinimalMyUnion2Object()
@@ -4168,11 +4153,8 @@ const TypeObject* TestTypeFactory::GetCompleteStructObject(bool complete)
     {
         return GetCompleteCompleteStructObject();
     }
-    else
-    {
-        return GetMinimalCompleteStructObject();
-    }
-    return GetTypeObject("CompleteStruct", complete);
+    //else
+    return GetMinimalCompleteStructObject();
 }
 
 const TypeObject* TestTypeFactory::GetMinimalCompleteStructObject()

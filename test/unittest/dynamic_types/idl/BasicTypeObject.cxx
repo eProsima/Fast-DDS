@@ -383,11 +383,8 @@ const TypeObject* BasicTypeFactory::GetMyEnumObject(bool complete)
     {
         return GetCompleteMyEnumObject();
     }
-    else
-    {
-        return GetMinimalMyEnumObject();
-    }
-    return GetTypeObject("MyEnum", complete);
+    // else
+    return GetMinimalMyEnumObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalMyEnumObject()
@@ -970,11 +967,8 @@ const TypeObject* BasicTypeFactory::GetEnumStructObject(bool complete)
     {
         return GetCompleteEnumStructObject();
     }
-    else
-    {
-        return GetMinimalEnumStructObject();
-    }
-    return GetTypeObject("EnumStruct", complete);
+    //else
+    return GetMinimalEnumStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalEnumStructObject()
@@ -1139,11 +1133,8 @@ const TypeObject* BasicTypeFactory::GetAliasStructObject(bool complete)
     {
         return GetCompleteAliasStructObject();
     }
-    else
-    {
-        return GetMinimalAliasStructObject();
-    }
-    return GetTypeObject("AliasStruct", complete);
+    //else
+    return GetMinimalAliasStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalAliasStructObject()
@@ -1308,11 +1299,8 @@ const TypeObject* BasicTypeFactory::GetAliasAliasStructObject(bool complete)
     {
         return GetCompleteAliasAliasStructObject();
     }
-    else
-    {
-        return GetMinimalAliasAliasStructObject();
-    }
-    return GetTypeObject("AliasAliasStruct", complete);
+    //else
+    return GetMinimalAliasAliasStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalAliasAliasStructObject()
@@ -1477,11 +1465,8 @@ const TypeObject* BasicTypeFactory::GetBoolStructObject(bool complete)
     {
         return GetCompleteBoolStructObject();
     }
-    else
-    {
-        return GetMinimalBoolStructObject();
-    }
-    return GetTypeObject("BoolStruct", complete);
+    //else
+    return GetMinimalBoolStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalBoolStructObject()
@@ -1662,11 +1647,8 @@ const TypeObject* BasicTypeFactory::GetOctetStructObject(bool complete)
     {
         return GetCompleteOctetStructObject();
     }
-    else
-    {
-        return GetMinimalOctetStructObject();
-    }
-    return GetTypeObject("OctetStruct", complete);
+    //else
+    return GetMinimalOctetStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalOctetStructObject()
@@ -1847,11 +1829,8 @@ const TypeObject* BasicTypeFactory::GetShortStructObject(bool complete)
     {
         return GetCompleteShortStructObject();
     }
-    else
-    {
-        return GetMinimalShortStructObject();
-    }
-    return GetTypeObject("ShortStruct", complete);
+    //else
+    return GetMinimalShortStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalShortStructObject()
@@ -2032,11 +2011,8 @@ const TypeObject* BasicTypeFactory::GetLongStructObject(bool complete)
     {
         return GetCompleteLongStructObject();
     }
-    else
-    {
-        return GetMinimalLongStructObject();
-    }
-    return GetTypeObject("LongStruct", complete);
+    //else
+    return GetMinimalLongStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalLongStructObject()
@@ -2217,11 +2193,8 @@ const TypeObject* BasicTypeFactory::GetLongLongStructObject(bool complete)
     {
         return GetCompleteLongLongStructObject();
     }
-    else
-    {
-        return GetMinimalLongLongStructObject();
-    }
-    return GetTypeObject("LongLongStruct", complete);
+    //else
+    return GetMinimalLongLongStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalLongLongStructObject()
@@ -2402,11 +2375,8 @@ const TypeObject* BasicTypeFactory::GetUShortStructObject(bool complete)
     {
         return GetCompleteUShortStructObject();
     }
-    else
-    {
-        return GetMinimalUShortStructObject();
-    }
-    return GetTypeObject("UShortStruct", complete);
+    //else
+    return GetMinimalUShortStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalUShortStructObject()
@@ -2587,11 +2557,8 @@ const TypeObject* BasicTypeFactory::GetULongStructObject(bool complete)
     {
         return GetCompleteULongStructObject();
     }
-    else
-    {
-        return GetMinimalULongStructObject();
-    }
-    return GetTypeObject("ULongStruct", complete);
+    //else
+    return GetMinimalULongStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalULongStructObject()
@@ -2772,11 +2739,8 @@ const TypeObject* BasicTypeFactory::GetULongLongStructObject(bool complete)
     {
         return GetCompleteULongLongStructObject();
     }
-    else
-    {
-        return GetMinimalULongLongStructObject();
-    }
-    return GetTypeObject("ULongLongStruct", complete);
+    //else
+    return GetMinimalULongLongStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalULongLongStructObject()
@@ -2957,11 +2921,8 @@ const TypeObject* BasicTypeFactory::GetFloatStructObject(bool complete)
     {
         return GetCompleteFloatStructObject();
     }
-    else
-    {
-        return GetMinimalFloatStructObject();
-    }
-    return GetTypeObject("FloatStruct", complete);
+    //else
+    return GetMinimalFloatStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalFloatStructObject()
@@ -3142,11 +3103,8 @@ const TypeObject* BasicTypeFactory::GetDoubleStructObject(bool complete)
     {
         return GetCompleteDoubleStructObject();
     }
-    else
-    {
-        return GetMinimalDoubleStructObject();
-    }
-    return GetTypeObject("DoubleStruct", complete);
+    //else
+    return GetMinimalDoubleStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalDoubleStructObject()
@@ -3327,11 +3285,8 @@ const TypeObject* BasicTypeFactory::GetLongDoubleStructObject(bool complete)
     {
         return GetCompleteLongDoubleStructObject();
     }
-    else
-    {
-        return GetMinimalLongDoubleStructObject();
-    }
-    return GetTypeObject("LongDoubleStruct", complete);
+    //else
+    return GetMinimalLongDoubleStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalLongDoubleStructObject()
@@ -3512,11 +3467,8 @@ const TypeObject* BasicTypeFactory::GetCharStructObject(bool complete)
     {
         return GetCompleteCharStructObject();
     }
-    else
-    {
-        return GetMinimalCharStructObject();
-    }
-    return GetTypeObject("CharStruct", complete);
+    //else
+    return GetMinimalCharStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalCharStructObject()
@@ -3697,11 +3649,8 @@ const TypeObject* BasicTypeFactory::GetWCharStructObject(bool complete)
     {
         return GetCompleteWCharStructObject();
     }
-    else
-    {
-        return GetMinimalWCharStructObject();
-    }
-    return GetTypeObject("WCharStruct", complete);
+    //else
+    return GetMinimalWCharStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalWCharStructObject()
@@ -3882,11 +3831,8 @@ const TypeObject* BasicTypeFactory::GetStringStructObject(bool complete)
     {
         return GetCompleteStringStructObject();
     }
-    else
-    {
-        return GetMinimalStringStructObject();
-    }
-    return GetTypeObject("StringStruct", complete);
+    //else
+    return GetMinimalStringStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalStringStructObject()
@@ -4055,11 +4001,8 @@ const TypeObject* BasicTypeFactory::GetWStringStructObject(bool complete)
     {
         return GetCompleteWStringStructObject();
     }
-    else
-    {
-        return GetMinimalWStringStructObject();
-    }
-    return GetTypeObject("WStringStruct", complete);
+    //else
+    return GetMinimalWStringStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalWStringStructObject()
@@ -4228,11 +4171,8 @@ const TypeObject* BasicTypeFactory::GetLargeStringStructObject(bool complete)
     {
         return GetCompleteLargeStringStructObject();
     }
-    else
-    {
-        return GetMinimalLargeStringStructObject();
-    }
-    return GetTypeObject("LargeStringStruct", complete);
+    //else
+    return GetMinimalLargeStringStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalLargeStringStructObject()
@@ -4401,11 +4341,8 @@ const TypeObject* BasicTypeFactory::GetLargeWStringStructObject(bool complete)
     {
         return GetCompleteLargeWStringStructObject();
     }
-    else
-    {
-        return GetMinimalLargeWStringStructObject();
-    }
-    return GetTypeObject("LargeWStringStruct", complete);
+    //else
+    return GetMinimalLargeWStringStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalLargeWStringStructObject()
@@ -4574,11 +4511,8 @@ const TypeObject* BasicTypeFactory::GetArraytStructObject(bool complete)
     {
         return GetCompleteArraytStructObject();
     }
-    else
-    {
-        return GetMinimalArraytStructObject();
-    }
-    return GetTypeObject("ArraytStruct", complete);
+    //else
+    return GetMinimalArraytStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalArraytStructObject()
@@ -4927,11 +4861,8 @@ const TypeObject* BasicTypeFactory::GetArrayArrayStructObject(bool complete)
     {
         return GetCompleteArrayArrayStructObject();
     }
-    else
-    {
-        return GetMinimalArrayArrayStructObject();
-    }
-    return GetTypeObject("ArrayArrayStruct", complete);
+    //else
+    return GetMinimalArrayArrayStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalArrayArrayStructObject()
@@ -5100,11 +5031,8 @@ const TypeObject* BasicTypeFactory::GetSequenceStructObject(bool complete)
     {
         return GetCompleteSequenceStructObject();
     }
-    else
-    {
-        return GetMinimalSequenceStructObject();
-    }
-    return GetTypeObject("SequenceStruct", complete);
+    //else
+    return GetMinimalSequenceStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalSequenceStructObject()
@@ -5273,11 +5201,8 @@ const TypeObject* BasicTypeFactory::GetSequenceSequenceStructObject(bool complet
     {
         return GetCompleteSequenceSequenceStructObject();
     }
-    else
-    {
-        return GetMinimalSequenceSequenceStructObject();
-    }
-    return GetTypeObject("SequenceSequenceStruct", complete);
+    //else
+    return GetMinimalSequenceSequenceStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalSequenceSequenceStructObject()
@@ -5446,11 +5371,8 @@ const TypeObject* BasicTypeFactory::GetMapStructObject(bool complete)
     {
         return GetCompleteMapStructObject();
     }
-    else
-    {
-        return GetMinimalMapStructObject();
-    }
-    return GetTypeObject("MapStruct", complete);
+    //else
+    return GetMinimalMapStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalMapStructObject()
@@ -5619,11 +5541,8 @@ const TypeObject* BasicTypeFactory::GetMapMapStructObject(bool complete)
     {
         return GetCompleteMapMapStructObject();
     }
-    else
-    {
-        return GetMinimalMapMapStructObject();
-    }
-    return GetTypeObject("MapMapStruct", complete);
+    //else
+    return GetMinimalMapMapStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalMapMapStructObject()
@@ -5792,11 +5711,8 @@ const TypeObject* BasicTypeFactory::GetStructStructObject(bool complete)
     {
         return GetCompleteStructStructObject();
     }
-    else
-    {
-        return GetMinimalStructStructObject();
-    }
-    return GetTypeObject("StructStruct", complete);
+    //else
+    return GetMinimalStructStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalStructStructObject()
@@ -6025,11 +5941,8 @@ const TypeObject* BasicTypeFactory::GetStructStructStructObject(bool complete)
     {
         return GetCompleteStructStructStructObject();
     }
-    else
-    {
-        return GetMinimalStructStructStructObject();
-    }
-    return GetTypeObject("StructStructStruct", complete);
+    //else
+    return GetMinimalStructStructStructObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalStructStructStructObject()
@@ -6242,11 +6155,8 @@ const TypeObject* BasicTypeFactory::GetSimpleUnionObject(bool complete)
     {
         return GetCompleteSimpleUnionObject();
     }
-    else
-    {
-        return GetMinimalSimpleUnionObject();
-    }
-    return GetTypeObject("SimpleUnion", complete);
+    // else
+    return GetMinimalSimpleUnionObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalSimpleUnionObject()
@@ -6503,11 +6413,8 @@ const TypeObject* BasicTypeFactory::GetUnionUnionObject(bool complete)
     {
         return GetCompleteUnionUnionObject();
     }
-    else
-    {
-        return GetMinimalUnionUnionObject();
-    }
-    return GetTypeObject("UnionUnion", complete);
+    // else
+    return GetMinimalUnionUnionObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalUnionUnionObject()
@@ -6748,11 +6655,8 @@ const TypeObject* BasicTypeFactory::GetWCharUnionObject(bool complete)
     {
         return GetCompleteWCharUnionObject();
     }
-    else
-    {
-        return GetMinimalWCharUnionObject();
-    }
-    return GetTypeObject("WCharUnion", complete);
+    // else
+    return GetMinimalWCharUnionObject();
 }
 
 const TypeObject* BasicTypeFactory::GetMinimalWCharUnionObject()

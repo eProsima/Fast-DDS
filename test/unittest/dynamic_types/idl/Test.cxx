@@ -210,6 +210,7 @@ size_t BasicStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t BasicStruct::getCdrSerializedSize(const BasicStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* bool my_bool */
@@ -651,6 +652,7 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t ComplexStruct::getCdrSerializedSize(const ComplexStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* uint8_t my_octet */
@@ -1188,6 +1190,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
 // TODO(Ricardo) Review
 size_t MyUnion::getCdrSerializedSize(const MyUnion& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* MyEnum */
@@ -1572,6 +1575,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
 // TODO(Ricardo) Review
 size_t MyUnion2::getCdrSerializedSize(const MyUnion2& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* uint8_t */
@@ -1700,6 +1704,7 @@ size_t CompleteStruct::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t CompleteStruct::getCdrSerializedSize(const CompleteStruct& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
 
     /* MyUnion my_union */
