@@ -24,6 +24,7 @@
 #include "PropertyPolicy.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "../../transport/TransportInterface.h"
+#include "../resources/ResourceManagement.h"
 
 #include <memory>
 
@@ -162,6 +163,12 @@ class BuiltinAttributes{
         //! Initial peers.
         LocatorList_t initialPeersList;
 
+        //! Memory policy for builtin readers
+        MemoryManagementPolicy_t readerHistoryMemoryPolicy;
+
+        //! Memory policy for builtin writers
+        MemoryManagementPolicy_t writerHistoryMemoryPolicy;
+
         BuiltinAttributes()
         {
             use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
@@ -172,7 +179,8 @@ class BuiltinAttributes{
             leaseDuration.seconds = 500;
             leaseDuration_announcementperiod.seconds = 250;
             use_WriterLivelinessProtocol = true;
-
+            readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+            writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
         };
         virtual ~BuiltinAttributes(){};
         /**
