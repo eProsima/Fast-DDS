@@ -3948,7 +3948,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mInt32Value;
-        std::cout << "DESERIALIZE: \tint32" << mInt32Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -3960,7 +3959,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt32Value;
-        std::cout << "DESERIALIZE: \tuint32" << mUInt32Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -3972,7 +3970,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mInt16Value;
-        std::cout << "DESERIALIZE: \tint16" << mInt16Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -3984,7 +3981,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt16Value;
-        std::cout << "DESERIALIZE: \tuint16" << mUInt16Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -3996,7 +3992,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mInt64Value;
-        std::cout << "DESERIALIZE: \tint64" << mInt64Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4008,7 +4003,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt64Value;
-        std::cout << "DESERIALIZE: \tuint64" << mUInt64Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4020,7 +4014,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mFloat32Value;
-        std::cout << "DESERIALIZE: \tfloat32" << mFloat32Value << std::endl;
 #else
         auto it = mValues.begin();
         cdr >> *((float*)it->second);
@@ -4031,7 +4024,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mFloat64Value;
-        std::cout << "DESERIALIZE: \tfloat64" << mFloat64Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4043,7 +4035,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mFloat128Value;
-        std::cout << "DESERIALIZE: \tfloat128" << mFloat128Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4055,7 +4046,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mChar8Value;
-        std::cout << "DESERIALIZE: \tchar8" << mChar8Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4067,7 +4057,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mChar16Value;
-        std::cout << "DESERIALIZE: \tchar16" << mChar16Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4079,7 +4068,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mBoolValue;
-        std::cout << "DESERIALIZE: \tbool" << mBoolValue << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4091,7 +4079,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mByteValue;
-        std::cout << "DESERIALIZE: \tbyte" << mByteValue << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4103,7 +4090,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mStringValue;
-        std::cout << "DESERIALIZE: \tstring" << mStringValue.c_str() << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4115,7 +4101,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mWStringValue;
-        std::wcout << "DESERIALIZE: \twstring" << mWStringValue.c_str() << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4127,7 +4112,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt32Value;
-        std::cout << "DESERIALIZE: \tenum" << mUInt32Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4140,7 +4124,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr >> mUInt64Value;
-        std::cout << "DESERIALIZE: \tbitset" << mUInt64Value << std::endl;
 
 #else
         auto it = mValues.begin();
@@ -4152,7 +4135,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     {
         mUnionDiscriminator->deserialize(cdr);
         UpdateUnionDiscriminator();
-        std::cout << "DESERIALIZE: \tunionid" << mUnionId << std::endl;
         SetUnionId(mUnionId);
         if (mUnionId != MEMBER_ID_INVALID)
         {
@@ -4215,9 +4197,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
     case TK_ARRAY:
     {
         uint32_t size(mType->GetTotalBounds());
-        //cdr >> size;
-        //std::cout << "DESERIALIZE: \tarraySize" << size << std::endl;
-
         if (size > 0)
         {
             DynamicData* inputData(nullptr);
@@ -4278,8 +4257,6 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
         uint32_t size(0);
         bool bKeyElement(false);
         cdr >> size;
-        std::cout << "DESERIALIZE: \tsequenceSize" << size << std::endl;
-
         for (uint32_t i = 0; i < size; ++i)
         {
             //cdr >> memberId;
@@ -4648,7 +4625,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_INT32:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tint32" << mInt32Value << std::endl;
         cdr << mInt32Value;
 #else
         auto it = mValues.begin();
@@ -4659,7 +4635,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_UINT32:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tuint32" << mUInt32Value << std::endl;
         cdr << mUInt32Value;
 #else
         auto it = mValues.begin();
@@ -4670,7 +4645,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_INT16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tint16" << mInt16Value << std::endl;
         cdr << mInt16Value;
 #else
         auto it = mValues.begin();
@@ -4681,7 +4655,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_UINT16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tuint16" << mUInt16Value << std::endl;
         cdr << mUInt16Value;
 #else
         auto it = mValues.begin();
@@ -4692,7 +4665,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_INT64:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tint64" << mInt64Value << std::endl;
         cdr << mInt64Value;
 #else
         auto it = mValues.begin();
@@ -4703,7 +4675,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_UINT64:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tuint64" << mUInt64Value << std::endl;
         cdr << mUInt64Value;
 #else
         auto it = mValues.begin();
@@ -4714,7 +4685,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_FLOAT32:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tfloat32" << mFloat32Value << std::endl;
         cdr << mFloat32Value;
 #else
         auto it = mValues.begin();
@@ -4725,7 +4695,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_FLOAT64:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tfloat64" << mFloat64Value << std::endl;
         cdr << mFloat64Value;
 #else
         auto it = mValues.begin();
@@ -4736,7 +4705,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_FLOAT128:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tfloat128" << mFloat128Value << std::endl;
         cdr << mFloat128Value;
 #else
         auto it = mValues.begin();
@@ -4747,7 +4715,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_CHAR8:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tchar8" << mChar8Value << std::endl;
         cdr << mChar8Value;
 #else
         auto it = mValues.begin();
@@ -4758,7 +4725,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_CHAR16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tchar16" << mChar16Value << std::endl;
         cdr << mChar16Value;
 #else
         auto it = mValues.begin();
@@ -4769,7 +4735,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_BOOLEAN:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tbool" << mBoolValue << std::endl;
         cdr << mBoolValue;
 #else
         auto it = mValues.begin();
@@ -4780,7 +4745,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_BYTE:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tbyte" << mByteValue << std::endl;
         cdr << mByteValue;
 #else
         auto it = mValues.begin();
@@ -4791,7 +4755,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_STRING8:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tstring" << mStringValue.c_str() << std::endl;
         cdr << mStringValue;
 #else
         auto it = mValues.begin();
@@ -4802,7 +4765,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_STRING16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::wcout << "SERIALIZE: \twstring" << mWStringValue.c_str() << std::endl;
         cdr << mWStringValue;
 #else
         auto it = mValues.begin();
@@ -4813,7 +4775,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_ENUM:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tenum" << mUInt32Value << std::endl;
         cdr << mUInt32Value;
 #else
         auto it = mValues.begin();
@@ -4825,7 +4786,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_BITMASK:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tbitset" << mUInt64Value << std::endl;
         cdr << mUInt64Value;
 #else
         auto it = mValues.begin();
@@ -4835,7 +4795,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     }
     case TK_UNION:
     {
-        std::cout << "SERIALIZE: \tunionid" << mUnionId << std::endl;
         mUnionDiscriminator->serialize(cdr);
         //cdr << mUnionId;
         if (mUnionId != MEMBER_ID_INVALID)
@@ -4851,7 +4810,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     }
     case TK_SEQUENCE: // Sequence is like structure, but with size
 #ifdef DYNAMIC_TYPES_CHECKING
-        std::cout << "SERIALIZE: \tsequenceSize" << static_cast<uint32_t>(mComplexValues.size()) << std::endl;
         cdr << static_cast<uint32_t>(mComplexValues.size());
 #else
         cdr << static_cast<uint32_t>(mValues.size());
@@ -4876,8 +4834,6 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_ARRAY:
     {
         uint32_t arraySize = mType->GetTotalBounds();
-        //std::cout << "SERIALIZE: \tarraySize" << arraySize << std::endl;
-        //cdr << arraySize;
         for (uint32_t idx = 0; idx < arraySize; ++idx)
         {
 #ifdef DYNAMIC_TYPES_CHECKING
