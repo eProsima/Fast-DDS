@@ -1238,7 +1238,7 @@ size_t LongDoubleStruct::getMaxCdrSerializedSize(size_t current_alignment)
     size_t initial_alignment = current_alignment;
 
     /* long double */
-    current_alignment += 128 + eprosima::fastcdr::Cdr::alignment(current_alignment, 128); // 128 bits
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // 128 bits
 
 
     return current_alignment - initial_alignment;
@@ -1250,7 +1250,7 @@ size_t LongDoubleStruct::getCdrSerializedSize(const LongDoubleStruct& data, size
     size_t initial_alignment = current_alignment;
 
     /* long double my_float128 */
-    current_alignment += 128 + eprosima::fastcdr::Cdr::alignment(current_alignment, 128); // 128 bits
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // 128 bits
 
 
     return current_alignment - initial_alignment;
