@@ -248,6 +248,7 @@ protected:
     ResponseCode SetUnionId(MemberId id);
     void UpdateUnionDiscriminator();
     void SortMemberIds(MemberId startId);
+    void SetUnionDiscriminator(DynamicData* pData);
 
     // Serializes and deserializes the Dynamic Data.
     bool deserialize(eprosima::fastcdr::Cdr &cdr);

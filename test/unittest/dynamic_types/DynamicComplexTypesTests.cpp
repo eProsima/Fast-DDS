@@ -230,7 +230,7 @@ void DynamicComplexTypesTests::init()
 
     // MyUnion
     DynamicTypeBuilder_ptr myUnion_builder = m_factory->CreateUnionBuilder(myEnum_builder.get());
-    myUnion_builder->AddMember(0, "basic", basicStruct_builder.get(), "0", { 0 }, true);
+    myUnion_builder->AddMember(0, "basic", basicStruct_builder.get(), "0", { 0 }, false);
     myUnion_builder->AddMember(1, "complex", complexStruct_builder.get(), "1", { 1, 2 }, false);
     myUnion_builder->SetName("MyUnion");
 
@@ -268,6 +268,9 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
     types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    ASSERT_TRUE(dynData2->Equals(dynData));
+
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData)());
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(dynData, &payload));
@@ -279,9 +282,7 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
 
-    types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynData2));
-
     ASSERT_TRUE(dynData2->Equals(dynData));
 
     DynamicDataFactory::GetInstance()->DeleteData(dynData);

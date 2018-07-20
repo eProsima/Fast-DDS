@@ -116,7 +116,7 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
                 {
                     DynamicData* discriminatorData = new DynamicData(pType->GetDiscriminatorType());
                     mDynamicDatas.push_back(discriminatorData);
-                    newData->mUnionDiscriminator = discriminatorData;
+                    newData->SetUnionDiscriminator(discriminatorData);
                 }
             }
             return newData;

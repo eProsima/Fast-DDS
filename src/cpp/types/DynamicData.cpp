@@ -143,13 +143,22 @@ void DynamicData::CreateMembers(DynamicType_ptr pType)
             // Set the default value for unions.
             if (pType->GetKind() == TK_UNION)
             {
+                bool defaultValue = false;
+                // Search the default value.
                 for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
                 {
                     if (it->second->IsDefaultUnionValue())
                     {
                         SetUnionId(it->first);
+                        defaultValue = true;
                         break;
                     }
+                }
+
+                // If there isn't a default value... set the first element of the union
+                if (!defaultValue && mDescriptors.size() > 0)
+                {
+                    SetUnionId(mDescriptors.begin()->first);
                 }
             }
         }
@@ -3193,6 +3202,15 @@ void DynamicData::UpdateUnionDiscriminator()
     }
 }
 
+void DynamicData::SetUnionDiscriminator(DynamicData* pData)
+{
+    mUnionDiscriminator = pData;
+    if (mUnionDiscriminator != nullptr)
+    {
+        mUnionDiscriminator->SetValue(std::to_string(mUnionLabel));
+    }
+}
+
 ResponseCode DynamicData::SetUnionId(MemberId id)
 {
     if (GetKind() == TK_UNION)
@@ -3222,6 +3240,7 @@ ResponseCode DynamicData::SetUnionId(MemberId id)
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
+
 
 ResponseCode DynamicData::GetWstringValue(std::wstring& value, MemberId id) const
 {
