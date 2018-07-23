@@ -28,11 +28,12 @@ namespace fastrtps{
 namespace rtps {
 
 
-ReaderProxyData::ReaderProxyData() :
-    m_expectsInlineQos(false),
-    m_userDefinedId(0),
-    m_isAlive(true),
-    m_topicKind(NO_KEY)
+ReaderProxyData::ReaderProxyData()
+    : m_expectsInlineQos(false)
+    , m_userDefinedId(0)
+    , m_isAlive(true)
+    , m_topicKind(NO_KEY)
+    , m_topicDiscoveryKind(NO_CHECK)
     {
 
     }

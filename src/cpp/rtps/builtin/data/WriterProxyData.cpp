@@ -28,11 +28,12 @@ namespace fastrtps{
 namespace rtps {
 
 
-WriterProxyData::WriterProxyData():
-    m_userDefinedId(0),
-    m_typeMaxSerialized(0),
-    m_isAlive(true),
-    m_topicKind(NO_KEY)
+WriterProxyData::WriterProxyData()
+    : m_userDefinedId(0)
+    , m_typeMaxSerialized(0)
+    , m_isAlive(true)
+    , m_topicKind(NO_KEY)
+    , m_topicDiscoveryKind(NO_CHECK)
     {
         // TODO Auto-generated constructor stub
     }
