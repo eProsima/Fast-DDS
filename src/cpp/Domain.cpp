@@ -275,8 +275,10 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* ty
 {
     using namespace eprosima::fastrtps::types;
     TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
-    const TypeIdentifier *type_id = typeFactory->GetTypeIdentifier(type->getName());
-    if (type_id == nullptr)
+
+    const TypeIdentifier *type_id_min = typeFactory->GetTypeIdentifier(type->getName());
+
+    if (type_id_min == nullptr)
     {
         DynamicTypeBuilderFactory *dynFactory = DynamicTypeBuilderFactory::GetInstance();
         std::map<MemberId, DynamicTypeMember*> membersMap;
@@ -288,8 +290,10 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* ty
         }
         TypeObject typeObj;
         dynFactory->BuildTypeObject(type->GetDynamicType()->getTypeDescriptor(), typeObj, &members);
+        // Minimal too
+        dynFactory->BuildTypeObject(type->GetDynamicType()->getTypeDescriptor(), typeObj, &members, false);
         const TypeIdentifier *type_id2 = typeFactory->GetTypeIdentifier(type->getName());
-        const TypeObject *type_obj = typeFactory->GetTypeObject(type->getName()); // TODO GASCO Complete?
+        const TypeObject *type_obj = typeFactory->GetTypeObject(type->getName());
         if (type_id2 == nullptr)
         {
             logError(DYN_TYPES, "Cannot register dynamic type " << type->getName());
@@ -297,6 +301,11 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* ty
         else
         {
             typeFactory->AddTypeObject(type->getName(), type_id2, type_obj);
+
+            // Complete, just to make sure it is generated
+            const TypeIdentifier *type_id_complete = typeFactory->GetTypeIdentifier(type->getName(), true);
+            const TypeObject *type_obj_complete = typeFactory->GetTypeObject(type->getName(), true);
+            typeFactory->AddTypeObject(type->getName(), type_id_complete, type_obj_complete); // Add complete
         }
     }
     return registerType(part, type);

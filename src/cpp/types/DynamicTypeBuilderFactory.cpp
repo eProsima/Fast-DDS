@@ -1316,7 +1316,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
 
             TypeObject memObj;
             BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
-            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(member->mType->GetName());
             if (typeId == nullptr)
             {
                 logError(DYN_TYPES, "Member " << member->GetName() << " of struct " << descriptor->GetName() << " failed.");
@@ -1426,7 +1426,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         identifier._d(EK_MINIMAL);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
-           MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4));
+           MinimalStructType::getCdrSerializedSize(object.minimal().struct_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
@@ -1434,7 +1434,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
-        for (CompleteStructMember &st : object.complete().struct_type().member_seq())
+        for (MinimalStructMember &st : object.minimal().struct_type().member_seq())
         {
             ser << st;
         }
@@ -1447,8 +1447,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
             identifier.equivalence_hash()[i] = objectHash.digest[i];
         }
 
-        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(),
-            &object.minimal().struct_type().header().base_type(), &object);
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
     }
 }
 
@@ -1508,7 +1507,7 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
 
             TypeObject memObj;
             BuildTypeObject(member->mType->mDescriptor, memObj, &innerMembers);
-            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(member->mType->GetName());
             if (typeId == nullptr)
             {
                 logError(DYN_TYPES, "Member " << member->GetName() << " of union " << descriptor->GetName() << " failed.");
