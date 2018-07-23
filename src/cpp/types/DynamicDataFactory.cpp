@@ -92,8 +92,9 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
                 else if (pType->GetKind() == TK_STRUCTURE)
                 {
                     newData = new DynamicData(pType);
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     mDynamicDatas.push_back(newData);
-
+#endif
                     CreateMembers(newData, pType->GetBaseType());
                 }
             }
@@ -108,14 +109,18 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
                 if (pType->GetKind() == TK_ARRAY)
                 {
                     DynamicData* defaultArrayData = new DynamicData(pType->GetElementType());
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     mDynamicDatas.push_back(defaultArrayData);
+#endif
                     newData->mDefaultArrayValue = defaultArrayData;
                 }
                 // Unions need a discriminator data
                 else if (pType->GetKind() == TK_UNION)
                 {
                     DynamicData* discriminatorData = new DynamicData(pType->GetDiscriminatorType());
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     mDynamicDatas.push_back(discriminatorData);
+#endif
                     newData->SetUnionDiscriminator(discriminatorData);
                 }
             }
@@ -157,16 +162,14 @@ ResponseCode DynamicDataFactory::DeleteData(DynamicData* pData)
         if (it != mDynamicDatas.end())
         {
             mDynamicDatas.erase(it);
-            delete pData;
         }
         else
         {
             logError(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
             return ResponseCode::RETCODE_ALREADY_DELETED;
         }
-#else
-        delete pData;
 #endif
+        delete pData;
     }
     return ResponseCode::RETCODE_OK;
 }

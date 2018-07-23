@@ -113,11 +113,9 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         auto data = DynamicDataFactory::GetInstance()->CreateData(created_builder.get());
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         auto data2 = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -131,7 +129,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -145,7 +142,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -159,7 +155,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -173,7 +168,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUint64Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -187,7 +181,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateFloat32Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -201,7 +194,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateFloat64Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -215,7 +207,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateFloat128Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -229,7 +220,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -243,7 +233,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -257,7 +246,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateByteBuilder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -271,7 +259,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateBoolBuilder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -285,7 +272,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder(LENGTH_UNLIMITED);
         ASSERT_TRUE(created_builder != nullptr);
@@ -299,7 +285,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateWstringBuilder(LENGTH_UNLIMITED);
         ASSERT_TRUE(created_builder != nullptr);
@@ -313,7 +298,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
 
         // Create with custom types
         TypeDescriptor pInt32Descriptor;
@@ -328,7 +312,6 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type->Equals(type2.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -3019,9 +3002,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(key_data2) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -3248,7 +3229,6 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
 
         // Delete the structure
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
 
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
@@ -3331,7 +3311,6 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
 
         // Delete the structure
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -3434,7 +3413,6 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(struct_data) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -3534,7 +3512,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
@@ -3630,7 +3607,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
 
         // Delete the map
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);
-        ASSERT_FALSE(DynamicDataFactory::GetInstance()->DeleteData(union_data) == ResponseCode::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
