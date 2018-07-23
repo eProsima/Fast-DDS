@@ -1342,7 +1342,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         identifier._d(EK_COMPLETE);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
-           CompleteEnumeratedType::getCdrSerializedSize(object.complete().enumerated_type()) + 4));
+           CompleteStructType::getCdrSerializedSize(object.complete().struct_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
@@ -1360,7 +1360,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         objectHash.finalize();
         for(int i = 0; i < 14; ++i)
         {
-            object.complete().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
         }
 
         TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
@@ -1444,7 +1444,7 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         objectHash.finalize();
         for(int i = 0; i < 14; ++i)
         {
-            object.complete().struct_type().header().base_type().equivalence_hash()[i] = objectHash.digest[i];
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
         }
 
         TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(),

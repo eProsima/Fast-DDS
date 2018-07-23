@@ -402,7 +402,11 @@ const StringSTypeDefn& TypeIdentifier::string_sdefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_string_sdefn;
 }
@@ -420,7 +424,11 @@ StringSTypeDefn& TypeIdentifier::string_sdefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_string_sdefn;
 }
@@ -443,7 +451,11 @@ const StringLTypeDefn& TypeIdentifier::string_ldefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_string_ldefn;
 }
@@ -461,7 +473,11 @@ StringLTypeDefn& TypeIdentifier::string_ldefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_string_ldefn;
 }
@@ -483,7 +499,11 @@ const PlainSequenceSElemDefn& TypeIdentifier::seq_sdefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_seq_sdefn;
 }
@@ -500,7 +520,11 @@ PlainSequenceSElemDefn& TypeIdentifier::seq_sdefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_seq_sdefn;
 }
@@ -522,7 +546,11 @@ const PlainSequenceLElemDefn& TypeIdentifier::seq_ldefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_seq_ldefn;
 }
@@ -539,7 +567,11 @@ PlainSequenceLElemDefn& TypeIdentifier::seq_ldefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_seq_ldefn;
 }
@@ -561,7 +593,11 @@ const PlainArraySElemDefn& TypeIdentifier::array_sdefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_array_sdefn;
 }
@@ -578,7 +614,11 @@ PlainArraySElemDefn& TypeIdentifier::array_sdefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_array_sdefn;
 }
@@ -600,7 +640,11 @@ const PlainArrayLElemDefn& TypeIdentifier::array_ldefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_array_ldefn;
 }
@@ -617,7 +661,11 @@ PlainArrayLElemDefn& TypeIdentifier::array_ldefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_array_ldefn;
 }
@@ -639,7 +687,11 @@ const PlainMapSTypeDefn& TypeIdentifier::map_sdefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_map_sdefn;
 }
@@ -656,7 +708,11 @@ PlainMapSTypeDefn& TypeIdentifier::map_sdefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_map_sdefn;
 }
@@ -678,7 +734,11 @@ const PlainMapLTypeDefn& TypeIdentifier::map_ldefn() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_map_ldefn;
 }
@@ -695,7 +755,11 @@ PlainMapLTypeDefn& TypeIdentifier::map_ldefn()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_map_ldefn;
 }
@@ -717,7 +781,11 @@ StronglyConnectedComponentId TypeIdentifier::sc_component_id() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_sc_component_id;
 }
@@ -734,7 +802,11 @@ StronglyConnectedComponentId& TypeIdentifier::sc_component_id()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_sc_component_id;
 }
@@ -757,7 +829,11 @@ const octet* TypeIdentifier::equivalence_hash() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return (octet*)&m_equivalence_hash;
 }
@@ -775,7 +851,11 @@ octet* TypeIdentifier::equivalence_hash()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return (octet*)&m_equivalence_hash;
 }
@@ -810,7 +890,11 @@ const ExtendedTypeDefn& TypeIdentifier::extended_defn() const
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_extended_defn;
 }
@@ -839,7 +923,10 @@ ExtendedTypeDefn& TypeIdentifier::extended_defn()
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_extended_defn;
 }

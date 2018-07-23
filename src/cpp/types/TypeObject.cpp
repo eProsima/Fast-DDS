@@ -4971,7 +4971,10 @@ const CompleteAliasType& CompleteTypeObject::alias_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
 
     return m_alias_type;
 }
@@ -4988,7 +4991,11 @@ CompleteAliasType& CompleteTypeObject::alias_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_alias_type;
 }
@@ -5011,7 +5018,11 @@ const CompleteAnnotationType& CompleteTypeObject::annotation_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_annotation_type;
 }
@@ -5028,7 +5039,11 @@ CompleteAnnotationType& CompleteTypeObject::annotation_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_annotation_type;
 }
@@ -5051,7 +5066,11 @@ const CompleteStructType& CompleteTypeObject::struct_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_struct_type;
 }
@@ -5068,7 +5087,11 @@ CompleteStructType& CompleteTypeObject::struct_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_struct_type;
 }
@@ -5091,7 +5114,11 @@ const CompleteUnionType& CompleteTypeObject::union_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_union_type;
 }
@@ -5108,7 +5135,11 @@ CompleteUnionType& CompleteTypeObject::union_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_union_type;
 }
@@ -5131,7 +5162,11 @@ const CompleteBitsetType& CompleteTypeObject::bitset_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitset_type;
 }
@@ -5148,7 +5183,11 @@ CompleteBitsetType& CompleteTypeObject::bitset_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitset_type;
 }
@@ -5171,7 +5210,11 @@ const CompleteSequenceType& CompleteTypeObject::sequence_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_sequence_type;
 }
@@ -5188,7 +5231,11 @@ CompleteSequenceType& CompleteTypeObject::sequence_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_sequence_type;
 }
@@ -5211,7 +5258,11 @@ const CompleteArrayType& CompleteTypeObject::array_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_array_type;
 }
@@ -5228,7 +5279,11 @@ CompleteArrayType& CompleteTypeObject::array_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_array_type;
 }
@@ -5251,7 +5306,11 @@ const CompleteMapType& CompleteTypeObject::map_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_map_type;
 }
@@ -5268,7 +5327,11 @@ CompleteMapType& CompleteTypeObject::map_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_map_type;
 }
@@ -5291,7 +5354,11 @@ const CompleteEnumeratedType& CompleteTypeObject::enumerated_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_enumerated_type;
 }
@@ -5308,7 +5375,11 @@ CompleteEnumeratedType& CompleteTypeObject::enumerated_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_enumerated_type;
 }
@@ -5331,7 +5402,11 @@ const CompleteBitmaskType& CompleteTypeObject::bitmask_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitmask_type;
 }
@@ -5348,7 +5423,11 @@ CompleteBitmaskType& CompleteTypeObject::bitmask_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitmask_type;
 }
@@ -5380,7 +5459,11 @@ const CompleteExtendedType& CompleteTypeObject::extended_type() const
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_extended_type;
 }
@@ -5406,7 +5489,11 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_extended_type;
 }
@@ -5755,7 +5842,11 @@ const MinimalAliasType& MinimalTypeObject::alias_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_alias_type;
 }
@@ -5772,7 +5863,11 @@ MinimalAliasType& MinimalTypeObject::alias_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_alias_type;
 }
@@ -5795,7 +5890,11 @@ const MinimalAnnotationType& MinimalTypeObject::annotation_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_annotation_type;
 }
@@ -5812,7 +5911,11 @@ MinimalAnnotationType& MinimalTypeObject::annotation_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_annotation_type;
 }
@@ -5835,7 +5938,11 @@ const MinimalStructType& MinimalTypeObject::struct_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_struct_type;
 }
@@ -5852,7 +5959,11 @@ MinimalStructType& MinimalTypeObject::struct_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_struct_type;
 }
@@ -5875,7 +5986,11 @@ const MinimalUnionType& MinimalTypeObject::union_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_union_type;
 }
@@ -5892,7 +6007,11 @@ MinimalUnionType& MinimalTypeObject::union_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_union_type;
 }
@@ -5915,7 +6034,11 @@ const MinimalBitsetType& MinimalTypeObject::bitset_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitset_type;
 }
@@ -5932,7 +6055,11 @@ MinimalBitsetType& MinimalTypeObject::bitset_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitset_type;
 }
@@ -5955,7 +6082,11 @@ const MinimalSequenceType& MinimalTypeObject::sequence_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_sequence_type;
 }
@@ -5972,7 +6103,11 @@ MinimalSequenceType& MinimalTypeObject::sequence_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_sequence_type;
 }
@@ -5995,7 +6130,11 @@ const MinimalArrayType& MinimalTypeObject::array_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_array_type;
 }
@@ -6012,7 +6151,11 @@ MinimalArrayType& MinimalTypeObject::array_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_array_type;
 }
@@ -6035,7 +6178,11 @@ const MinimalMapType& MinimalTypeObject::map_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_map_type;
 }
@@ -6052,7 +6199,11 @@ MinimalMapType& MinimalTypeObject::map_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_map_type;
 }
@@ -6075,7 +6226,11 @@ const MinimalEnumeratedType& MinimalTypeObject::enumerated_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_enumerated_type;
 }
@@ -6092,7 +6247,11 @@ MinimalEnumeratedType& MinimalTypeObject::enumerated_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_enumerated_type;
 }
@@ -6115,7 +6274,11 @@ const MinimalBitmaskType& MinimalTypeObject::bitmask_type() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitmask_type;
 }
@@ -6132,7 +6295,11 @@ MinimalBitmaskType& MinimalTypeObject::bitmask_type()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_bitmask_type;
 }
@@ -6164,7 +6331,11 @@ const MinimalExtendedType& MinimalTypeObject::extended_type() const
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_extended_type;
 }
@@ -6190,7 +6361,11 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_extended_type;
 }
@@ -6473,7 +6648,11 @@ const CompleteTypeObject& TypeObject::complete() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_complete;
 }
@@ -6490,7 +6669,11 @@ CompleteTypeObject& TypeObject::complete()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_complete;
 }
@@ -6518,7 +6701,11 @@ const MinimalTypeObject& TypeObject::minimal() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_minimal;
 }
@@ -6535,7 +6722,11 @@ MinimalTypeObject& TypeObject::minimal()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member hasn't been selected");
+    if (!b)
+    {
+        throw BadParamException("This member hasn't been selected");
+    }
+
 
     return m_minimal;
 }

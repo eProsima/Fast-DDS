@@ -1059,7 +1059,13 @@ void DynamicData::SetValue(const std::string& sValue)
     {
         if (sValue.length() >= 1)
         {
-            SetByteValue(sValue[0]);
+            uint8_t value(0);
+            try
+            {
+                value = static_cast<uint8_t>(stoul(sValue));
+            }
+            catch (...) {}
+            SetByteValue(value);
         }
     }
     break;
@@ -1254,7 +1260,13 @@ void DynamicData::SetDefaultValue(MemberId id)
     {
         if (defaultValue.length() >= 1)
         {
-            SetByteValue(defaultValue[0], id);
+            uint8_t value(0);
+            try
+            {
+                value = static_cast<uint8_t>(stoul(defaultValue));
+            }
+            catch (...) {}
+            SetByteValue(value, id);
         }
     }
     break;

@@ -603,7 +603,10 @@ bool AnnotationParameterValue::boolean_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_boolean_value;
 }
@@ -620,7 +623,10 @@ bool& AnnotationParameterValue::boolean_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_boolean_value;
 }
@@ -642,7 +648,10 @@ uint8_t AnnotationParameterValue::byte_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_byte_value;
 }
@@ -659,7 +668,10 @@ uint8_t& AnnotationParameterValue::byte_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_byte_value;
 }
@@ -681,7 +693,10 @@ int16_t AnnotationParameterValue::int16_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_int16_value;
 }
@@ -698,7 +713,10 @@ int16_t& AnnotationParameterValue::int16_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_int16_value;
 }
@@ -720,7 +738,10 @@ uint16_t AnnotationParameterValue::uint_16_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uint_16_value;
 }
@@ -737,7 +758,10 @@ uint16_t& AnnotationParameterValue::uint_16_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uint_16_value;
 }
@@ -759,7 +783,10 @@ int32_t AnnotationParameterValue::int32_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_int32_value;
 }
@@ -776,7 +803,10 @@ int32_t& AnnotationParameterValue::int32_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_int32_value;
 }
@@ -798,7 +828,10 @@ uint32_t AnnotationParameterValue::uint32_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uint32_value;
 }
@@ -815,7 +848,10 @@ uint32_t& AnnotationParameterValue::uint32_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uint32_value;
 }
@@ -837,7 +873,10 @@ int64_t AnnotationParameterValue::int64_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_int64_value;
 }
@@ -854,7 +893,10 @@ int64_t& AnnotationParameterValue::int64_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_int64_value;
 }
@@ -876,7 +918,10 @@ uint64_t AnnotationParameterValue::uint64_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uint64_value;
 }
@@ -893,7 +938,10 @@ uint64_t& AnnotationParameterValue::uint64_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uint64_value;
 }
@@ -915,7 +963,10 @@ float AnnotationParameterValue::float32_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_float32_value;
 }
@@ -932,7 +983,10 @@ float& AnnotationParameterValue::float32_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_float32_value;
 }
@@ -954,7 +1008,10 @@ double AnnotationParameterValue::float64_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_float64_value;
 }
@@ -971,7 +1028,10 @@ double& AnnotationParameterValue::float64_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_float64_value;
 }
@@ -993,7 +1053,10 @@ long double AnnotationParameterValue::float128_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_float128_value;
 }
@@ -1010,7 +1073,10 @@ long double& AnnotationParameterValue::float128_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_float128_value;
 }
@@ -1032,7 +1098,10 @@ char AnnotationParameterValue::char_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_char_value;
 }
@@ -1049,7 +1118,10 @@ char& AnnotationParameterValue::char_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_char_value;
 }
@@ -1071,7 +1143,10 @@ wchar_t AnnotationParameterValue::wchar_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_wchar_value;
 }
@@ -1088,7 +1163,10 @@ wchar_t& AnnotationParameterValue::wchar_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_wchar_value;
 }
@@ -1110,7 +1188,10 @@ int32_t AnnotationParameterValue::enumerated_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_enumerated_value;
 }
@@ -1127,7 +1208,10 @@ int32_t& AnnotationParameterValue::enumerated_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_enumerated_value;
 }
@@ -1155,7 +1239,10 @@ const std::string& AnnotationParameterValue::string8_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_string8_value;
 }
@@ -1172,7 +1259,10 @@ std::string& AnnotationParameterValue::string8_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_string8_value;
 }
@@ -1200,7 +1290,10 @@ const std::wstring& AnnotationParameterValue::string16_value() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_string16_value;
 }
@@ -1217,7 +1310,10 @@ std::wstring& AnnotationParameterValue::string16_value()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_string16_value;
 }
@@ -1260,7 +1356,10 @@ const ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_extended_value;
 }
@@ -1292,7 +1391,10 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
         b = true;
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_extended_value;
 }

@@ -314,12 +314,12 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
 
     uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
-    payload = SerializedPayload_t(payloadSize2);
-    ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload));
-    ASSERT_TRUE(payloadSize2 == payload.length);
+    SerializedPayload_t payload2 = SerializedPayload_t(payloadSize2);
+    ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
+    ASSERT_TRUE(payloadSize2 == payload2.length);
 
     types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
-    ASSERT_TRUE(pubsubtype.deserialize(&payload, dynData2));
+    ASSERT_TRUE(pubsubtype.deserialize(&payload2, dynData2));
 
     ASSERT_TRUE(dynData2->Equals(dynData));
 
@@ -427,8 +427,10 @@ TEST_F(DynamicComplexTypesTests, StaticVsDynamicDiscovery)
     DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(basicStruct_builder->getTypeDescriptor(),
         dynamicTypeObject, &innerMembers);
 
-    const TypeIdentifier* static_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct");
-    const TypeIdentifier* dynamic_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct2");
+    const TypeIdentifier* static_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct", true);
+    const TypeIdentifier* dynamic_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BasicStruct2", true);
+    ASSERT_TRUE(static_identifier != nullptr);
+    ASSERT_TRUE(dynamic_identifier != nullptr);
     ASSERT_TRUE(*static_identifier == *dynamic_identifier);
 }
 

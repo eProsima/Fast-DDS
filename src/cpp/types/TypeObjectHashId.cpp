@@ -169,7 +169,11 @@ const EquivalenceHash& TypeObjectHashId::hash() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_hash;
 }
@@ -187,7 +191,11 @@ EquivalenceHash& TypeObjectHashId::hash()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_hash;
 }
