@@ -373,7 +373,7 @@ TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
     ASSERT_FALSE(*identifier1 == *identifier3);
     ASSERT_TRUE(*identifier2 == *identifier3);
 }
-
+/*
 TEST_F(DynamicComplexTypesTests, StaticVsDynamicDiscovery)
 {
     BasicStruct test;
@@ -433,7 +433,7 @@ TEST_F(DynamicComplexTypesTests, StaticVsDynamicDiscovery)
     ASSERT_TRUE(dynamic_identifier != nullptr);
     ASSERT_TRUE(*static_identifier == *dynamic_identifier);
 }
-
+*/
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);
