@@ -1018,7 +1018,10 @@ void MyUnion::_d(MyEnum __d)
         break;
     }
 
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b)
+    {
+        throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    }
 
     m__d = __d;
 }
@@ -1057,7 +1060,10 @@ const BasicStruct& MyUnion::basic() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_basic;
 }
@@ -1074,7 +1080,10 @@ BasicStruct& MyUnion::basic()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_basic;
 }
@@ -1103,7 +1112,10 @@ const ComplexStruct& MyUnion::complex() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_complex;
 }
@@ -1121,7 +1133,10 @@ ComplexStruct& MyUnion::complex()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_complex;
 }
@@ -1358,7 +1373,10 @@ void MyUnion2::_d(uint8_t __d)
         break;
     }
 
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b)
+    {
+        throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    }
 
     m__d = __d;
 }
@@ -1391,7 +1409,10 @@ int32_t MyUnion2::uno() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uno;
 }
@@ -1408,7 +1429,10 @@ int32_t& MyUnion2::uno()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_uno;
 }
@@ -1436,7 +1460,10 @@ const std::string& MyUnion2::imString() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_imString;
 }
@@ -1453,7 +1480,10 @@ std::string& MyUnion2::imString()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_imString;
 }
@@ -1475,7 +1505,10 @@ int32_t MyUnion2::tres() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_tres;
 }
@@ -1492,7 +1525,10 @@ int32_t& MyUnion2::tres()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_tres;
 }

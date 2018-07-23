@@ -2706,7 +2706,10 @@ void SimpleUnion::_d(int32_t __d)
         break;
     }
 
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b)
+    {
+        throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    }
 
     m__d = __d;
 }
@@ -2739,7 +2742,10 @@ int32_t SimpleUnion::first() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_first;
 }
@@ -2756,7 +2762,10 @@ int32_t& SimpleUnion::first()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_first;
 }
@@ -2778,7 +2787,10 @@ int64_t SimpleUnion::second() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_second;
 }
@@ -2795,7 +2807,10 @@ int64_t& SimpleUnion::second()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_second;
 }
@@ -3014,7 +3029,10 @@ void UnionUnion::_d(int32_t __d)
         break;
     }
 
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b)
+    {
+        throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    }
 
     m__d = __d;
 }
@@ -3047,7 +3065,10 @@ int32_t UnionUnion::first() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_first;
 }
@@ -3064,7 +3085,10 @@ int32_t& UnionUnion::first()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_first;
 }
@@ -3092,7 +3116,10 @@ const SimpleUnion& UnionUnion::second() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_second;
 }
@@ -3109,7 +3136,10 @@ SimpleUnion& UnionUnion::second()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_second;
 }
@@ -3324,7 +3354,10 @@ void WCharUnion::_d(wchar_t __d)
         break;
     }
 
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if(!b)
+    {
+        throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    }
 
     m__d = __d;
 }
@@ -3357,7 +3390,10 @@ int32_t WCharUnion::first() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_first;
 }
@@ -3374,7 +3410,10 @@ int32_t& WCharUnion::first()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_first;
 }
@@ -3396,7 +3435,10 @@ int64_t WCharUnion::second() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_second;
 }
@@ -3413,7 +3455,10 @@ int64_t& WCharUnion::second()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_second;
 }
