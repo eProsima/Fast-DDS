@@ -4354,7 +4354,7 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     }
     case TK_FLOAT128:
     {
-        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
         break;
     }
     case TK_CHAR8:
@@ -4532,7 +4532,7 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
     }
     case TK_FLOAT128:
     {
-        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
         break;
     }
     case TK_CHAR8:
