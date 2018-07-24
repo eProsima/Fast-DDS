@@ -77,6 +77,8 @@ void TestTypeFactory::registerTypes()
     factory->AddTypeObject("MyUnion2", GetMyUnion2Identifier(false), GetMyUnion2Object(false));
     factory->AddTypeObject("CompleteStruct", GetCompleteStructIdentifier(true), GetCompleteStructObject(true));
     factory->AddTypeObject("CompleteStruct", GetCompleteStructIdentifier(false), GetCompleteStructObject(false));
+    factory->AddTypeObject("KeyedStruct", GetKeyedStructIdentifier(true), GetKeyedStructObject(true));
+    factory->AddTypeObject("KeyedStruct", GetKeyedStructIdentifier(false), GetKeyedStructObject(false));
 }
 
 const TypeIdentifier* TestTypeFactory::GetTypeIdentifier(const std::string &type_name, bool complete)
@@ -102,6 +104,7 @@ const TypeIdentifier* TestTypeFactory::GetTypeIdentifier(const std::string &type
         if (type_name == "MyUnion") return GetMyUnionIdentifier(complete);
         if (type_name == "MyUnion2") return GetMyUnion2Identifier(complete);
         if (type_name == "CompleteStruct") return GetCompleteStructIdentifier(complete);
+        if (type_name == "KeyedStruct") return GetKeyedStructIdentifier(complete);
     }
     else
     {
@@ -186,6 +189,11 @@ const TypeObject* TestTypeFactory::GetTypeObject(const std::string &type_name, b
         {
             GetCompleteStructIdentifier(complete);
             return GetTypeObject("CompleteStruct", complete);
+        }
+        if (type_name == "KeyedStruct")
+        {
+            GetKeyedStructIdentifier(complete);
+            return GetTypeObject("KeyedStruct", complete);
         }
     }
 
@@ -4326,4 +4334,218 @@ const TypeObject* TestTypeFactory::GetCompleteCompleteStructObject()
     TypeObjectFactory::GetInstance()->AddTypeObject("CompleteStruct", &identifier, type_object);
     delete type_object;
     return GetTypeObject("CompleteStruct", true);
+}
+
+const TypeIdentifier* TestTypeFactory::GetKeyedStructIdentifier(bool complete)
+{
+    const TypeIdentifier * c_identifier = GetTypeIdentifier("KeyedStruct", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetKeyedStructObject(complete); // Generated inside
+    return GetTypeIdentifier("KeyedStruct", complete);
+}
+
+const TypeObject* TestTypeFactory::GetKeyedStructObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("KeyedStruct", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteKeyedStructObject();
+    }
+    //else
+    return GetMinimalKeyedStructObject();
+}
+
+const TypeObject* TestTypeFactory::GetMinimalKeyedStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("KeyedStruct", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_STRUCTURE);
+
+    type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    MinimalStructMember mst_key;
+    mst_key.common().member_id(memberId++);
+    mst_key.common().member_flags().TRY_CONSTRUCT1(false);
+    mst_key.common().member_flags().TRY_CONSTRUCT2(false);
+    mst_key.common().member_flags().IS_EXTERNAL(false);
+    mst_key.common().member_flags().IS_OPTIONAL(false);
+    mst_key.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_key.common().member_flags().IS_KEY(false);
+    mst_key.common().member_flags().IS_DEFAULT(false);
+    {
+        std::string cppType = "uint8_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_key.common().member_type_id(*GetTypeIdentifier(cppType, false));
+    }
+
+    MD5 key_hash("key");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_key.detail().name_hash()[i] = key_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_key);
+
+    MinimalStructMember mst_basic;
+    mst_basic.common().member_id(memberId++);
+    mst_basic.common().member_flags().TRY_CONSTRUCT1(false);
+    mst_basic.common().member_flags().TRY_CONSTRUCT2(false);
+    mst_basic.common().member_flags().IS_EXTERNAL(false);
+    mst_basic.common().member_flags().IS_OPTIONAL(false);
+    mst_basic.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_basic.common().member_flags().IS_KEY(false);
+    mst_basic.common().member_flags().IS_DEFAULT(false);
+    mst_basic.common().member_type_id(*GetBasicStructIdentifier(false));
+    MD5 basic_hash("basic");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_basic.detail().name_hash()[i] = basic_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_basic);
+
+
+    // Header
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("KeyedStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("KeyedStruct", false);
+}
+
+const TypeObject* TestTypeFactory::GetCompleteKeyedStructObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("KeyedStruct", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_key;
+    cst_key.common().member_id(memberId++);
+    cst_key.common().member_flags().TRY_CONSTRUCT1(false);
+    cst_key.common().member_flags().TRY_CONSTRUCT2(false);
+    cst_key.common().member_flags().IS_EXTERNAL(false);
+    cst_key.common().member_flags().IS_OPTIONAL(false);
+    cst_key.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_key.common().member_flags().IS_KEY(false);
+    cst_key.common().member_flags().IS_DEFAULT(false);
+    {
+        std::string cppType = "uint8_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        cst_key.common().member_type_id(*GetTypeIdentifier(cppType, false));
+    }
+
+    cst_key.detail().name("key");
+    //cst_key.detail().ann_builtin()...
+    //cst_key.detail().ann_custom()...
+    type_object->complete().struct_type().member_seq().emplace_back(cst_key);
+
+    CompleteStructMember cst_basic;
+    cst_basic.common().member_id(memberId++);
+    cst_basic.common().member_flags().TRY_CONSTRUCT1(false);
+    cst_basic.common().member_flags().TRY_CONSTRUCT2(false);
+    cst_basic.common().member_flags().IS_EXTERNAL(false);
+    cst_basic.common().member_flags().IS_OPTIONAL(false);
+    cst_basic.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_basic.common().member_flags().IS_KEY(false);
+    cst_basic.common().member_flags().IS_DEFAULT(false);
+    cst_basic.common().member_type_id(*GetBasicStructIdentifier(true));
+    cst_basic.detail().name("basic");
+    //cst_basic.detail().ann_builtin()...
+    //cst_basic.detail().ann_custom()...
+    type_object->complete().struct_type().member_seq().emplace_back(cst_basic);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("KeyedStruct");
+    //type_object->complete().struct_type().header().detail().ann_builtin()...
+    //type_object->complete().struct_type().header().detail().ann_custom()...
+    // TODO inheritance
+    //type_object->complete().struct_type().header().base_type()._d(EK_COMPLETE);
+    //type_object->complete().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::GetInstance()->AddTypeObject("KeyedStruct", &identifier, type_object);
+    delete type_object;
+    return GetTypeObject("KeyedStruct", true);
 }

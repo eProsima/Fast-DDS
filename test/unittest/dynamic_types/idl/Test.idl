@@ -86,3 +86,9 @@ struct CompleteStruct
     MyUnion my_union;
     MyUnion2 my_union_2;
 };
+
+struct KeyedStruct
+{
+    @Key octet key;
+    BasicStruct basic;
+};

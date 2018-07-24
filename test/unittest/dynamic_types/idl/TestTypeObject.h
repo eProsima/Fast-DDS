@@ -133,6 +133,11 @@ public:
     eProsima_user_DllExport const TypeObject* GetMinimalCompleteStructObject();
     eProsima_user_DllExport const TypeObject* GetCompleteCompleteStructObject();
 
+    eProsima_user_DllExport const TypeIdentifier* GetKeyedStructIdentifier(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetKeyedStructObject(bool complete = false);
+    eProsima_user_DllExport const TypeObject* GetMinimalKeyedStructObject();
+    eProsima_user_DllExport const TypeObject* GetCompleteKeyedStructObject();
+
 
 private:
 };

@@ -1975,5 +1975,163 @@ private:
     MyUnion m_my_union;
     MyUnion2 m_my_union_2;
 };
+/*!
+ * @brief This class represents the structure KeyedStruct defined by the user in the IDL file.
+ * @ingroup TEST
+ */
+class KeyedStruct
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport KeyedStruct();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~KeyedStruct();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object KeyedStruct that will be copied.
+     */
+    eProsima_user_DllExport KeyedStruct(const KeyedStruct &x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object KeyedStruct that will be copied.
+     */
+    eProsima_user_DllExport KeyedStruct(KeyedStruct &&x);
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object KeyedStruct that will be copied.
+     */
+    eProsima_user_DllExport KeyedStruct& operator=(const KeyedStruct &x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object KeyedStruct that will be copied.
+     */
+    eProsima_user_DllExport KeyedStruct& operator=(KeyedStruct &&x);
+
+    /*!
+     * @brief This function sets a value in member key
+     * @param _key New value for member key
+     */
+    inline eProsima_user_DllExport void key(uint8_t _key)
+    {
+        m_key = _key;
+    }
+
+    /*!
+     * @brief This function returns the value of member key
+     * @return Value of member key
+     */
+    inline eProsima_user_DllExport uint8_t key() const
+    {
+        return m_key;
+    }
+
+    /*!
+     * @brief This function returns a reference to member key
+     * @return Reference to member key
+     */
+    inline eProsima_user_DllExport uint8_t& key()
+    {
+        return m_key;
+    }
+    /*!
+     * @brief This function copies the value in member basic
+     * @param _basic New value to be copied in member basic
+     */
+    inline eProsima_user_DllExport void basic(const BasicStruct &_basic)
+    {
+        m_basic = _basic;
+    }
+
+    /*!
+     * @brief This function moves the value in member basic
+     * @param _basic New value to be moved in member basic
+     */
+    inline eProsima_user_DllExport void basic(BasicStruct &&_basic)
+    {
+        m_basic = std::move(_basic);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member basic
+     * @return Constant reference to member basic
+     */
+    inline eProsima_user_DllExport const BasicStruct& basic() const
+    {
+        return m_basic;
+    }
+
+    /*!
+     * @brief This function returns a reference to member basic
+     * @return Reference to member basic
+     */
+    inline eProsima_user_DllExport BasicStruct& basic()
+    {
+        return m_basic;
+    }
+
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const KeyedStruct& data, size_t current_alignment = 0);
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    eProsima_user_DllExport static bool isKeyDefined();
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    uint8_t m_key;
+    BasicStruct m_basic;
+};
 
 #endif // _TEST_H_

@@ -95,5 +95,24 @@ public:
 	MD5 m_md5;
 	unsigned char* m_keyBuffer;
 };
+/*!
+ * @brief This class represents the TopicDataType of the type KeyedStruct defined by the user in the IDL file.
+ * @ingroup TEST
+ */
+class KeyedStructPubSubType : public eprosima::fastrtps::TopicDataType {
+public:
+        typedef KeyedStruct type;
+
+	KeyedStructPubSubType();
+	virtual ~KeyedStructPubSubType();
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+        std::function<uint32_t()> getSerializedSizeProvider(void* data);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+	void* createData();
+	void deleteData(void * data);
+	MD5 m_md5;
+	unsigned char* m_keyBuffer;
+};
 
 #endif // _TEST_PUBSUBTYPES_H_

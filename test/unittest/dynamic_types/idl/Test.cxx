@@ -1813,3 +1813,109 @@ void CompleteStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 	 
 	 
 }
+KeyedStruct::KeyedStruct()
+{
+    m_key = 0;
+
+
+    // Just to register all known types
+    TestTypeFactory factory;
+}
+
+KeyedStruct::~KeyedStruct()
+{
+}
+
+KeyedStruct::KeyedStruct(const KeyedStruct &x)
+{
+    m_key = x.m_key;
+    m_basic = x.m_basic;
+}
+
+KeyedStruct::KeyedStruct(KeyedStruct &&x)
+{
+    m_key = x.m_key;
+    m_basic = std::move(x.m_basic);
+}
+
+KeyedStruct& KeyedStruct::operator=(const KeyedStruct &x)
+{
+    m_key = x.m_key;
+    m_basic = x.m_basic;
+
+    return *this;
+}
+
+KeyedStruct& KeyedStruct::operator=(KeyedStruct &&x)
+{
+    m_key = x.m_key;
+    m_basic = std::move(x.m_basic);
+
+    return *this;
+}
+
+size_t KeyedStruct::getMaxCdrSerializedSize(size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    /* uint8_t */
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    /* BasicStruct */
+    current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t KeyedStruct::getCdrSerializedSize(const KeyedStruct& data, size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    /* uint8_t key */
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    /* BasicStruct basic */
+    current_alignment += BasicStruct::getCdrSerializedSize(data.basic(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+void KeyedStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << m_key;
+    scdr << m_basic;
+}
+
+void KeyedStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
+{
+    dcdr >> m_key;
+    dcdr >> m_basic;
+}
+
+size_t KeyedStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
+{
+	size_t current_align = current_alignment;
+            
+     /* uint8_t */
+    current_align += 1 + eprosima::fastcdr::Cdr::alignment(current_align, 1);
+
+     
+
+
+    return current_align;
+}
+
+bool KeyedStruct::isKeyDefined()
+{
+    return true;
+}
+
+void KeyedStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+{
+	(void) scdr;
+	 scdr << m_key;  
+	 
+}
