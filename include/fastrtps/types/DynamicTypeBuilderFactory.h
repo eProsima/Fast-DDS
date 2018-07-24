@@ -18,6 +18,8 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
+#define DISABLE_DYNAMIC_MEMORY_CHECK
+
 namespace eprosima{
 namespace fastrtps{
 namespace types{

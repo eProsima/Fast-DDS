@@ -177,7 +177,7 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
             m_isGetKeyDefined |= it->second->GetKeyAnnotation();
         }
 
-        m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(mDynamicType));
+        m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(mDynamicType) + 4);
         setName(mDynamicType->GetName().c_str());
     }
 }

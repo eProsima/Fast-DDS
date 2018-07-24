@@ -17,13 +17,15 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+
+#define DISABLE_DYNAMIC_MEMORY_CHECK
 
 namespace eprosima{
 namespace fastrtps{
 namespace types{
-
-class DynamicData;
-class DynamicTypeBuilder;
 
 class DynamicDataFactory
 {
