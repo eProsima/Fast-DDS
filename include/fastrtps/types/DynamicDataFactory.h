@@ -37,6 +37,7 @@ public:
 
     RTPS_DllAPI DynamicData* CreateData(DynamicTypeBuilder* pBuilder);
     RTPS_DllAPI DynamicData* CreateData(DynamicType_ptr pType);
+    RTPS_DllAPI DynamicData* CreateCopy(DynamicData* pData);
     RTPS_DllAPI ResponseCode DeleteData(DynamicData* pData);
 
     RTPS_DllAPI bool IsEmpty() const;

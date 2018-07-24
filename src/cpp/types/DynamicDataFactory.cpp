@@ -57,6 +57,11 @@ DynamicDataFactory::~DynamicDataFactory()
 #endif
 }
 
+DynamicData* DynamicDataFactory::CreateCopy(DynamicData* pData)
+{
+    return pData->Clone();
+}
+
 DynamicData* DynamicDataFactory::CreateData(DynamicTypeBuilder* pBuilder)
 {
     if (pBuilder != nullptr && pBuilder->IsConsistent())
