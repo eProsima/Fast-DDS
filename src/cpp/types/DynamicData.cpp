@@ -4393,9 +4393,9 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     case TK_STRING16:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        // string content (length + ((characters + 1) * 4) )
+        // string content (length + (characters * 4) )
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-            (data->mWStringValue.length() + 1) * 4;
+            (data->mWStringValue.length()) * 4;
 #else
         auto it = data->mValues.begin();
         // string content (length + ((characters + 1) * 4) )
@@ -4562,8 +4562,9 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
     }
     case TK_STRING16:
     {
-        // string length + ( string content + 1 ) * 4
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + ((type->GetBounds() + 1) * 4);
+        // string length + ( string content * 4 )
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (type->GetBounds() * 4);
+
         break;
     }
     case TK_UNION:
@@ -4963,7 +4964,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     case TK_STRING16:
     {
         // string length +  4
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 4;
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         break;
     }
     case TK_UNION:
