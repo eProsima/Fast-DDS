@@ -896,9 +896,9 @@ void DynamicData::GetValue(std::string& sOutValue)
     break;
     case TK_ENUM:
     {
-        uint32_t value(0);
-        GetUint32Value(value, MEMBER_ID_INVALID);
-        sOutValue = std::to_string(value);
+        std::string value;
+        GetEnumValue(value, MEMBER_ID_INVALID);
+        sOutValue = value;
     }
     break;
     case TK_BITSET:
