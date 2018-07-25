@@ -53,12 +53,31 @@ public:
 
     RTPS_DllAPI MemberId GetArrayIndex(const std::vector<uint32_t>& position);
     RTPS_DllAPI ResponseCode InsertSequenceData(MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertInt32Value(int32_t value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertUint32Value(uint32_t value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertInt16Value(int16_t value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertUint16Value(uint16_t value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertInt64Value(int64_t value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertUint64Value(uint64_t value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertFloat32Value(float value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertFloat64Value(double value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertFloat128Value(long double value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertChar8Value(char value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertChar16Value(wchar_t value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertByteValue(octet value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertBoolValue(bool value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertStringValue(const std::string& value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertWstringValue(const std::wstring& value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertEnumValue(const std::string& value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertComplexValue(DynamicData* value, MemberId& outId);
+
     RTPS_DllAPI ResponseCode RemoveSequenceData(MemberId id);
     RTPS_DllAPI ResponseCode ClearData();
 
     RTPS_DllAPI ResponseCode ClearArrayData(MemberId indexId);
 
     RTPS_DllAPI ResponseCode InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
+    RTPS_DllAPI ResponseCode InsertMapData(DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue);
     RTPS_DllAPI ResponseCode RemoveMapData(MemberId keyId);
 
     RTPS_DllAPI ResponseCode GetInt32Value(int32_t& value, MemberId id) const;
@@ -91,9 +110,10 @@ public:
 	RTPS_DllAPI ResponseCode SetStringValue(const std::string& value, MemberId id = MEMBER_ID_INVALID);
     RTPS_DllAPI ResponseCode GetWstringValue(std::wstring& value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetWstringValue(const std::wstring& value, MemberId id = MEMBER_ID_INVALID);
-
     RTPS_DllAPI ResponseCode GetEnumValue(std::string& value, MemberId id) const;
     RTPS_DllAPI ResponseCode SetEnumValue(const std::string& value, MemberId id = MEMBER_ID_INVALID);
+    RTPS_DllAPI ResponseCode GetEnumValue(uint32_t& value, MemberId id) const;
+    RTPS_DllAPI ResponseCode SetEnumValue(const uint32_t& value, MemberId id = MEMBER_ID_INVALID);
     RTPS_DllAPI ResponseCode GetBitmaskValue(const std::string& name, bool& value) const;
     RTPS_DllAPI ResponseCode SetBitmaskValue(bool value, const std::string& name);
 

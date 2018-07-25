@@ -1714,6 +1714,17 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
         ASSERT_TRUE(data->GetEnumValue(test2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
+        // Work as uint32_t
+        uint32_t uTest1 = 2;
+        ASSERT_FALSE(data->SetEnumValue(uTest1, 1) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(data->SetEnumValue(uTest1, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+
+        uint32_t uTest2;
+        ASSERT_FALSE(data->GetInt32Value(iTest, 0) == ResponseCode::RETCODE_OK);
+        ASSERT_FALSE(data->GetEnumValue(uTest2, 1) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(data->GetEnumValue(uTest2, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(uTest1 == uTest2);
+
         ASSERT_FALSE(data->SetInt32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         ASSERT_FALSE(data->SetUint32Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         ASSERT_FALSE(data->SetInt16Value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);

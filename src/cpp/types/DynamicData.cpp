@@ -3384,6 +3384,125 @@ ResponseCode DynamicData::SetWstringValue(const std::wstring& value, MemberId id
 #endif
 }
 
+ResponseCode DynamicData::GetEnumValue(uint32_t& value, MemberId id) const
+{
+#ifdef DYNAMIC_TYPES_CHECKING
+    if (GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    {
+        value = mUInt32Value;
+        return ResponseCode::RETCODE_OK;
+    }
+    else if (id != MEMBER_ID_INVALID)
+    {
+        auto it = mComplexValues.find(id);
+        if (it != mComplexValues.end())
+        {
+            if (GetKind() != TK_UNION || id == mUnionId)
+            {
+                return it->second->GetEnumValue(value, MEMBER_ID_INVALID);
+            }
+        }
+        else if (GetKind() == TK_ARRAY)
+        {
+            return mDefaultArrayValue->GetEnumValue(value, MEMBER_ID_INVALID);
+        }
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#else
+    auto itValue = mValues.find(id);
+    if (itValue != mValues.end())
+    {
+        if (GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        {
+            value = *((uint32_t*)itValue->second);
+            return ResponseCode::RETCODE_OK;
+        }
+        else if (id != MEMBER_ID_INVALID)
+        {
+            if (GetKind() != TK_UNION || id == mUnionId)
+            {
+                return ((DynamicData*)itValue->second)->GetEnumValue(value, MEMBER_ID_INVALID);
+            }
+        }
+    }
+    else if (GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    {
+        return mDefaultArrayValue->GetEnumValue(value, MEMBER_ID_INVALID);
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#endif
+}
+
+ResponseCode DynamicData::SetEnumValue(const uint32_t& value, MemberId id /*= MEMBER_ID_INVALID*/)
+{
+#ifdef DYNAMIC_TYPES_CHECKING
+    if (GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    {
+        if (mDescriptors.find(value) != mDescriptors.end())
+        {
+            mUInt32Value = value;
+            return ResponseCode::RETCODE_OK;
+        }
+    }
+    else if (id != MEMBER_ID_INVALID)
+    {
+        auto it = mComplexValues.find(id);
+        if (it != mComplexValues.end())
+        {
+            ResponseCode result = it->second->SetEnumValue(value, MEMBER_ID_INVALID);
+            if (result == ResponseCode::RETCODE_OK && GetKind() == TK_UNION)
+            {
+                SetUnionId(id);
+            }
+            return result;
+        }
+        else if (GetKind() == TK_ARRAY)
+        {
+            ResponseCode insertResult = InsertArrayData(id);
+            if (insertResult == ResponseCode::RETCODE_OK)
+            {
+                return SetEnumValue(value, id);
+            }
+            return insertResult;
+        }
+    }
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#else
+    auto itValue = mValues.find(id);
+    if (itValue != mValues.end())
+    {
+        if (GetKind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        {
+            if (mDescriptors.find(value) != mDescriptors.end())
+            {
+                *((uint32_t*)itValue->second) = value;
+                return ResponseCode::RETCODE_OK;
+            }
+        }
+        else if (id != MEMBER_ID_INVALID)
+        {
+            ResponseCode result = ((DynamicData*)itValue->second)->SetEnumValue(value, MEMBER_ID_INVALID);
+            if (result == ResponseCode::RETCODE_OK && GetKind() == TK_UNION)
+            {
+                SetUnionId(id);
+            }
+            return result;
+        }
+    }
+    else if (GetKind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    {
+        ResponseCode insertResult = InsertArrayData(id);
+        if (insertResult == ResponseCode::RETCODE_OK)
+        {
+            return SetEnumValue(value, id);
+        }
+        return insertResult;
+    }
+
+    return ResponseCode::RETCODE_BAD_PARAMETER;
+#endif
+}
+
 ResponseCode DynamicData::GetEnumValue(std::string& value, MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -3687,6 +3806,323 @@ ResponseCode DynamicData::ClearArrayData(MemberId indexId)
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
+ResponseCode DynamicData::InsertInt32Value(int32_t value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_INT32)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetInt32Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertUint32Value(uint32_t value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_UINT32)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetUint32Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertInt16Value(int16_t value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_INT16)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetInt16Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertUint16Value(uint16_t value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_UINT16)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetUint16Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertInt64Value(int64_t value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_INT64)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetInt64Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertUint64Value(uint64_t value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_UINT64)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetUint64Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertFloat32Value(float value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_FLOAT32)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetFloat32Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertFloat64Value(double value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_FLOAT64)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetFloat64Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertFloat128Value(long double value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_FLOAT128)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetFloat128Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertChar8Value(char value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_CHAR8)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetChar8Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertChar16Value(wchar_t value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_CHAR16)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetChar16Value(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertByteValue(octet value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_BYTE)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetByteValue(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertBoolValue(bool value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_BOOLEAN)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetBoolValue(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertStringValue(const std::string& value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_STRING8)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetStringValue(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertWstringValue(const std::wstring& value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_STRING16)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetWstringValue(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertEnumValue(const std::string& value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->GetKind() == TK_ENUM)
+    {
+        ResponseCode result = InsertSequenceData(outId);
+        if (result == ResponseCode::RETCODE_OK)
+        {
+            result = SetEnumValue(value, outId);
+        }
+        return result;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertComplexValue(DynamicData* value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->Equals(value->mType.get()))
+    {
+        if (mType->GetBounds() == LENGTH_UNLIMITED || GetItemCount() < mType->GetBounds())
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            outId = static_cast<MemberId>(mComplexValues.size());
+            mComplexValues.insert(std::make_pair(outId, value));
+            return ResponseCode::RETCODE_OK;
+#else
+            outId = static_cast<MemberId>(mValues.size());
+            mValues.insert(std::make_pair(outId, value));
+            return ResponseCode::RETCODE_OK;
+#endif
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
 ResponseCode DynamicData::InsertSequenceData(MemberId& outId)
 {
     outId = MEMBER_ID_INVALID;
@@ -3754,7 +4190,7 @@ ResponseCode DynamicData::RemoveSequenceData(MemberId id)
 
 ResponseCode DynamicData::InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId)
 {
-    if (GetKind() == TK_MAP)
+    if (GetKind() == TK_MAP && mType->Equals(key->mType.get()))
     {
         if (mType->GetBounds() == LENGTH_UNLIMITED || GetItemCount() < mType->GetBounds())
         {
@@ -3791,6 +4227,61 @@ ResponseCode DynamicData::InsertMapData(DynamicData* key, MemberId& outKeyId, Me
             DynamicData* new_element = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
             outValueId = static_cast<MemberId>(mValues.size());
             mValues.insert(std::make_pair(outValueId, new_element));
+            return ResponseCode::RETCODE_OK;
+#endif
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error inserting to map. The map is full");
+            return ResponseCode::RETCODE_ERROR;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting to map. The current Kind " << GetKind()
+            << " doesn't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertMapData(DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue)
+{
+    if (GetKind() == TK_MAP && mType->GetKeyElementType()->Equals(key->mType.get()) &&
+        mType->GetElementType()->Equals(value->mType.get()))
+    {
+        if (mType->GetBounds() == LENGTH_UNLIMITED || GetItemCount() < mType->GetBounds())
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+            {
+                if (it->second->Equals(key))
+                {
+                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    return ResponseCode::RETCODE_BAD_PARAMETER;
+                }
+            }
+            outKey = static_cast<MemberId>(mComplexValues.size());
+            key->mIsKeyElement = true;
+            mComplexValues.insert(std::make_pair(outKey, key));
+
+            outValue = static_cast<MemberId>(mComplexValues.size());
+            mComplexValues.insert(std::make_pair(outValue, value));
+            return ResponseCode::RETCODE_OK;
+#else
+            for (auto it = mValues.begin(); it != mValues.end(); ++it)
+            {
+                if (it->second == key)
+                {
+                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    return ResponseCode::RETCODE_BAD_PARAMETER;
+                }
+            }
+            outKey = static_cast<MemberId>(mValues.size());
+            key->mIsKeyElement = true;
+            mValues.insert(std::make_pair(outKey, key));
+
+            outValue = static_cast<MemberId>(mValues.size());
+            mValues.insert(std::make_pair(outValue, value));
             return ResponseCode::RETCODE_OK;
 #endif
         }
@@ -3900,31 +4391,63 @@ ResponseCode DynamicData::GetComplexValue(DynamicData** value, MemberId id) cons
 
 ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
 {
+    if (GetKind() == TK_STRUCTURE || GetKind() == TK_UNION || GetKind() == TK_SEQUENCE
+        || GetKind() == TK_ARRAY || GetKind() == TK_MAP)
+    {
+        if (id != MEMBER_ID_INVALID && (mType->GetBounds() == LENGTH_UNLIMITED || id < mType->GetBounds()))
+        {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mComplexValues.find(id);
-    if (it != mComplexValues.end())
-    {
-        if (it->second != nullptr)
-        {
-            DynamicDataFactory::GetInstance()->DeleteData(it->second);
-        }
-        mComplexValues.erase(it);
-    }
-    mComplexValues.insert(std::make_pair(id, value));
+            auto it = mComplexValues.find(id);
+            if (it != mComplexValues.end())
+            {
+                if (GetKind() == TK_MAP && it->second->mIsKeyElement)
+                {
+                    logError(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
+                    return ResponseCode::RETCODE_BAD_PARAMETER;
+                }
+                else
+                {
+                    if (it->second != nullptr)
+                    {
+                        DynamicDataFactory::GetInstance()->DeleteData(it->second);
+                    }
+                    mComplexValues.erase(it);
+                }
+            }
+            mComplexValues.insert(std::make_pair(id, value));
 #else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        if (it->second != nullptr)
-        {
-            DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)it->second);
-        }
-        mValues.erase(it);
-    }
-    mValues.insert(std::make_pair(id, value));
+            auto it = mValues.find(id);
+            if (it != mValues.end())
+            {
+                if (GetKind() == TK_MAP && it->second->mIsKeyElement)
+                {
+                    logError(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
+                    return ResponseCode::RETCODE_BAD_PARAMETER;
+                }
+                else
+                {
+                    if (it->second != nullptr)
+                    {
+                        DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)it->second);
+                    }
+                    mValues.erase(it);
+                }
+            }
+            mValues.insert(std::make_pair(id, value));
 #endif
-
-    return ResponseCode::RETCODE_OK;
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error setting complex Value. id out of bounds.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error settings complex value. The kind " << GetKind() << "doesn't support it");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 ResponseCode DynamicData::GetUnionLabel(uint64_t& value) const
