@@ -760,7 +760,7 @@ void* DynamicData::CloneValue(MemberId id, TypeKind kind) const
     case TK_ENUM:
     {
         uint32_t* newUInt32 = new uint32_t();
-        GetUint32Value(*newUInt32, id);
+        GetEnumValue(*newUInt32, id);
         return newUInt32;
     }
     break;
@@ -1106,7 +1106,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoul(sValue);
         }
         catch (...) {}
-        SetUint32Value(value);
+        SetEnumValue(value);
     }
     break;
     case TK_BITSET:
@@ -1307,7 +1307,7 @@ void DynamicData::SetDefaultValue(MemberId id)
             value = stoul(defaultValue);
         }
         catch (...) {}
-        SetUint32Value(value, id);
+        SetEnumValue(value, id);
     }
     break;
     case TK_BITSET:
