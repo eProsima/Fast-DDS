@@ -4542,6 +4542,12 @@ ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
                     }
                 }
             }
+            else if (GetKind() == TK_ARRAY)
+            {
+                mComplexValues.insert(std::make_pair(id, value));
+                return ResponseCode::RETCODE_OK;
+            }
+
 #else
             auto it = mValues.find(id);
             if (it != mValues.end())
@@ -4564,6 +4570,11 @@ ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
                         SetUnionId(id);
                     }
                 }
+            }
+            else if (GetKind() == TK_ARRAY)
+            {
+                mValues.insert(std::make_pair(id, value));
+                return ResponseCode::RETCODE_OK;
             }
 #endif
         }
