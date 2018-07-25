@@ -243,7 +243,24 @@ bool DynamicData::Equals(const DynamicData* other) const
             else
             {
 #ifdef DYNAMIC_TYPES_CHECKING
-                if (mInt32Value != other->mInt32Value || mUInt32Value != other->mUInt32Value ||
+                bool bFail = false;
+                bFail = mInt32Value != other->mInt32Value;
+                bFail = bFail || mUInt32Value != other->mUInt32Value;
+                bFail = bFail || mInt16Value != other->mInt16Value;
+                bFail = bFail || mUInt16Value != other->mUInt16Value;
+                bFail = bFail || mInt64Value != other->mInt64Value;
+                bFail = bFail || mUInt64Value != other->mUInt64Value;
+                bFail = bFail || mFloat32Value != other->mFloat32Value;
+                bFail = bFail || mFloat64Value != other->mFloat64Value;
+                bFail = bFail || mFloat128Value != other->mFloat128Value;
+                bFail = bFail || mChar8Value != other->mChar8Value;
+                bFail = bFail || mChar16Value != other->mChar16Value;
+                bFail = bFail || mByteValue != other->mByteValue;
+                bFail = bFail || mBoolValue != other->mBoolValue;
+                bFail = bFail || mStringValue != other->mStringValue;
+                bFail = bFail || mWStringValue != other->mWStringValue;
+                bFail = bFail || !map_compare(mComplexValues, other->mComplexValues);
+                /*if (mInt32Value != other->mInt32Value || mUInt32Value != other->mUInt32Value ||
                     mInt16Value != other->mInt16Value || mUInt16Value != other->mUInt16Value ||
                     mInt64Value != other->mInt64Value || mUInt64Value != other->mUInt64Value ||
                     mFloat32Value != other->mFloat32Value || mFloat64Value != other->mFloat64Value ||
@@ -252,6 +269,8 @@ bool DynamicData::Equals(const DynamicData* other) const
                     mBoolValue != other->mBoolValue || mStringValue != other->mStringValue ||
                     mWStringValue != other->mWStringValue ||
                     !map_compare(mComplexValues, other->mComplexValues))
+                    */
+                if (bFail)
                 {
                     return false;
                 }
@@ -896,9 +915,9 @@ void DynamicData::GetValue(std::string& sOutValue)
     break;
     case TK_ENUM:
     {
-        std::string value;
+        uint32_t value;
         GetEnumValue(value, MEMBER_ID_INVALID);
-        sOutValue = value;
+        sOutValue = std::to_string(value);
     }
     break;
     case TK_BITSET:

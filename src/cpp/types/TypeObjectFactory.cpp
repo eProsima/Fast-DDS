@@ -19,6 +19,7 @@
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/log/Log.h>
 #include <sstream>
@@ -1022,10 +1023,23 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
                 memDesc.mId = member->common().member_id();
                 memDesc.SetName(member->detail().name());
                 memDesc.SetDefaultUnionValue(member->common().member_flags().IS_DEFAULT());
-                memDesc.mDefaultValue = std::to_string(memDesc.mId);
-                for (uint32_t lab : member->common().label_seq())
+                if (descriptor.mDiscriminatorType->GetKind() == TK_ENUM)
                 {
-                    memDesc.AddUnionCaseIndex(lab);
+                    DynamicTypeMember enumMember;
+                    descriptor.mDiscriminatorType->GetMember(enumMember, memDesc.mId);
+                    memDesc.mDefaultValue = enumMember.GetDescriptor()->mName;
+                    for (uint32_t lab : member->common().label_seq())
+                    {
+                        memDesc.AddUnionCaseIndex(lab);
+                    }
+                }
+                else
+                {
+                    memDesc.mDefaultValue = std::to_string(memDesc.mId);
+                    for (uint32_t lab : member->common().label_seq())
+                    {
+                        memDesc.AddUnionCaseIndex(lab);
+                    }
                 }
                 unionType->AddMember(&memDesc);
             }

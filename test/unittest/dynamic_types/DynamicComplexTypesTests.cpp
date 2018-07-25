@@ -144,7 +144,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
 {
     if (m_MyEnumType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myEnum_builder = m_factory->CreateUint32Builder();
+        DynamicTypeBuilder_ptr myEnum_builder = m_factory->CreateEnumBuilder();
         myEnum_builder->SetName("MyEnum");
         myEnum_builder->AddEmptyMember(0, "A");
         myEnum_builder->AddEmptyMember(1, "B");
@@ -441,7 +441,7 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
     ASSERT_TRUE(m_StaticType.deserialize(&payload, &staticData));
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
 
-    ASSERT_TRUE(pubsubType.deserialize(&payload, dynData2));
+    ASSERT_TRUE(pubsubType.deserialize(&payload2, dynData2));
     ASSERT_TRUE(dynData2->Equals(dynData));
 
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
