@@ -3721,13 +3721,12 @@ MemberId DynamicData::GetArrayIndex(const std::vector<uint32_t>& position)
     {
         MemberId outPosition(0);
         uint32_t offset(1);
-        uint32_t boundsSize = mType->GetBoundsSize();
-        if (position.size() == boundsSize)
+        if (position.size() == mType->GetBoundsSize())
         {
-            for (uint32_t i = 0; i < position.size(); ++i)
+            for (int32_t i = static_cast<int32_t>(position.size() - 1); i >= 0; --i)
             {
                 outPosition += position[i] * offset;
-                offset *= mType->GetBounds(i);
+                offset *= mType->GetBounds(static_cast<uint32_t>(i));
             }
             return outPosition;
         }
