@@ -80,6 +80,10 @@ class SubscriberHistory: public rtps::ReaderHistory
         bool takeNextData(void* data, SampleInfo_t* info);
         ///@}
 
+        bool readNextBuffer(SerializedPayload_t* data, SampleInfo_t* info);
+        bool takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* info);
+
+
         /**
          * This method is called to remove a change from the SubscriberHistory.
          * @param change Pointer to the CacheChange_t.
