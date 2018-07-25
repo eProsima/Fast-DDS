@@ -4094,6 +4094,35 @@ ResponseCode DynamicData::InsertEnumValue(const std::string& value, MemberId& ou
     }
 }
 
+ResponseCode DynamicData::InsertComplexValue(const DynamicData* value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->Equals(value->mType.get()))
+    {
+        if (mType->GetBounds() == LENGTH_UNLIMITED || GetItemCount() < mType->GetBounds())
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            outId = static_cast<MemberId>(mComplexValues.size());
+            mComplexValues.insert(std::make_pair(outId, value->Clone()));
+            return ResponseCode::RETCODE_OK;
+#else
+            outId = static_cast<MemberId>(mValues.size());
+            mValues.insert(std::make_pair(outId, value->Clone()));
+            return ResponseCode::RETCODE_OK;
+#endif
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
 ResponseCode DynamicData::InsertComplexValue(DynamicData* value, MemberId& outId)
 {
     if (GetKind() == TK_SEQUENCE && mType->GetElementType()->Equals(value->mType.get()))
@@ -4188,24 +4217,25 @@ ResponseCode DynamicData::RemoveSequenceData(MemberId id)
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-ResponseCode DynamicData::InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId)
+ResponseCode DynamicData::InsertMapData(const DynamicData* key, MemberId& outKeyId, MemberId& outValueId)
 {
-    if (GetKind() == TK_MAP && mType->Equals(key->mType.get()))
+    if (GetKind() == TK_MAP && mType->GetKeyElementType()->Equals(key->mType.get()))
     {
         if (mType->GetBounds() == LENGTH_UNLIMITED || GetItemCount() < mType->GetBounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
             {
-                if (it->second->Equals(key))
+                if (it->second->mIsKeyElement && it->second->Equals(key))
                 {
                     logError(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ResponseCode::RETCODE_BAD_PARAMETER;
                 }
             }
             outKeyId = static_cast<MemberId>(mComplexValues.size());
-            key->mIsKeyElement = true;
-            mComplexValues.insert(std::make_pair(outKeyId, key));
+            DynamicData* keyCopy = key->Clone();
+            keyCopy->mIsKeyElement = true;
+            mComplexValues.insert(std::make_pair(outKeyId, keyCopy));
 
             DynamicData* new_element = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
             outValueId = static_cast<MemberId>(mComplexValues.size());
@@ -4221,8 +4251,9 @@ ResponseCode DynamicData::InsertMapData(DynamicData* key, MemberId& outKeyId, Me
                 }
             }
             outKeyId = static_cast<MemberId>(mValues.size());
-            key->mIsKeyElement = true;
-            mValues.insert(std::make_pair(outKeyId, key));
+            DynamicData* keyCopy = key->Clone();
+            keyCopy->mIsKeyElement = true;
+            mValues.insert(std::make_pair(outKeyId, keyCopy));
 
             DynamicData* new_element = DynamicDataFactory::GetInstance()->CreateData(mType->GetElementType());
             outValueId = static_cast<MemberId>(mValues.size());
@@ -4244,7 +4275,7 @@ ResponseCode DynamicData::InsertMapData(DynamicData* key, MemberId& outKeyId, Me
     }
 }
 
-ResponseCode DynamicData::InsertMapData(DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue)
+ResponseCode DynamicData::InsertMapData(const DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue)
 {
     if (GetKind() == TK_MAP && mType->GetKeyElementType()->Equals(key->mType.get()) &&
         mType->GetElementType()->Equals(value->mType.get()))
@@ -4254,15 +4285,16 @@ ResponseCode DynamicData::InsertMapData(DynamicData* key, DynamicData* value, Me
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
             {
-                if (it->second->Equals(key))
+                if (it->second->mIsKeyElement && it->second->Equals(key))
                 {
                     logError(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ResponseCode::RETCODE_BAD_PARAMETER;
                 }
             }
             outKey = static_cast<MemberId>(mComplexValues.size());
-            key->mIsKeyElement = true;
-            mComplexValues.insert(std::make_pair(outKey, key));
+            DynamicData* keyCopy = key->Clone();
+            keyCopy->mIsKeyElement = true;
+            mComplexValues.insert(std::make_pair(outKey, keyCopy));
 
             outValue = static_cast<MemberId>(mComplexValues.size());
             mComplexValues.insert(std::make_pair(outValue, value));
@@ -4277,11 +4309,71 @@ ResponseCode DynamicData::InsertMapData(DynamicData* key, DynamicData* value, Me
                 }
             }
             outKey = static_cast<MemberId>(mValues.size());
-            key->mIsKeyElement = true;
-            mValues.insert(std::make_pair(outKey, key));
+            DynamicData* keyCopy = key->Clone();
+            keyCopy->mIsKeyElement = true;
+            mValues.insert(std::make_pair(outKey, keyCopy));
 
             outValue = static_cast<MemberId>(mValues.size());
             mValues.insert(std::make_pair(outValue, value));
+            return ResponseCode::RETCODE_OK;
+#endif
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error inserting to map. The map is full");
+            return ResponseCode::RETCODE_ERROR;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting to map. The current Kind " << GetKind()
+            << " doesn't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode DynamicData::InsertMapData(const DynamicData* key, const DynamicData* value, MemberId& outKey, MemberId& outValue)
+{
+    if (GetKind() == TK_MAP && mType->GetKeyElementType()->Equals(key->mType.get()) &&
+        mType->GetElementType()->Equals(value->mType.get()))
+    {
+        if (mType->GetBounds() == LENGTH_UNLIMITED || GetItemCount() < mType->GetBounds())
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+            {
+                if (it->second->mIsKeyElement && it->second->Equals(key))
+                {
+                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    return ResponseCode::RETCODE_BAD_PARAMETER;
+                }
+            }
+            outKey = static_cast<MemberId>(mComplexValues.size());
+            DynamicData* keyCopy = key->Clone();
+            keyCopy->mIsKeyElement = true;
+            mComplexValues.insert(std::make_pair(outKey, keyCopy));
+
+            outValue = static_cast<MemberId>(mComplexValues.size());
+            DynamicData* valueCopy = value->Clone();
+            mComplexValues.insert(std::make_pair(outValue, valueCopy));
+            return ResponseCode::RETCODE_OK;
+#else
+            for (auto it = mValues.begin(); it != mValues.end(); ++it)
+            {
+                if (it->second == key)
+                {
+                    logError(DYN_TYPES, "Error inserting to map. The key already exists.");
+                    return ResponseCode::RETCODE_BAD_PARAMETER;
+                }
+            }
+            outKey = static_cast<MemberId>(mValues.size());
+            DynamicData* keyCopy = key->Clone();
+            keyCopy->mIsKeyElement = true;
+            mValues.insert(std::make_pair(outKey, keyCopy));
+
+            outValue = static_cast<MemberId>(mValues.size());
+            DynamicData* valueCopy = value->Clone();
+            mValues.insert(std::make_pair(outValue, valueCopy));
             return ResponseCode::RETCODE_OK;
 #endif
         }
@@ -4370,31 +4462,43 @@ ResponseCode DynamicData::ClearData()
 
 ResponseCode DynamicData::GetComplexValue(DynamicData** value, MemberId id) const
 {
+    // Check that the type is complex and in case of dynamic containers, check that the index is valid
+    if (id != MEMBER_ID_INVALID && (GetKind() == TK_STRUCTURE || GetKind() == TK_UNION ||
+        GetKind() == TK_SEQUENCE || GetKind() == TK_ARRAY || GetKind() == TK_MAP))
+    {
 #ifdef DYNAMIC_TYPES_CHECKING
-    auto it = mComplexValues.find(id);
-    if (it != mComplexValues.end())
-    {
-        *value = it->second->Clone();
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+        auto it = mComplexValues.find(id);
+        if (it != mComplexValues.end())
+        {
+            *value = it->second->Clone();
+            return ResponseCode::RETCODE_OK;
+        }
+        return ResponseCode::RETCODE_BAD_PARAMETER;
 #else
-    auto it = mValues.find(id);
-    if (it != mValues.end())
-    {
-        *value = ((DynamicData*)it->second)->Clone();
-        return ResponseCode::RETCODE_OK;
-    }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+        auto it = mValues.find(id);
+        if (it != mValues.end())
+        {
+            *value = ((DynamicData*)it->second)->Clone();
+            return ResponseCode::RETCODE_OK;
+        }
+        return ResponseCode::RETCODE_BAD_PARAMETER;
 #endif
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error settings complex value. The kind " << GetKind() << "doesn't support it");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
 }
 
 ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
 {
-    if (GetKind() == TK_STRUCTURE || GetKind() == TK_UNION || GetKind() == TK_SEQUENCE
-        || GetKind() == TK_ARRAY || GetKind() == TK_MAP)
+    // Check that the type is complex and in case of dynamic containers, check that the index is valid
+    if (id != MEMBER_ID_INVALID && (GetKind() == TK_STRUCTURE || GetKind() == TK_UNION ||
+        GetKind() == TK_SEQUENCE || GetKind() == TK_ARRAY || GetKind() == TK_MAP))
     {
-        if (id != MEMBER_ID_INVALID && (mType->GetBounds() == LENGTH_UNLIMITED || id < mType->GetBounds()))
+        // With containers, check that the index is valid
+        if ((GetKind() == TK_SEQUENCE || GetKind() == TK_ARRAY || GetKind() == TK_MAP) && id < mType->GetTotalBounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             auto it = mComplexValues.find(id);
@@ -4412,9 +4516,14 @@ ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
                         DynamicDataFactory::GetInstance()->DeleteData(it->second);
                     }
                     mComplexValues.erase(it);
+
+                    mComplexValues.insert(std::make_pair(id, value));
+                    if (GetKind() == TK_UNION && mUnionId != id)
+                    {
+                        SetUnionId(id);
+                    }
                 }
             }
-            mComplexValues.insert(std::make_pair(id, value));
 #else
             auto it = mValues.find(id);
             if (it != mValues.end())
@@ -4431,9 +4540,13 @@ ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
                         DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)it->second);
                     }
                     mValues.erase(it);
+                    mValues.insert(std::make_pair(id, value));
+                    if (GetKind() == TK_UNION && mUnionId != id)
+                    {
+                        SetUnionId(id);
+                    }
                 }
             }
-            mValues.insert(std::make_pair(id, value));
 #endif
         }
         else

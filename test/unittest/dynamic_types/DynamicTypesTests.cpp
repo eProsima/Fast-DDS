@@ -2402,6 +2402,12 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
         ASSERT_TRUE(data->RemoveSequenceData(newId) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
 
+        // New Insert Methods
+        ASSERT_TRUE(data->InsertInt32Value(test1, newId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(data->GetInt32Value(test2, newId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(test1 == test2);
+        ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
+
         // Check that the sequence is empty.
         ASSERT_FALSE(data->GetInt32Value(test2, 0) == ResponseCode::RETCODE_OK);
 
@@ -2611,6 +2617,16 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         types::DynamicData* data3 = DynamicDataFactory::GetInstance()->CreateData(seq_type);
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->Equals(data));
+
+        // New Insert Methods
+        ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
+        seq_data = DynamicDataFactory::GetInstance()->CreateData(seq_type);
+        ASSERT_TRUE(seq_data->InsertInt32Value(test1, newSeqId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(seq_data->GetInt32Value(test2, newSeqId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(test1 == test2);
+        ASSERT_TRUE(data->InsertComplexValue(seq_data, newId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(data->ClearAllValues() == ResponseCode::RETCODE_OK);
+
 
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);

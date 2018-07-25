@@ -69,6 +69,7 @@ public:
     RTPS_DllAPI ResponseCode InsertStringValue(const std::string& value, MemberId& outId);
     RTPS_DllAPI ResponseCode InsertWstringValue(const std::wstring& value, MemberId& outId);
     RTPS_DllAPI ResponseCode InsertEnumValue(const std::string& value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertComplexValue(const DynamicData* value, MemberId& outId);
     RTPS_DllAPI ResponseCode InsertComplexValue(DynamicData* value, MemberId& outId);
 
     RTPS_DllAPI ResponseCode RemoveSequenceData(MemberId id);
@@ -76,8 +77,9 @@ public:
 
     RTPS_DllAPI ResponseCode ClearArrayData(MemberId indexId);
 
-    RTPS_DllAPI ResponseCode InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
-    RTPS_DllAPI ResponseCode InsertMapData(DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue);
+    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
+    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue);
+    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, const DynamicData* value, MemberId& outKey, MemberId& outValue);
     RTPS_DllAPI ResponseCode RemoveMapData(MemberId keyId);
 
     RTPS_DllAPI ResponseCode GetInt32Value(int32_t& value, MemberId id) const;
