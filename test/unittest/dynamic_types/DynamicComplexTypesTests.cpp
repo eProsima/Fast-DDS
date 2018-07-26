@@ -2191,6 +2191,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     DynamicPubSubType pubsubType(GetKeyedStructType());
     uint32_t payloadSize = static_cast<uint32_t>(pbKeyed.getSerializedSizeProvider(&staticData)());
     SerializedPayload_t stPayload(payloadSize);
+    ASSERT_TRUE(pbKeyed.serialize(&staticData, &stPayload));
+    ASSERT_TRUE(payloadSize == stPayload.length);
+
     types::DynamicData* dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
 
