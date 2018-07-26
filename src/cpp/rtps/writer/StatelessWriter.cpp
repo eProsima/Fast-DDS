@@ -365,7 +365,6 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
             reader_locators.push_back(std::move(rl));
         }
 
-        reader_locators.back().remote_guids.clear();
         reader_locators.back().expectsInlineQos = false;
 
         // Find guids
@@ -393,7 +392,6 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
 
             if(found)
             {
-                reader_locators.back().remote_guids.push_back(remoteReader->guid);
                 reader_locators.back().expectsInlineQos |= remoteReader->expectsInlineQos;
 
                 if(remoteReader->guid == optionalGuid)
