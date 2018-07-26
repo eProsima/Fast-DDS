@@ -1240,12 +1240,949 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicDataFactory::GetInstance()->DeleteData(dynDataFromDynamic);
 }
 
-// TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
-// TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
-// TEST_F(DynamicComplexTypesTests, Data_Comparison_C_A)
-// TEST_F(DynamicComplexTypesTests, Data_Comparison_C_B)
-// TEST_F(DynamicComplexTypesTests, Data_Comparison_C_C)
-// TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
+TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
+{
+    types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+
+    CompleteStruct staticData;
+    staticData.my_union()._d() = B;
+    staticData.my_union().complex().my_octet(66);
+    staticData.my_union().complex().my_basic_struct().my_bool(true);
+    staticData.my_union().complex().my_basic_struct().my_octet(166);
+    staticData.my_union().complex().my_basic_struct().my_int16(-10401);
+    staticData.my_union().complex().my_basic_struct().my_int32(5884001);
+    staticData.my_union().complex().my_basic_struct().my_int64(884481567);
+    staticData.my_union().complex().my_basic_struct().my_uint16(250);
+    staticData.my_union().complex().my_basic_struct().my_uint32(15884);
+    staticData.my_union().complex().my_basic_struct().my_uint64(765241);
+    staticData.my_union().complex().my_basic_struct().my_float32(158.55f);
+    staticData.my_union().complex().my_basic_struct().my_float64(765241.58);
+    staticData.my_union().complex().my_basic_struct().my_float128(765241878.154874);
+    staticData.my_union().complex().my_basic_struct().my_char('L');
+    staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
+    staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
+    staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
+
+    staticData.my_union().complex().my_alias_enum(C);
+    staticData.my_union().complex().my_enum(B);
+    staticData.my_union().complex().my_sequence_octet().push_back(88);
+    staticData.my_union().complex().my_sequence_octet().push_back(99);
+    staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
+    for (int i = 0; i < 500; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+        {
+            for (int k = 0; k < 4; ++k)
+            {
+                staticData.my_union().complex().my_array_octet()[i][j][k] = static_cast<uint8_t>(j*k);
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; ++i)
+    {
+        staticData.my_union().complex().my_array_struct()[i].my_bool(i % 2 == 1);
+        staticData.my_union().complex().my_array_struct()[i].my_octet(static_cast<uint8_t>(i));
+        staticData.my_union().complex().my_array_struct()[i].my_int16(static_cast<int16_t>(-i));
+        staticData.my_union().complex().my_array_struct()[i].my_int32(i);
+        staticData.my_union().complex().my_array_struct()[i].my_int64(i * 1000);
+        staticData.my_union().complex().my_array_struct()[i].my_uint16(static_cast<uint16_t>(i));
+        staticData.my_union().complex().my_array_struct()[i].my_uint32(i);
+        staticData.my_union().complex().my_array_struct()[i].my_uint64(i * 10005);
+        staticData.my_union().complex().my_array_struct()[i].my_float32(i*5.5f);
+        staticData.my_union().complex().my_array_struct()[i].my_float64(i*8.8);
+        staticData.my_union().complex().my_array_struct()[i].my_float128(i*10.0);
+        staticData.my_union().complex().my_array_struct()[i].my_char('J');
+        staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
+        staticData.my_union().complex().my_array_struct()[i].my_string("JC@eProsima");
+        staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
+    }
+
+    staticData.my_union().complex().my_map_octet_short()[0] = 1340;
+    staticData.my_union().complex().my_map_octet_short()[1] = 1341;
+    staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
+    staticData.my_union().complex().my_map_long_struct()[55] = staticData.my_union().complex().my_basic_struct();
+
+    staticData.my_union().complex().my_map_long_seq_octet()[55].push_back({ 1, 2, 3, 4, 5 });
+    staticData.my_union().complex().my_map_long_seq_octet()[55].push_back({ 1, 2, 3, 4, 5 });
+    staticData.my_union().complex().my_map_long_seq_octet()[0].push_back({ 1, 2, 3, 4, 5 });
+    for (int i = 0; i < 500; ++i)
+    {
+        staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i % 256;
+        staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i + 55) % 256;
+    }
+
+    staticData.my_union().complex().my_small_string_8("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd");
+    staticData.my_union().complex().my_small_string_16(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
+    staticData.my_union().complex().my_large_string_8("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1");
+    staticData.my_union().complex().my_large_string_16(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
+    for (int i = 0; i < 5; ++i)
+        for (int j = 0; j < 5; ++j)
+            staticData.my_union().complex().my_array_string()[i][j] = "Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42";
+    for (int i = 0; i < 42; ++i)
+        staticData.my_union().complex().multi_alias_array_42()[i] = (MyEnum)(i % 3);
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            staticData.my_union().complex().my_array_arrays()[i][j] = i*j;
+        }
+    }
+
+    for (int i = 0; i < 23; ++i)
+    {
+        staticData.my_union().complex().my_sequences_array()[i].push_back(i);
+        staticData.my_union().complex().my_sequences_array()[i].push_back(i * 10);
+        staticData.my_union().complex().my_sequences_array()[i].push_back(i * 100);
+    }
+    //staticData.my_union_2()._d() = B;
+    staticData.my_union_2().imString("GASCO!");
+
+    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
+
+    DynamicData *complex = my_union->LoanValue(my_union->GetMemberIdByName("complex"));
+    complex->SetByteValue(66, complex->GetMemberIdByName("my_octet"));
+
+    DynamicData *basic = complex->LoanValue(complex->GetMemberIdByName("my_basic_struct"));
+    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
+    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
+    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
+    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
+    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
+    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
+    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
+    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
+    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
+    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
+    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
+    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
+    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
+    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
+    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
+    complex->ReturnLoanedValue(basic);
+
+    complex->SetEnumValue("C", complex->GetMemberIdByName("my_alias_enum"));
+    complex->SetEnumValue("B", complex->GetMemberIdByName("my_enum"));
+
+    DynamicData *my_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_sequence_octet"));
+    MemberId id;
+    my_seq_octet->InsertSequenceData(id);
+    my_seq_octet->SetByteValue(88, id);
+    my_seq_octet->InsertSequenceData(id);
+    my_seq_octet->SetByteValue(99, id);
+    //staticData.my_union().complex().my_sequence_octet().push_back(88);
+    //staticData.my_union().complex().my_sequence_octet().push_back(99);
+    complex->ReturnLoanedValue(my_seq_octet);
+
+    DynamicData *my_seq_struct = complex->LoanValue(complex->GetMemberIdByName("my_sequence_struct"));
+    my_seq_struct->InsertSequenceData(id);
+    my_seq_struct->SetComplexValue(DynamicDataFactory::GetInstance()->CreateCopy(basic), id);
+    //staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
+    complex->ReturnLoanedValue(my_seq_struct);
+
+    DynamicData *my_array_octet = complex->LoanValue(complex->GetMemberIdByName("my_array_octet"));
+    for (unsigned int i = 0; i < 500; ++i)
+    {
+        for (unsigned int j = 0; j < 5; ++j)
+        {
+            for (unsigned int k = 0; k < 4; ++k)
+            {
+                MemberId array_idx = my_array_octet->GetArrayIndex({ i, j, k });
+                my_array_octet->SetByteValue(static_cast<uint8_t>(j*k), array_idx);
+            }
+        }
+        //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
+    }
+    complex->ReturnLoanedValue(my_array_octet);
+
+    DynamicData *my_array_struct = complex->LoanValue(complex->GetMemberIdByName("my_array_struct"));
+    for (int i = 0; i < 5; ++i)
+    {
+        DynamicData *tempBasic = DynamicDataFactory::GetInstance()->CreateData(GetBasicStructType());
+        tempBasic->SetBoolValue(i % 2 == 1, tempBasic->GetMemberIdByName("my_bool"));
+        tempBasic->SetByteValue(static_cast<uint8_t>(i), tempBasic->GetMemberIdByName("my_octet"));
+        tempBasic->SetInt16Value(static_cast<int16_t>(-i), tempBasic->GetMemberIdByName("my_int16"));
+        tempBasic->SetInt32Value(i, tempBasic->GetMemberIdByName("my_int32"));
+        tempBasic->SetInt64Value(i * 1000, tempBasic->GetMemberIdByName("my_int64"));
+        tempBasic->SetUint16Value(static_cast<uint16_t>(i), tempBasic->GetMemberIdByName("my_uint16"));
+        tempBasic->SetUint32Value(i, tempBasic->GetMemberIdByName("my_uint32"));
+        tempBasic->SetUint64Value(i * 10005, tempBasic->GetMemberIdByName("my_uint64"));
+        tempBasic->SetFloat32Value(i*5.5f, tempBasic->GetMemberIdByName("my_float32"));
+        tempBasic->SetFloat64Value(i*8.8, tempBasic->GetMemberIdByName("my_float64"));
+        tempBasic->SetFloat128Value(i*10.0, tempBasic->GetMemberIdByName("my_float128"));
+        tempBasic->SetChar8Value('J', tempBasic->GetMemberIdByName("my_char"));
+        tempBasic->SetChar16Value(L'C', tempBasic->GetMemberIdByName("my_wchar"));
+        tempBasic->SetStringValue("JC@eProsima", tempBasic->GetMemberIdByName("my_string"));
+        tempBasic->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", tempBasic->GetMemberIdByName("my_wstring"));
+        my_array_struct->SetComplexValue(tempBasic, i);
+    }
+    complex->ReturnLoanedValue(my_array_struct);
+
+    DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
+    DynamicData *key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
+    MemberId kId;
+    MemberId vId;
+    MemberId ssId;
+    MemberId sId;
+    DynamicData *my_map_octet_short = complex->LoanValue(complex->GetMemberIdByName("my_map_octet_short"));
+    key_oct->SetByteValue(0);
+    my_map_octet_short->InsertMapData(key_oct, kId, vId);
+    my_map_octet_short->SetInt16Value((short)1340, vId);
+    key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
+    key_oct->SetByteValue(1);
+    my_map_octet_short->InsertMapData(key_oct, kId, vId);
+    my_map_octet_short->SetInt16Value((short)1341, vId);
+    //staticData.my_union().complex().my_map_octet_short()[0] = 1340;
+    //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
+    complex->ReturnLoanedValue(my_map_octet_short);
+
+    DynamicTypeBuilder_ptr long_builder = m_factory->CreateInt32Builder();
+    DynamicData *key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    DynamicData *my_map_long_struct = complex->LoanValue(complex->GetMemberIdByName("my_map_long_struct"));
+
+    //DynamicData *mas3 = my_array_struct->LoanValue(3);
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(55);
+    my_map_long_struct->InsertMapData(key, kId, vId);
+    basic = my_map_long_struct->LoanValue(vId);
+    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
+    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
+    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
+    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
+    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
+    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
+    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
+    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
+    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
+    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
+    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
+    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
+    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
+    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
+    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
+    my_map_long_struct->ReturnLoanedValue(basic);
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(1000);
+    my_map_long_struct->InsertMapData(key, kId, vId);
+    DynamicData *mas3 = my_map_long_struct->LoanValue(vId);
+    int i = 3;
+    mas3->SetBoolValue(i % 2 == 1, mas3->GetMemberIdByName("my_bool"));
+    mas3->SetByteValue(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_octet"));
+    mas3->SetInt16Value(static_cast<int16_t>(-i), mas3->GetMemberIdByName("my_int16"));
+    mas3->SetInt32Value(i, mas3->GetMemberIdByName("my_int32"));
+    mas3->SetInt64Value(i * 1000, mas3->GetMemberIdByName("my_int64"));
+    mas3->SetUint16Value(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_uint16"));
+    mas3->SetUint32Value(i, mas3->GetMemberIdByName("my_uint32"));
+    mas3->SetUint64Value(i * 10005, mas3->GetMemberIdByName("my_uint64"));
+    mas3->SetFloat32Value(i*5.5f, mas3->GetMemberIdByName("my_float32"));
+    mas3->SetFloat64Value(i*8.8, mas3->GetMemberIdByName("my_float64"));
+    mas3->SetFloat128Value(i*10.0, mas3->GetMemberIdByName("my_float128"));
+    mas3->SetChar8Value('J', mas3->GetMemberIdByName("my_char"));
+    mas3->SetChar16Value(L'C', mas3->GetMemberIdByName("my_wchar"));
+    mas3->SetStringValue("JC@eProsima", mas3->GetMemberIdByName("my_string"));
+    mas3->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", mas3->GetMemberIdByName("my_wstring"));
+    my_map_long_struct->ReturnLoanedValue(mas3);
+
+    // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
+    // staticData.my_union().complex().my_map_long_struct()[55] = staticData.my_union().complex().my_basic_struct();
+    complex->ReturnLoanedValue(my_map_long_struct);
+
+    DynamicData *my_map_long_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_map_long_seq_octet"));
+    //std::vector my_vector_octet = {1, 2, 3, 4, 5};
+    //MemberId id;
+    /*DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
+    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->CreateSequenceBuilder(octet_builder.get());
+    types::DynamicType_ptr seqSeqOctet_builder = m_factory->CreateSequenceBuilder(seqOctet_builder.get())->Build();
+    DynamicData *dataSeqOctet = seqOctet_builder->Build();
+    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->Build();
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(1, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(2, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(3, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(4, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(5, id);
+    dataSeqSeqOctet->InsertSequenceData(id);
+    dataSeqSeqOctet->SetComplexValue(dataSeqOctet, id);*/
+    // InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
+    // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(0);
+    my_map_long_seq_octet->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    DynamicData* seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
+    seq_seq_oct->InsertSequenceData(ssId);
+    DynamicData* seq_oct = seq_seq_oct->LoanValue(ssId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(1, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(2, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(3, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(4, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(5, sId);
+    seq_seq_oct->ReturnLoanedValue(seq_oct);
+    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(55);
+    my_map_long_seq_octet->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
+    seq_seq_oct->InsertSequenceData(ssId);
+    seq_oct = seq_seq_oct->LoanValue(ssId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(1, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(2, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(3, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(4, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(5, sId);
+    seq_seq_oct->ReturnLoanedValue(seq_oct);
+    seq_seq_oct->InsertSequenceData(ssId);
+    seq_oct = seq_seq_oct->LoanValue(ssId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(1, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(2, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(3, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(4, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(5, sId);
+    seq_seq_oct->ReturnLoanedValue(seq_oct);
+    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
+    //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
+    //staticData.my_union().complex().my_map_long_seq_octet()[0].push_back(my_vector_octet);
+    complex->ReturnLoanedValue(my_map_long_seq_octet);
+
+    DynamicData *my_map_long_octet_array_500 =
+        complex->LoanValue(complex->GetMemberIdByName("my_map_long_octet_array_500"));
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(0);
+    my_map_long_octet_array_500->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    DynamicData* oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    for (int j = 0; j < 500; ++j)
+    {
+        oct_array_500->SetByteValue(j % 256, j);
+        //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
+    }
+    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(10);
+    my_map_long_octet_array_500->InsertMapData(key, kId, vId);
+    oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    for (int j = 0; j < 500; ++j)
+    {
+        oct_array_500->SetByteValue((j + 55) % 256, j);
+        //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
+    }
+    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
+    complex->ReturnLoanedValue(my_map_long_octet_array_500);
+
+    complex->SetStringValue("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->GetMemberIdByName("my_small_string_8"));
+    complex->SetWstringValue(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->GetMemberIdByName("my_small_string_16"));
+    complex->SetStringValue("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->GetMemberIdByName("my_large_string_8"));
+    complex->SetWstringValue(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->GetMemberIdByName("my_large_string_16"));
+
+    DynamicData *my_array_string = complex->LoanValue(complex->GetMemberIdByName("my_array_string"));
+    for (unsigned int j = 0; j < 5; ++j)
+    {
+        for (unsigned int k = 0; k < 5; ++k)
+        {
+            MemberId array_idx = my_array_string->GetArrayIndex({ j, k });
+            my_array_string->SetStringValue("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
+            //staticData.my_union().complex().my_array_string()[i][j]("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42");
+        }
+    }
+    complex->ReturnLoanedValue(my_array_string);
+
+    DynamicData *multi_alias_array_42 = complex->LoanValue(complex->GetMemberIdByName("multi_alias_array_42"));
+    for (int j = 0; j < 42; ++j)
+    {
+        multi_alias_array_42->SetEnumValue(j % 3, j);
+        //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
+    }
+    complex->ReturnLoanedValue(multi_alias_array_42);
+
+    DynamicData *my_array_arrays = complex->LoanValue(complex->GetMemberIdByName("my_array_arrays"));
+    for (unsigned int j = 0; j < 5; ++j)
+    {
+        DynamicData *myMiniArray = my_array_arrays->LoanValue(j);
+        for (unsigned int k = 0; k < 2; ++k)
+        {
+            myMiniArray->SetInt32Value(j*k, k);
+            //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
+        }
+        my_array_arrays->ReturnLoanedValue(myMiniArray);
+    }
+    complex->ReturnLoanedValue(my_array_arrays);
+
+    DynamicData *my_sequences_array = complex->LoanValue(complex->GetMemberIdByName("my_sequences_array"));
+    for (int j = 0; j < 23; ++j)
+    {
+        DynamicData *seq = DynamicDataFactory::GetInstance()->CreateData(GetMySequenceLongType());
+        seq->InsertSequenceData(id);
+        seq->SetInt32Value(j, id);
+        seq->InsertSequenceData(id);
+        seq->SetInt32Value(j * 10, id);
+        seq->InsertSequenceData(id);
+        seq->SetInt32Value(j * 100, id);
+        my_sequences_array->SetComplexValue(seq, j);
+        // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
+        // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
+        // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
+    }
+    complex->ReturnLoanedValue(my_sequences_array);
+
+    my_union->ReturnLoanedValue(complex);
+    dynData->ReturnLoanedValue(my_union);
+
+    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
+    my_union_2->SetStringValue("GASCO!", my_union_2->GetMemberIdByName("imString"));
+
+    dynData->ReturnLoanedValue(my_union_2);
+
+    // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(m_DynManualType);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(dynData, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
+
+    CompleteStructPubSubType pbComplete;
+    uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
+    SerializedPayload_t stPayload(payloadSize2);
+    ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
+    ASSERT_TRUE(stPayload.length == payloadSize2);
+
+    types::DynamicData* dynDataFromDynamic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic));
+
+    types::DynamicData* dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
+
+    ASSERT_TRUE(dynDataFromStatic->Equals(dynDataFromDynamic));
+
+    DynamicDataFactory::GetInstance()->DeleteData(dynData);
+    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromStatic);
+    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromDynamic);
+}
+
+TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
+{
+    types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+
+    CompleteStruct staticData;
+    staticData.my_union()._d() = B;
+    staticData.my_union().complex().my_octet(66);
+    staticData.my_union().complex().my_basic_struct().my_bool(true);
+    staticData.my_union().complex().my_basic_struct().my_octet(166);
+    staticData.my_union().complex().my_basic_struct().my_int16(-10401);
+    staticData.my_union().complex().my_basic_struct().my_int32(5884001);
+    staticData.my_union().complex().my_basic_struct().my_int64(884481567);
+    staticData.my_union().complex().my_basic_struct().my_uint16(250);
+    staticData.my_union().complex().my_basic_struct().my_uint32(15884);
+    staticData.my_union().complex().my_basic_struct().my_uint64(765241);
+    staticData.my_union().complex().my_basic_struct().my_float32(158.55f);
+    staticData.my_union().complex().my_basic_struct().my_float64(765241.58);
+    staticData.my_union().complex().my_basic_struct().my_float128(765241878.154874);
+    staticData.my_union().complex().my_basic_struct().my_char('L');
+    staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
+    staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
+    staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
+
+    staticData.my_union().complex().my_alias_enum(C);
+    staticData.my_union().complex().my_enum(B);
+    staticData.my_union().complex().my_sequence_octet().push_back(88);
+    staticData.my_union().complex().my_sequence_octet().push_back(99);
+    staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
+    for (int i = 0; i < 500; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+        {
+            for (int k = 0; k < 4; ++k)
+            {
+                staticData.my_union().complex().my_array_octet()[i][j][k] = static_cast<uint8_t>(j*k);
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; ++i)
+    {
+        staticData.my_union().complex().my_array_struct()[i].my_bool(i % 2 == 1);
+        staticData.my_union().complex().my_array_struct()[i].my_octet(static_cast<uint8_t>(i));
+        staticData.my_union().complex().my_array_struct()[i].my_int16(static_cast<int16_t>(-i));
+        staticData.my_union().complex().my_array_struct()[i].my_int32(i);
+        staticData.my_union().complex().my_array_struct()[i].my_int64(i * 1000);
+        staticData.my_union().complex().my_array_struct()[i].my_uint16(static_cast<uint16_t>(i));
+        staticData.my_union().complex().my_array_struct()[i].my_uint32(i);
+        staticData.my_union().complex().my_array_struct()[i].my_uint64(i * 10005);
+        staticData.my_union().complex().my_array_struct()[i].my_float32(i*5.5f);
+        staticData.my_union().complex().my_array_struct()[i].my_float64(i*8.8);
+        staticData.my_union().complex().my_array_struct()[i].my_float128(i*10.0);
+        staticData.my_union().complex().my_array_struct()[i].my_char('J');
+        staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
+        staticData.my_union().complex().my_array_struct()[i].my_string("JC@eProsima");
+        staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
+    }
+
+    staticData.my_union().complex().my_map_octet_short()[0] = 1340;
+    staticData.my_union().complex().my_map_octet_short()[1] = 1341;
+    staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
+    staticData.my_union().complex().my_map_long_struct()[55] = staticData.my_union().complex().my_basic_struct();
+
+    staticData.my_union().complex().my_map_long_seq_octet()[55].push_back({ 1, 2, 3, 4, 5 });
+    staticData.my_union().complex().my_map_long_seq_octet()[55].push_back({ 1, 2, 3, 4, 5 });
+    staticData.my_union().complex().my_map_long_seq_octet()[0].push_back({ 1, 2, 3, 4, 5 });
+    for (int i = 0; i < 500; ++i)
+    {
+        staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i % 256;
+        staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i + 55) % 256;
+    }
+
+    staticData.my_union().complex().my_small_string_8("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd");
+    staticData.my_union().complex().my_small_string_16(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
+    staticData.my_union().complex().my_large_string_8("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1");
+    staticData.my_union().complex().my_large_string_16(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
+    for (int i = 0; i < 5; ++i)
+        for (int j = 0; j < 5; ++j)
+            staticData.my_union().complex().my_array_string()[i][j] = "Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42";
+    for (int i = 0; i < 42; ++i)
+        staticData.my_union().complex().multi_alias_array_42()[i] = (MyEnum)(i % 3);
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            staticData.my_union().complex().my_array_arrays()[i][j] = i*j;
+        }
+    }
+
+    for (int i = 0; i < 23; ++i)
+    {
+        staticData.my_union().complex().my_sequences_array()[i].push_back(i);
+        staticData.my_union().complex().my_sequences_array()[i].push_back(i * 10);
+        staticData.my_union().complex().my_sequences_array()[i].push_back(i * 100);
+    }
+    staticData.my_union_2().tres(156);
+
+    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
+
+    DynamicData *complex = my_union->LoanValue(my_union->GetMemberIdByName("complex"));
+    complex->SetByteValue(66, complex->GetMemberIdByName("my_octet"));
+
+    DynamicData *basic = complex->LoanValue(complex->GetMemberIdByName("my_basic_struct"));
+    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
+    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
+    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
+    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
+    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
+    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
+    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
+    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
+    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
+    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
+    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
+    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
+    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
+    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
+    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
+    complex->ReturnLoanedValue(basic);
+
+    complex->SetEnumValue("C", complex->GetMemberIdByName("my_alias_enum"));
+    complex->SetEnumValue("B", complex->GetMemberIdByName("my_enum"));
+
+    DynamicData *my_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_sequence_octet"));
+    MemberId id;
+    my_seq_octet->InsertSequenceData(id);
+    my_seq_octet->SetByteValue(88, id);
+    my_seq_octet->InsertSequenceData(id);
+    my_seq_octet->SetByteValue(99, id);
+    //staticData.my_union().complex().my_sequence_octet().push_back(88);
+    //staticData.my_union().complex().my_sequence_octet().push_back(99);
+    complex->ReturnLoanedValue(my_seq_octet);
+
+    DynamicData *my_seq_struct = complex->LoanValue(complex->GetMemberIdByName("my_sequence_struct"));
+    my_seq_struct->InsertSequenceData(id);
+    my_seq_struct->SetComplexValue(DynamicDataFactory::GetInstance()->CreateCopy(basic), id);
+    //staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
+    complex->ReturnLoanedValue(my_seq_struct);
+
+    DynamicData *my_array_octet = complex->LoanValue(complex->GetMemberIdByName("my_array_octet"));
+    for (unsigned int i = 0; i < 500; ++i)
+    {
+        for (unsigned int j = 0; j < 5; ++j)
+        {
+            for (unsigned int k = 0; k < 4; ++k)
+            {
+                MemberId array_idx = my_array_octet->GetArrayIndex({ i, j, k });
+                my_array_octet->SetByteValue(static_cast<uint8_t>(j*k), array_idx);
+            }
+        }
+        //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
+    }
+    complex->ReturnLoanedValue(my_array_octet);
+
+    DynamicData *my_array_struct = complex->LoanValue(complex->GetMemberIdByName("my_array_struct"));
+    for (int i = 0; i < 5; ++i)
+    {
+        DynamicData *tempBasic = DynamicDataFactory::GetInstance()->CreateData(GetBasicStructType());
+        tempBasic->SetBoolValue(i % 2 == 1, tempBasic->GetMemberIdByName("my_bool"));
+        tempBasic->SetByteValue(static_cast<uint8_t>(i), tempBasic->GetMemberIdByName("my_octet"));
+        tempBasic->SetInt16Value(static_cast<int16_t>(-i), tempBasic->GetMemberIdByName("my_int16"));
+        tempBasic->SetInt32Value(i, tempBasic->GetMemberIdByName("my_int32"));
+        tempBasic->SetInt64Value(i * 1000, tempBasic->GetMemberIdByName("my_int64"));
+        tempBasic->SetUint16Value(static_cast<uint16_t>(i), tempBasic->GetMemberIdByName("my_uint16"));
+        tempBasic->SetUint32Value(i, tempBasic->GetMemberIdByName("my_uint32"));
+        tempBasic->SetUint64Value(i * 10005, tempBasic->GetMemberIdByName("my_uint64"));
+        tempBasic->SetFloat32Value(i*5.5f, tempBasic->GetMemberIdByName("my_float32"));
+        tempBasic->SetFloat64Value(i*8.8, tempBasic->GetMemberIdByName("my_float64"));
+        tempBasic->SetFloat128Value(i*10.0, tempBasic->GetMemberIdByName("my_float128"));
+        tempBasic->SetChar8Value('J', tempBasic->GetMemberIdByName("my_char"));
+        tempBasic->SetChar16Value(L'C', tempBasic->GetMemberIdByName("my_wchar"));
+        tempBasic->SetStringValue("JC@eProsima", tempBasic->GetMemberIdByName("my_string"));
+        tempBasic->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", tempBasic->GetMemberIdByName("my_wstring"));
+        my_array_struct->SetComplexValue(tempBasic, i);
+    }
+    complex->ReturnLoanedValue(my_array_struct);
+
+    DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
+    DynamicData *key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
+    MemberId kId;
+    MemberId vId;
+    MemberId ssId;
+    MemberId sId;
+    DynamicData *my_map_octet_short = complex->LoanValue(complex->GetMemberIdByName("my_map_octet_short"));
+    key_oct->SetByteValue(0);
+    my_map_octet_short->InsertMapData(key_oct, kId, vId);
+    my_map_octet_short->SetInt16Value((short)1340, vId);
+    key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
+    key_oct->SetByteValue(1);
+    my_map_octet_short->InsertMapData(key_oct, kId, vId);
+    my_map_octet_short->SetInt16Value((short)1341, vId);
+    //staticData.my_union().complex().my_map_octet_short()[0] = 1340;
+    //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
+    complex->ReturnLoanedValue(my_map_octet_short);
+
+    DynamicTypeBuilder_ptr long_builder = m_factory->CreateInt32Builder();
+    DynamicData *key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    DynamicData *my_map_long_struct = complex->LoanValue(complex->GetMemberIdByName("my_map_long_struct"));
+
+    //DynamicData *mas3 = my_array_struct->LoanValue(3);
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(55);
+    my_map_long_struct->InsertMapData(key, kId, vId);
+    basic = my_map_long_struct->LoanValue(vId);
+    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
+    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
+    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
+    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
+    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
+    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
+    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
+    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
+    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
+    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
+    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
+    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
+    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
+    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
+    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
+    my_map_long_struct->ReturnLoanedValue(basic);
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(1000);
+    my_map_long_struct->InsertMapData(key, kId, vId);
+    DynamicData *mas3 = my_map_long_struct->LoanValue(vId);
+    int i = 3;
+    mas3->SetBoolValue(i % 2 == 1, mas3->GetMemberIdByName("my_bool"));
+    mas3->SetByteValue(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_octet"));
+    mas3->SetInt16Value(static_cast<int16_t>(-i), mas3->GetMemberIdByName("my_int16"));
+    mas3->SetInt32Value(i, mas3->GetMemberIdByName("my_int32"));
+    mas3->SetInt64Value(i * 1000, mas3->GetMemberIdByName("my_int64"));
+    mas3->SetUint16Value(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_uint16"));
+    mas3->SetUint32Value(i, mas3->GetMemberIdByName("my_uint32"));
+    mas3->SetUint64Value(i * 10005, mas3->GetMemberIdByName("my_uint64"));
+    mas3->SetFloat32Value(i*5.5f, mas3->GetMemberIdByName("my_float32"));
+    mas3->SetFloat64Value(i*8.8, mas3->GetMemberIdByName("my_float64"));
+    mas3->SetFloat128Value(i*10.0, mas3->GetMemberIdByName("my_float128"));
+    mas3->SetChar8Value('J', mas3->GetMemberIdByName("my_char"));
+    mas3->SetChar16Value(L'C', mas3->GetMemberIdByName("my_wchar"));
+    mas3->SetStringValue("JC@eProsima", mas3->GetMemberIdByName("my_string"));
+    mas3->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", mas3->GetMemberIdByName("my_wstring"));
+    my_map_long_struct->ReturnLoanedValue(mas3);
+
+    // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
+    // staticData.my_union().complex().my_map_long_struct()[55] = staticData.my_union().complex().my_basic_struct();
+    complex->ReturnLoanedValue(my_map_long_struct);
+
+    DynamicData *my_map_long_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_map_long_seq_octet"));
+    //std::vector my_vector_octet = {1, 2, 3, 4, 5};
+    //MemberId id;
+    /*DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
+    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->CreateSequenceBuilder(octet_builder.get());
+    types::DynamicType_ptr seqSeqOctet_builder = m_factory->CreateSequenceBuilder(seqOctet_builder.get())->Build();
+    DynamicData *dataSeqOctet = seqOctet_builder->Build();
+    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->Build();
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(1, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(2, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(3, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(4, id);
+    dataSeqOctet->InsertSequenceData(id);
+    dataSeqOctet->SetByteValue(5, id);
+    dataSeqSeqOctet->InsertSequenceData(id);
+    dataSeqSeqOctet->SetComplexValue(dataSeqOctet, id);*/
+    // InsertMapData(DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
+    // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(0);
+    my_map_long_seq_octet->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    DynamicData* seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
+    seq_seq_oct->InsertSequenceData(ssId);
+    DynamicData* seq_oct = seq_seq_oct->LoanValue(ssId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(1, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(2, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(3, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(4, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(5, sId);
+    seq_seq_oct->ReturnLoanedValue(seq_oct);
+    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(55);
+    my_map_long_seq_octet->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
+    seq_seq_oct->InsertSequenceData(ssId);
+    seq_oct = seq_seq_oct->LoanValue(ssId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(1, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(2, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(3, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(4, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(5, sId);
+    seq_seq_oct->ReturnLoanedValue(seq_oct);
+    seq_seq_oct->InsertSequenceData(ssId);
+    seq_oct = seq_seq_oct->LoanValue(ssId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(1, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(2, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(3, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(4, sId);
+    seq_oct->InsertSequenceData(sId);
+    seq_oct->SetByteValue(5, sId);
+    seq_seq_oct->ReturnLoanedValue(seq_oct);
+    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
+    //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
+    //staticData.my_union().complex().my_map_long_seq_octet()[0].push_back(my_vector_octet);
+    complex->ReturnLoanedValue(my_map_long_seq_octet);
+
+    DynamicData *my_map_long_octet_array_500 =
+        complex->LoanValue(complex->GetMemberIdByName("my_map_long_octet_array_500"));
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(0);
+    my_map_long_octet_array_500->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    DynamicData* oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    for (int j = 0; j < 500; ++j)
+    {
+        oct_array_500->SetByteValue(j % 256, j);
+        //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
+    }
+    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
+
+    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
+    key->SetInt32Value(10);
+    my_map_long_octet_array_500->InsertMapData(key, kId, vId);
+    oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
+    for (int j = 0; j < 500; ++j)
+    {
+        oct_array_500->SetByteValue((j + 55) % 256, j);
+        //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
+    }
+    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
+    complex->ReturnLoanedValue(my_map_long_octet_array_500);
+
+    complex->SetStringValue("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->GetMemberIdByName("my_small_string_8"));
+    complex->SetWstringValue(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->GetMemberIdByName("my_small_string_16"));
+    complex->SetStringValue("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->GetMemberIdByName("my_large_string_8"));
+    complex->SetWstringValue(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->GetMemberIdByName("my_large_string_16"));
+
+    DynamicData *my_array_string = complex->LoanValue(complex->GetMemberIdByName("my_array_string"));
+    for (unsigned int j = 0; j < 5; ++j)
+    {
+        for (unsigned int k = 0; k < 5; ++k)
+        {
+            MemberId array_idx = my_array_string->GetArrayIndex({ j, k });
+            my_array_string->SetStringValue("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
+            //staticData.my_union().complex().my_array_string()[i][j]("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42");
+        }
+    }
+    complex->ReturnLoanedValue(my_array_string);
+
+    DynamicData *multi_alias_array_42 = complex->LoanValue(complex->GetMemberIdByName("multi_alias_array_42"));
+    for (int j = 0; j < 42; ++j)
+    {
+        multi_alias_array_42->SetEnumValue(j % 3, j);
+        //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
+    }
+    complex->ReturnLoanedValue(multi_alias_array_42);
+
+    DynamicData *my_array_arrays = complex->LoanValue(complex->GetMemberIdByName("my_array_arrays"));
+    for (unsigned int j = 0; j < 5; ++j)
+    {
+        DynamicData *myMiniArray = my_array_arrays->LoanValue(j);
+        for (unsigned int k = 0; k < 2; ++k)
+        {
+            myMiniArray->SetInt32Value(j*k, k);
+            //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
+        }
+        my_array_arrays->ReturnLoanedValue(myMiniArray);
+    }
+    complex->ReturnLoanedValue(my_array_arrays);
+
+    DynamicData *my_sequences_array = complex->LoanValue(complex->GetMemberIdByName("my_sequences_array"));
+    for (int j = 0; j < 23; ++j)
+    {
+        DynamicData *seq = DynamicDataFactory::GetInstance()->CreateData(GetMySequenceLongType());
+        seq->InsertSequenceData(id);
+        seq->SetInt32Value(j, id);
+        seq->InsertSequenceData(id);
+        seq->SetInt32Value(j * 10, id);
+        seq->InsertSequenceData(id);
+        seq->SetInt32Value(j * 100, id);
+        my_sequences_array->SetComplexValue(seq, j);
+        // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
+        // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
+        // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
+    }
+    complex->ReturnLoanedValue(my_sequences_array);
+
+    my_union->ReturnLoanedValue(complex);
+    dynData->ReturnLoanedValue(my_union);
+
+    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
+    my_union_2->SetInt32Value(156, my_union_2->GetMemberIdByName("tres"));
+
+    dynData->ReturnLoanedValue(my_union_2);
+
+    // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(m_DynManualType);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(dynData, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
+    /*
+    std::cout << "BEGIN" << std::endl;
+    for (uint32_t j = 0; j < payload.length; j += 100)
+    {
+    std::cout << std::endl;
+    for (uint32_t k = 0; k < 100; k++)
+    {
+    if (j + k < payload.length)
+    {
+    if ((int)payload.data[j + k] == 204)
+    {
+    std::cout << 0 << " ";
+    }
+    else
+    {
+    std::cout << (int)payload.data[j + k] << " ";
+    }
+    }
+    }
+    }
+    std::cout << "END" << std::endl;
+    */
+    CompleteStructPubSubType pbComplete;
+    uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
+    SerializedPayload_t stPayload(payloadSize2);
+    ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
+    ASSERT_TRUE(stPayload.length == payloadSize2);
+    /*
+    std::cout << "BEGIN" << std::endl;
+    for (uint32_t j = 0; j < stPayload.length; j += 100)
+    {
+    std::cout << std::endl;
+    for (uint32_t k = 0; k < 100; k++)
+    {
+    if (j + k < stPayload.length)
+    {
+    if ((int)stPayload.data[j + k] == 204)
+    {
+    std::cout << 0 << " ";
+    }
+    else
+    {
+    std::cout << (int)stPayload.data[j + k] << " ";
+    }
+    }
+    }
+    }
+    std::cout << "END" << std::endl;
+    */
+    types::DynamicData* dynDataFromDynamic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic));
+
+    types::DynamicData* dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
+
+    ASSERT_TRUE(dynDataFromStatic->Equals(dynDataFromDynamic));
+
+    DynamicDataFactory::GetInstance()->DeleteData(dynData);
+    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromStatic);
+    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromDynamic);
+}
+
+TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
+{
+    //TODO: //ARCE:
+}
 
 int main(int argc, char **argv)
 {
