@@ -2182,7 +2182,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     basic->SetFloat128Value(1005.1005, basic->GetMemberIdByName("my_float128"));
     basic->SetChar8Value('O', basic->GetMemberIdByName("my_char"));
     basic->SetChar16Value(L'M', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("G It9s", basic->GetMemberIdByName("my_string"));
+    basic->SetStringValue("G It's", basic->GetMemberIdByName("my_string"));
     basic->SetWstringValue(L" Working", basic->GetMemberIdByName("my_wstring"));
     dynData->ReturnLoanedValue(basic);
     //dynData->SetByteValue(88, dynData->GetMemberIdByName("key"));

@@ -67,6 +67,11 @@ bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
 {
     if (other != nullptr && (mType == other->mType || (mType != nullptr && mType->Equals(other->mType.get()))))
     {
+        if (mValue.size() != other->mValue.size())
+        {
+            return false;
+        }
+
         for (auto it = mValue.begin(); it != mValue.end(); ++it)
         {
             auto it2 = other->mValue.find(it->first);
@@ -75,17 +80,8 @@ bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
                 return false;
             }
         }
-
-        for (auto it = other->mValue.begin(); it != other->mValue.end(); ++it)
-        {
-            auto it2 = mValue.find(it->first);
-            if (it2 == mValue.end() || it2->second != it->second)
-            {
-                return false;
-            }
-        }
     }
-    return false;
+    return true;
 }
 
 bool AnnotationDescriptor::GetKeyAnnotation() const
