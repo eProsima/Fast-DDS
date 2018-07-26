@@ -923,7 +923,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
         break;
     }
 
-    DynamicTypeBuilder* outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
+    DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
     //outputType->SetName(name);
     return outputType->Build();
 }
