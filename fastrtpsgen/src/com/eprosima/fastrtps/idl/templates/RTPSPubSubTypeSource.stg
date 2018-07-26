@@ -68,9 +68,9 @@ typedef_decl(ctx, parent, typedefs) ::= <<>>
 struct_type(ctx, parent, struct) ::= <<
 $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType() {
     setName("$struct.scopedname$");
-    m_typeSize = (uint32_t)$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
+    m_typeSize = static_cast<uint32_t>($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
     m_isGetKeyDefined = $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize()>16 ? $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize() : 16);
+    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize()>16 ?  $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize() : 16));
 }
 
 $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType() {
@@ -79,8 +79,8 @@ $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::~$if(paren
 }
 
 bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::serialize(void *data, SerializedPayload_t *payload) {
-    $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$ *p_type = ($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
+    $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$ *p_type = static_cast<$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -96,13 +96,13 @@ bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::seria
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength()); //Get the serialized length
     return true;
 }
 
 bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::deserialize(SerializedPayload_t* payload, void* data) {
-    $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$* p_type = ($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*) data; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+    $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$* p_type = static_cast<$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*>(data); //Convert DATA to pointer of your type
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -124,28 +124,28 @@ bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::deser
 std::function<uint32_t()> $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::getSerializedSizeProvider(void* data) {
     return [data]() -> uint32_t
     {
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$*>(data)) + 4 /*encapsulation*/;
+        return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$*>(data))) + 4 /*encapsulation*/;
     };
 }
 
 void* $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::createData() {
-    return (void*)new $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$();
+    return reinterpret_cast<void*>(new $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$());
 }
 
 void $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::deleteData(void* data) {
-    delete(($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*)data);
+    delete(reinterpret_cast<$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*>(data));
 }
 
 bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::getKey(void *data, InstanceHandle_t* handle) {
     if(!m_isGetKeyDefined)
         return false;
-    $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$* p_type = ($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
+    $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$* p_type = static_cast<$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),$if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
     p_type->serializeKey(ser);
     if($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize()>16)	{
         m_md5.init();
-        m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
         for(uint8_t i = 0;i<16;++i)    	{
             handle->value[i] = m_md5.digest[i];

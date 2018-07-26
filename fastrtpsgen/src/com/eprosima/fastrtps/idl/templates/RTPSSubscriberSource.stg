@@ -35,71 +35,77 @@ $ctx.filename$Subscriber::~$ctx.filename$Subscriber() {	Domain::removeParticipan
 
 bool $ctx.filename$Subscriber::init()
 {
-	// Create RTPSParticipant
-	
-	ParticipantAttributes PParam;
-	PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
-	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-	PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
-	mp_participant = Domain::createParticipant(PParam);
-	if(mp_participant == nullptr)
-			return false;
-	
-	//Register the type
-	
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);		
-			
-	// Create Subscriber
-			
-	SubscriberAttributes Rparam;
-	$if(ctx.lastStructure.typeCode.hasKey)$
-	Rparam.topic.topicKind = WITH_KEY;
+    // Create RTPSParticipant
+
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = 0; //MUST BE THE SAME AS IN THE PUBLISHER
+    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.setName("Participant_subscriber"); //You can put the name you want
+    mp_participant = Domain::createParticipant(PParam);
+    if(mp_participant == nullptr)
+    {
+        return false;
+    }
+
+    //Register the type
+
+    Domain::registerType(mp_participant, static_cast<TopicDataType*>(&myType));
+
+    // Create Subscriber
+
+    SubscriberAttributes Rparam;
+    $if(ctx.lastStructure.typeCode.hasKey)$
+    Rparam.topic.topicKind = WITH_KEY;
     $else$
-	Rparam.topic.topicKind = NO_KEY;
+    Rparam.topic.topicKind = NO_KEY;
     $endif$
-	Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
-	Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
-	mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
-	if(mp_subscriber == nullptr)
-		return false;
-	return true;
+    Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
+    Rparam.topic.topicName = "$ctx.filename$PubSubTopic";
+    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam, static_cast<SubscriberListener*>(&m_listener));
+    if(mp_subscriber == nullptr)
+    {
+        return false;
+    }
+    return true;
 }
 
 void $ctx.filename$Subscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
 {
-	if (info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		std::cout << "Subscriber matched" << std::endl;
-	}
-	else
-	{
-		n_matched--;
-		std::cout << "Subscriber unmatched" << std::endl;
-	}
+    (void)sub;
+
+    if (info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        std::cout << "Subscriber matched" << std::endl;
+    }
+    else
+    {
+        n_matched--;
+        std::cout << "Subscriber unmatched" << std::endl;
+    }
 }
 
 void $ctx.filename$Subscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-		// Take data
-		$ctx.m_lastStructureScopedName$ st;
-		
-		if(sub->takeNextData(&st, &m_info))
-		{
-			if(m_info.sampleKind == ALIVE)
-			{
-				// Print your structure data here.
-				++n_msg;
-				std::cout << "Sample received, count=" << n_msg << std::endl;
-			}
-		}
+    // Take data
+    $ctx.m_lastStructureScopedName$ st;
+
+    if(sub->takeNextData(&st, &m_info))
+    {
+        if(m_info.sampleKind == ALIVE)
+        {
+            // Print your structure data here.
+            ++n_msg;
+            std::cout << "Sample received, count=" << n_msg << std::endl;
+        }
+    }
 }
 
 void $ctx.filename$Subscriber::run()
 {
-	std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
-	std::cin.ignore();
-	std::cout << "Shutting down the Subscriber." << std::endl;
+    std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
+    std::cin.ignore();
+    std::cout << "Shutting down the Subscriber." << std::endl;
 }
 
 
