@@ -2194,13 +2194,23 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     ASSERT_TRUE(pbKeyed.serialize(&staticData, &stPayload));
     ASSERT_TRUE(payloadSize == stPayload.length);
 
+    DynamicPubSubType dynPubSub;
+    uint32_t payloadSize2 = static_cast<uint32_t>(dynPubSub.getSerializedSizeProvider(dynData)());
+    SerializedPayload_t dynPayload(payloadSize2);
+    ASSERT_TRUE(dynPubSub.serialize(dynData, &dynPayload));
+    ASSERT_TRUE(payloadSize2 == dynPayload.length);
+
     types::DynamicData* dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynData));
+    types::DynamicData* dynDataFromDynamic = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
+    ASSERT_TRUE(dynPubSub.deserialize(&dynPayload, dynDataFromDynamic));
+
+    ASSERT_TRUE(dynDataFromStatic->Equals(dynDataFromDynamic));
 
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynDataFromStatic);
+    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromDynamic);
 }
 
 int main(int argc, char **argv)
