@@ -97,6 +97,7 @@ set(${PROJECT_NAME}_source_files
     types/DynamicType.cpp
     types/DynamicPubSubType.cpp
     types/DynamicTypePtr.cpp
+    types/DynamicDataPtr.cpp
     types/DynamicTypeBuilder.cpp
     types/DynamicTypeBuilderPtr.cpp
     types/DynamicTypeBuilderFactory.cpp

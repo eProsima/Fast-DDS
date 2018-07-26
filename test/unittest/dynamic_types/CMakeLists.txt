@@ -33,6 +33,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicType.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicPubSubType.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypePtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicDataPtr.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilderPtr.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilderFactory.cpp
