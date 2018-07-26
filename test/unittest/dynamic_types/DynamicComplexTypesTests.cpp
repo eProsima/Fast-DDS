@@ -133,9 +133,14 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
 {
     if (m_KeyedStructType.get() == nullptr)
     {
-        //DynamicTypeBuilder_ptr myEnum_builder = m_factory->CreateUint32Builder();
-        //myEnum_builder->SetName("MyEnum");
-        //m_KeyedStructType = myEnum_builder->Build();
+        DynamicTypeBuilder_ptr keyedStruct_builder = m_factory->CreateStructBuilder();
+        DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
+        octet_builder->ApplyAnnotation("@Key", "true");
+        keyedStruct_builder->AddMember(0, "key", octet_builder->Build());
+        keyedStruct_builder->AddMember(1, "basic", GetBasicStructType());
+        keyedStruct_builder->ApplyAnnotation("@Key", "true");
+        keyedStruct_builder->SetName("KeyedStruct");
+        m_KeyedStructType = keyedStruct_builder->Build();
     }
 
     return m_KeyedStructType;
@@ -2143,7 +2148,56 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
 {
-    //TODO: //ARCE:
+    KeyedStruct staticData;
+
+    staticData.basic().my_bool(true);
+    staticData.basic().my_octet(100);
+    staticData.basic().my_int16(-12000);
+    staticData.basic().my_int32(-12000000);
+    staticData.basic().my_int64(-1200000000);
+    staticData.basic().my_uint16(12000);
+    staticData.basic().my_uint32(12000000);
+    staticData.basic().my_uint64(1200000000);
+    staticData.basic().my_float32(5.5f);
+    staticData.basic().my_float64(8.888);
+    staticData.basic().my_float128(1005.1005);
+    staticData.basic().my_char('O');
+    staticData.basic().my_wchar(L'M');
+    staticData.basic().my_string("G It's");
+    staticData.basic().my_wstring(L" Working");
+    //staticData.key(88);
+
+    DynamicData *dynData = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
+    DynamicData *basic = dynData->LoanValue(dynData->GetMemberIdByName("basic"));
+    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
+    basic->SetByteValue(100, basic->GetMemberIdByName("my_octet"));
+    basic->SetInt16Value(-12000, basic->GetMemberIdByName("my_int16"));
+    basic->SetInt32Value(-12000000, basic->GetMemberIdByName("my_int32"));
+    basic->SetInt64Value(-1200000000, basic->GetMemberIdByName("my_int64"));
+    basic->SetUint16Value(12000, basic->GetMemberIdByName("my_uint16"));
+    basic->SetUint32Value(12000000, basic->GetMemberIdByName("my_uint32"));
+    basic->SetUint64Value(1200000000, basic->GetMemberIdByName("my_uint64"));
+    basic->SetFloat32Value(5.5f, basic->GetMemberIdByName("my_float32"));
+    basic->SetFloat64Value(8.888, basic->GetMemberIdByName("my_float64"));
+    basic->SetFloat128Value(1005.1005, basic->GetMemberIdByName("my_float128"));
+    basic->SetChar8Value('O', basic->GetMemberIdByName("my_char"));
+    basic->SetChar16Value(L'M', basic->GetMemberIdByName("my_wchar"));
+    basic->SetStringValue("G It9s", basic->GetMemberIdByName("my_string"));
+    basic->SetWstringValue(L" Working", basic->GetMemberIdByName("my_wstring"));
+    dynData->ReturnLoanedValue(basic);
+    //dynData->SetByteValue(88, dynData->GetMemberIdByName("key"));
+
+    KeyedStructPubSubType pbKeyed;
+    DynamicPubSubType pubsubType(GetKeyedStructType());
+    uint32_t payloadSize = static_cast<uint32_t>(pbKeyed.getSerializedSizeProvider(&staticData)());
+    SerializedPayload_t stPayload(payloadSize);
+    types::DynamicData* dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
+    ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
+
+    ASSERT_TRUE(dynDataFromStatic->Equals(dynData));
+
+    DynamicDataFactory::GetInstance()->DeleteData(dynData);
+    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromStatic);
 }
 
 int main(int argc, char **argv)
