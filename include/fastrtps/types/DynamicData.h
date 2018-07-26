@@ -39,7 +39,6 @@ public:
     RTPS_DllAPI ResponseCode ClearNonkeyValues();
     RTPS_DllAPI ResponseCode ClearValue(MemberId id);
 
-    RTPS_DllAPI DynamicData* Clone() const;
     RTPS_DllAPI bool Equals(const DynamicData* other) const;
     RTPS_DllAPI inline TypeKind GetKind() const;
     RTPS_DllAPI uint32_t GetItemCount() const;
@@ -254,18 +253,20 @@ public:
 protected:
 
     DynamicData();
+    DynamicData(const DynamicData* pData);
     DynamicData(DynamicType_ptr pType);
 
     void AddValue(TypeKind kind, MemberId id);
     void CreateMembers(DynamicType_ptr pType);
+    void CreateMembers(const DynamicData* pData);
     void Clean();
     void* CloneValue(MemberId id, TypeKind kind) const;
     bool CompareValues(TypeKind kind, void* left, void* right) const;
     ResponseCode InsertArrayData(MemberId indexId);
     void SerializeEmptyData(const DynamicType_ptr pType, eprosima::fastcdr::Cdr &cdr) const;
     void SetDefaultValue(MemberId id);
-    void GetValue(std::string& sOutValue);
-    void SetValue(const std::string& sValue);
+    void GetValue(std::string& sOutValue, MemberId id = MEMBER_ID_INVALID) const;
+    void SetValue(const std::string& sValue, MemberId id = MEMBER_ID_INVALID);
     void SetTypeName(const std::string& name);
     ResponseCode SetUnionId(MemberId id);
     void UpdateUnionDiscriminator();

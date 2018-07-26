@@ -57,9 +57,14 @@ DynamicDataFactory::~DynamicDataFactory()
 #endif
 }
 
-DynamicData* DynamicDataFactory::CreateCopy(DynamicData* pData)
+DynamicData* DynamicDataFactory::CreateCopy(const DynamicData* pData)
 {
-    return pData->Clone();
+    DynamicData* newData = new DynamicData(pData);
+#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    mDynamicDatas.push_back(newData);
+#endif
+
+    return newData;
 }
 
 DynamicData* DynamicDataFactory::CreateData(DynamicTypeBuilder* pBuilder)

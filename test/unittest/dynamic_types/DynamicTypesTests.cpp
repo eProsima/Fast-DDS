@@ -128,7 +128,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -144,7 +144,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -160,7 +160,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -176,7 +176,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -192,7 +192,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -208,7 +208,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -224,7 +224,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -240,7 +240,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -256,7 +256,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -272,7 +272,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -288,7 +288,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -304,7 +304,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -320,7 +320,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -336,7 +336,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->Equals(type3.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -353,7 +353,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type2 != nullptr);
         ASSERT_TRUE(type->Equals(type2.get()));
         data = DynamicDataFactory::GetInstance()->CreateData(type);
-        data2 = data->Clone();
+        data2 = DynamicDataFactory::GetInstance()->CreateCopy(data);
         ASSERT_TRUE(data2->Equals(data));
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data2) == ResponseCode::RETCODE_OK);
@@ -2959,12 +2959,14 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
 
         // Try to Add the same key twice.
         ASSERT_FALSE(data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data) == ResponseCode::RETCODE_OK);
 
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
         key_data->SetInt32Value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->InsertMapData(key_data, keyId2, valueId2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data) == ResponseCode::RETCODE_OK);
 
         // Try to Add one more than the limit
         auto key_data2 = DynamicDataFactory::GetInstance()->CreateData(base_type);
@@ -3113,12 +3115,14 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
 
         // Try to Add the same key twice.
         ASSERT_FALSE(data->InsertMapData(key_data, keyId, valueId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data) == ResponseCode::RETCODE_OK);
 
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::GetInstance()->CreateData(base_type);
         key_data->SetInt32Value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->InsertMapData(key_data, keyId2, valueId2) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data) == ResponseCode::RETCODE_OK);
 
         // Try to Add one more than the limit
         auto key_data2 = DynamicDataFactory::GetInstance()->CreateData(base_type);
@@ -3131,6 +3135,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
 
         auto key_data3 = DynamicDataFactory::GetInstance()->CreateData(base_type);
         ASSERT_TRUE(seq_data->InsertMapData(key_data3, keyId, valueId) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(key_data3) == ResponseCode::RETCODE_OK);
 
         // Set and get a value.
         int32_t test1(234);

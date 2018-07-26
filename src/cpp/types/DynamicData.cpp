@@ -101,9 +101,72 @@ DynamicData::DynamicData(DynamicType_ptr pType)
     CreateMembers(mType);
 }
 
+DynamicData::DynamicData(const DynamicData* pData)
+    : mType(pData->mType)
+#ifdef DYNAMIC_TYPES_CHECKING
+    , mInt32Value(pData->mInt32Value)
+    , mUInt32Value(pData->mUInt32Value)
+    , mInt16Value(pData->mInt16Value)
+    , mUInt16Value(pData->mUInt16Value)
+    , mInt64Value(pData->mInt64Value)
+    , mUInt64Value(pData->mUInt64Value)
+    , mFloat32Value(pData->mFloat32Value)
+    , mFloat64Value(pData->mFloat64Value)
+    , mFloat128Value(pData->mFloat128Value)
+    , mChar8Value(pData->mChar8Value)
+    , mChar16Value(pData->mChar16Value)
+    , mByteValue(pData->mByteValue)
+    , mBoolValue(pData->mBoolValue)
+    , mStringValue(pData->mStringValue)
+    , mWStringValue(pData->mWStringValue)
+#endif
+    , mIsKeyElement(pData->mIsKeyElement)
+    , mDefaultArrayValue(pData->mDefaultArrayValue)
+    , mUnionLabel(pData->mUnionLabel)
+    , mUnionId(pData->mUnionId)
+    , mUnionDiscriminator(pData->mUnionDiscriminator)
+{
+    CreateMembers(pData);
+}
+
+
 DynamicData::~DynamicData()
 {
     Clean();
+}
+
+void DynamicData::CreateMembers(const DynamicData* pData)
+{
+    for (auto it = pData->mDescriptors.begin(); it != pData->mDescriptors.end(); ++it)
+    {
+        mDescriptors.insert(std::make_pair(it->first, new MemberDescriptor(it->second)));
+    }
+
+#ifdef DYNAMIC_TYPES_CHECKING
+    for (auto it = pData->mComplexValues.begin(); it != pData->mComplexValues.end(); ++it)
+    {
+        mComplexValues.insert(std::make_pair(it->first, DynamicDataFactory::GetInstance()->CreateCopy(it->second)));
+    }
+#else
+    if (mType->IsComplexKind())
+    {
+        for (auto it = pData->mValues.begin(); it != pData->mValues.end(); ++it)
+        {
+            mValues.insert(std::make_pair(it->first, DynamicDataFactory::GetInstance()->CreateCopy((DynamicData*)it->second)));
+        }
+    }
+    else if (pData->mDescriptors.size() > 0)
+    {
+        for (auto it = pData->mDescriptors.begin(); it != pData->mDescriptors.end(); ++it)
+        {
+            mValues.insert(std::make_pair(it->first, pData->CloneValue(it->first, it->second->GetKind())));
+        }
+    }
+    else
+    {
+        mValues.insert(std::make_pair(MEMBER_ID_INVALID, pData->CloneValue(MEMBER_ID_INVALID, pData->GetKind())));
+    }
+#endif
 }
 
 void DynamicData::CreateMembers(DynamicType_ptr pType)
@@ -301,7 +364,7 @@ bool DynamicData::Equals(const DynamicData* other) const
                         }
                     }
                 }
-                else
+                else if (mDescriptors.size() > 0)
                 {
                     for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
                     {
@@ -311,6 +374,13 @@ bool DynamicData::Equals(const DynamicData* other) const
                         {
                             return false;
                         }
+                    }
+                }
+                else
+                {
+                    if (!CompareValues(GetKind(), mValues.begin()->second, other->mValues.begin()->second))
+                    {
+                        return false;
                     }
                 }
 #endif
@@ -803,7 +873,7 @@ bool DynamicData::CompareValues(TypeKind kind, void* left, void* right) const
     return false;
 }
 
-void DynamicData::GetValue(std::string& sOutValue)
+void DynamicData::GetValue(std::string& sOutValue, MemberId id /*= MEMBER_ID_INVALID*/) const
 {
     switch (mType->mKind)
     {
@@ -812,77 +882,77 @@ void DynamicData::GetValue(std::string& sOutValue)
     case TK_INT32:
     {
         int32_t value(0);
-        GetInt32Value(value, MEMBER_ID_INVALID);
+        GetInt32Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_UINT32:
     {
         uint32_t value(0);
-        GetUint32Value(value, MEMBER_ID_INVALID);
+        GetUint32Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_INT16:
     {
         int16_t value(0);
-        GetInt16Value(value, MEMBER_ID_INVALID);
+        GetInt16Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_UINT16:
     {
         uint16_t value(0);
-        GetUint16Value(value, MEMBER_ID_INVALID);
+        GetUint16Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_INT64:
     {
         int64_t value(0);
-        GetInt64Value(value, MEMBER_ID_INVALID);
+        GetInt64Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_UINT64:
     {
         uint64_t value(0);
-        GetUint64Value(value, MEMBER_ID_INVALID);
+        GetUint64Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_FLOAT32:
     {
         float value(0.0f);
-        GetFloat32Value(value, MEMBER_ID_INVALID);
+        GetFloat32Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_FLOAT64:
     {
         double value(0.0f);
-        GetFloat64Value(value, MEMBER_ID_INVALID);
+        GetFloat64Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_FLOAT128:
     {
         long double value(0.0f);
-        GetFloat128Value(value, MEMBER_ID_INVALID);
+        GetFloat128Value(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_CHAR8:
     {
         char value = 0;
-        GetChar8Value(value, MEMBER_ID_INVALID);
+        GetChar8Value(value, id);
         sOutValue = value;
     }
     break;
     case TK_CHAR16:
     {
         wchar_t value(0);
-        GetChar16Value(value, MEMBER_ID_INVALID);
+        GetChar16Value(value, id);
         std::wstring temp = L"" + value;
         sOutValue = std::string(temp.begin(), temp.end());
     }
@@ -890,40 +960,40 @@ void DynamicData::GetValue(std::string& sOutValue)
     case TK_BOOLEAN:
     {
         bool value(false);
-        GetBoolValue(value, MEMBER_ID_INVALID);
+        GetBoolValue(value, id);
         sOutValue = std::to_string(value ? 1 : 0);
     }
     break;
     case TK_BYTE:
     {
         uint8_t value(0);
-        GetByteValue(value, MEMBER_ID_INVALID);
+        GetByteValue(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_STRING8:
     {
-        sOutValue = GetStringValue(MEMBER_ID_INVALID);
+        sOutValue = GetStringValue(id);
     }
     break;
     case TK_STRING16:
     {
         std::wstring value;
-        GetWstringValue(value, MEMBER_ID_INVALID);
+        GetWstringValue(value, id);
         sOutValue = std::string(value.begin(), value.end());
     }
     break;
     case TK_ENUM:
     {
         uint32_t value;
-        GetEnumValue(value, MEMBER_ID_INVALID);
+        GetEnumValue(value, id);
         sOutValue = std::to_string(value);
     }
     break;
     case TK_BITSET:
     case TK_BITMASK:
     {
-        int value(GetBoolValue(MEMBER_ID_INVALID) ? 1 : 0);
+        int value(GetBoolValue(id) ? 1 : 0);
         sOutValue = std::to_string(value);
     }
     break;
@@ -937,7 +1007,7 @@ void DynamicData::GetValue(std::string& sOutValue)
     }
 }
 
-void DynamicData::SetValue(const std::string& sValue)
+void DynamicData::SetValue(const std::string& sValue, MemberId id /*= MEMBER_ID_INVALID*/)
 {
     switch (mType->mKind)
     {
@@ -951,7 +1021,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoi(sValue);
         }
         catch (...) {}
-        SetInt32Value(value);
+        SetInt32Value(value, id);
     }
     break;
     case TK_UINT32:
@@ -962,7 +1032,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoul(sValue);
         }
         catch (...) {}
-        SetUint32Value(value);
+        SetUint32Value(value, id);
     }
     break;
     case TK_INT16:
@@ -973,7 +1043,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = static_cast<int16_t>(stoi(sValue));
         }
         catch (...) {}
-        SetInt16Value(value);
+        SetInt16Value(value, id);
     }
     break;
     case TK_UINT16:
@@ -984,7 +1054,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = static_cast<uint16_t>(stoul(sValue));
         }
         catch (...) {}
-        SetUint16Value(value);
+        SetUint16Value(value, id);
     }
     break;
     case TK_INT64:
@@ -995,7 +1065,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoll(sValue);
         }
         catch (...) {}
-        SetInt64Value(value);
+        SetInt64Value(value, id);
     }
     break;
     case TK_UINT64:
@@ -1006,7 +1076,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoul(sValue);
         }
         catch (...) {}
-        SetUint64Value(value);
+        SetUint64Value(value, id);
     }
     break;
     case TK_FLOAT32:
@@ -1017,7 +1087,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stof(sValue);
         }
         catch (...) {}
-        SetFloat32Value(value);
+        SetFloat32Value(value, id);
     }
     break;
     case TK_FLOAT64:
@@ -1028,7 +1098,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stod(sValue);
         }
         catch (...) {}
-        SetFloat64Value(value);
+        SetFloat64Value(value, id);
     }
     break;
     case TK_FLOAT128:
@@ -1039,14 +1109,14 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stold(sValue);
         }
         catch (...) {}
-        SetFloat128Value(value);
+        SetFloat128Value(value, id);
     }
     break;
     case TK_CHAR8:
     {
         if (sValue.length() >= 1)
         {
-            SetChar8Value(sValue[0]);
+            SetChar8Value(sValue[0], id);
         }
     }
     break;
@@ -1060,7 +1130,7 @@ void DynamicData::SetValue(const std::string& sValue)
         }
         catch (...) {}
 
-        SetChar16Value(value);
+        SetChar16Value(value, id);
     }
     break;
     case TK_BOOLEAN:
@@ -1071,7 +1141,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoi(sValue);
         }
         catch (...) {}
-        SetBoolValue(value == 1 ? true : false);
+        SetBoolValue(value == 1 ? true : false, id);
     }
     break;
     case TK_BYTE:
@@ -1084,18 +1154,18 @@ void DynamicData::SetValue(const std::string& sValue)
                 value = static_cast<uint8_t>(stoul(sValue));
             }
             catch (...) {}
-            SetByteValue(value);
+            SetByteValue(value, id);
         }
     }
     break;
     case TK_STRING8:
     {
-        SetStringValue(sValue);
+        SetStringValue(sValue, id);
     }
     break;
     case TK_STRING16:
     {
-        SetWstringValue(std::wstring(sValue.begin(), sValue.end()));
+        SetWstringValue(std::wstring(sValue.begin(), sValue.end()), id);
     }
     break;
     case TK_ENUM:
@@ -1106,7 +1176,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoul(sValue);
         }
         catch (...) {}
-        SetEnumValue(value);
+        SetEnumValue(value, id);
     }
     break;
     case TK_BITSET:
@@ -1118,7 +1188,7 @@ void DynamicData::SetValue(const std::string& sValue)
             value = stoi(sValue);
         }
         catch (...) {}
-        SetBoolValue(value == 1 ? true : false);
+        SetBoolValue(value == 1 ? true : false, id);
     }
     break;
     case TK_ARRAY:
@@ -1452,62 +1522,6 @@ ResponseCode DynamicData::ReturnLoanedValue(const DynamicData* value)
 
     logError(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
     return ResponseCode::RETCODE_PRECONDITION_NOT_MET;
-}
-
-DynamicData* DynamicData::Clone() const
-{
-    DynamicData* newData = DynamicDataFactory::GetInstance()->CreateData(mType);
-
-#ifdef DYNAMIC_TYPES_CHECKING
-    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
-    {
-        newData->mDescriptors.insert(std::make_pair(it->first, new MemberDescriptor(it->second)));
-    }
-
-    newData->mInt32Value = mInt32Value;
-    newData->mUInt32Value = mUInt32Value;
-    newData->mInt16Value = mInt16Value;
-    newData->mUInt16Value = mUInt16Value;
-    newData->mInt64Value = mInt64Value;
-    newData->mUInt64Value = mUInt64Value;
-    newData->mFloat32Value = mFloat32Value;
-    newData->mFloat64Value = mFloat64Value;
-    newData->mFloat128Value = mFloat128Value;
-    newData->mChar8Value = mChar8Value;
-    newData->mChar16Value = mChar16Value;
-    newData->mByteValue = mByteValue;
-    newData->mBoolValue = mBoolValue;
-    newData->mStringValue = mStringValue;
-    newData->mWStringValue = mWStringValue;
-
-    for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
-    {
-        newData->mComplexValues.insert(std::make_pair(it->first, it->second->Clone()));
-    }
-
-#else
-    for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
-    {
-        newData->mDescriptors.insert(std::make_pair(it->first, new MemberDescriptor(it->second)));
-    }
-
-    if (mType->IsComplexKind())
-    {
-        for (auto it = mValues.begin(); it != mValues.end(); ++it)
-        {
-            newData->mValues.insert(std::make_pair(it->first, ((DynamicData*)it->second)->Clone()));
-        }
-    }
-    else
-    {
-        for (auto it = mDescriptors.begin(); it != mDescriptors.end(); ++it)
-        {
-            newData->mValues.insert(std::make_pair(it->first, CloneValue(it->first, it->second->GetKind())));
-        }
-    }
-#endif
-
-    return newData;
 }
 
 ResponseCode DynamicData::GetInt32Value(int32_t& value, MemberId id) const
@@ -4120,11 +4134,11 @@ ResponseCode DynamicData::InsertComplexValue(const DynamicData* value, MemberId&
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(mComplexValues.size());
-            mComplexValues.insert(std::make_pair(outId, value->Clone()));
+            mComplexValues.insert(std::make_pair(outId, DynamicDataFactory::GetInstance()->CreateCopy(value)));
             return ResponseCode::RETCODE_OK;
 #else
             outId = static_cast<MemberId>(mValues.size());
-            mValues.insert(std::make_pair(outId, value->Clone()));
+            mValues.insert(std::make_pair(outId, DynamicDataFactory::GetInstance()->CreateCopy(value)));
             return ResponseCode::RETCODE_OK;
 #endif
         }
@@ -4251,7 +4265,7 @@ ResponseCode DynamicData::InsertMapData(const DynamicData* key, MemberId& outKey
                 }
             }
             outKeyId = static_cast<MemberId>(mComplexValues.size());
-            DynamicData* keyCopy = key->Clone();
+            DynamicData* keyCopy = DynamicDataFactory::GetInstance()->CreateCopy(key);
             keyCopy->mIsKeyElement = true;
             mComplexValues.insert(std::make_pair(outKeyId, keyCopy));
 
@@ -4262,14 +4276,14 @@ ResponseCode DynamicData::InsertMapData(const DynamicData* key, MemberId& outKey
 #else
             for (auto it = mValues.begin(); it != mValues.end(); ++it)
             {
-                if (it->second == key)
+                if (((DynamicData*)it->second)->mIsKeyElement && ((DynamicData*)it->second)->Equals(key))
                 {
                     logError(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ResponseCode::RETCODE_BAD_PARAMETER;
                 }
             }
             outKeyId = static_cast<MemberId>(mValues.size());
-            DynamicData* keyCopy = key->Clone();
+            DynamicData* keyCopy = DynamicDataFactory::GetInstance()->CreateCopy(key);
             keyCopy->mIsKeyElement = true;
             mValues.insert(std::make_pair(outKeyId, keyCopy));
 
@@ -4310,7 +4324,7 @@ ResponseCode DynamicData::InsertMapData(const DynamicData* key, DynamicData* val
                 }
             }
             outKey = static_cast<MemberId>(mComplexValues.size());
-            DynamicData* keyCopy = key->Clone();
+            DynamicData* keyCopy = DynamicDataFactory::GetInstance()->CreateCopy(key);
             keyCopy->mIsKeyElement = true;
             mComplexValues.insert(std::make_pair(outKey, keyCopy));
 
@@ -4327,7 +4341,7 @@ ResponseCode DynamicData::InsertMapData(const DynamicData* key, DynamicData* val
                 }
             }
             outKey = static_cast<MemberId>(mValues.size());
-            DynamicData* keyCopy = key->Clone();
+            DynamicData* keyCopy = DynamicDataFactory::GetInstance()->CreateCopy(key);
             keyCopy->mIsKeyElement = true;
             mValues.insert(std::make_pair(outKey, keyCopy));
 
@@ -4367,12 +4381,12 @@ ResponseCode DynamicData::InsertMapData(const DynamicData* key, const DynamicDat
                 }
             }
             outKey = static_cast<MemberId>(mComplexValues.size());
-            DynamicData* keyCopy = key->Clone();
+            DynamicData* keyCopy = DynamicDataFactory::GetInstance()->CreateCopy(key);
             keyCopy->mIsKeyElement = true;
             mComplexValues.insert(std::make_pair(outKey, keyCopy));
 
             outValue = static_cast<MemberId>(mComplexValues.size());
-            DynamicData* valueCopy = value->Clone();
+            DynamicData* valueCopy = DynamicDataFactory::GetInstance()->CreateCopy(value);
             mComplexValues.insert(std::make_pair(outValue, valueCopy));
             return ResponseCode::RETCODE_OK;
 #else
@@ -4385,12 +4399,12 @@ ResponseCode DynamicData::InsertMapData(const DynamicData* key, const DynamicDat
                 }
             }
             outKey = static_cast<MemberId>(mValues.size());
-            DynamicData* keyCopy = key->Clone();
+            DynamicData* keyCopy = DynamicDataFactory::GetInstance()->CreateCopy(key);
             keyCopy->mIsKeyElement = true;
             mValues.insert(std::make_pair(outKey, keyCopy));
 
             outValue = static_cast<MemberId>(mValues.size());
-            DynamicData* valueCopy = value->Clone();
+            DynamicData* valueCopy = DynamicDataFactory::GetInstance()->CreateCopy(value);
             mValues.insert(std::make_pair(outValue, valueCopy));
             return ResponseCode::RETCODE_OK;
 #endif
@@ -4488,7 +4502,7 @@ ResponseCode DynamicData::GetComplexValue(DynamicData** value, MemberId id) cons
         auto it = mComplexValues.find(id);
         if (it != mComplexValues.end())
         {
-            *value = it->second->Clone();
+            *value = DynamicDataFactory::GetInstance()->CreateCopy(it->second);
             return ResponseCode::RETCODE_OK;
         }
         return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -4496,7 +4510,7 @@ ResponseCode DynamicData::GetComplexValue(DynamicData** value, MemberId id) cons
         auto it = mValues.find(id);
         if (it != mValues.end())
         {
-            *value = ((DynamicData*)it->second)->Clone();
+            *value = DynamicDataFactory::GetInstance()->CreateCopy((DynamicData*)it->second);
             return ResponseCode::RETCODE_OK;
         }
         return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -4552,7 +4566,7 @@ ResponseCode DynamicData::SetComplexValue(DynamicData* value, MemberId id)
             auto it = mValues.find(id);
             if (it != mValues.end())
             {
-                if (GetKind() == TK_MAP && it->second->mIsKeyElement)
+                if (GetKind() == TK_MAP && ((DynamicData*)it->second)->mIsKeyElement)
                 {
                     logError(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
                     return ResponseCode::RETCODE_BAD_PARAMETER;
@@ -4826,7 +4840,7 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
             auto it = mValues.find(mUnionId);
             if (it != mValues.end())
             {
-                DynamicData* it = (DynamicData*)it->second->deserialize(cdr);
+                ((DynamicData*)it->second)->deserialize(cdr);
             }
 #endif
         }
@@ -5546,7 +5560,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
             it->second->serialize(cdr);
         }
 #else
-        cdr << static_cast<uint32_t>(mValues.size());
+        cdr << static_cast<uint32_t>(mValues.size() / 2);
         for (auto it = mValues.begin(); it != mValues.end(); ++it)
         {
             ((DynamicData*)it->second)->serialize(cdr);

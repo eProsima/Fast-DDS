@@ -886,7 +886,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 
     DynamicData *my_seq_struct = complex->LoanValue(complex->GetMemberIdByName("my_sequence_struct"));
     my_seq_struct->InsertSequenceData(id);
-    my_seq_struct->SetComplexValue(basic, id);
+    my_seq_struct->SetComplexValue(DynamicDataFactory::GetInstance()->CreateCopy(basic), id);
     //staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
     complex->ReturnLoanedValue(my_seq_struct);
 
@@ -1023,6 +1023,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
     key->SetInt32Value(0);
     my_map_long_seq_octet->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
     DynamicData* seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
     seq_seq_oct->InsertSequenceData(ssId);
     DynamicData* seq_oct = seq_seq_oct->LoanValue(ssId);
@@ -1042,6 +1044,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
     key->SetInt32Value(55);
     my_map_long_seq_octet->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
     seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
     seq_seq_oct->InsertSequenceData(ssId);
     seq_oct = seq_seq_oct->LoanValue(ssId);
@@ -1081,6 +1085,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
     key->SetInt32Value(0);
     my_map_long_octet_array_500->InsertMapData(key, kId, vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
     DynamicData* oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
     for (int j = 0; j < 500; ++j)
     {
@@ -1092,7 +1098,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
     key->SetInt32Value(10);
     my_map_long_octet_array_500->InsertMapData(key, kId, vId);
-        oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    DynamicDataFactory::GetInstance()->DeleteData(key);
+
     for (int j = 0; j < 500; ++j)
     {
         oct_array_500->SetByteValue((j+55)%256, j);
@@ -1229,6 +1237,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 
     DynamicDataFactory::GetInstance()->DeleteData(dynData);
     DynamicDataFactory::GetInstance()->DeleteData(dynDataFromStatic);
+    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromDynamic);
 }
 
 // TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
