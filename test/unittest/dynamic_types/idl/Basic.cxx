@@ -41,6 +41,7 @@ EnumStruct::EnumStruct()
 {
     m_my_enum = ::A;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -130,6 +131,7 @@ void EnumStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 AliasStruct::AliasStruct()
 {
     m_my_alias = ::A;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -221,6 +223,7 @@ AliasAliasStruct::AliasAliasStruct()
 {
     m_my_alias_alias = ::A;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -311,6 +314,7 @@ BoolStruct::BoolStruct()
 {
     m_my_bool = false;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -399,6 +403,7 @@ void BoolStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 OctetStruct::OctetStruct()
 {
     m_my_octet = 0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -489,6 +494,7 @@ ShortStruct::ShortStruct()
 {
     m_my_int16 = 0;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -577,6 +583,7 @@ void ShortStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 LongStruct::LongStruct()
 {
     m_my_int32 = 0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -667,6 +674,7 @@ LongLongStruct::LongLongStruct()
 {
     m_my_int64 = 0;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -755,6 +763,7 @@ void LongLongStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 UShortStruct::UShortStruct()
 {
     m_my_uint16 = 0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -845,6 +854,7 @@ ULongStruct::ULongStruct()
 {
     m_my_uint32 = 0;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -933,6 +943,7 @@ void ULongStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 ULongLongStruct::ULongLongStruct()
 {
     m_my_uint64 = 0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -1023,6 +1034,7 @@ FloatStruct::FloatStruct()
 {
     m_my_float32 = 0.0;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -1111,6 +1123,7 @@ void FloatStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 DoubleStruct::DoubleStruct()
 {
     m_my_float64 = 0.0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -1201,6 +1214,7 @@ LongDoubleStruct::LongDoubleStruct()
 {
     m_my_float128 = 0.0;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -1287,6 +1301,7 @@ void LongDoubleStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 CharStruct::CharStruct()
 {
     m_my_char = 0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -1376,6 +1391,7 @@ void CharStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 WCharStruct::WCharStruct()
 {
     m_my_wchar = 0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -1806,7 +1822,7 @@ void LargeWStringStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 }
 ArraytStruct::ArraytStruct()
 {
-
+    memset(&m_my_array, 0, (2 * 2 * 2) * 4);
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -2420,7 +2436,9 @@ void MapMapStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 StructStruct::StructStruct()
 {
     m_a = 0;
+
     m_b = 0;
+
 
     // Just to register all known types
     BasicTypeFactory factory;
@@ -2529,6 +2547,7 @@ StructStructStruct::StructStructStruct()
 
     m_child_int64 = 0;
 
+
     // Just to register all known types
     BasicTypeFactory factory;
 }
@@ -2631,7 +2650,9 @@ SimpleUnion::SimpleUnion()
 {
     m__d = A;
     m_first = 0;
+
     m_second = 0;
+
 }
 
 SimpleUnion::~SimpleUnion()
@@ -2954,6 +2975,7 @@ UnionUnion::UnionUnion()
 {
     m__d = A;
     m_first = 0;
+
 
 }
 
@@ -3279,7 +3301,9 @@ WCharUnion::WCharUnion()
 {
     m__d = A;
     m_first = 0;
+
     m_second = 0;
+
 }
 
 WCharUnion::~WCharUnion()

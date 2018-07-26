@@ -41,18 +41,31 @@ using namespace eprosima::fastcdr::exception;
 BasicStruct::BasicStruct()
 {
     m_my_bool = false;
+
     m_my_octet = 0;
+
     m_my_int16 = 0;
+
     m_my_int32 = 0;
+
     m_my_int64 = 0;
+
     m_my_uint16 = 0;
+
     m_my_uint32 = 0;
+
     m_my_uint64 = 0;
+
     m_my_float32 = 0.0;
+
     m_my_float64 = 0.0;
+
     m_my_float128 = 0.0;
+
     m_my_char = 0;
+
     m_my_wchar = 0;
+
 
 
 
@@ -367,11 +380,15 @@ ComplexStruct::ComplexStruct()
 {
     m_my_octet = 0;
 
+
     m_my_alias_enum = ::A;
+
     m_my_enum = ::A;
 
 
 
+    memset(&m_my_array_octet, 0, (500 * 5 * 4) * 1);
+    memset(&m_my_octet_array_500, 0, (500) * 1);
 
 
 
@@ -383,8 +400,7 @@ ComplexStruct::ComplexStruct()
 
 
 
-
-
+    memset(&m_multi_alias_array_42, 0, (42) * 4);
 
 
 
@@ -1301,7 +1317,9 @@ MyUnion2::MyUnion2()
     m__d = A;
     m_uno = 0;
 
+
     m_tres = 0;
+
 }
 
 MyUnion2::~MyUnion2()
@@ -1816,6 +1834,7 @@ void CompleteStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 KeyedStruct::KeyedStruct()
 {
     m_key = 0;
+
 
 
     // Just to register all known types
