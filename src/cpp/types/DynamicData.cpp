@@ -5060,12 +5060,12 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
 #ifdef DYNAMIC_TYPES_CHECKING
         // string content (length + (characters * 4) )
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-            (data->mWStringValue.length()) * 4;
+            ((data->mWStringValue.length()) * 4);
 #else
         auto it = data->mValues.begin();
-        // string content (length + ((characters + 1) * 4) )
+        // string content (length + (characters * 4) )
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-            (((std::wstring*)it->second)->length() + 1) * 4;
+            (((std::wstring*)it->second)->length() * 4);
 #endif
         break;
     }
@@ -5102,10 +5102,8 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
     }
     case TK_ARRAY:
     {
-        // Elements count
-        //current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
         uint32_t arraySize = data->mType->GetTotalBounds();
+        size_t emptyElementSize = getEmptyCdrSerializedSize(data->mType->GetElementType().get(), current_alignment);
         for (uint32_t idx = 0; idx < arraySize; ++idx)
         {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -5121,7 +5119,7 @@ size_t DynamicData::getCdrSerializedSize(const DynamicData* data, size_t current
             }
             else
             {
-                current_alignment += getEmptyCdrSerializedSize(data->mType->GetElementType().get(), current_alignment);
+                current_alignment += emptyElementSize;
             }
         }
         break;
@@ -5288,7 +5286,10 @@ size_t DynamicData::getMaxCdrSerializedSize(const DynamicType_ptr type, size_t c
     }
 
     case TK_ALIAS:
+    {
+        current_alignment += getMaxCdrSerializedSize(type->GetBaseType());
         break;
+    }
     }
 
     return current_alignment - initial_alignment;
@@ -5534,7 +5535,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     case TK_MAP:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        cdr << static_cast<uint32_t>(mComplexValues.size());
+        cdr << static_cast<uint32_t>(mComplexValues.size() / 2); // Number of pairs
         for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
         {
             it->second->serialize(cdr);
@@ -5628,7 +5629,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     }
     case TK_STRING16:
     {
-        // string length +  4
+        // string length
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
         break;
     }
@@ -5664,6 +5665,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
     }
 
     case TK_ALIAS:
+        current_alignment += getEmptyCdrSerializedSize(type->GetBaseType().get());
         break;
     }
 
@@ -5676,6 +5678,11 @@ void DynamicData::SerializeEmptyData(const DynamicType_ptr pType, eprosima::fast
     {
     default:
         break;
+    case TK_ALIAS:
+    {
+        SerializeEmptyData(pType->GetBaseType(), cdr);
+        break;
+    }
     case TK_INT32:
     {
         cdr << static_cast<int32_t>(0);
@@ -5796,8 +5803,6 @@ void DynamicData::SerializeEmptyData(const DynamicType_ptr pType, eprosima::fast
         cdr << static_cast<uint32_t>(0);
         break;
     }
-    case TK_ALIAS:
-        break;
     }
 }
 
