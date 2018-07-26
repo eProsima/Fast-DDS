@@ -4934,6 +4934,11 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr &cdr)
         uint32_t size(0);
         bool bKeyElement(false);
         cdr >> size;
+
+        if (GetKind() == TK_MAP)
+        {
+            size *= 2; // We serialize the number of pairs.
+        }
         for (uint32_t i = 0; i < size; ++i)
         {
             //cdr >> memberId;
