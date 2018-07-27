@@ -111,6 +111,7 @@ DynamicTypeBuilderFactory::DynamicTypeBuilderFactory()
 DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
 {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    std::unique_lock<std::recursive_mutex> scoped(mMutex);
     for (auto it = mBuildersList.begin(); it != mBuildersList.end(); ++it)
     {
         delete *it;
@@ -123,6 +124,7 @@ void DynamicTypeBuilderFactory::AddBuilderToList(DynamicTypeBuilder* pBuilder)
 {
     (void)pBuilder;
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    std::unique_lock<std::recursive_mutex> scoped(mMutex);
     mBuildersList.push_back(pBuilder);
 #endif
 }
@@ -756,6 +758,7 @@ ResponseCode DynamicTypeBuilderFactory::DeleteBuilder(DynamicTypeBuilder* builde
     if (builder != nullptr)
     {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+        std::unique_lock<std::recursive_mutex> scoped(mMutex);
         auto it = std::find(mBuildersList.begin(), mBuildersList.end(), builder);
         if (it != mBuildersList.end())
         {

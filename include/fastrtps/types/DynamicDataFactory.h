@@ -20,7 +20,7 @@
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
-
+#include <mutex>
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
 
 namespace eprosima{
@@ -49,6 +49,7 @@ protected:
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicData*> mDynamicDatas;
+    mutable std::recursive_mutex mMutex;
 #endif
 };
 

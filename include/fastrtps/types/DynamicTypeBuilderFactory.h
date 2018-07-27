@@ -17,6 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <mutex>
 
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
 
@@ -129,6 +130,7 @@ protected:
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicTypeBuilder*> mBuildersList;
+    mutable std::recursive_mutex mMutex;
 #endif
 };
 

@@ -49,6 +49,7 @@ DynamicDataFactory::DynamicDataFactory()
 DynamicDataFactory::~DynamicDataFactory()
 {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    std::unique_lock<std::recursive_mutex> scoped(mMutex);
     while (mDynamicDatas.size() > 0)
     {
         DeleteData(*mDynamicDatas.begin());
@@ -61,7 +62,10 @@ DynamicData* DynamicDataFactory::CreateCopy(const DynamicData* pData)
 {
     DynamicData* newData = new DynamicData(pData);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    mDynamicDatas.push_back(newData);
+    {
+        std::unique_lock<std::recursive_mutex> scoped(mMutex);
+        mDynamicDatas.push_back(newData);
+    }
 #endif
 
     return newData;
@@ -100,7 +104,10 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
                 {
                     newData = new DynamicData(pType);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-                    mDynamicDatas.push_back(newData);
+                    {
+                        std::unique_lock<std::recursive_mutex> scoped(mMutex);
+                        mDynamicDatas.push_back(newData);
+                    }
 #endif
                     CreateMembers(newData, pType->GetBaseType());
                 }
@@ -109,7 +116,10 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
             {
                 newData = new DynamicData(pType);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-                mDynamicDatas.push_back(newData);
+                {
+                    std::unique_lock<std::recursive_mutex> scoped(mMutex);
+                    mDynamicDatas.push_back(newData);
+                }
 #endif
 
                 // Arrays must have created every members for serialization.
@@ -117,7 +127,10 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
                 {
                     DynamicData* defaultArrayData = new DynamicData(pType->GetElementType());
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-                    mDynamicDatas.push_back(defaultArrayData);
+                    {
+                        std::unique_lock<std::recursive_mutex> scoped(mMutex);
+                        mDynamicDatas.push_back(defaultArrayData);
+                    }
 #endif
                     newData->mDefaultArrayValue = defaultArrayData;
                 }
@@ -126,7 +139,10 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
                 {
                     DynamicData* discriminatorData = new DynamicData(pType->GetDiscriminatorType());
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-                    mDynamicDatas.push_back(discriminatorData);
+                    {
+                        std::unique_lock<std::recursive_mutex> scoped(mMutex);
+                        mDynamicDatas.push_back(discriminatorData);
+                    }
 #endif
                     newData->SetUnionDiscriminator(discriminatorData);
                 }
@@ -165,6 +181,7 @@ ResponseCode DynamicDataFactory::DeleteData(DynamicData* pData)
     if (pData != nullptr)
     {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+        std::unique_lock<std::recursive_mutex> scoped(mMutex);
         auto it = std::find(mDynamicDatas.begin(), mDynamicDatas.end(), pData);
         if (it != mDynamicDatas.end())
         {
@@ -184,6 +201,7 @@ ResponseCode DynamicDataFactory::DeleteData(DynamicData* pData)
 bool DynamicDataFactory::IsEmpty() const
 {
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    std::unique_lock<std::recursive_mutex> scoped(mMutex);
     return mDynamicDatas.empty();
 #else
     return true;
