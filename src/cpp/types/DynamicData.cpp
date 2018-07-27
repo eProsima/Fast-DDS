@@ -591,29 +591,8 @@ void DynamicData::Clean()
         DynamicDataFactory::GetInstance()->DeleteData(mUnionDiscriminator);
         mUnionDiscriminator = nullptr;
     }
-#ifdef DYNAMIC_TYPES_CHECKING
-    for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
-    {
-        DynamicDataFactory::GetInstance()->DeleteData(it->second);
-    }
-    mComplexValues.clear();
-#else
-    if (mType->HasChildren())
-    {
-        for (auto it = mValues.begin(); it != mValues.end(); ++it)
-        {
-            DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)it->second);
-        }
-    }
-    else
-    {
-        for (auto it = mValues.begin(); it != mValues.end(); ++it)
-        {
-            delete it->second;
-        }
-    }
-    mValues.clear();
-#endif
+
+    CleanMembers();
 
     mType = nullptr;
 
@@ -657,6 +636,180 @@ ResponseCode DynamicData::ClearAllValues()
         SetDefaultValue(MEMBER_ID_INVALID);
     }
     return ResponseCode::RETCODE_OK;
+}
+
+void DynamicData::CleanMembers()
+{
+#ifdef DYNAMIC_TYPES_CHECKING
+    for (auto it = mComplexValues.begin(); it != mComplexValues.end(); ++it)
+    {
+        DynamicDataFactory::GetInstance()->DeleteData(it->second);
+    }
+    mComplexValues.clear();
+#else
+    if (mType->HasChildren())
+    {
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)it->second);
+        }
+    }
+    else
+    {
+        switch (GetKind())
+        {
+        default:
+            break;
+        case TK_INT32:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((int32_t*)it->second);
+#endif
+            break;
+        }
+        case TK_UINT32:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((uint32_t*)it->second);
+#endif
+            break;
+        }
+        case TK_INT16:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((int16_t*)it->second);
+#endif
+            break;
+        }
+        case TK_UINT16:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((uint16_t*)it->second);
+#endif
+            break;
+        }
+        case TK_INT64:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((int64_t*)it->second);
+#endif
+            break;
+        }
+        case TK_UINT64:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((uint64_t*)it->second);
+#endif
+            break;
+        }
+        case TK_FLOAT32:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((float*)it->second);
+#endif
+            break;
+        }
+        case TK_FLOAT64:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((double*)it->second);
+#endif
+            break;
+        }
+        case TK_FLOAT128:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((long double*)it->second);
+#endif
+            break;
+        }
+        case TK_CHAR8:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((char*)it->second);
+#endif
+            break;
+        }
+        case TK_CHAR16:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((wchar_t*)it->second);
+#endif
+            break;
+        }
+        case TK_BOOLEAN:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((bool*)it->second);
+#endif
+            break;
+        }
+        case TK_BYTE:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((octet*)it->second);
+#endif
+            break;
+        }
+        case TK_STRING8:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((std::string*)it->second);
+#endif
+            break;
+        }
+        case TK_STRING16:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((std::wstring*)it->second);
+#endif
+            break;
+        }
+        case TK_ENUM:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((uint32_t*)it->second);
+#endif
+            break;
+        }
+        case TK_BITSET:
+        case TK_BITMASK:
+        {
+#ifndef DYNAMIC_TYPES_CHECKING
+            auto it = mValues.begin();
+            delete ((uint64_t*)it->second);
+#endif
+            break;
+        }
+        case TK_UNION:
+        case TK_STRUCTURE:
+        case TK_ARRAY:
+        case TK_SEQUENCE:
+        case TK_MAP:
+        case TK_ALIAS:
+        {
+            break;
+        }
+        }
+    }
+    mValues.clear();
+#endif
 }
 
 ResponseCode DynamicData::ClearNonkeyValues()

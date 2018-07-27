@@ -18,7 +18,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
-#define DYNAMIC_TYPES_CHECKING
+//#define DYNAMIC_TYPES_CHECKING
 
 namespace eprosima{
 namespace fastrtps{
@@ -260,6 +260,7 @@ protected:
     void CreateMembers(DynamicType_ptr pType);
     void CreateMembers(const DynamicData* pData);
     void Clean();
+    void CleanMembers();
     void* CloneValue(MemberId id, TypeKind kind) const;
     bool CompareValues(TypeKind kind, void* left, void* right) const;
     ResponseCode InsertArrayData(MemberId indexId);
