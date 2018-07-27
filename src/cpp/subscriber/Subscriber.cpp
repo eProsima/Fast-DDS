@@ -37,9 +37,15 @@ bool Subscriber::readNextData(void* data,SampleInfo_t* info)
 {
     return mp_impl->readNextData(data,info);
 }
+
 bool Subscriber::takeNextData(void* data,SampleInfo_t* info)
 {
     return mp_impl->takeNextData(data,info);
+}
+
+bool Subscriber::takeNextSerializedPayload(SerializedPayload_t* payload, SampleInfo_t* info)
+{
+    return mp_impl->takeNextSerializedPayload(payload, info);
 }
 
 bool Subscriber::updateAttributes(SubscriberAttributes& att)

@@ -84,10 +84,20 @@ bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
     return this->m_history.readNextData(data,info);
 }
 
-bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info) {
+bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info)
+{
     return this->m_history.takeNextData(data,info);
 }
 
+bool SubscriberImpl::readNextSerializedPayload(SerializedPayload_t* payload, SampleInfo_t* info)
+{
+    return this->m_history.readNextSerializedPayload(payload, info);
+}
+
+bool SubscriberImpl::takeNextSerializedPayload(SerializedPayload_t* payload, SampleInfo_t* info)
+{
+    return this->m_history.takeNextSerializedPayload(payload, info);
+}
 
 
 const GUID_t& SubscriberImpl::getGuid(){

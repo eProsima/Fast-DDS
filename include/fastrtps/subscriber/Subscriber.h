@@ -60,19 +60,38 @@ public:
     void waitForUnreadMessage();
 
     /**
-     * Read next unread Data from the Subscriber.
-     * @param data Pointer to the object where you want the data stored.
-     * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
-     * @return True if a sample was read.
-     */
-    bool readNextData(void* data,SampleInfo_t* info);
+    * Read next unread Data from the Subscriber.
+    * @param data Pointer to the object where you want the data stored.
+    * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
+    * @return True if a sample was read.
+    */
+    bool readNextData(void* data, SampleInfo_t* info);
+
     /**
-     * Take next Data from the Subscriber. The data is removed from the subscriber.
-     * @param data Pointer to the object where you want the data stored.
-     * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
-     * @return True if a sample was taken.
-     */
-    bool takeNextData(void* data,SampleInfo_t* info);
+    * Read next unread SerializedPayload from the Subscriber.
+    * THIS METHOD DOESN'T MANAGE TOPICS WITH KEYS
+    * @param data Pointer to the object where you want the data stored.
+    * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
+    * @return True if a sample was read.
+    */
+    bool readNextSerializedPayload(SerializedPayload_t* payload, SampleInfo_t* info);
+
+    /**
+    * Take next Data from the Subscriber. The data is removed from the subscriber.
+    * @param data Pointer to the object where you want the data stored.
+    * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
+    * @return True if a sample was taken.
+    */
+    bool takeNextData(void* data, SampleInfo_t* info);
+
+    /**
+    * Take next Serialized Payload from the Subscriber. The data is removed from the subscriber.
+    * THIS METHOD DOESN'T MANAGE TOPICS WITH KEYS
+    * @param data Pointer to the object where you want the data stored.
+    * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
+    * @return True if a sample was taken.
+    */
+    bool takeNextSerializedPayload(SerializedPayload_t* payload, SampleInfo_t* info);
 
 
     /**
