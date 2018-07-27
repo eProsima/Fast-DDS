@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Publisher.h 	
+ * @file Publisher.h
  */
 
 
@@ -66,21 +66,25 @@ class PublisherImpl
     virtual ~PublisherImpl();
 
     /**
-     * 
+     *
      * @param kind
      * @param  Data
      * @return
      */
     bool create_new_change(rtps::ChangeKind_t kind, void* Data);
 
+    bool create_new_change(rtps::ChangeKind_t changeKind, SerializedPayload_t *payload);
+
     /**
-     * 
+     *
      * @param kind
      * @param  Data
      * @param wparams
      * @return
      */
     bool create_new_change_with_params(rtps::ChangeKind_t kind, void* Data, rtps::WriteParams &wparams);
+    bool create_new_change_with_params(rtps::ChangeKind_t kind, SerializedPayload_t* payload,
+        rtps::WriteParams &wparams);
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -95,7 +99,7 @@ class PublisherImpl
     bool removeAllChange(size_t* removed);
 
     /**
-     * 
+     *
      * @return
      */
     const rtps::GUID_t& getGuid();

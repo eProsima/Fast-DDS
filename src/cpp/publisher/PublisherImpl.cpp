@@ -69,11 +69,107 @@ PublisherImpl::~PublisherImpl()
     delete(this->mp_userPublisher);
 }
 
-
+bool PublisherImpl::create_new_change(ChangeKind_t changeKind, SerializedPayload_t *payload)
+{
+    return create_new_change_with_params(changeKind, payload, WRITE_PARAM_DEFAULT);
+}
 
 bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 {
     return create_new_change_with_params(changeKind, data, WriteParams::WRITE_PARAM_DEFAULT);
+}
+
+bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, SerializedPayload_t* payload, WriteParams &wparams)
+{
+    /// Preconditions
+    if (payload == nullptr || payload->data == nullptr)
+    {
+        logError(PUBLISHER, "Payload not valid");
+        return false;
+    }
+
+    if(changeKind == NOT_ALIVE_UNREGISTERED || changeKind == NOT_ALIVE_DISPOSED ||
+            changeKind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+    {
+        if(m_att.topic.topicKind == NO_KEY)
+        {
+            logError(PUBLISHER,"Topic is NO_KEY, operation not permitted");
+            return false;
+        }
+    }
+
+    InstanceHandle_t handle;
+    // Block lowlevel writer
+    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+
+    CacheChange_t* ch = mp_writer->new_change(payload, changeKind, handle);
+    if(ch != nullptr)
+    {
+        //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
+        if(high_mark_for_frag_ == 0)
+        {
+            uint32_t max_data_size = mp_writer->getMaxDataSize();
+            uint32_t writer_throughput_controller_bytes =
+                mp_writer->calculateMaxDataSize(m_att.throughputController.bytesPerPeriod);
+            uint32_t participant_throughput_controller_bytes =
+                mp_writer->calculateMaxDataSize(mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
+
+            high_mark_for_frag_ =
+                max_data_size > writer_throughput_controller_bytes ?
+                writer_throughput_controller_bytes :
+                (max_data_size > participant_throughput_controller_bytes ?
+                 participant_throughput_controller_bytes :
+                 max_data_size);
+        }
+
+        uint32_t final_high_mark_for_frag = high_mark_for_frag_;
+
+        // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
+        if(wparams.related_sample_identity() != SampleIdentity::unknown())
+        {
+            final_high_mark_for_frag -= 32;
+        }
+
+        // If it is big data, fragment it.
+        if(ch->serializedPayload.length > final_high_mark_for_frag)
+        {
+            // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
+            if( m_att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+            {
+                logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
+                        ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
+                        final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
+                m_history.release_Cache(ch);
+                return false;
+            }
+
+            /// Fragment the data.
+            // Set the fragment size to the cachechange.
+            // Note: high_mark will always be a value that can be casted to uint16_t)
+            ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
+        }
+
+        if(&wparams != &WRITE_PARAM_DEFAULT)
+        {
+            ch->write_params = wparams;
+        }
+
+        if(!this->m_history.add_pub_change(ch, wparams, lock))
+        {
+            m_history.release_Cache(ch);
+            return false;
+        }
+
+        if(m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS &&
+                mp_writer->is_acked_by_all(ch))
+        {
+            m_history.remove_change_g(ch);
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void* data, WriteParams &wparams)
