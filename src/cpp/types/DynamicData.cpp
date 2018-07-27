@@ -605,6 +605,13 @@ void DynamicData::Clean()
             DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)it->second);
         }
     }
+    else
+    {
+        for (auto it = mValues.begin(); it != mValues.end(); ++it)
+        {
+            delete it->second;
+        }
+    }
     mValues.clear();
 #endif
 
