@@ -634,9 +634,8 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
 {
     bool bProcessOk(true);
 
-    TCPControlMsgHeader controlHeader;
+    TCPControlMsgHeader controlHeader = *(reinterpret_cast<TCPControlMsgHeader*>(receiveBuffer));
     //memcpy(&controlHeader, receiveBuffer, TCPControlMsgHeader::getSize());
-    controlHeader = *(reinterpret_cast<TCPControlMsgHeader*>(receiveBuffer));
     size_t dataSize = controlHeader.length - TCPControlMsgHeader::getSize();
     size_t bufferSize = dataSize + 4;
 
