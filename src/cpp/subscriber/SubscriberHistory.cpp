@@ -271,8 +271,7 @@ bool SubscriberHistory::readNextSerializedPayload(SerializedPayload_t* payload, 
         logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
         if (change->kind == ALIVE)
         {
-            payload->reserve(change->serializedPayload.length);
-            payload->copy(&change->serializedPayload);
+            payload->copy(&change->serializedPayload, false);
         }
         if (info != nullptr)
         {
@@ -313,6 +312,11 @@ bool SubscriberHistory::takeNextSerializedPayload(SerializedPayload_t* payload, 
         logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
             " from writer: " << change->writerGUID);
 
+        if (change->kind == ALIVE)
+        {
+            payload->copy(&change->serializedPayload, false);
+        }
+
         if (info != nullptr)
         {
             info->sampleKind = change->kind;
@@ -327,12 +331,6 @@ bool SubscriberHistory::takeNextSerializedPayload(SerializedPayload_t* payload, 
             //    change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
             //{
             //}
-            if (change->kind == ALIVE)
-            {
-                payload->reserve(change->serializedPayload.length);
-                payload->copy(&change->serializedPayload);
-            }
-
             info->iHandle = change->instanceHandle;
             info->related_sample_identity = change->write_params.sample_identity();
         }

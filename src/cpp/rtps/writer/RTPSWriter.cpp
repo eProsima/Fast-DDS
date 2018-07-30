@@ -77,7 +77,7 @@ CacheChange_t* RTPSWriter::new_change(SerializedPayload_t *payload, ChangeKind_t
     ch->instanceHandle = handle;
     ch->writerGUID = m_guid;
 
-    ch->serializedPayload = *payload;
+    ch->serializedPayload.copy(payload, false);
 
     return ch;
 }
