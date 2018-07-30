@@ -46,13 +46,18 @@ SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,uint32_t payloadMaxSi
     mp_subImpl(simpl),
     mp_getKeyObject(nullptr)
 {
-    mp_getKeyObject = mp_subImpl->getType()->createData();
+    if (mp_subImpl->getType()->m_isGetKeyDefined)
+    {
+        mp_getKeyObject = mp_subImpl->getType()->createData();
+    }
 }
 
 SubscriberHistory::~SubscriberHistory()
 {
-    mp_subImpl->getType()->deleteData(mp_getKeyObject);
-
+    if (mp_subImpl->getType()->m_isGetKeyDefined)
+    {
+        mp_subImpl->getType()->deleteData(mp_getKeyObject);
+    }
 }
 
 bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_missing_changes_up_to)
