@@ -323,12 +323,16 @@ bool SubscriberHistory::takeNextSerializedPayload(SerializedPayload_t* payload, 
             {
                 info->ownershipStrength = wp->m_att.ownershipStrength;
             }
-            if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
-                change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
+            //if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
+            //    change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
+            //{
+            //}
+            if (change->kind == ALIVE)
             {
                 payload->reserve(change->serializedPayload.length);
                 payload->copy(&change->serializedPayload);
             }
+
             info->iHandle = change->instanceHandle;
             info->related_sample_identity = change->write_params.sample_identity();
         }

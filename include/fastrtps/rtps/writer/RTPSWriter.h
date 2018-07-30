@@ -35,7 +35,7 @@ class WriterListener;
 class WriterHistory;
 class FlowController;
 struct CacheChange_t;
-class SerializedPayload_t;
+struct SerializedPayload_t;
 
 
 /**
