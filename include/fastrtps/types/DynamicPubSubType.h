@@ -18,6 +18,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -39,6 +40,7 @@ public:
     RTPS_DllAPI bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 
     RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
+    RTPS_DllAPI ResponseCode SetDynamicType(DynamicData_ptr pData);
     RTPS_DllAPI ResponseCode SetDynamicType(DynamicType_ptr pType);
 
 protected:
