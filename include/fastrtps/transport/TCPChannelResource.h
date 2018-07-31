@@ -176,7 +176,7 @@ public:
     {
         return mLocator;
     }
-/*
+    /*
     inline bool HasLogicalConnections() const
     {
         std::unique_lock<std::recursive_mutex> scoped(mLogicalConnectionsMutex);
@@ -195,7 +195,7 @@ public:
         assert(mLogicalConnections > 0);
         --mLogicalConnections;
     }
-*/
+    */
 protected:
     inline void ChangeStatus(eConnectionStatus s)
     {
