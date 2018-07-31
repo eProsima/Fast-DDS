@@ -186,7 +186,7 @@ void TCPTransportInterface::AssociateSenderToSocket(TCPChannelResource *socket, 
     if (it == mSocketToSenders.end())
     {
         mSocketToSenders[socket].emplace_back(sender);
-        socket->AddLogicalConnection();
+        //socket->AddLogicalConnection();
     }
     else if (std::find(it->second.begin(), it->second.end(), sender) == it->second.end())
     {
@@ -1091,21 +1091,21 @@ void TCPTransportInterface::RegisterReceiverResources(TCPChannelResource* pChann
         {
             pChannelResource->AddMessageReceiver(it->first.get_logical_port(), it->second->CreateMessageReceiver());
             pChannelResource->mLogicalInputPorts.emplace_back(it->first.get_logical_port());
-            pChannelResource->AddLogicalConnection();
+            //pChannelResource->AddLogicalConnection();
         }
     }
 }
 
-void TCPTransportInterface::ReleaseTCPSocket(TCPChannelResource *pChannelResource, bool force)
+void TCPTransportInterface::ReleaseTCPSocket(TCPChannelResource *pChannelResource, bool /*force*/)
 {
     if (pChannelResource != nullptr && pChannelResource->IsAlive())
     {
-        if (pChannelResource->HasLogicalConnections())
-        {
-            pChannelResource->RemoveLogicalConnection();
-        }
+        //if (pChannelResource->HasLogicalConnections())
+        //{
+        //    pChannelResource->RemoveLogicalConnection();
+        //}
 
-        if (force || !pChannelResource->HasLogicalConnections())
+        //if (force || !pChannelResource->HasLogicalConnections())
         {
             // Pauses the timer to clean the deleted sockets pool.
             if (mCleanSocketsPoolTimer != nullptr)

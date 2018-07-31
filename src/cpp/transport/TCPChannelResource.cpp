@@ -31,7 +31,7 @@ TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& loc
 	, mNegotiationSemaphore(0)
 	, mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
-    , mLogicalConnections(0)
+    //, mLogicalConnections(0)
 {
     mReadMutex = new std::recursive_mutex();
     mWriteMutex = new std::recursive_mutex();
@@ -58,7 +58,7 @@ TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& loc
     , mCheckingLogicalPort(0)
     , mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
-    , mLogicalConnections(0)
+    //, mLogicalConnections(0)
 {
     mReadMutex = new std::recursive_mutex();
     mWriteMutex = new std::recursive_mutex();
