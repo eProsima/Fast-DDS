@@ -5701,11 +5701,14 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
         break;
     }
     case TK_SEQUENCE: // Sequence is like structure, but with size
+    {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr << static_cast<uint32_t>(mComplexValues.size());
 #else
         cdr << static_cast<uint32_t>(mValues.size());
 #endif
+        break;
+    }
     case TK_STRUCTURE:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
