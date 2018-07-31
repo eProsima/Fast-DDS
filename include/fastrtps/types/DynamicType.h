@@ -31,8 +31,6 @@ class DynamicType
 {
 public:
 
-    virtual ~DynamicType();
-
     bool Equals(const DynamicType* other) const;
 
     ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members);
@@ -71,6 +69,8 @@ protected:
     DynamicType();
     DynamicType(const TypeDescriptor* descriptor);
     DynamicType(const DynamicTypeBuilder* other);
+
+    virtual ~DynamicType();
 
     virtual void Clear();
 

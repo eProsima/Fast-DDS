@@ -31,7 +31,6 @@ class MemberDescriptor;
 class DynamicData
 {
 public:
-    ~DynamicData();
 
     ResponseCode GetDescriptor(MemberDescriptor& value, MemberId id);
     ResponseCode SetDescriptor(MemberId id, const MemberDescriptor* value);
@@ -258,6 +257,8 @@ protected:
     DynamicData();
     DynamicData(const DynamicData* pData);
     DynamicData(DynamicType_ptr pType);
+
+    ~DynamicData();
 
     void AddValue(TypeKind kind, MemberId id);
     void CreateMembers(DynamicType_ptr pType);

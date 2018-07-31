@@ -115,7 +115,6 @@ const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject(bool complete)
     {
         return GetMinimalHelloWorldObject();
     }
-    return GetTypeObject("HelloWorld", complete);
 }
 
 const TypeObject* HelloWorldTypeFactory::GetMinimalHelloWorldObject()

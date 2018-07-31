@@ -31,11 +31,6 @@ class DynamicTypeMember;
 class DynamicTypeBuilder
 {
 public:
-    DynamicTypeBuilder();
-    DynamicTypeBuilder(const DynamicTypeBuilder* builder);
-    DynamicTypeBuilder(const TypeDescriptor* descriptor);
-
-    virtual ~DynamicTypeBuilder();
 
     RTPS_DllAPI ResponseCode AddEmptyMember(uint32_t index, const std::string& name);
     RTPS_DllAPI ResponseCode AddMember(const MemberDescriptor* descriptor);
@@ -71,7 +66,14 @@ public:
     RTPS_DllAPI ResponseCode SetName(const std::string& name);
 protected:
 
+    DynamicTypeBuilder();
+    DynamicTypeBuilder(const DynamicTypeBuilder* builder);
+    DynamicTypeBuilder(const TypeDescriptor* descriptor);
+
+    virtual ~DynamicTypeBuilder();
+
     friend class DynamicType;
+    friend class DynamicTypeBuilderFactory;
 
     TypeDescriptor* mDescriptor;
     std::vector<AnnotationDescriptor*> mAnnotation;

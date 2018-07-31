@@ -3696,26 +3696,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesTests, DynamicType_union_with_unions_uasdasdnit_tests)
-{
-    DynamicType_ptr discriminator = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type();
-    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::GetInstance()->CreateUnionBuilder(discriminator.get());
-    builder->AddMember(0, "first", DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type(), "", { 0 }, true);
-
-    DynamicTypeBuilder_ptr struct_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
-    struct_builder->AddMember(0, "first", DynamicTypeBuilderFactory::GetInstance()->CreateInt32Type());
-    struct_builder->AddMember(1, "other", DynamicTypeBuilderFactory::GetInstance()->CreateUint64Type());
-    builder->AddMember(1, "first", struct_builder.get(), "", { 1 }, false);
-
-    DynamicType_ptr union_type = builder->Build();
-    DynamicData_ptr data = DynamicDataFactory::GetInstance()->CreateData(union_type);
-
-    DynamicData* child_data = data->LoanValue(1);
-    child_data->SetInt32Value(9, 0);
-    child_data->SetInt64Value(13, 1);
-    data->ReturnLoanedValue(child_data);
-}
-
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);

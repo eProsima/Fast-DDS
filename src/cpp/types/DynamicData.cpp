@@ -5704,8 +5704,18 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr &cdr) const
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         cdr << static_cast<uint32_t>(mComplexValues.size());
+        for (uint32_t idx = 0; idx < static_cast<uint32_t>(mComplexValues.size()); ++idx)
+        {
+            auto it = mComplexValues.at(idx);
+            it->serialize(cdr);
+        }
 #else
         cdr << static_cast<uint32_t>(mValues.size());
+        for (uint32_t idx = 0; idx < static_cast<uint32_t>(mValues.size()); ++idx)
+        {
+            auto it = mValues.at(idx);
+            ((DynamicData*)it)->serialize(cdr);
+        }
 #endif
         break;
     }
