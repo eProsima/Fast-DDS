@@ -110,6 +110,9 @@ public class fastrtpsgen {
     //! Default package used in Java files.
     private String m_package = "";
 
+    // Generate TypeObject files?
+    private boolean m_type_object_files = false;
+
     // Use to know the programming language
     public enum LANGUAGE
     {
@@ -215,6 +218,10 @@ public class fastrtpsgen {
             else if(arg.equals("-fusion"))
             {
                 fusion_ = true;
+            }
+            else if(arg.equals("-typeobject"))
+            {
+                m_type_object_files = true;
             }
             else if(arg.equals("-I"))
             {
@@ -478,7 +485,7 @@ public class fastrtpsgen {
         }
 
         if (idlParseFileName != null) {
-            Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct);
+            Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct, m_type_object_files);
 
             if(fusion_) ctx.setActivateFusion(true);
 
@@ -499,11 +506,17 @@ public class fastrtpsgen {
             extensions.add(new TemplateExtension("struct_type", "keyFunctionHeadersStruct"));
             extensions.add(new TemplateExtension("union_type", "keyFunctionHeadersUnion"));
             tmanager.addGroup("TypesHeader", extensions);
-            tmanager.addGroup("TypeObjectHeader", extensions);
+            if (m_type_object_files)
+            {
+                tmanager.addGroup("TypeObjectHeader", extensions);
+            }
             extensions.clear();
             extensions.add(new TemplateExtension("struct_type", "keyFunctionSourcesStruct"));
             tmanager.addGroup("TypesSource", extensions);
-            tmanager.addGroup("TypeObjectSource", extensions);
+            if (m_type_object_files)
+            {
+                tmanager.addGroup("TypeObjectSource", extensions);
+            }
 
             // TODO: Uncomment following lines and create templates
 
@@ -566,15 +579,18 @@ public class fastrtpsgen {
                     if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + ".cxx", maintemplates.getTemplate("TypesSource"), m_replace)) {
                         project.addCommonIncludeFile(onlyFileName + ".h");
                         project.addCommonSrcFile(onlyFileName + ".cxx");
-                        System.out.println("Generating TypeObject files...");
-                        if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "TypeObject.h",
-                            maintemplates.getTemplate("TypeObjectHeader"), m_replace))
+                        if (m_type_object_files)
                         {
-                            if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "TypeObject.cxx",
-                                    maintemplates.getTemplate("TypeObjectSource"), m_replace)) {
-                                project.addCommonIncludeFile(onlyFileName + "TypeObject.h");
-                                project.addCommonSrcFile(onlyFileName + "TypeObject.cxx");
+                            System.out.println("Generating TypeObject files...");
+                            if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "TypeObject.h",
+                                maintemplates.getTemplate("TypeObjectHeader"), m_replace))
+                            {
+                                if (returnedValue = Utils.writeFile(m_outputDir + onlyFileName + "TypeObject.cxx",
+                                        maintemplates.getTemplate("TypeObjectSource"), m_replace)) {
+                                    project.addCommonIncludeFile(onlyFileName + "TypeObject.h");
+                                    project.addCommonSrcFile(onlyFileName + "TypeObject.cxx");
 
+                                }
                             }
                         }
                     }
