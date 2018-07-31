@@ -85,6 +85,8 @@ public:
     RTPS_DllAPI DynamicType_ptr CreateAnnotationPrimitive();
     RTPS_DllAPI DynamicType_ptr CreateType(const TypeDescriptor* descriptor, const std::string& name = "");
     RTPS_DllAPI DynamicType_ptr CreateType(const DynamicTypeBuilder* other);
+    RTPS_DllAPI DynamicType_ptr CreateAliasType(DynamicTypeBuilder* base_type, const std::string& sName);
+    RTPS_DllAPI DynamicType_ptr CreateAliasType(DynamicType_ptr base_type, const std::string& sName);
     RTPS_DllAPI DynamicType_ptr CreateInt32Type();
     RTPS_DllAPI DynamicType_ptr CreateUint32Type();
     RTPS_DllAPI DynamicType_ptr CreateInt16Type();
@@ -100,6 +102,7 @@ public:
     RTPS_DllAPI DynamicType_ptr CreateByteType();
     RTPS_DllAPI DynamicType_ptr CreateStringType(uint32_t bound = MAX_STRING_LENGTH);
     RTPS_DllAPI DynamicType_ptr CreateWstringType(uint32_t bound = MAX_STRING_LENGTH);
+    RTPS_DllAPI DynamicType_ptr CreateBitsetType(uint32_t bound);
 
     RTPS_DllAPI void BuildTypeIdentifier(const DynamicType_ptr type, TypeIdentifier& identifier,
         bool complete = true) const;

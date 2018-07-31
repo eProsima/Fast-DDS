@@ -1659,6 +1659,52 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
     }
 }
 
+DynamicType_ptr DynamicTypeBuilderFactory::CreateAliasType(DynamicTypeBuilder* base_type, const std::string& sName)
+{
+    if (base_type != nullptr)
+    {
+        DynamicType_ptr pType = CreateType(base_type);
+        if (pType != nullptr)
+        {
+            return CreateAliasType(pType, sName);
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
+    }
+    return nullptr;
+}
+
+DynamicType_ptr DynamicTypeBuilderFactory::CreateAliasType(DynamicType_ptr base_type, const std::string& sName)
+{
+    if (base_type != nullptr)
+    {
+        TypeDescriptor pDescriptor;
+        pDescriptor.mKind = TK_ALIAS;
+        pDescriptor.mBaseType = base_type;
+        if (sName.length() > 0)
+        {
+            pDescriptor.mName = sName;
+        }
+        else
+        {
+            pDescriptor.mName = base_type->GetName();
+        }
+
+        return CreateType(&pDescriptor, sName);
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
+    }
+    return nullptr;
+}
+
 DynamicType_ptr DynamicTypeBuilderFactory::CreateInt32Type()
 {
     TypeDescriptor pInt32Descriptor(GenerateTypeName(GetTypeName(TK_INT32)), TK_INT32);
@@ -1766,6 +1812,23 @@ DynamicType_ptr DynamicTypeBuilderFactory::CreateWstringType(uint32_t bound /*= 
     pStringDescriptor.mBound.push_back(bound);
 
     return new DynamicType(&pStringDescriptor);
+}
+
+DynamicType_ptr DynamicTypeBuilderFactory::CreateBitsetType(uint32_t bound)
+{
+    if (bound <= MAX_BITMASK_LENGTH)
+    {
+        TypeDescriptor pDescriptor;
+        pDescriptor.mKind = TK_BITSET;
+        pDescriptor.mName = GenerateTypeName(GetTypeName(TK_BITSET));
+        pDescriptor.mBound.push_back(bound);
+        return CreateType(&pDescriptor, pDescriptor.mName);
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
+    }
+    return nullptr;
 }
 
 } // namespace types

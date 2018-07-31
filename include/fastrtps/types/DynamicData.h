@@ -16,6 +16,7 @@
 #define TYPES_DYNAMIC_DATA_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
 //#define DYNAMIC_TYPES_CHECKING
@@ -70,6 +71,7 @@ public:
     RTPS_DllAPI ResponseCode InsertEnumValue(const std::string& value, MemberId& outId);
     RTPS_DllAPI ResponseCode InsertComplexValue(const DynamicData* value, MemberId& outId);
     RTPS_DllAPI ResponseCode InsertComplexValue(DynamicData* value, MemberId& outId);
+    RTPS_DllAPI ResponseCode InsertComplexValue(DynamicData_ptr value, MemberId& outId);
 
     RTPS_DllAPI ResponseCode RemoveSequenceData(MemberId id);
     RTPS_DllAPI ResponseCode ClearData();
@@ -79,6 +81,7 @@ public:
     RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
     RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue);
     RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, const DynamicData* value, MemberId& outKey, MemberId& outValue);
+    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, DynamicData_ptr value, MemberId& outKey, MemberId& outValue);
     RTPS_DllAPI ResponseCode RemoveMapData(MemberId keyId);
 
     RTPS_DllAPI ResponseCode GetInt32Value(int32_t& value, MemberId id) const;

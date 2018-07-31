@@ -20,8 +20,8 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastcdr/Cdr.h>
 
 namespace eprosima {
@@ -4315,6 +4315,35 @@ ResponseCode DynamicData::InsertComplexValue(const DynamicData* value, MemberId&
     }
 }
 
+ResponseCode DynamicData::InsertComplexValue(DynamicData_ptr value, MemberId& outId)
+{
+    if (GetKind() == TK_SEQUENCE && mType->GetElementType()->Equals(value->mType.get()))
+    {
+        if (mType->GetBounds() == LENGTH_UNLIMITED || GetItemCount() < mType->GetBounds())
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            outId = static_cast<MemberId>(mComplexValues.size());
+            mComplexValues.insert(std::make_pair(outId, DynamicDataFactory::GetInstance()->CreateCopy(value)));
+            return ResponseCode::RETCODE_OK;
+#else
+            outId = static_cast<MemberId>(mValues.size());
+            mValues.insert(std::make_pair(outId, DynamicDataFactory::GetInstance()->CreateCopy(value.get())));
+            return ResponseCode::RETCODE_OK;
+#endif
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error inserting data. The container is full.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
 ResponseCode DynamicData::InsertComplexValue(DynamicData* value, MemberId& outId)
 {
     if (GetKind() == TK_SEQUENCE && mType->GetElementType()->Equals(value->mType.get()))
@@ -4581,6 +4610,11 @@ ResponseCode DynamicData::InsertMapData(const DynamicData* key, const DynamicDat
             << " doesn't support this method");
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
+}
+
+ResponseCode DynamicData::InsertMapData(const DynamicData* key, DynamicData_ptr value, MemberId& outKey, MemberId& outValue)
+{
+    return InsertMapData(key, reinterpret_cast<const DynamicData*>(value.get()), outKey, outValue);
 }
 
 ResponseCode DynamicData::RemoveMapData(MemberId keyId)

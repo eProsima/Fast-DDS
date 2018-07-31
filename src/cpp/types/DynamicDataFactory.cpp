@@ -52,7 +52,7 @@ DynamicDataFactory::~DynamicDataFactory()
     std::unique_lock<std::recursive_mutex> scoped(mMutex);
     while (mDynamicDatas.size() > 0)
     {
-        DeleteData(*mDynamicDatas.begin());
+        DeleteData(mDynamicDatas[mDynamicDatas.size() - 1]);
     }
     mDynamicDatas.clear();
 #endif
