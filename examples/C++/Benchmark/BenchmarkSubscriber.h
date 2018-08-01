@@ -30,6 +30,8 @@
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+//#include <fastrtps/types/DynamicDataPtr.h>
+//#include <fastrtps/types/DynamicPubSubType.h>
 
 #include "Benchmark.h"
 #include "Benchmark_small.h"
@@ -44,12 +46,19 @@ public:
 	virtual ~BenchMarkSubscriber();
 
     //!Initialize the subscriber
-	bool init(int transport, eprosima::fastrtps::ReliabilityQosPolicyKind kind, const std::string& topicName, int domain, int size);
+	bool init(int transport, eprosima::fastrtps::ReliabilityQosPolicyKind kind, const std::string& topicName,
+        int domain, int size/*, bool dynamicTypes*/);
 
     //!RUN the subscriber
 	void run();
 
 private:
+
+    BenchMarkBig m_HelloBig;
+    BenchMarkMedium m_HelloMedium;
+    BenchMarkSmall m_HelloSmall;
+    BenchMark m_Hello;
+    //eprosima::fastrtps::types::DynamicData_ptr m_DynamicData;
 
 	int m_iSize;
     eprosima::fastrtps::Participant* mp_participant;
@@ -96,10 +105,12 @@ public:
     }m_subListener;
 
 private:
+    //eprosima::fastrtps::types::DynamicPubSubType m_dynType;
 	BenchMarkPubSubType m_type;
 	BenchMarkSmallPubSubType m_typeSmall;
 	BenchMarkMediumPubSubType m_typeMedium;
 	BenchMarkBigPubSubType m_typeBig;
+    //bool m_bDynamicTypes;
 };
 
 #endif /* BENCHMARK_SUBSCRIBER_H_ */
