@@ -44,7 +44,8 @@ enum Endianness_t{
 
 //!Reliability enum used for internal purposes
 //!@ingroup COMMON_MODULE
-typedef enum ReliabilityKind_t{
+typedef enum ReliabilityKind_t
+{
     RELIABLE,
     BEST_EFFORT
 }ReliabilityKind_t;
@@ -61,17 +62,26 @@ typedef enum DurabilityKind_t
 
 //!Endpoint kind
 //!@ingroup COMMON_MODULE
-typedef enum EndpointKind_t{
+typedef enum EndpointKind_t
+{
     READER,
     WRITER
 }EndpointKind_t;
 
 //!Topic kind
-typedef enum TopicKind_t{
+typedef enum TopicKind_t
+{
     NO_KEY,
     WITH_KEY
 }TopicKind_t;
 
+//!Topic discovery kind
+typedef enum TopicDiscoveryKind_t
+{
+    NO_CHECK,
+    MINIMAL,
+    COMPLETE
+}TopicDiscoveryKind_t;
 
 #if __BIG_ENDIAN__
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
@@ -98,7 +108,8 @@ typedef uint32_t Count_t;
 #define BIT(i) ((i==0) ? BIT0 : (i==1) ? BIT1 :(i==2)?BIT2:(i==3)?BIT3:(i==4)?BIT4:(i==5)?BIT5:(i==6)?BIT6:(i==7)?BIT7:0x0)
 
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
-struct RTPS_DllAPI ProtocolVersion_t{
+struct RTPS_DllAPI ProtocolVersion_t
+{
     octet m_major;
     octet m_minor;
     ProtocolVersion_t():
@@ -107,19 +118,27 @@ struct RTPS_DllAPI ProtocolVersion_t{
     {
 
     };
-    ProtocolVersion_t(octet maj,octet min):
-        m_major(maj),
-        m_minor(min)
+    ProtocolVersion_t(octet maj,octet min)
+        : m_major(maj)
+        , m_minor(min)
     {
 
     }
-};
 
+    bool operator==(const ProtocolVersion_t &v) const
+    {
+        return m_major == v.m_major && m_minor == v.m_minor;
+    }
+
+    bool operator!=(const ProtocolVersion_t &v) const
+    {
+        return m_major != v.m_major || m_minor != v.m_minor;
+    }
+};
 
 const ProtocolVersion_t c_ProtocolVersion_2_0(2,0);
 const ProtocolVersion_t c_ProtocolVersion_2_1(2,1);
 const ProtocolVersion_t c_ProtocolVersion_2_2(2,2);
-
 const ProtocolVersion_t c_ProtocolVersion(2,1);
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
