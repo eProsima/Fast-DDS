@@ -395,21 +395,25 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
     CheckLogicalPortsResponse_t response;
     if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
     {
+        std::cout << "Not stablished" << std::endl;
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
     else
     {
 		if (request.logicalPortsRange().empty())
 		{
+            std::cout << "No available logical ports." << std::endl;
 			logWarning(RTCP, "No available logical ports.");
 		}
 		else
 		{
 			for (uint16_t port : request.logicalPortsRange())
 			{
+                std::cout << "Checking Port: " << port << std::endl;
 				if (std::find(pChannelResource->mOpenedPorts.begin(), pChannelResource->mOpenedPorts.end(), port) ==
 					pChannelResource->mOpenedPorts.end())
 				{
+                    std::cout << "FoundOpenedLogicalPort: " << port << std::endl;
 					logInfo(RTCP, "FoundOpenedLogicalPort: " << port);
 					response.availableLogicalPorts().emplace_back(port);
 				}
@@ -544,6 +548,17 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPChannelResour
 	}
 }
 
+static uint16_t GetBaseAutoPort(uint16_t currentPort)
+{
+    uint16_t aux = currentPort - 7411; // base + offset3
+    uint16_t domain = static_cast<uint16_t>(aux / 250.);
+    uint16_t part = static_cast<uint16_t>(aux % 250);
+    part = part / 2;
+
+    std::cout << "GetBaseAutoPort(" << currentPort << "): Domain = " << domain << " & Part = " << part << std::endl;
+    return 7411 + (domain * 250); // And participant 0
+}
+
 bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
     const TCPTransactionId &transactionId, Locator_t &remoteLocator)
 {
@@ -588,6 +603,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
         break;
         case RETCODE_INVALID_PORT:
         {
+            pChannelResource->mCheckingLogicalPort = GetBaseAutoPort(pChannelResource->mPendingLogicalPort);
             prepareAndSendCheckLogicalPortsRequest(pChannelResource);
         }
         break;
