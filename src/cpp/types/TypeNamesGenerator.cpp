@@ -23,7 +23,7 @@ std::string TypeNamesGenerator::getSequenceTypeName(const std::string &type_name
     std::stringstream auxType;
     auxType << ((bound < 256) ? "sequences_" : "sequencel_");
     auxType << type_name << "_" << bound;
-    if (generate_identifier) { TypeObjectFactory::GetInstance()->GetSequenceIdentifier(type_name, bound); }
+    if (generate_identifier) { TypeObjectFactory::GetInstance()->GetSequenceIdentifier(type_name, bound, true); }
     return auxType.str();
 }
 
@@ -56,7 +56,7 @@ std::string TypeNamesGenerator::getArrayTypeName(const std::string &type_name,
     }
     auxType << auxType2.str();
     ret_size = size;
-    if (generate_identifier) { TypeObjectFactory::GetInstance()->GetArrayIdentifier(type_name, bound); }
+    if (generate_identifier) { TypeObjectFactory::GetInstance()->GetArrayIdentifier(type_name, bound, true); }
     return auxType.str();
 }
 
@@ -66,7 +66,7 @@ std::string TypeNamesGenerator::getMapTypeName(const std::string &key_type_name,
     std::stringstream auxType;
     auxType << ((bound < 256) ? "maps_" : "mapl_");
     auxType << key_type_name << "_" << value_type_name << "_" << bound;
-    if (generate_identifier) { TypeObjectFactory::GetInstance()->GetMapIdentifier(key_type_name, value_type_name, bound); }
+    if (generate_identifier) { TypeObjectFactory::GetInstance()->GetMapIdentifier(key_type_name, value_type_name, bound, true); }
     return auxType.str();
 }
 
