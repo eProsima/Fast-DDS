@@ -232,10 +232,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         IPFinder::getIP4Address(&loclist);
         for (auto it = loclist.begin(); it != loclist.end(); ++it)
         {
-            (*it).port = static_cast<uint16_t>(m_att.port.portBase +
-                m_att.port.domainIDGain*PParam.builtin.domainId +
-                m_att.port.offsetd3 +
-                m_att.port.participantIDGain*m_att.participantID);
+            // (*it).set_port(static_cast<uint16_t>(m_att.port.portBase +
+            //     m_att.port.domainIDGain*PParam.builtin.domainId +
+            //     m_att.port.offsetd3 +
+            //     m_att.port.participantIDGain*m_att.participantID));
+            (*it).port = calculateWellKnownPort(m_att);
             (*it).kind = LOCATOR_KIND_UDPv4;
 
             m_att.defaultUnicastLocatorList.push_back((*it));
@@ -249,18 +250,28 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         {
             if (IPLocator::getPortRTPS(loc) == 0)
             {
-                IPLocator::setPortRTPS(loc, static_cast<uint16_t>(m_att.port.portBase +
-                    m_att.port.domainIDGain*PParam.builtin.domainId +
-                    m_att.port.offsetd3 +
-                    m_att.port.participantIDGain*m_att.participantID));
+                // loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+                //     m_att.port.domainIDGain*PParam.builtin.domainId +
+                //     m_att.port.offsetd3 +
+                //     m_att.port.participantIDGain*m_att.participantID), true);
+                IPLocator::setPortRTPS(loc, calculateWellKnownPort(m_att));
             }
             if (IPLocator::getPhysicalPort(loc) == 0)
             {
-                IPLocator::setPhysicalPort(loc,
-                    static_cast<uint16_t>(m_att.port.portBase +
-                    m_att.port.domainIDGain*PParam.builtin.domainId +
-                    m_att.port.offsetd3 +
-                    m_att.port.participantIDGain*m_att.participantID));
+                // loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+                //     m_att.port.domainIDGain*PParam.builtin.domainId +
+                //     m_att.port.offsetd3 +
+                //     m_att.port.participantIDGain*m_att.participantID));
+                loc.port = calculateWellKnownPort(m_att);
+            }
+
+            // In TCP case, calculate logical port too
+            if (loc.kind == LOCATOR_KIND_TCPv4 || loc.kind == LOCATOR_KIND_TCPv6)
+            {
+                if (IPLocator::getLogicalPort(loc) == 0)
+                {
+                    IPLocator::setLogicalPort(loc, calculateWellKnownPort(m_att));
+                }
             }
         });
 

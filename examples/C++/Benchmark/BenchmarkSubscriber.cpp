@@ -18,6 +18,7 @@
  */
 
 #include "BenchmarkSubscriber.h"
+//#include "DynamicTypesHelper.h"
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -28,6 +29,9 @@
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>
+//#include <fastrtps/types/DynamicData.h>
+
+
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -41,11 +45,14 @@ BenchMarkSubscriber::BenchMarkSubscriber()
     , mp_subscriber(nullptr)
 	, m_pubListener(this)
 	, m_subListener(this)
+    //, m_bDynamicTypes(false)
 {
 }
 
-bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabilityKind, const std::string& topicName, int domain, int size)
+bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabilityKind, const std::string& topicName,
+    int domain, int size/*, bool dynamicTypes*/)
 {
+    //m_bDynamicTypes = dynamicTypes;
 	m_iSize = size;
 
     ParticipantAttributes PParam;
@@ -85,20 +92,11 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
         IPLocator::setLogicalPort(meta_locator, 7403);
         PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
 
-        //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-        //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
-        //PParam.rtps.builtin.setStaticEndpointXMLFilename("BenchMarkPublisher.xml");
-        //PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-        //PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-        //PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
 		descriptor->set_metadata_logical_port(7403);
-        //descriptor->set_WAN_address("192.168.1.47");
-        //descriptor->set_WAN_address("192.168.1.55");
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 3)
@@ -149,43 +147,79 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
     if(mp_participant==nullptr)
         return false;
 
-    //REGISTER THE TYPE
-	switch(m_iSize)
-	{
-	default:
-	case 0:
-		Domain::registerType(mp_participant, &m_type);
-		break;
-	case 1:
-		Domain::registerType(mp_participant, &m_typeSmall);
-		break;
-	case 2:
-		Domain::registerType(mp_participant, &m_typeMedium);
-		break;
-	case 3:
-		Domain::registerType(mp_participant, &m_typeBig);
-		break;
-	}
-
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
-	switch (m_iSize)
-	{
-	default:
-	case 0:
-		Rparam.topic.topicDataType = "BenchMark";
-		break;
-	case 1:
-		Rparam.topic.topicDataType = "BenchMarkSmall";
-		break;
-	case 2:
-		Rparam.topic.topicDataType = "BenchMarkMedium";
-		break;
-	case 3:
-		Rparam.topic.topicDataType = "BenchMarkBig";
-		break;
-	}
+
+    //CREATE THE PUBLISHER
+    PublisherAttributes Wparam;
+    Wparam.topic.topicKind = NO_KEY;
+
+    //REGISTER THE TYPE
+    /*if (m_bDynamicTypes)
+    {
+        switch (m_iSize)
+        {
+        default:
+        case 0:
+            m_DynamicData = DynamicTypesHelper::CreateData();
+            Rparam.topic.topicDataType = "Dyn_BenchMark";
+            Wparam.topic.topicDataType = "Dyn_BenchMark";
+            m_dynType.SetDynamicType(m_DynamicData);
+            Domain::registerType(mp_participant, &m_dynType);
+            break;
+        case 1:
+            m_DynamicData = DynamicTypesHelper::CreateSmallData();
+            Rparam.topic.topicDataType = "Dyn_BenchMarkSmall";
+            Wparam.topic.topicDataType = "Dyn_BenchMarkSmall";
+            m_dynType.SetDynamicType(m_DynamicData);
+            Domain::registerType(mp_participant, &m_dynType);
+            break;
+        case 2:
+            m_DynamicData = DynamicTypesHelper::CreateMediumData();
+            Rparam.topic.topicDataType = "Dyn_BenchMarkMedium";
+            Wparam.topic.topicDataType = "Dyn_BenchMarkMedium";
+            m_dynType.SetDynamicType(m_DynamicData);
+            Domain::registerType(mp_participant, &m_dynType);
+            break;
+        case 3:
+            m_DynamicData = DynamicTypesHelper::CreateBigData();
+            Rparam.topic.topicDataType = "Dyn_BenchMarkBig";
+            Wparam.topic.topicDataType = "Dyn_BenchMarkBig";
+            m_dynType.SetDynamicType(m_DynamicData);
+            Domain::registerType(mp_participant, &m_dynType);
+            break;
+        }
+        m_DynamicData->SetUint32Value(0, 0);
+    }
+    else*/
+    {
+        switch (m_iSize)
+        {
+        default:
+        case 0:
+            Rparam.topic.topicDataType = "BenchMark";
+            Wparam.topic.topicDataType = "BenchMark";
+            Domain::registerType(mp_participant, &m_type);
+            break;
+        case 1:
+            Rparam.topic.topicDataType = "BenchMarkSmall";
+            Wparam.topic.topicDataType = "BenchMarkSmall";
+            Domain::registerType(mp_participant, &m_typeSmall);
+            break;
+        case 2:
+            Rparam.topic.topicDataType = "BenchMarkMedium";
+            Wparam.topic.topicDataType = "BenchMarkMedium";
+            Domain::registerType(mp_participant, &m_typeMedium);
+            break;
+        case 3:
+            Rparam.topic.topicDataType = "BenchMarkBig";
+            Wparam.topic.topicDataType = "BenchMarkBig";
+            Domain::registerType(mp_participant, &m_typeBig);
+            break;
+        }
+    }
+
 	Rparam.topic.topicName = topicName + "_1";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     //Rparam.topic.historyQos.depth = 30;
@@ -206,25 +240,6 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
         return false;
     }
 
-    //CREATE THE PUBLISHER
-    PublisherAttributes Wparam;
-    Wparam.topic.topicKind = NO_KEY;
-	switch (m_iSize)
-	{
-	default:
-	case 0:
-		Wparam.topic.topicDataType = "BenchMark";
-		break;
-	case 1:
-		Wparam.topic.topicDataType = "BenchMarkSmall";
-		break;
-	case 2:
-		Wparam.topic.topicDataType = "BenchMarkMedium";
-		break;
-	case 3:
-		Wparam.topic.topicDataType = "BenchMarkBig";
-		break;
-	}
 	Wparam.topic.topicName = topicName + "_2";
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     //Wparam.topic.historyQos.depth = 30;
@@ -302,58 +317,72 @@ void BenchMarkSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/
 
 void BenchMarkSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-	switch (mParent->m_iSize)
-	{
-	default:
-	case 0:
-	{
-		if (sub->takeNextData((void*)&m_Hello, &m_info))
-		{
-			if (m_info.sampleKind == ALIVE)
-			{
-				m_Hello.index(m_Hello.index() + 1);
-				mParent->mp_publisher->write((void*)&m_Hello);
-			}
-		}
-	}
-	break;
-	case 1:
-	{
-		if (sub->takeNextData((void*)&m_HelloSmall, &m_info))
-		{
-			if (m_info.sampleKind == ALIVE)
-			{
-				m_HelloSmall.index(m_HelloSmall.index() + 1);
-				mParent->mp_publisher->write((void*)&m_HelloSmall);
-			}
-		}
-	}
-	break;
-	case 2:
-	{
-		if (sub->takeNextData((void*)&m_HelloMedium, &m_info))
-		{
-			if (m_info.sampleKind == ALIVE)
-			{
-				m_HelloMedium.index(m_HelloMedium.index() + 1);
-				mParent->mp_publisher->write((void*)&m_HelloMedium);
-			}
-		}
-	}
-	break;
-	case 3:
-	{
-		if (sub->takeNextData((void*)&m_HelloBig, &m_info))
-		{
-			if (m_info.sampleKind == ALIVE)
-			{
-				m_HelloBig.index(m_HelloBig.index() + 1);
-				mParent->mp_publisher->write((void*)&m_HelloBig);
-			}
-		}
-	}
-	break;
-	}
+    /*if (mParent->m_bDynamicTypes)
+    {
+        if (sub->takeNextData((void*)mParent->m_DynamicData.get(), &m_info))
+        {
+            if (m_info.sampleKind == ALIVE)
+            {
+                mParent->m_DynamicData->SetUint32Value(mParent->m_DynamicData->GetUint32Value(0) + 1, 0);
+                mParent->mp_publisher->write((void*)mParent->m_DynamicData.get());
+            }
+        }
+    }*/
+    else
+    {
+        switch (mParent->m_iSize)
+        {
+        default:
+        case 0:
+        {
+            if (sub->takeNextData((void*)&mParent->m_Hello, &m_info))
+            {
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_Hello.index(mParent->m_Hello.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_Hello);
+                }
+            }
+        }
+        break;
+        case 1:
+        {
+            if (sub->takeNextData((void*)&mParent->m_HelloSmall, &m_info))
+            {
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_HelloSmall.index(mParent->m_HelloSmall.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_HelloSmall);
+                }
+            }
+        }
+        break;
+        case 2:
+        {
+            if (sub->takeNextData((void*)&mParent->m_HelloMedium, &m_info))
+            {
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_HelloMedium.index(mParent->m_HelloMedium.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_HelloMedium);
+                }
+            }
+        }
+        break;
+        case 3:
+        {
+            if (sub->takeNextData((void*)&mParent->m_HelloBig, &m_info))
+            {
+                if (m_info.sampleKind == ALIVE)
+                {
+                    mParent->m_HelloBig.index(mParent->m_HelloBig.index() + 1);
+                    mParent->mp_publisher->write((void*)&mParent->m_HelloBig);
+                }
+            }
+        }
+        break;
+        }
+    }
 }
 
 void BenchMarkSubscriber::run()
