@@ -62,15 +62,14 @@ bool test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *
         {
             sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
         }
-        else if (std::find(pChannelResource->mOpenedPorts.begin(), pChannelResource->mOpenedPorts.end(),
-            request.logicalPort()) != pChannelResource->mOpenedPorts.end())
+        else if (std::find(pChannelResource->mLogicalInputPorts.begin(), pChannelResource->mLogicalInputPorts.end(),
+            request.logicalPort()) != pChannelResource->mLogicalInputPorts.end())
         {
             //logInfo(RTCP, "OpenLogicalPortRequest [FAILED]: " << request.logicalPort());
             sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
         }
         else
         {
-            pChannelResource->mOpenedPorts.emplace_back(request.logicalPort());
             sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
         }
     }

@@ -315,8 +315,8 @@ void RTCPMessageManager::sendUnbindConnectionRequest(TCPChannelResource *pChanne
     sendData(pChannelResource, UNBIND_CONNECTION_REQUEST, getTransactionId());
 }
 
-bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChannelResource, const ConnectionRequest_t &request,
-    const TCPTransactionId &transactionId, Locator_t &localLocator)
+bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChannelResource,
+        const ConnectionRequest_t &request, const TCPTransactionId &transactionId, Locator_t &localLocator)
 {
     BindConnectionResponse_t response;
 
@@ -375,15 +375,14 @@ bool RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChan
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
-    else if (std::find(pChannelResource->mOpenedPorts.begin(), pChannelResource->mOpenedPorts.end(),
-        request.logicalPort()) != pChannelResource->mOpenedPorts.end())
+    else if (std::find(pChannelResource->mLogicalInputPorts.begin(), pChannelResource->mLogicalInputPorts.end(),
+        request.logicalPort()) == pChannelResource->mLogicalInputPorts.end())
     {
         //logInfo(RTCP, "OpenLogicalPortRequest [FAILED]: " << request.logicalPort());
         sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
     }
     else
     {
-        pChannelResource->mOpenedPorts.emplace_back(request.logicalPort());
         sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
     }
     return true;
@@ -395,25 +394,21 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
     CheckLogicalPortsResponse_t response;
     if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
     {
-        std::cout << "Not stablished" << std::endl;
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
     else
     {
 		if (request.logicalPortsRange().empty())
 		{
-            std::cout << "No available logical ports." << std::endl;
 			logWarning(RTCP, "No available logical ports.");
 		}
 		else
 		{
 			for (uint16_t port : request.logicalPortsRange())
 			{
-                std::cout << "Checking Port: " << port << std::endl;
-				if (std::find(pChannelResource->mOpenedPorts.begin(), pChannelResource->mOpenedPorts.end(), port) ==
-					pChannelResource->mOpenedPorts.end())
+				if (std::find(pChannelResource->mLogicalInputPorts.begin(), pChannelResource->mLogicalInputPorts.end(),
+                    port) != pChannelResource->mLogicalInputPorts.end())
 				{
-                    std::cout << "FoundOpenedLogicalPort: " << port << std::endl;
 					logInfo(RTCP, "FoundOpenedLogicalPort: " << port);
 					response.availableLogicalPorts().emplace_back(port);
 				}
@@ -507,6 +502,24 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pC
     }
 }
 
+/**
+ * Search for the base port in the current domain without taking account the participant
+ */
+static uint16_t GetBaseAutoPort(uint16_t currentPort)
+{
+    if (currentPort < 7411)
+    {
+        return currentPort;
+    }
+    uint16_t aux = currentPort - 7411; // base + offset3
+    uint16_t domain = static_cast<uint16_t>(aux / 250.);
+    uint16_t part = static_cast<uint16_t>(aux % 250);
+    part = part / 2;
+
+    //std::cout << "GetBaseAutoPort(" << currentPort << "): Domain = " << domain << " & Part = " << part << std::endl;
+    return 7411 + (domain * 250); // And participant 0
+}
+
 void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource)
 {
     // Dont try again this port
@@ -527,12 +540,14 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPChannelResour
     }
 
     std::vector<uint16_t> ports;
-    for (uint16_t p = pChannelResource->mCheckingLogicalPort + mTransport->GetLogicalPortIncrement();
+    uint16_t base_port = GetBaseAutoPort(pChannelResource->mCheckingLogicalPort);
+    for (uint16_t p = base_port;
         p <= pChannelResource->mCheckingLogicalPort + (mTransport->GetLogicalPortRange()
             * mTransport->GetLogicalPortIncrement());
         p += mTransport->GetLogicalPortIncrement())
     {
-        if (p <= pChannelResource->mNegotiatingLogicalPort + mTransport->GetMaxLogicalPort())
+        if (p != pChannelResource->mNegotiatingLogicalPort && // Don't add the same port again
+            p <= pChannelResource->mNegotiatingLogicalPort + mTransport->GetMaxLogicalPort()) // Until the max
         {
             ports.emplace_back(p);
         }
@@ -546,20 +561,6 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPChannelResour
 	{
 		sendCheckLogicalPortsRequest(pChannelResource, ports);
 	}
-}
-
-/**
- * Search for the base port in the current domain without taking account the participant
- */
-static uint16_t GetBaseAutoPort(uint16_t currentPort)
-{
-    uint16_t aux = currentPort - 7411; // base + offset3
-    uint16_t domain = static_cast<uint16_t>(aux / 250.);
-    uint16_t part = static_cast<uint16_t>(aux % 250);
-    part = part / 2;
-
-    std::cout << "GetBaseAutoPort(" << currentPort << "): Domain = " << domain << " & Part = " << part << std::endl;
-    return 7411 + (domain * 250); // And participant 0
 }
 
 bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
@@ -588,9 +589,16 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
 
                 // Both, real one and negotiated must be added
                 pChannelResource->mLogicalOutputPorts.emplace_back(pChannelResource->mNegotiatingLogicalPort);
+                pChannelResource->mLogicalOutputPorts.emplace_back(pChannelResource->mPendingLogicalPort);
+
+                // Bind the real port too
+                Locator_t realLocator = remoteLocator;
+                realLocator.set_logical_port(pChannelResource->mPendingLogicalPort);
+                mTransport->BindSocket(realLocator, pChannelResource);
 
                 pChannelResource->mNegotiatingLogicalPort = 0;
                 pChannelResource->mCheckingLogicalPort = 0;
+
             }
             else
             {

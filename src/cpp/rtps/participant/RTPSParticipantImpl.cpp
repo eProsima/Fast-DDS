@@ -39,6 +39,7 @@
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/TCPTransportDescriptor.h>
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -121,6 +122,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
+        if (dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get()) != nullptr)
+        {
+            TCPTransportDescriptor* tcpDesc = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+            if  (tcpDesc->metadata_logical_port == 0)
+            {
+                tcpDesc->metadata_logical_port =
+                    static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, 0));
+                //tcpDesc->metadata_logical_port += 4; // Test as 2nd participant
+            }
+        }
         m_network_Factory.RegisterTransport(transportDescriptor.get(), m_guid.guidPrefix);
     }
 
@@ -169,10 +180,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
             if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
             {
-                if (locator.get_logical_port() == 0)
+                if (IPLocator::getLogicalPort(locator) == 0)
                 {
-                    locator.set_logical_port(static_cast<uint16_t>(metatraffic_multicast_port));
-                    std::cout << "MMCL Logical port calculated: " << locator.get_logical_port() << std::endl;
+                    IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_multicast_port));
+                    //std::cout << "MMCL Logical port calculated: " << IPLocator::getLogicalPort(locator) << std::endl;
                 }
             }
         });
@@ -188,10 +199,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
             if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
             {
-                if (locator.get_logical_port() == 0)
+                if (IPLocator::getLogicalPort(locator) == 0)
                 {
-                    locator.set_logical_port(static_cast<uint16_t>(metatraffic_unicast_port));
-                    std::cout << "MUCL Logical port calculated: " << locator.get_logical_port() << std::endl;
+                    IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_unicast_port));
+                    //std::cout << "MUCL Logical port calculated: " << IPLocator::getLogicalPort(locator) << std::endl;
                 }
             }
         });
@@ -242,7 +253,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                             if (IPLocator::getLogicalPort(locator) == 0)
                             {
                                 IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)));
-                                std::cout << "IP (UCP) Logical port calculated: " << locator.get_logical_port() << std::endl;
+                                //std::cout << "IP (UCP) Logical port calculated: " << IPLocator::getLogicalPort(locator) << std::endl;
                             }
 
                             m_att.builtin.initialPeersList.push_back(auxloc);
@@ -257,7 +268,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                             {
                                 Locator_t auxloc(locator);
                                 IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)));
-                                std::cout << "IP Logical port calculated: " << IPLocator::getLogicalPort(auxloc) << std::endl;
+                                //std::cout << "IP Logical port calculated: " << IPLocator::getLogicalPort(auxloc) << std::endl;
                                 m_att.builtin.initialPeersList.push_back(auxloc);
                             }
                         }
@@ -332,7 +343,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                 if (IPLocator::getLogicalPort(loc) == 0)
                 {
                     IPLocator::setLogicalPort(loc, calculateWellKnownPort(m_att));
-                    std::cout << "UCL Logical port calculated: " << loc.get_logical_port() << std::endl;
+                    //std::cout << "UCL Logical port calculated: " << IPLocator::getLogicalPort(loc) << std::endl;
                 }
             }
         });
