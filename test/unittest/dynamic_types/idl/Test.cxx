@@ -26,7 +26,6 @@ namespace { char dummy; }
 
 #include "Test.h"
 #include "TestTypeObject.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -70,7 +69,7 @@ BasicStruct::BasicStruct()
 
 
     // Just to register all known types
-    TestTypeFactory factory;
+    registerTestTypes();
 }
 
 BasicStruct::~BasicStruct()
@@ -405,7 +404,7 @@ ComplexStruct::ComplexStruct()
 
 
     // Just to register all known types
-    TestTypeFactory factory;
+    registerTestTypes();
 }
 
 ComplexStruct::~ComplexStruct()
@@ -887,12 +886,16 @@ void ComplexStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_my_octet;
     dcdr >> m_my_basic_struct;
-    uint32_t enum_value_my_alias_enum = 0;
-    dcdr >> enum_value_my_alias_enum;
-    m_my_alias_enum = (MyAliasEnum)enum_value_my_alias_enum;
-    uint32_t enum_value_my_enum = 0;
-    dcdr >> enum_value_my_enum;
-    m_my_enum = (MyEnum)enum_value_my_enum;
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m_my_alias_enum = (MyAliasEnum)enum_value;
+    }
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m_my_enum = (MyEnum)enum_value;
+    }
     dcdr >> m_my_sequence_octet;
     dcdr >> m_my_sequence_struct;
     dcdr >> m_my_array_octet;
@@ -1295,7 +1298,11 @@ void MyUnion::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void MyUnion::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> (uint32_t&)m__d;
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m__d = (MyEnum)enum_value;
+    }
 
     switch(m__d)
     {
@@ -1738,7 +1745,7 @@ CompleteStruct::CompleteStruct()
 
 
     // Just to register all known types
-    TestTypeFactory factory;
+    registerTestTypes();
 }
 
 CompleteStruct::~CompleteStruct()
@@ -1838,7 +1845,7 @@ KeyedStruct::KeyedStruct()
 
 
     // Just to register all known types
-    TestTypeFactory factory;
+    registerTestTypes();
 }
 
 KeyedStruct::~KeyedStruct()

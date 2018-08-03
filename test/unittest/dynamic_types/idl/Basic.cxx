@@ -26,7 +26,6 @@ namespace { char dummy; }
 
 #include "Basic.h"
 #include "BasicTypeObject.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -43,7 +42,7 @@ EnumStruct::EnumStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 EnumStruct::~EnumStruct()
@@ -106,9 +105,12 @@ void EnumStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void EnumStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    uint32_t enum_value_my_enum = 0;
-    dcdr >> enum_value_my_enum;
-    m_my_enum = (MyEnum)enum_value_my_enum;}
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m_my_enum = (MyEnum)enum_value;
+    }
+}
 
 size_t EnumStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
@@ -134,7 +136,7 @@ AliasStruct::AliasStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 AliasStruct::~AliasStruct()
@@ -197,9 +199,12 @@ void AliasStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void AliasStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    uint32_t enum_value_my_alias = 0;
-    dcdr >> enum_value_my_alias;
-    m_my_alias = (MyAliasEnum)enum_value_my_alias;}
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m_my_alias = (MyAliasEnum)enum_value;
+    }
+}
 
 size_t AliasStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
@@ -225,7 +230,7 @@ AliasAliasStruct::AliasAliasStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 AliasAliasStruct::~AliasAliasStruct()
@@ -288,9 +293,12 @@ void AliasAliasStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void AliasAliasStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    uint32_t enum_value_my_alias_alias = 0;
-    dcdr >> enum_value_my_alias_alias;
-    m_my_alias_alias = (MyAliasAliasEnum)enum_value_my_alias_alias;}
+    {
+        uint32_t enum_value = 0;
+        dcdr >> enum_value;
+        m_my_alias_alias = (MyAliasAliasEnum)enum_value;
+    }
+}
 
 size_t AliasAliasStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
@@ -316,7 +324,7 @@ BoolStruct::BoolStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 BoolStruct::~BoolStruct()
@@ -406,7 +414,7 @@ OctetStruct::OctetStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 OctetStruct::~OctetStruct()
@@ -496,7 +504,7 @@ ShortStruct::ShortStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 ShortStruct::~ShortStruct()
@@ -586,7 +594,7 @@ LongStruct::LongStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 LongStruct::~LongStruct()
@@ -676,7 +684,7 @@ LongLongStruct::LongLongStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 LongLongStruct::~LongLongStruct()
@@ -766,7 +774,7 @@ UShortStruct::UShortStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 UShortStruct::~UShortStruct()
@@ -856,7 +864,7 @@ ULongStruct::ULongStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 ULongStruct::~ULongStruct()
@@ -946,7 +954,7 @@ ULongLongStruct::ULongLongStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 ULongLongStruct::~ULongLongStruct()
@@ -1036,7 +1044,7 @@ FloatStruct::FloatStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 FloatStruct::~FloatStruct()
@@ -1126,7 +1134,7 @@ DoubleStruct::DoubleStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 DoubleStruct::~DoubleStruct()
@@ -1216,7 +1224,7 @@ LongDoubleStruct::LongDoubleStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 LongDoubleStruct::~LongDoubleStruct()
@@ -1304,7 +1312,7 @@ CharStruct::CharStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 CharStruct::~CharStruct()
@@ -1394,7 +1402,7 @@ WCharStruct::WCharStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 WCharStruct::~WCharStruct()
@@ -1480,7 +1488,7 @@ StringStruct::StringStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 StringStruct::~StringStruct()
@@ -1566,7 +1574,7 @@ WStringStruct::WStringStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 WStringStruct::~WStringStruct()
@@ -1652,7 +1660,7 @@ LargeStringStruct::LargeStringStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 LargeStringStruct::~LargeStringStruct()
@@ -1738,7 +1746,7 @@ LargeWStringStruct::LargeWStringStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 LargeWStringStruct::~LargeWStringStruct()
@@ -1824,7 +1832,7 @@ ArraytStruct::ArraytStruct()
 {
     memset(&m_my_array, 0, (2 * 2 * 2) * 4);
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 ArraytStruct::~ArraytStruct()
@@ -1912,7 +1920,7 @@ ArrayArrayStruct::ArrayArrayStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 ArrayArrayStruct::~ArrayArrayStruct()
@@ -2009,7 +2017,7 @@ SequenceStruct::SequenceStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 SequenceStruct::~SequenceStruct()
@@ -2103,7 +2111,7 @@ SequenceSequenceStruct::SequenceSequenceStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 SequenceSequenceStruct::~SequenceSequenceStruct()
@@ -2209,7 +2217,7 @@ MapStruct::MapStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 MapStruct::~MapStruct()
@@ -2315,7 +2323,7 @@ MapMapStruct::MapMapStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 MapMapStruct::~MapMapStruct()
@@ -2441,7 +2449,7 @@ StructStruct::StructStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 StructStruct::~StructStruct()
@@ -2549,7 +2557,7 @@ StructStructStruct::StructStructStruct()
 
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 StructStructStruct::~StructStructStruct()
@@ -3625,7 +3633,7 @@ SimpleUnionStruct::SimpleUnionStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 SimpleUnionStruct::~SimpleUnionStruct()
@@ -3709,7 +3717,7 @@ UnionUnionUnionStruct::UnionUnionUnionStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 UnionUnionUnionStruct::~UnionUnionUnionStruct()
@@ -3793,7 +3801,7 @@ WCharUnionStruct::WCharUnionStruct()
 {
 
     // Just to register all known types
-    BasicTypeFactory factory;
+    registerBasicTypes();
 }
 
 WCharUnionStruct::~WCharUnionStruct()
