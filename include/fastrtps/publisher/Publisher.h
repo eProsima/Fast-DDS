@@ -62,15 +62,6 @@ public:
 	bool write(void*Data);
 
 	/**
-	 * Write a SerializedPayload.
-	 * @param payload Pointer to the SerializedPayload
-	 * @return True if correct
-	 * @par Calling example:
-	 * @snippet fastrtps_example.cpp ex_PublisherWrite
-	 */
-	bool write(SerializedPayload_t *payload);
-
-	/**
 	 * Write data with params to the topic.
 	 * @param Data Pointer to the data
      * @param wparams Extra write parameters.

@@ -80,8 +80,8 @@ class SubscriberHistory: public rtps::ReaderHistory
         bool takeNextData(void* data, SampleInfo_t* info);
         ///@}
 
-        bool readNextSerializedPayload(SerializedPayload_t* data, SampleInfo_t* info);
-        bool takeNextSerializedPayload(SerializedPayload_t* data, SampleInfo_t* info);
+        bool readNextBuffer(SerializedPayload_t* data, SampleInfo_t* info);
+        bool takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* info);
 
 
         /**

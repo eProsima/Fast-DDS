@@ -35,7 +35,6 @@ class WriterListener;
 class WriterHistory;
 class FlowController;
 struct CacheChange_t;
-struct SerializedPayload_t;
 
 
 /**
@@ -68,9 +67,6 @@ class RTPSWriter : public Endpoint
 
     RTPS_DllAPI CacheChange_t* new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
             ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
-
-    RTPS_DllAPI CacheChange_t* new_change(SerializedPayload_t *payload, ChangeKind_t changeKind,
-            InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
     /**
      * Add a matched reader.

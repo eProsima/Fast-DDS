@@ -74,11 +74,9 @@ public:
 
 	bool readNextData(void* data,SampleInfo_t* info);
 	bool takeNextData(void* data,SampleInfo_t* info);
-    bool readNextSerializedPayload(SerializedPayload_t* payload, SampleInfo_t* info);
-    bool takeNextSerializedPayload(SerializedPayload_t* payload, SampleInfo_t* info);
 
 	///@}
-
+	
 	/**
 	 * Update the Attributes of the subscriber;
 	 * @param att Reference to a SubscriberAttributes object to update the parameters;

@@ -39,11 +39,6 @@ bool Publisher::write(void* Data) {
     return mp_impl->create_new_change(ALIVE,Data);
 }
 
-bool Publisher::write(SerializedPayload_t *payload) {
-    logInfo(PUBLISHER,"Writing new payload");
-    return mp_impl->create_new_change(ALIVE, payload);
-}
-
 bool Publisher::write(void* Data, WriteParams &wparams) {
     logInfo(PUBLISHER,"Writing new data with WriteParams");
     return mp_impl->create_new_change_with_params(ALIVE, Data, wparams);

@@ -62,25 +62,6 @@ RTPSWriter::~RTPSWriter()
     mp_history->mp_mutex = nullptr;
 }
 
-CacheChange_t* RTPSWriter::new_change(SerializedPayload_t *payload, ChangeKind_t changeKind, InstanceHandle_t handle)
-{
-    logInfo(RTPS_WRITER,"Creating new change from Payload");
-    CacheChange_t* ch = nullptr;
-
-    if(!mp_history->reserve_Cache(&ch, payload->max_size))
-    {
-        logWarning(RTPS_WRITER,"Problem reserving Cache from the History");
-        return nullptr;
-    }
-
-    ch->kind = changeKind;
-    ch->instanceHandle = handle;
-    ch->writerGUID = m_guid;
-    ch->serializedPayload.copy(payload, false);
-
-    return ch;
-}
-
 CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
         ChangeKind_t changeKind, InstanceHandle_t handle)
 {
