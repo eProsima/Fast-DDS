@@ -71,7 +71,9 @@ $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::$if(parent
     setName("$struct.scopedname$");
     m_typeSize = static_cast<uint32_t>($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
     m_isGetKeyDefined = $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::isKeyDefined();
-    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc($if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize()>16 ?  $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize() : 16));
+    size_t keyLength = $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize()>16 ? $if(parent.IsInterface)$$struct.scopedname$$else$$struct.name$$endif$::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType()
