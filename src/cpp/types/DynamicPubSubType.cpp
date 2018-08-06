@@ -122,6 +122,7 @@ bool DynamicPubSubType::getKey(void* data, eprosima::fastrtps::rtps::InstanceHan
     if (m_keyBuffer == nullptr)
     {
         m_keyBuffer = (unsigned char*)malloc(keyBufferSize>16 ? keyBufferSize : 16);
+        memset(m_keyBuffer, 0, keyBufferSize>16 ? keyBufferSize : 16);
     }
 
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
