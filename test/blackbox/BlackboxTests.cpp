@@ -5114,6 +5114,116 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
     reader.block_for_at_least(2);
 }
 
+// Test created to check bug #3290 (ROS2 #539)
+BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
+{
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+        init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+        resource_limits_allocated_samples(9).
+        resource_limits_max_samples(9).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_data300kb_data_generator(10);
+
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
+}
+
+// Test created to check bug #3290 (ROS2 #539)
+BLACKBOXTEST(BlackBox, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+        init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+        resource_limits_allocated_samples(9).
+        resource_limits_max_samples(9).
+        init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloworld_data_generator(10);
+
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
+}
+
+// Test created to check bug #3290 (ROS2 #539)
+BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+        init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+        resource_limits_allocated_samples(9).
+        resource_limits_max_samples(9).
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    auto data = default_helloworld_data_generator(10);
+
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_at_least(2);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
