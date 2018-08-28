@@ -296,7 +296,17 @@ void StatefulWriter::send_any_unsent_changes()
                             activateHeartbeatPeriod = true;
                             assert(remoteReader->mp_nackSupression != nullptr);
                             if(allFragmentsSent)
+                            {
+                                remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY);
                                 remoteReader->mp_nackSupression->restart_timer();
+                            }
+                        }
+                        else
+                        {
+                            if(allFragmentsSent)
+                            {
+                                remoteReader->set_change_to_status(changeToSend.sequenceNumber, ACKNOWLEDGED);
+                            }
                         }
                     }
                 }
