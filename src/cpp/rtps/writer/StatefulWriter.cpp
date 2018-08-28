@@ -389,6 +389,9 @@ void StatefulWriter::send_any_unsent_changes()
         send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group, true);
     }
 
+    // On VOLATILE writers, remove auto-acked (best effort readers) changes
+    check_acked_status();
+
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
