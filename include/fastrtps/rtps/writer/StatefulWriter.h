@@ -110,14 +110,15 @@ namespace eprosima
                  * @return True if it was matched.
                  */
                 bool matched_reader_is_matched(const RemoteReaderAttributes& ratt);
-                /**
-                 * Remove the change with the minimum SequenceNumber
-                 * @return True if removed.
-                 */
+
                 bool is_acked_by_all(CacheChange_t* a_change);
 
                 bool wait_for_all_acked(const Duration_t& max_wait);
 
+                /**
+                * Remove the change with the minimum SequenceNumber
+                * @return True if removed.
+                */
                 bool try_remove_change(std::chrono::microseconds& microseconds,
                         std::unique_lock<std::recursive_mutex>& lock);
 

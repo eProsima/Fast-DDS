@@ -102,6 +102,8 @@ class StatelessWriter : public RTPSWriter
      */
     inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 
+    bool is_acked_by_all(CacheChange_t* a_change);
+
     bool try_remove_change(std::chrono::microseconds&, std::unique_lock<std::recursive_mutex>&) { return remove_older_changes(1); }
 
     void add_flow_controller(std::unique_ptr<FlowController> controller);

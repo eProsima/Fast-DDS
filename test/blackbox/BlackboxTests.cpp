@@ -93,6 +93,7 @@ void default_send_print(const Data1mb& data)
 #include "PubSubWriterReader.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
@@ -2223,7 +2224,8 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableVolatileSocket)
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
         durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
-        add_to_multicast_locator_list(ip, global_port).init();
+        add_to_multicast_locator_list(ip, global_port).
+		auto_remove_on_volatile().init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -5128,7 +5130,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
         durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
-        add_to_multicast_locator_list(ip, global_port).init();
+        add_to_multicast_locator_list(ip, global_port).
+		auto_remove_on_volatile().init();
 
     ASSERT_TRUE(writer.isInitialized());
 

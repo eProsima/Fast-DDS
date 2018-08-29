@@ -18,6 +18,7 @@
  */
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
@@ -49,7 +50,7 @@ StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
         WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
     RTPSWriter(pimpl, guid, att, hist, listen),
     mp_periodicHB(nullptr), m_times(att.times),
-    all_acked_(false), may_remove_change_(false),
+    all_acked_(false), may_remove_change_(0),
     disableHeartbeatPiggyback_(att.disableHeartbeatPiggyback),
     sendBufferSize_(pimpl->get_min_network_send_buffer_size()),
     currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
@@ -670,10 +671,10 @@ void StatefulWriter::check_acked_status()
 
     if(get_seq_num_min() != SequenceNumber_t::unknown())
     {
-        // If VOLATILE, remove samples acked.
-        if(m_att.durabilityKind == VOLATILE)
+        // Inform of samples acked.
+        if(mp_listener != nullptr)
         {
-            std::vector<CacheChange_t*> to_remove;
+            std::vector<CacheChange_t*> all_acked_changes;
             for(SequenceNumber_t current_seq = get_seq_num_min(); current_seq <= min_low_mark; ++current_seq)
             {
                 for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
@@ -681,26 +682,23 @@ void StatefulWriter::check_acked_status()
                 {
                     if((*cit)->sequenceNumber == current_seq)
                     {
-                        to_remove.push_back(*cit);
+                        all_acked_changes.push_back(*cit);
                     }
                 }
             }
-            for(auto cit = to_remove.begin(); cit != to_remove.end(); ++cit)
+            for(auto cit = all_acked_changes.begin(); cit != all_acked_changes.end(); ++cit)
             {
-                mp_history->remove_change_g(*cit);
+                mp_listener->onWriterChangeReceivedByAll(this, *cit);
             }
         }
-        else
+        
+        SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
+            (min_low_mark - get_seq_num_min()) + 1;
+        if (calc > SequenceNumber_t())
         {
-            SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
-                (min_low_mark - get_seq_num_min()) + 1;
-
-            if(calc > SequenceNumber_t())
-            {
-                std::unique_lock<std::mutex> may_lock(may_remove_change_mutex_);
-                may_remove_change_ = 1;
-                may_remove_change_cond_.notify_one();
-            }
+            std::unique_lock<std::mutex> may_lock(may_remove_change_mutex_);
+            may_remove_change_ = 1;
+            may_remove_change_cond_.notify_one();
         }
     }
 

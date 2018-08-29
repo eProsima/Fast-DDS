@@ -297,6 +297,14 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*write
         mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);
 }
 
+void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(RTPSWriter* /*writer*/, CacheChange_t* ch)
+{
+    if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+    {
+        mp_publisherImpl->m_history.remove_change_g(ch);
+    }
+}
+
 bool PublisherImpl::try_remove_change(std::unique_lock<std::recursive_mutex>& lock)
 {
     std::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
