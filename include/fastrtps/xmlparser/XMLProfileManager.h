@@ -119,6 +119,15 @@ public:
     RTPS_DllAPI static XMLP_ret fillTopicAttributes(const std::string& profile_name, TopicAttributes& atts);
 
     RTPS_DllAPI static void getDefaultTopicAttributes(TopicAttributes& topic_attributes);
+    
+    RTPS_DllAPI static void DeleteInstance()
+    {
+        m_participant_profiles.clear();
+        m_publisher_profiles.clear();
+        m_subscriber_profiles.clear();
+        m_xml_files.clear();
+        m_transport_profiles.clear();
+    }
 
 private:
 

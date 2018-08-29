@@ -70,6 +70,7 @@ void Domain::stopAll()
     DynamicTypeBuilderFactory::DeleteInstance();
     DynamicDataFactory::DeleteInstance();
     TypeObjectFactory::DeleteInstance();
+    XMLProfileManager::DeleteInstance();
 
     eClock::my_sleep(100);
     Log::KillThread();
