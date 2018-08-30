@@ -107,7 +107,7 @@ TEST_F(LogTests, regex_category_filtering)
 TEST_F(LogTests, multi_criteria_filtering_with_regex)
 {
    Log::SetCategoryFilter(std::regex("(Good)"));
-   Log::SetFilenameFilter(std::regex("(LogTests)"));
+   Log::SetFilenameFilter(std::regex("(LogTests)", std::regex_constants::icase));
    Log::SetErrorStringFilter(std::regex("(Good)"));
    Log::ReportFilenames(true); // For clarity, not necessary.
 
