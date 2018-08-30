@@ -5165,12 +5165,18 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
 
     ASSERT_TRUE(reader.isInitialized());
 
+    // When doing fragmentation, it is necessary to have some degree of
+    // flow control not to overrun the receive buffer.
+    uint32_t bytesPerPeriod = 65536;
+    uint32_t periodInMs = 50;
+
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
         durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
         resource_limits_allocated_samples(9).
         resource_limits_max_samples(9).
         asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
         init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -5182,8 +5188,8 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
     auto data = default_data300kb_data_generator(10);
 
     reader.startReception(data);
-    // Send data
-    writer.send(data);
+    // Send data with some interval, to let async writer thread send samples
+    writer.send(data,300);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
@@ -5255,8 +5261,8 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     auto data = default_helloworld_data_generator(10);
 
     reader.startReception(data);
-    // Send data
-    writer.send(data);
+    // Send data with some interval, to let async writer thread send samples
+    writer.send(data,300);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
