@@ -128,7 +128,7 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
     return true;
 }
 
-bool StatelessWriter::is_acked_by_all(CacheChange_t* change)
+bool StatelessWriter::is_acked_by_all(const CacheChange_t* change) const
 {
     // Only asynchronous writers may have unacked (i.e. unsent changes)
     if (isAsync())

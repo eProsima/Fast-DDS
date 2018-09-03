@@ -111,7 +111,7 @@ namespace eprosima
                  */
                 bool matched_reader_is_matched(const RemoteReaderAttributes& ratt);
 
-                bool is_acked_by_all(CacheChange_t* a_change);
+                bool is_acked_by_all(const CacheChange_t* a_change) const override;
 
                 bool wait_for_all_acked(const Duration_t& max_wait);
 

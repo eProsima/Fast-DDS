@@ -91,7 +91,7 @@ class RTPSWriter : public Endpoint
     * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
     * @return True if acknowledged by all.
     */
-    RTPS_DllAPI virtual bool is_acked_by_all(CacheChange_t* /*a_change*/){ return false; }
+    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) const { return false; }
 
     RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/){ return true; }
 
@@ -150,7 +150,7 @@ class RTPSWriter : public Endpoint
      * Get the publication mode
      * @return publication mode
      */
-    RTPS_DllAPI inline bool isAsync(){ return is_async_; };
+    RTPS_DllAPI inline bool isAsync() const { return is_async_; };
 
     /**
      * Remove an specified max number of changes

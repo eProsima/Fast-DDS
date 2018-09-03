@@ -606,7 +606,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
     return false;
 }
 
-bool StatefulWriter::is_acked_by_all(CacheChange_t* change)
+bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
