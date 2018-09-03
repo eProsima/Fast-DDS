@@ -48,45 +48,45 @@ class StatelessWriter : public RTPSWriter
      * Add a specific change to all ReaderLocators.
      * @param p Pointer to the change.
      */
-    void unsent_change_added_to_history(CacheChange_t* p);
+    void unsent_change_added_to_history(CacheChange_t* p) override;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
      * @param a_change Pointer to the change that is going to be removed.
      * @return True if removed correctly.
      */
-    bool change_removed_by_history(CacheChange_t* a_change);
+    bool change_removed_by_history(CacheChange_t* a_change) override;
     /**
      * Add a matched reader.
      * @param ratt Attributes of the reader to add.
      * @return True if added.
      */
-    bool matched_reader_add(const RemoteReaderAttributes& ratt);
+    bool matched_reader_add(const RemoteReaderAttributes& ratt) override;
     /**
      * Remove a matched reader.
      * @param ratt Attributes of the reader to remove.
      * @return True if removed.
      */
-    bool matched_reader_remove(const RemoteReaderAttributes& ratt);
+    bool matched_reader_remove(const RemoteReaderAttributes& ratt) override;
     /**
      * Tells us if a specific Reader is matched against this writer
      * @param ratt Attributes of the reader to check.
      * @return True if it was matched.
      */
-    bool matched_reader_is_matched(const RemoteReaderAttributes& ratt);
+    bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) override;
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.
      */
-    void send_any_unsent_changes();
+    void send_any_unsent_changes() override;
 
     /**
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    void updateAttributes(WriterAttributes& att){
+    void updateAttributes(WriterAttributes& att) override {
         (void)att;
         //FOR NOW THERE IS NOTHING TO UPDATE.
-    };
+    }
 
     bool add_locator(Locator_t& loc);
 
@@ -102,9 +102,13 @@ class StatelessWriter : public RTPSWriter
      */
     inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 
-    bool try_remove_change(std::chrono::microseconds&, std::unique_lock<std::recursive_mutex>&) { return remove_older_changes(1); }
+    bool is_acked_by_all(const CacheChange_t* a_change) const override;
 
-    void add_flow_controller(std::unique_ptr<FlowController> controller);
+    bool try_remove_change(std::chrono::microseconds&, std::unique_lock<std::recursive_mutex>&) override { 
+        return remove_older_changes(1); 
+    }
+
+    void add_flow_controller(std::unique_ptr<FlowController> controller) override;
 
     private:
 

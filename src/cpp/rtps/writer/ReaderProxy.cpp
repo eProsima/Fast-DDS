@@ -79,6 +79,7 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
             change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber() :
             true);
 
+    // For best effort readers, changes are acked when being sent
     if(m_changesForReader.size() == 0 && change.getStatus() == ACKNOWLEDGED)
     {
         changesFromRLowMark_ = change.getSequenceNumber();
@@ -264,7 +265,6 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
         newch.markFragmentsAsSent(fragment);
         if (newch.getUnsentFragments().isSetEmpty())
         {
-            newch.setStatus(UNDERWAY); //TODO (Ricardo) Check
             allFragmentsSent = true;
         }
         else

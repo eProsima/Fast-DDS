@@ -319,7 +319,7 @@ class PubSubWriter
         }
     }
 
-    void send(std::list<type>& msgs)
+    void send(std::list<type>& msgs, uint32_t milliseconds = 0)
     {
         auto it = msgs.begin();
 
@@ -329,6 +329,8 @@ class PubSubWriter
             {
                 default_send_print<type>(*it);
                 it = msgs.erase(it);
+                if(milliseconds > 0)
+                    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
             }
             else
                 break;

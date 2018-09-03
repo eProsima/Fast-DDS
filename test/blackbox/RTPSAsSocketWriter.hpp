@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/rtps_fwd.h>
@@ -39,7 +40,7 @@
 
 
 template<class TypeSupport>
-class RTPSAsSocketWriter
+class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
 {
     public:
 
@@ -47,7 +48,7 @@ class RTPSAsSocketWriter
         typedef typename type_support::type type;
 
         RTPSAsSocketWriter(const std::string& magicword) : participant_(nullptr),
-        writer_(nullptr), history_(nullptr), initialized_(false), port_(0)
+        writer_(nullptr), history_(nullptr), initialized_(false), auto_remove_(false), port_(0)
         {
             std::ostringstream mw;
             mw << magicword << "_" << asio::ip::host_name() << "_" << GET_PID();
@@ -76,6 +77,14 @@ class RTPSAsSocketWriter
                 delete(history_);
         }
 
+        void onWriterChangeReceivedByAll(eprosima::fastrtps::rtps::RTPSWriter* /*writer*/, eprosima::fastrtps::rtps::CacheChange_t* change)
+        {
+            if(writer_attr_.endpoint.durabilityKind == eprosima::fastrtps::rtps::VOLATILE)
+            {
+                history_->remove_change_g(change);
+            }
+        }
+        
         void init()
         {
             //Create participant
@@ -92,7 +101,8 @@ class RTPSAsSocketWriter
             history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr_);
 
             //Create writer
-            writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_);
+            eprosima::fastrtps::rtps::WriterListener* listener = auto_remove_ ? this : nullptr;
+            writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(participant_, writer_attr_, history_, listener);
             ASSERT_NE(writer_, nullptr);
 
             register_reader();
@@ -111,7 +121,7 @@ class RTPSAsSocketWriter
                 eprosima::fastrtps::rtps::CacheChange_t * ch = writer_->new_change([&]() -> uint32_t
                                 {
                                    size_t current_alignment =  4 + magicword_.size() + 1;
-				   return (uint32_t)(current_alignment + type::getCdrSerializedSize(*it, current_alignment));
+                   return (uint32_t)(current_alignment + type::getCdrSerializedSize(*it, current_alignment));
                                 }
                                 , eprosima::fastrtps::rtps::ALIVE);
 
@@ -130,6 +140,12 @@ class RTPSAsSocketWriter
         bool is_history_empty () 
         {
             return history_->getHistorySize() == 0;
+        }
+        
+        RTPSAsSocketWriter& auto_remove_on_volatile()
+        {
+            auto_remove_ = true;
+            return *this;
         }
 
         /*** Function to change QoS ***/
@@ -235,6 +251,7 @@ class RTPSAsSocketWriter
         eprosima::fastrtps::rtps::WriterHistory *history_;
         eprosima::fastrtps::rtps::HistoryAttributes hattr_;
         bool initialized_;
+        bool auto_remove_;
         std::string magicword_;
         type_support type_;
         std::string ip_;
