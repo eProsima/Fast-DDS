@@ -164,6 +164,10 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             }
 
             this->mp_periodicHB->restart_timer();
+            if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
+            {
+                mp_listener->onWriterChangeReceivedByAll(this, change);
+            }
         }
         else
         {
@@ -189,6 +193,10 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
     else
     {
         logInfo(RTPS_WRITER,"No reader proxy to add change.");
+        if (mp_listener != nullptr)
+        {
+            mp_listener->onWriterChangeReceivedByAll(this, change);
+        }
     }
 }
 

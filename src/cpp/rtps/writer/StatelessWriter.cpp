@@ -71,26 +71,42 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
+    if (!reader_locators.empty())
+    {
 #if HAVE_SECURITY
-    encrypt_cachechange(cptr);
+        encrypt_cachechange(cptr);
 #endif
 
-    if(!isAsync())
-    {
-        this->setLivelinessAsserted(true);
-
-        RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
-
-        if(!group.add_data(*cptr, mAllRemoteReaders, mAllShrinkedLocatorList, false))
+        if (!isAsync())
         {
-            logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+            this->setLivelinessAsserted(true);
+
+            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+
+            if (!group.add_data(*cptr, mAllRemoteReaders, mAllShrinkedLocatorList, false))
+            {
+                logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+            }
+
+            if (mp_listener != nullptr)
+            {
+                mp_listener->onWriterChangeReceivedByAll(this, cptr);
+            }
+        }
+        else
+        {
+            for (auto& reader_locator : reader_locators)
+                reader_locator.unsent_changes.push_back(ChangeForReader_t(cptr));
+            AsyncWriterThread::wakeUp(this);
         }
     }
     else
     {
-        for(auto& reader_locator : reader_locators)
-            reader_locator.unsent_changes.push_back(ChangeForReader_t(cptr));
-        AsyncWriterThread::wakeUp(this);
+        logInfo(RTPS_WRITER, "No reader to add change.");
+        if (mp_listener != nullptr)
+        {
+            mp_listener->onWriterChangeReceivedByAll(this, cptr);
+        }
     }
 }
 

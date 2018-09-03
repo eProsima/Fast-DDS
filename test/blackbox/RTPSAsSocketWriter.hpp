@@ -133,12 +133,6 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
                 ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
 
                 history_->add_change(ch);
-                if(auto_remove_ && 
-                   (writer_attr_.endpoint.durabilityKind == eprosima::fastrtps::rtps::VOLATILE) && 
-                   writer_->is_acked_by_all(ch) )
-                {
-                    history_->remove_change_g(ch);
-                }
                 it = msgs.erase(it);
             }
         }
