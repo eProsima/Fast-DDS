@@ -142,6 +142,7 @@ class PublisherImpl
             PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
             virtual ~PublisherWriterListener(){};
             void onWriterMatched(rtps::RTPSWriter* writer, rtps::MatchingInfo& info);
+            void onWriterChangeReceivedByAll(rtps::RTPSWriter* writer, rtps::CacheChange_t* change);
             PublisherImpl* mp_publisherImpl;
     }m_writerListener;
 
