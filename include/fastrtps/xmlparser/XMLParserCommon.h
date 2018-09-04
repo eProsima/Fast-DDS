@@ -44,6 +44,7 @@ extern const char* PARTICIPANT;
 extern const char* PUBLISHER;
 extern const char* SUBSCRIBER;
 extern const char* RTPS;
+extern const char* TYPES;
 
 extern const char* TRANSPORT;
 extern const char* TRANSPORT_ID;
@@ -259,6 +260,32 @@ extern const char* EPROSIMA_UNKNOWN_STRING;
 extern const char* _TRANSIENT_LOCAL_DURABILITY_QOS;
 extern const char* _VOLATILE_DURABILITY_QOS;
 extern const char* STRENGTH;
+
+// TYPES parser
+extern const char* STRUCT;
+extern const char* UNION;
+extern const char* BOOLEAN;
+extern const char* CHAR;
+extern const char* WCHAR;
+extern const char* OCTET;
+extern const char* SHORT;
+extern const char* LONG;
+extern const char* USHORT;
+extern const char* ULONG;
+extern const char* LONGLONG;
+extern const char* ULONGLONG;
+extern const char* FLOAT;
+extern const char* DOUBLE;
+extern const char* STRING;
+extern const char* BOUNDEDSTRING;
+extern const char* SEQUENCE;
+extern const char* CASE;
+extern const char* CASEVALUE;
+extern const char* DISCRIMINATOR;
+extern const char* DIMENSIONS;
+extern const char* KEY;
+extern const char* LENGHT;
+extern const char* MAXLENGTH;
 
 
 } /* xmlparser */

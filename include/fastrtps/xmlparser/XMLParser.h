@@ -21,6 +21,11 @@
 #include "../attributes/PublisherAttributes.h"
 #include "../attributes/SubscriberAttributes.h"
 #include "./XMLParserCommon.h"
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 #include <map>
 #include <string>
@@ -45,6 +50,8 @@ typedef node_att_map_t::const_iterator         node_att_map_cit_t;
 
 typedef std::shared_ptr<rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
+typedef types::DynamicTypeBuilder*                     p_dynamictypebuilder_t;
+typedef std::map<std::string, p_dynamictypebuilder_t> p_dynamictype_map_t;
 
 typedef std::unique_ptr<ParticipantAttributes> up_participant_t;
 typedef DataNode<ParticipantAttributes>        node_participant_t;
@@ -109,6 +116,13 @@ class XMLParser
      */
     RTPS_DllAPI static XMLP_ret loadXMLProfiles(tinyxml2::XMLElement &profiles, up_base_node_t& root);
 
+    /**
+     * Load a XML node.
+     * @param types Node to be loaded.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret loadXMLDynamicTypes(tinyxml2::XMLElement &types);
+
   protected:
     RTPS_DllAPI static XMLP_ret parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root);
@@ -124,6 +138,17 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLTransportData(tinyxml2::XMLElement* p_root);
     RTPS_DllAPI static XMLP_ret parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
     RTPS_DllAPI static XMLP_ret parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
+
+    RTPS_DllAPI static XMLP_ret parseXMLDynamicTypes(tinyxml2::XMLElement& types);
+    RTPS_DllAPI static XMLP_ret parseDynamicTypes(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static XMLP_ret parseXMLTypes(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static XMLP_ret parseXMLDynamicType(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static XMLP_ret parseXMLStructDynamicType(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static XMLP_ret parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static XMLP_ret parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
+      p_dynamictypebuilder_t p_dynamictype, MemberId mId);
+    RTPS_DllAPI static XMLP_ret parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
+      p_dynamictypebuilder_t p_dynamictype, MemberId mId, const std::string& values);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node);
     RTPS_DllAPI static XMLP_ret fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node);

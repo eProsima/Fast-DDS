@@ -26,7 +26,9 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include "idl/BasicPubSubTypes.h"
+#include <tinyxml2.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
@@ -3694,6 +3696,734 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::GetInstance()->IsEmpty());
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_BoolStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile("types.xml");
+    tinyxml2::XMLElement *element = doc.FirstChildElement("types");
+    XMLP_ret ret = XMLProfileManager::loadXMLDynamicTypes(*element);
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        BoolStruct wbool;
+        BoolStructPubSubType wboolpb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wboolpb.deserialize(&dynamic_payload, &wbool));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wboolpb.getSerializedSizeProvider(&wbool)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wboolpb.serialize(&wbool, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_OctetStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("OctetStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        OctetStruct refData;
+        OctetStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_ShortStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        ShortStruct refData;
+        ShortStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_LongStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("LongStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        LongStruct refData;
+        LongStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_LongLongStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("LongLongStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        LongLongStruct refData;
+        LongLongStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_UShortStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        UShortStruct refData;
+        UShortStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_ULongStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        ULongStruct refData;
+        ULongStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_ULongLongStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        ULongLongStruct refData;
+        ULongLongStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_FloatStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        FloatStruct refData;
+        FloatStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_DoubleStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        DoubleStruct refData;
+        DoubleStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_CharStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        CharStruct refData;
+        CharStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_WCharStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        WCharStruct refData;
+        WCharStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        StringStruct refData;
+        StringStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        WStringStruct refData;
+        WStringStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        LargeStringStruct refData;
+        LargeStringStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ArraytStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        ArraytStruct refData;
+        ArraytStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        SequenceStruct refData;
+        SequenceStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        StructStruct refData;
+        StructStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        StructStructStruct refData;
+        StructStructStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        SimpleUnionStruct refData;
+        SimpleUnionStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionUnionStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionUnionStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        UnionUnionUnionStruct refData;
+        UnionUnionUnionStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        WCharUnionStruct refData;
+        WCharUnionStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
 }
 
 int main(int argc, char **argv)

@@ -29,6 +29,7 @@ const char* PARTICIPANT = "participant";
 const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
+const char* TYPES = "types";
 
 const char* TRANSPORT = "transport";
 const char* TRANSPORT_ID = "transport_id";
@@ -241,6 +242,32 @@ const char* _INF = "INF";
 const char* EPROSIMA_UNKNOWN_STRING = "EPROSIMA_UNKNOWN_STRING";
 const char* _OWNERSHIP_KIND_NOT_PRESENT = "OWNERSHIP_KIND_NOT_PRESENT";
 const char* STRENGTH = "strength";
+
+// TYPES parser
+const char* STRUCT = "struct";
+const char* UNION = "union";
+const char* BOOLEAN = "boolean";
+const char* CHAR = "char";
+const char* WCHAR = "wchar";
+const char* OCTET = "octet";
+const char* SHORT = "short";
+const char* LONG = "long";
+const char* USHORT = "unsigned short";
+const char* ULONG = "unsigned long";
+const char* LONGLONG = "long long";
+const char* ULONGLONG = "unsigned long long";
+const char* FLOAT = "float";
+const char* DOUBLE = "double";
+const char* STRING = "string";
+const char* BOUNDEDSTRING = "boundedString";
+const char* SEQUENCE = "sequence";
+const char* CASE = "case";
+const char* CASEVALUE = "caseValue";
+const char* DISCRIMINATOR = "discriminator";
+const char* DIMENSIONS = "dimensions";
+const char* KEY = "key";
+const char* LENGHT = "length";
+const char* MAXLENGTH = "maxLength";
 
 
 } /* xmlparser */
