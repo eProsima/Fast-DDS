@@ -145,9 +145,11 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLDynamicType(tinyxml2::XMLElement* p_root);
     RTPS_DllAPI static XMLP_ret parseXMLStructDynamicType(tinyxml2::XMLElement* p_root);
     RTPS_DllAPI static XMLP_ret parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root);
-    RTPS_DllAPI static XMLP_ret parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
+    RTPS_DllAPI static XMLP_ret parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static XMLP_ret parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
       p_dynamictypebuilder_t p_dynamictype, MemberId mId);
-    RTPS_DllAPI static XMLP_ret parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
+    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
       p_dynamictypebuilder_t p_dynamictype, MemberId mId, const std::string& values);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node);

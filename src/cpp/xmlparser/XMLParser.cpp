@@ -505,24 +505,179 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement *p_element = nullptr;
-    p_element = p_root->FirstChildElement(STRUCT);
-    if (p_element != nullptr)
+
+    for (p_element = p_root->FirstChildElement();
+            p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
-        ret = parseXMLStructDynamicType(p_element);
-    }
-    else
-    {
-        p_element = p_root->FirstChildElement(UNION);
-        if (p_element != nullptr)
+        const std::string type = p_element->Value();
+        if (type.compare(STRUCT) == 0)
+        {
+            ret = parseXMLStructDynamicType(p_element);
+        }
+        else if (type.compare(UNION) == 0)
         {
             ret = parseXMLUnionDynamicType(p_element);
         }
+        else if (type.compare(ENUM) == 0)
+        {
+            ret = parseXMLEnumDynamicType(p_element);
+        }
+        else if (type.compare(TYPEDEF) == 0)
+        {
+            ret = parseXMLAliasDynamicType(p_element);
+        }
         else
         {
-            logError(XMLPARSER, "Error parsing type: Type not recognized.");
+            logError(XMLPARSER, "Error parsing type: Type " << type << " not recognized.");
             ret = XMLP_ret::XML_ERROR;
         }
+
+        if (ret != XMLP_ret::XML_OK)
+        {
+            break;
+        }
     }
+    return ret;
+}
+
+static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &disc)
+{
+    /*
+    mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 ||
+        mKind == TK_INT64 || mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TK_UINT64 ||
+        mKind == TK_FLOAT32 || mKind == TK_FLOAT64 || mKind == TK_FLOAT128 || mKind == TK_CHAR8 ||
+        mKind == TK_CHAR16 || mKind == TK_STRING8 || mKind == TK_STRING16 || mKind == TK_ENUM || mKind == TK_BITMASK
+    */
+    types::DynamicTypeBuilderFactory* factory = types::DynamicTypeBuilderFactory::GetInstance();
+    if (disc.compare(BOOLEAN) == 0)
+    {
+        return factory->CreateBoolBuilder();
+    }
+    else if (disc.compare(OCTET) == 0)
+    {
+        return factory->CreateByteBuilder();
+    }
+    else if (disc.compare(SHORT) == 0)
+    {
+        return factory->CreateInt16Builder();
+    }
+    else if (disc.compare(LONG) == 0)
+    {
+        return factory->CreateInt32Builder();
+    }
+    else if (disc.compare(LONGLONG) == 0)
+    {
+        return factory->CreateInt64Builder();
+    }
+    else if (disc.compare(USHORT) == 0)
+    {
+        return factory->CreateUint16Builder();
+    }
+    else if (disc.compare(ULONG) == 0)
+    {
+        return factory->CreateUint32Builder();
+    }
+    else if (disc.compare(ULONGLONG) == 0)
+    {
+        return factory->CreateUint64Builder();
+    }
+    else if (disc.compare(FLOAT) == 0)
+    {
+        return factory->CreateFloat32Builder();
+    }
+    else if (disc.compare(DOUBLE) == 0)
+    {
+        return factory->CreateFloat64Builder();
+    }
+    else if (disc.compare(LONGDOUBLE) == 0)
+    {
+        return factory->CreateFloat128Builder();
+    }
+    else if (disc.compare(CHAR) == 0)
+    {
+        return factory->CreateChar8Builder();
+    }
+    else if (disc.compare(WCHAR) == 0)
+    {
+        return factory->CreateChar16Builder();
+    }
+    return XMLProfileManager::getDynamicTypeByName(disc);
+}
+
+XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
+{
+    /*
+    <typedef name="MyAliasEnum" value="MyEnum"/>
+    ||
+    <typedef name="MyAlias">
+        <long dimensions="2,2"/>
+    </typedef>
+    */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    const char* name = p_root->Attribute(NAME);
+    const char* value = p_root->Attribute(VALUE);
+
+    p_dynamictypebuilder_t valueBuilder;
+
+    if (value == nullptr)
+    {
+        valueBuilder = parseXMLMemberDynamicType(p_root->FirstChildElement(), nullptr, -1);
+    }
+    else
+    {
+        valueBuilder = getDiscriminatorTypeBuilder(value);
+    }
+
+    if (valueBuilder == nullptr)
+    {
+        logError(XMLPARSER, "Error parsing alias type: Value not recognized.");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    else
+    {
+        p_dynamictypebuilder_t typeBuilder =
+                types::DynamicTypeBuilderFactory::GetInstance()->CreateAliasBuilder(valueBuilder, name);
+        XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+    }
+
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
+{
+    /*
+    <enum name="MyEnum">
+        <literal name="A" value="0"/>
+        <literal name="B" value="1"/>
+        <literal name="C" value="2"/>
+    </enum>
+    */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    const char* name = p_root->Attribute(NAME);
+
+
+    p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::GetInstance()->CreateEnumBuilder();
+
+    uint32_t currValue = 0;
+    for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(LITERAL);
+            literal != nullptr; literal = literal->NextSiblingElement(LITERAL))
+    {
+        const char* name = literal->Attribute(NAME);
+        const char* value = literal->Attribute(VALUE);
+        if (name == nullptr)
+        {
+            logError(XMLPARSER, "Error parsing enum type: Literals must have name.");
+            return XMLP_ret::XML_ERROR;
+        }
+        if (value != nullptr)
+        {
+            currValue = std::atoi(value);
+        }
+        typeBuilder->AddEmptyMember(currValue++, name);
+    }
+
+    XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+
     return ret;
 }
 
@@ -546,76 +701,16 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
     for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
             p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
-        ret = parseXMLMemberDynamicType(p_element, typeBuilder, mId++);
-        if (ret != XMLP_ret::XML_OK)
+        p_dynamictypebuilder_t mType = parseXMLMemberDynamicType(p_element, typeBuilder, mId++);
+        if (mType == nullptr)
         {
-            return ret;
+            return XMLP_ret::XML_ERROR;
         }
     }
 
     XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
 
     return ret;
-}
-
-static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &disc)
-{
-    /*
-    mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 ||
-        mKind == TK_INT64 || mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TK_UINT64 ||
-        mKind == TK_FLOAT32 || mKind == TK_FLOAT64 || mKind == TK_FLOAT128 || mKind == TK_CHAR8 ||
-        mKind == TK_CHAR16 || mKind == TK_STRING8 || mKind == TK_STRING16 || mKind == TK_ENUM || mKind == TK_BITMASK
-    */
-    types::DynamicTypeBuilderFactory* factory = types::DynamicTypeBuilderFactory::GetInstance();
-    if (disc.compare("boolean") == 0)
-    {
-        return factory->CreateBoolBuilder();
-    }
-    else if (disc.compare("octet") == 0)
-    {
-        return factory->CreateByteBuilder();
-    }
-    else if (disc.compare("short") == 0)
-    {
-        return factory->CreateInt16Builder();
-    }
-    else if (disc.compare("long") == 0)
-    {
-        return factory->CreateInt32Builder();
-    }
-    else if (disc.compare("longlong") == 0)
-    {
-        return factory->CreateInt64Builder();
-    }
-    else if (disc.compare("unsignedshort") == 0)
-    {
-        return factory->CreateUint16Builder();
-    }
-    else if (disc.compare("unsignedlong") == 0)
-    {
-        return factory->CreateUint32Builder();
-    }
-    else if (disc.compare("unsignedlonglong") == 0)
-    {
-        return factory->CreateUint64Builder();
-    }
-    else if (disc.compare("float") == 0)
-    {
-        return factory->CreateFloat32Builder();
-    }
-    else if (disc.compare("double") == 0)
-    {
-        return factory->CreateFloat64Builder();
-    }
-    else if (disc.compare("char") == 0)
-    {
-        return factory->CreateChar8Builder();
-    }
-    else if (disc.compare("wchar") == 0)
-    {
-        return factory->CreateChar16Builder();
-    }
-    return XMLProfileManager::getDynamicTypeByName(disc);;
 }
 
 XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
@@ -692,10 +787,11 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
                 }
                 if (caseElement != nullptr)
                 {
-                    ret = parseXMLMemberDynamicType(caseElement, typeBuilder, mId++, valuesStr);
-                    if (ret != XMLP_ret::XML_OK)
+                    p_dynamictypebuilder_t mType = parseXMLMemberDynamicType(
+                                                        caseElement, typeBuilder, mId++, valuesStr);
+                    if (mType == nullptr)
                     {
-                        return ret;
+                        return XMLP_ret::XML_ERROR;
                     }
                 }
                 else
@@ -740,7 +836,7 @@ static bool dimensionsToLabels(const std::string& labelStr, std::vector<uint64_t
 
     while (std::getline(ss, item, ','))
     {
-        if (item == "default") def = true;
+        if (item == DEFAULT) def = true;
         else
         {
             labels.push_back(std::atoi(item.c_str()));
@@ -750,25 +846,31 @@ static bool dimensionsToLabels(const std::string& labelStr, std::vector<uint64_t
     return def;
 }
 
-XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
+p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype, MemberId mId)
 {
     return parseXMLMemberDynamicType(p_root, p_dynamictype, mId, "");
 }
 
-XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
+p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype, MemberId mId, const std::string& values)
 {
+    if (p_root == nullptr)
+    {
+        logError(XMLPARSER, "Error parsing member: Node not found.");
+        return nullptr;
+    }
+
     const char* memberType = p_root->Value();
     const char* memberName = p_root->Attribute(NAME);
     const char* memberArray = p_root->Attribute(DIMENSIONS);
     const char* memberKey = p_root->Attribute(KEY);
     bool isArray = false;
 
-    if (memberName == nullptr)
+    if (memberName == nullptr && p_dynamictype != nullptr)
     {
         logError(XMLPARSER, "Error parsing member name: Not found.");
-        return XMLP_ret::XML_ERROR;
+        return nullptr;
     }
 
     if (memberArray != nullptr)
@@ -776,10 +878,10 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
         isArray = true;
     }
 
-    types::DynamicTypeBuilder* memberBuilder;
+    types::DynamicTypeBuilder* memberBuilder = nullptr;
     types::DynamicTypeBuilderFactory* factory = types::DynamicTypeBuilderFactory::GetInstance();
 
-    if (strncmp(memberType, "boolean", 8) == 0)
+    if (strncmp(memberType, BOOLEAN, 8) == 0)
     {
         if (!isArray)
         {
@@ -794,7 +896,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "char", 5) == 0)
+    else if (strncmp(memberType, CHAR, 5) == 0)
     {
         if (!isArray)
         {
@@ -809,7 +911,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "wchar", 6) == 0)
+    else if (strncmp(memberType, WCHAR, 6) == 0)
     {
         if (!isArray)
         {
@@ -824,7 +926,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "octet", 6) == 0)
+    else if (strncmp(memberType, OCTET, 6) == 0)
     {
         if (!isArray)
         {
@@ -839,7 +941,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "short", 6) == 0)
+    else if (strncmp(memberType, SHORT, 6) == 0)
     {
         if (!isArray)
         {
@@ -854,7 +956,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "long", 5) == 0)
+    else if (strncmp(memberType, LONG, 5) == 0)
     {
         if (!isArray)
         {
@@ -869,7 +971,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "unsignedlong", 13) == 0)
+    else if (strncmp(memberType, ULONG, 13) == 0)
     {
         if (!isArray)
         {
@@ -884,7 +986,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "unsignedshort", 14) == 0)
+    else if (strncmp(memberType, USHORT, 14) == 0)
     {
         if (!isArray)
         {
@@ -899,7 +1001,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "longlong", 9) == 0)
+    else if (strncmp(memberType, LONGLONG, 9) == 0)
     {
         if (!isArray)
         {
@@ -914,7 +1016,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "unsignedlonglong", 17) == 0)
+    else if (strncmp(memberType, ULONGLONG, 17) == 0)
     {
         if (!isArray)
         {
@@ -929,7 +1031,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "float", 6) == 0)
+    else if (strncmp(memberType, FLOAT, 6) == 0)
     {
         if (!isArray)
         {
@@ -944,7 +1046,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "double", 7) == 0)
+    else if (strncmp(memberType, DOUBLE, 7) == 0)
     {
         if (!isArray)
         {
@@ -959,7 +1061,22 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "string", 7) == 0)
+    else if (strncmp(memberType, LONGDOUBLE, 11) == 0)
+    {
+        if (!isArray)
+        {
+            memberBuilder = factory->CreateFloat128Builder();
+        }
+        else
+        {
+            types::DynamicTypeBuilder* innerBuilder = factory->CreateFloat128Builder();
+            std::vector<uint32_t> bounds;
+            dimensionsToArrayBounds(memberArray, bounds);
+            memberBuilder = factory->CreateArrayBuilder(innerBuilder, bounds);
+            //factory->DeleteBuilder(innerBuilder);
+        }
+    }
+    else if (strncmp(memberType, STRING, 7) == 0)
     {
         if (!isArray)
         {
@@ -974,7 +1091,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "wstring", 8) == 0)
+    else if (strncmp(memberType, WSTRING, 8) == 0)
     {
         if (!isArray)
         {
@@ -989,7 +1106,7 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "boundedString", 14) == 0)
+    else if (strncmp(memberType, BOUNDEDSTRING, 14) == 0)
     {
         tinyxml2::XMLElement* maxLength = p_root->FirstChildElement(MAXLENGTH);
         const char* boundStr = maxLength->Attribute(VALUE);
@@ -1007,10 +1124,51 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, "sequence", 9) == 0)
+    else if (strncmp(memberType, BOUNDEDWSTRING, 15) == 0)
     {
+        tinyxml2::XMLElement* maxLength = p_root->FirstChildElement(MAXLENGTH);
+        const char* boundStr = maxLength->Attribute(VALUE);
+        uint32_t bound = std::atoi(boundStr);
+        if (!isArray)
+        {
+            memberBuilder = factory->CreateWstringBuilder(bound);
+        }
+        else
+        {
+            types::DynamicTypeBuilder* innerBuilder = factory->CreateWstringBuilder(bound);
+            std::vector<uint32_t> bounds;
+            dimensionsToArrayBounds(memberArray, bounds);
+            memberBuilder = factory->CreateArrayBuilder(innerBuilder, bounds);
+            //factory->DeleteBuilder(innerBuilder);
+        }
+    }
+    else if (strncmp(memberType, SEQUENCE, 9) == 0)
+    {
+        /*
+            In sequences allowed formats are (complex format includes the basic):
+            sequence<sequence<long,2>,2>
+            <sequence name="my_sequence" length="2">
+                <sequence name="inner_sequence" type="long" length="2"/>
+            </sequence>
+            In this example, inner sequence's name is ignored and can be omited.
+         */
         const char* seqType = p_root->Attribute(TYPE);
-        p_dynamictypebuilder_t contentType = getDiscriminatorTypeBuilder(seqType);
+        p_dynamictypebuilder_t contentType;
+        if (seqType == nullptr)
+        {
+            contentType = parseXMLMemberDynamicType(p_root->FirstChildElement(), nullptr, -1);
+        }
+        else
+        {
+            contentType = getDiscriminatorTypeBuilder(seqType);
+        }
+
+        if (contentType == nullptr)
+        {
+            logError(XMLPARSER, "Error parsing sequence element type: Cannot be recognized.");
+            return nullptr;
+        }
+
         const char* lengthStr = p_root->Attribute(LENGHT);
         uint32_t length = MAX_ELEMENTS_COUNT;
         if (lengthStr != nullptr)
@@ -1025,6 +1183,94 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
         else
         {
             types::DynamicTypeBuilder* innerBuilder = factory->CreateSequenceBuilder(contentType, length);
+            std::vector<uint32_t> bounds;
+            dimensionsToArrayBounds(memberArray, bounds);
+            memberBuilder = factory->CreateArrayBuilder(innerBuilder, bounds);
+            //factory->DeleteBuilder(innerBuilder);
+        }
+    }
+    else if (strncmp(memberType, MAP, 4) == 0)
+    {
+        /*
+            In maps allowed formats are (complex format includes the basic):
+            map<map<long, long, 6>, map<long, map<long, short>,2>
+            <map name="my_map" length="2">
+                <key_type>
+                    <map name="inner_key_map" key_type="long" value_type="long" length="6"/>
+                </key_type>
+                </value_type>
+                    <map name="inner_value_map" key_type="long" length="2">
+                        </value_type>
+                            <map name="inner_value_value_map" key_type="long" value_type="short"/>
+                        </value_type>
+                    </map>
+                </value_type>
+            </map>
+            In this example, inner maps names are ignored and can be omited.
+         */
+        // Parse key
+        const char* keyType = p_root->Attribute(KEY_TYPE);
+        p_dynamictypebuilder_t keyTypeBuilder;
+        if (keyType == nullptr)
+        {
+            tinyxml2::XMLElement* keyElement = p_root->FirstChildElement(KEY_TYPE);
+            if (keyElement == nullptr)
+            {
+                logError(XMLPARSER, "Error parsing key_value element: Not found.");
+                return nullptr;
+            }
+            keyTypeBuilder = parseXMLMemberDynamicType(keyElement->FirstChildElement(), nullptr, -1);
+        }
+        else
+        {
+            keyTypeBuilder = getDiscriminatorTypeBuilder(keyType);
+        }
+
+        if (keyTypeBuilder == nullptr)
+        {
+            logError(XMLPARSER, "Error parsing map's key element type: Cannot be recognized.");
+            return nullptr;
+        }
+
+        // Parse value
+        const char* valueType = p_root->Attribute(VALUE_TYPE);
+        p_dynamictypebuilder_t valueTypeBuilder;
+        if (valueType == nullptr)
+        {
+            tinyxml2::XMLElement* valueElement = p_root->FirstChildElement(VALUE_TYPE);
+            if (valueElement == nullptr)
+            {
+                logError(XMLPARSER, "Error parsing value_value element: Not found.");
+                return nullptr;
+            }
+            valueTypeBuilder = parseXMLMemberDynamicType(valueElement->FirstChildElement(), nullptr, -1);
+        }
+        else
+        {
+            valueTypeBuilder = getDiscriminatorTypeBuilder(valueType);
+        }
+
+        if (valueTypeBuilder == nullptr)
+        {
+            logError(XMLPARSER, "Error parsing map's value element type: Cannot be recognized.");
+            return nullptr;
+        }
+
+        const char* lengthStr = p_root->Attribute(LENGHT);
+        uint32_t length = MAX_ELEMENTS_COUNT;
+        if (lengthStr != nullptr)
+        {
+            length = std::stoi(lengthStr);
+        }
+
+        if (!isArray)
+        {
+            memberBuilder = factory->CreateMapBuilder(keyTypeBuilder, valueTypeBuilder, length);
+        }
+        else
+        {
+            types::DynamicTypeBuilder* innerBuilder =
+                    factory->CreateMapBuilder(keyTypeBuilder, valueTypeBuilder, length);
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
             memberBuilder = factory->CreateArrayBuilder(innerBuilder, bounds);
@@ -1054,24 +1300,30 @@ XMLP_ret XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
         if (strncmp(memberKey, "true", 5) == 0)
         {
             memberBuilder->ApplyAnnotation("@Key", "true");
-            p_dynamictype->ApplyAnnotation("@Key", "true");
+            if (p_dynamictype != nullptr)
+            {
+                p_dynamictype->ApplyAnnotation("@Key", "true");
+            }
         }
     }
 
-    if (!values.empty())
+    if (p_dynamictype != nullptr)
     {
-        std::vector<uint64_t> labels;
-        bool defaultLabel = dimensionsToLabels(values, labels);
-        p_dynamictype->AddMember(mId, memberName, memberBuilder,
-            "", labels, defaultLabel);
-    }
-    else
-    {
-        p_dynamictype->AddMember(mId, memberName, memberBuilder);
+        if (!values.empty())
+        {
+            std::vector<uint64_t> labels;
+            bool defaultLabel = dimensionsToLabels(values, labels);
+            p_dynamictype->AddMember(mId, memberName, memberBuilder,
+                "", labels, defaultLabel);
+        }
+        else
+        {
+            p_dynamictype->AddMember(mId, memberName, memberBuilder);
+        }
     }
     //factory->DeleteBuilder(memberBuilder);
 
-    return XMLP_ret::XML_OK;
+    return memberBuilder;
 }
 
 XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)

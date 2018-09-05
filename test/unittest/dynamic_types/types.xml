@@ -1,6 +1,5 @@
 
 <types>
-    <!-- NOT SUPPORTED
     <type>
         <enum name="MyEnum">
             <literal name="A" value="0"/>
@@ -9,10 +8,10 @@
         </enum>
     </type>
     <type>
-        <typedef name="MyAliasEnum" from="MyEnum"/>
+        <typedef name="MyAliasEnum" value="MyEnum"/>
     </type>
     <type>
-        <typedef name="MyAliasAliasEnum" from="MyAliasEnum"/>
+        <typedef name="MyAliasAliasEnum" value="MyAliasEnum"/>
     </type>
     <type>
         <struct name="EnumStruct">
@@ -29,7 +28,6 @@
             <MyAliasAliasEnum name="my_alias_alias"/>
         </struct>
     </type>
-    -->
     <type>
         <struct name="BoolStruct">
             <boolean name="my_bool"/>
@@ -80,13 +78,11 @@
             <double name="my_float64"/>
         </struct>
     </type>
-    <!-- NOT SUPPORTED
     <type>
         <struct name="LongDoubleStruct">
             <longdouble name="my_float128"/>
         </struct>
     </type>
-    -->
     <type>
         <struct name="CharStruct">
             <char name="my_char"/>
@@ -114,39 +110,39 @@
             </boundedString>
         </struct>
     </type>
-    <!-- NOT SUPPORTED
     <type>
         <struct name="LargeWStringStruct">
             <boundedWString name="my_large_wstring">
                 <maxLength value="41925"/>
-            </boundedString>
+            </boundedWString>
         </struct>
     </type>
-    -->
     <type>
         <struct name="ArraytStruct">
             <long name="my_array" dimensions="2,2,2"/>
         </struct>
     </type>
-    <!-- NOT SUPPORTED
+
     <type>
-        <typedef name="MyArray" from="long" dimensions="2,2"/>
+        <typedef name="MyArray">
+            <long dimensions="2,2"/>
+        </typedef>
     </type>
     <type>
         <struct name="ArrayArrayStruct">
             <MyArray name="my_array_array" dimensions="2,2"/>
         </struct>
     </type>
-    -->
     <type>
         <struct name="SequenceStruct">
             <sequence name="my_sequence" type="long" length="2"/>
         </struct>
     </type>
-    <!-- NOT SUPPORTED
     <type>
         <struct name="SequenceSequenceStruct">
-            <sequence name="my_sequence_sequence" type="sequence<long, 2>" length="3"/>
+            <sequence name="my_sequence_sequence" length="3">
+                <sequence type="long" length="2"/>
+            </sequence>
         </struct>
     </type>
     <type>
@@ -156,10 +152,13 @@
     </type>
     <type>
         <struct name="MapMapStruct">
-            <map name="my_map_map" key_type="long" value_type="map<long, long, 2>" length="2"/>
+            <map name="my_map_map" key_type="long" length="2">
+                <value_type>
+                    <map key_type="long" value_type="long" length="2"/>
+                </value_type>
+            </map>
         </struct>
     </type>
-    -->
     <type>
         <struct name="StructStruct">
             <long name="a"/>
