@@ -167,10 +167,14 @@ endif()
 
 # External sources
 if(TINYXML2_SOURCE_DIR)
+    set(TINYXML2_SOURCE_DIR_ ${TINYXML2_SOURCE_DIR})
+    if(UNIX AND EPROSIMA_INSTALLER)
+        file(RELATIVE_PATH TINYXML2_SOURCE_DIR_ ${CMAKE_CURRENT_SOURCE_DIR} ${TINYXML2_SOURCE_DIR})
+    endif()
     list(APPEND ${PROJECT_NAME}_source_files
-        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        ${TINYXML2_SOURCE_DIR_}/tinyxml2.cpp
         )
-    set_sources(${TINYXML2_SOURCE_DIR}/tinyxml2.cpp)
+    set_sources(${TINYXML2_SOURCE_DIR_}/tinyxml2.cpp)
 endif()
 
 if(ANDROID)
