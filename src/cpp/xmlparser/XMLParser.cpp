@@ -103,6 +103,23 @@ XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNo
         logError(XMLPARSER, "Error parsing participant profile");
         ret = XMLP_ret::XML_ERROR;
     }
+
+    if (ret == XMLP_ret::XML_OK)
+    {
+        // Has publishers or subscribers?
+        for (tinyxml2::XMLElement* p_pub_element = p_root->FirstChildElement(PUBLISHER);
+                p_pub_element != nullptr; p_pub_element = p_pub_element->NextSiblingElement(PUBLISHER))
+        {
+            parseXMLPublisherProf(p_pub_element, rootNode);
+        }
+
+        for (tinyxml2::XMLElement* p_sub_element = p_root->FirstChildElement(SUBSCRIBER);
+                p_sub_element != nullptr; p_sub_element = p_sub_element->NextSiblingElement(SUBSCRIBER))
+        {
+            parseXMLSubscriberProf(p_sub_element, rootNode);
+        }
+    }
+
     return ret;
 }
 
@@ -421,6 +438,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
             return XMLP_ret::XML_ERROR;
         participant_node.get()->rtps.setName(s.c_str());
     }
+
     return XMLP_ret::XML_OK;
 }
 
