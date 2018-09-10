@@ -40,9 +40,6 @@ mp_publisher(nullptr)
 bool HelloWorldPublisher::init()
 {
     stop = false;
-    //Log::SetVerbosity(Log::Kind::Info);
-    //std::regex filter("RTCP(?!_SEQ)");
-    //Log::SetCategoryFilter(filter);
     m_Hello.index(0);
     m_Hello.message("HelloWorld");
     ParticipantAttributes PParam;
@@ -55,23 +52,14 @@ bool HelloWorldPublisher::init()
     unicast_locator.kind = kind;
     unicast_locator.set_IP4_address("127.0.0.1");
     unicast_locator.set_port(5100);
-    unicast_locator.set_logical_port(7410);
     PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
 
     Locator_t meta_locator;
     meta_locator.kind = kind;
     meta_locator.set_IP4_address("127.0.0.1");
     meta_locator.set_port(5100);
-    meta_locator.set_logical_port(7402);
     PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
-    //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
-    //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldSubscriber.xml");
-
-    //PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    //PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    //PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
@@ -101,18 +89,12 @@ bool HelloWorldPublisher::init()
     Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "HelloWorldTopicTCP";
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    //Wparam.topic.historyQos.depth = 30;
-    //Wparam.topic.resourceLimitsQos.max_samples = 50;
-    //Wparam.topic.resourceLimitsQos.allocated_samples = 20;
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
     Wparam.topic.resourceLimitsQos.allocated_samples = 20;
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-    //Wparam.setUserDefinedID(1);
-    //Wparam.setEntityID(2);
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;
@@ -123,11 +105,10 @@ bool HelloWorldPublisher::init()
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
-    // TODO Auto-generated destructor stub
     Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* ,MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
     {
@@ -184,7 +165,6 @@ void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
         std::cout << "Publisher running " << samples << " samples." << std::endl;
     }
     thread.join();
-    //runThread(samples, sleep_ms);
 }
 
 bool HelloWorldPublisher::publish(bool waitForListener)

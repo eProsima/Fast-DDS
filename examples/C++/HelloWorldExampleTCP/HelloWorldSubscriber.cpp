@@ -44,32 +44,20 @@ bool HelloWorldSubscriber::init()
     initial_peer_locator.kind = kind;
     initial_peer_locator.set_IP4_address("127.0.0.1");
     initial_peer_locator.set_port(5100);
-    initial_peer_locator.set_logical_port(7402);
-    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
-    initial_peer_locator.set_logical_port(7410);
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
     unicast_locator.set_IP4_address("127.0.0.1");
     unicast_locator.set_port(5100);
-    unicast_locator.set_logical_port(7411);
     PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Subscriber's data channel
 
     Locator_t meta_locator;
     meta_locator.kind = kind;
     meta_locator.set_IP4_address("127.0.0.1");
     meta_locator.set_port(5100);
-    meta_locator.set_logical_port(7403);
     PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
 
-    //PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    //PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = false;
-    //PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
-
-    //PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    //PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    //PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
@@ -78,9 +66,7 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 	descriptor->wait_for_tcp_negotiation = false;
-    descriptor->set_metadata_logical_port(7403);
-    //descriptor->set_WAN_address("192.168.1.47");
-    //descriptor->set_WAN_address("192.168.1.55");
+    descriptor->set_metadata_logical_port(0);
     PParam.rtps.userTransports.push_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
@@ -96,17 +82,11 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.topicDataType = "HelloWorld";
     Rparam.topic.topicName = "HelloWorldTopicTCP";
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    //Rparam.topic.historyQos.depth = 30;
-    //Rparam.topic.resourceLimitsQos.max_samples = 50;
-    //Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.resourceLimitsQos.max_samples = 50;
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    //Rparam.setUserDefinedID(3);
-    //Rparam.setEntityID(4);
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
     if(mp_subscriber == nullptr)
@@ -117,11 +97,10 @@ bool HelloWorldSubscriber::init()
 }
 
 HelloWorldSubscriber::~HelloWorldSubscriber() {
-    // TODO Auto-generated destructor stub
     Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* ,MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
     {

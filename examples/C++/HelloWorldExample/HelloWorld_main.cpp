@@ -30,10 +30,6 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-    //Log::SetVerbosity(Log::Kind::Info);
-    //std::regex filter("RTPS_HISTORY");
-    std::regex filter("RTPS_READER");
-    Log::SetCategoryFilter(filter);
     std::cout << "Starting "<< std::endl;
     int type = 1;
     int count = 10;
@@ -62,7 +58,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    //Log::SetVerbosity(Log::Kind::Info);
     switch(type)
     {
         case 1:

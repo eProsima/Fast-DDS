@@ -30,22 +30,11 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-    double vm, rss;
-    HelloWorld::ProcessMemUsage(vm, rss);
-    std::cout << "Initial memory ussage: " << std::endl;
-    std::cout << "\tVM: " << vm << std::endl;
-    std::cout << "\tRSS: " << rss << std::endl;
-    //Log::SetVerbosity(Log::Kind::Info);
-    std::regex filter("RTCP(?!_SEQ)");
-    //std::regex filter("RTPS_HISTORY");
-    //std::regex filter("RTPS_READER");    
-    Log::SetCategoryFilter(filter);
-
     std::cout << "Starting "<< std::endl;
     int type = 1;
     int count = 0;
     long sleep = 100;
-    
+
     if(argc > 1)
     {
         if(strcmp(argv[1],"publisher")==0)
@@ -100,15 +89,5 @@ int main(int argc, char** argv)
     }
     Domain::stopAll();
     Log::Reset();
-
-    double fvm, frss;
-    HelloWorld::ProcessMemUsage(fvm, frss);
-    std::cout << "####################" << std::endl;
-    std::cout << "Final memory ussage: " << std::endl;
-    std::cout << "\tVM: " << fvm << std::endl;
-    std::cout << "\tRSS: " << frss << std::endl;
-    std::cout << "\tDiff VM: " << fvm - vm << std::endl;
-    std::cout << "\tDiff RSS: " << frss - rss << std::endl;
-
     return 0;
 }

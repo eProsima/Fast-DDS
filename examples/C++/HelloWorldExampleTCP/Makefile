@@ -17,7 +17,7 @@ LN=g++
 AR=ar
 CP=cp
 SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
-DEFINES= 
+DEFINES=
 COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__ -std=c++11
 
 ## CHOOSE HERE BETWEEN 32 and 64 bit architecture
@@ -38,17 +38,17 @@ LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) HelloWorldExample
+all: $(DIRECTORIES) HelloWorldExampleTCP
 
-HELLOWORLDEXAMPLE_TARGET= bin/HelloWorldExample
+HELLOWORLDEXAMPLE_TARGET= bin/HelloWorldExampleTCP
 
 HELLOWORLDEXAMPLE_SRC_CXXFILES=
 
-HELLOWORLDEXAMPLE_SRC_CPPFILES= HelloWorldExample/HelloWorld.cxx \
-								HelloWorldExample/HelloWorldPubSubTypes.cxx \
-								HelloWorldExample/HelloWorldPublisher.cpp \
-								HelloWorldExample/HelloWorldSubscriber.cpp \
-								HelloWorldExample/HelloWorld_main.cpp 
+HELLOWORLDEXAMPLE_SRC_CPPFILES= HelloWorldExampleTCP/HelloWorld.cxx \
+								HelloWorldExampleTCP/HelloWorldPubSubTypes.cxx \
+								HelloWorldExampleTCP/HelloWorldPublisher.cpp \
+								HelloWorldExampleTCP/HelloWorldSubscriber.cpp \
+								HelloWorldExampleTCP/HelloWorld_main.cpp
 
 
 # Project sources are copied to the current directory
@@ -94,7 +94,7 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS)
 endif
 
-%.dir : 
+%.dir :
 	@echo "Checking directory $*"
 	@if [ ! -d $* ]; then \
 		echo "Making directory $*"; \
