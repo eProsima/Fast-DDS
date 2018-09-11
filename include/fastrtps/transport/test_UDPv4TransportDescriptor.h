@@ -15,13 +15,13 @@
 #ifndef TEST_UDPV4_TRANSPORT_DESCRIPTOR 
 #define TEST_UDPV4_TRANSPORT_DESCRIPTOR
 
-#include "TransportInterface.h"
+#include "./SocketTransportDescriptor.h"
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-typedef struct test_UDPv4TransportDescriptor : public TransportDescriptorInterface{
+typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor{
    bool granularMode;
 
    // Test shim parameters

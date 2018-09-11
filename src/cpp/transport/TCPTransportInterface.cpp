@@ -84,7 +84,7 @@ void TCPConnector::RetryConnect(asio::io_service& io_service, TCPTransportInterf
 }
 
 TCPTransportDescriptor::TCPTransportDescriptor()
-    : TransportDescriptorInterface(s_maximumMessageSize)
+    : SocketTransportDescriptor(s_maximumMessageSize)
     , keep_alive_frequency_ms(s_default_keep_alive_frequency)
     , keep_alive_timeout_ms(s_default_keep_alive_timeout)
     , max_logical_port(100)
@@ -97,7 +97,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
 }
 
 TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
-    : TransportDescriptorInterface(t)
+    : SocketTransportDescriptor(t)
     , listening_ports(t.listening_ports)
     , keep_alive_frequency_ms(t.keep_alive_frequency_ms)
     , keep_alive_timeout_ms(t.keep_alive_timeout_ms)

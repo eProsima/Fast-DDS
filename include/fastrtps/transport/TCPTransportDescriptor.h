@@ -15,7 +15,7 @@
 #ifndef TCP_TRANSPORT_DESCRIPTOR_H
 #define TCP_TRANSPORT_DESCRIPTOR_H
 
-#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include "./SocketTransportDescriptor.h"
 
 namespace eprosima{
 namespace fastrtps{
@@ -25,7 +25,7 @@ namespace rtps{
 * Transport configuration
 * @ingroup TRANSPORT_MODULE
 */
-typedef struct TCPTransportDescriptor : public TransportDescriptorInterface {
+typedef struct TCPTransportDescriptor : public SocketTransportDescriptor {
     virtual ~TCPTransportDescriptor() {}
 
     std::vector<uint16_t> listening_ports;

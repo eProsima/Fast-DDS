@@ -27,8 +27,6 @@ namespace rtps{
 
 class TransportInterface;
 
-static const uint8_t s_defaultTTL = 1;
-
 /**
  * Virtual base class for the data type used to define transport configuration.
  * @ingroup RTPS_MODULE
@@ -36,32 +34,27 @@ static const uint8_t s_defaultTTL = 1;
 struct TransportDescriptorInterface
 {
     TransportDescriptorInterface(uint32_t maximumMessageSize) : maxMessageSize(maximumMessageSize)
-        , sendBufferSize(0)
-        , receiveBufferSize(0)
-        , TTL(s_defaultTTL)
     {}
 
     TransportDescriptorInterface(const TransportDescriptorInterface& t) : maxMessageSize(t.maxMessageSize)
-        , sendBufferSize(t.sendBufferSize)
-        , receiveBufferSize(t.receiveBufferSize)
-        , TTL(t.TTL)
-        //, rtpsParticipantGuidPrefix(t.rtpsParticipantGuidPrefix)
     {}
 
     virtual ~TransportDescriptorInterface(){}
 
+    /**
+     * Factory method pattern. It will create and return a TransportInterface 
+     * corresponding to this descriptor. This provides an interface to the NetworkFactory 
+     * to create the transports without the need to know about their type
+     */
     virtual TransportInterface* create_transport() const = 0;
 
-    uint32_t maxMessageSize;
+     //! Returns the minimum size required for a send operation.
+    virtual uint32_t min_send_buffer_size() const = 0;
 
-    //! Length of the send buffer.
-    uint32_t sendBufferSize;
-    //! Length of the receive buffer.
-    uint32_t receiveBufferSize;
-    //! Allowed interfaces in an IP string format.
-    std::vector<std::string> interfaceWhiteList;
-    //! Specified time to live (8bit - 255 max TTL)
-    uint8_t TTL;
+    //! Returns the maximum size expected for received messages.
+    virtual uint32_t max_message_size() const { return maxMessageSize; }
+
+    uint32_t maxMessageSize;
 };
 
 } // namespace rtps

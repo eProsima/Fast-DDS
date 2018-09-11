@@ -15,10 +15,10 @@
 #ifndef NETWORK_FACTORY_HPP
 #define NETWORK_FACTORY_HPP
 
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include "../../transport/TransportInterface.h"
+#include "./ReceiverResource.h"
+#include "./SenderResource.h"
+#include "../messages/MessageReceiver.h"
 #include <vector>
 #include <memory>
 
@@ -88,7 +88,7 @@ class NetworkFactory
 
         size_t numberOfRegisteredTransports() const;
 
-        uint32_t get_max_message_size_between_transports() { return maxMessageSizeBetweenTransports_; }
+        uint32_t get_max_message_size_between_transports() const { return maxMessageSizeBetweenTransports_; }
 
         uint32_t get_min_send_buffer_size() { return minSendBufferSize_; }
 

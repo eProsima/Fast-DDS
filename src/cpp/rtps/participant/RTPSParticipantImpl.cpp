@@ -1120,20 +1120,7 @@ void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix
 
 uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 {
-    uint32_t minMaxMessageSize = UINT32_MAX;
-    if (m_att.useBuiltinTransports)
-    {
-        UDPv4TransportDescriptor defaultDescriptor;
-        minMaxMessageSize = defaultDescriptor.maxMessageSize;
-    }
-    for (const auto& it : m_att.userTransports)
-    {
-        if (minMaxMessageSize > (*it).maxMessageSize)
-        {
-            minMaxMessageSize = (*it).maxMessageSize;
-        }
-    }
-    return minMaxMessageSize;
+    return m_network_Factory.get_max_message_size_between_transports();
 }
 
 uint32_t RTPSParticipantImpl::getMaxDataSize()

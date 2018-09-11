@@ -148,7 +148,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     std::string sId = "";
-    std::shared_ptr<rtps::TransportDescriptorInterface> pDescriptor = nullptr;
+    sp_transport_t pDescriptor = nullptr;
 
     tinyxml2::XMLElement *p_aux0 = nullptr;
     p_aux0 = p_root->FirstChildElement(TRANSPORT_ID);
@@ -260,13 +260,15 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
 
     tinyxml2::XMLElement* p_aux = nullptr;
 
+    std::shared_ptr<rtps::SocketTransportDescriptor> pDesc = std::dynamic_pointer_cast<rtps::SocketTransportDescriptor>(p_transport);
+
     // sendBufferSize - int32Type
     if (nullptr != (p_aux = p_root->FirstChildElement(SEND_BUFFER_SIZE)))
     {
         int iSize = 0;
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iSize, 0) || iSize < 0)
             return XMLP_ret::XML_ERROR;
-        p_transport->sendBufferSize = iSize;
+        pDesc->sendBufferSize = iSize;
     }
     // receiveBufferSize - int32Type
     if (nullptr != (p_aux = p_root->FirstChildElement(RECEIVE_BUFFER_SIZE)))
@@ -274,7 +276,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
         int iSize = 0;
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iSize, 0) || iSize < 0)
             return XMLP_ret::XML_ERROR;
-        p_transport->receiveBufferSize = iSize;
+        pDesc->receiveBufferSize = iSize;
     }
 
     // TTL - int8Type
@@ -283,7 +285,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
         int iTTL = 0;
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iTTL, 0) || iTTL < 0 || iTTL > 255)
             return XMLP_ret::XML_ERROR;
-        p_transport->TTL = static_cast<uint8_t>(iTTL);
+        pDesc->TTL = static_cast<uint8_t>(iTTL);
     }
 
     // InterfaceWhiteList stringListType
@@ -295,7 +297,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             const char* text = p_aux1->GetText();
             if (nullptr != text)
             {
-                p_transport->interfaceWhiteList.emplace_back(text);
+                pDesc->interfaceWhiteList.emplace_back(text);
             }
             p_aux1 = p_aux1->NextSiblingElement(ADDRESS);
         }

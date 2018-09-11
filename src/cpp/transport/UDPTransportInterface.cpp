@@ -44,13 +44,13 @@ struct MultiUniLocatorsLinkage
 };
 
 UDPTransportDescriptor::UDPTransportDescriptor()
-    : TransportDescriptorInterface(s_maximumMessageSize)
+    : SocketTransportDescriptor(s_maximumMessageSize)
     , m_output_udp_socket(0)
 {
 }
 
 UDPTransportDescriptor::UDPTransportDescriptor(const UDPTransportDescriptor& t)
-    : TransportDescriptorInterface(t)
+    : SocketTransportDescriptor(t)
     , m_output_udp_socket(t.m_output_udp_socket)
 {
 }

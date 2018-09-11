@@ -15,7 +15,7 @@
 #ifndef UDPV6_TRANSPORT_DESCRIPTOR
 #define UDPV6_TRANSPORT_DESCRIPTOR
 
-#include <fastrtps/transport/UDPTransportDescriptor.h>
+#include "./UDPTransportDescriptor.h"
 
 namespace eprosima{
 namespace fastrtps{

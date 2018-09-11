@@ -79,15 +79,15 @@ bool NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
     std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
     if(transport->init())
     {
-        minSendBufferSize = transport->get_configuration()->sendBufferSize;
+        minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
         mRegisteredTransports.emplace_back(std::move(transport));
         wasRegistered = true;
     }
 
     if(wasRegistered)
     {
-        if(descriptor->maxMessageSize > maxMessageSizeBetweenTransports_)
-            maxMessageSizeBetweenTransports_ = descriptor->maxMessageSize;
+        if(descriptor->max_message_size() > maxMessageSizeBetweenTransports_)
+            maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
 
         if(minSendBufferSize < minSendBufferSize_)
             minSendBufferSize_ = minSendBufferSize;
