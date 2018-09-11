@@ -153,5 +153,6 @@ void ReqRepHelloWorldRequester::send(const uint16_t number)
 
     ASSERT_EQ(request_publisher_->write((void*)&hello, wparams), true);
     related_sample_identity_ = wparams.sample_identity();
+    ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
     current_number_ = number;
 }

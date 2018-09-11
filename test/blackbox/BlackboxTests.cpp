@@ -5269,6 +5269,23 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     reader.block_for_at_least(2);
 }
 
+// Regression test of Refs #3376, github ros2/rmw_fastrtps #226
+BLACKBOXTEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
+{
+    ReqRepAsReliableHelloWorldRequester requester;
+    ReqRepAsReliableHelloWorldReplier replier;
+
+    requester.durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init();
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    requester.send(1);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
