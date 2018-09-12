@@ -68,8 +68,8 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
         // Stores missing changes but there is some fragments received.
         std::vector<CacheChange_t*> uncompleted_changes;
 
-        RTPSMessageGroup group(mp_WP->mp_SFR->getRTPSParticipant(), mp_WP->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages);
-        group.set_fixed_destination(m_destination_locators, m_remote_endpoints);
+        RTPSMessageGroup group(mp_WP->mp_SFR->getRTPSParticipant(), mp_WP->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
+            m_destination_locators, m_remote_endpoints);
 
         if(!missing_changes.empty() || !mp_WP->m_heartbeatFinalFlag)
         {

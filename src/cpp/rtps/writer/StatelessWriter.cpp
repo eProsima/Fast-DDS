@@ -81,8 +81,8 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
         {
             this->setLivelinessAsserted(true);
 
-            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
-            group.set_fixed_destination(mAllShrinkedLocatorList, mAllRemoteReaders);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+                mAllShrinkedLocatorList, mAllRemoteReaders);
 
             if (!group.add_data(*cptr, mAllRemoteReaders, mAllShrinkedLocatorList, false))
             {
@@ -202,8 +202,8 @@ void StatelessWriter::send_any_unsent_changes()
     for (auto& controller : mp_RTPSParticipant->getFlowControllers())
         (*controller)(changesToSend);
 
-    RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages);
-    group.set_fixed_destination(mAllShrinkedLocatorList, mAllRemoteReaders);
+    RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages,
+        mAllShrinkedLocatorList, mAllRemoteReaders);
 
     bool bHasListener = mp_listener != nullptr;
     while(!changesToSend.empty())

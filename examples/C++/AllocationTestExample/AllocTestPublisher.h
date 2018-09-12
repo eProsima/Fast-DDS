@@ -31,27 +31,27 @@
 
 class AllocTestPublisher {
 public:
-	AllocTestPublisher();
-	virtual ~AllocTestPublisher();
-	//!Initialize
-	bool init(const char* profile);
-	//!Publish a sample
-	bool publish();
-	//!Run for number samples
-	void run(uint32_t number);
+    AllocTestPublisher();
+    virtual ~AllocTestPublisher();
+    //!Initialize
+    bool init(const char* profile);
+    //!Publish a sample
+    bool publish();
+    //!Run for number samples
+    void run(uint32_t number);
 private:
     AllocTestTypePubSubType m_type;
     AllocTestType m_data;
-	eprosima::fastrtps::Participant* mp_participant;
-	eprosima::fastrtps::Publisher* mp_publisher;
-	class PubListener:public eprosima::fastrtps::PublisherListener
-	{
-	public:
-		PubListener():n_matched(0){};
-		~PubListener(){};
-		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
-		int n_matched;
-	}m_listener;
+    eprosima::fastrtps::Participant* mp_participant;
+    eprosima::fastrtps::Publisher* mp_publisher;
+    class PubListener:public eprosima::fastrtps::PublisherListener
+    {
+    public:
+        PubListener():n_matched(0){};
+        ~PubListener(){};
+        void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+        int n_matched;
+    }m_listener;
 };
 
 

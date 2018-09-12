@@ -156,6 +156,23 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
 #endif
 }
 
+RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
+    RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
+    const std::vector<GUID_t>& remote_endpoints) : RTPSMessageGroup(participant, endpoint, type, msg_group)
+{
+    (void)remote_endpoints;
+
+#if HAVE_SECURITY
+    if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
+    {
+        get_participants_from_endpoints(remote_endpoints, current_remote_participants_);
+    }
+#endif
+
+    fixed_destination_locators_ = &locator_list;
+    fixed_destination_ = true;
+}
+
 RTPSMessageGroup::~RTPSMessageGroup()
 {
     send();
@@ -394,22 +411,6 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
 #endif
 
     return true;
-}
-
-void RTPSMessageGroup::set_fixed_destination(const LocatorList_t& locator_list,
-        const std::vector<GUID_t>& remote_endpoints)
-{
-    (void)remote_endpoints;
-
-#if HAVE_SECURITY
-    if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
-    {
-        get_participants_from_endpoints(remote_endpoints, current_remote_participants_);
-    }
-#endif
-
-    fixed_destination_locators_ = &locator_list;
-    fixed_destination_ = true;
 }
 
 bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<GUID_t>& remote_readers,
@@ -685,6 +686,9 @@ bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
 bool RTPSMessageGroup::add_acknack(const std::vector<GUID_t>& remote_writers, SequenceNumberSet_t& SNSet,
         int32_t count, bool finalFlag, const LocatorList_t& locators)
 {
+    // A vector is used to avoid dynamic allocations, but only first item is used
+    assert(remote_writers.size() == 1);
+
     check_and_maybe_flush(locators, remote_writers);
 
 #if HAVE_SECURITY
@@ -730,6 +734,9 @@ bool RTPSMessageGroup::add_acknack(const std::vector<GUID_t>& remote_writers, Se
 bool RTPSMessageGroup::add_nackfrag(const std::vector<GUID_t>& remote_writers, SequenceNumber_t& writerSN,
         FragmentNumberSet_t fnState, int32_t count, const LocatorList_t locators)
 {
+    // A vector is used to avoid dynamic allocations, but only first item is used
+    assert(remote_writers.size() == 1);
+
     check_and_maybe_flush(locators, remote_writers);
 
 #if HAVE_SECURITY

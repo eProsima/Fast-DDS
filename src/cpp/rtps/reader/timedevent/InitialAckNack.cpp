@@ -76,8 +76,8 @@ void InitialAckNack::event(EventCode code, const char* msg)
 
         logInfo(RTPS_READER,"Sending ACKNACK: "<< sns);
 
-        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages);
-        group.set_fixed_destination(m_destination_locators, m_remote_endpoints);
+        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
+            m_destination_locators, m_remote_endpoints);
 
         group.add_acknack(m_remote_endpoints, sns, acknackCount, false, m_destination_locators);
     }
