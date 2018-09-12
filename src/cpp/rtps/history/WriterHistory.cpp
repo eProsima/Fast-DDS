@@ -20,6 +20,7 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
+#include "fastrtps/rtps/common/WriteParams.h"
 
 #include <mutex>
 
@@ -27,6 +28,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+WriteParams WriteParams::WRITE_PARAM_DEFAULT;
 
 typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
@@ -45,6 +47,11 @@ WriterHistory::~WriterHistory()
 }
 
 bool WriterHistory::add_change(CacheChange_t* a_change)
+{
+    return add_change(a_change, WriteParams::WRITE_PARAM_DEFAULT);
+}
+
+bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
 {
     if(mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -75,6 +82,16 @@ bool WriterHistory::add_change(CacheChange_t* a_change)
 
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
+
+    if(&wparams != &WriteParams::WRITE_PARAM_DEFAULT)
+    {
+        a_change->write_params = wparams;
+
+        // Updated sample identity
+        wparams.sample_identity().writer_guid(a_change->writerGUID);
+        wparams.sample_identity().sequence_number(a_change->sequenceNumber);
+    }
+
     m_changes.push_back(a_change);
 
     if(static_cast<int32_t>(m_changes.size()) == m_att.maximumReservedCaches)

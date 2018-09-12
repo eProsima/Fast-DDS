@@ -795,6 +795,9 @@ BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
 
     replier.init();
 
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
     ASSERT_TRUE(replier.isInitialized());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
@@ -5267,6 +5270,18 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(2);
+}
+
+// Regression test of Refs #3376, github ros2/rmw_fastrtps #226
+BLACKBOXTEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
+{
+    ReqRepAsReliableHelloWorldRequester requester;
+
+    requester.durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    requester.send(1);
 }
 
 int main(int argc, char **argv)

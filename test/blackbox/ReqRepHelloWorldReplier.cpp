@@ -85,8 +85,6 @@ void ReqRepHelloWorldReplier::init()
 
 void ReqRepHelloWorldReplier::newNumber(SampleIdentity sample_identity, uint16_t number)
 {
-    waitDiscovery();
-
     WriteParams wparams;
     HelloWorld hello;
     hello.index(number);
@@ -99,18 +97,21 @@ void ReqRepHelloWorldReplier::waitDiscovery()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-    if(matched_ < 2)
-        cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+    std::cout << "Replier is waiting discovery..." << std::endl;
 
-    ASSERT_GE(matched_, 2u);
+    cvDiscovery_.wait(lock, [&](){return matched_ > 1;});
+
+    std::cout << "Replier discovery finished..." << std::endl;
 }
 
 void ReqRepHelloWorldReplier::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
-    if(matched_ >= 2)
+    if(matched_ > 1)
+    {
         cvDiscovery_.notify_one();
+    }
 }
 
 void ReqRepHelloWorldReplier::ReplyListener::onNewDataMessage(Subscriber *sub)

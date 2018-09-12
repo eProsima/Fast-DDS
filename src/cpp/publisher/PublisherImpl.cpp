@@ -35,10 +35,6 @@
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 
-
-
-::rtps::WriteParams WRITE_PARAM_DEFAULT;
-
 PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
         PublisherAttributes& att,PublisherListener* listen ):
     mp_participant(p),
@@ -77,7 +73,7 @@ PublisherImpl::~PublisherImpl()
 
 bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
 {
-    return create_new_change_with_params(changeKind, data, WRITE_PARAM_DEFAULT);
+    return create_new_change_with_params(changeKind, data, WriteParams::WRITE_PARAM_DEFAULT);
 }
 
 bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void* data, WriteParams &wparams)
@@ -165,11 +161,6 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
             // Set the fragment size to the cachechange.
             // Note: high_mark will always be a value that can be casted to uint16_t)
             ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
-        }
-
-        if(&wparams != &WRITE_PARAM_DEFAULT)
-        {
-            ch->write_params = wparams;
         }
 
         if(!this->m_history.add_pub_change(ch, wparams, lock))
