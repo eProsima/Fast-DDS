@@ -54,6 +54,13 @@ class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
 
             puattr.topic.topicName = t.str();
         }
+
+        ReqRepAsReliableHelloWorldRequester& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+        {
+            puattr.qos.m_durability.kind = kind;
+            sattr.qos.m_durability.kind = kind;
+            return *this;
+        }
 };
 
 #endif // _TEST_BLACKBOX_REQREPASRELIABLEHELLOWORLDREQUESTER_HPP_

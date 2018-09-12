@@ -109,18 +109,21 @@ void ReqRepHelloWorldRequester::waitDiscovery()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-    if(matched_ < 2)
-        cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+    std::cout << "Requester is waiting discovery..." << std::endl;
 
-    ASSERT_GE(matched_, 2u);
+    cvDiscovery_.wait(lock, [&](){return matched_ > 1;});
+
+    std::cout << "Requester discovery finished..." << std::endl;
 }
 
 void ReqRepHelloWorldRequester::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
-    if(matched_ >= 2)
+    if(matched_ > 1)
+    {
         cvDiscovery_.notify_one();
+    }
 }
 
 void ReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(Subscriber *sub)
@@ -142,8 +145,6 @@ void ReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(Subscriber *sub)
 
 void ReqRepHelloWorldRequester::send(const uint16_t number)
 {
-    waitDiscovery();
-
     WriteParams wparams;
     HelloWorld hello;
     hello.index(number);
@@ -153,5 +154,6 @@ void ReqRepHelloWorldRequester::send(const uint16_t number)
 
     ASSERT_EQ(request_publisher_->write((void*)&hello, wparams), true);
     related_sample_identity_ = wparams.sample_identity();
+    ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
     current_number_ = number;
 }

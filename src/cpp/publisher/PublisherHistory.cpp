@@ -90,7 +90,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
     //NO KEY HISTORY
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
-        if(this->add_change(change))
+        if(this->add_change(change, wparams))
         {
             returnedValue = true;
         }
@@ -131,7 +131,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
 
             if(add)
             {
-                if(this->add_change(change))
+                if(this->add_change(change, wparams))
                 {
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
@@ -141,13 +141,6 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
                 }
             }
         }
-    }
-
-    // Updated sample identity
-    if(returnedValue && &wparams != &WRITE_PARAM_DEFAULT)
-    {
-        wparams.sample_identity().writer_guid(change->writerGUID);
-        wparams.sample_identity().sequence_number(change->sequenceNumber);
     }
 
 
