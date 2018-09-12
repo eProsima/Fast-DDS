@@ -69,6 +69,9 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
         RTPSParticipantDiscoveryInfo info;
         info.m_status = DROPPED_RTPSPARTICIPANT;
         info.m_guid = mp_participantProxyData->m_guid;
+        info.m_RTPSParticipantName = mp_participantProxyData->m_participantName;
+        info.m_propertyList = mp_participantProxyData->m_properties.properties;
+        info.m_userData = mp_participantProxyData->m_userData;
 
         // Set pointer to null because this call will be delete itself.
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;

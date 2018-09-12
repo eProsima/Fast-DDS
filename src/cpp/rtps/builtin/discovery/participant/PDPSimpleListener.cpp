@@ -139,18 +139,25 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
     {
         GUID_t guid;
         iHandle2GUID(guid, change->instanceHandle);
+        ParticipantProxyData participant_data;
 
-        if(this->mp_SPDP->removeRemoteParticipant(guid))
+        if(this->mp_SPDP->lookupParticipantProxyData(guid, participant_data))
         {
-            if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
+            if(this->mp_SPDP->removeRemoteParticipant(guid))
             {
-                RTPSParticipantDiscoveryInfo info;
-                info.m_status = REMOVED_RTPSPARTICIPANT;
-                info.m_guid = guid;
                 if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
-                    this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
-                            this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
-                            info);
+                {
+                    RTPSParticipantDiscoveryInfo info;
+                    info.m_status = REMOVED_RTPSPARTICIPANT;
+                    info.m_guid = guid;
+                    info.m_RTPSParticipantName = participant_data.m_participantName;
+                    info.m_propertyList = participant_data.m_properties.properties;
+                    info.m_userData = participant_data.m_userData;
+                    if(this->mp_SPDP->getRTPSParticipant()->getListener()!=nullptr)
+                        this->mp_SPDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
+                                this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),
+                                info);
+                }
             }
         }
     }
