@@ -795,6 +795,9 @@ BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
 
     replier.init();
 
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
     ASSERT_TRUE(replier.isInitialized());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
@@ -5273,15 +5276,10 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 BLACKBOXTEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
 {
     ReqRepAsReliableHelloWorldRequester requester;
-    ReqRepAsReliableHelloWorldReplier replier;
 
     requester.durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
 
     ASSERT_TRUE(requester.isInitialized());
-
-    replier.init();
-
-    ASSERT_TRUE(replier.isInitialized());
 
     requester.send(1);
 }
