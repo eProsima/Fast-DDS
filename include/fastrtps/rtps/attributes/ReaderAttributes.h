@@ -43,7 +43,7 @@ class ReaderTimes
         virtual ~ReaderTimes(){};
         //!Initial AckNack delay. Default value ~45ms.
         Duration_t initialAcknackDelay;
-        //!Delay to be applied when a hearbeat message is received, default value ~116ms.
+        //!Delay to be applied when a hearbeat message is received, default value ~4.5ms.
         Duration_t heartbeatResponseDelay;
 };
 
