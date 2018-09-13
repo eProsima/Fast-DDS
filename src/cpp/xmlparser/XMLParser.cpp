@@ -178,6 +178,10 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 parseXMLSubscriberProf(p_profile, profilesNode);
             }
+            else if (strcmp(tag, TOPIC) == 0)
+            {
+                parseXMLTopicData(p_profile, profilesNode);
+            }
             else if (strcmp(tag, QOS_PROFILE))
             {
             }
@@ -185,9 +189,6 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
             }
             else if (strcmp(tag, TYPE))
-            {
-            }
-            else if (strcmp(tag, TOPIC))
             {
             }
             else if (strcmp(tag, DATA_WRITER))

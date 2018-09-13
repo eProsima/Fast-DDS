@@ -48,8 +48,8 @@ class PublisherAttributes
             m_userDefinedID = -1;
             m_entityID = -1;
             historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
-        };
-        virtual ~PublisherAttributes(){};
+        }
+        virtual ~PublisherAttributes(){}
         //!Topic Attributes for the Publisher
         TopicAttributes topic;
         //!QOS for the Publisher
@@ -84,13 +84,13 @@ class PublisherAttributes
          * Set the user defined ID
          * @param id User defined ID to be set
          */
-        inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
+        inline void setUserDefinedID(uint8_t id) { m_userDefinedID = id; }
 
         /**
          * Set the entity ID
          * @param id Entity ID to be set
          */
-        inline void setEntityID(uint8_t id){m_entityID = id;	};
+        inline void setEntityID(uint8_t id) { m_entityID = id; }
     private:
         //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
         int16_t m_userDefinedID;

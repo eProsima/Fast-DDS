@@ -41,7 +41,7 @@ class  TopicDataType {
             : m_typeSize(0), m_isGetKeyDefined(false)
         {}
 
-        RTPS_DllAPI virtual ~TopicDataType(){};
+        RTPS_DllAPI virtual ~TopicDataType() {}
         /**
          * Serialize method, it should be implemented by the user, since it is abstract.
          * It is VERY IMPORTANT that the user sets the serializedPaylaod length correctly.
