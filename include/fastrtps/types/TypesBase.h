@@ -16,10 +16,13 @@
 #define TYPES_BASE_H
 
 #include <fastrtps/rtps/common/Types.h>
+#include <fastcdr/Cdr.h>
+#include <bitset>
 #include <string>
 #include <map>
 #include <vector>
 #include <cctype>
+#include <algorithm>
 
 namespace eprosima{
 namespace fastrtps{
@@ -80,12 +83,12 @@ const octet TK_MAP        = 0x62;
 // The name of some element (e.g. type, type member, module)
 // Valid characters are alphanumeric plus the "_" cannot start with digit
 
-const long MEMBER_NAME_MAX_LENGTH = 256;
+const int32_t MEMBER_NAME_MAX_LENGTH = 256;
 typedef std::string MemberName;
 
 // Qualified type name includes the name of containing modules
 // using "::" as separator. No leading "::". E.g. "MyModule::MyType"
-const long TYPE_NAME_MAX_LENGTH = 256;
+const int32_t TYPE_NAME_MAX_LENGTH = 256;
 typedef std::string QualifiedTypeName;
 
 // Every type has an ID. Those of the primitive types are pre-defined.
@@ -98,7 +101,7 @@ typedef std::array<uint8_t, 4> NameHash;
 
 // Mask used to remove the flags that do no affect assignability
 // Selects  T1, T2, O, M, K, D
-const unsigned short MemberFlagMinimalMask = 0x003f;
+const uint16_t MemberFlagMinimalMask = 0x003f;
 
 /*!
  * @brief This class represents the enumeration ResponseCode.
@@ -134,7 +137,7 @@ public:
 };
 
 // Long Bound of a collection type
-typedef unsigned long LBound;
+typedef uint32_t LBound;
 typedef std::vector<LBound> LBoundSeq;
 const LBound INVALID_LBOUND = 0;
 
@@ -153,6 +156,20 @@ class MemberFlag
 private:
 	std::bitset<16> m_MemberFlag;
 public:
+	MemberFlag();
+    MemberFlag(const MemberFlag &x) : m_MemberFlag(x.m_MemberFlag) {}
+    MemberFlag(MemberFlag &&x) : m_MemberFlag(std::move(x.m_MemberFlag)) {}
+    MemberFlag& operator=(const MemberFlag &x)
+	{
+		m_MemberFlag = x.m_MemberFlag;
+		return *this;
+	}
+
+    MemberFlag& operator=(MemberFlag &&x)
+	{
+		m_MemberFlag = std::move(x.m_MemberFlag);
+		return *this;
+	}
 	// T1 | 00 = INVALID, 01 = DISCARD
 	bool TRY_CONSTRUCT1() const { return m_MemberFlag.test(0); }
 	void TRY_CONSTRUCT1(bool b) { b ? m_MemberFlag.set(0) : m_MemberFlag.reset(0); }
@@ -175,6 +192,27 @@ public:
 	// D  UnionMember, EnumerationLiteral
 	bool IS_DEFAULT() const { return m_MemberFlag.test(6); }
 	void IS_DEFAULT(bool b) { b ? m_MemberFlag.set(6) : m_MemberFlag.reset(6); }
+
+    void serialize(eprosima::fastcdr::Cdr &cdr) const
+	{
+		//cdr << m_MemberFlag;
+		uint16_t bits = static_cast<uint16_t>(m_MemberFlag.to_ulong());
+		cdr << bits;
+	}
+
+    void deserialize(eprosima::fastcdr::Cdr &cdr)
+	{
+		//cdr >> (uint16_t)m_MemberFlag;
+		uint16_t bits;
+		cdr >> bits;
+		m_MemberFlag = std::bitset<16>(bits);
+	}
+
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0) { return 2; }
+    static size_t getCdrSerializedSize(const MemberFlag&, size_t current_alignment = 0)
+	{
+		return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+	}
 };
 
 typedef MemberFlag CollectionElementFlag;   // T1, T2, X
@@ -195,6 +233,21 @@ class TypeFlag
 private:
 	std::bitset<16> m_TypeFlag;
 public:
+	TypeFlag();
+    TypeFlag(const TypeFlag &x) : m_TypeFlag(x.m_TypeFlag) {}
+    TypeFlag(TypeFlag &&x) : m_TypeFlag(std::move(x.m_TypeFlag)) {}
+    TypeFlag& operator=(const TypeFlag &x)
+	{
+		m_TypeFlag = x.m_TypeFlag;
+		return *this;
+	}
+
+    TypeFlag& operator=(TypeFlag &&x)
+	{
+		m_TypeFlag = std::move(x.m_TypeFlag);
+		return *this;
+	}
+
 	// F |
 	bool IS_FINAL() const { return m_TypeFlag.test(0); }
 	void IS_FINAL(bool b) { b ? m_TypeFlag.set(0) : m_TypeFlag.reset(0); }
@@ -210,6 +263,27 @@ public:
 	// H     Struct
 	bool IS_AUTOID_HASH() const { return m_TypeFlag.test(4); }
 	void IS_AUTOID_HASH(bool b) { b ? m_TypeFlag.set(4) : m_TypeFlag.reset(4); }
+
+    void serialize(eprosima::fastcdr::Cdr &cdr) const
+	{
+		//cdr << m_TypeFlag;
+		uint16_t bits = static_cast<uint16_t>(m_TypeFlag.to_ulong());
+		cdr << bits;
+	}
+
+    void deserialize(eprosima::fastcdr::Cdr &cdr)
+	{
+		//cdr >> (uint16_t)m_TypeFlag;
+		uint16_t bits;
+		cdr >> bits;
+		m_TypeFlag = std::bitset<16>(bits);
+	}
+
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0) { return 2; }
+    static size_t getCdrSerializedSize(const TypeFlag&, size_t current_alignment = 0)
+	{
+		return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+	}
 };
 
 typedef TypeFlag   StructTypeFlag;      // All flags apply
@@ -222,14 +296,13 @@ typedef TypeFlag   BitmaskTypeFlag;     // Unused. No flags apply
 typedef TypeFlag   BitsetTypeFlag;      // Unused. No flags apply
 
 // Mask used to remove the flags that do no affect assignability
-const unsigned short TypeFlagMinimalMask = 0x0007; // Selects  M, A, F
+const uint16_t TypeFlagMinimalMask = 0x0007; // Selects  M, A, F
 
 // --- Annotation usage: ----------------------------------------------
 
 // ID of a type member
-typedef unsigned long MemberId;
-const unsigned long ANNOTATION_STR_VALUE_MAX_LEN = 128;
-const unsigned long ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
+const uint32_t ANNOTATION_STR_VALUE_MAX_LEN = 128;
+const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
 
 } // namespace types
 } // namespace fastrtps

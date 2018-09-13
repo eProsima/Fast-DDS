@@ -548,7 +548,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier _element_identifier)
+    inline void element_identifier(TypeIdentifier* _element_identifier)
     {
         m_element_identifier = _element_identifier;
     }
@@ -557,7 +557,7 @@ public:
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    inline TypeIdentifier element_identifier() const
+    inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -566,7 +566,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    inline TypeIdentifier& element_identifier()
+    inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -624,7 +624,7 @@ public:
 private:
     PlainCollectionHeader m_header;
     SBound m_bound;
-    TypeIdentifier m_element_identifier;
+    TypeIdentifier* m_element_identifier;
 };
 /*!
  * @brief This class represents the structure PlainSequenceLElemDefn defined by the user in the IDL file.
@@ -733,7 +733,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier _element_identifier)
+    inline void element_identifier(TypeIdentifier* _element_identifier)
     {
         m_element_identifier = _element_identifier;
     }
@@ -742,7 +742,7 @@ public:
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    inline TypeIdentifier element_identifier() const
+    inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -751,7 +751,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    inline TypeIdentifier& element_identifier()
+    inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -809,7 +809,7 @@ public:
 private:
     PlainCollectionHeader m_header;
     LBound m_bound;
-    TypeIdentifier m_element_identifier;
+    TypeIdentifier* m_element_identifier;
 };
 /*!
  * @brief This class represents the structure PlainArraySElemDefn defined by the user in the IDL file.
@@ -927,7 +927,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier _element_identifier)
+    inline void element_identifier(TypeIdentifier* _element_identifier)
     {
         m_element_identifier = _element_identifier;
     }
@@ -936,7 +936,7 @@ public:
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    inline TypeIdentifier element_identifier() const
+    inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -945,7 +945,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    inline TypeIdentifier& element_identifier()
+    inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -1003,7 +1003,7 @@ public:
 private:
     PlainCollectionHeader m_header;
     SBoundSeq m_array_bound_seq;
-    TypeIdentifier m_element_identifier;
+    TypeIdentifier* m_element_identifier;
 };
 /*!
  * @brief This class represents the structure PlainArrayLElemDefn defined by the user in the IDL file.
@@ -1121,7 +1121,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier _element_identifier)
+    inline void element_identifier(TypeIdentifier* _element_identifier)
     {
         m_element_identifier = _element_identifier;
     }
@@ -1130,7 +1130,7 @@ public:
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    inline TypeIdentifier element_identifier() const
+    inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -1139,7 +1139,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    inline TypeIdentifier& element_identifier()
+    inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -1197,7 +1197,7 @@ public:
 private:
     PlainCollectionHeader m_header;
     LBoundSeq m_array_bound_seq;
-    TypeIdentifier m_element_identifier;
+    TypeIdentifier* m_element_identifier;
 };
 /*!
  * @brief This class represents the structure PlainMapSTypeDefn defined by the user in the IDL file.
@@ -1306,7 +1306,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier _element_identifier)
+    inline void element_identifier(TypeIdentifier* _element_identifier)
     {
         m_element_identifier = _element_identifier;
     }
@@ -1315,7 +1315,7 @@ public:
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    inline TypeIdentifier element_identifier() const
+    inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -1324,7 +1324,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    inline TypeIdentifier& element_identifier()
+    inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -1358,7 +1358,7 @@ public:
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
      */
-    inline void key_identifier(TypeIdentifier _key_identifier)
+    inline void key_identifier(TypeIdentifier* _key_identifier)
     {
         m_key_identifier = _key_identifier;
     }
@@ -1367,7 +1367,7 @@ public:
      * @brief This function returns the value of member key_identifier
      * @return Value of member key_identifier
      */
-    inline TypeIdentifier key_identifier() const
+    inline const TypeIdentifier* key_identifier() const
     {
         return m_key_identifier;
     }
@@ -1376,7 +1376,7 @@ public:
      * @brief This function returns a reference to member key_identifier
      * @return Reference to member key_identifier
      */
-    inline TypeIdentifier& key_identifier()
+    inline TypeIdentifier* key_identifier()
     {
         return m_key_identifier;
     }
@@ -1434,9 +1434,9 @@ public:
 private:
     PlainCollectionHeader m_header;
     SBound m_bound;
-    TypeIdentifier m_element_identifier;
+    TypeIdentifier* m_element_identifier;
     CollectionElementFlag m_key_flags;
-    TypeIdentifier m_key_identifier;
+    TypeIdentifier* m_key_identifier;
 };
 /*!
  * @brief This class represents the structure PlainMapLTypeDefn defined by the user in the IDL file.
@@ -1545,7 +1545,7 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    inline void element_identifier(TypeIdentifier _element_identifier)
+    inline void element_identifier(TypeIdentifier* _element_identifier)
     {
         m_element_identifier = _element_identifier;
     }
@@ -1554,7 +1554,7 @@ public:
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    inline TypeIdentifier element_identifier() const
+    inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -1563,7 +1563,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    inline TypeIdentifier& element_identifier()
+    inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -1597,7 +1597,7 @@ public:
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
      */
-    inline void key_identifier(TypeIdentifier _key_identifier)
+    inline void key_identifier(TypeIdentifier* _key_identifier)
     {
         m_key_identifier = _key_identifier;
     }
@@ -1606,7 +1606,7 @@ public:
      * @brief This function returns the value of member key_identifier
      * @return Value of member key_identifier
      */
-    inline TypeIdentifier key_identifier() const
+    inline const TypeIdentifier* key_identifier() const
     {
         return m_key_identifier;
     }
@@ -1615,7 +1615,7 @@ public:
      * @brief This function returns a reference to member key_identifier
      * @return Reference to member key_identifier
      */
-    inline TypeIdentifier& key_identifier()
+    inline TypeIdentifier* key_identifier()
     {
         return m_key_identifier;
     }
@@ -1673,9 +1673,9 @@ public:
 private:
     PlainCollectionHeader m_header;
     LBound m_bound;
-    TypeIdentifier m_element_identifier;
+    TypeIdentifier* m_element_identifier;
     CollectionElementFlag m_key_flags;
-    TypeIdentifier m_key_identifier;
+    TypeIdentifier* m_key_identifier;
 };
 /*!
  * @brief This class represents the structure StronglyConnectedComponentId defined by the user in the IDL file.
@@ -1883,13 +1883,13 @@ public:
      * @brief Copy constructor.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    virtual ExtendedTypeDefn(const ExtendedTypeDefn &x);
+    ExtendedTypeDefn(const ExtendedTypeDefn &x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    virtual ExtendedTypeDefn(ExtendedTypeDefn &&x);
+    ExtendedTypeDefn(ExtendedTypeDefn &&x);
 
     /*!
      * @brief Copy assignment.
@@ -1909,7 +1909,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    virtual static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1917,7 +1917,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    virtual static size_t getCdrSerializedSize(const ExtendedTypeDefn& data, size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(const ExtendedTypeDefn& data, size_t current_alignment = 0);
 
 
     /*!
@@ -1940,12 +1940,12 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    virtual static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
 
     /*!
      * @brief This function tells you if the Key has been defined for this type
      */
-    virtual static bool isKeyDefined();
+    static bool isKeyDefined();
 
     /*!
      * @brief This function serializes the key members of an object using CDR serialization.

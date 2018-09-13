@@ -38,17 +38,7 @@ namespace types{
 TypeIdentifier::TypeIdentifier()
 {
     m__d = 0x00; // Default
-    m_string_sdefn = 0;
-    m_string_ldefn = 0;
-    m_seq_sdefn = 0;
-    m_seq_ldefn = 0;
-    m_array_sdefn = 0;
-    m_array_ldefn = 0;
-    m_map_sdefn = 0;
-    m_map_ldefn = 0;
-    m_sc_component_id = 0;
-    m_equivalence_hash = 0;
-    m_extended_defn = 0;
+
 }
 
 TypeIdentifier::~TypeIdentifier()
@@ -92,7 +82,7 @@ TypeIdentifier::TypeIdentifier(const TypeIdentifier &x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_equivalence_hash = x.m_equivalence_hash;
+        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -137,7 +127,7 @@ TypeIdentifier::TypeIdentifier(TypeIdentifier &&x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_equivalence_hash = x.m_equivalence_hash;
+        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -182,7 +172,7 @@ TypeIdentifier& TypeIdentifier::operator=(const TypeIdentifier &x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_equivalence_hash = x.m_equivalence_hash;
+        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -229,7 +219,7 @@ TypeIdentifier& TypeIdentifier::operator=(TypeIdentifier &&x)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_equivalence_hash = x.m_equivalence_hash;
+        memcpy(m_equivalence_hash, x.m_equivalence_hash, 14);
         break;
         default:
         m_extended_defn = x.m_extended_defn;
@@ -239,7 +229,7 @@ TypeIdentifier& TypeIdentifier::operator=(TypeIdentifier &&x)
     return *this;
 }
 
-void TypeIdentifier::_d(char __d)
+void TypeIdentifier::_d(octet __d)
 {
     bool b = false;
 
@@ -380,12 +370,12 @@ void TypeIdentifier::_d(char __d)
     m__d = __d;
 }
 
-char TypeIdentifier::_d() const
+octet TypeIdentifier::_d() const
 {
     return m__d;
 }
 
-char& TypeIdentifier::_d()
+octet& TypeIdentifier::_d()
 {
     return m__d;
 }
@@ -747,11 +737,11 @@ StronglyConnectedComponentId& TypeIdentifier::sc_component_id()
 }
 void TypeIdentifier::equivalence_hash(EquivalenceHash _equivalence_hash)
 {
-    m_equivalence_hash = _equivalence_hash;
+    memcpy(m_equivalence_hash, _equivalence_hash, 14);
     m__d = EK_COMPLETE;
 }
 
-EquivalenceHash TypeIdentifier::equivalence_hash() const
+const octet* TypeIdentifier::equivalence_hash() const
 {
     bool b = false;
 
@@ -769,7 +759,7 @@ EquivalenceHash TypeIdentifier::equivalence_hash() const
     return m_equivalence_hash;
 }
 
-EquivalenceHash& TypeIdentifier::equivalence_hash()
+octet* TypeIdentifier::equivalence_hash()
 {
     bool b = false;
 
@@ -819,7 +809,7 @@ ExtendedTypeDefn TypeIdentifier::extended_defn() const
     }
     if(!b) throw BadParamException("This member is not been selected");
 
-    return m_equivalence_hash;
+    return m_extended_defn;
 }
 
 ExtendedTypeDefn& TypeIdentifier::extended_defn()
@@ -848,7 +838,7 @@ ExtendedTypeDefn& TypeIdentifier::extended_defn()
     }
     if(!b) throw BadParamException("This member is not been selected");
 
-    return m_equivalence_hash;
+    return m_extended_defn;
 }
 
 size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
@@ -862,7 +852,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += StringSTypeDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -871,7 +861,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += StringLTypeDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -880,7 +870,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += PlainSequenceSElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -889,7 +879,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += PlainSequenceLElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -898,7 +888,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += PlainArraySElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -907,7 +897,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += PlainArrayLElemDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -916,7 +906,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += PlainMapSTypeDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -925,7 +915,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += PlainMapLTypeDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -934,7 +924,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += StronglyConnectedComponentId::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -943,7 +933,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += 14 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 14);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -952,7 +942,7 @@ size_t TypeIdentifier::getMaxCdrSerializedSize(size_t current_alignment)
 
         reset_alignment = current_alignment;
 
-        reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
+        reset_alignment += ExtendedTypeDefn::getMaxCdrSerializedSize(reset_alignment);
 
 
         if(union_max_size_serialized < reset_alignment)
@@ -974,49 +964,49 @@ size_t TypeIdentifier::getCdrSerializedSize(const TypeIdentifier& data, size_t c
     {
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += StringSTypeDefn::getCdrSerializedSize(data.m_string_sdefn, current_alignment);
 
         break;
         case TI_STRING8_LARGE:
         case TI_STRING16_LARGE:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += StringLTypeDefn::getCdrSerializedSize(data.m_string_ldefn, current_alignment);
 
         break;
         case TI_PLAIN_SEQUENCE_SMALL:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += PlainSequenceSElemDefn::getCdrSerializedSize(data.m_seq_sdefn, current_alignment);
 
         break;
         case TI_PLAIN_SEQUENCE_LARGE:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += PlainSequenceLElemDefn::getCdrSerializedSize(data.m_seq_ldefn, current_alignment);
 
         break;
         case TI_PLAIN_ARRAY_SMALL:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += PlainArraySElemDefn::getCdrSerializedSize(data.m_array_sdefn, current_alignment);
 
         break;
         case TI_PLAIN_ARRAY_LARGE:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += PlainArrayLElemDefn::getCdrSerializedSize(data.m_array_ldefn, current_alignment);
 
         break;
         case TI_PLAIN_MAP_SMALL:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += PlainMapSTypeDefn::getCdrSerializedSize(data.m_map_sdefn, current_alignment);
 
         break;
         case TI_PLAIN_MAP_LARGE:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += PlainMapLTypeDefn::getCdrSerializedSize(data.m_map_ldefn, current_alignment);
 
         break;
         case TI_STRONGLY_CONNECTED_COMPONENT:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += StronglyConnectedComponentId::getCdrSerializedSize(data.m_sc_component_id, current_alignment);
 
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += 14 + eprosima::fastcdr::Cdr::alignment(current_alignment, 14);
 
         break;
         default:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+        current_alignment += ExtendedTypeDefn::getCdrSerializedSize(data.m_extended_defn, current_alignment);
         break;
     }
 
@@ -1060,7 +1050,10 @@ void TypeIdentifier::serialize(eprosima::fastcdr::Cdr &scdr) const
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        scdr << m_equivalence_hash;
+        for (int i = 0; i < 14; ++i)
+        {
+            scdr << m_equivalence_hash[i];
+        }
         break;
         default:
         scdr << m_extended_defn;
@@ -1105,7 +1098,10 @@ void TypeIdentifier::deserialize(eprosima::fastcdr::Cdr &dcdr)
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
-        dcdr >> m_equivalence_hash;
+        for (int i = 0; i < 14; ++i)
+        {
+            dcdr >> m_equivalence_hash[i];
+        }
         break;
         default:
         dcdr >> m_extended_defn;

@@ -316,14 +316,14 @@ public:
      * @return Value of member equivalence_hash
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    EquivalenceHash equivalence_hash() const;
+    const octet* equivalence_hash() const;
 
     /*!
      * @brief This function returns a reference to member equivalence_hash
      * @return Reference to member equivalence_hash
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    EquivalenceHash& equivalence_hash();
+    octet* equivalence_hash();
     /*!
      * @brief This function sets a value in member extended_defn
      * @param _extended_defn New value for member extended_defn

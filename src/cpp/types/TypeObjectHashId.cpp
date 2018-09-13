@@ -28,9 +28,12 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
+namespace eprosima{
+namespace fastrtps{
 
+using namespace rtps;
 
-
+namespace types{
 
 TypeObjectHashId::TypeObjectHashId()
 {
@@ -49,7 +52,7 @@ TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_hash = x.m_hash;
+        memcpy(m_hash, x.m_hash, 14);
         break;
         default:
         break;
@@ -64,7 +67,7 @@ TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_hash = std::move(x.m_hash);
+        memcpy(m_hash, x.m_hash, 14);
         break;
         default:
         break;
@@ -79,7 +82,7 @@ TypeObjectHashId& TypeObjectHashId::operator=(const TypeObjectHashId &x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_hash = x.m_hash;
+        memcpy(m_hash, x.m_hash, 14);
         break;
         default:
         break;
@@ -96,7 +99,7 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        m_hash = std::move(x.m_hash);
+        memcpy(m_hash, x.m_hash, 14);
         break;
         default:
         break;
@@ -142,13 +145,13 @@ uint8_t& TypeObjectHashId::_d()
 
 void TypeObjectHashId::hash(const EquivalenceHash &_hash)
 {
-    m_hash = _hash;
+    memcpy(m_hash, _hash, 14);
     m__d = EK_COMPLETE;
 }
 
 void TypeObjectHashId::hash(EquivalenceHash &&_hash)
 {
-    m_hash = std::move(_hash);
+    memcpy(m_hash, _hash, 14);
     m__d = EK_COMPLETE;
 }
 
@@ -236,7 +239,10 @@ void TypeObjectHashId::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        scdr << m_hash;
+        for (int i = 0; i < 14; ++i)
+        {
+            scdr << m_hash[i];
+        }
         break;
         default:
         break;
@@ -251,10 +257,18 @@ void TypeObjectHashId::deserialize(eprosima::fastcdr::Cdr &dcdr)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        dcdr >> m_hash;
+        for (int i = 0; i < 14; ++i)
+        {
+            dcdr >> m_hash[i];
+        }
         break;
         default:
         break;
     }
 }
 
+
+
+} // namespace types
+} // namespace fastrtps
+} // namespace eprosima
