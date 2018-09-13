@@ -93,7 +93,7 @@ protected:
     DynamicType_ptr GetElementType() const;
     DynamicType_ptr GetKeyElementType() const;
     ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
-    ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string name);
+    ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string& name);
 
     TypeDescriptor* mDescriptor;
 	std::vector<AnnotationDescriptor*> mAnnotation;

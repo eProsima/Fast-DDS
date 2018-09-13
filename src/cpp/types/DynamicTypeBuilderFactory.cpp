@@ -131,11 +131,15 @@ DynamicType_ptr DynamicTypeBuilderFactory::BuildType(DynamicType_ptr other)
     return other;
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::CreateType(const TypeDescriptor* descriptor)
+DynamicType_ptr DynamicTypeBuilderFactory::CreateType(const TypeDescriptor* descriptor, const std::string& name)
 {
     if (descriptor != nullptr)
     {
         DynamicType_ptr pNewType = new DynamicType(descriptor);
+        if (name.length() > 0)
+        {
+            pNewType->SetName(name);
+        }
         return pNewType;
     }
     else
