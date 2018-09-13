@@ -158,7 +158,7 @@ class RTPSMessageGroup
         /**
          * Adds a ACKNACK message to the group.
          * @param remote_writers List of destination GUIDs (note: only first one will be used).
-         * @param SNSet Set of received sequence numbers.
+         * @param SNSet Set of missing sequence numbers.
          * @param count Counting identifier.
          * @param finalFlag Should final flag be set?
          * @param locators List of destination locators.
@@ -170,7 +170,8 @@ class RTPSMessageGroup
         /**
          * Adds a NACKFRAG message to the group.
          * @param remote_writers List of destination GUIDs (note: only first one will be used).
-         * @param SNSet Set of received sequence numbers.
+         * @param writerSN Sequence number being nack'ed.
+         * @param fnState Set of missing fragment numbers.
          * @param count Counting identifier.
          * @param finalFlag Should final flag be set?
          * @param locators List of destination locators.
