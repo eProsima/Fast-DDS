@@ -361,7 +361,8 @@ bool ParticipantImpl::registerType(TopicDataType* type)
         logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");
         return false;
     }
-    if (std::string(type->getName()).size() <= 0)
+    const char * name = type->getName();
+    if (strlen(name) <= 0)
     {
         logError(PARTICIPANT, "Registered Type must have a name");
         return false;

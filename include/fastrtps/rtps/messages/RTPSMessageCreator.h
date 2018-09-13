@@ -57,7 +57,7 @@ class RTPSMessageCreator
          * @param vendorId Vendor Id.
          * @return True if correct.
          */
-        static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
+        static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix,const ProtocolVersion_t& version,const VendorId_t& vendorId);
 
         /**
          * Create a Header to the serialized message.

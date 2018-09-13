@@ -41,6 +41,7 @@ if(PROFILING_TESTS)
     target_include_directories(RTPSPubSubProfiling PRIVATE ../ ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
     target_link_libraries(RTPSPubSubProfiling fastrtps fastcdr ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
+    add_subdirectory(allocations)
     add_subdirectory(memory)
     add_subdirectory(cycles)
 

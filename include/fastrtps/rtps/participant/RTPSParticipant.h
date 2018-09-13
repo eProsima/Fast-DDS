@@ -135,7 +135,7 @@ class RTPS_DllAPI RTPSParticipant
      * Get a copy of the actual state of the RTPSParticipantParameters
      * @return RTPSParticipantAttributes copy of the params.
      */
-    RTPSParticipantAttributes getRTPSParticipantAttributes() const;
+    const RTPSParticipantAttributes & getRTPSParticipantAttributes() const;
 
     uint32_t getMaxMessageSize() const;
 

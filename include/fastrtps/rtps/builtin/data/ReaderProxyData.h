@@ -162,7 +162,7 @@ class ReaderProxyData
             m_typeName = std::move(typeName);
         }
 
-        RTPS_DllAPI std::string typeName() const
+        RTPS_DllAPI const std::string& typeName() const
         {
             return m_typeName;
         }
@@ -182,7 +182,7 @@ class ReaderProxyData
             m_topicName = std::move(topicName);
         }
 
-        RTPS_DllAPI std::string topicName() const
+        RTPS_DllAPI const std::string& topicName() const
         {
             return m_topicName;
         }

@@ -748,10 +748,7 @@ bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const ui
     }
 
     // Use a temporary wraping message
-    CDRMessage_t msg(0);
-    msg.wraps = true;
-    msg.buffer = change->serializedPayload.data;
-    msg.length = change->serializedPayload.length;
+    CDRMessage_t msg(change->serializedPayload);
 
     // Read encapsulation
     msg.pos += 1;

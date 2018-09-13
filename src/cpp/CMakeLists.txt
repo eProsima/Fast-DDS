@@ -78,7 +78,6 @@ set(${PROJECT_NAME}_source_files
     transport/test_UDPv4Transport.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
-    qos/QosList.cpp
     qos/QosPolicies.cpp
     qos/WriterQos.cpp
     qos/ReaderQos.cpp

@@ -66,7 +66,7 @@ class RTPSParticipantDiscoveryInfo
         //!User data
         UserData m_userData;
         //!Participant name
-        std::string m_RTPSParticipantName;
+        const char* m_RTPSParticipantName = nullptr;
 };
 
 #if HAVE_SECURITY

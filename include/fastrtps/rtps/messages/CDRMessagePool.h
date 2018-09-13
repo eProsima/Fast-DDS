@@ -57,7 +57,7 @@ protected:
 	uint16_t m_group_size;
 	void allocateGroup();
 	void allocateGroup(uint16_t payload);
-    std::mutex *mutex_;
+    std::mutex mutex_;
 };
 
 

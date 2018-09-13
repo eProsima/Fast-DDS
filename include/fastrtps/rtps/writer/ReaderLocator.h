@@ -46,11 +46,11 @@ class ReaderLocator
         ReaderLocator();
 
         ReaderLocator(ReaderLocator&& readerLocator) : locator(std::move(readerLocator.locator)),
-            expectsInlineQos(readerLocator.expectsInlineQos), remote_guids(std::move(readerLocator.remote_guids)),
+            expectsInlineQos(readerLocator.expectsInlineQos),
             unsent_changes(std::move(readerLocator.unsent_changes)) {}
 
         ReaderLocator(const ReaderLocator& readerLocator) : locator(readerLocator.locator),
-            expectsInlineQos(readerLocator.expectsInlineQos), remote_guids(readerLocator.remote_guids),
+            expectsInlineQos(readerLocator.expectsInlineQos),
             unsent_changes(readerLocator.unsent_changes) {}
 
         virtual ~ReaderLocator();
@@ -60,8 +60,6 @@ class ReaderLocator
 
         //!Whether the Reader expects inlineQos with its data messages.
         bool expectsInlineQos;
-
-        std::vector<GUID_t> remote_guids;
 
         std::vector<ChangeForReader_t> unsent_changes;
 };

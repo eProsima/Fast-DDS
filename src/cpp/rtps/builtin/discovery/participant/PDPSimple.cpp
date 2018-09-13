@@ -265,10 +265,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 
             if(change != nullptr)
             {
-                CDRMessage_t aux_msg(0);
-                aux_msg.wraps = true;
-                aux_msg.buffer = change->serializedPayload.data;
-                aux_msg.max_size = change->serializedPayload.max_size;
+                CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
                 change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
@@ -309,10 +306,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 
         if(change != nullptr)
         {
-            CDRMessage_t aux_msg(0);
-            aux_msg.wraps = true;
-            aux_msg.buffer = change->serializedPayload.data;
-            aux_msg.max_size = change->serializedPayload.max_size;
+            CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;

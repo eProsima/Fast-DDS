@@ -294,19 +294,17 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
     if(msg->pos+str_size > msg->length){
         return false;
     }
+
+    stri->clear();
     if(str_size>1)
     {
-        *stri = std::string();stri->resize(str_size-1);
-        octet* oc1 = (octet*)malloc(str_size);
-        valid &= CDRMessage::readData(msg,oc1,str_size);
-        for(uint32_t i =0;i<str_size-1;i++)
-            stri->at(i) = oc1[i];
-        free((void*)oc1);
+        stri->resize(str_size-1);
+        for (uint32_t i = 0; i < str_size - 1; i++)
+        {
+            stri->at(i) = msg->buffer[msg->pos + i];
+        }
     }
-    else
-    {
-        msg->pos+=str_size;
-    }
+    msg->pos += str_size;
     int rest = (str_size) % 4;
     rest = rest==0 ? 0 : 4-rest;
     msg->pos+=rest;
@@ -538,7 +536,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 
     addUInt32(msg, numBits);
     uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
-    int32_t* bitmap = new int32_t[n_longs];
+    uint32_t bitmap[8];
 
     for(uint32_t i = 0; i < n_longs; i++)
         bitmap[i] = 0;
@@ -558,7 +556,6 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
     for(uint32_t i= 0;i<n_longs;i++)
         addInt32(msg,bitmap[i]);
 
-    delete[] bitmap;
     return true;
 }
 

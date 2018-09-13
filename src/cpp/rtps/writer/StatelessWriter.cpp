@@ -81,7 +81,8 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
         {
             this->setLivelinessAsserted(true);
 
-            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+                mAllShrinkedLocatorList, mAllRemoteReaders);
 
             if (!group.add_data(*cptr, mAllRemoteReaders, mAllShrinkedLocatorList, false))
             {
@@ -201,39 +202,30 @@ void StatelessWriter::send_any_unsent_changes()
     for (auto& controller : mp_RTPSParticipant->getFlowControllers())
         (*controller)(changesToSend);
 
-    RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages);
-    bool bHasListener = mp_listener != nullptr;
+    RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages,
+        mAllShrinkedLocatorList, mAllRemoteReaders);
 
+    bool bHasListener = mp_listener != nullptr;
     while(!changesToSend.empty())
     {
         RTPSWriterCollector<ReaderLocator*>::Item changeToSend = changesToSend.pop();
-        std::vector<GUID_t> remote_readers = get_builtin_guid();
-        std::set<GUID_t> remote_readers_aux;
-        LocatorList_t locatorList;
-        bool expectsInlineQos = false, addGuid = remote_readers.empty();
+        bool expectsInlineQos = false;
 
         for(auto* readerLocator : changeToSend.remoteReaders)
         {
             // Remove the messages selected for sending from the original list,
             // and update those that were fragmented with the new sent index
             update_unsent_changes(*readerLocator, changeToSend.sequenceNumber, changeToSend.fragmentNumber);
-
-            if(addGuid)
-                remote_readers_aux.insert(readerLocator->remote_guids.begin(), readerLocator->remote_guids.end());
-            locatorList.push_back(readerLocator->locator);
             expectsInlineQos |= readerLocator->expectsInlineQos;
         }
-
-        if(addGuid)
-            remote_readers.assign(remote_readers_aux.begin(), remote_readers_aux.end());
 
         // Notify the controllers
         FlowController::NotifyControllersChangeSent(changeToSend.cacheChange);
 
         if(changeToSend.fragmentNumber != 0)
         {
-            if(!group.add_data_frag(*changeToSend.cacheChange, changeToSend.fragmentNumber, remote_readers,
-                        locatorList, expectsInlineQos))
+            if(!group.add_data_frag(*changeToSend.cacheChange, changeToSend.fragmentNumber, mAllRemoteReaders,
+                        mAllShrinkedLocatorList, expectsInlineQos))
             {
                 logError(RTPS_WRITER, "Error sending fragment (" << changeToSend.sequenceNumber <<
                         ", " << changeToSend.fragmentNumber << ")");
@@ -241,8 +233,8 @@ void StatelessWriter::send_any_unsent_changes()
         }
         else
         {
-            if(!group.add_data(*changeToSend.cacheChange, remote_readers,
-                        locatorList, expectsInlineQos))
+            if(!group.add_data(*changeToSend.cacheChange, mAllRemoteReaders,
+                        mAllShrinkedLocatorList, expectsInlineQos))
             {
                 logError(RTPS_WRITER, "Error sending change " << changeToSend.sequenceNumber);
             }
@@ -373,7 +365,6 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
             reader_locators.push_back(std::move(rl));
         }
 
-        reader_locators.back().remote_guids.clear();
         reader_locators.back().expectsInlineQos = false;
 
         // Find guids
@@ -401,7 +392,6 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
 
             if(found)
             {
-                reader_locators.back().remote_guids.push_back(remoteReader->guid);
                 reader_locators.back().expectsInlineQos |= remoteReader->expectsInlineQos;
 
                 if(remoteReader->guid == optionalGuid)
