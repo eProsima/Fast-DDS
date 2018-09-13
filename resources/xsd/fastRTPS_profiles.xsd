@@ -469,6 +469,8 @@
     <xs:complexType name="participantProfileType">
       <xs:sequence>
         <xs:element name="rtps" type="rtpsParticipantAttributesType"/>
+        <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="profile_name" type="stringType" use="required"/>
     </xs:complexType>
