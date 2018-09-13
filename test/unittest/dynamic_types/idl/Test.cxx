@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Test.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -326,7 +326,7 @@ void BasicStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t BasicStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
 
 
@@ -354,21 +354,21 @@ bool BasicStruct::isKeyDefined()
 void BasicStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
@@ -860,8 +860,8 @@ void ComplexStruct::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_my_octet;
     scdr << m_my_basic_struct;
-    scdr << (const uint32_t)m_my_alias_enum;
-    scdr << (const uint32_t)m_my_enum;
+    scdr << (uint32_t)m_my_alias_enum;
+    scdr << (uint32_t)m_my_enum;
     scdr << m_my_sequence_octet;
     scdr << m_my_sequence_struct;
     scdr << m_my_array_octet;
@@ -919,7 +919,7 @@ void ComplexStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t ComplexStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
 
 
@@ -954,28 +954,28 @@ bool ComplexStruct::isKeyDefined()
 void ComplexStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 MyUnion::MyUnion()
 {
@@ -1236,7 +1236,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         /* ComplexStruct */
@@ -1245,7 +1245,7 @@ size_t MyUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -1280,7 +1280,7 @@ size_t MyUnion::getCdrSerializedSize(const MyUnion& data, size_t current_alignme
 
 void MyUnion::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << (const uint32_t)m__d;
+    scdr << (uint32_t)m__d;
 
     switch(m__d)
     {
@@ -1636,7 +1636,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         /* std::string */
@@ -1646,7 +1646,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         /* int32_t */
@@ -1657,7 +1657,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -1820,7 +1820,7 @@ void CompleteStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t CompleteStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
 
 
@@ -1835,8 +1835,8 @@ bool CompleteStruct::isKeyDefined()
 void CompleteStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
+
+
 }
 KeyedStruct::KeyedStruct()
 {
@@ -1924,11 +1924,11 @@ void KeyedStruct::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t KeyedStruct::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
      /* uint8_t */
     current_align += 1 + eprosima::fastcdr::Cdr::alignment(current_align, 1);
 
-     
+
 
 
     return current_align;
@@ -1942,6 +1942,6 @@ bool KeyedStruct::isKeyDefined()
 void KeyedStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 scdr << m_key;  
-	 
+	 scdr << m_key;
+
 }
