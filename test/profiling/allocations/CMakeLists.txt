@@ -18,7 +18,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
-project(AllocationTestExample)
+project(AllocationTest)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -41,7 +41,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-message(STATUS "Configuring AllocationTest example...")
+message(STATUS "Configuring AllocationTest...")
 file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CPP "*.cpp")
 
@@ -52,7 +52,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.sh
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-add_executable(AllocationTestExample ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
-target_link_libraries(AllocationTestExample fastrtps fastcdr)
-install(TARGETS AllocationTestExample
-    RUNTIME DESTINATION examples/C++/AllocationTestExample/${BIN_INSTALL_DIR})
+add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
+target_link_libraries(AllocationTest fastrtps fastcdr)
+install(TARGETS AllocationTest
+    RUNTIME DESTINATION test/profiling/allocations/${BIN_INSTALL_DIR})
