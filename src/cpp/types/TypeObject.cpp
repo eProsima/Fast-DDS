@@ -14,6 +14,7 @@
 
 #include <fastrtps/types/TypeObject.h>
 #include <fastcdr/exceptions/BadParamException.h>
+#include <fastcdr/Cdr.h>
 
 // The types in this file shall be serialized with XCDR encoding version 2
 namespace eprosima{

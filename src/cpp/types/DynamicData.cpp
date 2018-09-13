@@ -22,6 +22,7 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastcdr/Cdr.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -16,7 +16,6 @@
 #define TYPES_BASE_H
 
 #include <fastrtps/rtps/common/Types.h>
-#include <fastcdr/Cdr.h>
 #include <bitset>
 #include <string>
 #include <map>
@@ -24,6 +23,12 @@
 #include <cctype>
 #include <algorithm>
 #include <memory>
+
+namespace eprosima{
+namespace fastcdr{
+	class Cdr;
+}
+}
 
 namespace eprosima{
 namespace fastrtps{
@@ -235,30 +240,11 @@ public:
 	bool IS_DEFAULT() const { return m_MemberFlag.test(6); }
 	void IS_DEFAULT(bool b) { b ? m_MemberFlag.set(6) : m_MemberFlag.reset(6); }
 
-    void serialize(eprosima::fastcdr::Cdr &cdr) const
-	{
-		//cdr << m_MemberFlag;
-		uint16_t bits = static_cast<uint16_t>(m_MemberFlag.to_ulong());
-		cdr << bits;
-	}
+    void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
-    void deserialize(eprosima::fastcdr::Cdr &cdr)
-	{
-		//cdr >> (uint16_t)m_MemberFlag;
-		uint16_t bits;
-		cdr >> bits;
-		m_MemberFlag = std::bitset<16>(bits);
-	}
+    void deserialize(eprosima::fastcdr::Cdr &cdr);
 
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0)
-	//{
-	//	return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-	//}
-
-    static size_t getCdrSerializedSize(const MemberFlag&, size_t current_alignment = 0)
-	{
-		return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-	}
+    static size_t getCdrSerializedSize(const MemberFlag&, size_t current_alignment = 0);
 };
 
 typedef MemberFlag CollectionElementFlag;   // T1, T2, X
@@ -310,30 +296,11 @@ public:
 	bool IS_AUTOID_HASH() const { return m_TypeFlag.test(4); }
 	void IS_AUTOID_HASH(bool b) { b ? m_TypeFlag.set(4) : m_TypeFlag.reset(4); }
 
-    void serialize(eprosima::fastcdr::Cdr &cdr) const
-	{
-		//cdr << m_TypeFlag;
-		uint16_t bits = static_cast<uint16_t>(m_TypeFlag.to_ulong());
-		cdr << bits;
-	}
+    void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
-    void deserialize(eprosima::fastcdr::Cdr &cdr)
-	{
-		//cdr >> (uint16_t)m_TypeFlag;
-		uint16_t bits;
-		cdr >> bits;
-		m_TypeFlag = std::bitset<16>(bits);
-	}
+    void deserialize(eprosima::fastcdr::Cdr &cdr);
 
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0)
-	//{
-	//	return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-	//}
-
-    static size_t getCdrSerializedSize(const TypeFlag&, size_t current_alignment = 0)
-	{
-		return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-	}
+    static size_t getCdrSerializedSize(const TypeFlag&, size_t current_alignment = 0);
 };
 
 typedef TypeFlag   StructTypeFlag;      // All flags apply

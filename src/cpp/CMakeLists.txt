@@ -109,6 +109,7 @@ set(${PROJECT_NAME}_source_files
     types/TypeObjectHashId.cpp
     types/TypeObjectFactory.cpp
     types/TypeNamesGenerator.cpp
+    types/TypesBase.cpp
 
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp

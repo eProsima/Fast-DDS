@@ -112,7 +112,7 @@ DynamicData* DynamicDataFactory::CreateData(DynamicType_ptr pType)
             }
             return newData;
         }
-        catch (std::exception e)
+        catch (std::exception &e)
         {
             logError(DYN_TYPES, "Exception creating DynamicData: " << e.what());
             return nullptr;

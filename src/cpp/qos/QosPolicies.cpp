@@ -21,6 +21,7 @@
 
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/log/Log.h>
+#include <fastcdr/Cdr.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
