@@ -327,8 +327,8 @@ void BenchMarkSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
                 mParent->mp_publisher->write((void*)mParent->m_DynamicData.get());
             }
         }
-    }*/
-    else
+    }
+    else*/
     {
         switch (mParent->m_iSize)
         {

@@ -15,7 +15,7 @@
 #ifndef UDPV6_TRANSPORT_DESCRIPTOR
 #define UDPV6_TRANSPORT_DESCRIPTOR
 
-#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/transport/SocketTransportDescriptor.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -33,22 +33,22 @@ class TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv6TransportDescriptor: public TransportDescriptorInterface
+typedef struct UDPv6TransportDescriptor: public SocketTransportDescriptor
 {
    virtual ~UDPv6TransportDescriptor(){}
 
    virtual TransportInterface* create_transport() const override {	return nullptr;	}
 
    RTPS_DllAPI UDPv6TransportDescriptor()
-   : TransportDescriptorInterface(65550)
+   : SocketTransportDescriptor(65550)
    {
 
    }
 
    RTPS_DllAPI UDPv6TransportDescriptor(const UDPv6TransportDescriptor& /*t*/)
-   : TransportDescriptorInterface(65550)
+   : SocketTransportDescriptor(65550)
    {
-   	
+
    }
 
    uint16_t m_output_udp_socket;

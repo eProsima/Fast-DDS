@@ -594,7 +594,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
 
                 // Bind the real port too
                 Locator_t realLocator = remoteLocator;
-                realLocator.set_logical_port(pChannelResource->mPendingLogicalPort);
+                IPLocator::setLogicalPort(realLocator, pChannelResource->mPendingLogicalPort);
                 mTransport->BindSocket(realLocator, pChannelResource);
 
                 pChannelResource->mNegotiatingLogicalPort = 0;

@@ -29,6 +29,7 @@
 #include <fastrtps/publisher/Publisher.h>
 
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <gtest/gtest.h>
 
@@ -72,14 +73,14 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId)
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
-    unicast_locator.set_IP4_address("127.0.0.1");
-    unicast_locator.set_port(5100);
+    IPLocator::setIPv4(unicast_locator, "127.0.0.1");
+    unicast_locator.port = 5100;
     pattr.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
 
     Locator_t meta_locator;
     meta_locator.kind = kind;
-    meta_locator.set_IP4_address("127.0.0.1");
-    meta_locator.set_port(5100);
+    IPLocator::setIPv4(meta_locator, "127.0.0.1");
+    meta_locator.port = 5100;
     pattr.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
     pattr.rtps.useBuiltinTransports = false;

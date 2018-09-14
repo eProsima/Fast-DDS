@@ -16,6 +16,7 @@
 #define MOCK_TRANSPORT_H
 
 #include <fastrtps/transport/TransportInterface.h>
+#include <fastrtps/transport/SocketTransportDescriptor.h>
 #include <utility>
 #include <vector>
 
@@ -102,10 +103,10 @@ class MockTransport: public TransportInterface
         static std::vector<MockTransport*> mockTransportInstances;
 };
 
-class MockTransportDescriptor: public TransportDescriptorInterface
+class MockTransportDescriptor: public SocketTransportDescriptor
 {
 public:
-    MockTransportDescriptor() : TransportDescriptorInterface(0x8FFF) {}
+    MockTransportDescriptor() : SocketTransportDescriptor(0x8FFF) {}
     int maximumChannels;
     int supportedKind;
     virtual TransportInterface* create_transport() const override { return new MockTransport(*this); }

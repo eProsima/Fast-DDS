@@ -15,10 +15,10 @@
 #ifndef NETWORK_FACTORY_HPP
 #define NETWORK_FACTORY_HPP
 
-#include "../../transport/TransportInterface.h"
-#include "./ReceiverResource.h"
-#include "./SenderResource.h"
-#include "../messages/MessageReceiver.h"
+#include <fastrtps/transport/TransportInterface.h>
+#include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/network/SenderResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <vector>
 #include <memory>
 
