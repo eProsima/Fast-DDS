@@ -442,7 +442,7 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
-    if(local_reader->getAttributes()->security_attributes().is_discovered_protected)
+    if(local_reader->getAttributes().security_attributes().is_discovered_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
         reader = &sedp_builtin_subscriptions_secure_reader_;
@@ -507,7 +507,7 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
     auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
-    if(local_writer->getAttributes()->security_attributes().is_discovered_protected)
+    if(local_writer->getAttributes().security_attributes().is_discovered_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
         reader = &sedp_builtin_publications_secure_reader_;
@@ -568,7 +568,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
     auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
-    if(W->getAttributes()->security_attributes().is_discovered_protected)
+    if(W->getAttributes().security_attributes().is_discovered_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
         reader = &sedp_builtin_publications_secure_reader_;
@@ -613,7 +613,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
     auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
-    if(R->getAttributes()->security_attributes().is_discovered_protected)
+    if(R->getAttributes().security_attributes().is_discovered_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
         reader = &sedp_builtin_subscriptions_secure_reader_;
@@ -741,7 +741,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     sedp_builtin_publications_secure_reader_.first->getGuid(), pdata.m_guid, watt,
-                    sedp_builtin_publications_secure_reader_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_publications_secure_reader_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_publications_secure_reader_.first->getGuid());
@@ -764,7 +764,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     sedp_builtin_publications_secure_writer_.first->getGuid(), pdata.m_guid, ratt,
-                    sedp_builtin_publications_secure_writer_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_publications_secure_writer_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_publications_secure_writer_.first->getGuid());
@@ -787,7 +787,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     sedp_builtin_subscriptions_secure_reader_.first->getGuid(), pdata.m_guid, watt,
-                    sedp_builtin_subscriptions_secure_reader_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_subscriptions_secure_reader_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_subscriptions_secure_reader_.first->getGuid());
@@ -811,7 +811,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     sedp_builtin_subscriptions_secure_writer_.first->getGuid(), pdata.m_guid, ratt,
-                    sedp_builtin_subscriptions_secure_writer_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_subscriptions_secure_writer_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_subscriptions_secure_writer_.first->getGuid());

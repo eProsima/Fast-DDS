@@ -43,10 +43,13 @@ class PublisherImpl;
  * Class Publisher, used to send data to associated subscribers.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI Publisher {
+class RTPS_DllAPI Publisher
+{
 	friend class PublisherImpl;
 	virtual ~Publisher();
+
 public:
+
 	Publisher(PublisherImpl* pimpl);
 
 	/**
@@ -94,7 +97,7 @@ public:
 	 */
 	bool removeAllChange(size_t* removed = nullptr);
 
-   bool wait_for_all_acked(const rtps::Time_t& max_wait);
+    bool wait_for_all_acked(const rtps::Time_t& max_wait);
 
 	/**
 	 * Get the GUID_t of the associated RTPSWriter.
@@ -106,7 +109,7 @@ public:
 	 * Get the Attributes of the Publisher.
 	 * @return Attributes of the publisher
 	 */
-	PublisherAttributes getAttributes() const;
+    const PublisherAttributes& getAttributes() const;
 
 private:
 	PublisherImpl* mp_impl;

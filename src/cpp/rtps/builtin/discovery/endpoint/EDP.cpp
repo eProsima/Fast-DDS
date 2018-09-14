@@ -64,14 +64,14 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, Read
     rpd.m_expectsInlineQos = reader->expectsInlineQos();
     rpd.guid(reader->getGuid());
     rpd.key() = rpd.guid();
-    rpd.multicastLocatorList(reader->getAttributes()->multicastLocatorList);
-    rpd.unicastLocatorList(reader->getAttributes()->unicastLocatorList);
+    rpd.multicastLocatorList(reader->getAttributes().multicastLocatorList);
+    rpd.unicastLocatorList(reader->getAttributes().unicastLocatorList);
     rpd.RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
     rpd.topicName(att.getTopicName());
     rpd.typeName(att.getTopicDataType());
     rpd.topicKind(att.getTopicKind());
     rpd.m_qos = rqos;
-    rpd.userDefinedId(reader->getAttributes()->getUserDefinedID());
+    rpd.userDefinedId(reader->getAttributes().getUserDefinedID());
     reader->m_acceptMessagesFromUnkownWriters = false;
 
     //ADD IT TO THE LIST OF READERPROXYDATA
@@ -96,16 +96,16 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
     wpd.isAlive(true);
     wpd.guid(writer->getGuid());
     wpd.key() = wpd.guid();
-    wpd.multicastLocatorList(writer->getAttributes()->multicastLocatorList);
-    wpd.unicastLocatorList(writer->getAttributes()->unicastLocatorList);
+    wpd.multicastLocatorList(writer->getAttributes().multicastLocatorList);
+    wpd.unicastLocatorList(writer->getAttributes().unicastLocatorList);
     wpd.RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
     wpd.topicName(att.getTopicName());
     wpd.typeName(att.getTopicDataType());
     wpd.topicKind(att.getTopicKind());
     wpd.typeMaxSerialized(writer->getTypeMaxSerialized());
     wpd.m_qos = wqos;
-    wpd.userDefinedId(writer->getAttributes()->getUserDefinedID());
-    wpd.persistence_guid(writer->getAttributes()->persistence_guid);
+    wpd.userDefinedId(writer->getAttributes().getUserDefinedID());
+    wpd.persistence_guid(writer->getAttributes().persistence_guid);
 
     //ADD IT TO THE LIST OF READERPROXYDATA
     ParticipantProxyData pdata;
@@ -422,7 +422,7 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
             {
 #if HAVE_SECURITY
                 if(!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
-                            **wdatait, R->getAttributes()->security_attributes()))
+                            **wdatait, R->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
                 }
@@ -486,7 +486,7 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
             {
 #if HAVE_SECURITY
                 if(!mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), (*pit)->m_guid,
-                            **rdatait, W->getAttributes()->security_attributes()))
+                            **rdatait, W->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
@@ -552,7 +552,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
             {
 #if HAVE_SECURITY
                 if(!mp_RTPSParticipant->security_manager().discovered_reader(writerGUID, pdata->m_guid,
-                            *rdata, (*wit)->getAttributes()->security_attributes()))
+                            *rdata, (*wit)->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                 }
@@ -620,7 +620,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
                 if(valid)
                 {
                     if(!mp_RTPSParticipant->security_manager().discovered_reader(writerGUID,
-                                remote_participant_guid, rdata, (*wit)->getAttributes()->security_attributes()))
+                                remote_participant_guid, rdata, (*wit)->getAttributes().security_attributes()))
                     {
                         logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                     }
@@ -710,7 +710,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
             {
 #if HAVE_SECURITY
                 if(!mp_RTPSParticipant->security_manager().discovered_writer(readerGUID, pdata->m_guid,
-                            *wdata, (*rit)->getAttributes()->security_attributes()))
+                            *wdata, (*rit)->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                 }
@@ -778,7 +778,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
                 if(valid)
                 {
                     if(!mp_RTPSParticipant->security_manager().discovered_writer(readerGUID,
-                                remote_participant_guid, wdata, (*rit)->getAttributes()->security_attributes()))
+                                remote_participant_guid, wdata, (*rit)->getAttributes().security_attributes()))
                     {
                         logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                     }

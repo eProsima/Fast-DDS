@@ -472,7 +472,7 @@ bool StatefulWriter::matched_reader_add(const RemoteReaderAttributes& rdata)
 
             ChangeForReader_t changeForReader(*cit);
 
-            if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL && this->getAttributes()->durabilityKind >= TRANSIENT_LOCAL)
+            if(rp->m_att.endpoint.durabilityKind >= TRANSIENT_LOCAL && this->getAttributes().durabilityKind >= TRANSIENT_LOCAL)
             {
                 changeForReader.setRelevance(rp->rtps_is_relevant(*cit));
                 if(!rp->rtps_is_relevant(*cit))
