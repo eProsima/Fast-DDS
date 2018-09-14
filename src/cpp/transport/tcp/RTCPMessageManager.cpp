@@ -548,6 +548,9 @@ void RTCPMessageManager::prepareAndSendCheckLogicalPortsRequest(TCPChannelResour
 	}
 }
 
+/**
+ * Search for the base port in the current domain without taking account the participant
+ */
 static uint16_t GetBaseAutoPort(uint16_t currentPort)
 {
     uint16_t aux = currentPort - 7411; // base + offset3

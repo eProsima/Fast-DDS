@@ -46,6 +46,8 @@ bool HelloWorldSubscriber::init()
     IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
     initial_peer_locator.port = 5100;
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
+    //initial_peer_locator.set_logical_port(7411);
+    //PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;

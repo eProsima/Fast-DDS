@@ -1224,7 +1224,9 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
         std::map<Locator_t, std::vector<TCPChannelResource*>>::iterator it = mBoundOutputSockets.find(remoteLocator);
         if (it == mBoundOutputSockets.end())
         {
-            logWarning(RTCP, "SEND [RTPS] Failed: Not bound: " << IPLocator::getLogicalPort(remoteLocator));
+            //logWarning(RTCP, "SEND [RTPS] Failed: Not bound: " << IPLocator::getLogicalPort(remoteLocator));
+            EnqueueLogicalOutputPort(remoteLocator);
+            logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) << " will be bound.");
             return false;
         }
         else

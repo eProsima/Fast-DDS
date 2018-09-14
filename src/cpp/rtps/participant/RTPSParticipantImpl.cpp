@@ -252,10 +252,19 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                     {
                         if (IPLocator::getLogicalPort(locator) == 0)
                         {
-                            IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
-                            std::cout << "IP Logical port calculated: " << locator.get_logical_port() << std::endl;
+                            // TODO(Ricardo) Make configurable.
+                            for(int32_t i = 0; i < 4; ++i)
+                            {
+                                Locator_t auxloc(locator);
+                                IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)));
+                                std::cout << "IP Logical port calculated: " << IPLocator::getLogicalPort(auxloc) << std::endl;
+                                m_att.builtin.initialPeersList.push_back(auxloc);
+                            }
                         }
-                        m_att.builtin.initialPeersList.push_back(locator);
+                        else
+                        {
+                            m_att.builtin.initialPeersList.push_back(locator);
+                        }
                     }
 
 
