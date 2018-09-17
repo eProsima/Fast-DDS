@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -106,10 +107,10 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
             return false;
 
         ReleaseInputChannel(locator);
-        pChannelResource = mInputSockets.at(locator.get_physical_port());
+        pChannelResource = mInputSockets.at(IPLocator::getPhysicalPort(locator));
         pChannelResource->getSocket()->cancel();
         pChannelResource->getSocket()->close();
-        mInputSockets.erase(locator.get_physical_port());
+        mInputSockets.erase(IPLocator::getPhysicalPort(locator));
     }
 
     if (pChannelResource != nullptr)
@@ -150,7 +151,7 @@ bool UDPTransportInterface::CloseOutputChannel(const Locator_t& locator)
 
 bool UDPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-    return left.get_port() == right.get_port();
+    return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
 }
 
 bool UDPTransportInterface::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const
@@ -227,7 +228,7 @@ bool UDPTransportInterface::init()
 bool UDPTransportInterface::IsInputChannelOpen(const Locator_t& locator) const
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    return IsLocatorSupported(locator) && (mInputSockets.find(locator.get_physical_port()) != mInputSockets.end());
+    return IsLocatorSupported(locator) && (mInputSockets.find(IPLocator::getPhysicalPort(locator)) != mInputSockets.end());
 }
 
 bool UDPTransportInterface::IsLocatorSupported(const Locator_t& locator) const
@@ -270,20 +271,20 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Re
 
     try
     {
-        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(locator.get_physical_port(), is_multicast);
+        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(IPLocator::getPhysicalPort(locator), is_multicast);
         UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
         pChannelResource->SetMessageReceiver(receiverResource->CreateMessageReceiver());
         std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
             pChannelResource, locator);
         pChannelResource->SetThread(newThread);
-        mInputSockets.emplace(locator.get_physical_port(), pChannelResource);
+        mInputSockets.emplace(IPLocator::getPhysicalPort(locator), pChannelResource);
     }
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << locator.get_physical_port() << ")"
+        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
             << " with msg: " << e.what());
-        mInputSockets.erase(locator.get_physical_port());
+        mInputSockets.erase(IPLocator::getPhysicalPort(locator));
         return false;
     }
 
@@ -361,7 +362,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, S
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << locator.get_physical_port() << ")" << " with msg: " << e.what());
+        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
         for (auto& socket : mOutputSockets)
         {
             //auto it = mSocketToSenders.find(socket);
@@ -458,7 +459,7 @@ bool UDPTransportInterface::Receive(octet* receiveBuffer, uint32_t receiveBuffer
             return false;
         }
 
-        auto socketIt = mInputSockets.find(static_cast<uint16_t>(inputLocator.get_port()));
+        auto socketIt = mInputSockets.find(IPLocator::getPhysicalPort(inputLocator));
         if (socketIt != mInputSockets.end())
         {
             socket = socketIt->second;
@@ -502,7 +503,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator)
     {
         ip::udp::socket socket(mService);
         socket.open(GenerateProtocol());
-        auto destinationEndpoint = GenerateLocalEndpoint(locator, static_cast<uint16_t>(locator.get_port()));
+        auto destinationEndpoint = GenerateLocalEndpoint(locator, IPLocator::getPhysicalPort(locator));
         socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
     catch (const std::exception& error)
@@ -532,7 +533,7 @@ bool UDPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
         return false;
 
     bool success = false;
-    bool is_multicast_remote_address = remoteLocator.is_Multicast();
+    bool is_multicast_remote_address = IPLocator::isMulticast(remoteLocator);
 
     for (auto& socket : mOutputSockets)
     {
@@ -552,7 +553,7 @@ bool UDPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
 bool UDPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize,
     const Locator_t& remoteLocator, eProsimaUDPSocketRef socket)
 {
-    auto destinationEndpoint = GenerateEndpoint(remoteLocator, remoteLocator.get_physical_port());
+    auto destinationEndpoint = GenerateEndpoint(remoteLocator, IPLocator::getPhysicalPort(remoteLocator));
 
     size_t bytesSent = 0;
 
@@ -591,7 +592,7 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
         {
             assert((*it).kind == mTransportKind);
 
-            if (it->is_Multicast())
+            if (IPLocator::isMulticast(*it))
             {
                 // If the multicast locator is already chosen, not choose any unicast locator.
                 if (multicastResult.contains(*it))
@@ -642,7 +643,7 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
                             // Loopback locator
                             Locator_t loopbackLocator;
                             FillLocalIp(loopbackLocator);
-                            loopbackLocator.set_port(it->get_physical_port());
+                            IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
                             pendingUnicast.push_back(loopbackLocator);
                             break;
                         }

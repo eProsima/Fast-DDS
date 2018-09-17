@@ -18,6 +18,7 @@
  */
 
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #if defined(_WIN32)
 #include <stdio.h>
@@ -256,9 +257,9 @@ bool IPFinder::getIP6Address(LocatorList_t* locators)
 bool IPFinder::parseIP4(info_IP& info)
 {
     info.locator.kind = 1;
-    info.locator.set_port(0);
-    info.locator.set_IP4_address(info.name);
-    if (info.locator.is_IP4_Local())
+    info.locator.port = 0;
+    IPLocator::setIPv4(info.locator, info.name);
+    if (IPLocator::isLocal(info.locator))
     {
         info.type = IP4_LOCAL;
     }
@@ -267,9 +268,9 @@ bool IPFinder::parseIP4(info_IP& info)
 bool IPFinder::parseIP6(info_IP& info)
 {
     info.locator.kind = LOCATOR_KIND_UDPv6;
-    info.locator.set_port(0);
-    info.locator.set_IP6_address(info.name);
-    if (info.locator.is_IP6_Local())
+    info.locator.port = 0;
+    IPLocator::setIPv6(info.locator, info.name);
+    if (IPLocator::isLocal(info.locator))
     {
         info.type = IP6_LOCAL;
     }
@@ -281,4 +282,64 @@ bool IPFinder::parseIP6(info_IP& info)
        cout << "LOCATOR: " << *loc << endl;
        */
     return true;
+}
+
+std::string IPFinder::getIPv4Address(const std::string &name)
+{
+    addrinfo hints;
+    addrinfo *result;
+    char str[INET_ADDRSTRLEN];
+
+    memset(&hints, 0, sizeof(addrinfo));
+    hints.ai_addr = nullptr;
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = 0;
+    hints.ai_flags = AI_PASSIVE;
+    hints.ai_protocol = 0;
+    hints.ai_canonname = nullptr;
+    hints.ai_next = nullptr;
+
+    int s = getaddrinfo(name.c_str(), nullptr, &hints, &result);
+
+    if (s != 0)
+    {
+        return "";
+    }
+
+    if (inet_ntop(AF_INET, result[0].ai_addr, str, INET_ADDRSTRLEN) == nullptr)
+    {
+        return "";
+    }
+
+    return str;
+}
+
+std::string IPFinder::getIPv6Address(const std::string &name)
+{
+    addrinfo hints;
+    addrinfo *result;
+    char str[INET6_ADDRSTRLEN];
+
+    memset(&hints, 0, sizeof(addrinfo));
+    hints.ai_addr = nullptr;
+    hints.ai_family = AF_INET6;
+    hints.ai_socktype = 0;
+    hints.ai_flags = AI_PASSIVE;
+    hints.ai_protocol = 0;
+    hints.ai_canonname = nullptr;
+    hints.ai_next = nullptr;
+
+    int s = getaddrinfo(name.c_str(), nullptr, &hints, &result);
+
+    if (s != 0)
+    {
+        return "";
+    }
+
+    if (inet_ntop(AF_INET6, result[0].ai_addr, str, INET6_ADDRSTRLEN) == nullptr)
+    {
+        return "";
+    }
+
+    return str;
 }

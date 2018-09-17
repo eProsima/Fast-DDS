@@ -15,6 +15,7 @@
 #include <asio.hpp>
 #include <fastrtps/transport/TCPChannelResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/utils/IPLocator.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -37,13 +38,13 @@ TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& loc
     mWriteMutex = new std::recursive_mutex();
     if (outputLocator)
     {
-        mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
-        logInfo(RTCP, "Bound output locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
+        mPendingLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
+        logInfo(RTCP, "Bound output locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
     }
     else
     {
-        mLogicalInputPorts.emplace_back(locator.get_logical_port());
-        logInfo(RTCP, "Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
+        mLogicalInputPorts.emplace_back(IPLocator::getLogicalPort(locator));
+        logInfo(RTCP, "Bound input locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
     }
 }
 
@@ -64,13 +65,13 @@ TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& loc
     mWriteMutex = new std::recursive_mutex();
     if (outputLocator)
     {
-        mPendingLogicalOutputPorts.emplace_back(locator.get_logical_port());
-        logInfo(RTCP, "Bound output locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
+        mPendingLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
+        logInfo(RTCP, "Bound output locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
     }
     else
     {
-        mLogicalInputPorts.emplace_back(locator.get_logical_port());
-        logInfo(RTCP, "Bound input locator (physical: " << locator.get_physical_port() << "; logical: " << locator.get_logical_port() << ")");
+        mLogicalInputPorts.emplace_back(IPLocator::getLogicalPort(locator));
+        logInfo(RTCP, "Bound input locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
     }
 }
 /*
@@ -169,12 +170,12 @@ void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)
     Locator_t temp = mLocator;
     for (uint16_t port : mPendingLogicalOutputPorts)
     {
-        temp.set_logical_port(port);
+        IPLocator::setLogicalPort(temp, port);
         outVector.emplace_back(temp);
     }
     for (uint16_t port : mLogicalOutputPorts)
     {
-        temp.set_logical_port(port);
+        IPLocator::setLogicalPort(temp, port);
         outVector.emplace_back(temp);
     }
 }

@@ -31,12 +31,15 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <string>
 #include <list>
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+
+using eprosima::fastrtps::rtps::IPLocator;
 
 template<class TypeSupport>
 class PubSubReader
@@ -443,7 +446,7 @@ class PubSubReader
             participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
             eprosima::fastrtps::rtps::Locator_t loopback_locator;
-            loopback_locator.set_IP4_address(127, 0, 0, 1);
+            IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1);
             participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
             return *this;
         }

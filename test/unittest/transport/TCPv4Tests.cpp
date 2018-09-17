@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 #include <thread>
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/log/Log.h>
 #include <memory>
 #include <asio.hpp>
@@ -99,7 +100,7 @@ TEST_F(TCPv4Tests, opening_and_closing_output_channel)
 
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
-    genericOutputChannelLocator.set_port(g_output_port); // arbitrary
+    genericOutputChannelLocator.port = g_output_port; // arbitrary
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -118,8 +119,8 @@ TEST_F(TCPv4Tests, opening_and_closing_input_channel)
 
     Locator_t genericInputChannelLocator;
     genericInputChannelLocator.kind = LOCATOR_KIND_TCPv4;
-    genericInputChannelLocator.set_port(g_input_port); // listen port
-    genericInputChannelLocator.set_IP4_address(127, 0, 0, 1);
+    genericInputChannelLocator.port = g_input_port; // listen port
+    IPLocator::setIPv4(genericInputChannelLocator, 127, 0, 0, 1);
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(genericInputChannelLocator));
@@ -153,15 +154,15 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 
     Locator_t inputLocator;
     inputLocator.kind = LOCATOR_KIND_TCPv4;
-    inputLocator.set_port(5100);
-    inputLocator.set_IP4_address(127, 0, 0, 1);
-    inputLocator.set_logical_port(7410);
+    inputLocator.port = 5100;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
 
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
-    outputLocator.set_IP4_address(127, 0, 0, 1);
-    outputLocator.set_port(5100);
-    outputLocator.set_logical_port(7410);
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = 5100;
+    IPLocator::setLogicalPort(outputLocator, 7410);
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
@@ -209,12 +210,12 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
-    genericOutputChannelLocator.set_port(g_output_port);
+    genericOutputChannelLocator.port = g_output_port;
     transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr);
 
     Locator_t destinationLocator;
     destinationLocator.kind = LOCATOR_KIND_TCPv4;
-    destinationLocator.set_port(g_output_port + 1);
+    destinationLocator.port = g_output_port + 1;
 
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
@@ -229,15 +230,15 @@ TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
 
     Locator_t remoteLocator;
     remoteLocator.kind = LOCATOR_KIND_TCPv4;
-    remoteLocator.set_port(g_default_port);
-    remoteLocator.set_IP4_address(222,222,222,222);
+    remoteLocator.port = g_default_port;
+    IPLocator::setIPv4(remoteLocator, 222,222,222,222);
 
     // When
     Locator_t mainLocalLocator = transportUnderTest.RemoteToMainLocal(remoteLocator);
 
-    ASSERT_EQ(mainLocalLocator.get_port(), remoteLocator.get_port());
+    ASSERT_EQ(mainLocalLocator.port, remoteLocator.port);
     ASSERT_EQ(mainLocalLocator.kind, remoteLocator.kind);
-    ASSERT_EQ(mainLocalLocator.to_IP4_string(), "0.0.0.0");
+    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), "0.0.0.0");
 }
 
 TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
@@ -247,14 +248,14 @@ TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
     transportUnderTest.init();
 
     Locator_t locatorAlpha;
-    locatorAlpha.set_port(g_default_port);
-    locatorAlpha.set_IP4_address(239, 255, 0, 1);
+    locatorAlpha.port = g_default_port;
+    IPLocator::setIPv4(locatorAlpha, 239, 255, 0, 1);
     Locator_t locatorBeta = locatorAlpha;
 
     // Then
     ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 
-    locatorBeta.set_IP4_address(100, 100, 100, 100);
+    IPLocator::setIPv4(locatorBeta, 100, 100, 100, 100);
     // Then
     ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
@@ -265,13 +266,13 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     transportUnderTest.init();
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.set_port(g_output_port);
+    outputChannelLocator.port = g_output_port;
     outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
-    outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
+    IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
-    outputChannelLocator.set_IP4_address(111,111,111,111);
+    IPLocator::setIPv4(outputChannelLocator, 111,111,111,111);
     std::vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
 }
@@ -284,20 +285,20 @@ TEST_F(TCPv4Tests, shrink_locator_lists)
     LocatorList_t result, list1, list2, list3;
     Locator_t locator, locResult1, locResult2, locResult3;
     locator.kind = LOCATOR_KIND_TCPv4;
-    locator.set_port(g_default_port);
+    locator.port = g_default_port;
     locResult1.kind = LOCATOR_KIND_TCPv4;
-    locResult1.set_port(g_default_port);
+    locResult1.port = g_default_port;
     locResult2.kind = LOCATOR_KIND_TCPv4;
-    locResult2.set_port(g_default_port);
+    locResult2.port = g_default_port;
     locResult3.kind = LOCATOR_KIND_TCPv4;
-    locResult3.set_port(g_default_port);
+    locResult3.port = g_default_port;
 
     // Check shrink of only one locator list unicast.
-    locator.set_IP4_address(192,168,1,4);
-    locResult1.set_IP4_address(192,168,1,4);
+    IPLocator::setIPv4(locator, 192,168,1,4);
+    IPLocator::setIPv4(locResult1, 192,168,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(192,168,2,5);
-    locResult2.set_IP4_address(192,168,2,5);
+    IPLocator::setIPv4(locator, 192,168,2,5);
+    IPLocator::setIPv4(locResult2, 192,168,2,5);
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});

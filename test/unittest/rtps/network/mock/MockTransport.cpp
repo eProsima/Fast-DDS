@@ -57,12 +57,12 @@ bool MockTransport::init()
 
 bool MockTransport::IsOutputChannelOpen(const Locator_t& locator) const
 {
-    return (find(mockOpenOutputChannels.begin(), mockOpenOutputChannels.end(), locator.get_port()) != mockOpenOutputChannels.end());
+    return (find(mockOpenOutputChannels.begin(), mockOpenOutputChannels.end(), locator.port) != mockOpenOutputChannels.end());
 }
 
 bool MockTransport::IsInputChannelOpen(const Locator_t& locator) const
 {
-    return (find(mockOpenInputChannels.begin(), mockOpenInputChannels.end(), locator.get_port()) != mockOpenInputChannels.end());
+    return (find(mockOpenInputChannels.begin(), mockOpenInputChannels.end(), locator.port) != mockOpenInputChannels.end());
 }
 
 bool MockTransport::IsLocatorSupported(const Locator_t& locator) const
@@ -72,19 +72,19 @@ bool MockTransport::IsLocatorSupported(const Locator_t& locator) const
 
 bool MockTransport::OpenOutputChannel(const Locator_t& locator, SenderResource*, uint32_t)
 {
-    mockOpenOutputChannels.push_back(locator.get_port());
+    mockOpenOutputChannels.push_back(locator.port);
     return true;
 }
 
 bool MockTransport::OpenInputChannel(const Locator_t& locator, ReceiverResource*, uint32_t)
 {
-    mockOpenInputChannels.push_back(locator.get_port());
+    mockOpenInputChannels.push_back(locator.port);
     return true;
 }
 
 bool MockTransport::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-    return left.get_port() == right.get_port();
+    return left.port == right.port;
 }
 
 bool MockTransport::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const
@@ -125,7 +125,7 @@ bool MockTransport::CloseOutputChannel(const Locator_t& locator)
 {
    mockOpenOutputChannels.erase(std::remove(mockOpenOutputChannels.begin(),
                                       mockOpenOutputChannels.end(),
-                                      locator.get_port()),
+                                      locator.port),
                                 mockOpenOutputChannels.end());
    return true;
 }
@@ -134,7 +134,7 @@ bool MockTransport::CloseInputChannel(const Locator_t& locator)
 {
    mockOpenInputChannels.erase(std::remove(mockOpenInputChannels.begin(),
                                       mockOpenInputChannels.end(),
-                                      locator.get_port()),
+                                      locator.port),
                                 mockOpenInputChannels.end());
    return true;
 }

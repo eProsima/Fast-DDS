@@ -59,7 +59,7 @@ void MessageReceiver::init(uint32_t rec_buffer_size)
 
     defUniLoc.kind = LOCATOR_KIND_UDPv4;
     defUniLoc.set_Invalid_Address();
-    defUniLoc.set_port(LOCATOR_PORT_INVALID);
+    defUniLoc.port = LOCATOR_PORT_INVALID;
     mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 }
 

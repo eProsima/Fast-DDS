@@ -183,10 +183,10 @@ bool NetworkFactory::generate_locators(uint16_t physical_port, int locator_kind,
     {
         IPFinder::getIP6Address(&ret_locators);
     }
-    for (Locator_t loc : ret_locators)
+    for (Locator_t &loc : ret_locators)
     {
         loc.kind = locator_kind;
-        loc.set_port(physical_port);
+        loc.port = physical_port;
     }
     return !ret_locators.empty();
 }

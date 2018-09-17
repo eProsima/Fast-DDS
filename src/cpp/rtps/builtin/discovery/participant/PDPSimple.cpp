@@ -48,6 +48,7 @@
 
 
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -521,7 +522,7 @@ bool PDPSimple::createSPDPEndpoints()
             RemoteReaderAttributes rratt;
             for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)
             {
-                if (it->is_Multicast())
+                if (IPLocator::isMulticast(*it))
                 {
                     rratt.endpoint.multicastLocatorList.push_back(*it);
                 }

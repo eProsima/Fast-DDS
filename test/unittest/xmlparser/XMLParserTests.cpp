@@ -15,6 +15,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <gtest/gtest.h>
 
@@ -372,14 +373,14 @@ TEST_F(XMLParserTests, Data)
     Locator_t locator;
     LocatorListIterator loc_list_it;
     PortParameters& port = rtps_atts.port;
-    locator.set_IP4_address(192, 168, 1, 2);
-    locator.set_port(2019);
+    IPLocator::setIPv4(locator, 192, 168, 1, 2);
+    locator.port = 2019;
     EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
-    locator.set_IP4_address(239, 255, 0, 1);
-    locator.set_port(2021);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2021;
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
-    locator.set_IP4_address(192, 168, 1, 1);
-    locator.set_port(1979);
+    IPLocator::setIPv4(locator, 192, 168, 1, 1);
+    locator.port = 1979;
     //EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
     //EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
@@ -394,22 +395,22 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
-    locator.set_IP4_address(192, 168, 1, 5);
-    locator.set_port(9999);
+    IPLocator::setIPv4(locator, 192, 168, 1, 5);
+    locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
-    locator.set_IP4_address(192, 168, 1, 6);
-    locator.set_port(6666);
+    IPLocator::setIPv4(locator, 192, 168, 1, 6);
+    locator.port = 6666;
     ++loc_list_it;
     EXPECT_EQ(*loc_list_it, locator);
-    locator.set_IP4_address(239, 255, 0, 2);
-    locator.set_port(32);
+    IPLocator::setIPv4(locator, 239, 255, 0, 2);
+    locator.port = 32;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
-    locator.set_IP4_address(239, 255, 0, 3);
-    locator.set_port(2112);
+    IPLocator::setIPv4(locator, 239, 255, 0, 3);
+    locator.port = 2112;
     ++loc_list_it;
     EXPECT_EQ(*loc_list_it, locator);
-    locator.set_IP4_address(239, 255, 0, 1);
-    locator.set_port(21120);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 21120;
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
@@ -458,14 +459,14 @@ TEST_F(XMLParserTests, DataBuffer)
     Locator_t locator;
     LocatorListIterator loc_list_it;
     PortParameters& port = rtps_atts.port;
-    locator.set_IP4_address(192, 168, 1, 2);
-    locator.set_port(2019);
+    IPLocator::setIPv4(locator, 192, 168, 1, 2);
+    locator.port = 2019;
     EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
-    locator.set_IP4_address(239, 255, 0, 1);
-    locator.set_port(2021);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2021;
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
-    locator.set_IP4_address(192, 168, 1, 1);
-    locator.set_port(1979);
+    IPLocator::setIPv4(locator, 192, 168, 1, 1);
+    locator.port = 1979;
     //EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
     //EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
@@ -480,22 +481,22 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
-    locator.set_IP4_address(192, 168, 1, 5);
-    locator.set_port(9999);
+    IPLocator::setIPv4(locator, 192, 168, 1, 5);
+    locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
-    locator.set_IP4_address(192, 168, 1, 6);
-    locator.set_port(6666);
+    IPLocator::setIPv4(locator, 192, 168, 1, 6);
+    locator.port = 6666;
     ++loc_list_it;
     EXPECT_EQ(*loc_list_it, locator);
-    locator.set_IP4_address(239, 255, 0, 2);
-    locator.set_port(32);
+    IPLocator::setIPv4(locator, 239, 255, 0, 2);
+    locator.port = 32;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
-    locator.set_IP4_address(239, 255, 0, 3);
-    locator.set_port(2112);
+    IPLocator::setIPv4(locator, 239, 255, 0, 3);
+    locator.port = 2112;
     ++loc_list_it;
     EXPECT_EQ(*loc_list_it, locator);
-    locator.set_IP4_address(239, 255, 0, 1);
-    locator.set_port(21120);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 21120;
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);

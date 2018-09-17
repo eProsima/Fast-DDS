@@ -47,6 +47,7 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/utils/Semaphore.h>
@@ -76,16 +77,18 @@ Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
     {
         case LOCATOR_KIND_UDPv4:
             //This is a completely made up rule
-            loc.get_port_by_ref() += m_att.port.participantIDGain;
+            loc.port += m_att.port.participantIDGain;
             break;
         case LOCATOR_KIND_UDPv6:
             //TODO - Define the rest of rules
-            loc.get_port_by_ref() += m_att.port.participantIDGain;
+            loc.port += m_att.port.participantIDGain;
             break;
         case LOCATOR_KIND_TCPv4:
         case LOCATOR_KIND_TCPv6:
             //TODO: Check Physical <-> Logical Port
-            loc.set_logical_port(loc.get_logical_port() + m_att.port.participantIDGain);
+            loc.port += m_att.port.participantIDGain;
+            //uint16_t oldPort = IPLocator::getLogicalPort(loc);
+            //IPLocator::setLogicalPort(loc, oldPort + m_att.port.participantIDGain);
             break;
     }
     return loc;
@@ -145,12 +148,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         //UDPv4
         Locator_t mandatoryMulticastLocator;
         mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
-        mandatoryMulticastLocator.set_port(static_cast<uint16_t>(metatraffic_multicast_port));
-        mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
+        mandatoryMulticastLocator.port = static_cast<uint16_t>(metatraffic_multicast_port);
+        IPLocator::setIPv4(mandatoryMulticastLocator, 239, 255, 0, 1);
         m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
 
         Locator_t default_metatraffic_unicast_locator;
-        default_metatraffic_unicast_locator.set_port(static_cast<uint16_t>(metatraffic_unicast_port));
+        default_metatraffic_unicast_locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
         m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
@@ -159,9 +162,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
         {
-            if (locator.get_port() == 0)
+            if (locator.port == 0)
             {
-                locator.set_port(static_cast<uint16_t>(metatraffic_multicast_port));
+                locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
             }
         });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
@@ -169,9 +172,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
             m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
         {
-            if (locator.get_port() == 0)
+            if (locator.port == 0)
             {
-                locator.set_port(static_cast<uint16_t>(metatraffic_unicast_port));
+                locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
             }
         });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
@@ -192,13 +195,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
         std::for_each(initial_peers.begin(), initial_peers.end(),
             [&](Locator_t& locator) {
-                if(locator.get_port() == 0)
+                if(locator.port == 0)
                 {
                     // TODO(Ricardo) Make configurable.
                     for(int32_t i = 0; i < 4; ++i)
                     {
                         Locator_t auxloc(locator);
-                        auxloc.set_port(static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)), true);
+                        auxloc.port = static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i));
 
                         m_att.builtin.initialPeersList.push_back(auxloc);
                     }
@@ -229,10 +232,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         IPFinder::getIP4Address(&loclist);
         for (auto it = loclist.begin(); it != loclist.end(); ++it)
         {
-            (*it).set_port(static_cast<uint16_t>(m_att.port.portBase +
+            (*it).port = static_cast<uint16_t>(m_att.port.portBase +
                 m_att.port.domainIDGain*PParam.builtin.domainId +
                 m_att.port.offsetd3 +
-                m_att.port.participantIDGain*m_att.participantID));
+                m_att.port.participantIDGain*m_att.participantID);
             (*it).kind = LOCATOR_KIND_UDPv4;
 
             m_att.defaultUnicastLocatorList.push_back((*it));
@@ -244,16 +247,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
             [&](Locator_t& loc)
         {
-            if (loc.get_port() == 0 && loc.get_logical_port() == 0)
+            if (IPLocator::getPortRTPS(loc) == 0)
             {
-                loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+                IPLocator::setPortRTPS(loc, static_cast<uint16_t>(m_att.port.portBase +
                     m_att.port.domainIDGain*PParam.builtin.domainId +
                     m_att.port.offsetd3 +
-                    m_att.port.participantIDGain*m_att.participantID), true);
+                    m_att.port.participantIDGain*m_att.participantID));
             }
-            if (loc.get_physical_port() == 0)
+            if (IPLocator::getPhysicalPort(loc) == 0)
             {
-                loc.set_port(static_cast<uint16_t>(m_att.port.portBase +
+                IPLocator::setPhysicalPort(loc,
+                    static_cast<uint16_t>(m_att.port.portBase +
                     m_att.port.domainIDGain*PParam.builtin.domainId +
                     m_att.port.offsetd3 +
                     m_att.port.participantIDGain*m_att.participantID));

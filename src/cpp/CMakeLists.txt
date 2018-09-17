@@ -23,6 +23,7 @@ set(${PROJECT_NAME}_source_files
     utils/IPFinder.cpp
     utils/md5.cpp
     utils/StringMatching.cpp
+    utils/IPLocator.cpp
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
     rtps/resources/TimedEventImpl.cpp

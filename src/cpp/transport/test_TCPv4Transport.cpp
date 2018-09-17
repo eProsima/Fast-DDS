@@ -105,7 +105,7 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
                     (*it)->getSocket()->cancel();
                     (*it)->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
                 }
-                catch (std::exception)
+                catch (std::exception&)
                 {
                     // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
                 }
@@ -151,7 +151,7 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
                     (*it)->getSocket()->cancel();
                     (*it)->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
                 }
-                catch (std::exception)
+                catch (std::exception&)
                 {
                     // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
                 }

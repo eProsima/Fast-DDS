@@ -16,8 +16,11 @@
 #include "types/StringType.h"
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
+#include <fastrtps/utils/IPLocator.h>
 
 #include <thread>
+
+using eprosima::fastrtps::rtps::IPLocator;
 
 /****** Auxiliary print functions  ******/
 template<class Type>
@@ -383,8 +386,8 @@ protected:
         eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
         if (loc.size()>0)
         {
-            guid_prefix_.value[10] = loc.begin()->get_Address()[14];
-            guid_prefix_.value[11] = loc.begin()->get_Address()[15];
+            guid_prefix_.value[10] = loc.begin()->address[14];
+            guid_prefix_.value[11] = loc.begin()->address[15];
         }
         else
         {
@@ -1718,7 +1721,7 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
     Locator_t LocatorBuffer;
 
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.set_port(31337);
+    LocatorBuffer.port = 31337;
 
     WriterOutLocators.push_back(LocatorBuffer);
 
@@ -1731,7 +1734,7 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
     ASSERT_TRUE(reader.isInitialized());
 
     std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
-    descriptor->m_output_udp_socket = static_cast<uint16_t>(LocatorBuffer.get_port());
+    descriptor->m_output_udp_socket = static_cast<uint16_t>(LocatorBuffer.port);
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
         durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
@@ -1867,13 +1870,13 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     Locator_t LocatorBuffer;
 
     LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.set_port(static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER));
-    LocatorBuffer.set_IP4_address(127,0,0,1);
+    LocatorBuffer.port = static_cast<uint16_t>(W_UNICAST_PORT_RANDOM_NUMBER);
+    IPLocator::setIPv4(LocatorBuffer, 127, 0, 0, 1);
     WriterUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t WriterMulticastLocators;
 
-    LocatorBuffer.set_port(static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER));
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
@@ -1889,12 +1892,12 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
 
     LocatorList_t ReaderUnicastLocators;
 
-    LocatorBuffer.set_port(static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER));
+    LocatorBuffer.port = static_cast<uint16_t>(R_UNICAST_PORT_RANDOM_NUMBER);
     ReaderUnicastLocators.push_back(LocatorBuffer);
 
     LocatorList_t ReaderMulticastLocators;
 
-    LocatorBuffer.set_port(static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER));
+    LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
 
@@ -2150,11 +2153,11 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
 
     Locator_t loc_initial_peer, loc_default_unicast;
     LocatorList_t reader_initial_peers;
-    loc_initial_peer.set_IP4_address(127, 0, 0, 1);
-    loc_initial_peer.set_port(static_cast<uint16_t>(port));
+    IPLocator::setIPv4(loc_initial_peer, 127, 0, 0, 1);
+    loc_initial_peer.port = static_cast<uint16_t>(port);
     reader_initial_peers.push_back(loc_initial_peer);
     LocatorList_t reader_default_unicast_locator;
-    loc_default_unicast.set_port(static_cast<uint16_t>(port + 1));
+    loc_default_unicast.port = static_cast<uint16_t>(port + 1);
     reader_default_unicast_locator.push_back(loc_default_unicast);
 
     reader.metatraffic_unicast_locator_list(reader_default_unicast_locator).
@@ -2164,10 +2167,10 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
     ASSERT_TRUE(reader.isInitialized());
 
     LocatorList_t writer_initial_peers;
-    loc_initial_peer.set_port(static_cast<uint16_t>(port + 1));
+    loc_initial_peer.port = static_cast<uint16_t>(port + 1);
     writer_initial_peers.push_back(loc_initial_peer);
     LocatorList_t writer_default_unicast_locator;
-    loc_default_unicast.set_port(static_cast<uint16_t>(port));
+    loc_default_unicast.port = static_cast<uint16_t>(port);
     writer_default_unicast_locator.push_back(loc_default_unicast);
 
     writer.metatraffic_unicast_locator_list(writer_default_unicast_locator).

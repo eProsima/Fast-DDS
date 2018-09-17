@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <gtest/gtest.h>
@@ -74,19 +75,19 @@ TEST_F(UDPv6Tests, conversion_to_ip6_string)
 {
     Locator_t locator;
     locator.kind = LOCATOR_KIND_UDPv6;
-    ASSERT_EQ("0:0:0:0:0:0:0:0", locator.to_IP6_string());
+    ASSERT_EQ("0:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
 
-    locator.get_Address()[0] = 0xff;
-    ASSERT_EQ("ff00:0:0:0:0:0:0:0", locator.to_IP6_string());
+    locator.address[0] = 0xff;
+    ASSERT_EQ("ff00:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
 
-    locator.get_Address()[1] = 0xaa;
-    ASSERT_EQ("ffaa:0:0:0:0:0:0:0", locator.to_IP6_string());
+    locator.address[1] = 0xaa;
+    ASSERT_EQ("ffaa:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
 
-    locator.get_Address()[2] = 0x0a;
-    ASSERT_EQ("ffaa:a00:0:0:0:0:0:0", locator.to_IP6_string());
+    locator.address[2] = 0x0a;
+    ASSERT_EQ("ffaa:a00:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
 
-    locator.get_Address()[5] = 0x0c;
-    ASSERT_EQ("ffaa:a00:c:0:0:0:0:0", locator.to_IP6_string());
+    locator.address[5] = 0x0c;
+    ASSERT_EQ("ffaa:a00:c:0:0:0:0:0", IPLocator::toIPv6string(locator));
 }
 
 TEST_F(UDPv6Tests, setting_ip6_values_on_locators)
@@ -94,8 +95,8 @@ TEST_F(UDPv6Tests, setting_ip6_values_on_locators)
     Locator_t locator;
     locator.kind = LOCATOR_KIND_UDPv6;
 
-    locator.set_IP6_address(0xffff,0xa, 0xaba, 0, 0, 0, 0, 0);
-    ASSERT_EQ("ffff:a:aba:0:0:0:0:0", locator.to_IP6_string());
+    IPLocator::setIPv6(locator, 0xffff, 0xa, 0xaba, 0, 0, 0, 0, 0);
+    ASSERT_EQ("ffff:a:aba:0:0:0:0:0", IPLocator::toIPv6string(locator));
 }
 
 TEST_F(UDPv6Tests, locators_with_kind_2_supported)
@@ -122,7 +123,7 @@ TEST_F(UDPv6Tests, opening_and_closing_output_channel)
 
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    genericOutputChannelLocator.set_port(g_default_port); // arbitrary
+    genericOutputChannelLocator.port = g_default_port; // arbitrary
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -142,8 +143,8 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
 
     Locator_t multicastFilterLocator;
     multicastFilterLocator.kind = LOCATOR_KIND_UDPv6;
-    multicastFilterLocator.set_port(g_default_port); // arbitrary
-    multicastFilterLocator.set_IP6_address(0xff31, 0, 0, 0, 0, 0, 0x8000, 0x1234);
+    multicastFilterLocator.port = g_default_port; // arbitrary
+    IPLocator::setIPv6(multicastFilterLocator, 0xff31, 0, 0, 0, 0, 0, 0x8000, 0x1234);
 
     NetworkFactory factory;
     factory.RegisterTransport<UDPv6Transport, UDPv6TransportDescriptor>(descriptor);
@@ -166,14 +167,14 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     transportUnderTest.init();
 
     Locator_t multicastLocator;
-    multicastLocator.set_port(g_default_port);
+    multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
-    multicastLocator.set_IP6_address(0,0,0,0,0,0,0,1);
+    IPLocator::setIPv6(multicastLocator, 0,0,0,0,0,0,0,1);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.set_port(g_default_port + 1);
+    outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    outputChannelLocator.set_IP6_address(0,0,0,0,0,0,0,1);
+    IPLocator::setIPv6(outputChannelLocator, 0,0,0,0,0,0,0,1);
 
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
@@ -209,14 +210,14 @@ TEST_F(UDPv6Tests, send_to_loopback)
     transportUnderTest.init();
 
     Locator_t multicastLocator;
-    multicastLocator.set_port(g_default_port);
+    multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
-    multicastLocator.set_IP6_address(0,0,0,0,0,0,0,1);
+    IPLocator::setIPv6(multicastLocator,0,0,0,0,0,0,0,1);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.set_port(g_default_port + 1);
+    outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    outputChannelLocator.set_IP6_address(0,0,0,0,0,0,0,1); // Loopback
+    IPLocator::setIPv6(outputChannelLocator,0,0,0,0,0,0,0,1); // Loopback
 
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());

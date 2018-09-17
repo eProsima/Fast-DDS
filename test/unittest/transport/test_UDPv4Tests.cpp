@@ -19,6 +19,7 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <memory>
 #include <string>
@@ -28,6 +29,8 @@
 #else
 #define GET_PID getpid
 #endif
+
+using eprosima::fastrtps::rtps::IPLocator;
 
 static uint16_t g_default_port = 0;
 
@@ -80,7 +83,7 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    HELPER_FillDataMessage(testDataMessage, SequenceNumber_t());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.set_port(g_default_port);
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -100,7 +103,7 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.set_port(g_default_port);
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -119,7 +122,7 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    HELPER_FillHeartbeatMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.set_port(g_default_port);
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -138,7 +141,7 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.set_port(g_default_port);
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -162,7 +165,7 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
    HELPER_FillDataMessage(testDataMessage, sequenceNumbersToDrop.back());
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.set_port(g_default_port);
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
 
    // Then
@@ -184,9 +187,9 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    HELPER_FillAckNackMessage(testDataMessage);
    HELPER_WarmUpOutput(transportUnderTest);
    Locator_t locator;
-   locator.set_port(g_default_port);
+   locator.port = g_default_port;
    locator.kind = LOCATOR_KIND_UDPv4;
-   locator.set_IP4_address(239, 255, 1, 4);
+   IPLocator::setIPv4(locator, 239, 255, 1, 4);
 
    // Then
    ASSERT_TRUE(transportUnderTest.Send(testDataMessage.buffer, testDataMessage.length, locator, locator));
@@ -210,7 +213,7 @@ void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
 void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
 {
    Locator_t outputChannelLocator;
-   outputChannelLocator.set_port(g_default_port);
+   outputChannelLocator.port = g_default_port;
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
    ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator, nullptr));
 }

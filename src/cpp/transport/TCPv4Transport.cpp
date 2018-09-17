@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 
 using namespace std;
@@ -45,15 +46,19 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
 
 static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
 {
-    if (locator.has_IP4_WAN_address())
+    if (IPLocator::hasWan(locator))
     {
-        return{ {locator.get_IP4_WAN_address()[0],
-            locator.get_IP4_WAN_address()[1], locator.get_IP4_WAN_address()[2], locator.get_IP4_WAN_address()[3]} };
+        return{ { IPLocator::getWan(locator)[0],
+            IPLocator::getWan(locator)[1],
+            IPLocator::getWan(locator)[2],
+            IPLocator::getWan(locator)[3]} };
     }
     else
     {
-        return{ {locator.get_IP4_address()[0],
-            locator.get_IP4_address()[1], locator.get_IP4_address()[2], locator.get_IP4_address()[3]} };
+        return{ { IPLocator::getIPv4(locator)[0],
+            IPLocator::getIPv4(locator)[1],
+            IPLocator::getIPv4(locator)[2],
+            IPLocator::getIPv4(locator)[3]} };
     }
 }
 
@@ -101,7 +106,9 @@ void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
     {
         for (auto it = mConfiguration_.listening_ports.begin(); it != mConfiguration_.listening_ports.end(); ++it)
         {
-            defaultList.push_back(Locator_t(LOCATOR_KIND_TCPv4, "127.0.0.1", *it));
+            Locator_t *temp = IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", *it);
+            defaultList.push_back(*temp);
+            delete temp;
         }
     }
     else if (mSocketConnectors.size() > 0)
@@ -114,7 +121,9 @@ void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
     }
     else
     {
-        defaultList.push_back(Locator_t(LOCATOR_KIND_TCPv4, "127.0.0.1", 0));
+        Locator_t *temp = IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", 0);
+        defaultList.push_back(*temp);
+        delete temp;
     }
 }
 
@@ -158,14 +167,14 @@ LocatorList_t TCPv4Transport::NormalizeLocator(const Locator_t& locator)
 {
     LocatorList_t list;
 
-    if (locator.is_Any())
+    if (IPLocator::isAny(locator))
     {
         std::vector<IPFinder::info_IP> locNames;
         GetIP4s(locNames);
         for (const auto& infoIP : locNames)
         {
             Locator_t newloc(locator);
-            newloc.set_IP4_address(infoIP.locator);
+            IPLocator::setIPv4(newloc, infoIP.locator);
             list.push_back(newloc);
         }
     }
@@ -179,14 +188,14 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_TCPv4);
 
-    if (locator.is_IP4_Local())
+    if (IPLocator::isLocal(locator))
     {
         return true;
     }
 
     for (auto localInterface : mCurrentInterfaces)
     {
-        if (locator.compare_IP4_address(localInterface.locator))
+        if (IPLocator::compareAddress(locator, localInterface.locator))
         {
             return true;
         }
@@ -197,23 +206,23 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
 
 bool TCPv4Transport::CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const
 {
-    return lh.compare_IP4_address(rh);
+    return IPLocator::compareAddress(lh, rh);
 }
 
 bool TCPv4Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const
 {
-    return lh.compare_IP4_address_and_port(rh);
+    return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
 void TCPv4Transport::FillLocalIp(Locator_t& loc)
 {
-    loc.set_IP4_address("127.0.0.1");
+    IPLocator::setIPv4(loc, "127.0.0.1");
 }
 
 ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port)
 {
     asio::ip::address_v4::bytes_type remoteAddress;
-    loc.copy_IP4_address(remoteAddress.data());
+    IPLocator::copyIPv4(loc, remoteAddress.data());
     return ip::tcp::endpoint(asio::ip::address_v4(remoteAddress), port);
 }
 
@@ -234,7 +243,7 @@ asio::ip::tcp TCPv4Transport::GenerateProtocol() const
 
 bool TCPv4Transport::IsInterfaceAllowed(const Locator_t& loc)
 {
-    asio::ip::address_v4 ip = asio::ip::make_address_v4(loc.to_IP4_string());
+    asio::ip::address_v4 ip = asio::ip::make_address_v4(IPLocator::toIPv4string(loc));
     return IsInterfaceAllowed(ip);
 }
 

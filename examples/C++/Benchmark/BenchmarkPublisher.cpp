@@ -30,6 +30,7 @@
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -97,16 +98,16 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind reliabilit
 
         Locator_t unicast_locator;
         unicast_locator.kind = kind;
-        unicast_locator.set_IP4_address("127.0.0.1");
-        unicast_locator.set_port(5100);
-        unicast_locator.set_logical_port(7410);
+        IPLocator::setIPv4(unicast_locator, "127.0.0.1");
+        unicast_locator.port = 5100;
+        IPLocator::setLogicalPort(unicast_locator, 7410);
         PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
 
         Locator_t meta_locator;
         meta_locator.kind = kind;
-        meta_locator.set_IP4_address("127.0.0.1");
-        meta_locator.set_port(5100);
-        meta_locator.set_logical_port(7402);
+        IPLocator::setIPv4(meta_locator, "127.0.0.1");
+        meta_locator.port = 5100;
+        IPLocator::setLogicalPort(meta_locator, 7402);
         PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
@@ -131,16 +132,16 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind reliabilit
 
         Locator_t unicast_locator;
         unicast_locator.kind = kind;
-        unicast_locator.set_IP6_address("::1");
-        unicast_locator.set_port(5100);
-        unicast_locator.set_logical_port(7410);
+        IPLocator::setIPv6(unicast_locator, "::1");
+        unicast_locator.port = 5100;
+        IPLocator::setLogicalPort(unicast_locator, 7410);
         PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
 
         Locator_t meta_locator;
         meta_locator.kind = kind;
-        meta_locator.set_IP6_address("::1");
-        meta_locator.set_port(5100);
-        meta_locator.set_logical_port(7402);
+        IPLocator::setIPv6(meta_locator, "::1");
+        meta_locator.port = 5100;
+        IPLocator::setLogicalPort(meta_locator, 7402);
         PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();

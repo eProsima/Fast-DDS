@@ -17,6 +17,7 @@
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -1374,7 +1375,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
         bool bPortOption = false;
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(PORT)))
         {
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.get_port_by_ref(), ident + 1))
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.port, ident + 1))
                 return XMLP_ret::XML_ERROR;
             bPortOption = true;
         }
@@ -1389,14 +1390,18 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
 
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(LOGICAL_PORT)))
             {
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &loc.get_logical_port_by_ref(), ident + 1))
+                uint16_t aux;
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &aux, ident + 1))
                     return XMLP_ret::XML_ERROR;
+                IPLocator::setLogicalPort(loc, aux);
             }
 
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(PHYSICAL_PORT)))
             {
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &loc.get_physical_port_by_ref(), ident + 1))
+                uint16_t aux;
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &aux, ident + 1))
                     return XMLP_ret::XML_ERROR;
+                IPLocator::setPhysicalPort(loc, aux);
             }
         }
 
@@ -1407,7 +1412,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1))
                 return XMLP_ret::XML_ERROR;
-            loc.set_IP4_address(s);
+            IPLocator::setIPv4(loc, s);
             bAddressOption = true;
         }
 
@@ -1422,7 +1427,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1))
                 return XMLP_ret::XML_ERROR;
-            loc.set_IP6_address(s);
+            IPLocator::setIPv6(loc, s);
             bAddressOption = true;
         }
 
@@ -1439,7 +1444,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
                 std::string sUniqueLanId;
                 if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sUniqueLanId, ident + 1))
                     return XMLP_ret::XML_ERROR;
-                loc.set_Unique_Lan_Id(sUniqueLanId);
+                IPLocator::setLanID(loc, sUniqueLanId);
             }
 
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(WAN_ADDRESS)))
@@ -1447,7 +1452,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
                 std::string sWanAddr;
                 if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sWanAddr, ident + 1))
                     return XMLP_ret::XML_ERROR;
-                loc.set_IP4_WAN_address(sWanAddr);
+                IPLocator::setWan(loc, sWanAddr);
             }
 
             if (nullptr != (p_aux2 = p_aux1->FirstChildElement(IP_ADDRESS)))
@@ -1455,7 +1460,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
                 std::string sIPddr;
                 if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sIPddr, ident + 1))
                     return XMLP_ret::XML_ERROR;
-                loc.set_IP4_address(sIPddr);
+                IPLocator::setIPv4(loc, sIPddr);
             }
         }
 
@@ -1628,8 +1633,8 @@ XMLP_ret XMLParser::getXMLInt(tinyxml2::XMLElement *elem, int *in, uint8_t /*ide
 
 XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, unsigned int *ui, uint8_t /*ident*/)
 {
-    if (nullptr == elem || nullptr == ui)   
-    { 
+    if (nullptr == elem || nullptr == ui)
+    {
         logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
@@ -1662,7 +1667,7 @@ XMLP_ret XMLParser::getXMLUint(tinyxml2::XMLElement *elem, uint16_t *ui16, uint8
 XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*ident*/)
 {
     if (nullptr == elem || nullptr == b)
-    { 
+    {
         logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
@@ -1679,7 +1684,7 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     const char* text = nullptr;
 
     if (nullptr == elem || nullptr == s)
-    { 
+    {
         logError(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }

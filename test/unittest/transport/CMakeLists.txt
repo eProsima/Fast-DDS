@@ -39,6 +39,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
         )
 
         set(UDPV6TESTS_SOURCE
@@ -54,6 +56,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
         )
 
         set(TCPV4TESTS_SOURCE
@@ -67,6 +71,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
@@ -95,6 +100,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv6Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
@@ -119,6 +125,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_UDPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
@@ -127,7 +134,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
         )
 
         include_directories(mock/)

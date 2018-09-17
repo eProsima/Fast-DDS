@@ -20,6 +20,7 @@
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/TCPChannelResource.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -39,15 +40,15 @@ static void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t
     {
         locator.kind = LOCATOR_KIND_TCPv4;
         auto ipBytes = endpoint.address().to_v4().to_bytes();
-        locator.set_IP4_address(ipBytes.data());
+        IPLocator::setIPv4(locator, ipBytes.data());
     }
     else if (endpoint.protocol() == asio::ip::tcp::v6())
     {
         locator.kind = LOCATOR_KIND_TCPv6;
         auto ipBytes = endpoint.address().to_v6().to_bytes();
-        locator.set_IP6_address(ipBytes.data());
+        IPLocator::setIPv6(locator, ipBytes.data());
     }
-    locator.set_port(endpoint.port());
+    IPLocator::setPhysicalPort(locator, endpoint.port());
 }
 
 static void readSerializedPayload(SerializedPayload_t &payload, const octet* data, size_t size)
@@ -226,12 +227,12 @@ void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResou
     ConnectionRequest_t request;
     Locator_t locator;
     EndpointToLocator(pChannelResource->getSocket()->local_endpoint(), locator);
-    locator.set_logical_port(localLogicalPort);
+    IPLocator::setLogicalPort(locator, localLogicalPort);
 
     if (locator.kind == LOCATOR_KIND_TCPv4)
     {
         const TCPv4TransportDescriptor* pTCPv4Desc = (TCPv4TransportDescriptor*)mTransport->get_configuration();
-        locator.set_IP4_WAN_address(pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
+        IPLocator::setWan(locator, pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
             pTCPv4Desc->wan_addr[3]);
     }
     request.transportLocator(locator);
@@ -239,7 +240,7 @@ void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResou
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
 
-    logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << locator.get_physical_port()
+    logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator)
         << ", LogicalPort: " << localLogicalPort);
     sendData(pChannelResource, BIND_CONNECTION_REQUEST, getTransactionId(), &payload);
     pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBindResponse);
@@ -322,14 +323,14 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     if (localLocator.kind == LOCATOR_KIND_TCPv4)
     {
         const TCPv4TransportDescriptor* pTCPv4Desc = (TCPv4TransportDescriptor*)mTransport->get_configuration();
-        localLocator.set_logical_port(pTCPv4Desc->metadata_logical_port);
-        localLocator.set_IP4_WAN_address(pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
+        IPLocator::setLogicalPort(localLocator, pTCPv4Desc->metadata_logical_port);
+        IPLocator::setWan(localLocator, pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
             pTCPv4Desc->wan_addr[3]);
     }
     else if (localLocator.kind == LOCATOR_KIND_TCPv6)
     {
         const TCPv6TransportDescriptor* pTCPv6Desc = (TCPv6TransportDescriptor*)mTransport->get_configuration();
-        localLocator.set_logical_port(pTCPv6Desc->metadata_logical_port);
+        IPLocator::setLogicalPort(localLocator, pTCPv6Desc->metadata_logical_port);
     }
     else
     {
@@ -350,7 +351,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     {
         {
             std::unique_lock<std::recursive_mutex> scope(pChannelResource->mPendingLogicalMutex);
-            pChannelResource->EnqueueLogicalPort(request.transportLocator().get_logical_port());
+            pChannelResource->EnqueueLogicalPort(IPLocator::getLogicalPort(request.transportLocator()));
             mTransport->BindSocket(request.transportLocator(), pChannelResource);
         }
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
@@ -429,7 +430,7 @@ bool RTCPMessageManager::processKeepAliveRequest(TCPChannelResource *pChannelRes
     {
         sendData(pChannelResource, KEEP_ALIVE_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
-    else if (pChannelResource->GetLocator().get_logical_port() == request.locator().get_logical_port())
+    else if (IPLocator::getLogicalPort(pChannelResource->GetLocator()) == IPLocator::getLogicalPort(request.locator()))
     {
         sendData(pChannelResource, KEEP_ALIVE_RESPONSE, transactionId, nullptr, RETCODE_OK);
     }
@@ -456,7 +457,8 @@ bool RTCPMessageManager::processBindConnectionResponse(TCPChannelResource *pChan
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
     {
-        logInfo(RTCP, "Connection established (Resp) (physical: " << pChannelResource->mLocator.get_physical_port() << ")");
+        logInfo(RTCP, "Connection established (Resp) (physical: "
+                << IPLocator::getPhysicalPort(pChannelResource->mLocator) << ")");
         pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eEstablished);
         mUnconfirmedTransactions.erase(it);
         return true;
@@ -564,7 +566,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
                 // << "->" << pChannelResource->mPendingLogicalPort);
 
                 // We want the reference to the negotiated port, not the real logical one
-                remoteLocator.set_logical_port(pChannelResource->mNegotiatingLogicalPort);
+                IPLocator::setLogicalPort(remoteLocator, pChannelResource->mNegotiatingLogicalPort);
 
                 // Both, real one and negotiated must be added
                 pChannelResource->mLogicalOutputPorts.emplace_back(pChannelResource->mNegotiatingLogicalPort);
@@ -574,7 +576,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
             }
             else
             {
-                remoteLocator.set_logical_port(pChannelResource->mPendingLogicalPort);
+                IPLocator::setLogicalPort(remoteLocator, pChannelResource->mPendingLogicalPort);
                 logInfo(RTCP, "OpenedLogicalPort " << pChannelResource->mPendingLogicalPort);
             }
 
@@ -633,7 +635,8 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
     bool bProcessOk(true);
 
     TCPControlMsgHeader controlHeader;
-    memcpy(&controlHeader, receiveBuffer, TCPControlMsgHeader::getSize());
+    //memcpy(&controlHeader, receiveBuffer, TCPControlMsgHeader::getSize());
+    controlHeader = *(reinterpret_cast<TCPControlMsgHeader*>(receiveBuffer));
     size_t dataSize = controlHeader.length - TCPControlMsgHeader::getSize();
     size_t bufferSize = dataSize + 4;
 
@@ -658,8 +661,8 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
         request.deserialize(&payload);
 
         logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] " <<
-            "LogicalPort: " << request.transportLocator().get_logical_port()
-            << ", Physical remote: " << request.transportLocator().get_physical_port());
+            "LogicalPort: " << IPLocator::getLogicalPort(request.transportLocator())
+            << ", Physical remote: " << IPLocator::getPhysicalPort(request.transportLocator()));
 
         bProcessOk = processBindConnectionRequest(pChannelResource, request, controlHeader.transactionId, myLocator);
     }
@@ -674,8 +677,9 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
         readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize);
         response.deserialize(&payload);
 
-        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " << response.locator().get_logical_port()
-            << ", Physical remote: " << response.locator().get_physical_port());
+        logInfo(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " \
+            << IPLocator::getLogicalPort(response.locator()) << ", Physical remote: " \
+            << IPLocator::getPhysicalPort(response.locator()));
 
         if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
         {

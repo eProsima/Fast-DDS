@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 
 using namespace std;
@@ -45,12 +46,22 @@ static void GetIP6s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
 
 static asio::ip::address_v6::bytes_type locatorToNative(Locator_t& locator)
 {
-    return{ {locator.get_IP6_address()[0], locator.get_IP6_address()[1], locator.get_IP6_address()[2],
-        locator.get_IP6_address()[3] , locator.get_IP6_address()[4] , locator.get_IP6_address()[5],
-        locator.get_IP6_address()[6] , locator.get_IP6_address()[7] , locator.get_IP6_address()[8],
-        locator.get_IP6_address()[9] , locator.get_IP6_address()[10] , locator.get_IP6_address()[11],
-        locator.get_IP6_address()[12] , locator.get_IP6_address()[13] , locator.get_IP6_address()[14],
-        locator.get_IP6_address()[15] } };
+    return{ { IPLocator::getIPv6(locator)[0],
+        IPLocator::getIPv6(locator)[1],
+        IPLocator::getIPv6(locator)[2],
+        IPLocator::getIPv6(locator)[3] ,
+        IPLocator::getIPv6(locator)[4] ,
+        IPLocator::getIPv6(locator)[5],
+        IPLocator::getIPv6(locator)[6] ,
+        IPLocator::getIPv6(locator)[7] ,
+        IPLocator::getIPv6(locator)[8],
+        IPLocator::getIPv6(locator)[9] ,
+        IPLocator::getIPv6(locator)[10] ,
+        IPLocator::getIPv6(locator)[11],
+        IPLocator::getIPv6(locator)[12] ,
+        IPLocator::getIPv6(locator)[13] ,
+        IPLocator::getIPv6(locator)[14],
+        IPLocator::getIPv6(locator)[15] } };
 }
 
 TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
@@ -95,7 +106,9 @@ void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
     {
         for (auto it = mConfiguration_.listening_ports.begin(); it != mConfiguration_.listening_ports.end(); ++it)
         {
-            defaultList.push_back(Locator_t(LOCATOR_KIND_TCPv6, "::1", *it));
+            Locator_t *temp = IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", *it);
+            defaultList.push_back(*temp);
+            delete temp;
         }
     }
     else if (mSocketConnectors.size() > 0)
@@ -108,7 +121,9 @@ void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
     }
     else
     {
-        defaultList.push_back(Locator_t(LOCATOR_KIND_TCPv6, "::1", 0));
+        Locator_t *temp = IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", 0);
+        defaultList.push_back(*temp);
+        delete temp;
     }
 }
 
@@ -152,14 +167,14 @@ LocatorList_t TCPv6Transport::NormalizeLocator(const Locator_t& locator)
 {
     LocatorList_t list;
 
-    if (locator.is_Any())
+    if (IPLocator::isAny(locator))
     {
         std::vector<IPFinder::info_IP> locNames;
         GetIP6s(locNames);
         for (const auto& infoIP : locNames)
         {
             Locator_t newloc(locator);
-            newloc.set_IP6_address(infoIP.locator);
+            IPLocator::setIPv6(newloc, infoIP.locator);
             list.push_back(newloc);
         }
     }
@@ -173,14 +188,14 @@ bool TCPv6Transport::is_local_locator(const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_TCPv6);
 
-    if (locator.is_IP6_Local())
+    if (IPLocator::isLocal(locator))
     {
         return true;
     }
 
     for (auto localInterface : mCurrentInterfaces)
     {
-        if (locator.compare_IP6_address(localInterface.locator))
+        if (IPLocator::compareAddress(locator, localInterface.locator))
         {
             return true;
         }
@@ -191,23 +206,23 @@ bool TCPv6Transport::is_local_locator(const Locator_t& locator) const
 
 bool TCPv6Transport::CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const
 {
-    return lh.compare_IP6_address(rh);
+    return IPLocator::compareAddress(lh, rh);
 }
 
 bool TCPv6Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const
 {
-    return lh.compare_IP6_address_and_port(rh);
+    return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
 void TCPv6Transport::FillLocalIp(Locator_t& loc)
 {
-    loc.set_IP6_address("::1");
+    IPLocator::setIPv6(loc, "::1");
 }
 
 ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port)
 {
     asio::ip::address_v6::bytes_type remoteAddress;
-    loc.copy_Address(remoteAddress.data());
+    IPLocator::copyIPv6(loc, remoteAddress.data());
     return ip::tcp::endpoint(asio::ip::address_v6(remoteAddress), port);
 }
 
@@ -228,7 +243,7 @@ asio::ip::tcp TCPv6Transport::GenerateProtocol() const
 
 bool TCPv6Transport::IsInterfaceAllowed(const Locator_t& loc)
 {
-    asio::ip::address_v6 ip = asio::ip::make_address_v6(loc.to_IP6_string());
+    asio::ip::address_v6 ip = asio::ip::make_address_v6(IPLocator::toIPv6string(loc));
     return IsInterfaceAllowed(ip);
 }
 

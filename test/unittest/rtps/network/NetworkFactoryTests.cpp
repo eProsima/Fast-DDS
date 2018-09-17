@@ -219,7 +219,7 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible
 
    // When
    // We do it again for a locator that maps to the same channel
-   locator.get_Address()[0]++; // Address can differ, since they map to the same port
+   locator.address[0]++; // Address can differ, since they map to the same port
 
    auto secondBatchResources = networkFactoryUnderTest.BuildSenderResources(locator);
 
@@ -243,7 +243,7 @@ TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_
    ASSERT_TRUE(resource->SupportsLocator(locator));
 
    // When
-   locator.get_port_by_ref()++;
+   locator.port++;
 
    // Then
    ASSERT_FALSE(resource->SupportsLocator(locator));
@@ -263,7 +263,7 @@ TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_
    ASSERT_TRUE(resource.SupportsLocator(locator));
 
    // When
-   locator.get_port_by_ref()++;
+   locator.port++;
 
    // Then
    ASSERT_TRUE(resource.SupportsLocator(locator));
@@ -284,7 +284,7 @@ TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_out
    const char testData[testDataLength] { 'a', 'b', 'c' };
    Locator_t destinationLocator;
    destinationLocator.kind = 1;
-   destinationLocator.get_Address()[0] = 5;
+   destinationLocator.address[0] = 5;
    senderResource.Send((octet*)testData, testDataLength, destinationLocator);
 
    // Then

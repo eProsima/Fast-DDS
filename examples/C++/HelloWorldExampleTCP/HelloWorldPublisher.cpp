@@ -26,6 +26,7 @@
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -43,21 +44,21 @@ bool HelloWorldPublisher::init()
     m_Hello.index(0);
     m_Hello.message("HelloWorld");
     ParticipantAttributes PParam;
-    PParam.rtps.use_IP6_to_send = true;
+    //PParam.rtps.use_IP6_to_send = true;
 
     // TCP CONNECTION PEER.
     uint32_t kind = LOCATOR_KIND_TCPv4;
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
-    unicast_locator.set_IP4_address("127.0.0.1");
-    unicast_locator.set_port(5100);
+    IPLocator::setIPv4(unicast_locator, "127.0.0.1");
+    unicast_locator.port = 5100;
     PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
 
     Locator_t meta_locator;
     meta_locator.kind = kind;
-    meta_locator.set_IP4_address("127.0.0.1");
-    meta_locator.set_port(5100);
+    IPLocator::setIPv4(meta_locator, "127.0.0.1");
+    meta_locator.port = 5100;
     PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
     PParam.rtps.builtin.domainId = 0;
