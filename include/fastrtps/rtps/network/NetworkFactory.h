@@ -25,6 +25,9 @@
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+class RTPSParticipantAttributes;
+
 /**
  * Provides the FastRTPS library with abstract resources, which
  * in turn manage the SEND and RECEIVE operations over some transport.
@@ -62,8 +65,15 @@ class NetworkFactory
         * are supported here (although it can be easily extended at NetworkFactory.cpp)
         * @param descriptor Structure that defines all initial configuration for a given transport.
         */
-        void RegisterTransport(const TransportDescriptorInterface* descriptor,
-            const GuidPrefix_t& participantGuidPrefix);
+        void RegisterTransport(TransportDescriptorInterface* descriptor,
+            const GuidPrefix_t& participantGuidPrefix, const RTPSParticipantAttributes* m_att = nullptr);
+
+        /**
+        * Allows registration of the default transport dynamically.
+        * @param Participant attributes for buffers sizes
+        * @param descriptor Structure that defines all initial configuration for a given transport.
+        */
+        void RegisterDefaultTransport(const RTPSParticipantAttributes& PParam, const GuidPrefix_t& participantGuidPrefix);
 
         /**
          * Walks over the list of transports, opening every possible channel that can send through
@@ -104,6 +114,36 @@ class NetworkFactory
          * */
         void GetDefaultOutputLocators(LocatorList_t &defaultLocators);
 
+        /**
+         * Fills the locator with the default metatraffic multicast configuration.
+         * */
+        bool fillDefaultMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const;
+
+        /**
+         * Fills the locator with the default metatraffic unicast configuration.
+         * */
+        bool fillDefaultMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const;
+
+        /**
+         * Fills the locator with the metatraffic multicast configuration.
+         * */
+        bool fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const;
+
+        /**
+         * Fills the locator with the metatraffic unicast configuration.
+         * */
+        bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const;
+
+        /**
+         * Configures the locator with the initial peer configuration.
+         * */
+        bool configureInitialPeerLocator(Locator_t &locator, RTPSParticipantAttributes& m_att) const;
+
+        /**
+         * Fills the locator with the default unicast configuration.
+         * */
+        bool fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const;
+
     private:
 
         std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;
@@ -111,6 +151,11 @@ class NetworkFactory
         uint32_t maxMessageSizeBetweenTransports_;
 
         uint32_t minSendBufferSize_;
+
+        /**
+         * Calculates well-known ports.
+        */
+        uint16_t calculateWellKnownPort(const RTPSParticipantAttributes& att) const;
 };
 
 } // namespace rtps

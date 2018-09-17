@@ -305,17 +305,6 @@ private:
     */
     bool checkSenderResource(Locator_t& locator);
 
-    /**
-     * Calculates well-known ports.
-    */
-    uint16_t calculateWellKnownPort(const RTPSParticipantAttributes& att) const
-    {
-        return static_cast<uint16_t>(att.port.portBase +
-                att.port.domainIDGain*att.builtin.domainId +
-                att.port.offsetd3 +
-                att.port.participantIDGain*att.participantID);
-    }
-
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
 
