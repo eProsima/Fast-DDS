@@ -5306,6 +5306,9 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
     requester.waitDiscovery();
     replier.waitDiscovery();
 
+    ASSERT_TRUE(requester.isMatched());
+    ASSERT_TRUE(replier.isMatched());
+
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         requester.send(count);
