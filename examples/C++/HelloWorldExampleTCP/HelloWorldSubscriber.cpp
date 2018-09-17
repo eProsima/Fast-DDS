@@ -108,6 +108,7 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* ,Match
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
+        //logError(HW, "Matched");
         std::cout << "[RTCP] Subscriber matched"<<std::endl;
     }
     else
@@ -125,6 +126,7 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
         {
             this->n_samples++;
             // Print your structure data here.
+            //logError(HW, "RECEIVED " <<  m_Hello.index());
             std::cout << "[RTCP] Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
         }
     }

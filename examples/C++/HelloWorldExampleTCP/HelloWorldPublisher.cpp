@@ -115,6 +115,7 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* ,Matching
     {
         n_matched++;
         firstConnected = true;
+        //logError(HW, "Matched");
         std::cout << "[RTCP] Publisher matched"<<std::endl;
     }
     else
@@ -132,6 +133,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
         {
             if(publish(false))
             {
+                //logError(HW, "SENT " <<  m_Hello.index());
                 std::cout << "[RTCP] Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
             }
             eClock::my_sleep(sleep_ms);

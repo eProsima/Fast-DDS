@@ -97,6 +97,8 @@ void default_send_print(const Data1mb& data)
 #include "RTPSWithRegistrationWriter.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
+#include "TCPReqRepHelloWorldRequester.hpp"
+#include "TCPReqRepHelloWorldReplier.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
@@ -804,9 +806,6 @@ BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
     ASSERT_TRUE(requester.isInitialized());
 
     replier.init();
-
-    requester.waitDiscovery();
-    replier.waitDiscovery();
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5288,16 +5287,281 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     reader.block_for_at_least(2);
 }
 
-// Regression test of Refs #3376, github ros2/rmw_fastrtps #226
-BLACKBOXTEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
+// TCP and Domain management with logical ports tests
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
 {
-    ReqRepAsReliableHelloWorldRequester requester;
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+    const uint16_t nmsgs = 5;
 
-    requester.durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+    requester.init(0, 0);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    requester.send(1);
+    replier.init(1, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
+    for(uint16_t count = 0; count < nmsgs; ++count)
+    {
+        requester.send(count);
+        requester.block(std::chrono::seconds(10));
+    }
+
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D1)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 0);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(1, 1);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 1);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(1, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D0_D0)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+    const uint16_t nmsgs = 5;
+
+    requester.init(0, 0);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(4, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
+    for(uint16_t count = 0; count < nmsgs; ++count)
+    {
+        requester.send(count);
+        requester.block(std::chrono::seconds(10));
+    }
+
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D0_D1)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 0);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(4, 1);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D1_D0)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 1);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(4, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D0_D0)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+    const uint16_t nmsgs = 5;
+
+    requester.init(4, 0);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(0, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
+    for(uint16_t count = 0; count < nmsgs; ++count)
+    {
+        requester.send(count);
+        requester.block(std::chrono::seconds(10));
+    }
+
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D0_D1)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(4, 0);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(0, 1);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D1_D0)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(4, 1);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(0, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D0_D0)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+    const uint16_t nmsgs = 5;
+
+    requester.init(4, 0);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(5, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
+    for(uint16_t count = 0; count < nmsgs; ++count)
+    {
+        requester.send(count);
+        requester.block(std::chrono::seconds(10));
+    }
+
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D0_D1)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(4, 0);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(5, 1);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D1_D0)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(4, 1);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(5, 0);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery. They must not discover each other.
+    requester.waitDiscovery(false, 10);
+    replier.waitDiscovery(false, 10);
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+
 }
 
 int main(int argc, char **argv)

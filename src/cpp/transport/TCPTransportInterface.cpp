@@ -53,6 +53,11 @@ TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* pa
 void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_service)
 {
     mSocket = createTCPSocket(io_service);
+
+    // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    // std::cout << std::put_time(std::localtime(&now_c), "%F %T") << "--> Async_Accept" << std::endl;
+
 	mAcceptor.async_accept(getTCPSocketRef(mSocket), mEndPoint, std::bind(&TCPTransportInterface::SocketAccepted,
         parent, this, std::placeholders::_1));
 }
@@ -1422,6 +1427,14 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->mLocator)
                 << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port()
                 << ") IP: " << pChannelResource->getSocket()->remote_endpoint().address());
+
+
+            // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+            // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+            // std::cout << std::put_time(std::localtime(&now_c), "%F %T")
+            //     <<  "--> Accepted connection (physical local: " << acceptor->mLocator.get_physical_port()
+            //     << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port()
+            //     << ") IP: " << pChannelResource->getSocket()->remote_endpoint().address() << std::endl;
         }
         else
         {
@@ -1483,6 +1496,12 @@ void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *
                 logInfo(RTCP, " Socket Connected (physical remote: " << IPLocator::getPhysicalPort(locator)
                     << ", local: " << outputSocket->getSocket()->local_endpoint().port()
                     << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
+
+                // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+                // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+                // std::cout << std::put_time(std::localtime(&now_c), "%F %T") << "--> Socket Connected (physical remote: " << locator.get_physical_port()
+                //     << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+                //     << ") IP: " << outputSocket->getSocket()->remote_endpoint().address() << std::endl;
 
                 // RTCP Control Message
                 mRTCPMessageManager->sendConnectionRequest(outputSocket, GetConfiguration()->metadata_logical_port);

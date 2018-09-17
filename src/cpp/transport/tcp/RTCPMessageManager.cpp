@@ -356,6 +356,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
         }
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
         pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eEstablished);
+        logInfo(RTPC_MSG, "Connection Stablished");
     }
     else if (pChannelResource->mConnectionStatus == TCPChannelResource::eConnectionStatus::eEstablished)
     {

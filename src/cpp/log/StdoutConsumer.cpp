@@ -1,13 +1,14 @@
 #include <fastrtps/log/StdoutConsumer.h>
 #include <fastrtps/log/Colors.h>
 #include <iostream>
+#include <iomanip>
 
 namespace eprosima {
 namespace fastrtps {
 
 std::recursive_mutex StdoutConsumer::stdOutMutex;
 
-void StdoutConsumer::Consume(const Log::Entry& entry) 
+void StdoutConsumer::Consume(const Log::Entry& entry)
 {
     std::stringstream ss;
     PrintHeader(ss, entry);
@@ -22,7 +23,14 @@ void StdoutConsumer::Consume(const Log::Entry& entry)
 
 void StdoutConsumer::PrintHeader(std::stringstream &ss, const Log::Entry& entry) const
 {
-    switch (entry.kind) 
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    std::chrono::system_clock::duration tp = now.time_since_epoch();
+    tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
+    auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
+    ss << C_B_WHITE << std::put_time(std::localtime(&now_c), "%F %T")
+       << "." << std::setw(3) << std::setfill('0') <<  ms << " ";
+    switch (entry.kind)
     {
     case Log::Kind::Error:
         ss << C_B_RED << "[" << C_B_WHITE << entry.context.category << C_B_RED << " Error] ";
@@ -37,9 +45,9 @@ void StdoutConsumer::PrintHeader(std::stringstream &ss, const Log::Entry& entry)
 }
 
 void StdoutConsumer::PrintContext(std::stringstream &ss, const Log::Entry& entry) const
-{ 
+{
     ss << C_B_BLUE;
-    if (entry.context.filename) 
+    if (entry.context.filename)
     {
         ss << " (" << entry.context.filename;
         ss << ":" << entry.context.line << ")";
