@@ -3621,7 +3621,7 @@ const TypeObject* GetMinimalStringStructObject()
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
     mst_my_string.common().member_flags().IS_DEFAULT(false);
-    mst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
+    mst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, false));
 
 
     MD5 my_string_hash("my_string");
@@ -3692,7 +3692,7 @@ const TypeObject* GetCompleteStringStructObject()
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
     cst_my_string.common().member_flags().IS_DEFAULT(false);
-    cst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
+    cst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, false));
 
 
     cst_my_string.detail().name("my_string");
@@ -3791,7 +3791,7 @@ const TypeObject* GetMinimalWStringStructObject()
     mst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_wstring.common().member_flags().IS_KEY(false);
     mst_my_wstring.common().member_flags().IS_DEFAULT(false);
-    mst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, true));
+    mst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, true));
 
 
     MD5 my_wstring_hash("my_wstring");
@@ -3862,7 +3862,7 @@ const TypeObject* GetCompleteWStringStructObject()
     cst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_wstring.common().member_flags().IS_KEY(false);
     cst_my_wstring.common().member_flags().IS_DEFAULT(false);
-    cst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, true));
+    cst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, true));
 
 
     cst_my_wstring.detail().name("my_wstring");

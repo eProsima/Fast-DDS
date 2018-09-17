@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <bitset>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

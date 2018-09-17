@@ -36,7 +36,9 @@ EnumStructPubSubType::EnumStructPubSubType()
     setName("EnumStruct");
     m_typeSize = (uint32_t)EnumStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = EnumStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(EnumStruct::getKeyMaxCdrSerializedSize()>16 ? EnumStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = EnumStruct::getKeyMaxCdrSerializedSize()>16 ? EnumStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 EnumStructPubSubType::~EnumStructPubSubType()
@@ -136,7 +138,9 @@ AliasStructPubSubType::AliasStructPubSubType()
     setName("AliasStruct");
     m_typeSize = (uint32_t)AliasStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = AliasStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(AliasStruct::getKeyMaxCdrSerializedSize()>16 ? AliasStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = AliasStruct::getKeyMaxCdrSerializedSize()>16 ? AliasStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 AliasStructPubSubType::~AliasStructPubSubType()
@@ -236,7 +240,9 @@ AliasAliasStructPubSubType::AliasAliasStructPubSubType()
     setName("AliasAliasStruct");
     m_typeSize = (uint32_t)AliasAliasStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = AliasAliasStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(AliasAliasStruct::getKeyMaxCdrSerializedSize()>16 ? AliasAliasStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = AliasAliasStruct::getKeyMaxCdrSerializedSize()>16 ? AliasAliasStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 AliasAliasStructPubSubType::~AliasAliasStructPubSubType()
@@ -336,7 +342,9 @@ BoolStructPubSubType::BoolStructPubSubType()
     setName("BoolStruct");
     m_typeSize = (uint32_t)BoolStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = BoolStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(BoolStruct::getKeyMaxCdrSerializedSize()>16 ? BoolStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = BoolStruct::getKeyMaxCdrSerializedSize()>16 ? BoolStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 BoolStructPubSubType::~BoolStructPubSubType()
@@ -436,7 +444,9 @@ OctetStructPubSubType::OctetStructPubSubType()
     setName("OctetStruct");
     m_typeSize = (uint32_t)OctetStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = OctetStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(OctetStruct::getKeyMaxCdrSerializedSize()>16 ? OctetStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = OctetStruct::getKeyMaxCdrSerializedSize()>16 ? OctetStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 OctetStructPubSubType::~OctetStructPubSubType()
@@ -536,7 +546,9 @@ ShortStructPubSubType::ShortStructPubSubType()
     setName("ShortStruct");
     m_typeSize = (uint32_t)ShortStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = ShortStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(ShortStruct::getKeyMaxCdrSerializedSize()>16 ? ShortStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = ShortStruct::getKeyMaxCdrSerializedSize()>16 ? ShortStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 ShortStructPubSubType::~ShortStructPubSubType()
@@ -636,7 +648,9 @@ LongStructPubSubType::LongStructPubSubType()
     setName("LongStruct");
     m_typeSize = (uint32_t)LongStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = LongStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(LongStruct::getKeyMaxCdrSerializedSize()>16 ? LongStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = LongStruct::getKeyMaxCdrSerializedSize()>16 ? LongStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 LongStructPubSubType::~LongStructPubSubType()
@@ -736,7 +750,9 @@ LongLongStructPubSubType::LongLongStructPubSubType()
     setName("LongLongStruct");
     m_typeSize = (uint32_t)LongLongStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = LongLongStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(LongLongStruct::getKeyMaxCdrSerializedSize()>16 ? LongLongStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = LongLongStruct::getKeyMaxCdrSerializedSize()>16 ? LongLongStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 LongLongStructPubSubType::~LongLongStructPubSubType()
@@ -836,7 +852,9 @@ UShortStructPubSubType::UShortStructPubSubType()
     setName("UShortStruct");
     m_typeSize = (uint32_t)UShortStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = UShortStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(UShortStruct::getKeyMaxCdrSerializedSize()>16 ? UShortStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = UShortStruct::getKeyMaxCdrSerializedSize()>16 ? UShortStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 UShortStructPubSubType::~UShortStructPubSubType()
@@ -936,7 +954,9 @@ ULongStructPubSubType::ULongStructPubSubType()
     setName("ULongStruct");
     m_typeSize = (uint32_t)ULongStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = ULongStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(ULongStruct::getKeyMaxCdrSerializedSize()>16 ? ULongStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = ULongStruct::getKeyMaxCdrSerializedSize()>16 ? ULongStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 ULongStructPubSubType::~ULongStructPubSubType()
@@ -1036,7 +1056,9 @@ ULongLongStructPubSubType::ULongLongStructPubSubType()
     setName("ULongLongStruct");
     m_typeSize = (uint32_t)ULongLongStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = ULongLongStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(ULongLongStruct::getKeyMaxCdrSerializedSize()>16 ? ULongLongStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = ULongLongStruct::getKeyMaxCdrSerializedSize()>16 ? ULongLongStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 ULongLongStructPubSubType::~ULongLongStructPubSubType()
@@ -1136,7 +1158,9 @@ FloatStructPubSubType::FloatStructPubSubType()
     setName("FloatStruct");
     m_typeSize = (uint32_t)FloatStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = FloatStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(FloatStruct::getKeyMaxCdrSerializedSize()>16 ? FloatStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = FloatStruct::getKeyMaxCdrSerializedSize()>16 ? FloatStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 FloatStructPubSubType::~FloatStructPubSubType()
@@ -1236,7 +1260,9 @@ DoubleStructPubSubType::DoubleStructPubSubType()
     setName("DoubleStruct");
     m_typeSize = (uint32_t)DoubleStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = DoubleStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(DoubleStruct::getKeyMaxCdrSerializedSize()>16 ? DoubleStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = DoubleStruct::getKeyMaxCdrSerializedSize()>16 ? DoubleStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 DoubleStructPubSubType::~DoubleStructPubSubType()
@@ -1336,7 +1362,9 @@ LongDoubleStructPubSubType::LongDoubleStructPubSubType()
     setName("LongDoubleStruct");
     m_typeSize = (uint32_t)LongDoubleStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = LongDoubleStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(LongDoubleStruct::getKeyMaxCdrSerializedSize()>16 ? LongDoubleStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = LongDoubleStruct::getKeyMaxCdrSerializedSize()>16 ? LongDoubleStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 LongDoubleStructPubSubType::~LongDoubleStructPubSubType()
@@ -1436,7 +1464,9 @@ CharStructPubSubType::CharStructPubSubType()
     setName("CharStruct");
     m_typeSize = (uint32_t)CharStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = CharStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(CharStruct::getKeyMaxCdrSerializedSize()>16 ? CharStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = CharStruct::getKeyMaxCdrSerializedSize()>16 ? CharStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 CharStructPubSubType::~CharStructPubSubType()
@@ -1536,7 +1566,9 @@ WCharStructPubSubType::WCharStructPubSubType()
     setName("WCharStruct");
     m_typeSize = (uint32_t)WCharStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = WCharStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(WCharStruct::getKeyMaxCdrSerializedSize()>16 ? WCharStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = WCharStruct::getKeyMaxCdrSerializedSize()>16 ? WCharStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 WCharStructPubSubType::~WCharStructPubSubType()
@@ -1636,7 +1668,9 @@ StringStructPubSubType::StringStructPubSubType()
     setName("StringStruct");
     m_typeSize = (uint32_t)StringStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = StringStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(StringStruct::getKeyMaxCdrSerializedSize()>16 ? StringStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = StringStruct::getKeyMaxCdrSerializedSize()>16 ? StringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 StringStructPubSubType::~StringStructPubSubType()
@@ -1736,7 +1770,9 @@ WStringStructPubSubType::WStringStructPubSubType()
     setName("WStringStruct");
     m_typeSize = (uint32_t)WStringStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = WStringStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(WStringStruct::getKeyMaxCdrSerializedSize()>16 ? WStringStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = WStringStruct::getKeyMaxCdrSerializedSize()>16 ? WStringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 WStringStructPubSubType::~WStringStructPubSubType()
@@ -1836,7 +1872,9 @@ LargeStringStructPubSubType::LargeStringStructPubSubType()
     setName("LargeStringStruct");
     m_typeSize = (uint32_t)LargeStringStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = LargeStringStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(LargeStringStruct::getKeyMaxCdrSerializedSize()>16 ? LargeStringStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = LargeStringStruct::getKeyMaxCdrSerializedSize()>16 ? LargeStringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 LargeStringStructPubSubType::~LargeStringStructPubSubType()
@@ -1936,7 +1974,9 @@ LargeWStringStructPubSubType::LargeWStringStructPubSubType()
     setName("LargeWStringStruct");
     m_typeSize = (uint32_t)LargeWStringStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = LargeWStringStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(LargeWStringStruct::getKeyMaxCdrSerializedSize()>16 ? LargeWStringStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = LargeWStringStruct::getKeyMaxCdrSerializedSize()>16 ? LargeWStringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 LargeWStringStructPubSubType::~LargeWStringStructPubSubType()
@@ -2036,7 +2076,9 @@ ArraytStructPubSubType::ArraytStructPubSubType()
     setName("ArraytStruct");
     m_typeSize = (uint32_t)ArraytStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = ArraytStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(ArraytStruct::getKeyMaxCdrSerializedSize()>16 ? ArraytStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = ArraytStruct::getKeyMaxCdrSerializedSize()>16 ? ArraytStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 ArraytStructPubSubType::~ArraytStructPubSubType()
@@ -2137,7 +2179,9 @@ ArrayArrayStructPubSubType::ArrayArrayStructPubSubType()
     setName("ArrayArrayStruct");
     m_typeSize = (uint32_t)ArrayArrayStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = ArrayArrayStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(ArrayArrayStruct::getKeyMaxCdrSerializedSize()>16 ? ArrayArrayStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = ArrayArrayStruct::getKeyMaxCdrSerializedSize()>16 ? ArrayArrayStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 ArrayArrayStructPubSubType::~ArrayArrayStructPubSubType()
@@ -2237,7 +2281,9 @@ SequenceStructPubSubType::SequenceStructPubSubType()
     setName("SequenceStruct");
     m_typeSize = (uint32_t)SequenceStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = SequenceStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(SequenceStruct::getKeyMaxCdrSerializedSize()>16 ? SequenceStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = SequenceStruct::getKeyMaxCdrSerializedSize()>16 ? SequenceStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 SequenceStructPubSubType::~SequenceStructPubSubType()
@@ -2337,7 +2383,9 @@ SequenceSequenceStructPubSubType::SequenceSequenceStructPubSubType()
     setName("SequenceSequenceStruct");
     m_typeSize = (uint32_t)SequenceSequenceStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = SequenceSequenceStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(SequenceSequenceStruct::getKeyMaxCdrSerializedSize()>16 ? SequenceSequenceStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = SequenceSequenceStruct::getKeyMaxCdrSerializedSize()>16 ? SequenceSequenceStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 SequenceSequenceStructPubSubType::~SequenceSequenceStructPubSubType()
@@ -2437,7 +2485,9 @@ MapStructPubSubType::MapStructPubSubType()
     setName("MapStruct");
     m_typeSize = (uint32_t)MapStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = MapStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(MapStruct::getKeyMaxCdrSerializedSize()>16 ? MapStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = MapStruct::getKeyMaxCdrSerializedSize()>16 ? MapStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 MapStructPubSubType::~MapStructPubSubType()
@@ -2537,7 +2587,9 @@ MapMapStructPubSubType::MapMapStructPubSubType()
     setName("MapMapStruct");
     m_typeSize = (uint32_t)MapMapStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = MapMapStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(MapMapStruct::getKeyMaxCdrSerializedSize()>16 ? MapMapStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = MapMapStruct::getKeyMaxCdrSerializedSize()>16 ? MapMapStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 MapMapStructPubSubType::~MapMapStructPubSubType()
@@ -2637,7 +2689,9 @@ StructStructPubSubType::StructStructPubSubType()
     setName("StructStruct");
     m_typeSize = (uint32_t)StructStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = StructStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(StructStruct::getKeyMaxCdrSerializedSize()>16 ? StructStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = StructStruct::getKeyMaxCdrSerializedSize()>16 ? StructStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 StructStructPubSubType::~StructStructPubSubType()
@@ -2737,7 +2791,9 @@ StructStructStructPubSubType::StructStructStructPubSubType()
     setName("StructStructStruct");
     m_typeSize = (uint32_t)StructStructStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = StructStructStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(StructStructStruct::getKeyMaxCdrSerializedSize()>16 ? StructStructStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = StructStructStruct::getKeyMaxCdrSerializedSize()>16 ? StructStructStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 StructStructStructPubSubType::~StructStructStructPubSubType()
@@ -2840,7 +2896,9 @@ SimpleUnionStructPubSubType::SimpleUnionStructPubSubType()
     setName("SimpleUnionStruct");
     m_typeSize = (uint32_t)SimpleUnionStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = SimpleUnionStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(SimpleUnionStruct::getKeyMaxCdrSerializedSize()>16 ? SimpleUnionStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = SimpleUnionStruct::getKeyMaxCdrSerializedSize()>16 ? SimpleUnionStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 SimpleUnionStructPubSubType::~SimpleUnionStructPubSubType()
@@ -2940,7 +2998,9 @@ UnionUnionUnionStructPubSubType::UnionUnionUnionStructPubSubType()
     setName("UnionUnionUnionStruct");
     m_typeSize = (uint32_t)UnionUnionUnionStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = UnionUnionUnionStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(UnionUnionUnionStruct::getKeyMaxCdrSerializedSize()>16 ? UnionUnionUnionStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = UnionUnionUnionStruct::getKeyMaxCdrSerializedSize()>16 ? UnionUnionUnionStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 UnionUnionUnionStructPubSubType::~UnionUnionUnionStructPubSubType()
@@ -3040,7 +3100,9 @@ WCharUnionStructPubSubType::WCharUnionStructPubSubType()
     setName("WCharUnionStruct");
     m_typeSize = (uint32_t)WCharUnionStruct::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = WCharUnionStruct::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(WCharUnionStruct::getKeyMaxCdrSerializedSize()>16 ? WCharUnionStruct::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = WCharUnionStruct::getKeyMaxCdrSerializedSize()>16 ? WCharUnionStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 WCharUnionStructPubSubType::~WCharUnionStructPubSubType()
