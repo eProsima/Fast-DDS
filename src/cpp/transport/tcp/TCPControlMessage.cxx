@@ -936,7 +936,11 @@ const ConnectionRequest_t& RequestData::connectionRequest() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_connectionRequest;
 }
@@ -953,7 +957,11 @@ ConnectionRequest_t& RequestData::connectionRequest()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_connectionRequest;
 }
@@ -981,7 +989,11 @@ const OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_openLogicalPortRequest;
 }
@@ -998,7 +1010,11 @@ OpenLogicalPortRequest_t& RequestData::openLogicalPortRequest()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_openLogicalPortRequest;
 }
@@ -1026,7 +1042,11 @@ const CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_checkLogicalPortsRequest;
 }
@@ -1043,7 +1063,11 @@ CheckLogicalPortsRequest_t& RequestData::checkLogicalPortsRequest()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_checkLogicalPortsRequest;
 }
@@ -1071,7 +1095,11 @@ const KeepAliveRequest_t& RequestData::keepAliveRequest() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_keepAliveRequest;
 }
@@ -1088,7 +1116,11 @@ KeepAliveRequest_t& RequestData::keepAliveRequest()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_keepAliveRequest;
 }
@@ -1116,7 +1148,11 @@ const LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest() co
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_logicalPortIsClosedRequest;
 }
@@ -1133,7 +1169,11 @@ LogicalPortIsClosedRequest_t& RequestData::logicalPortIsClosedRequest()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_logicalPortIsClosedRequest;
 }
@@ -1671,7 +1711,11 @@ const BindConnectionResponse_t& ResponseData::bindConnectionResponse() const
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
 
     return m_bindConnectionResponse;
 }
@@ -1688,7 +1732,10 @@ BindConnectionResponse_t& ResponseData::bindConnectionResponse()
         default:
         break;
     }
-    if(!b) throw BadParamException("This member is not been selected");
+    if (!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
 
     return m_bindConnectionResponse;
 }
