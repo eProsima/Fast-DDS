@@ -132,6 +132,11 @@ const TCPTransportDescriptor* TCPv6Transport::GetConfiguration() const
     return &mConfiguration_;
 }
 
+TCPTransportDescriptor* TCPv6Transport::GetConfiguration()
+{
+    return &mConfiguration_;
+}
+
 void TCPv6Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback)
 {
     GetIP6s(locNames, return_loopback);

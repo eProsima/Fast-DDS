@@ -80,6 +80,7 @@ protected:
     virtual void FillLocalIp(Locator_t& loc) override;
 
     virtual const TCPTransportDescriptor* GetConfiguration() const override;
+    virtual TCPTransportDescriptor* GetConfiguration() override;
 
     virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) override;
     virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) override;

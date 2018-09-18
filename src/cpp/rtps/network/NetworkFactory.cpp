@@ -14,8 +14,6 @@
 
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/transport/TransportDescriptorInterface.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -100,35 +98,9 @@ bool NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
 }
 
 void NetworkFactory::RegisterTransport(TransportDescriptorInterface* descriptor,
-    const GuidPrefix_t& participantGuidPrefix, const RTPSParticipantAttributes* m_att)
-{
-    if (dynamic_cast<TCPTransportDescriptor*>(descriptor) != nullptr)
-    {
-        TCPTransportDescriptor* tcpDesc = dynamic_cast<TCPTransportDescriptor*>(descriptor);
-        if  (tcpDesc->metadata_logical_port == 0 && m_att != nullptr)
-        {
-            tcpDesc->metadata_logical_port =
-                static_cast<uint16_t>(m_att->port.getUnicastPort(m_att->builtin.domainId, 0));
-            //tcpDesc->metadata_logical_port += 4; // Test as 2nd participant
-        }
-    }
-
-    bool bWasRegistered = RegisterTransport(descriptor);
-    if (bWasRegistered)
-    {
-        mRegisteredTransports.back()->SetParticipantGUIDPrefix(participantGuidPrefix);
-    }
-}
-
-void NetworkFactory::RegisterDefaultTransport(const RTPSParticipantAttributes& PParam,
         const GuidPrefix_t& participantGuidPrefix)
 {
-    // The well known default transport is UDPv4
-    UDPv4TransportDescriptor descriptor;
-    descriptor.sendBufferSize = PParam.sendSocketBufferSize;
-    descriptor.receiveBufferSize = PParam.listenSocketBufferSize;
-
-    bool bWasRegistered = RegisterTransport(&descriptor);
+    bool bWasRegistered = RegisterTransport(descriptor);
     if (bWasRegistered)
     {
         mRegisteredTransports.back()->SetParticipantGUIDPrefix(participantGuidPrefix);
@@ -241,19 +213,14 @@ bool NetworkFactory::fillDefaultMetatrafficMulticastLocator(Locator_t &locator,
 
 bool NetworkFactory::fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const
 {
-    if (locator.port == 0)
+    for(auto& transport : mRegisteredTransports)
     {
-        locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    }
-
-    if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
-    {
-        if (IPLocator::getLogicalPort(locator) == 0)
+        if (transport->IsLocatorSupported(locator))
         {
-            IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_multicast_port));
+            return transport->fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
         }
     }
-    return true;
+    return false;
 }
 
 bool NetworkFactory::fillDefaultMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
@@ -266,105 +233,39 @@ bool NetworkFactory::fillDefaultMetatrafficUnicastLocator(Locator_t &locator, ui
 
 bool NetworkFactory::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
 {
-    if (locator.port == 0)
+    for(auto& transport : mRegisteredTransports)
     {
-        locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
-    }
-
-    if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
-    {
-        if (IPLocator::getLogicalPort(locator) == 0)
+        if (transport->IsLocatorSupported(locator))
         {
-            IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_unicast_port));
+            return transport->fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
         }
     }
-    return true;
+    return false;
 }
 
 bool NetworkFactory::configureInitialPeerLocator(Locator_t &locator, RTPSParticipantAttributes& m_att) const
 {
-    if (locator.kind == LOCATOR_KIND_UDPv4 || locator.kind == LOCATOR_KIND_UDPv6)
+    for(auto& transport : mRegisteredTransports)
     {
-        if(locator.port == 0)
+        if (transport->IsLocatorSupported(locator))
         {
-            // TODO(Ricardo) Make configurable.
-            for(int32_t i = 0; i < 4; ++i)
-            {
-                Locator_t auxloc(locator);
-                auxloc.port = static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i));
-
-                m_att.builtin.initialPeersList.push_back(auxloc);
-            }
+            return transport->configureInitialPeerLocator(locator, m_att.port, m_att.builtin.domainId,
+                                                        m_att.builtin.initialPeersList);
         }
-        else
-            m_att.builtin.initialPeersList.push_back(locator);
     }
-    else if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
-    {
-        if(IPLocator::getPhysicalPort(locator) == 0)
-        {
-            // TODO(Ricardo) Make configurable.
-            for(int32_t i = 0; i < 4; ++i)
-            {
-                Locator_t auxloc(locator);
-                auxloc.port = static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i));
-
-                if (IPLocator::getLogicalPort(locator) == 0)
-                {
-                    IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)));
-                }
-
-                m_att.builtin.initialPeersList.push_back(auxloc);
-            }
-        }
-        else
-        {
-            if (IPLocator::getLogicalPort(locator) == 0)
-            {
-                // TODO(Ricardo) Make configurable.
-                for(int32_t i = 0; i < 4; ++i)
-                {
-                    Locator_t auxloc(locator);
-                    IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(m_att.port.getUnicastPort(m_att.builtin.domainId, i)));
-                    m_att.builtin.initialPeersList.push_back(auxloc);
-                }
-            }
-            else
-            {
-                m_att.builtin.initialPeersList.push_back(locator);
-            }
-        }
-
-
-    }
-    return true;
+    return false;
 }
 
 bool NetworkFactory::fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const
 {
-    //locator.port = calculateWellKnownPort(m_att);
-    //locator.kind = LOCATOR_KIND_UDPv4;
-
-    if (IPLocator::getPortRTPS(locator) == 0)
+    for(auto& transport : mRegisteredTransports)
     {
-        IPLocator::setPortRTPS(locator, calculateWellKnownPort(m_att));
-    }
-    if (IPLocator::getPhysicalPort(locator) == 0) // TCP Case, set physical too
-    {
-        locator.port = calculateWellKnownPort(m_att);
-    }
-
-    // In TCP case, calculate logical port too
-    /*
-    if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
-    {
-        if (IPLocator::getLogicalPort(locator) == 0)
+        if (transport->IsLocatorSupported(locator))
         {
-            IPLocator::setLogicalPort(locator, calculateWellKnownPort(m_att));
+            return transport->fillUnicastLocator(locator, calculateWellKnownPort(m_att));
         }
     }
-    */
-    return true;
+    return false;
 }
 
 uint16_t NetworkFactory::calculateWellKnownPort(const RTPSParticipantAttributes& att) const

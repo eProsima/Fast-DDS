@@ -372,6 +372,11 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
 bool RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
     const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
+    if (request.logicalPort() == 0)
+    {
+        logError(RTCP, "OpenLogicalPortRequest with logical port 0.");
+        return false;
+    }
     if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
@@ -410,6 +415,10 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
 				if (std::find(pChannelResource->mLogicalInputPorts.begin(), pChannelResource->mLogicalInputPorts.end(),
                     port) != pChannelResource->mLogicalInputPorts.end())
 				{
+                    if (port == 0)
+                    {
+					    logInfo(RTCP, "FoundOpenedLogicalPort 0, but will not be considered");
+                    }
 					logInfo(RTCP, "FoundOpenedLogicalPort: " << port);
 					response.availableLogicalPorts().emplace_back(port);
 				}
@@ -574,6 +583,12 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
         {
         case RETCODE_OK:
         {
+            if (pChannelResource->mPendingLogicalPort == 0)
+            {
+                logError(RTCP, "OpenLogicalPortResponse with pending port " << pChannelResource->mPendingLogicalPort);
+                return false;
+            }
+
             std::unique_lock<std::recursive_mutex> scopedLock(pChannelResource->mPendingLogicalMutex);
             if (pChannelResource->mNegotiatingLogicalPort != 0
                 && pChannelResource->mPendingLogicalPort == pChannelResource->mCheckingLogicalPort)

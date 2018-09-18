@@ -220,6 +220,16 @@ public:
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);
 
+    virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
+        uint32_t metatraffic_multicast_port) const override;
+
+    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) override;
+
+    virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
+        LocatorList_t& list) const override;
+
+    virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
+
 protected:
 
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
@@ -278,6 +288,7 @@ protected:
     bool EnqueueLogicalOutputPort(const Locator_t& locator);
 
     virtual const TCPTransportDescriptor* GetConfiguration() const = 0;
+    virtual TCPTransportDescriptor* GetConfiguration() = 0;
 
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
 

@@ -681,6 +681,55 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
     return result;
 }
 
+bool UDPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &locator,
+        uint32_t metatraffic_multicast_port) const
+{
+    if (locator.port == 0)
+    {
+        locator.port = metatraffic_multicast_port;
+    }
+    return true;
+}
+
+bool UDPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
+        uint32_t metatraffic_unicast_port)
+{
+    if (locator.port == 0)
+    {
+        locator.port = metatraffic_unicast_port;
+    }
+    return true;
+}
+
+bool UDPTransportInterface::configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params,
+        uint32_t domainId, LocatorList_t& list) const
+{
+    if(locator.port == 0)
+    {
+        // TODO(Ricardo) Make configurable.
+        for(int32_t i = 0; i < 4; ++i)
+        {
+            Locator_t auxloc(locator);
+            auxloc.port = port_params.getUnicastPort(domainId, i);
+
+            list.push_back(auxloc);
+        }
+    }
+    else
+        list.push_back(locator);
+
+    return true;
+}
+
+bool UDPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
+{
+    if (locator.port == 0)
+    {
+        locator.port = well_known_port;
+    }
+    return true;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

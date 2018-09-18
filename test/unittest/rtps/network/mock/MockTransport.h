@@ -76,6 +76,15 @@ class MockTransport: public TransportInterface
         virtual TransportDescriptorInterface* get_configuration() override { return nullptr; };
         virtual void AddDefaultOutputLocator(LocatorList_t &) override {};
 
+        virtual bool fillMetatrafficMulticastLocator(Locator_t &, uint32_t ) const override { return true; }
+
+        virtual bool fillMetatrafficUnicastLocator(Locator_t &, uint32_t ) override { return true; }
+
+        virtual bool configureInitialPeerLocator(Locator_t &, const PortParameters &, uint32_t , LocatorList_t& ) const
+            override { return true; }
+
+        virtual bool fillUnicastLocator(Locator_t &, uint32_t) const override { return true; }
+
         //Helpers and message record
         typedef struct
         {

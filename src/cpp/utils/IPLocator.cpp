@@ -324,7 +324,6 @@ uint16_t IPLocator::getPhysicalPort(const Locator_t &locator)
 // TCPv4
 bool IPLocator::setWan(Locator_t &locator, octet o1, octet o2, octet o3, octet o4)
 {
-    LOCATOR_ADDRESS_INVALID(locator.address);
     locator.address[8] = o1;
     locator.address[9] = o2;
     locator.address[10] = o3;
@@ -339,7 +338,6 @@ bool IPLocator::setWan(Locator_t &locator, const std::string &wan)
     int a, b, c, d; //to store the 4 ints
     char ch; //to temporarily store the '.'
     ss >> a >> ch >> b >> ch >> c >> ch >> d;
-    LOCATOR_ADDRESS_INVALID(locator.address);
     locator.address[8]  = (octet)a;
     locator.address[9]  = (octet)b;
     locator.address[10] = (octet)c;

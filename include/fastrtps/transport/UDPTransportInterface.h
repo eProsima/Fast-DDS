@@ -107,6 +107,16 @@ public:
 
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
+    virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
+        uint32_t metatraffic_multicast_port) const override;
+
+    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) override;
+
+    virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
+        LocatorList_t& list) const override;
+
+    virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
+
 protected:
 
     int32_t mTransportKind;

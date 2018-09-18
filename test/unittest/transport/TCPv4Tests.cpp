@@ -141,6 +141,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     recvDescriptor.receiveBufferSize = 5;
     recvDescriptor.add_listener_port(5100);
     recvDescriptor.wait_for_tcp_negotiation = true;
+    recvDescriptor.metadata_logical_port = 7410;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
@@ -149,6 +150,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     sendDescriptor.sendBufferSize = 5;
     sendDescriptor.receiveBufferSize = 5;
     sendDescriptor.wait_for_tcp_negotiation = true;
+    sendDescriptor.metadata_logical_port = 7410;
     TCPv4Transport sendTransportUnderTest(sendDescriptor);
     sendTransportUnderTest.init();
 
@@ -211,11 +213,13 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     genericOutputChannelLocator.port = g_output_port;
+    IPLocator::setLogicalPort(genericOutputChannelLocator, 7400);
     transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr);
 
     Locator_t destinationLocator;
     destinationLocator.kind = LOCATOR_KIND_TCPv4;
     destinationLocator.port = g_output_port + 1;
+    IPLocator::setLogicalPort(destinationLocator, 7400);
 
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
@@ -268,13 +272,15 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_output_port;
     outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setLogicalPort(outputChannelLocator, 7400);
     IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
-    IPLocator::setIPv4(outputChannelLocator, 111,111,111,111);
+    Locator_t wrongLocator(outputChannelLocator);
+    IPLocator::setIPv4(wrongLocator, 111,111,111,111);
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
+    ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
 }
 
 TEST_F(TCPv4Tests, shrink_locator_lists)
@@ -314,6 +320,7 @@ void TCPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.sendBufferSize = 5;
     descriptor.receiveBufferSize = 5;
     descriptor.add_listener_port(5100);
+    descriptor.metadata_logical_port = 7400;
 }
 
 int main(int argc, char **argv)

@@ -188,6 +188,13 @@ struct TCPControlMsgHeader
     uint16_t length; // 2 bytes
     TCPTransactionId transactionId; // 12 bytes
 
+    TCPControlMsgHeader()
+    {
+        kind = static_cast<TCPCPMKind>(0x00);
+        flags = static_cast<octet>(0x00);
+        length = 0;
+    }
+
     void setFlags(bool endianess, bool hasPayload, bool requiresResponse)
     {
         //TODO: Optimize receiving a Endianness_t

@@ -192,6 +192,10 @@ void TCPChannelResource::EnqueueLogicalPort(uint16_t port)
         == mPendingLogicalOutputPorts.end()
         && std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) == mLogicalOutputPorts.end())
     {
+        if (port == 0)
+        {
+            logError(RTPS, "Trying to enqueue logical port 0.");
+        }
         mPendingLogicalOutputPorts.emplace_back(port);
     }
 }

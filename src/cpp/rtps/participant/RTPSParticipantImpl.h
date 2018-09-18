@@ -298,7 +298,7 @@ private:
         can not be opened, we want to mutate the Locator to open a more or less equivalent channel.
         @param loc -  Locator we want to change
         */
-    Locator_t applyLocatorAdaptRule(Locator_t loc);
+    Locator_t& applyLocatorAdaptRule(Locator_t &loc);
 
     /** Checks if there is any sender resource available to reach the given locator.
     @param loc -  Locator we want to check

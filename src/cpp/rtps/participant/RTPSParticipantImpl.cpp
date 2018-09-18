@@ -38,6 +38,7 @@
 #include <fastrtps/rtps/reader/StatefulPersistentReader.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -69,26 +70,11 @@ static EntityId_t TrustedWriter(const EntityId_t& reader)
         c_EntityId_Unknown;
 }
 
-Locator_t RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t loc)
+Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t& loc)
 {
-    switch (loc.kind)
-    {
-        case LOCATOR_KIND_UDPv4:
-            //This is a completely made up rule
-            loc.port += m_att.port.participantIDGain;
-            break;
-        case LOCATOR_KIND_UDPv6:
-            //TODO - Define the rest of rules
-            loc.port += m_att.port.participantIDGain;
-            break;
-        case LOCATOR_KIND_TCPv4:
-        case LOCATOR_KIND_TCPv6:
-            //TODO: Check Physical <-> Logical Port
-            loc.port += m_att.port.participantIDGain;
-            //uint16_t oldPort = IPLocator::getLogicalPort(loc);
-            //IPLocator::setLogicalPort(loc, oldPort + m_att.port.participantIDGain);
-            break;
-    }
+    // This is a completely made up rule
+    // It is transport responsability to interpret this new port.
+    loc.port += m_att.port.participantIDGain;
     return loc;
 }
 
@@ -110,13 +96,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
     {
-        m_network_Factory.RegisterDefaultTransport(m_att, m_guid.guidPrefix);
+        UDPv4TransportDescriptor descriptor;
+        descriptor.sendBufferSize = m_att.sendSocketBufferSize;
+        descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+        m_network_Factory.RegisterTransport(&descriptor, m_guid.guidPrefix);
     }
 
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
-        m_network_Factory.RegisterTransport(transportDescriptor.get(), m_guid.guidPrefix, &m_att);
+        m_network_Factory.RegisterTransport(transportDescriptor.get(), m_guid.guidPrefix);
     }
 
     mp_userParticipant->mp_impl = this;
@@ -140,7 +129,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
-        //UDPv4
         Locator_t mandatoryMulticastLocator;
         m_network_Factory.fillDefaultMetatrafficMulticastLocator(mandatoryMulticastLocator, metatraffic_multicast_port);
         m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
@@ -151,7 +139,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
-    else // TODO UDPv6 is this brach... but TCP isn't
+    else
     {
         std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
@@ -207,7 +195,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         IPFinder::getIP4Address(&loclist);
         for (auto it = loclist.begin(); it != loclist.end(); ++it)
         {
-            (*it).kind = LOCATOR_KIND_UDPv4; // Force UDPv4
+            (*it).kind = LOCATOR_KIND_UDPv4; // Force UDPv4 as default
             m_network_Factory.fillDefaultUnicastLocator((*it), m_att);
             m_att.defaultUnicastLocatorList.push_back((*it));
         }

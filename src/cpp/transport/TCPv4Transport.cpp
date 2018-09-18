@@ -132,6 +132,11 @@ const TCPTransportDescriptor* TCPv4Transport::GetConfiguration() const
     return &mConfiguration_;
 }
 
+TCPTransportDescriptor* TCPv4Transport::GetConfiguration()
+{
+    return &mConfiguration_;
+}
+
 void TCPv4Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback)
 {
     GetIP4s(locNames, return_loopback);

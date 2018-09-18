@@ -19,6 +19,7 @@
 #include <vector>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/PortParameters.h>
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 
 namespace eprosima{
@@ -44,7 +45,7 @@ class TransportInterface
 {
 public:
 
-   /**
+    /**
     * Aside from the API defined here, an user-defined Transport must define a descriptor data type and a constructor that
     * expects a constant reference to such descriptor. e.g:
     *
@@ -54,82 +55,91 @@ public:
     *    MyTransport(const MyTransportDescriptor&);
     *    ...
     */
-   virtual ~TransportInterface() = default;
+    virtual ~TransportInterface() = default;
 
-   virtual bool init() = 0;
+    virtual bool init() = 0;
 
-   /**
+    /**
     * Must report whether the output channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
-   virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
+    virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
 
-   /**
+    /**
     * Must report whether the input channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
-   virtual bool IsInputChannelOpen(const Locator_t&) const = 0;
+    virtual bool IsInputChannelOpen(const Locator_t&) const = 0;
 
-   //! Must report whether the given locator is supported by this transport (typically inspecting its "kind" value).
-   virtual bool IsLocatorSupported(const Locator_t&) const = 0;
+    //! Must report whether the given locator is supported by this transport (typically inspecting its "kind" value).
+    virtual bool IsLocatorSupported(const Locator_t&) const = 0;
 
-   //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
-   virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
+    //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
+    virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
 
-   //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
-   //! any resources that are needed for said channel.
-   virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
-   virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
+    //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
+    //! any resources that are needed for said channel.
+    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
+    virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
 
-   virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) = 0;
+    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) = 0;
 
-   /**
+    /**
     * Must close the channel that maps to/from the given locator.
     * IMPORTANT: It MUST be safe to call this method even during a Send operation on another thread. You must implement
     * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
     */
-   virtual bool CloseOutputChannel(const Locator_t&) = 0;
+    virtual bool CloseOutputChannel(const Locator_t&) = 0;
 
-   /**
+    /**
     * Must close the channel that maps to/from the given locator.
     * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
     * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
     */
-   virtual bool CloseInputChannel(const Locator_t&) = 0;
+    virtual bool CloseInputChannel(const Locator_t&) = 0;
 
-   /**
+    /**
     * Must release the channel that maps to/from the given locator.
     * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
     * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
     */
-   virtual bool ReleaseInputChannel(const Locator_t&) = 0;
+    virtual bool ReleaseInputChannel(const Locator_t&) = 0;
 
-   //! Must report whether two locators map to the same internal channel.
-   virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
-   //! Must report whether two locators map to the same internal channel.
-   virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
-   /**
-   * Must execute a blocking send, through the outbound channel that maps to the localLocator, targeted to the
-   * remote address defined by remoteLocator. Must be threadsafe between channels, but not necessarily
-   * within the same channel.
-   */
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
+    //! Must report whether two locators map to the same internal channel.
+    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
+    //! Must report whether two locators map to the same internal channel.
+    virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
+    /**
+     * Must execute a blocking send, through the outbound channel that maps to the localLocator, targeted to the
+     * remote address defined by remoteLocator. Must be threadsafe between channels, but not necessarily
+     * within the same channel.
+     */
+    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
 
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource* pChannelResource) = 0;
+    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource* pChannelResource) = 0;
 
-   //virtual ChannelResource* FindSocket(const Locator_t& remoteLocator) = 0;
+    //virtual ChannelResource* FindSocket(const Locator_t& remoteLocator) = 0;
 
-   virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) = 0;
+    virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) = 0;
 
-   virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
+    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
-   virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
+    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
 
-   virtual bool is_local_locator(const Locator_t& locator) const = 0;
+    virtual bool is_local_locator(const Locator_t& locator) const = 0;
 
-   virtual TransportDescriptorInterface* get_configuration() = 0;
+    virtual TransportDescriptorInterface* get_configuration() = 0;
 
-   virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
+    virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
+
+    virtual bool fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const = 0;
+
+    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) = 0;
+
+    virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
+        LocatorList_t& list) const = 0;
+
+    virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
 
 protected:
 

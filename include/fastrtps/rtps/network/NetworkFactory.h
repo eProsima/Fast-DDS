@@ -66,14 +66,7 @@ class NetworkFactory
         * @param descriptor Structure that defines all initial configuration for a given transport.
         */
         void RegisterTransport(TransportDescriptorInterface* descriptor,
-            const GuidPrefix_t& participantGuidPrefix, const RTPSParticipantAttributes* m_att = nullptr);
-
-        /**
-        * Allows registration of the default transport dynamically.
-        * @param Participant attributes for buffers sizes
-        * @param descriptor Structure that defines all initial configuration for a given transport.
-        */
-        void RegisterDefaultTransport(const RTPSParticipantAttributes& PParam, const GuidPrefix_t& participantGuidPrefix);
+            const GuidPrefix_t& participantGuidPrefix);
 
         /**
          * Walks over the list of transports, opening every possible channel that can send through

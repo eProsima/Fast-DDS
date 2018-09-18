@@ -862,7 +862,7 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
     std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
 
     bool bSendOpenLogicalPort = false;
-    logInfo(RTCP, "START performRTPCManagementThread " << pChannelResource->GetLocator() << " (" << pChannelResource->getSocket()->local_endpoint().address() << "->" << pChannelResource->getSocket()->remote_endpoint().address() << ")");
+    logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" << pChannelResource->getSocket()->local_endpoint().address() << ":" << pChannelResource->getSocket()->local_endpoint().port() << "->" << pChannelResource->getSocket()->remote_endpoint().address() << ":" << pChannelResource->getSocket()->remote_endpoint().port() << ")");
     while (pChannelResource->IsAlive())
     {
         if (pChannelResource->IsConnectionEstablished())
@@ -1548,6 +1548,103 @@ void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
         }
     }
 }
+
+bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &locator,
+        uint32_t metatraffic_multicast_port) const
+{
+    if (locator.port == 0)
+    {
+        locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
+    }
+
+    if (IPLocator::getLogicalPort(locator) == 0)
+    {
+        IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_multicast_port));
+    }
+
+    return true;
+}
+
+bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
+        uint32_t metatraffic_unicast_port)
+{
+    if (locator.port == 0)
+    {
+        locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
+    }
+
+    if (IPLocator::getLogicalPort(locator) == 0)
+    {
+        IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_unicast_port));
+    }
+
+    if (GetConfiguration() != nullptr)
+    {
+        if (GetConfiguration()->metadata_logical_port == 0)
+        {
+            GetConfiguration()->metadata_logical_port = static_cast<uint16_t>(metatraffic_unicast_port);
+        }
+    }
+
+    return true;
+}
+
+bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params,
+        uint32_t domainId, LocatorList_t& list) const
+{
+    if(IPLocator::getPhysicalPort(locator) == 0)
+    {
+        // TODO(Ricardo) Make configurable.
+        for(int32_t i = 0; i < 4; ++i)
+        {
+            Locator_t auxloc(locator);
+            auxloc.port = static_cast<uint16_t>(port_params.getUnicastPort(domainId, i));
+
+            if (IPLocator::getLogicalPort(locator) == 0)
+            {
+                IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, i)));
+            }
+
+            list.push_back(auxloc);
+        }
+    }
+    else
+    {
+        if (IPLocator::getLogicalPort(locator) == 0)
+        {
+            // TODO(Ricardo) Make configurable.
+            for(int32_t i = 0; i < 4; ++i)
+            {
+                Locator_t auxloc(locator);
+                IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, i)));
+                list.push_back(auxloc);
+            }
+        }
+        else
+        {
+            list.push_back(locator);
+        }
+    }
+
+    return true;
+}
+
+bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
+{
+    if (locator.port == 0)
+    {
+        locator.port = well_known_port;
+    }
+
+    if (IPLocator::getLogicalPort(locator) == 0)
+    {
+        IPLocator::setLogicalPort(locator, well_known_port);
+    }
+
+    return true;
+}
+
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
