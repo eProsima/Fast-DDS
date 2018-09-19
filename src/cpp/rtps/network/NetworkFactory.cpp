@@ -213,14 +213,15 @@ bool NetworkFactory::fillDefaultMetatrafficMulticastLocator(Locator_t &locator,
 
 bool NetworkFactory::fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const
 {
+    bool result = false;
     for(auto& transport : mRegisteredTransports)
     {
         if (transport->IsLocatorSupported(locator))
         {
-            return transport->fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
+            result |= transport->fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
         }
     }
-    return false;
+    return result;
 }
 
 bool NetworkFactory::fillDefaultMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
@@ -233,39 +234,42 @@ bool NetworkFactory::fillDefaultMetatrafficUnicastLocator(Locator_t &locator, ui
 
 bool NetworkFactory::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
 {
+    bool result = false;
     for(auto& transport : mRegisteredTransports)
     {
         if (transport->IsLocatorSupported(locator))
         {
-            return transport->fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+            result |= transport->fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
         }
     }
-    return false;
+    return result;
 }
 
 bool NetworkFactory::configureInitialPeerLocator(Locator_t &locator, RTPSParticipantAttributes& m_att) const
 {
+    bool result = false;
     for(auto& transport : mRegisteredTransports)
     {
         if (transport->IsLocatorSupported(locator))
         {
-            return transport->configureInitialPeerLocator(locator, m_att.port, m_att.builtin.domainId,
+            result |= transport->configureInitialPeerLocator(locator, m_att.port, m_att.builtin.domainId,
                                                         m_att.builtin.initialPeersList);
         }
     }
-    return false;
+    return result;
 }
 
 bool NetworkFactory::fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const
 {
+    bool result = false;
     for(auto& transport : mRegisteredTransports)
     {
         if (transport->IsLocatorSupported(locator))
         {
-            return transport->fillUnicastLocator(locator, calculateWellKnownPort(m_att));
+            result |= transport->fillUnicastLocator(locator, calculateWellKnownPort(m_att));
         }
     }
-    return false;
+    return result;
 }
 
 uint16_t NetworkFactory::calculateWellKnownPort(const RTPSParticipantAttributes& att) const
