@@ -76,7 +76,7 @@ bool MockTransport::OpenOutputChannel(const Locator_t& locator, SenderResource*,
     return true;
 }
 
-bool MockTransport::OpenInputChannel(const Locator_t& locator, ReceiverResource*, uint32_t)
+bool MockTransport::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface*, uint32_t)
 {
     mockOpenInputChannels.push_back(locator.port);
     return true;

@@ -43,7 +43,7 @@ class MockTransport: public TransportInterface
         virtual bool IsInputChannelOpen(const Locator_t&)  const override;
 
         virtual bool OpenOutputChannel(const Locator_t&, SenderResource* sender = nullptr, uint32_t size = 0) override;
-        virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
+        virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) override;
 
         virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override
         { (void)size; return false; };
@@ -72,7 +72,6 @@ class MockTransport: public TransportInterface
 
         virtual bool is_local_locator(const Locator_t&) const override { return false; }
 
-        virtual void SetParticipantGUIDPrefix(const GuidPrefix_t&) override {};
         virtual TransportDescriptorInterface* get_configuration() override { return nullptr; };
         virtual void AddDefaultOutputLocator(LocatorList_t &) override {};
 

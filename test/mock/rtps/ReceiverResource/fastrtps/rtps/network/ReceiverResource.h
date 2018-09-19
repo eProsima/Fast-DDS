@@ -34,7 +34,7 @@ class RTPSParticipantImpl;
  * Mock ReceiverResource
  * @ingroup NETWORK_MODULE
  */
-class ReceiverResource
+class ReceiverResource : public TransportReceiverInterface
 {
     friend class NetworkFactory;
 
@@ -56,15 +56,18 @@ public:
             Cleanup();
         }
     }
+    virtual void OnDataReceived(const octet*, const uint32_t,
+        const Locator_t&, const Locator_t&) override
+    { }
+
     virtual MessageReceiver* CreateMessageReceiver() { return nullptr; }
     void associateEndpoint(Endpoint *) {}
     void removeEndpoint(Endpoint *) {}
     bool checkReaders(EntityId_t) { return false; }
 protected:
-    ReceiverResource(RTPSParticipantImpl* participant, TransportInterface& transport,
+    ReceiverResource(TransportInterface& transport,
         const Locator_t& locator, uint32_t maxMsgSize)
         : mValid(false)
-        , m_participant(participant)
         , m_maxMsgSize(maxMsgSize)
     {
         mValid = transport.OpenInputChannel(locator, this, m_maxMsgSize);
@@ -81,7 +84,6 @@ protected:
     std::function<void()> Cleanup;
     std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
     bool mValid;
-    RTPSParticipantImpl* m_participant;
     uint32_t m_maxMsgSize;
 
 private:

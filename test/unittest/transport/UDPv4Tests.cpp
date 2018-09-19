@@ -121,7 +121,7 @@ TEST_F(UDPv4Tests, opening_and_closing_input_channel)
     NetworkFactory factory;
     factory.RegisterTransport<UDPv4Transport, UDPv4TransportDescriptor>(descriptor);
     std::vector<std::shared_ptr<ReceiverResource>> receivers;
-    factory.BuildReceiverResources(multicastFilterLocator, nullptr, 0x8FFF, receivers);
+    factory.BuildReceiverResources(multicastFilterLocator, 0x8FFF, receivers);
     ReceiverResource* receiver = receivers.back().get();
 
     // Then

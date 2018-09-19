@@ -69,7 +69,7 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_c
 
    // When
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator, nullptr, 0x8FFF, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator, 0x8FFF, resources);
 
    // Then
    ASSERT_TRUE(ret);
@@ -88,7 +88,7 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_multiple_resources_if_multipl
 
    // When
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports, nullptr, 0x8FFF, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports, 0x8FFF, resources);
 
    // Then
    ASSERT_TRUE(ret);
@@ -140,7 +140,7 @@ TEST_F(NetworkTests, creating_receive_resource_from_locator_opens_channels_mappe
 
    // When
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, nullptr, 0x8FFF, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, 0x8FFF, resources);
 
    ASSERT_TRUE(ret);
 
@@ -179,7 +179,7 @@ TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mappe
    locator.kind = ArbitraryKind;
 
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, nullptr, 0x8FFF, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, 0x8FFF, resources);
    ASSERT_TRUE(ret);
 
    // When
@@ -235,7 +235,7 @@ TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_
    Locator_t locator;
    locator.kind = ArbitraryKind;
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, nullptr, 0x8FFF, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, 0x8FFF, resources);
    ASSERT_TRUE(ret);
    auto& resource = resources.back();
 
@@ -304,7 +304,7 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    Locator_t locator;
    locator.kind = ArbitraryKind;
    std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, nullptr, 0x8FFF, resources);
+   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, 0x8FFF, resources);
    ASSERT_TRUE(ret);
    auto& receiverResource = resources.back();
 

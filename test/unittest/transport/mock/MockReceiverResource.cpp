@@ -21,7 +21,6 @@ namespace rtps{
 MockReceiverResource::MockReceiverResource(TransportInterface& transport, const Locator_t& locator)
         : msg_receiver(nullptr)
 {
-    m_participant = nullptr;
     m_maxMsgSize = 0x8FFF;
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenInputChannel(locator, this, m_maxMsgSize);
@@ -54,12 +53,25 @@ MessageReceiver* MockReceiverResource::CreateMessageReceiver()
     return msg_receiver;
 }
 
+void MockReceiverResource::OnDataReceived(const octet* buf, const uint32_t size,
+    const Locator_t&, const Locator_t& remote)
+{
+    if (msg_receiver != nullptr)
+    {
+        CDRMessage_t msg(0);
+        msg.wraps = true;
+        msg.buffer = const_cast<octet*>(buf);
+        msg.length = size;
+        msg_receiver->processCDRMsg(remote, &msg);
+    }
+}
+
 void MockMessageReceiver::setCallback(std::function<void()> cb)
 {
     this->callback = cb;
 }
 
-void MockMessageReceiver::processCDRMsg(const GuidPrefix_t&, Locator_t*, CDRMessage_t*msg)
+void MockMessageReceiver::processCDRMsg(const Locator_t&, CDRMessage_t*msg)
 {
     data = msg->buffer;
     if (callback != nullptr)

@@ -51,7 +51,7 @@ class MessageReceiver
         virtual ~MessageReceiver(){}
         void reset(){}
         void init(uint32_t /*rec_buffer_size*/){}
-        virtual void processCDRMsg(const GuidPrefix_t& /*RTPSParticipantguidprefix*/,Locator_t* /*loc*/, CDRMessage_t* /*msg*/){}
+        virtual void processCDRMsg(const Locator_t& /*loc*/, CDRMessage_t* /*msg*/){}
         void setReceiverResource(ReceiverResource* /*receiverResource*/){}
         ParameterList_t m_ParamList;
 
