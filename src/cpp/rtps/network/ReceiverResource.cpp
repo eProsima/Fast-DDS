@@ -27,7 +27,7 @@ namespace rtps{
 
 ReceiverResource::ReceiverResource(TransportInterface& transport,
     const Locator_t& locator, uint32_t max_size)
-    : mValid(false)
+    : mValid(false), receiver(nullptr)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenInputChannel(locator, this, max_size);
@@ -46,6 +46,10 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 {
     Cleanup.swap(rValueResource.Cleanup);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
+    receiver = rValueResource.receiver;
+    rValueResource.receiver = nullptr;
+    mValid = rValueResource.mValid;
+    rValueResource.mValid = false;
 }
 
 bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
