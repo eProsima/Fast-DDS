@@ -47,7 +47,7 @@ bool Subscriber::updateAttributes(SubscriberAttributes& att)
     return mp_impl->updateAttributes(att);
 }
 
-SubscriberAttributes Subscriber::getAttributes() const
+const SubscriberAttributes& Subscriber::getAttributes() const
 {
     return mp_impl->getAttributes();
 }

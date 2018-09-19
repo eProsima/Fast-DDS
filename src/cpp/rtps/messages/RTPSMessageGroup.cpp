@@ -326,7 +326,7 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
     if(added)
     {
 #if HAVE_SECURITY
-        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+        if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
         {
             buffer->pos = from_buffer_position;
             CDRMessage::initCDRMsg(encrypt_msg_);
@@ -385,7 +385,7 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -438,7 +438,7 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
 
     // TODO (Ricardo). Check to create special wrapper.
 
-    if(!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change, endpoint_->getAttributes()->topicKind,
+    if(!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change, endpoint_->getAttributes().topicKind,
                 readerId, expectsInlineQos, inlineQos))
     {
         logError(RTPS_WRITER, "Cannot add DATA submsg to the CDRMessage. Buffer too small");
@@ -446,7 +446,7 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -510,7 +510,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
     change_to_add.serializedPayload.length = fragment_size;
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_payload_protected)
+    if(endpoint_->getAttributes().security_attributes().is_payload_protected)
     {
         SerializedPayload_t encrypt_payload;
         encrypt_payload.data = encrypt_msg_->buffer;
@@ -533,7 +533,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
 #endif
 
     if(!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change_to_add, fragment_number,
-                change.serializedPayload.length, endpoint_->getAttributes()->topicKind, readerId,
+                change.serializedPayload.length, endpoint_->getAttributes().topicKind, readerId,
                 expectsInlineQos, inlineQos))
     {
         logError(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
@@ -543,7 +543,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
     change_to_add.serializedPayload.data = NULL;
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -591,7 +591,7 @@ bool RTPSMessageGroup::add_heartbeat(const std::vector<GUID_t>& remote_readers, 
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -648,7 +648,7 @@ bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
         }
 
 #if HAVE_SECURITY
-        if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+        if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
         {
             submessage_msg_->pos = from_buffer_position;
             CDRMessage::initCDRMsg(encrypt_msg_);
@@ -703,7 +703,7 @@ bool RTPSMessageGroup::add_acknack(const std::vector<GUID_t>& remote_writers, Se
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
@@ -751,7 +751,7 @@ bool RTPSMessageGroup::add_nackfrag(const std::vector<GUID_t>& remote_writers, S
     }
 
 #if HAVE_SECURITY
-    if(endpoint_->getAttributes()->security_attributes().is_submessage_protected)
+    if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);

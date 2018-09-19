@@ -502,7 +502,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
     if(!isBuiltin)
     {
         if(!m_security_manager.register_local_writer(SWriter->getGuid(),
-                    param.endpoint.properties, SWriter->getAttributes()->security_attributes()))
+                    param.endpoint.properties, SWriter->getAttributes().security_attributes()))
         {
             delete(SWriter);
             return false;
@@ -511,7 +511,7 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut,
     else
     {
         if(!m_security_manager.register_local_builtin_writer(SWriter->getGuid(),
-                    SWriter->getAttributes()->security_attributes()))
+                    SWriter->getAttributes().security_attributes()))
         {
             delete(SWriter);
             return false;
@@ -652,7 +652,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
     if(!isBuiltin)
     {
         if(!m_security_manager.register_local_reader(SReader->getGuid(),
-                    param.endpoint.properties, SReader->getAttributes()->security_attributes()))
+                    param.endpoint.properties, SReader->getAttributes().security_attributes()))
         {
             delete(SReader);
             return false;
@@ -661,7 +661,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
     else
     {
         if(!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
-                    SReader->getAttributes()->security_attributes()))
+                    SReader->getAttributes().security_attributes()))
         {
             delete(SReader);
             return false;
@@ -794,9 +794,9 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp)
        In case are using the default list of Locators they have already been embedded to the parameters */
 
     //UNICAST
-    assignEndpoint2LocatorList(endp, endp->getAttributes()->unicastLocatorList);
+    assignEndpoint2LocatorList(endp, endp->getAttributes().unicastLocatorList);
     //MULTICAST
-    assignEndpoint2LocatorList(endp, endp->getAttributes()->multicastLocatorList);
+    assignEndpoint2LocatorList(endp, endp->getAttributes().multicastLocatorList);
     return valid;
 }
 
@@ -813,12 +813,12 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
     std::vector<ReceiverResource> newItemsBuffer;					//Store intermediate results
     //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
     //In that case, just use the standard
-    if (pend->getAttributes()->unicastLocatorList.empty() && pend->getAttributes()->multicastLocatorList.empty()){
+    if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty()){
         //Default unicast
-        pend->getAttributes()->unicastLocatorList = m_att.defaultUnicastLocatorList;
+        pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
     }
-    createReceiverResources(pend->getAttributes()->unicastLocatorList, false);
-    createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
+    createReceiverResources(pend->getAttributes().unicastLocatorList, false);
+    createReceiverResources(pend->getAttributes().multicastLocatorList, false);
 
     // Associate the Endpoint with ReceiverResources inside ReceiverControlBlocks
     assignEndpointListenResources(pend);
@@ -949,7 +949,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 
     bool found = false, found_in_users = false;
     {
-        if(p_endpoint->getAttributes()->endpointKind == WRITER)
+        if(p_endpoint->getAttributes().endpointKind == WRITER)
         {
             std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
             for(auto wit=m_userWriterList.begin();
@@ -1003,7 +1003,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
         }
 
         //REMOVE FOR BUILTINPROTOCOLS
-        if(p_endpoint->getAttributes()->endpointKind == WRITER)
+        if(p_endpoint->getAttributes().endpointKind == WRITER)
         {
             if(found_in_users)
             {
@@ -1011,8 +1011,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
-                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
+            if(p_endpoint->getAttributes().security_attributes().is_submessage_protected ||
+                    p_endpoint->getAttributes().security_attributes().is_payload_protected)
             {
                 m_security_manager.unregister_local_writer(p_endpoint->getGuid());
             }
@@ -1026,8 +1026,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
             }
 
 #if HAVE_SECURITY
-            if(p_endpoint->getAttributes()->security_attributes().is_submessage_protected ||
-                    p_endpoint->getAttributes()->security_attributes().is_payload_protected)
+            if(p_endpoint->getAttributes().security_attributes().is_submessage_protected ||
+                    p_endpoint->getAttributes().security_attributes().is_payload_protected)
             {
                 m_security_manager.unregister_local_reader(p_endpoint->getGuid());
             }

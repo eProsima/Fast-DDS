@@ -196,7 +196,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     if(!createSPDPEndpoints())
         return false;
     //UPDATE METATRAFFIC.
-    mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes()->unicastLocatorList);
+    mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes().unicastLocatorList);
     m_participantProxies.push_back(new ParticipantProxyData());
     initializeParticipantProxyData(m_participantProxies.front());
 
@@ -798,7 +798,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
                     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
                             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
                     {
-                        if((*rit)->getAttributes()->reliabilityKind == RELIABLE)
+                        if((*rit)->getAttributes().reliabilityKind == RELIABLE)
                         {
                             StatefulReader* sfr = (StatefulReader*)(*rit);
                             WriterProxy* WP;
