@@ -46,11 +46,6 @@ UDPChannelResource::UDPChannelResource(UDPChannelResource&& channelResource)
 UDPChannelResource::~UDPChannelResource()
 {
     Clear();
-
-    if (mMsgReceiver != nullptr)
-    {
-        delete mMsgReceiver;
-    }
     mMsgReceiver = nullptr;
 }
 

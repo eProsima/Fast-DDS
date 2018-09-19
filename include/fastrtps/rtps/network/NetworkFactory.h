@@ -61,14 +61,6 @@ class NetworkFactory
         bool RegisterTransport(const TransportDescriptorInterface* descriptor);
 
         /**
-        * Allows registration of a transport dynamically. Only the transports built into FastRTPS
-        * are supported here (although it can be easily extended at NetworkFactory.cpp)
-        * @param descriptor Structure that defines all initial configuration for a given transport.
-        */
-        void RegisterTransport(TransportDescriptorInterface* descriptor,
-            const GuidPrefix_t& participantGuidPrefix);
-
-        /**
          * Walks over the list of transports, opening every possible channel that can send through
          * the given locator and returning a vector of Sender Resources associated with it.
          * @param local Locator through which to send.
@@ -80,7 +72,7 @@ class NetworkFactory
          * from the given locator, and returns a vector of Receiver Resources for this goal.
          * @param local Locator from which to listen.
          */
-        bool BuildReceiverResources(Locator_t& local, RTPSParticipantImpl* participant, uint32_t maxMsgSize,
+        bool BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize,
             std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list);
 
         void NormalizeLocators(LocatorList_t& locators);

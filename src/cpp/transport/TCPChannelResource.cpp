@@ -14,7 +14,6 @@
 
 #include <asio.hpp>
 #include <fastrtps/transport/TCPChannelResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <fastrtps/utils/IPLocator.h>
 
 namespace eprosima {
@@ -147,7 +146,7 @@ std::thread* TCPChannelResource::ReleaseRTCPThread()
     return outThread;
 }
 
-bool TCPChannelResource::AddMessageReceiver(uint16_t logicalPort, MessageReceiver* receiver)
+bool TCPChannelResource::AddMessageReceiver(uint16_t logicalPort, TransportReceiverInterface* receiver)
 {
     if (mReceiversMap.find(logicalPort) == mReceiversMap.end())
     {
@@ -157,7 +156,7 @@ bool TCPChannelResource::AddMessageReceiver(uint16_t logicalPort, MessageReceive
     return false;
 }
 
-MessageReceiver* TCPChannelResource::GetMessageReceiver(uint16_t logicalPort)
+TransportReceiverInterface* TCPChannelResource::GetMessageReceiver(uint16_t logicalPort)
 {
     if (mReceiversMap.find(logicalPort) != mReceiversMap.end())
         return mReceiversMap[logicalPort];

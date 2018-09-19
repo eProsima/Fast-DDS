@@ -21,7 +21,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
@@ -264,7 +263,7 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindInputSocket(uint16_t port, b
     return socket;
 }
 
-bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource,
+bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver,
     bool is_multicast, uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -273,9 +272,9 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Re
     {
         eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(IPLocator::getPhysicalPort(locator), is_multicast);
         UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
-        pChannelResource->SetMessageReceiver(receiverResource->CreateMessageReceiver());
+        pChannelResource->SetMessageReceiver(receiver);
         std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
-            pChannelResource, locator);
+            pChannelResource, locator, maxMsgSize);
         pChannelResource->SetThread(newThread);
         mInputSockets.emplace(IPLocator::getPhysicalPort(locator), pChannelResource);
     }
@@ -417,26 +416,26 @@ bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&, SenderResou
     return false;
 }
 
-void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator)
+void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator, uint32_t maxMsgSize)
 {
+    CDRMessage_t msg(maxMsgSize);
     Locator_t remoteLocator;
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.
-        auto msg = pChannelResource->GetMessageBuffer();
         CDRMessage::initCDRMsg(&msg);
         if (!Receive(msg.buffer, msg.max_size, msg.length, pChannelResource, input_locator, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
-        MessageReceiver* receiver = pChannelResource->GetMessageReceiver();
+        auto receiver = pChannelResource->GetMessageReceiver();
         if (receiver != nullptr)
         {
-            receiver->processCDRMsg(rtpsParticipantGuidPrefix, &input_locator, &msg);
+            receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remoteLocator);
         }
         else
         {
-            logWarning(RTPS_MSG_IN, "Received Message, but no MessageReceiver attached");
+            logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
         }
     }
 }
@@ -571,10 +570,6 @@ bool UDPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t 
     logInfo(RTPS_MSG_OUT, "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
         << " FROM " << getSocketPtr(socket)->local_endpoint());
     return true;
-}
-void UDPTransportInterface::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
-{
-    rtpsParticipantGuidPrefix = prefix;
 }
 
 LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)

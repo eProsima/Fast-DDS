@@ -18,108 +18,75 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/rtps/Endpoint.h>
-#include "../common/all_common.h"
+#include "../messages/MessageReceiver.h"
+#include "../../transport/TransportInterface.h"
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
-
-class RTPSWriter;
-class RTPSReader;
-class MessageReceiver;
-class RTPSParticipantImpl;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 /**
- * RAII object that encapsulates the Receive operation over one chanel in an unknown transport.
+ * RAII object that encapsulates the Receive operation over one channel in an unknown transport.
  * A Receiver resource is always univocally associated to a transport channel; the
  * act of constructing a Receiver Resource opens the channel and its destruction
  * closes it.
  * @ingroup NETWORK_MODULE
  */
-class ReceiverResource
+class ReceiverResource : public TransportReceiverInterface
 {
    //! Only NetworkFactory is ever allowed to construct a ReceiverResource from scratch.
    //! In doing so, it guarantees the transport and channel are in a valid state for
    //! this resource to exist.
-friend class NetworkFactory;
+    friend class NetworkFactory;
 
 public:
-  /**
-   * Performs a blocking receive through the channel managed by this resource,
-   * notifying about the origin locator.
-   * @param receiveBuffer Pointer to a buffer where to store the received message.
-   * @param receiveBufferCapacity Capacity of the reception buffer.
-   * Will be used as a boundary check for the previous parameter.
-   * @param[out] receiveBufferSize Final size of the received message.
-   * @param[out] originLocator Address of the remote sender.
-   * @return Success of the managed Receive operation.
-   */
-   //bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-   //             Locator_t& originLocator);
-
-  /**
-   * Reports whether this resource supports the given local locator (i.e., said locator
-   * maps to the transport channel managed by this resource).
-   */
-   bool SupportsLocator(const Locator_t& localLocator);
-
-   /**
-    * Aborts a blocking receive (thread safe).
+    /**
+    * Method called by the transport when receiving data.
+    * @param data Pointer to the received data.
+    * @param size Number of bytes received.
+    * @param localLocator Locator identifying the local endpoint.
+    * @param remoteLocator Locator identifying the remote endpoint.
     */
-   void Abort();
+    virtual void OnDataReceived(const octet* data, const uint32_t size,
+        const Locator_t& localLocator, const Locator_t& remoteLocator) override;
 
-   /**
-    * Resources can only be transfered through move semantics. Copy, assignment, and
-    * construction outside of the factory are forbidden.
+    /**
+     * Reports whether this resource supports the given local locator (i.e., said locator
+     * maps to the transport channel managed by this resource).
+     */
+    bool SupportsLocator(const Locator_t& localLocator);
+
+    /**
+     * Register a MessageReceiver object to be called upon reception of data.
+     * @param receiver The message receiver to register.
+     */
+    void RegisterReceiver(MessageReceiver* receiver);
+
+    /**
+    * Unregister a MessageReceiver object to be called upon reception of data.
+    * @param receiver The message receiver to unregister.
     */
-   ReceiverResource(ReceiverResource&&);
-   ~ReceiverResource();
+    void UnregisterReceiver(MessageReceiver* receiver);
 
-   virtual MessageReceiver* CreateMessageReceiver();
-
-   // Functions to associate/remove associatedendpoints
-   void associateEndpoint(Endpoint *to_add);
-   void removeEndpoint(Endpoint *to_remove);
-   bool checkReaders(EntityId_t readerID);
-   void processDataMsg(EntityId_t readerID, CacheChange_t* ch);
-
-   void processDataFragMsg(EntityId_t readerID, CacheChange_t *incomingChange, uint32_t sampleSize,
-       uint32_t fragmentStartingNum);
-
-   void processHeartbeatMsg(EntityId_t readerID, GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-       SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
-
-   void processGapMsg(EntityId_t readerID, GUID_t &writerGUID, SequenceNumber_t &gapStart,
-       SequenceNumberSet_t &gapList);
-
-   bool processSubMsgNackFrag(const GUID_t& readerGUID, const GUID_t& writerGUID, SequenceNumber_t& writerSN,
-       FragmentNumberSet_t& fnState, uint32_t Ackcount);
-
-   bool processAckNack(const GUID_t& readerGUID, const GUID_t& writerGUID, uint32_t ackCount,
-       const SequenceNumberSet_t& snSet, bool finalFlag);
-
-   void updateParticipantGUID(const GUID_t& participantGUID);
-
-protected:
-   ReceiverResource(RTPSParticipantImpl*, TransportInterface&, const Locator_t&, uint32_t maxMsgSize);
-   ReceiverResource() {};
-   std::function<void()> Cleanup;
-   std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
-   std::function<void(const GUID_t&)> UpdateParticipantGUID;
-   bool mValid; // Post-construction validity check for the NetworkFactory
-   RTPSParticipantImpl* m_participant;
-   uint32_t m_maxMsgSize;
+    /**
+     * Resources can only be transfered through move semantics. Copy, assignment, and
+     * construction outside of the factory are forbidden.
+     */
+    ReceiverResource(ReceiverResource&&);
+    ~ReceiverResource();
 
 private:
+    ReceiverResource() = delete;
+    ReceiverResource(const ReceiverResource&) = delete;
+    ReceiverResource& operator=(const ReceiverResource&) = delete;
 
-   ReceiverResource(const ReceiverResource&)            = delete;
-   ReceiverResource& operator=(const ReceiverResource&) = delete;
+    ReceiverResource(TransportInterface&, const Locator_t&, uint32_t);
+    std::function<void()> Cleanup;
+    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
+    bool mValid; // Post-construction validity check for the NetworkFactory
 
-   std::mutex mtx;
-   std::vector<RTPSWriter*> AssociatedWriters;
-   std::vector<RTPSReader*> AssociatedReaders;
+    std::mutex mtx;
+    MessageReceiver* receiver;
 };
 
 } // namespace rtps

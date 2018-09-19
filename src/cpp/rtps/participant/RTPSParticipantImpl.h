@@ -86,6 +86,29 @@ class IPersistenceService;
     */
 class RTPSParticipantImpl
 {
+    /*
+    Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
+    It contains:
+    -A ReceiverResource (as produced by the NetworkFactory Element)
+    -Its associated MessageReceiver
+    */
+    typedef struct ReceiverControlBlock
+    {
+        std::shared_ptr<ReceiverResource> Receiver;
+        MessageReceiver* mp_receiver; //Associated Readers/Writers inside of MessageReceiver
+        ReceiverControlBlock(std::shared_ptr<ReceiverResource>&& rec) :Receiver(std::move(rec)), mp_receiver(nullptr)
+        {
+        }
+        ReceiverControlBlock(ReceiverControlBlock&& origen) :Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver)
+        {
+            origen.mp_receiver = nullptr;
+        }
+
+    private:
+        ReceiverControlBlock(const ReceiverControlBlock&) = delete;
+        const ReceiverControlBlock& operator=(const ReceiverControlBlock&) = delete;
+
+    } ReceiverControlBlock;
 public:
     /**
         * @param param
@@ -244,7 +267,7 @@ private:
 #endif
 
     //! Encapsulates all associated resources on a Receiving element.
-    std::list<std::shared_ptr<ReceiverResource>> m_receiverResourcelist;
+    std::list<ReceiverControlBlock> m_receiverResourcelist;
     //! Receiver resource list needs its own mutext to avoid a race condition.
     std::mutex m_receiverResourcelistMutex;
 

@@ -152,7 +152,7 @@ public:
     /** Opens an input channel to receive incomming connections.
     *   If there is an existing channel it registers the receiver resource.
     */
-    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
+    virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
     virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
@@ -206,9 +206,6 @@ public:
     virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
         const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
 
-    //! Sets the ID of the participant that has created the transport.
-    virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) override;
-
     virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
     //! Callback called each time that an incomming connection is accepted.
@@ -241,7 +238,7 @@ protected:
 
     std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<uint16_t, std::vector<TCPChannelResource*>> mInputSockets; // The Key is the "Physical Port"
-    std::map<Locator_t, ReceiverResource*> mReceiverResources;
+    std::map<Locator_t, TransportReceiverInterface*> mReceiverResources;
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
     std::recursive_mutex mDeletedSocketsPoolMutex;

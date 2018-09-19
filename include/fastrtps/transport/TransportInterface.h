@@ -17,10 +17,10 @@
 
 #include <memory>
 #include <vector>
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/PortParameters.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include "../rtps/common/Locator.h"
+#include "../rtps/common/PortParameters.h"
+#include "./TransportDescriptorInterface.h"
+#include "./TransportReceiverInterface.h"
 
 namespace eprosima{
 namespace fastrtps{
@@ -29,8 +29,6 @@ namespace rtps{
 static const uint32_t s_maximumMessageSize = 65500;
 static const uint32_t s_minimumSocketBuffer = 65536;
 
-struct TransportDescriptorInterface;
-class ReceiverResource;
 class SenderResource;
 class ChannelResource;
 
@@ -57,6 +55,10 @@ public:
     */
     virtual ~TransportInterface() = default;
 
+    /**
+    * Initialize this transport. This method will prepare all the internals of the transport.
+    * @return True when the transport was correctly intialized.
+    */
     virtual bool init() = 0;
 
     /**
@@ -82,7 +84,7 @@ public:
     virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
     virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t) = 0;
 
-    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) = 0;
+    virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) = 0;
 
     /**
     * Must close the channel that maps to/from the given locator.
@@ -120,8 +122,6 @@ public:
 
     //virtual ChannelResource* FindSocket(const Locator_t& remoteLocator) = 0;
 
-    virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) = 0;
-
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
     virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
@@ -140,11 +140,6 @@ public:
         LocatorList_t& list) const = 0;
 
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
-
-protected:
-
-    //! Participant GUID prefix.
-    GuidPrefix_t rtpsParticipantGuidPrefix;
 };
 
 } // namespace rtps

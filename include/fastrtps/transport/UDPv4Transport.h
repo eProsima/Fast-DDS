@@ -53,7 +53,7 @@ public:
         * Starts listening on the specified port, and if the specified address is in the
         * multicast range, it joins the specified multicast group,
         */
-    virtual bool OpenInputChannel(const Locator_t&, ReceiverResource*, uint32_t) override;
+    virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) override;
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 

@@ -421,9 +421,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     std::vector<GUID_t> allRemoteReaders;
     std::vector<LocatorList_t> allLocatorLists;
 
-    getRTPSParticipant()->createSenderResources(rdata.endpoint.unicastLocatorList, false);
-    getRTPSParticipant()->createSenderResources(rdata.endpoint.multicastLocatorList, false);
-
     // Check if it is already matched.
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
     {

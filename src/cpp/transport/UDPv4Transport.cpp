@@ -178,7 +178,7 @@ void UDPv4Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool retur
     GetIP4s(locNames, return_loopback);
 }
 
-bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource,
+bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
     uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -188,7 +188,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator, receiverResource, IPLocator::isMulticast(locator), maxMsgSize);
+        success = OpenAndBindInputSockets(locator, receiver, IPLocator::isMulticast(locator), maxMsgSize);
 
     if (IPLocator::isMulticast(locator) && IsInputChannelOpen(locator))
     {

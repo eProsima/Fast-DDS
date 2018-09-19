@@ -26,7 +26,6 @@
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPChannelResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 using namespace std;
 using namespace asio;
@@ -782,7 +781,7 @@ bool TCPTransportInterface::OpenExtraOutputChannel(const Locator_t& locator, Sen
     return OpenOutputChannel(locator, senderResource, msgSize);
 }
 
-bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource,
+bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
     uint32_t maxMsgSize)
 {
     bool success = false;
@@ -791,7 +790,7 @@ bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, ReceiverR
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (mReceiverResources.find(locator) == mReceiverResources.end())
         {
-            mReceiverResources[locator] = receiverResource;
+            mReceiverResources[locator] = receiver;
 
             logInfo(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
             if (IsTCPInputSocket(locator))
@@ -937,14 +936,14 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
         }
 
         // Processes the data through the CDR Message interface.
-        MessageReceiver* receiver = pChannelResource->GetMessageReceiver(logicalPort);
+        TransportReceiverInterface* receiver = pChannelResource->GetMessageReceiver(logicalPort);
         if (receiver != nullptr)
         {
-            receiver->processCDRMsg(rtpsParticipantGuidPrefix, &pChannelResource->mLocator, &msg);
+            receiver->OnDataReceived(msg.buffer, msg.length, pChannelResource->GetLocator(), pChannelResource->mLocator);
         }
         else
         {
-            logWarning(RTCP, "Received Message, but no MessageReceiver attached: " << logicalPort);
+            logWarning(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
         }
     }
 
@@ -1096,7 +1095,7 @@ void TCPTransportInterface::RegisterReceiverResources(TCPChannelResource* pChann
             pChannelResource->GetMessageReceiver(IPLocator::getLogicalPort(it->first)) == nullptr)
         {
             pChannelResource->AddMessageReceiver(IPLocator::getLogicalPort(it->first),
-                                                it->second->CreateMessageReceiver());
+                                                it->second);
             pChannelResource->mLogicalInputPorts.emplace_back(IPLocator::getLogicalPort(it->first));
             //pChannelResource->AddLogicalConnection();
         }
@@ -1338,11 +1337,6 @@ bool TCPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t 
 
     logInfo(RTPS_MSG_OUT, "SENT " << bytesSent);
     return bytesSent > 0;
-}
-
-void TCPTransportInterface::SetParticipantGUIDPrefix(const GuidPrefix_t& prefix)
-{
-    rtpsParticipantGuidPrefix = prefix;
 }
 
 LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)

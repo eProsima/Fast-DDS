@@ -21,7 +21,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class MessageReceiver;
+class TransportReceiverInterface;
 
 #if defined(ASIO_HAS_MOVE)
     // Typedefs
@@ -107,19 +107,19 @@ public:
         return getSocketPtr(socket_);
     }
 
-    inline void SetMessageReceiver(MessageReceiver* receiver)
+    inline void SetMessageReceiver(TransportReceiverInterface* receiver)
     {
         mMsgReceiver = receiver;
     }
 
-    inline MessageReceiver* GetMessageReceiver()
+    inline TransportReceiverInterface* GetMessageReceiver()
     {
         return mMsgReceiver;
     }
 
 private:
 
-    MessageReceiver* mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
+    TransportReceiverInterface* mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
     UDPChannelResource(const UDPChannelResource&) = delete;

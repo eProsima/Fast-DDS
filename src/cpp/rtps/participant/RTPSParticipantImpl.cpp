@@ -99,13 +99,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         UDPv4TransportDescriptor descriptor;
         descriptor.sendBufferSize = m_att.sendSocketBufferSize;
         descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-        m_network_Factory.RegisterTransport(&descriptor, m_guid.guidPrefix);
+        m_network_Factory.RegisterTransport(&descriptor);
     }
 
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
-        m_network_Factory.RegisterTransport(transportDescriptor.get(), m_guid.guidPrefix);
+        m_network_Factory.RegisterTransport(transportDescriptor.get());
     }
 
     mp_userParticipant->mp_impl = this;
@@ -251,9 +251,9 @@ const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
     // Safely abort threads.
-    for(auto& receiverResource : m_receiverResourcelist)
+    for(auto& block : m_receiverResourcelist)
     {
-        receiverResource->Abort();
+        block.Receiver->UnregisterReceiver(block.mp_receiver);
     }
 
     while(m_userReaderList.size() > 0)
@@ -273,6 +273,10 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 #endif
 
     // Destruct message receivers
+    for (auto& block : m_receiverResourcelist)
+    {
+        delete block.mp_receiver;
+    }
     m_receiverResourcelist.clear();
 
     delete(this->mp_ResourceSemaphore);
@@ -603,9 +607,9 @@ bool RTPSParticipantImpl::enableReader(RTPSReader *reader)
 void RTPSParticipantImpl::disableReader(RTPSReader *reader)
 {
     m_receiverResourcelistMutex.lock();
-    for(auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
+    for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
     {
-        (*it)->removeEndpoint(reader);
+        it->mp_receiver->removeEndpoint(reader);
     }
     m_receiverResourcelistMutex.unlock();
 }
@@ -690,7 +694,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
 {
     /*	This function...
         - Asks the network factory for new resources
-        - Encapsulates the new resources within the ReceiverResources list
+        - Encapsulates the new resources within the ReceiverControlBlock list
         - Associated the endpoint to the new elements in the list
         - Launches the listener thread
     */
@@ -707,7 +711,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
     createReceiverResources(pend->getAttributes()->unicastLocatorList, false);
     createReceiverResources(pend->getAttributes()->multicastLocatorList, false);
 
-    // Associate the Endpoint with ReceiverResources
+    // Associate the Endpoint with ReceiverControlBlock
     assignEndpointListenResources(pend);
     return true;
 }
@@ -732,10 +736,10 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp, LocatorList
         {
             //Take mutex for the resource since we are going to interact with shared resources
             //std::lock_guard<std::mutex> guard((*it).mtx);
-            if ((*it)->SupportsLocator(*lit))
+            if (it->Receiver->SupportsLocator(*lit))
             {
                 //Supported! Take mutex and update lists - We maintain reader/writer discrimination just in case
-                (*it)->associateEndpoint(endp);
+                it->mp_receiver->associateEndpoint(endp);
                 // end association between reader/writer and the receive resources
             }
 
@@ -785,7 +789,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
     uint32_t size = m_network_Factory.get_max_message_size_between_transports();
     for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
     {
-        bool ret = m_network_Factory.BuildReceiverResources(*it_loc, this, size, newItemsBuffer);
+        bool ret = m_network_Factory.BuildReceiverResources(*it_loc, size, newItemsBuffer);
         if (!ret && ApplyMutation)
         {
             int tries = 0;
@@ -793,7 +797,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
             {
                 tries++;
                 *it_loc = applyLocatorAdaptRule(*it_loc);
-                ret = m_network_Factory.BuildReceiverResources(*it_loc, this, size, newItemsBuffer);
+                ret = m_network_Factory.BuildReceiverResources(*it_loc, size, newItemsBuffer);
             }
         }
 
@@ -801,7 +805,12 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
         {
             std::lock_guard<std::mutex> lock(m_receiverResourcelistMutex);
             //Push the new items into the ReceiverResource buffer
-            m_receiverResourcelist.push_back(*it_buffer);
+            m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
+            //Create and init the MessageReceiver
+            auto mr = new MessageReceiver(this, size);
+            m_receiverResourcelist.back().mp_receiver = mr;
+            //Start reception
+            m_receiverResourcelist.back().Receiver->RegisterReceiver(mr);
         }
         newItemsBuffer.clear();
     }
@@ -856,7 +865,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
     m_receiverResourcelistMutex.lock();
     for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
     {
-        (*it)->removeEndpoint(p_endpoint);
+        it->mp_receiver->removeEndpoint(p_endpoint);
     }
     m_receiverResourcelistMutex.unlock();
 
@@ -1004,15 +1013,6 @@ void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint* /*pend*/, const 
 void RTPSParticipantImpl::setGuid(GUID_t& guid)
 {
     m_guid = guid;
-    for (auto it = m_senderResourceList.begin(); it != m_senderResourceList.end(); ++it)
-    {
-        it->UpdateParticipantGUID(m_guid);
-    }
-
-    for (auto it = m_receiverResourcelist.begin(); it != m_receiverResourcelist.end(); ++it)
-    {
-        (*it)->updateParticipantGUID(m_guid);
-    }
 }
 
 void RTPSParticipantImpl::announceRTPSParticipantState()

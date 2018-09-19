@@ -16,6 +16,7 @@
 #define TCP_CHANNEL_RESOURCE_INFO_
 
 #include <asio.hpp>
+#include <fastrtps/transport/TransportReceiverInterface.h>
 #include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/rtps/common/Locator.h>
 
@@ -32,8 +33,6 @@ enum eSocketErrorCodes
     eException,
     eConnectionAborted = 125
 };
-
-class MessageReceiver;
 
 #if defined(ASIO_HAS_MOVE)
     // Typedefs
@@ -168,9 +167,9 @@ public:
         return mConnectionStatus == eConnectionStatus::eEstablished;
     }
 
-    bool AddMessageReceiver(uint16_t logicalPort, MessageReceiver* receiver);
+    bool AddMessageReceiver(uint16_t logicalPort, TransportReceiverInterface* receiver);
 
-    MessageReceiver* GetMessageReceiver(uint16_t logicalPort);
+    TransportReceiverInterface* GetMessageReceiver(uint16_t logicalPort);
 
     inline const Locator_t& GetLocator() const
     {
@@ -219,7 +218,7 @@ private:
     std::vector<uint16_t> mLogicalInputPorts;
     std::recursive_mutex* mReadMutex;
     std::recursive_mutex* mWriteMutex;
-    std::map<uint16_t, MessageReceiver*> mReceiversMap;  // The key is the logical port.
+    std::map<uint16_t, TransportReceiverInterface*> mReceiversMap;  // The key is the logical port.
     std::recursive_mutex mPendingLogicalMutex;
     std::map<uint16_t, uint16_t> mLogicalPortRouting;
 	Semaphore mNegotiationSemaphore;

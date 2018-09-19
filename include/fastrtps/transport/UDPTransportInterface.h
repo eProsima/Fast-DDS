@@ -102,9 +102,6 @@ public:
    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
        const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
 
-   //! Sets the ID of the participant that has created the transport.
-   virtual void SetParticipantGUIDPrefix(const GuidPrefix_t& prefix) override;
-
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
     virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
@@ -155,7 +152,7 @@ protected:
     virtual bool IsInterfaceWhiteListEmpty() const = 0;
     virtual bool IsInterfaceAllowed(const std::string& interface) = 0;
 
-    bool OpenAndBindInputSockets(const Locator_t& locator, ReceiverResource* receiverResource, bool is_multicast,
+    bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
         uint32_t maxMsgSize);
     eProsimaUDPSocket OpenAndBindInputSocket(uint16_t port, bool is_multicast);
     bool OpenAndBindOutputSockets(const Locator_t& locator, SenderResource*);
@@ -164,7 +161,7 @@ protected:
     operation on the ReceiveResource
     @param input_locator - Locator that triggered the creation of the resource
     */
-    void performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator);
+    void performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator, uint32_t maxMsgSize);
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         eProsimaUDPSocketRef socket);

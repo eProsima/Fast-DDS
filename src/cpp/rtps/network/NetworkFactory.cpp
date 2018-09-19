@@ -47,8 +47,8 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local, ui
     return newSenderResources;
 }
 
-bool NetworkFactory::BuildReceiverResources(Locator_t& local, RTPSParticipantImpl* participant,
-    uint32_t maxMsgSize, std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
+bool NetworkFactory::BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize, 
+    std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
 {
     bool returnedValue = false;
     for (auto& transport : mRegisteredTransports)
@@ -58,7 +58,7 @@ bool NetworkFactory::BuildReceiverResources(Locator_t& local, RTPSParticipantImp
             if (!transport->IsInputChannelOpen(local))
             {
                 std::shared_ptr<ReceiverResource> newReceiverResource = std::shared_ptr<ReceiverResource>(
-                    new ReceiverResource(participant, *transport, local, maxMsgSize));
+                    new ReceiverResource(*transport, local, maxMsgSize));
 
                 if (newReceiverResource->mValid)
                 {
@@ -95,16 +95,6 @@ bool NetworkFactory::RegisterTransport(const TransportDescriptorInterface* descr
             minSendBufferSize_ = minSendBufferSize;
     }
     return wasRegistered;
-}
-
-void NetworkFactory::RegisterTransport(TransportDescriptorInterface* descriptor,
-        const GuidPrefix_t& participantGuidPrefix)
-{
-    bool bWasRegistered = RegisterTransport(descriptor);
-    if (bWasRegistered)
-    {
-        mRegisteredTransports.back()->SetParticipantGUIDPrefix(participantGuidPrefix);
-    }
 }
 
 void NetworkFactory::NormalizeLocators(LocatorList_t& locators)

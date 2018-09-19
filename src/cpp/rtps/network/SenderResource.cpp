@@ -66,11 +66,6 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
         {
             return transport.DoOutputLocatorsMatch(locator, transport.RemoteToMainLocal(locatorToCheck));
         };
-
-    updateParticipantGUID = [&transport](const GUID_t& participantGUID)
-    {
-        transport.SetParticipantGUIDPrefix(participantGUID.guidPrefix);
-    };
 }
 
 bool SenderResource::AddSenderLocator(const Locator_t& destination)
@@ -99,7 +94,6 @@ SenderResource::SenderResource(SenderResource&& rValueResource)
     SendThroughAssociatedChannel.swap(rValueResource.SendThroughAssociatedChannel);
     LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
     ManagedChannelMapsToRemote.swap(rValueResource.ManagedChannelMapsToRemote);
-    updateParticipantGUID.swap(rValueResource.updateParticipantGUID);
     //m_pChannelResource = rValueResource.m_pChannelResource;
     //rValueResource.m_pChannelResource = nullptr;
 }
@@ -127,14 +121,6 @@ SenderResource::~SenderResource()
     if (Cleanup)
     {
         Cleanup();
-    }
-}
-
-void SenderResource::UpdateParticipantGUID(const GUID_t& guid)
-{
-    if (updateParticipantGUID)
-    {
-        updateParticipantGUID(guid);
     }
 }
 

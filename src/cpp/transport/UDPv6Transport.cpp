@@ -20,7 +20,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
@@ -178,7 +177,7 @@ void UDPv6Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool retur
     GetIP6s(locNames, return_loopback);
 }
 
-bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource* receiverResource,
+bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
     uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
@@ -188,7 +187,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, ReceiverResource
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
-        success = OpenAndBindInputSockets(locator, receiverResource, IPLocator::isMulticast(locator), maxMsgSize);
+        success = OpenAndBindInputSockets(locator, receiver, IPLocator::isMulticast(locator), maxMsgSize);
 
     if (IPLocator::isMulticast(locator) && IsInputChannelOpen(locator))
     {
