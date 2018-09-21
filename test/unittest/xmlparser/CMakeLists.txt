@@ -72,6 +72,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
         target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLProfileParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
+        endif()
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLProfileParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}
@@ -119,6 +122,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_BINARY_DIR}/include
             )
         target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} )
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
+        endif()
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}
