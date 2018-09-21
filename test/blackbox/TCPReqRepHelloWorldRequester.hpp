@@ -91,7 +91,7 @@ class TCPReqRepHelloWorldRequester
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
         void block(const std::chrono::seconds &seconds);
-        void waitDiscovery(bool expectMatch = true, int maxWait = 10);
+        void waitDiscovery(uint32_t expectMatch = 2, int maxWait = 0);
         void matched();
         void send(const uint16_t number);
         bool isMatched() { return matched_ > 0; }

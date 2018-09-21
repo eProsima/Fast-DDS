@@ -5303,8 +5303,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.waitDiscovery(2);
+    replier.waitDiscovery(2);
 
     ASSERT_TRUE(requester.isMatched());
     ASSERT_TRUE(replier.isMatched());
@@ -5331,8 +5331,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
@@ -5352,8 +5352,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
@@ -5375,8 +5375,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.waitDiscovery(2);
+    replier.waitDiscovery(2);
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -5400,8 +5400,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
@@ -5421,8 +5421,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
@@ -5444,8 +5444,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.waitDiscovery(2);
+    replier.waitDiscovery(2);
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -5469,8 +5469,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
@@ -5490,8 +5490,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
@@ -5513,8 +5513,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.waitDiscovery(2);
+    replier.waitDiscovery(2);
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -5538,8 +5538,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
@@ -5559,8 +5559,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery(false, 10);
-    replier.waitDiscovery(false, 10);
+    requester.waitDiscovery(0, 10);
+    replier.waitDiscovery(0, 10);
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());

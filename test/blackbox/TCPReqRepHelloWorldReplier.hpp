@@ -89,7 +89,7 @@ class TCPReqRepHelloWorldReplier
         void init(int participantId, int domainId);
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity sample_identity, uint16_t number);
-        void waitDiscovery(bool expectMatch = true, int maxWait = 10);
+        void waitDiscovery(uint32_t expectMatch = 2, int maxWait = 0);
         void matched();
         bool isMatched() { return matched_ > 0; }
 

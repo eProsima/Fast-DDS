@@ -139,16 +139,26 @@ void TCPReqRepHelloWorldRequester::block(const std::chrono::seconds &seconds)
     ASSERT_EQ(current_number_, number_received_);
 }
 
-void TCPReqRepHelloWorldRequester::waitDiscovery(bool expectMatch, int maxWait)
+void TCPReqRepHelloWorldRequester::waitDiscovery(uint32_t expectMatch, int maxWait)
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-    if(matched_ < 2)
-        cvDiscovery_.wait_for(lock, std::chrono::seconds(maxWait));
-
-    if (expectMatch)
+    if(matched_ < expectMatch || expectMatch == 0)
     {
-        ASSERT_GE(matched_, 2u);
+        if (maxWait > 0 || expectMatch == 0)
+        {
+            cvDiscovery_.wait_for(lock, std::chrono::seconds(maxWait),
+                    [&](){return matched_ > 0 && matched_ == expectMatch;});
+        }
+        else
+        {
+            cvDiscovery_.wait(lock, [&](){return matched_ == expectMatch;});
+        }
+    }
+
+    if (expectMatch > 0)
+    {
+        ASSERT_GE(matched_, expectMatch);
     }
     else
     {
