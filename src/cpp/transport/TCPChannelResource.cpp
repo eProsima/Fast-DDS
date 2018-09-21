@@ -42,8 +42,7 @@ TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& loc
     }
     else
     {
-        mLogicalInputPorts.emplace_back(IPLocator::getLogicalPort(locator));
-        logInfo(RTCP, "Bound input locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
+        mLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
     }
 }
 
@@ -69,31 +68,10 @@ TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& loc
     }
     else
     {
-        mLogicalInputPorts.emplace_back(IPLocator::getLogicalPort(locator));
-        logInfo(RTCP, "Bound input locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
+        mLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
     }
 }
-/*
-TCPChannelResource::TCPChannelResource(TCPChannelResource&& channelResource)
-    : ChannelResource(std::move(channelResource))
-    , mLocator(channelResource.mLocator)
-    , m_inputSocket(channelResource.m_inputSocket)
-    , mWaitingForKeepAlive(channelResource.m_inputSocket)
-    , mPendingLogicalPort(channelResource.mPendingLogicalPort)
-    , mNegotiatingLogicalPort(channelResource.mNegotiatingLogicalPort)
-    , mCheckingLogicalPort(channelResource.mCheckingLogicalPort)
-    , mRTCPThread(channelResource.mRTCPThread)
-    , mReadMutex(channelResource.mReadMutex)
-    , mWriteMutex(channelResource.mWriteMutex)
-    , mSocket(moveSocket(channelResource.mSocket))
-    , mConnectionStatus(channelResource.mConnectionStatus)
-{
-    channelResource.mReadMutex = nullptr;
-    channelResource.mWriteMutex = nullptr;
-    channelResource.mRTCPThread = nullptr;
-    std::cout << "############ MOVE CTOR ###########" << std::endl;
-}
-*/
+
 TCPChannelResource::~TCPChannelResource()
 {
 	mNegotiationSemaphore.disable();

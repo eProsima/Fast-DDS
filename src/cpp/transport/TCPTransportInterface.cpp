@@ -721,6 +721,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
     if (IsLocatorSupported(locator))
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        logInfo(RTCP, "OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
         if (!IsTCPInputSocket(locator))
         {
             if (!IsOutputChannelConnected(locator))
@@ -1096,8 +1097,6 @@ void TCPTransportInterface::RegisterReceiverResources(TCPChannelResource* pChann
         {
             pChannelResource->AddMessageReceiver(IPLocator::getLogicalPort(it->first),
                                                 it->second);
-            pChannelResource->mLogicalInputPorts.emplace_back(IPLocator::getLogicalPort(it->first));
-            //pChannelResource->AddLogicalConnection();
         }
     }
 }
@@ -1399,6 +1398,8 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 
             // Create one message receiver for each registered receiver resources.
             RegisterReceiverResources(pChannelResource, acceptor->mLocator);
+            mOutputSockets.push_back(pChannelResource); // And open it as output too.
+            mBoundOutputSockets[acceptor->mLocator].push_back(pChannelResource); // And bound it.
 
             for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end(); ++it)
             {

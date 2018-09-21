@@ -381,10 +381,8 @@ bool RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChan
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
-    else if (std::find(pChannelResource->mLogicalInputPorts.begin(), pChannelResource->mLogicalInputPorts.end(),
-        request.logicalPort()) == pChannelResource->mLogicalInputPorts.end())
+    else if (pChannelResource->mReceiversMap.find(request.logicalPort()) == pChannelResource->mReceiversMap.end())
     {
-        //logInfo(RTCP, "OpenLogicalPortRequest [FAILED]: " << request.logicalPort());
         sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
     }
     else
@@ -412,8 +410,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
 		{
 			for (uint16_t port : request.logicalPortsRange())
 			{
-				if (std::find(pChannelResource->mLogicalInputPorts.begin(), pChannelResource->mLogicalInputPorts.end(),
-                    port) != pChannelResource->mLogicalInputPorts.end())
+				if (pChannelResource->mReceiversMap.find(port) != pChannelResource->mReceiversMap.end())
 				{
                     if (port == 0)
                     {

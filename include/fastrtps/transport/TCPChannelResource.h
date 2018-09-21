@@ -97,19 +97,8 @@ public:
 
     TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
         uint32_t maxMsgSize);
-/*
-    TCPChannelResource(TCPChannelResource&& channelResource);
-*/
-    virtual ~TCPChannelResource();
 
-/*
-    TCPChannelResource& operator=(TCPChannelResource&& channelResource)
-    {
-        mSocket = moveSocket(channelResource.mSocket);
-        std::cout << "############ MOVE ASSIGN ###########" << std::endl;
-        return *this;
-    }
-*/
+    virtual ~TCPChannelResource();
 
     bool operator==(const TCPChannelResource& channelResource) const
     {
@@ -175,26 +164,7 @@ public:
     {
         return mLocator;
     }
-    /*
-    inline bool HasLogicalConnections() const
-    {
-        std::unique_lock<std::recursive_mutex> scoped(mLogicalConnectionsMutex);
-        return mLogicalConnections > 0;
-    }
 
-    inline void AddLogicalConnection()
-    {
-        std::unique_lock<std::recursive_mutex> scoped(mLogicalConnectionsMutex);
-        ++mLogicalConnections;
-    }
-
-    inline void RemoveLogicalConnection()
-    {
-        std::unique_lock<std::recursive_mutex> scoped(mLogicalConnectionsMutex);
-        assert(mLogicalConnections > 0);
-        --mLogicalConnections;
-    }
-    */
 protected:
     inline void ChangeStatus(eConnectionStatus s)
     {
@@ -215,7 +185,7 @@ private:
     std::thread* mRTCPThread;
     std::vector<uint16_t> mPendingLogicalOutputPorts; // Must be accessed after lock mPendingLogicalMutex
     std::vector<uint16_t> mLogicalOutputPorts;
-    std::vector<uint16_t> mLogicalInputPorts;
+    //std::vector<uint16_t> mLogicalInputPorts;
     std::recursive_mutex* mReadMutex;
     std::recursive_mutex* mWriteMutex;
     std::map<uint16_t, TransportReceiverInterface*> mReceiversMap;  // The key is the logical port.
@@ -224,9 +194,6 @@ private:
 	Semaphore mNegotiationSemaphore;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
-
-    //uint32_t mLogicalConnections; // Count of writers/readers using this socket.
-    //mutable std::recursive_mutex mLogicalConnectionsMutex;
 
     TCPChannelResource(const TCPChannelResource&) = delete;
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;

@@ -135,6 +135,9 @@ TEST_F(TCPv4Tests, opening_and_closing_input_channel)
 // TODO SKIP AT THIS MOMENT
 TEST_F(TCPv4Tests, send_and_receive_between_ports)
 {
+    Log::SetVerbosity(Log::Kind::Info);
+    std::regex filter("RTCP(?!_SEQ)");
+    Log::SetCategoryFilter(filter);
     TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.maxMessageSize = 5;
     recvDescriptor.sendBufferSize = 5;

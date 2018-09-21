@@ -146,15 +146,9 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
     multicastFilterLocator.port = g_default_port; // arbitrary
     IPLocator::setIPv6(multicastFilterLocator, 0xff31, 0, 0, 0, 0, 0, 0x8000, 0x1234);
 
-    NetworkFactory factory;
-    factory.RegisterTransport<UDPv6Transport, UDPv6TransportDescriptor>(descriptor);
-    std::vector<std::shared_ptr<ReceiverResource>> receivers;
-    factory.BuildReceiverResources(multicastFilterLocator, 0x8FFF, receivers);
-    ReceiverResource* receiver = receivers.back().get();
-
     // Then
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastFilterLocator, receiver, 0x8FFF));
+    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastFilterLocator, nullptr, 0x8FFF));
     ASSERT_TRUE  (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
     ASSERT_TRUE  (transportUnderTest.CloseInputChannel(multicastFilterLocator));
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));

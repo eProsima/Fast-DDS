@@ -118,15 +118,9 @@ TEST_F(UDPv4Tests, opening_and_closing_input_channel)
     multicastFilterLocator.port = g_default_port; // arbitrary
     IPLocator::setIPv4(multicastFilterLocator, 239, 255, 0, 1);
 
-    NetworkFactory factory;
-    factory.RegisterTransport<UDPv4Transport, UDPv4TransportDescriptor>(descriptor);
-    std::vector<std::shared_ptr<ReceiverResource>> receivers;
-    factory.BuildReceiverResources(multicastFilterLocator, 0x8FFF, receivers);
-    ReceiverResource* receiver = receivers.back().get();
-
     // Then
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastFilterLocator, receiver, 0x8FFF));
+    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastFilterLocator, nullptr, 0x8FFF));
     ASSERT_TRUE  (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
     ASSERT_TRUE  (transportUnderTest.CloseInputChannel(multicastFilterLocator));
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
