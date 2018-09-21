@@ -27,6 +27,7 @@ namespace fastrtps{
 namespace rtps {
 
 class RTPSWriter;
+class WriteParams;
 
 /**
  * Class WriterHistory, container of the different CacheChanges of a writer
@@ -49,12 +50,22 @@ class WriterHistory : public History
      * Update the maximum and minimum sequenceNumber cacheChanges.
      */
     RTPS_DllAPI void updateMaxMinSeqNum();
+
     /**
-     * Add a CacheChange_t to the ReaderHistory.
-     * @param a_change Pointer to the CacheChange to add.
+     * Add a CacheChange_t to the WriterHistory.
+     * @param a_change Pointer to the CacheChange_t to be added.
      * @return True if added.
      */
     RTPS_DllAPI bool add_change(CacheChange_t* a_change);
+
+    /**
+     * Add a CacheChange_t to the WriterHistory.
+     * @param a_change Pointer to the CacheChange_t to be added.
+     * @param wparams Extra write parameters.
+     * @return True if added.
+     */
+    RTPS_DllAPI bool add_change(CacheChange_t* a_change, WriteParams &wparams);
+
     /**
      * Remove a specific change from the history.
      * @param a_change Pointer to the CacheChange_t.
