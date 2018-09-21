@@ -1632,7 +1632,7 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
 
     if (IPLocator::getLogicalPort(locator) == 0)
     {
-        IPLocator::setLogicalPort(locator, well_known_port);
+        IPLocator::setLogicalPort(locator, static_cast<uint16_t>(well_known_port));
     }
 
     return true;

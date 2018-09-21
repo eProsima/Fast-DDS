@@ -41,6 +41,8 @@ MockReceiverResource::~MockReceiverResource()
     {
         Cleanup();
     }
+
+    delete msg_receiver;
 }
 
 MessageReceiver* MockReceiverResource::CreateMessageReceiver()
