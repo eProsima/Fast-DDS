@@ -100,13 +100,6 @@ TCPChannelResource::~TCPChannelResource()
 
     Clear();
 
-    for (auto it = mReceiversMap.begin(); it != mReceiversMap.end(); ++it)
-    {
-        if (it->second != nullptr)
-        {
-            delete(it->second);
-        }
-    }
     mReceiversMap.clear();
 
     if (mReadMutex != nullptr)
