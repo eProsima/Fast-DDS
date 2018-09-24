@@ -67,7 +67,6 @@ class MessageReceiver
         //!Pointer to the Listen Resource that contains this MessageReceiver.
 
         //!Received message
-        CDRMessage_t m_rec_msg;
 #if HAVE_SECURITY
         CDRMessage_t m_crypto_msg;
 #endif

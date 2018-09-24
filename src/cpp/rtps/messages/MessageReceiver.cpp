@@ -51,7 +51,6 @@ namespace rtps {
 
 
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
-    m_rec_msg(rec_buffer_size),
 #if HAVE_SECURITY
     m_crypto_msg(rec_buffer_size),
 #endif
@@ -69,7 +68,7 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
     haveTimestamp = false;
     timestamp = c_TimeInvalid;
 
-    logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size);
+    logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<< rec_buffer_size);
     mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 }
 
