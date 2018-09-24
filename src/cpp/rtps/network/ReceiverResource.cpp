@@ -89,6 +89,7 @@ void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
         msg.wraps = true;
         msg.buffer = const_cast<octet*>(data);
         msg.length = size;
+        msg.max_size = size;
 
         // TODO: Should we unlock in case UnregisterReceiver is called from callback ?
         rcv->processCDRMsg(remoteLocator, &msg);
