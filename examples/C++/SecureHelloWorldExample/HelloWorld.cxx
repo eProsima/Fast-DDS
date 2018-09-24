@@ -127,5 +127,4 @@ bool HelloWorld::isKeyDefined()
 
 void HelloWorld::serializeKey(eprosima::fastcdr::Cdr& scdr) const
 {
-    (void) scdr;
 }
