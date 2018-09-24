@@ -89,18 +89,12 @@ class MessageReceiver
         GuidPrefix_t sourceGuidPrefix;
         //!GuidPrefix of the entity that receives the message. GuidPrefix of the RTPSParticipant.
         GuidPrefix_t destGuidPrefix;
-        //!Reply addresses (unicast).
-        LocatorList_t unicastReplyLocatorList;
-        //!Reply addresses (multicast).
-        LocatorList_t multicastReplyLocatorList;
         //!Has the message timestamp?
         bool haveTimestamp;
         //!Timestamp associated with the message
         Time_t timestamp;
         //!Version of the protocol used by the receiving end.
         ProtocolVersion_t destVersion;
-        //!Default locator used in reset
-        Locator_t defUniLoc;
 
         uint16_t mMaxPayload_;
 

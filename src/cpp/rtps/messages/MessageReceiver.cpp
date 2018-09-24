@@ -69,9 +69,6 @@ void MessageReceiver::init(uint32_t rec_buffer_size){
     haveTimestamp = false;
     timestamp = c_TimeInvalid;
 
-    defUniLoc.kind = LOCATOR_KIND_UDPv4;
-    LOCATOR_ADDRESS_INVALID(defUniLoc.address);
-    defUniLoc.port = LOCATOR_PORT_INVALID;
     logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size);
     mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 }

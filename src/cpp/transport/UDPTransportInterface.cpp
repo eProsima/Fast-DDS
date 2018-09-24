@@ -418,20 +418,20 @@ bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&, SenderResou
 
 void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator, uint32_t maxMsgSize)
 {
-    CDRMessage_t msg(maxMsgSize);
+    std::vector<octet> data(maxMsgSize);
     Locator_t remoteLocator;
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.
-        CDRMessage::initCDRMsg(&msg);
-        if (!Receive(msg.buffer, msg.max_size, msg.length, pChannelResource, input_locator, remoteLocator))
+        uint32_t length;
+        if (!Receive(data.data(), maxMsgSize, length, pChannelResource, input_locator, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
         auto receiver = pChannelResource->GetMessageReceiver();
         if (receiver != nullptr)
         {
-            receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remoteLocator);
+            receiver->OnDataReceived(data.data(), length, input_locator, remoteLocator);
         }
         else
         {
