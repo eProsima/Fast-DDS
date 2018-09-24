@@ -764,7 +764,7 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
         CheckLogicalPortsResponse_t response;
         SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
         memcpy(&respCode, &(receiveBuffer[TCPControlMsgHeader::getSize()]), 4); // uint32_t
-        readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize);
+        readSerializedPayload(payload, &(receiveBuffer[TCPControlMsgHeader::getSize() + 4]), dataSize - 4);
         response.deserialize(&payload);
         logInfo(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_RESPONSE]");
         processCheckLogicalPortsResponse(pChannelResource, response, controlHeader.transactionId);
