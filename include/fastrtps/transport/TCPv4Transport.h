@@ -98,6 +98,8 @@ protected:
 
     virtual void SetReceiveBufferSize(uint32_t size) override;
     virtual void SetSendBufferSize(uint32_t size) override;
+
+    virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const override;
 };
 
 } // namespace rtps

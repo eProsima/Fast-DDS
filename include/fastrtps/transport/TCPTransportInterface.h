@@ -171,10 +171,10 @@ public:
     * capacity must not be less than the receiveBufferSize supplied to this class during construction.
     * @param receiveBufferCapacity maximum size of the buffer.
     * @param[out] receiveBufferSize Size of the packet received.
-    * @param[out] logicalPort associated to the packet.
+    * @param[out] remoteLocator associated remote locator.
     */
     bool Receive(TCPChannelResource* pChannelResource, octet* receiveBuffer, uint32_t receiveBufferCapacity,
-        uint32_t& receiveBufferSize, uint16_t& logicalPort);
+        uint32_t& receiveBufferSize, Locator_t& remoteLocator);
 
     /**
     * Must release the channel that maps to/from the given locator.
@@ -237,7 +237,7 @@ protected:
     mutable std::recursive_mutex mSocketsMapMutex;
 
     std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
-    std::map<uint16_t, std::vector<TCPChannelResource*>> mInputSockets; // The Key is the "Physical Port"
+    std::map<Locator_t, TCPChannelResource*> mChannelResources; // The Key is the "Physical Port"
     std::map<Locator_t, TransportReceiverInterface*> mReceiverResources;
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
@@ -246,9 +246,7 @@ protected:
 
     std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
     std::map<Locator_t, TCPConnector*> mSocketConnectors;
-    std::vector<TCPChannelResource*> mOutputSockets;
     std::map<Locator_t, std::vector<TCPChannelResource*>> mBoundOutputSockets;
-    mutable std::map<TCPChannelResource*, std::vector<SenderResource*>> mSocketToSenders;
 
     TCPTransportInterface();
 
@@ -261,9 +259,6 @@ protected:
     bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size);
     void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);
     void FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize, uint16_t logicalPort);
-
-    //! Method to send the socket to the sender resource and avoid unnecessary searchs to send messages.
-    void AssociateSenderToSocket(TCPChannelResource*, SenderResource*) const;
 
     //! Cleans the sockets pending to delete.
     void CleanDeletedSockets();
@@ -321,6 +316,8 @@ protected:
     virtual void SetSendBufferSize(uint32_t size) = 0;
 
     void Clean(); // Must be called on childs destructors!
+
+    virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const = 0;
 };
 
 } // namespace rtps

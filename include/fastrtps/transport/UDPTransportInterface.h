@@ -121,7 +121,6 @@ protected:
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
     asio::io_service mService;
     std::unique_ptr<std::thread> ioServiceThread;
-    mutable std::map<UDPChannelResource*, std::vector<SenderResource*>> mSocketToSenders;
     std::vector<IPFinder::info_IP> currentInterfaces;
 
     mutable std::recursive_mutex mOutputMapMutex;
@@ -133,8 +132,6 @@ protected:
     uint32_t mReceiveBufferSize;
 
     UDPTransportInterface();
-
-    void AssociateSenderToSocket(UDPChannelResource*, SenderResource*) const;
 
     virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const = 0;
     virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const = 0;

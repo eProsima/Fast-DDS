@@ -79,6 +79,7 @@ class IPLocator
         RTPS_DllAPI static bool setLanID(Locator_t &locator, const std::string &lanId);
         RTPS_DllAPI static const octet* getLanID(const Locator_t &locator);
         RTPS_DllAPI static std::string toLanIDstring(const Locator_t &locator);
+        RTPS_DllAPI static Locator_t toPhysicalLocator(const Locator_t &locator);
 
         // Common
         RTPS_DllAPI static bool setPortRTPS(Locator_t &locator, uint16_t port);

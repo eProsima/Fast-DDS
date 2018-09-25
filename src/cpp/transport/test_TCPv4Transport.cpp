@@ -16,6 +16,7 @@
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/tcp/test_RTCPMessageManager.h>
 #include <fastrtps/transport/TCPChannelResource.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <cstdlib>
 
 using namespace std;
@@ -96,22 +97,21 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
     else
     {
-        for (auto it = mOutputSockets.begin(); it != mOutputSockets.end();++it)
+        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(localLocator));
+        if (it != mChannelResources.end())
         {
-            if ((*it)->GetLocator() == localLocator)
+            try
             {
-                try
-                {
-                    (*it)->getSocket()->cancel();
-                    (*it)->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
-                }
-                catch (std::exception&)
-                {
-                    // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-                }
-                (*it)->getSocket()->close();
+                it->second->getSocket()->cancel();
+                it->second->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
             }
+            catch (std::exception&)
+            {
+                // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+            }
+            it->second->getSocket()->close();
         }
+
         return true;
     }
 }
@@ -142,21 +142,19 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
     else
     {
-        for (auto it = mOutputSockets.begin(); it != mOutputSockets.end(); ++it)
+        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(localLocator));
+        if (it != mChannelResources.end())
         {
-            if ((*it)->GetLocator() == localLocator)
+            try
             {
-                try
-                {
-                    (*it)->getSocket()->cancel();
-                    (*it)->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
-                }
-                catch (std::exception&)
-                {
-                    // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-                }
-                (*it)->getSocket()->close();
+                it->second->getSocket()->cancel();
+                it->second->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
             }
+            catch (std::exception&)
+            {
+                // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+            }
+            it->second->getSocket()->close();
         }
         return true;
     }

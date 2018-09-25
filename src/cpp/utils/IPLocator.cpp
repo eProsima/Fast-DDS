@@ -408,6 +408,13 @@ std::string IPLocator::toLanIDstring(const Locator_t &locator)
     return ss.str();
 }
 
+Locator_t IPLocator::toPhysicalLocator(const Locator_t &locator)
+{
+    Locator_t result = locator;
+    setLogicalPort(result, 0);
+    return result;
+}
+
 // Common
 bool IPLocator::setPortRTPS(Locator_t &locator, uint16_t port)
 {

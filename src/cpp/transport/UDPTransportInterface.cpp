@@ -65,26 +65,6 @@ UDPTransportInterface::~UDPTransportInterface()
 {
 }
 
-void UDPTransportInterface::AssociateSenderToSocket(UDPChannelResource *socket, SenderResource *sender) const
-{
-    //sender->SetChannelResource(socket);
-
-    auto it = mSocketToSenders.find(socket);
-    if (it == mSocketToSenders.end())
-    {
-        mSocketToSenders[socket].emplace_back(sender);
-    }
-    else
-    {
-        auto srit = std::find((*it).second.begin(), (*it).second.end(), sender);
-        if (srit == (*it).second.end())
-        {
-            (*it).second.emplace_back(sender);
-        }
-        // else already associated
-    }
-}
-
 void UDPTransportInterface::Clean()
 {
     if (ioServiceThread)
@@ -130,16 +110,6 @@ bool UDPTransportInterface::CloseOutputChannel(const Locator_t& locator)
     {
         socket->getSocket()->cancel();
         socket->getSocket()->close();
-
-        //auto it = mSocketToSenders.find(socket);
-        //if (it != mSocketToSenders.end())
-        //{
-        //    auto& senders = mSocketToSenders.at(socket);
-        //    for (auto& sender : senders)
-        //    {
-        //        sender->SetChannelResource(nullptr);
-        //    }
-        //}
 
         delete socket;
     }
@@ -333,10 +303,6 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, S
                 // Multicast data will be sent for the only one interface.
                 UDPChannelResource *mSocket = new UDPChannelResource(unicastSocket);
                 mOutputSockets.push_back(mSocket);
-                if (senderResource != nullptr)
-                {
-                    AssociateSenderToSocket(mSocket, senderResource);
-                }
             }
         }
         else
@@ -364,16 +330,6 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, S
         logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
         for (auto& socket : mOutputSockets)
         {
-            //auto it = mSocketToSenders.find(socket);
-            //if (it != mSocketToSenders.end())
-            //{
-            //    auto& senders = mSocketToSenders.at(socket);
-            //    for (auto& sender : senders)
-            //    {
-            //        sender->SetChannelResource(nullptr);
-            //    }
-            //}
-
             delete socket;
         }
         mOutputSockets.clear();
