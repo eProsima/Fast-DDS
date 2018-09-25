@@ -497,14 +497,12 @@ bool IPLocator::isAny(const Locator_t &locator)
     }
 }
 
-bool IPLocator::compareAddress(const Locator_t &loc1, const Locator_t &loc2)
+bool IPLocator::compareAddress(const Locator_t &loc1, const Locator_t &loc2, bool fullAddress)
 {
     if (loc1.kind != loc2.kind) return false;
 
-    if (loc1.kind == LOCATOR_KIND_UDPv4
-            || loc1.kind == LOCATOR_KIND_TCPv4)
+    if (!fullAddress && (loc1.kind == LOCATOR_KIND_UDPv4 || loc1.kind == LOCATOR_KIND_TCPv4) )
     {
-        // TODO Compare WAN?
         return memcmp(&loc1.address[12], &loc2.address[12], 4) == 0;
     }
     else
@@ -515,7 +513,7 @@ bool IPLocator::compareAddress(const Locator_t &loc1, const Locator_t &loc2)
 
 bool IPLocator::compareAddressAndPhysicalPort(const Locator_t &loc1, const Locator_t &loc2)
 {
-    return compareAddress(loc1, loc2) && getPhysicalPort(loc1) == getPhysicalPort(loc2);
+    return compareAddress(loc1, loc2, true) && getPhysicalPort(loc1) == getPhysicalPort(loc2);
 }
 
 // UDP

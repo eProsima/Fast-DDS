@@ -46,7 +46,7 @@ public:
     /** @name Send RTCP Message Methods.
     * These methods create RTPS messages for different types
     */
-    void sendConnectionRequest(TCPChannelResource *pChannelResource, uint16_t localLogicalPort);
+    void sendConnectionRequest(TCPChannelResource *pChannelResource);
 
     void sendOpenLogicalPortRequest(TCPChannelResource *pChannelResource, OpenLogicalPortRequest_t &request);
 

@@ -222,12 +222,12 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     }
 }
 
-void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResource, uint16_t localLogicalPort)
+void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResource)
 {
     ConnectionRequest_t request;
     Locator_t locator;
     EndpointToLocator(pChannelResource->getSocket()->local_endpoint(), locator);
-    IPLocator::setLogicalPort(locator, localLogicalPort);
+    IPLocator::setLogicalPort(locator, 0);
 
     if (locator.kind == LOCATOR_KIND_TCPv4)
     {
@@ -240,8 +240,7 @@ void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResou
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
 
-    logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator)
-        << ", LogicalPort: " << localLogicalPort);
+    logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator));
     sendData(pChannelResource, BIND_CONNECTION_REQUEST, getTransactionId(), &payload);
     pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBindResponse);
 }
@@ -323,14 +322,11 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     if (localLocator.kind == LOCATOR_KIND_TCPv4)
     {
         const TCPv4TransportDescriptor* pTCPv4Desc = (TCPv4TransportDescriptor*)mTransport->get_configuration();
-        IPLocator::setLogicalPort(localLocator, pTCPv4Desc->metadata_logical_port);
         IPLocator::setWan(localLocator, pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
             pTCPv4Desc->wan_addr[3]);
     }
     else if (localLocator.kind == LOCATOR_KIND_TCPv6)
     {
-        const TCPv6TransportDescriptor* pTCPv6Desc = (TCPv6TransportDescriptor*)mTransport->get_configuration();
-        IPLocator::setLogicalPort(localLocator, pTCPv6Desc->metadata_logical_port);
     }
     else
     {
@@ -351,7 +347,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     {
         {
             std::unique_lock<std::recursive_mutex> scope(pChannelResource->mPendingLogicalMutex);
-            pChannelResource->EnqueueLogicalPort(IPLocator::getLogicalPort(request.transportLocator()));
+            //pChannelResource->EnqueueLogicalPort(IPLocator::getLogicalPort(request.transportLocator()));
             mTransport->BindSocket(request.transportLocator(), pChannelResource);
         }
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);

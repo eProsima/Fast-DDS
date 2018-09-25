@@ -95,7 +95,6 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , max_logical_port(100)
     , logical_port_range(20)
     , logical_port_increment(2)
-    , metadata_logical_port(0)
 	, tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
 	, wait_for_tcp_negotiation(true)
 {
@@ -109,7 +108,6 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , max_logical_port(t.max_logical_port)
     , logical_port_range(t.logical_port_range)
     , logical_port_increment(t.logical_port_increment)
-    , metadata_logical_port(t.metadata_logical_port)
 	, tcp_negotiation_timeout(t.tcp_negotiation_timeout)
 	, wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
 {
@@ -434,7 +432,7 @@ bool TCPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Lo
 
 bool TCPTransportInterface::DoOutputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
-    return IPLocator::getPhysicalPort(left) ==  IPLocator::getPhysicalPort(right);
+    return CompareLocatorIPAndPort(left, right);
 }
 
 bool TCPTransportInterface::init()
@@ -1499,7 +1497,7 @@ void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *
                 //     << ") IP: " << outputSocket->getSocket()->remote_endpoint().address() << std::endl;
 
                 // RTCP Control Message
-                mRTCPMessageManager->sendConnectionRequest(outputSocket, GetConfiguration()->metadata_logical_port);
+                mRTCPMessageManager->sendConnectionRequest(outputSocket);
                 if (senderResource != nullptr)
                 {
                     AssociateSenderToSocket(outputSocket, senderResource);
@@ -1575,10 +1573,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
 
     if (GetConfiguration() != nullptr)
     {
-        if (GetConfiguration()->metadata_logical_port == 0)
-        {
-            GetConfiguration()->metadata_logical_port = static_cast<uint16_t>(metatraffic_unicast_port);
-        }
+        // TODO: Add physical port and WAN address
     }
 
     return true;

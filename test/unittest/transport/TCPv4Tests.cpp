@@ -144,7 +144,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     recvDescriptor.receiveBufferSize = 5;
     recvDescriptor.add_listener_port(5100);
     recvDescriptor.wait_for_tcp_negotiation = true;
-    recvDescriptor.metadata_logical_port = 7410;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
@@ -153,7 +152,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     sendDescriptor.sendBufferSize = 5;
     sendDescriptor.receiveBufferSize = 5;
     sendDescriptor.wait_for_tcp_negotiation = true;
-    sendDescriptor.metadata_logical_port = 7410;
     TCPv4Transport sendTransportUnderTest(sendDescriptor);
     sendTransportUnderTest.init();
 
@@ -323,7 +321,6 @@ void TCPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.sendBufferSize = 5;
     descriptor.receiveBufferSize = 5;
     descriptor.add_listener_port(5100);
-    descriptor.metadata_logical_port = 7400;
 }
 
 int main(int argc, char **argv)

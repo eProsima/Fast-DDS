@@ -96,7 +96,6 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
-		descriptor->set_metadata_logical_port(7403);
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 3)
@@ -139,7 +138,6 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
-		descriptor->set_metadata_logical_port(7403);
         PParam.rtps.userTransports.push_back(descriptor);
     }
 

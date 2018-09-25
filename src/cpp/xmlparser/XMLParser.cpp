@@ -373,15 +373,6 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
             pTCPDesc->logical_port_increment = static_cast<uint16_t>(iPort);
         }
 
-        // metadata_logical_port - uint16Type
-        if (nullptr != (p_aux0 = p_root->FirstChildElement(METADATA_LOGICAL_PORT)))
-        {
-            int iPort(0);
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
-                return XMLP_ret::XML_ERROR;
-            pTCPDesc->metadata_logical_port = static_cast<uint16_t>(iPort);
-        }
-
         // ListeningPorts uint16ListType
         if (nullptr != (p_aux0 = p_root->FirstChildElement(LISTENING_PORTS)))
         {

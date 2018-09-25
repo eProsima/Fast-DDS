@@ -34,18 +34,12 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor {
     uint16_t max_logical_port;
     uint16_t logical_port_range;
     uint16_t logical_port_increment;
-    uint16_t metadata_logical_port;
 	uint32_t tcp_negotiation_timeout;
 	bool wait_for_tcp_negotiation;
 
     void add_listener_port(uint16_t port)
     {
         listening_ports.push_back(port);
-    }
-
-    void set_metadata_logical_port(uint16_t port)
-    {
-        metadata_logical_port = port;
     }
 
     RTPS_DllAPI TCPTransportDescriptor();

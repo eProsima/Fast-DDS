@@ -99,6 +99,7 @@ TCPChannelResource::~TCPChannelResource()
 
 void TCPChannelResource::Disable()
 {
+    mReceiversMap.clear();
 	mNegotiationSemaphore.disable();
 
 	ChannelResource::Disable();

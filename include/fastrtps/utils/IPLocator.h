@@ -85,7 +85,7 @@ class IPLocator
         RTPS_DllAPI static uint16_t getPortRTPS(Locator_t &locator);
         RTPS_DllAPI static bool isLocal(const Locator_t &locator);
         RTPS_DllAPI static bool isAny(const Locator_t &locator);
-        RTPS_DllAPI static bool compareAddress(const Locator_t &loc1, const Locator_t &loc2);
+        RTPS_DllAPI static bool compareAddress(const Locator_t &loc1, const Locator_t &loc2, bool fullAddress = false);
         RTPS_DllAPI static bool compareAddressAndPhysicalPort(const Locator_t &loc1, const Locator_t &loc2);
 
         // UDP

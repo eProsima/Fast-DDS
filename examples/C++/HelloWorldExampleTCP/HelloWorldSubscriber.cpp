@@ -69,7 +69,6 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 	descriptor->wait_for_tcp_negotiation = false;
-    descriptor->set_metadata_logical_port(0);
     PParam.rtps.userTransports.push_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
