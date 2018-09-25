@@ -39,7 +39,7 @@ class IPLocator
         virtual ~IPLocator();
 
         // Factory
-        RTPS_DllAPI static Locator_t* createLocator(int32_t kindin, const std::string& address, uint32_t portin);
+        RTPS_DllAPI static void createLocator(int32_t kindin, const std::string& address, uint32_t portin, Locator_t& locator);
 
         // IPv4
         RTPS_DllAPI static bool setIPv4(Locator_t &locator, const unsigned char* addr);

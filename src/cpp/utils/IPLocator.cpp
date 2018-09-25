@@ -33,26 +33,27 @@ IPLocator::~IPLocator()
 }
 
 // Factory
-Locator_t* IPLocator::createLocator(int32_t kindin, const std::string& address, uint32_t portin)
+void IPLocator::createLocator(int32_t kindin, const std::string& address, uint32_t portin, Locator_t& locator)
 {
-    Locator_t *locator = new Locator_t(kindin, portin);
+    locator.kind = kindin;
+    locator.port = portin;
+    LOCATOR_ADDRESS_INVALID(locator.address);
 
     switch (kindin)
     {
         case LOCATOR_KIND_TCPv4:
         case LOCATOR_KIND_UDPv4:
         {
-            setIPv4(*locator, address);
+            setIPv4(locator, address);
             break;
         }
         case LOCATOR_KIND_TCPv6:
         case LOCATOR_KIND_UDPv6:
         {
-            setIPv6(*locator, address);
+            setIPv6(locator, address);
             break;
         }
     }
-    return locator;
 }
 
 // IPv4

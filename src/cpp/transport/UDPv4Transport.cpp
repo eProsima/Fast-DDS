@@ -106,12 +106,9 @@ UDPv4Transport::~UDPv4Transport()
 
 void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
-    Locator_t *locator =
-        IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.0.1", mConfiguration_.m_output_udp_socket);
-
-    defaultList.push_back(*locator);
-
-    delete locator;
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.0.1", mConfiguration_.m_output_udp_socket, locator);
+    defaultList.push_back(locator);
 }
 
 bool UDPv4Transport::CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const

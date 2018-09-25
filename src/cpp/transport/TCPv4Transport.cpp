@@ -106,9 +106,9 @@ void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
     {
         for (auto it = mConfiguration_.listening_ports.begin(); it != mConfiguration_.listening_ports.end(); ++it)
         {
-            Locator_t *temp = IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", *it);
-            defaultList.push_back(*temp);
-            delete temp;
+            Locator_t temp;
+            IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", *it, temp);
+            defaultList.push_back(temp);
         }
     }
     else if (mSocketConnectors.size() > 0)
@@ -121,9 +121,9 @@ void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
     }
     else
     {
-        Locator_t *temp = IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", 0);
-        defaultList.push_back(*temp);
-        delete temp;
+        Locator_t temp;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", 0, temp);
+        defaultList.push_back(temp);
     }
 }
 

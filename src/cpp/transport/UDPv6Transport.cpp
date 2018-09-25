@@ -108,9 +108,9 @@ UDPv6Transport::~UDPv6Transport()
 void UDPv6Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
     // TODO What is the default IPv6 address?
-    Locator_t *temp = IPLocator::createLocator(LOCATOR_KIND_UDPv6, "239.255.0.1", 0);
-    defaultList.push_back(*temp);
-    delete temp;
+    Locator_t temp;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "239.255.0.1", 0, temp);
+    defaultList.push_back(temp);
 }
 
 bool UDPv6Transport::CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const
