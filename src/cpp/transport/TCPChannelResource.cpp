@@ -88,6 +88,14 @@ bool TCPChannelResource::IsLogicalPortOpened(uint16_t port)
 	return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end();
 }
 
+bool TCPChannelResource::IsLogicalPortAdded(uint16_t port)
+{
+	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+	return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end()
+           || std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
+                != mPendingLogicalOutputPorts.end();
+}
+
 std::thread* TCPChannelResource::ReleaseRTCPThread()
 {
     std::thread* outThread = mRTCPThread;

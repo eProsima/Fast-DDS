@@ -107,30 +107,6 @@ TCPv6Transport::~TCPv6Transport()
 
 void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
 {
-    std::unique_lock<std::recursive_mutex> scoped(mSocketsMapMutex);
-    if (mConfiguration_.listening_ports.size() > 0)
-    {
-        for (auto it = mConfiguration_.listening_ports.begin(); it != mConfiguration_.listening_ports.end(); ++it)
-        {
-            Locator_t temp;
-            IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", *it, temp);
-            defaultList.push_back(temp);
-        }
-    }
-    else if (mSocketConnectors.size() > 0)
-    {
-        defaultList.push_back(mSocketConnectors.begin()->first);
-    }
-    else if (mChannelResources.size() > 0)
-    {
-        defaultList.push_back(mChannelResources.begin()->first);
-    }
-    else
-    {
-        Locator_t temp;
-        IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", 0, temp);
-        defaultList.push_back(temp);
-    }
 }
 
 const TCPTransportDescriptor* TCPv6Transport::GetConfiguration() const
@@ -270,6 +246,7 @@ void TCPv6Transport::SetSendBufferSize(uint32_t size)
 
 void TCPv6Transport::EndpointToLocator(const ip::tcp::endpoint& endpoint, Locator_t& locator) const
 {
+    locator.kind = LOCATOR_KIND_TCPv6;
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v6().to_bytes();
     IPLocator::setIPv6(locator, ipBytes.data());

@@ -188,7 +188,7 @@ void TCPTransportInterface::BindOutputChannel(const Locator_t& locator, SenderRe
     auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (it != mChannelResources.end())
     {
-        BindSocket(locator, it->second);
+        BindSocket(locator, itc->second);
     }
 }
 
@@ -290,6 +290,13 @@ void TCPTransportInterface::CreateConnectorSocket(const Locator_t& locator, Send
     {
         TCPConnector* newConnector = new TCPConnector(mService, locator, msgSize);
         newConnector->m_PendingLocators = pendingLocators;
+        const Locator_t &physicalLocator = IPLocator::toPhysicalLocator(locator);
+        if (mSocketConnectors.find(physicalLocator) != mSocketConnectors.end())
+        {
+            TCPConnector* oldConnector = mSocketConnectors.at(physicalLocator);
+            delete oldConnector;
+        }
+        mSocketConnectors[physicalLocator] = newConnector;
         logInfo(RTCP, " OpenAndBindOutput (physical: " << IPLocator::getPhysicalPort(locator) <<
             "; logical: " << IPLocator::getLogicalPort(locator) << ")");
         newConnector->Connect(this, senderResource);
@@ -472,8 +479,8 @@ bool TCPTransportInterface::IsOutputChannelOpen(const Locator_t& locator) const
     auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (socketIt != mChannelResources.end())
     {
-        // TODO: return socketIt->second->IsLogicalPortAdded(IPLocator::getLogicalPort(locator));
-        return true;
+        // And it is registered as output logical port
+        return socketIt->second->IsLogicalPortAdded(IPLocator::getLogicalPort(locator));
     }
 
     return false;
@@ -602,6 +609,22 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
                 GenerateLocalEndpoint(physicalLocator, IPLocator::getPhysicalPort(physicalLocator)));
             channel = new TCPChannelResource(this, connector, physicalLocator);
             mChannelResources[physicalLocator] = channel;
+            /*
+            // There's an already opened connection?
+            success = mChannelResources.find(IPLocator::toPhysicalLocator(locator)) != mChannelResources.end();
+            if (!success)
+            {
+                // Maybe, there's a waiting acceptor?
+                auto it = mSocketAcceptors.find(IPLocator::getPhysicalPort(locator));
+                if (it != mSocketAcceptors.end())
+                {
+                    it->second->mPendingOutLocators.push_back(locator);
+                    BindOutputChannel(locator, senderResource);
+                    success = EnqueueLogicalOutputPort(locator);
+                }
+            }
+            */
+        }
         }
 
         // TODO: success = channel->AddLogicalPort(logicalPort);
@@ -1161,7 +1184,12 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             TCPChannelResource *pChannelResource = new TCPChannelResource(this, unicastSocket);
             pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBind);
 
-            BindSocket(acceptor->mLocator, pChannelResource);
+            //BindSocket(acceptor->mLocator, pChannelResource);
+            Locator_t remoteLocator;
+            EndpointToLocator(pChannelResource->getSocket()->remote_endpoint(), remoteLocator);
+            BindSocket(remoteLocator, pChannelResource);
+            IPLocator::setPhysicalPort(remoteLocator, IPLocator::getPhysicalPort(acceptor->mLocator));
+            BindSocket(remoteLocator, pChannelResource);
 
             for (const Locator_t& loc : acceptor->mPendingOutLocators)
             {
@@ -1206,6 +1234,84 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
         }
     }
 }
+
+/*
+void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *senderResource, const asio::error_code& error)
+{
+    std::string value = error.message();
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    const Locator_t &physicalLocator = IPLocator::toPhysicalLocator(locator);
+    if (mSocketConnectors.find(physicalLocator) != mSocketConnectors.end())
+    {
+        auto pendingConector = mSocketConnectors.at(physicalLocator);
+        if (!error.value())
+        {
+            try
+            {
+                TCPChannelResource *outputSocket(nullptr);
+                if (pendingConector->m_msgSize != 0)
+                {
+                    outputSocket = new TCPChannelResource(pendingConector->m_socket,
+                        locator, true, false, pendingConector->m_msgSize);
+                }
+                else
+                {
+                    outputSocket = new TCPChannelResource(pendingConector->m_socket, locator, true, false);
+                }
+
+                outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
+                outputSocket->SetThread(
+                    new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
+                outputSocket->SetRTCPThread(
+                    new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, outputSocket));
+
+                BindOutputChannel(locator);
+
+                const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
+                auto it = mChannelResources.find(physicalLocator);
+                if (it == mChannelResources.end())
+                {
+                    mChannelResources[physicalLocator] = outputSocket;
+                }
+
+                for (auto& it : pendingConector->m_PendingLocators)
+                {
+                    EnqueueLogicalOutputPort(it);
+                }
+
+                Locator_t remoteLocator;
+                EndpointToLocator(outputSocket->getSocket()->local_endpoint(), remoteLocator);
+                BindSocket(remoteLocator, outputSocket);
+
+                logInfo(RTCP, " Socket Connected (physical remote: " << IPLocator::getPhysicalPort(locator)
+                    << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+                    << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
+
+                // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+                // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+                // std::cout << std::put_time(std::localtime(&now_c), "%F %T") << "--> Socket Connected (physical remote: " << locator.get_physical_port()
+                //     << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+                //     << ") IP: " << outputSocket->getSocket()->remote_endpoint().address() << std::endl;
+
+                // RTCP Control Message
+                mRTCPMessageManager->sendConnectionRequest(outputSocket);
+            }
+            catch (asio::system_error const& e)
+            {
+                (void)e;
+                logInfo(RTPS_MSG_OUT, "TCPTransport Error establishing the connection at port:(" << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
+                CloseOutputChannel(locator);
+            }
+        }
+        else
+        {
+            eClock::my_sleep(100);
+            //std::cout << "Reconnect..." << this << std::endl;
+            pendingConector->RetryConnect(mService, this, senderResource);
+        }
+    }
+}
+*/
 
 void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
 {
@@ -1278,12 +1384,15 @@ bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
         if (IPLocator::getLogicalPort(locator) == 0)
         {
             // TODO(Ricardo) Make configurable.
-            for(int32_t i = 0; i < 4; ++i)
+            /*for(int32_t i = 0; i < 4; ++i)
             {
                 Locator_t auxloc(locator);
                 IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, i)));
                 list.push_back(auxloc);
-            }
+            }*/
+            Locator_t auxloc(locator);
+            IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, 0)));
+            list.push_back(auxloc);
         }
         else
         {

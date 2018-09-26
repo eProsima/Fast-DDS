@@ -155,6 +155,8 @@ public:
 
 	bool IsLogicalPortOpened(uint16_t port);
 
+    bool IsLogicalPortAdded(uint16_t port);
+
     bool IsConnectionEstablished()
     {
         return mConnectionStatus == eConnectionStatus::eEstablished;
