@@ -237,16 +237,15 @@ protected:
     mutable std::recursive_mutex mSocketsMapMutex;
 
     std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
-    std::map<Locator_t, TCPChannelResource*> mChannelResources; // The Key is the "Physical Port"
-    std::map<Locator_t, TransportReceiverInterface*> mReceiverResources;
+    std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
+    std::map<Locator_t, TransportReceiverInterface*> mReceiverResources; // The key is the complete locator
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
     std::recursive_mutex mDeletedSocketsPoolMutex;
     CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
 
     std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
-    std::map<Locator_t, TCPConnector*> mSocketConnectors;
-    std::map<Locator_t, std::vector<TCPChannelResource*>> mBoundOutputSockets;
+    std::map<Locator_t, TCPConnector*> mSocketConnectors; // The key is the "Physical locator"
 
     TCPTransportInterface();
 

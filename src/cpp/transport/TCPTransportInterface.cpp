@@ -200,24 +200,25 @@ void TCPTransportInterface::BindOutputChannel(const Locator_t& locator, SenderRe
 void TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResource *pChannelResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (!IsLocatorSupported(locator))
+    if (IsLocatorSupported(locator))
     {
-        return;
-    }
-
-    auto it = mBoundOutputSockets.find(locator);
-    if (it == mBoundOutputSockets.end())
-    {
-        mBoundOutputSockets[locator].push_back(pChannelResource); // First element, just add it
-    }
-    else
-    {
-        // There are more, check isn't already added
-        auto found = std::find(mBoundOutputSockets[locator].begin(), mBoundOutputSockets[locator].end(), pChannelResource);
-        if (found == mBoundOutputSockets[locator].end())
+        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
+        auto it = mChannelResources.find(physicalLocator);
+        if (it == mChannelResources.end())
         {
-            mBoundOutputSockets[locator].push_back(pChannelResource);
+            mChannelResources[physicalLocator] = pChannelResource; // First element, just add it
         }
+        /*
+        else
+        {
+            // There are more, check isn't already added
+            auto found = std::find(mBoundOutputSockets[locator].begin(), mBoundOutputSockets[locator].end(), pChannelResource);
+            if (found == mBoundOutputSockets[locator].end())
+            {
+                mBoundOutputSockets[locator].push_back(pChannelResource);
+            }
+        }
+        */
     }
 }
 
@@ -332,8 +333,8 @@ bool TCPTransportInterface::IsOutputChannelBound(const Locator_t& locator) const
     if (!IsLocatorSupported(locator))
         return false;
 
-    auto socket = mBoundOutputSockets.find(locator);
-    if (socket != mBoundOutputSockets.end())
+    auto socket = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
+    if (socket != mChannelResources.end())
     {
         return true;
     }
@@ -482,12 +483,10 @@ bool TCPTransportInterface::IsOutputChannelOpen(const Locator_t& locator) const
     }
 
     // Check if there is any connector to the given locator.
-    for (auto it = mSocketConnectors.begin(); it != mSocketConnectors.end(); ++it)
+    auto it = mSocketConnectors.find(IPLocator::toPhysicalLocator(locator));
+    if (it != mSocketConnectors.end())
     {
-        if (CompareLocatorIPAndPort(it->first, locator))
-        {
-            return true;
-        }
+        return true;
     }
 
     // Check if there is any socket opened with the given locator.
@@ -541,7 +540,7 @@ bool TCPTransportInterface::CloseOutputChannel(const Locator_t& locator)
                 }
             }
         }
-        mBoundOutputSockets.erase(locator);
+        //mBoundOutputSockets.erase(locator);
 
         auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
         if (socketIt != mChannelResources.end())
@@ -678,7 +677,9 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
         }
         else
         {
-            if (mBoundOutputSockets.find(locator) == mBoundOutputSockets.end())
+            const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
+            auto it = mChannelResources.find(physicalLocator);
+            if (it == mChannelResources.end())
             {
                 if (std::find(mPendingOutputPorts[locator].begin(), mPendingOutputPorts[locator].end(),
                     senderResource) == mPendingOutputPorts[locator].end())
@@ -686,14 +687,13 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
                     mPendingOutputPorts[locator].push_back(senderResource);
                 }
 
-                auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-                if (socketIt != mChannelResources.end())
-                {
-                    BindSocket(locator, socketIt->second);
-                    success = EnqueueLogicalOutputPort(locator);
-                }
+                BindSocket(locator, it->second);
+                success = EnqueueLogicalOutputPort(locator);
             }
-            success = true;
+            else
+            {
+                success = true;
+            }
         }
     }
     else
@@ -1121,34 +1121,34 @@ size_t TCPTransportInterface::Send(TCPChannelResource *pChannelResource, const o
 bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
     const Locator_t& remoteLocator)
 {
-    //    logInfo(RTCP, " SEND [RTPS Data] to locator " << IPLocator::getPhysicalPort(remoteLocator) << ":" << IPLocator::getLogicalPort(remoteLocator));
-    std::vector<TCPChannelResource* > sendVector;
-    {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
-        {
-            logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator));
-            return false;
-        }
+    //    logInfo(RTCP, " SEND [RTPS Data] to locator " << IPLocator::getPhysicalPort(remoteLocator) << ":" << \
+            IPLocator::getLogicalPort(remoteLocator));
 
-        std::map<Locator_t, std::vector<TCPChannelResource*>>::iterator it = mBoundOutputSockets.find(remoteLocator);
-        if (it == mBoundOutputSockets.end())
-        {
-            //logWarning(RTCP, "SEND [RTPS] Failed: Not bound: " << IPLocator::getLogicalPort(remoteLocator));
-            EnqueueLogicalOutputPort(remoteLocator);
-            logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) << " will be bound.");
-            return false;
-        }
-        else
-        {
-            sendVector = it->second;
-        }
+    TCPChannelResource* channelResource = nullptr;
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
+    {
+        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator));
+        return false;
+    }
+
+    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(remoteLocator));
+    if (it == mChannelResources.end())
+    {
+        EnqueueLogicalOutputPort(remoteLocator);
+        logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) << \
+                " will be bound.");
+        return false;
+    }
+    else
+    {
+        channelResource = it->second;
     }
 
     bool result = true;
-    for (TCPChannelResource* socket : sendVector)
+    if (channelResource != nullptr)
     {
-        result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, socket);
+        result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, channelResource);
     }
     return result;
 }
@@ -1305,26 +1305,19 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 
             // Create one message receiver for each registered receiver resources.
             RegisterReceiverResources(pChannelResource, acceptor->mLocator);
-            mBoundOutputSockets[acceptor->mLocator].push_back(pChannelResource); // And bound it.
-
-            for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end(); ++it)
-            {
-                if (CompareLocatorIPAndPort(acceptor->mLocator, it->first))
-                {
-                    BindSocket(it->first, pChannelResource);
-                }
-            }
+            //mBoundOutputSockets[acceptor->mLocator].push_back(pChannelResource); // And bound it.
+            //for (auto it = mPendingOutputPorts.begin(); it != mPendingOutputPorts.end(); ++it)
+            //{
+            //    if (CompareLocatorIPAndPort(acceptor->mLocator, it->first))
+            //    {
+            BindSocket(acceptor->mLocator, pChannelResource);
+            //    }
+            //}
 
             pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this,
                 pChannelResource));
             pChannelResource->SetRTCPThread(new std::thread(&TCPTransportInterface::performRTPCManagementThread,
                 this, pChannelResource));
-
-            const Locator_t &physicalLocator = IPLocator::toPhysicalLocator(acceptor->mLocator);
-            if (mChannelResources.find(physicalLocator) == mChannelResources.end())
-            {
-                mChannelResources[physicalLocator] = pChannelResource;
-            }
 
             logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->mLocator)
                 << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port()
@@ -1428,23 +1421,10 @@ void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *
 void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    for (auto it = mBoundOutputSockets.begin(); it != mBoundOutputSockets.end();)
+    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(pSocket->mLocator));
+    if (it != mChannelResources.end())
     {
-        auto& vector = it->second;
-        auto toRemove = std::find(vector.begin(), vector.end(), pSocket);
-        if (toRemove != vector.end())
-        {
-            vector.erase(toRemove);
-        }
-
-        if (vector.empty())
-        {
-            it = mBoundOutputSockets.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
+        mChannelResources.erase(it);
     }
 }
 

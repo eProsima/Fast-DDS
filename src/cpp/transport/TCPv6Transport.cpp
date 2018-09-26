@@ -115,9 +115,9 @@ void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
     {
         defaultList.push_back(mSocketConnectors.begin()->first);
     }
-    else if (mBoundOutputSockets.size() > 0)
+    else if (mChannelResources.size() > 0)
     {
-        defaultList.push_back(mBoundOutputSockets.begin()->first);
+        defaultList.push_back(mChannelResources.begin()->first);
     }
     else
     {
