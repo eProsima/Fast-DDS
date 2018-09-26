@@ -740,9 +740,11 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
 {
     Locator_t remoteLocator;
     uint16_t logicalPort(0);
+    /*
     logInfo(RTCP, "START PerformListenOperation " << pChannelResource->GetLocator() << " (" << \
         pChannelResource->getSocket()->local_endpoint().address() << "->" << \
         pChannelResource->getSocket()->remote_endpoint().address() << ")");
+    */
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.
@@ -1083,7 +1085,8 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     }
     else
     {
-        logWarning(RTCP, " SEND [RTPS] Failed: Connection not established" << IPLocator::getLogicalPort(remoteLocator));
+        logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
+            << IPLocator::getLogicalPort(remoteLocator));
         eClock::my_sleep(100);
         return false;
     }
@@ -1320,21 +1323,33 @@ void TCPTransportInterface::SocketConnected(TCPChannelResource *outputSocket)
             new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
         outputSocket->SetRTCPThread(
             new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, outputSocket));
+/*
+        BindOutputChannel(locator);
+
+        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
+        auto it = mChannelResources.find(physicalLocator);
+        if (it == mChannelResources.end())
+        {
+            mChannelResources[physicalLocator] = outputSocket;
+        }
+
+        for (auto& it : pendingConector->m_PendingLocators)
+        {
+            EnqueueLogicalOutputPort(it);
+        }
+
+        Locator_t remoteLocator;
+        EndpointToLocator(outputSocket->getSocket()->local_endpoint(), remoteLocator);
+        BindSocket(remoteLocator, outputSocket);
 
         logInfo(RTCP, " Socket Connected (physical remote: " << outputSocket->getSocket()->remote_endpoint().port()
             << ", local: " << outputSocket->getSocket()->local_endpoint().port()
             << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
-
-        // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-        // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-        // std::cout << std::put_time(std::localtime(&now_c), "%F %T") << "--> Socket Connected (physical remote: " << locator.get_physical_port()
-        //     << ", local: " << outputSocket->getSocket()->local_endpoint().port()
-        //     << ") IP: " << outputSocket->getSocket()->remote_endpoint().address() << std::endl;
-
+*/
         // RTCP Control Message
         mRTCPMessageManager->sendConnectionRequest(outputSocket);
     }
-    catch (asio::system_error const& e)
+    catch (asio::system_error const& /*e*/)
     {
         /*
         (void)e;

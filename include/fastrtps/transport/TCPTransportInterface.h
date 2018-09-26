@@ -55,6 +55,8 @@ public:
 class TCPConnector
 {
 public:
+    friend class TCPChannelResource;
+
     TCPConnector(asio::io_service& io_service, asio::ip::tcp type, asio::ip::tcp::endpoint endpoint);
     ~TCPConnector();
 
@@ -64,10 +66,10 @@ public:
     //! Method to start the reconnection process.
     void RetryConnect(TCPChannelResource* channel);
 
-    inline eProsimaTCPSocket& getSocket() { return m_socket; }
+    //inline eProsimaTCPSocket& getSocket() { return m_socket; }
 
 private:
-    
+
     eProsimaTCPSocket m_socket;
     asio::io_service& m_service;
     asio::ip::tcp m_type;

@@ -31,7 +31,7 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, TCPConnect
     , mNegotiatingLogicalPort(0)
     , mCheckingLogicalPort(0)
     , mNegotiationSemaphore(0)
-    , mSocket(moveSocket(connector->getSocket()))
+    , mSocket(moveSocket(connector->m_socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
     , mConnector(connector)
     //, mLogicalConnections(0)

@@ -225,14 +225,18 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
 void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResource)
 {
     ConnectionRequest_t request;
+    Locator_t locator;
+    mTransport->EndpointToLocator(pChannelResource->getSocket()->local_endpoint(), locator);
 
-    // TODO: Change locator to listening locator
-    Locator_t locator = pChannelResource->GetLocator();
-    IPLocator::setLogicalPort(locator, 0);
+    auto config = mTransport->GetConfiguration();
+    if (!config->listening_ports.empty())
+    {
+        IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
+    }
 
     if (locator.kind == LOCATOR_KIND_TCPv4)
     {
-        const TCPv4TransportDescriptor* pTCPv4Desc = (TCPv4TransportDescriptor*)mTransport->get_configuration();
+        const TCPv4TransportDescriptor* pTCPv4Desc = static_cast<TCPv4TransportDescriptor*>(config);
         IPLocator::setWan(locator, pTCPv4Desc->wan_addr[0], pTCPv4Desc->wan_addr[1], pTCPv4Desc->wan_addr[2],
             pTCPv4Desc->wan_addr[3]);
     }
