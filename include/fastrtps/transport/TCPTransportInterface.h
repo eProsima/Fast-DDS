@@ -129,9 +129,6 @@ public:
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
-    //! Checks if there is an opened socket or an acceptor waiting for connections.
-    bool IsInputSocketOpen(const Locator_t&) const;
-
     virtual bool IsInterfaceAllowed(const Locator_t& loc) = 0;
 
     //! Checks for TCP kinds.

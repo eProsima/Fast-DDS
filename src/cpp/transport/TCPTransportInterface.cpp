@@ -461,13 +461,6 @@ bool TCPTransportInterface::IsInputChannelOpen(const Locator_t& locator) const
            && mReceiverResources.find(IPLocator::getLogicalPort(locator)) != mReceiverResources.end();
 }
 
-bool TCPTransportInterface::IsInputSocketOpen(const Locator_t& locator) const
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    return IsLocatorSupported(locator) &&
-          (mSocketAcceptors.find(IPLocator::getPhysicalPort(locator)) != mSocketAcceptors.end());
-}
-
 bool TCPTransportInterface::IsLocatorSupported(const Locator_t& locator) const
 {
     return locator.kind == mTransportKind;
@@ -712,40 +705,15 @@ bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, Transport
     if (IsLocatorSupported(locator))
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        if (mReceiverResources.find(IPLocator::getLogicalPort(locator)) == mReceiverResources.end())
+        auto logicalPort = IPLocator::getLogicalPort(locator);
+        if (mReceiverResources.find(logicalPort) == mReceiverResources.end())
         {
-            mReceiverResources[IPLocator::getLogicalPort(locator)] = receiver;
+            success = true;
+            mReceiverResources[logicalPort] = receiver;
 
             logInfo(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << \
                 IPLocator::getLogicalPort(locator) << ")");
-
-            if (IsTCPInputSocket(locator))
-            {
-                success = true;
-                if (!IsInputSocketOpen(locator))
-                {
-                    success = CreateAcceptorSocket(locator);
-                }
-            }
-            else
-            {
-                success = true;
-                if (IsOutputChannelConnected(locator))
-                {
-                    TCPChannelResource* pSocket = nullptr;
-                    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-                    if (it != mChannelResources.end())
-                    {
-                        pSocket = it->second;
-                    }
-                }
-            }
         }
-        else
-        {
-            success = false;
-        }
-
     }
     return success;
 }
