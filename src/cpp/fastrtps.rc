@@ -14,6 +14,9 @@
 
 #include <fastrtps/fastrtps_dll.h>
 
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+
 // Microsoft Visual C++ generated resource script.
 //
 #ifdef APSTUDIO_INVOKED

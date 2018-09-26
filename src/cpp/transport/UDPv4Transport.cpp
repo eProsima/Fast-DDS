@@ -68,8 +68,8 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
     mReceiveBufferSize(descriptor.receiveBufferSize)
     {
-        for (const auto& interface : descriptor.interfaceWhiteList)
-            mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
+        for (const auto& networkInterface : descriptor.interfaceWhiteList)
+            mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(networkInterface));
     }
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor():
