@@ -299,8 +299,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         <xs:element name="port" type="portType"/>
         <xs:element name="userData" type="octetVectorType"/>
         <xs:element name="participantID" type="int32Type"/>
-        <xs:element name="use_IP4_to_send" type="boolType"/>
-        <xs:element name="use_IP6_to_send" type="boolType"/>
         <xs:element name="throughputController" type="throughputControllerType"/>
         <!-- <xs:element name="userTransports" type="XXX"/> -->
         <xs:element name="useBuiltinTransports" type="boolType"/>
@@ -392,18 +390,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     if (nullptr != (p_aux = p_element->FirstChildElement(PART_ID)))
     {
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &participant_node.get()->rtps.participantID, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // use_IP4_to_send - boolType
-    if (nullptr != (p_aux = p_element->FirstChildElement(IP4_TO_SEND)))
-    {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.get()->rtps.use_IP4_to_send, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // use_IP6_to_send - boolType
-    if (nullptr != (p_aux = p_element->FirstChildElement(IP6_TO_SEND)))
-    {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.get()->rtps.use_IP6_to_send, ident))
             return XMLP_ret::XML_ERROR;
     }
     // throughputController
