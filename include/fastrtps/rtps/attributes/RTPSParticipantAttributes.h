@@ -214,8 +214,6 @@ class RTPSParticipantAttributes
             setName("RTPSParticipant");
             sendSocketBufferSize = 0;
             listenSocketBufferSize = 0;
-            use_IP4_to_send = true;
-            use_IP6_to_send = false;
             participantID = -1;
             useBuiltinTransports = true;
         }
@@ -266,10 +264,6 @@ class RTPSParticipantAttributes
         std::vector<octet> userData;
         //!Participant ID
         int32_t participantID;
-        //!Use IP4 to send messages.
-        bool use_IP4_to_send;
-        //!Use IP6 to send messages.
-        bool use_IP6_to_send;
         //!Set the name of the participant.
         inline void setName(const char* nam){name = nam;}
         //!Get the name of the participant.

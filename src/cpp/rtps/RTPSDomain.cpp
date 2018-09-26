@@ -67,11 +67,6 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
         logError(RTPS_PARTICIPANT,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
     }
-    if(PParam.use_IP4_to_send == false && PParam.use_IP6_to_send == false)
-    {
-        logError(RTPS_PARTICIPANT,"Use IP4 OR User IP6 to send must be set to true");
-        return nullptr;
-    }
     uint32_t ID;
     if(PParam.participantID < 0)
     {

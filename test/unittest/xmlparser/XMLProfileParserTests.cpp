@@ -114,8 +114,6 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.use_IP4_to_send, true);
-    EXPECT_EQ(rtps_atts.use_IP6_to_send, false);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
@@ -184,8 +182,6 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.use_IP4_to_send, true);
-    EXPECT_EQ(rtps_atts.use_IP6_to_send, false);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
