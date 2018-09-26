@@ -46,7 +46,7 @@ if(${CMAKE_MAJOR_VERSION} GREATER 3 OR (${CMAKE_MAJOR_VERSION} EQUAL 3 AND ${CMA
     set(QUIET_ QUIET)
 endif()
 
-ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
+# ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
 
 if(UNIX)
     find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
