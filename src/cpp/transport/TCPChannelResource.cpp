@@ -79,7 +79,11 @@ void TCPChannelResource::Disable()
 
 void TCPChannelResource::Connected()
 {
-
+    if (mConnectionStatus == eConnectionStatus::eDisconnected)
+    {
+        mConnectionStatus = eConnectionStatus::eConnected;
+        mParent->SocketConnected(this);
+    }
 }
 
 bool TCPChannelResource::IsLogicalPortOpened(uint16_t port)

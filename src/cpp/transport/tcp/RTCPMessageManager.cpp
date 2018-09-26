@@ -225,8 +225,9 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
 void RTCPMessageManager::sendConnectionRequest(TCPChannelResource *pChannelResource)
 {
     ConnectionRequest_t request;
-    Locator_t locator;
-    EndpointToLocator(pChannelResource->getSocket()->local_endpoint(), locator);
+
+    // TODO: Change locator to listening locator
+    Locator_t locator = pChannelResource->GetLocator();
     IPLocator::setLogicalPort(locator, 0);
 
     if (locator.kind == LOCATOR_KIND_TCPv4)

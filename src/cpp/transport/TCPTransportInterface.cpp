@@ -188,7 +188,7 @@ void TCPTransportInterface::BindOutputChannel(const Locator_t& locator, SenderRe
     auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (it != mChannelResources.end())
     {
-        BindSocket(locator, itc->second);
+        BindSocket(locator, it->second);
     }
 }
 
@@ -624,7 +624,6 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
                 }
             }
             */
-        }
         }
 
         // TODO: success = channel->AddLogicalPort(logicalPort);
@@ -1312,6 +1311,38 @@ void TCPTransportInterface::SocketConnected(Locator_t& locator, SenderResource *
     }
 }
 */
+void TCPTransportInterface::SocketConnected(TCPChannelResource *outputSocket)
+{
+    try
+    {
+        outputSocket->ChangeStatus(TCPChannelResource::eConnectionStatus::eConnected);
+        outputSocket->SetThread(
+            new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
+        outputSocket->SetRTCPThread(
+            new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, outputSocket));
+
+        logInfo(RTCP, " Socket Connected (physical remote: " << outputSocket->getSocket()->remote_endpoint().port()
+            << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+            << ") IP: " << outputSocket->getSocket()->remote_endpoint().address());
+
+        // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+        // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+        // std::cout << std::put_time(std::localtime(&now_c), "%F %T") << "--> Socket Connected (physical remote: " << locator.get_physical_port()
+        //     << ", local: " << outputSocket->getSocket()->local_endpoint().port()
+        //     << ") IP: " << outputSocket->getSocket()->remote_endpoint().address() << std::endl;
+
+        // RTCP Control Message
+        mRTCPMessageManager->sendConnectionRequest(outputSocket);
+    }
+    catch (asio::system_error const& e)
+    {
+        /*
+        (void)e;
+        logInfo(RTPS_MSG_OUT, "TCPTransport Error establishing the connection at port:(" << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
+        CloseOutputChannel(locator);
+        */
+    }
+}
 
 void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
 {

@@ -215,7 +215,7 @@ public:
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
 
     //! Callback called each time that an outgoing connection is established.
-    void SocketConnected(Locator_t& locator, TCPConnector* connector, const asio::error_code& error);
+    void SocketConnected(TCPChannelResource *outputSocket);
 
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);
