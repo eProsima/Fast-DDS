@@ -85,8 +85,8 @@ UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor):
     mSendBufferSize(descriptor.sendBufferSize),
     mReceiveBufferSize(descriptor.receiveBufferSize)
     {
-        for (const auto& interface : descriptor.interfaceWhiteList)
-           mInterfaceWhiteList.emplace_back(ip::address_v6::from_string(interface));
+        for (const auto& networkInterface : descriptor.interfaceWhiteList)
+           mInterfaceWhiteList.emplace_back(ip::address_v6::from_string(networkInterface));
     }
 
 UDPv6TransportDescriptor::UDPv6TransportDescriptor():
