@@ -78,8 +78,6 @@ TCPChannelResource::~TCPChannelResource()
 
     Clear();
 
-    mReceiversMap.clear();
-
     if (mReadMutex != nullptr)
     {
         delete mReadMutex;
@@ -99,7 +97,6 @@ TCPChannelResource::~TCPChannelResource()
 
 void TCPChannelResource::Disable()
 {
-    mReceiversMap.clear();
 	mNegotiationSemaphore.disable();
 
 	ChannelResource::Disable();
@@ -116,23 +113,6 @@ std::thread* TCPChannelResource::ReleaseRTCPThread()
     std::thread* outThread = mRTCPThread;
     mRTCPThread = nullptr;
     return outThread;
-}
-
-bool TCPChannelResource::AddMessageReceiver(uint16_t logicalPort, TransportReceiverInterface* receiver)
-{
-    if (mReceiversMap.find(logicalPort) == mReceiversMap.end())
-    {
-        mReceiversMap[logicalPort] = receiver;
-        return true;
-    }
-    return false;
-}
-
-TransportReceiverInterface* TCPChannelResource::GetMessageReceiver(uint16_t logicalPort)
-{
-    if (mReceiversMap.find(logicalPort) != mReceiversMap.end())
-        return mReceiversMap[logicalPort];
-    return nullptr;
 }
 
 void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)

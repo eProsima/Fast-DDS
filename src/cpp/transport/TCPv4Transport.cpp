@@ -70,6 +70,12 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     {
         mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
     }
+
+    for (uint16_t port : mConfiguration_.listening_ports)
+    {
+        Locator_t locator(LOCATOR_KIND_TCPv4, port);
+        CreateAcceptorSocket(locator);
+    }
 }
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor()

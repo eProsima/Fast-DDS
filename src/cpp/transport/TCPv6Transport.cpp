@@ -72,6 +72,12 @@ TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
     {
         mInterfaceWhiteList.emplace_back(ip::address_v6::from_string(interface));
     }
+
+    for (uint16_t port : mConfiguration_.listening_ports)
+    {
+        Locator_t locator(LOCATOR_KIND_TCPv6, port);
+        CreateAcceptorSocket(locator);
+    }
 }
 
 TCPv6TransportDescriptor::TCPv6TransportDescriptor()

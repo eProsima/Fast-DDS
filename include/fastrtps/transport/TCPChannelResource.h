@@ -156,10 +156,6 @@ public:
         return mConnectionStatus == eConnectionStatus::eEstablished;
     }
 
-    bool AddMessageReceiver(uint16_t logicalPort, TransportReceiverInterface* receiver);
-
-    TransportReceiverInterface* GetMessageReceiver(uint16_t logicalPort);
-
     inline const Locator_t& GetLocator() const
     {
         return mLocator;
@@ -188,7 +184,6 @@ private:
     //std::vector<uint16_t> mLogicalInputPorts;
     std::recursive_mutex* mReadMutex;
     std::recursive_mutex* mWriteMutex;
-    std::map<uint16_t, TransportReceiverInterface*> mReceiversMap;  // The key is the logical port.
     std::recursive_mutex mPendingLogicalMutex;
     std::map<uint16_t, uint16_t> mLogicalPortRouting;
 	Semaphore mNegotiationSemaphore;

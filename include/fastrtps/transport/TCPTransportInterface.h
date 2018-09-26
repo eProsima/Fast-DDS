@@ -41,12 +41,10 @@ class TCPAcceptor
 public:
     asio::ip::tcp::acceptor mAcceptor;
     Locator_t mLocator;
-    uint32_t mMaxMsgSize;
     eProsimaTCPSocket mSocket;
     asio::ip::tcp::endpoint mEndPoint;
 
-    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator,
-        uint32_t maxMsgSize);
+    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
     ~TCPAcceptor() {    }
 
     //! Method to start the accepting process.
@@ -89,6 +87,7 @@ class TCPTransportInterface : public TransportInterface
 {
 public:
     friend class RTCPMessageManager;
+    friend class test_RTCPMessageManager;
     friend class CleanTCPSocketsEvent;
 
     virtual ~TCPTransportInterface();
@@ -238,7 +237,7 @@ protected:
 
     std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
-    std::map<Locator_t, TransportReceiverInterface*> mReceiverResources; // The key is the complete locator
+    std::map<uint16_t, TransportReceiverInterface*> mReceiverResources; // The key is the logical port
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
     std::recursive_mutex mDeletedSocketsPoolMutex;
@@ -269,7 +268,7 @@ protected:
     void CloseTCPSocket(TCPChannelResource* pChannelResource);
 
     //! Creates a TCP acceptor to wait for incomming connections by the given locator.
-    bool CreateAcceptorSocket(const Locator_t& locator, uint32_t maxMsgSize);
+    bool CreateAcceptorSocket(const Locator_t& locator);
 
     //! Method to create a TCP connector to establish a socket with the given locator.
     void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
@@ -295,11 +294,6 @@ protected:
 
     bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
         TCPChannelResource* pChannelResource, std::size_t body_size);
-
-    /** Associates the given pChannelResource with the registered ReceiverResources with the given locator.
-    * This relationship is used to root the incomming messages to the related Receivers.
-    */
-    void RegisterReceiverResources(TCPChannelResource* pChannelResource, const Locator_t& locator);
 
     //! Closes the physical socket and mark it to be deleted.
     void ReleaseTCPSocket(TCPChannelResource* pChannelResource, bool force);

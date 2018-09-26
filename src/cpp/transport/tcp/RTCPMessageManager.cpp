@@ -377,7 +377,7 @@ bool RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChan
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
-    else if (pChannelResource->mReceiversMap.find(request.logicalPort()) == pChannelResource->mReceiversMap.end())
+    else if (mTransport->mReceiverResources.find(request.logicalPort()) == mTransport->mReceiverResources.end())
     {
         sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
     }
@@ -406,7 +406,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
 		{
 			for (uint16_t port : request.logicalPortsRange())
 			{
-				if (pChannelResource->mReceiversMap.find(port) != pChannelResource->mReceiversMap.end())
+				if (mTransport->mReceiverResources.find(port) != mTransport->mReceiverResources.end())
 				{
                     if (port == 0)
                     {
