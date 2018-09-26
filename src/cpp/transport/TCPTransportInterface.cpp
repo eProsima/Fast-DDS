@@ -645,7 +645,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         logInfo(RTCP, "OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " \
-                << IPLocator::getLogicalPort(locator) << ")");
+                << IPLocator::getLogicalPort(locator) << ") @ IP: " << IPLocator::toIPv4string(locator));
 
         // TODO simplify
 
@@ -680,6 +680,16 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
         {
             // There's an already opened connection?
             success = mChannelResources.find(IPLocator::toPhysicalLocator(locator)) != mChannelResources.end();
+            if (!success)
+            {
+                // Maybe, there's a waiting acceptor?
+                auto it = mSocketAcceptors.find(IPLocator::getPhysicalPort(locator));
+                if (it != mSocketAcceptors.end())
+                {
+                    it->second->mPendingOutLocators.push_back(locator);
+                    success = true; // Don't remove this SenderResource
+                }
+            }
         }
     }
     else
@@ -769,7 +779,14 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
     std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
 
     bool bSendOpenLogicalPort = false;
-    logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" << pChannelResource->getSocket()->local_endpoint().address() << ":" << pChannelResource->getSocket()->local_endpoint().port() << "->" << pChannelResource->getSocket()->remote_endpoint().address() << ":" << pChannelResource->getSocket()->remote_endpoint().port() << ")");
+    /*
+    logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) \
+        << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" \
+        << pChannelResource->getSocket()->local_endpoint().address() << ":" \
+        << pChannelResource->getSocket()->local_endpoint().port() << "->" \
+        << pChannelResource->getSocket()->remote_endpoint().address() << ":" \
+        << pChannelResource->getSocket()->remote_endpoint().port() << ")");
+        */
     while (pChannelResource->IsAlive())
     {
         if (pChannelResource->IsConnectionEstablished())
@@ -1100,7 +1117,8 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
     {
-        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator));
+        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator) \
+            << " @ IP: " << IPLocator::toIPv4string(remoteLocator));
         return false;
     }
 
@@ -1108,8 +1126,8 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     if (it == mChannelResources.end())
     {
         EnqueueLogicalOutputPort(remoteLocator);
-        logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) << \
-                " will be bound.");
+        logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) \
+            << " @ IP: " << IPLocator::toIPv4string(remoteLocator) << " will be bound.");
         return false;
     }
     else
@@ -1276,6 +1294,11 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBind);
 
             BindSocket(acceptor->mLocator, pChannelResource);
+
+            for (const Locator_t& loc : acceptor->mPendingOutLocators)
+            {
+                BindSocket(loc, pChannelResource);
+            }
 
             pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this,
                 pChannelResource));

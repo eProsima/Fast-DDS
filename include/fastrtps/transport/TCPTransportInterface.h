@@ -43,6 +43,7 @@ public:
     Locator_t mLocator;
     eProsimaTCPSocket mSocket;
     asio::ip::tcp::endpoint mEndPoint;
+    std::vector<Locator_t> mPendingOutLocators;
 
     TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
     ~TCPAcceptor() {    }
