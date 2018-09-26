@@ -41,7 +41,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         add_executable(SecurityAuthentication ${SOURCES_SECURITY_TEST_SOURCE}
-            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityAuthenticationTests.cpp)
+            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp)
         target_compile_definitions(SecurityAuthentication PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(SecurityAuthentication PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
@@ -66,6 +67,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_link_libraries(SecurityAuthentication ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
         add_gtest(SecurityAuthentication
-            SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/SecurityAuthenticationTests.cpp)
+            SOURCES
+            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp)
     endif()
 endif()

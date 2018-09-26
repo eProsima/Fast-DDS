@@ -115,7 +115,7 @@ class SharedSecret
         };
 
         static const char* const class_id_;
-        
+
         std::vector<BinaryData> data_;
 };
 

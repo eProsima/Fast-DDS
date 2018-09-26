@@ -22,6 +22,8 @@
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/attributes/ReaderAttributes.h>
 
 #include <gmock/gmock.h>
 
