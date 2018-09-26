@@ -14,62 +14,46 @@
 
 #include <asio.hpp>
 #include <fastrtps/transport/TCPChannelResource.h>
+#include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket)
+TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, TCPConnector* connector, const Locator_t& locator)
     : ChannelResource()
+    , mParent (parent)
     , mLocator(locator)
-    , m_inputSocket(inputSocket)
+    , m_inputSocket(false)
+    , mWaitingForKeepAlive(false)
+    , mPendingLogicalPort(0)
+    , mNegotiatingLogicalPort(0)
+    , mCheckingLogicalPort(0)
+    , mNegotiationSemaphore(0)
+    , mSocket(moveSocket(connector->getSocket()))
+    , mConnectionStatus(eConnectionStatus::eDisconnected)
+    , mConnector(connector)
+    //, mLogicalConnections(0)
+{
+    connector->Connect(this);
+}
+
+TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket)
+    : ChannelResource()
+    , mParent(parent)
+    , mLocator()
+    , m_inputSocket(true)
     , mWaitingForKeepAlive(false)
     , mPendingLogicalPort(0)
     , mNegotiatingLogicalPort(0)
     , mCheckingLogicalPort(0)
 	, mNegotiationSemaphore(0)
 	, mSocket(moveSocket(socket))
-    , mConnectionStatus(eConnectionStatus::eDisconnected)
+    , mConnectionStatus(eConnectionStatus::eWaitingForBind)
+    , mConnector(nullptr)
     //, mLogicalConnections(0)
 {
-    mReadMutex = new std::recursive_mutex();
-    mWriteMutex = new std::recursive_mutex();
-    if (outputLocator)
-    {
-        mPendingLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
-        logInfo(RTCP, "Bound output locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
-    }
-    else
-    {
-        mLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
-    }
-}
-
-TCPChannelResource::TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
-    uint32_t maxMsgSize)
-    : ChannelResource(maxMsgSize)
-    , mLocator(locator)
-    , m_inputSocket(inputSocket)
-    , mWaitingForKeepAlive(false)
-    , mPendingLogicalPort(0)
-    , mNegotiatingLogicalPort(0)
-    , mCheckingLogicalPort(0)
-    , mSocket(moveSocket(socket))
-    , mConnectionStatus(eConnectionStatus::eDisconnected)
-    //, mLogicalConnections(0)
-{
-    mReadMutex = new std::recursive_mutex();
-    mWriteMutex = new std::recursive_mutex();
-    if (outputLocator)
-    {
-        mPendingLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
-        logInfo(RTCP, "Bound output locator (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
-    }
-    else
-    {
-        mLogicalOutputPorts.emplace_back(IPLocator::getLogicalPort(locator));
-    }
 }
 
 TCPChannelResource::~TCPChannelResource()
@@ -77,15 +61,6 @@ TCPChannelResource::~TCPChannelResource()
 	mNegotiationSemaphore.disable();
 
     Clear();
-
-    if (mReadMutex != nullptr)
-    {
-        delete mReadMutex;
-    }
-    if (mWriteMutex != nullptr)
-    {
-        delete mWriteMutex;
-    }
 
     if (mRTCPThread != nullptr)
     {
@@ -100,6 +75,11 @@ void TCPChannelResource::Disable()
 	mNegotiationSemaphore.disable();
 
 	ChannelResource::Disable();
+}
+
+void TCPChannelResource::Connected()
+{
+
 }
 
 bool TCPChannelResource::IsLogicalPortOpened(uint16_t port)

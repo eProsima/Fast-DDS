@@ -55,19 +55,25 @@ public:
 class TCPConnector
 {
 public:
-    Locator_t m_locator;
-    eProsimaTCPSocket m_socket;
-    std::vector<Locator_t> m_PendingLocators;
-    uint32_t m_msgSize;
-
-    TCPConnector(asio::io_service& io_service, const Locator_t& locator, uint32_t msgSize);
+    TCPConnector(asio::io_service& io_service, asio::ip::tcp type, asio::ip::tcp::endpoint endpoint);
     ~TCPConnector();
 
     //! Method to start the connecting process with the endpoint set in the locator.
-    void Connect(TCPTransportInterface* parent, SenderResource *senderResource);
+    void Connect(TCPChannelResource* channel);
 
     //! Method to start the reconnection process.
-    void RetryConnect(asio::io_service& io_service, TCPTransportInterface* parent, SenderResource *senderResource);
+    void RetryConnect(TCPChannelResource* channel);
+
+    inline eProsimaTCPSocket& getSocket() { return m_socket; }
+
+private:
+    
+    eProsimaTCPSocket m_socket;
+    asio::io_service& m_service;
+    asio::ip::tcp m_type;
+    asio::ip::tcp::endpoint m_endpoint;
+
+    void SocketConnected(TCPChannelResource* channel, const asio::error_code& error);
 };
 
 /**
@@ -209,7 +215,7 @@ public:
     void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
 
     //! Callback called each time that an outgoing connection is established.
-    void SocketConnected(Locator_t& locator, SenderResource *senderResource, const asio::error_code& error);
+    void SocketConnected(Locator_t& locator, TCPConnector* connector, const asio::error_code& error);
 
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);

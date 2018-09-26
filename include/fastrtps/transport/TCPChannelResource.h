@@ -24,6 +24,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+class TCPConnector;
+class TCPTransportInterface;
+
 enum eSocketErrorCodes
 {
     eNoError,
@@ -93,10 +96,11 @@ enum eConnectionStatus
 };
 
 public:
-    TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket);
+    // Constructor called when trying to connect to a remote server
+    TCPChannelResource(TCPTransportInterface* parent, TCPConnector* connector, const Locator_t& locator);
 
-    TCPChannelResource(eProsimaTCPSocket& socket, Locator_t& locator, bool outputLocator, bool inputSocket,
-        uint32_t maxMsgSize);
+    // Constructor called when local server accepted connection
+    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket);
 
     virtual ~TCPChannelResource();
 
@@ -122,12 +126,12 @@ public:
         return getSocketPtr(mSocket);
     }
 
-    std::recursive_mutex* GetReadMutex() const
+    std::recursive_mutex& GetReadMutex()
     {
         return mReadMutex;
     }
 
-    std::recursive_mutex* GetWriteMutex() const
+    std::recursive_mutex& GetWriteMutex()
     {
         return mWriteMutex;
     }
@@ -161,6 +165,8 @@ public:
         return mLocator;
     }
 
+    void Connected();
+
 protected:
     inline void ChangeStatus(eConnectionStatus s)
     {
@@ -172,6 +178,7 @@ protected:
     friend class test_RTCPMessageManager;
 
 private:
+    TCPTransportInterface * mParent;
     Locator_t mLocator;
     bool m_inputSocket;
     bool mWaitingForKeepAlive;
@@ -182,13 +189,14 @@ private:
     std::vector<uint16_t> mPendingLogicalOutputPorts; // Must be accessed after lock mPendingLogicalMutex
     std::vector<uint16_t> mLogicalOutputPorts;
     //std::vector<uint16_t> mLogicalInputPorts;
-    std::recursive_mutex* mReadMutex;
-    std::recursive_mutex* mWriteMutex;
+    std::recursive_mutex mReadMutex;
+    std::recursive_mutex mWriteMutex;
     std::recursive_mutex mPendingLogicalMutex;
     std::map<uint16_t, uint16_t> mLogicalPortRouting;
 	Semaphore mNegotiationSemaphore;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
+    TCPConnector* mConnector;
 
     TCPChannelResource(const TCPChannelResource&) = delete;
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;
