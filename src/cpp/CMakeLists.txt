@@ -192,7 +192,7 @@ configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 if(WIN32)
     if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-        add_definitions(-D_WIN32_WINNT=0x0603)
+        add_definitions(-D_WIN32_WINNT=0x0603 -DSQLITE_OS_WINRT)
     else()
         add_definitions(-D_WIN32_WINNT=0x0601)
     endif()
