@@ -106,7 +106,7 @@ void TCPChannelResource::Connect()
 
 ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
 {
-    
+
     if (mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
     {
         mLocator = locator;
@@ -127,6 +127,11 @@ ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
     }
 
     return RETCODE_SERVER_ERROR;
+}
+
+void TCPChannelResource::InputPortClosed(uint16_t port)
+{
+    mRTCPManager->sendLogicalPortIsClosedRequest(this, port);
 }
 
 void TCPChannelResource::ConnectionLost()
@@ -251,49 +256,17 @@ void TCPChannelResource::AddLogicalPort(uint16_t port)
             logError(RTPS, "Trying to open logical port 0.");
         } // But let's continue...
 
-        if (mPendingLogicalOutputPorts.size() == 0) // Empty pending, let's try to open directly
-        {
-            TCPTransactionId id = mRTCPManager->sendOpenLogicalPortRequest(this, port);
-            mNegotiatingLogicalPorts[id] = port;
-            mPendingLogicalOutputPorts.emplace_back(port);
-        }
-        else if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
-                 == mPendingLogicalOutputPorts.end()) // Check isn't enqueued already
+        if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
+            == mPendingLogicalOutputPorts.end()) // Check isn't enqueued already
         {
             mPendingLogicalOutputPorts.emplace_back(port);
-        }
-    }
-
-
-
-    /*
-    { // Logical Ports
-        if (pChannelResource->mPendingLogicalPort == 0 && !pChannelResource->mPendingLogicalOutputPorts.empty())
-        {
-            pChannelResource->mPendingLogicalPort = *pChannelResource->mPendingLogicalOutputPorts.begin();
-            bSendOpenLogicalPort = true;
-        }
-        else if (pChannelResource->mPendingLogicalPort == 0)
-        {
-            if (GetConfiguration()->wait_for_tcp_negotiation)
+            if (mConnectionStatus == eConnectionStatus::eEstablished)
             {
-                pChannelResource->mNegotiationSemaphore.post();
+                TCPTransactionId id = mRTCPManager->sendOpenLogicalPortRequest(this, port);
+                mNegotiatingLogicalPorts[id] = port;
             }
         }
-        else if (std::chrono::system_clock::now() > negotiation_time)
-        {
-            pChannelResource->mNegotiationSemaphore.post();
-        }
     }
-
-    if (bSendOpenLogicalPort)
-    {
-        mRTCPMessageManager->sendOpenLogicalPortRequest(pChannelResource,
-            pChannelResource->mPendingLogicalPort);
-        negotiation_time = time_now + std::chrono::milliseconds(GetConfiguration()->tcp_negotiation_timeout);
-        bSendOpenLogicalPort = false;
-    }
-    */
 }
 
 void TCPChannelResource::SendPendingOpenLogicalPorts()
@@ -310,7 +283,7 @@ void TCPChannelResource::SendPendingOpenLogicalPorts()
     }
 }
 
-void TCPChannelResource::AddLogicalPortResponse(const TCPTransactionId &id, bool success, Locator_t &remote)
+void TCPChannelResource::AddLogicalPortResponse(const TCPTransactionId &id, bool success)
 {
 	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     auto it = mNegotiatingLogicalPorts.find(id);
@@ -325,9 +298,7 @@ void TCPChannelResource::AddLogicalPortResponse(const TCPTransactionId &id, bool
             if (success)
             {
                 mLogicalOutputPorts.push_back(port);
-                IPLocator::setLogicalPort(remote, port);
                 logInfo(RTCP, "OpenedLogicalPort " << port);
-                mParent->BindSocket(remote, this);
             }
             else
             {

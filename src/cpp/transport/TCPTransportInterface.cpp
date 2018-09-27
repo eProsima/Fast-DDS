@@ -499,13 +499,12 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
         {
             bClosed = true;
             mReceiverResources.erase(receiverIt);
-            // TODO: Inform all channel resources that logical port has been closed
-            /*
+
+            // Inform all channel resources that logical port has been closed
             for (auto channelIt : mChannelResources)
             {
-                channelIt.second->InputPortHasBeenClosed(logicalPort);
+                channelIt.second->InputPortClosed(logicalPort);
             }
-            */
         }
     }
 
@@ -1161,19 +1160,9 @@ void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
     }
 }
 
-bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &locator,
-        uint32_t metatraffic_multicast_port) const
+bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &, uint32_t) const
 {
-    if (locator.port == 0)
-    {
-        locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    }
-
-    if (IPLocator::getLogicalPort(locator) == 0)
-    {
-        IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_multicast_port));
-    }
-
+    // TCP doesn't have multicast support
     return true;
 }
 
@@ -1190,9 +1179,19 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_unicast_port));
     }
 
-    if (GetConfiguration() != nullptr)
+    auto config = GetConfiguration();
+    if (config != nullptr)
     {
-        // TODO: Add physical port and WAN address
+        if (!config->listening_ports.empty())
+        {
+            IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
+        }
+        else
+        {
+            // TODO Think about a "virtual physical port" to avoid send the real one
+            IPLocator::setPhysicalPort(locator, 0);
+        }
+        // TODO: Add WAN address
     }
 
     return true;
@@ -1251,6 +1250,21 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
     if (IPLocator::getLogicalPort(locator) == 0)
     {
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(well_known_port));
+    }
+
+    auto config = GetConfiguration();
+    if (config != nullptr)
+    {
+        if (!config->listening_ports.empty())
+        {
+            IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
+        }
+        else
+        {
+            // TODO Think about a "virtual physical port" to avoid send the real one
+            IPLocator::setPhysicalPort(locator, 0);
+        }
+        // TODO: Add WAN address
     }
 
     return true;

@@ -173,6 +173,8 @@ public:
         return mLocator;
     }
 
+    void InputPortClosed(uint16_t port);
+
     void Connect();
     ResponseCode ProcessBindRequest(const Locator_t& locator);
     void ConnectionLost();
@@ -193,7 +195,7 @@ protected:
 	    return false;
     }
 
-    void AddLogicalPortResponse(const TCPTransactionId &id, bool success, Locator_t &remote);
+    void AddLogicalPortResponse(const TCPTransactionId &id, bool success);
     void ProcessCheckLogicalPortsResponse(const TCPTransactionId &transactionId,
         const std::vector<uint16_t> &availablePorts);
 

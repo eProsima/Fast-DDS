@@ -233,6 +233,11 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(TCPChannelResource *p
     {
         IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
     }
+    else
+    {
+        // TODO Think about a "virtual physical port" to avoid send the real one
+        IPLocator::setPhysicalPort(locator, 0);
+    }
 
     if (locator.kind == LOCATOR_KIND_TCPv4)
     {
@@ -367,26 +372,6 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
 
     ResponseCode code = pChannelResource->ProcessBindRequest(request.transportLocator());
     sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, code);
-    /*
-    else if (pChannelResource->mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
-    {
-        {
-            std::unique_lock<std::recursive_mutex> scope(pChannelResource->mPendingLogicalMutex);
-            //pChannelResource->EnqueueLogicalPort(IPLocator::getLogicalPort(request.transportLocator()));
-            mTransport->BindSocket(request.transportLocator(), pChannelResource);
-        }
-        pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eEstablished);
-        logInfo(RTPC_MSG, "Connection Stablished");
-    }
-    else if (pChannelResource->mConnectionStatus == TCPChannelResource::eConnectionStatus::eEstablished)
-    {
-        sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_EXISTING_CONNECTION);
-    }
-    else
-    {
-        sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_SERVER_ERROR);
-    }
-    */
 
     return true;
 }
@@ -467,16 +452,20 @@ bool RTCPMessageManager::processKeepAliveRequest(TCPChannelResource *pChannelRes
 }
 
 void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPChannelResource* pChannelResource,
-    const LogicalPortIsClosedRequest_t &/*request*/, const TCPTransactionId & transactionId)
+        const LogicalPortIsClosedRequest_t &request, const TCPTransactionId & transactionId)
 {
     if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
+    else
+    {
+        pChannelResource->RemoveLogicalPort(request.logicalPort());
+    }
 }
 
 bool RTCPMessageManager::processBindConnectionResponse(TCPChannelResource *pChannelResource,
-    const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transactionId)
+        const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -495,7 +484,7 @@ bool RTCPMessageManager::processBindConnectionResponse(TCPChannelResource *pChan
 }
 
 bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pChannelResource,
-    const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId)
+        const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -512,7 +501,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pC
 }
 
 bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
-    const TCPTransactionId &transactionId, Locator_t &remoteLocator)
+        const TCPTransactionId &transactionId, Locator_t &/*remoteLocator*/)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
@@ -521,12 +510,12 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
         {
         case RETCODE_OK:
         {
-            pChannelResource->AddLogicalPortResponse(transactionId, true, remoteLocator);
+            pChannelResource->AddLogicalPortResponse(transactionId, true);
         }
         break;
         case RETCODE_INVALID_PORT:
         {
-            pChannelResource->AddLogicalPortResponse(transactionId, false, remoteLocator);
+            pChannelResource->AddLogicalPortResponse(transactionId, false);
         }
         break;
         default:
@@ -544,7 +533,7 @@ bool RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *pCha
 }
 
 bool RTCPMessageManager::processKeepAliveResponse(TCPChannelResource *pChannelResource,
-    ResponseCode respCode, const TCPTransactionId &transactionId)
+        ResponseCode respCode, const TCPTransactionId &transactionId)
 {
     auto it = mUnconfirmedTransactions.find(transactionId);
     if (it != mUnconfirmedTransactions.end())
