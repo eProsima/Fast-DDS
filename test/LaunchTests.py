@@ -23,13 +23,17 @@ else:
 pub_list = pub_str.split(',')
 sub_list = sub_str.split(',')
 
+id = 0
 for a in pub_list:
 	print("Launch Publisher on: " + a)
-	subprocess.Popen(["docker ", "-H ", a, "run", "--cap-add", "SYS_ADMIN", "--security-opt", "seccomp=unconfined", "--cap-add", "DAC_READ_SEARCH", "ubuntu-test", "python3", "\"/workspace/Multi-Node Manual Linux/test/PublisherTests.py\"", user, password])
+	subprocess.Popen(["docker ", "-H ", a, "run", "--cap-add", "SYS_ADMIN", "--security-opt", "seccomp=unconfined", "--cap-add", "DAC_READ_SEARCH", "-rm", "-d", "--network", "host", "--name", "TestPub" + id, "ubuntu-test", "python3", "\"/workspace/Multi-Node Manual Linux/test/PublisherTests.py\"", user, password])
+	id = id + 1
 
 p = None
+id = 0
 for a in sub_list:
 	print("Launch Subscriber on: " + a)
-	subprocess.Popen(["docker ", "-H ", a, "run", "--cap-add", "SYS_ADMIN", "--security-opt", "seccomp=unconfined", "--cap-add", "DAC_READ_SEARCH", "ubuntu-test", "python3", "\"/workspace/Multi-Node Manual Linux/test/SubscriberTests.py\"", user, password], shell=False, stdout=subprocess.PIPE)
+	subprocess.Popen(["docker ", "-H ", a, "run", "--cap-add", "SYS_ADMIN", "--security-opt", "seccomp=unconfined", "--cap-add", "DAC_READ_SEARCH", "-rm", "-d", "--network", "host", "--name", "TestSub" + id, "ubuntu-test", "python3", "\"/workspace/Multi-Node Manual Linux/test/SubscriberTests.py\"", user, password], shell=False, stdout=subprocess.PIPE)
+	id = id + 1
 
 p.communicate()
