@@ -477,42 +477,24 @@ void TCPTransportInterface::CloseInputSocket(TCPChannelResource *pChannelResourc
 bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
 {
     bool bClosed = false;
-    // std::vector<TCPChannelResource*> vDeletedSockets;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
 
-        if (mReceiverResources.find(IPLocator::getLogicalPort(locator)) != mReceiverResources.end())
+        auto logicalPort = IPLocator::getLogicalPort(locator);
+        auto receiverIt = mReceiverResources.find(logicalPort);
+        if (receiverIt != mReceiverResources.end())
         {
-            mReceiverResources.erase(IPLocator::getLogicalPort(locator));
             bClosed = true;
+            mReceiverResources.erase(receiverIt);
+            // TODO: Inform all channel resources that logical port has been closed
+            /*
+            for (auto channelIt : mChannelResources)
+            {
+                channelIt.second->InputPortHasBeenClosed(logicalPort);
+            }
+            */
         }
-
-        /*
-        auto acceptorIt = mSocketAcceptors.find(IPLocator::getPhysicalPort(locator));
-        if (acceptorIt != mSocketAcceptors.end())
-        {
-            delete acceptorIt->second;
-            mSocketAcceptors.erase(acceptorIt);
-            bClosed = true;
-        }
-
-        auto InputSocketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-        if (InputSocketIt != mChannelResources.end())
-        {
-            mChannelResources.erase(InputSocketIt);
-            vDeletedSockets.emplace_back(InputSocketIt->second);
-            bClosed = true;
-        }
-        */
     }
-
-    /*
-    for (auto it = vDeletedSockets.begin(); it != vDeletedSockets.end(); ++it)
-    {
-        ReleaseTCPSocket(*it, false);
-        *it = nullptr;
-    }
-    */
 
     return bClosed;
 }
