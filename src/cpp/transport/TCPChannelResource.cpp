@@ -73,28 +73,70 @@ void TCPChannelResource::Disable()
 	mNegotiationSemaphore.disable();
 
 	ChannelResource::Disable();
+
+    Disconnect();
 }
 
 void TCPChannelResource::Connect()
 {
-    auto type = mParent->GetProtocolType();
-    auto endpoint = mParent->GenerateLocalEndpoint(mLocator, IPLocator::getPhysicalPort(mLocator));
-    getSocketPtr(mSocket)->open(type);
-    getSocketPtr(mSocket)->async_connect(endpoint, std::bind(&TCPChannelResource::SocketConnected, this,
-        std::placeholders::_1));
+    if (mConnectionStatus == eConnectionStatus::eDisconnected)
+    {
+        mConnectionStatus = eConnectionStatus::eConnecting;
+        auto type = mParent->GetProtocolType();
+        auto endpoint = mParent->GenerateLocalEndpoint(mLocator, IPLocator::getPhysicalPort(mLocator));
+        mSocket.open(type);
+        mSocket.async_connect(endpoint, std::bind(&TCPChannelResource::SocketConnected, this,
+            std::placeholders::_1));
+    }
+}
+
+void TCPChannelResource::ConnectionLost()
+{
+    if (mConnectionStatus != eConnectionStatus::eConnecting)
+    {
+        // TODO: SetAllLogicalPortsPending()
+        Disconnect();
+        if (mAlive && !m_inputSocket)
+        {
+            eClock::my_sleep(100);
+            Connect();
+        }
+    }
+}
+
+void TCPChannelResource::Disconnect()
+{
+    if (ChangeStatus(eConnectionStatus::eDisconnected))
+    {
+        try
+        {
+            mSocket.cancel();
+            mSocket.shutdown(asio::ip::tcp::socket::shutdown_both);
+        }
+        catch (std::exception&)
+        {
+            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+        }
+        mSocket.close();
+    }
 }
 
 void TCPChannelResource::SocketConnected(const asio::error_code& error)
 {
+    // If we were disabled while trying to connect, this method will be
+    // called with a 'canceled' error value. In that case we return directly
+    if (!mAlive)
+        return;
+
     if (error.value())
     {
-        getSocketPtr(mSocket)->close();
+        Disconnect();
         eClock::my_sleep(100);
         Connect();
     }
     else
     {
-        if (mConnectionStatus == eConnectionStatus::eDisconnected)
+        if (mConnectionStatus == eConnectionStatus::eConnecting)
         {
             mConnectionStatus = eConnectionStatus::eConnected;
             mParent->SocketConnected(this);

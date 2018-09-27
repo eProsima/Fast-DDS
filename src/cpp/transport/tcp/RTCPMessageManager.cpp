@@ -346,7 +346,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     if (request.protocolVersion() != c_ProtocolVersion)
     {
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_INCOMPATIBLE_VERSION);
-        return false;
+        return true;
     }
     else if (pChannelResource->mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
     {
@@ -373,16 +373,12 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
 bool RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
     const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
-    if (request.logicalPort() == 0)
-    {
-        logError(RTCP, "OpenLogicalPortRequest with logical port 0.");
-        return false;
-    }
     if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
-    else if (mTransport->mReceiverResources.find(request.logicalPort()) == mTransport->mReceiverResources.end())
+    else if (request.logicalPort() == 0 ||
+        mTransport->mReceiverResources.find(request.logicalPort()) == mTransport->mReceiverResources.end())
     {
         sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
     }
@@ -797,6 +793,7 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
     {
         logInfo(RTCP_SEQ, "Receive [UNBIND_CONNECTION_REQUEST] Seq:" << controlHeader.transactionId);
         logInfo(RTCP_MSG, "Receive [UNBIND_CONNECTION_REQUEST]");
+        pChannelResource->Disable();
         bProcessOk = false;
     }
     break;

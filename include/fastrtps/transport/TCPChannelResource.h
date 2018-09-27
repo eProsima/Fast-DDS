@@ -88,6 +88,7 @@ class TCPChannelResource : public ChannelResource
 enum eConnectionStatus
 {
     eDisconnected = 0,
+    eConnecting,                // Output -> Trying connection.
     eConnected,                 // Output -> Send bind message.
     eWaitingForBind,            // Input -> Waiting for the bind message.
     eWaitingForBindResponse,    // Output -> Waiting for the bind response message.
@@ -170,11 +171,18 @@ public:
     }
 
     void Connect();
+    void ConnectionLost();
+    void Disconnect();
 
 protected:
-    inline void ChangeStatus(eConnectionStatus s)
+    inline bool ChangeStatus(eConnectionStatus s)
     {
-        mConnectionStatus = s;
+        if (mConnectionStatus != s)
+        {
+            mConnectionStatus = s;
+            return true;
+        }
+        return false;
     }
 
     friend class TCPTransportInterface;
