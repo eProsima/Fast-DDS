@@ -364,6 +364,10 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_INCOMPATIBLE_VERSION);
         return true;
     }
+
+    ResponseCode code = pChannelResource->ProcessBindRequest(request.transportLocator());
+    sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, code);
+    /*
     else if (pChannelResource->mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
     {
         {
@@ -371,7 +375,6 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
             //pChannelResource->EnqueueLogicalPort(IPLocator::getLogicalPort(request.transportLocator()));
             mTransport->BindSocket(request.transportLocator(), pChannelResource);
         }
-        sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_OK);
         pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eEstablished);
         logInfo(RTPC_MSG, "Connection Stablished");
     }
@@ -383,6 +386,8 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
     {
         sendData(pChannelResource, BIND_CONNECTION_RESPONSE, transactionId, &payload, RETCODE_SERVER_ERROR);
     }
+    */
+
     return true;
 }
 

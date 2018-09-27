@@ -174,6 +174,7 @@ public:
     }
 
     void Connect();
+    ResponseCode ProcessBindRequest(const Locator_t& locator);
     void ConnectionLost();
     void Disconnect();
 

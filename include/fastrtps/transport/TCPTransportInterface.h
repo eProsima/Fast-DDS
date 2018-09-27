@@ -108,7 +108,7 @@ public:
     void BindOutputChannel(const Locator_t&, SenderResource *senderResource = nullptr);
 
     //! Stores the binding between the given locator and the given TCP socket.
-    void BindSocket(const Locator_t&, TCPChannelResource*);
+    TCPChannelResource* BindSocket(const Locator_t&, TCPChannelResource*);
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;

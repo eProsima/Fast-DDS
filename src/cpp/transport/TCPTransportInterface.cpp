@@ -153,7 +153,7 @@ void TCPTransportInterface::BindOutputChannel(const Locator_t& locator, SenderRe
     }
 }
 
-void TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResource *pChannelResource)
+TCPChannelResource* TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResource *pChannelResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (IsLocatorSupported(locator))
@@ -163,8 +163,21 @@ void TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResou
         if (it == mChannelResources.end())
         {
             mChannelResources[physicalLocator] = pChannelResource;
+            return nullptr;
+        }
+
+        TCPChannelResource* oldChannel = it->second;
+        if (oldChannel->IsConnectionEstablished())
+        {
+            logWarning(RTCP, "Trying to restablish connection on already connected locator." << locator);
+        }
+        else
+        {
+            mChannelResources[physicalLocator] = pChannelResource;
+            return oldChannel;
         }
     }
+    return nullptr;
 }
 
 void TCPTransportInterface::CleanDeletedSockets()
@@ -1059,6 +1072,8 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 #endif
             // Store the new connection.
             TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, unicastSocket);
+
+            /*
             pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBind);
 
             //BindSocket(acceptor->mLocator, pChannelResource);
@@ -1072,6 +1087,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             {
                 BindSocket(loc, pChannelResource);
             }
+            */
 
             pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this,
                 pChannelResource));

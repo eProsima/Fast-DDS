@@ -104,6 +104,31 @@ void TCPChannelResource::Connect()
     }
 }
 
+ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
+{
+    
+    if (mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
+    {
+        mLocator = locator;
+        TCPChannelResource* oldChannel = mParent->BindSocket(mLocator, this);
+        if (oldChannel != nullptr)
+        {
+            CopyPendingPortsFrom(oldChannel);
+            delete oldChannel;
+        }
+
+        mConnectionStatus = eConnectionStatus::eEstablished;
+        logInfo(RTPC_MSG, "Connection Stablished");
+        return RETCODE_OK;
+    }
+    else if (mConnectionStatus == eConnectionStatus::eEstablished)
+    {
+        return RETCODE_EXISTING_CONNECTION;
+    }
+
+    return RETCODE_SERVER_ERROR;
+}
+
 void TCPChannelResource::ConnectionLost()
 {
     if (mConnectionStatus != eConnectionStatus::eConnecting)
