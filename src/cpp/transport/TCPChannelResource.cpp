@@ -22,7 +22,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket, const Locator_t& locator)
+TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocketRef socket, const Locator_t& locator)
     : ChannelResource()
     , mParent (parent)
     , mLocator(locator)
@@ -38,7 +38,7 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTC
 {
 }
 
-TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket)
+TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocketRef socket)
     : ChannelResource()
     , mParent(parent)
     , mLocator()
@@ -144,7 +144,7 @@ uint32_t TCPChannelResource::GetMsgSize() const
 	return m_rec_msg.max_size;
 }
 
-void TCPChannelResource::EnqueueLogicalPort(uint16_t port)
+void TCPChannelResource::AddLogicalPort(uint16_t port)
 {
 	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
@@ -157,6 +157,11 @@ void TCPChannelResource::EnqueueLogicalPort(uint16_t port)
         }
         mPendingLogicalOutputPorts.emplace_back(port);
     }
+}
+
+void TCPChannelResource::RemoveLogicalPort(uint16_t port)
+{
+
 }
 
 } // namespace rtps

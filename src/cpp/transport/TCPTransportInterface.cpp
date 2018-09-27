@@ -312,7 +312,7 @@ bool TCPTransportInterface::EnqueueLogicalOutputPort(const Locator_t& locator)
     auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (socketIt != mChannelResources.end())
     {
-        socketIt->second->EnqueueLogicalPort(IPLocator::getLogicalPort(locator));
+        socketIt->second->AddLogicalPort(IPLocator::getLogicalPort(locator));
         return true;
     }
     return false;
@@ -609,7 +609,8 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
             // Create connector
             // auto connector = new TCPConnector(mService, GetProtocolType(),
             //    GenerateLocalEndpoint(physicalLocator, IPLocator::getPhysicalPort(physicalLocator)));
-            channel = new TCPChannelResource(this, createTCPSocket(mService), physicalLocator);
+            auto socket = createTCPSocket(mService);
+            channel = new TCPChannelResource(this, socket, physicalLocator);
             mChannelResources[physicalLocator] = channel;
             channel->Connect();
             /*
@@ -631,7 +632,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
 
         // TODO: success = channel->AddLogicalPort(logicalPort);
         success = true;
-        channel->EnqueueLogicalPort(logicalPort);
+        channel->AddLogicalPort(logicalPort);
     }
 
     return success;
@@ -673,14 +674,14 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
     std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
 
     bool bSendOpenLogicalPort = false;
-    /*
+
     logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) \
         << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" \
         << pChannelResource->getSocket()->local_endpoint().address() << ":" \
         << pChannelResource->getSocket()->local_endpoint().port() << "->" \
         << pChannelResource->getSocket()->remote_endpoint().address() << ":" \
         << pChannelResource->getSocket()->remote_endpoint().port() << ")");
-        */
+
     while (pChannelResource->IsAlive())
     {
         if (pChannelResource->IsConnectionEstablished())
@@ -707,7 +708,8 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
 
             if (bSendOpenLogicalPort)
             {
-                mRTCPMessageManager->sendOpenLogicalPortRequest(pChannelResource, pChannelResource->mPendingLogicalPort);
+                mRTCPMessageManager->sendOpenLogicalPortRequest(pChannelResource,
+                    pChannelResource->mPendingLogicalPort);
                 negotiation_time = time_now + std::chrono::milliseconds(GetConfiguration()->tcp_negotiation_timeout);
                 bSendOpenLogicalPort = false;
             }
@@ -1054,10 +1056,17 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
         bool bSendMsg = true;
         if (!tcpChannelResource->IsLogicalPortOpened(logicalPort))
         {
-            tcpChannelResource->EnqueueLogicalPort(logicalPort);
-            if (GetConfiguration()->wait_for_tcp_negotiation)
+            // TODO review logic
+            if (tcpChannelResource->IsLogicalPortAdded(logicalPort))
             {
-                tcpChannelResource->mNegotiationSemaphore.wait();
+                if (GetConfiguration()->wait_for_tcp_negotiation)
+                {
+                    tcpChannelResource->mNegotiationSemaphore.wait();
+                }
+                else
+                {
+                    bSendMsg = false;
+                }
             }
             else
             {

@@ -97,10 +97,10 @@ enum eConnectionStatus
 
 public:
     // Constructor called when trying to connect to a remote server
-    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket, const Locator_t& locator);
+    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocketRef socket, const Locator_t& locator);
 
     // Constructor called when local server accepted connection
-    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket);
+    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocketRef socket);
 
     virtual ~TCPChannelResource();
 
@@ -111,7 +111,9 @@ public:
 
     void fillLogicalPorts(std::vector<Locator_t>& outVector);
 
-    void EnqueueLogicalPort(uint16_t port);
+    void AddLogicalPort(uint16_t port);
+
+    void RemoveLogicalPort(uint16_t port);
 
 	virtual void Disable() override;
 

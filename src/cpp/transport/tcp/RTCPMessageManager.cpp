@@ -492,7 +492,7 @@ bool RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *pC
         else
         {
             pChannelResource->mCheckingLogicalPort = response.availableLogicalPorts()[0];
-            pChannelResource->EnqueueLogicalPort(pChannelResource->mCheckingLogicalPort);
+            pChannelResource->AddLogicalPort(pChannelResource->mCheckingLogicalPort);
             //logInfo(RTCP, "NegotiatingLogicalPort: " << pChannelResource->mCheckingLogicalPort);
             if (pChannelResource->mNegotiatingLogicalPort == 0)
             {
