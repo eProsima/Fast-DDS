@@ -16,4 +16,4 @@ else:
 
 os.system("mkdir -p /mnt/jenkins")
 os.system("mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
-os.system("./ /mnt/jenkins/LatencyTest subscriber >> sub.log")
+os.system("/mnt/jenkins/LatencyTest subscriber >> sub.log")
