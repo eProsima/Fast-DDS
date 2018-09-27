@@ -435,3 +435,4 @@ target/
 .project
 
 .pydevproject
+test/xml/
