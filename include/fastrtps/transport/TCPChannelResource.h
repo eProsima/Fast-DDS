@@ -97,7 +97,7 @@ enum eConnectionStatus
 
 public:
     // Constructor called when trying to connect to a remote server
-    TCPChannelResource(TCPTransportInterface* parent, TCPConnector* connector, const Locator_t& locator);
+    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket, const Locator_t& locator);
 
     // Constructor called when local server accepted connection
     TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket);
@@ -167,7 +167,7 @@ public:
         return mLocator;
     }
 
-    void Connected();
+    void Connect();
 
 protected:
     inline void ChangeStatus(eConnectionStatus s)
@@ -198,7 +198,8 @@ private:
 	Semaphore mNegotiationSemaphore;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
-    TCPConnector* mConnector;
+
+    void SocketConnected(const asio::error_code& error);
 
     TCPChannelResource(const TCPChannelResource&) = delete;
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;

@@ -16,12 +16,13 @@
 #include <fastrtps/transport/TCPChannelResource.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/eClock.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, TCPConnector* connector, const Locator_t& locator)
+TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket, const Locator_t& locator)
     : ChannelResource()
     , mParent (parent)
     , mLocator(locator)
@@ -31,12 +32,10 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, TCPConnect
     , mNegotiatingLogicalPort(0)
     , mCheckingLogicalPort(0)
     , mNegotiationSemaphore(0)
-    , mSocket(moveSocket(connector->m_socket))
+    , mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
-    , mConnector(connector)
     //, mLogicalConnections(0)
 {
-    connector->Connect(this);
 }
 
 TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocket& socket)
@@ -51,7 +50,6 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, eProsimaTC
 	, mNegotiationSemaphore(0)
 	, mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eWaitingForBind)
-    , mConnector(nullptr)
     //, mLogicalConnections(0)
 {
 }
@@ -77,12 +75,30 @@ void TCPChannelResource::Disable()
 	ChannelResource::Disable();
 }
 
-void TCPChannelResource::Connected()
+void TCPChannelResource::Connect()
 {
-    if (mConnectionStatus == eConnectionStatus::eDisconnected)
+    auto type = mParent->GetProtocolType();
+    auto endpoint = mParent->GenerateLocalEndpoint(mLocator, IPLocator::getPhysicalPort(mLocator));
+    getSocketPtr(mSocket)->open(type);
+    getSocketPtr(mSocket)->async_connect(endpoint, std::bind(&TCPChannelResource::SocketConnected, this,
+        std::placeholders::_1));
+}
+
+void TCPChannelResource::SocketConnected(const asio::error_code& error)
+{
+    if (error.value())
     {
-        mConnectionStatus = eConnectionStatus::eConnected;
-        mParent->SocketConnected(this);
+        getSocketPtr(mSocket)->close();
+        eClock::my_sleep(100);
+        Connect();
+    }
+    else
+    {
+        if (mConnectionStatus == eConnectionStatus::eDisconnected)
+        {
+            mConnectionStatus = eConnectionStatus::eConnected;
+            mParent->SocketConnected(this);
+        }
     }
 }
 

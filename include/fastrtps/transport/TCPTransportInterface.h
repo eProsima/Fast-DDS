@@ -52,6 +52,7 @@ public:
     void Accept(TCPTransportInterface* parent, asio::io_service&);
 };
 
+/*
 class TCPConnector
 {
 public:
@@ -77,6 +78,7 @@ private:
 
     void SocketConnected(TCPChannelResource* channel, const asio::error_code& error);
 };
+*/
 
 /**
  * This is a default TCP Interface implementation.
@@ -250,7 +252,7 @@ protected:
     CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
 
     std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
-    std::map<Locator_t, TCPConnector*> mSocketConnectors; // The key is the "Physical locator"
+    // std::map<Locator_t, TCPConnector*> mSocketConnectors; // The key is the "Physical locator"
 
     TCPTransportInterface();
 

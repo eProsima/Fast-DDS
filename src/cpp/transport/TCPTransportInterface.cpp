@@ -59,6 +59,7 @@ void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_ser
         parent, this, std::placeholders::_1));
 }
 
+/*
 TCPConnector::TCPConnector(asio::io_service& io_service, asio::ip::tcp type, asio::ip::tcp::endpoint endpoint)
     : m_socket(createTCPSocket(io_service))
     , m_service(io_service)
@@ -97,6 +98,7 @@ void TCPConnector::SocketConnected(TCPChannelResource* channel, const asio::erro
         channel->Connected();
     }
 }
+*/
 
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize)
@@ -605,10 +607,11 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
         else
         {
             // Create connector
-            auto connector = new TCPConnector(mService, GetProtocolType(),
-                GenerateLocalEndpoint(physicalLocator, IPLocator::getPhysicalPort(physicalLocator)));
-            channel = new TCPChannelResource(this, connector, physicalLocator);
+            // auto connector = new TCPConnector(mService, GetProtocolType(),
+            //    GenerateLocalEndpoint(physicalLocator, IPLocator::getPhysicalPort(physicalLocator)));
+            channel = new TCPChannelResource(this, createTCPSocket(mService), physicalLocator);
             mChannelResources[physicalLocator] = channel;
+            channel->Connect();
             /*
             // There's an already opened connection?
             success = mChannelResources.find(IPLocator::toPhysicalLocator(locator)) != mChannelResources.end();
