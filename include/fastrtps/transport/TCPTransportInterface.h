@@ -120,9 +120,9 @@ public:
     virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
     virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) = 0;
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) = 0;
-    virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) = 0;
+    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) const = 0;
+    virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) const = 0;
+    virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const = 0;
     virtual asio::ip::tcp GenerateProtocol() const = 0;
 
 
@@ -139,7 +139,7 @@ public:
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
-    virtual bool IsInterfaceAllowed(const Locator_t& loc) = 0;
+    virtual bool IsInterfaceAllowed(const Locator_t& loc) const = 0;
 
     //! Checks for TCP kinds.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
@@ -259,12 +259,12 @@ protected:
     virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const = 0;
     virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const = 0;
 
-    virtual void FillLocalIp(Locator_t& loc) = 0;
+    virtual void FillLocalIp(Locator_t& loc) const = 0;
 
     //! Methods to manage the TCP headers and their CRC values.
-    bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size);
-    void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size);
-    void FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize, uint16_t logicalPort);
+    bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size) const;
+    void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size) const;
+    void FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize, uint16_t logicalPort) const;
 
     //! Cleans the sockets pending to delete.
     void CleanDeletedSockets();
@@ -288,7 +288,7 @@ protected:
     virtual const TCPTransportDescriptor* GetConfiguration() const = 0;
     virtual TCPTransportDescriptor* GetConfiguration() = 0;
 
-    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
+    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) const = 0;
 
     //! Checks if the socket of the given locator has been opened as an input socket.
     bool IsTCPInputSocket(const Locator_t& locator) const;

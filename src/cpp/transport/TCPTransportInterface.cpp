@@ -162,19 +162,8 @@ void TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResou
         auto it = mChannelResources.find(physicalLocator);
         if (it == mChannelResources.end())
         {
-            mChannelResources[physicalLocator] = pChannelResource; // First element, just add it
+            mChannelResources[physicalLocator] = pChannelResource;
         }
-        /*
-        else
-        {
-            // There are more, check isn't already added
-            auto found = std::find(mBoundOutputSockets[locator].begin(), mBoundOutputSockets[locator].end(), pChannelResource);
-            if (found == mBoundOutputSockets[locator].end())
-            {
-                mBoundOutputSockets[locator].push_back(pChannelResource);
-            }
-        }
-        */
     }
 }
 
@@ -201,7 +190,7 @@ void TCPTransportInterface::CleanDeletedSockets()
     mDeletedSocketsPool.clear();
 }
 
-bool TCPTransportInterface::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size)
+bool TCPTransportInterface::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size) const
 {
     uint32_t crc(0);
     for (uint32_t i = 0; i < size; ++i)
@@ -211,7 +200,7 @@ bool TCPTransportInterface::CheckCRC(const TCPHeader &header, const octet *data,
     return crc == header.crc;
 }
 
-void TCPTransportInterface::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size)
+void TCPTransportInterface::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size) const
 {
     uint32_t crc(0);
     for (uint32_t i = 0; i < size; ++i)
@@ -278,7 +267,7 @@ bool TCPTransportInterface::EnqueueLogicalOutputPort(const Locator_t& locator)
 }
 
 void TCPTransportInterface::FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize,
-    uint16_t logicalPort)
+        uint16_t logicalPort) const
 {
     header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getSize());
     header.logicalPort = logicalPort;
@@ -571,12 +560,11 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
         {
             // Create output channel
             auto socket = createTCPSocket(mService);
-            channel = new TCPChannelResource(this, socket, physicalLocator);
+            channel = new TCPChannelResource(this, mRTCPMessageManager, socket, physicalLocator);
             mChannelResources[physicalLocator] = channel;
             channel->Connect();
         }
 
-        // TODO: success = channel->AddLogicalPort(logicalPort);
         success = true;
         channel->AddLogicalPort(logicalPort);
     }
@@ -619,8 +607,6 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
         time_now + std::chrono::milliseconds(GetConfiguration()->keep_alive_timeout_ms);
     std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
 
-    bool bSendOpenLogicalPort = false;
-
     logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) \
         << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" \
         << pChannelResource->getSocket()->local_endpoint().address() << ":" \
@@ -632,34 +618,6 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
     {
         if (pChannelResource->IsConnectionEstablished())
         {
-            { // Logical Ports
-                std::unique_lock<std::recursive_mutex> scopedLock(pChannelResource->mPendingLogicalMutex);
-                if (pChannelResource->mPendingLogicalPort == 0 && !pChannelResource->mPendingLogicalOutputPorts.empty())
-                {
-                    pChannelResource->mPendingLogicalPort = *pChannelResource->mPendingLogicalOutputPorts.begin();
-                    bSendOpenLogicalPort = true;
-                }
-                else if (pChannelResource->mPendingLogicalPort == 0)
-                {
-                    if (GetConfiguration()->wait_for_tcp_negotiation)
-                    {
-                        pChannelResource->mNegotiationSemaphore.post();
-                    }
-                }
-                else if (std::chrono::system_clock::now() > negotiation_time)
-                {
-                    pChannelResource->mNegotiationSemaphore.post();
-                }
-            }
-
-            if (bSendOpenLogicalPort)
-            {
-                mRTCPMessageManager->sendOpenLogicalPortRequest(pChannelResource,
-                    pChannelResource->mPendingLogicalPort);
-                negotiation_time = time_now + std::chrono::milliseconds(GetConfiguration()->tcp_negotiation_timeout);
-                bSendOpenLogicalPort = false;
-            }
-
             // KeepAlive
             if (GetConfiguration()->keep_alive_frequency_ms > 0 && GetConfiguration()->keep_alive_timeout_ms > 0)
             {
@@ -982,10 +940,7 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     if (tcpChannelResource != nullptr && tcpChannelResource->IsConnectionEstablished())
     {
         bool success = false;
-        uint16_t logicalPort = tcpChannelResource->mLogicalPortRouting.find(IPLocator::getLogicalPort(remoteLocator))
-            != tcpChannelResource->mLogicalPortRouting.end()
-            ? tcpChannelResource->mLogicalPortRouting.at(IPLocator::getLogicalPort(remoteLocator))
-            : IPLocator::getLogicalPort(remoteLocator);
+        uint16_t logicalPort = IPLocator::getLogicalPort(remoteLocator);
 
         bool bSendMsg = true;
         if (!tcpChannelResource->IsLogicalPortOpened(logicalPort))
@@ -1121,7 +1076,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             acceptor->mSocket = nullptr;
 #endif
             // Store the new connection.
-            TCPChannelResource *pChannelResource = new TCPChannelResource(this, unicastSocket);
+            TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, unicastSocket);
             pChannelResource->ChangeStatus(TCPChannelResource::eConnectionStatus::eWaitingForBind);
 
             //BindSocket(acceptor->mLocator, pChannelResource);

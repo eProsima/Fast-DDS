@@ -18,6 +18,7 @@
 #include <asio.hpp>
 #include <fastrtps/transport/TransportReceiverInterface.h>
 #include <fastrtps/transport/ChannelResource.h>
+#include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/rtps/common/Locator.h>
 
 namespace eprosima{
@@ -98,10 +99,12 @@ enum eConnectionStatus
 
 public:
     // Constructor called when trying to connect to a remote server
-    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocketRef socket, const Locator_t& locator);
+    TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
+        eProsimaTCPSocketRef socket, const Locator_t& locator);
 
     // Constructor called when local server accepted connection
-    TCPChannelResource(TCPTransportInterface* parent, eProsimaTCPSocketRef socket);
+    TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
+        eProsimaTCPSocketRef socket);
 
     virtual ~TCPChannelResource();
 
@@ -179,11 +182,19 @@ protected:
     {
         if (mConnectionStatus != s)
         {
-            mConnectionStatus = s;
-            return true;
-        }
-        return false;
+        	mConnectionStatus = s;
+	        if (mConnectionStatus == eEstablished)
+	        {
+	            SendPendingOpenLogicalPorts();
+	        }
+	        return true;
+	    }
+	    return false;
     }
+
+    void AddLogicalPortResponse(const TCPTransactionId &id, bool success, Locator_t &remote);
+    void ProcessCheckLogicalPortsResponse(const TCPTransactionId &transactionId,
+        const std::vector<uint16_t> &availablePorts);
 
     friend class TCPTransportInterface;
     friend class RTCPMessageManager;
@@ -191,25 +202,28 @@ protected:
 
 private:
     TCPTransportInterface * mParent;
+    RTCPMessageManager* mRTCPManager;
     Locator_t mLocator;
     bool m_inputSocket;
     bool mWaitingForKeepAlive;
-    uint16_t mPendingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
-    uint16_t mNegotiatingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
-    uint16_t mCheckingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
+    //uint16_t mPendingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
+    std::map<TCPTransactionId, uint16_t> mNegotiatingLogicalPorts; // Must be accessed after lock mPendingLogicalMutex
+    std::map<TCPTransactionId, uint16_t> mLastCheckedLogicalPort;
+    //uint16_t mCheckingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
     std::thread* mRTCPThread;
     std::vector<uint16_t> mPendingLogicalOutputPorts; // Must be accessed after lock mPendingLogicalMutex
     std::vector<uint16_t> mLogicalOutputPorts;
-    //std::vector<uint16_t> mLogicalInputPorts;
     std::recursive_mutex mReadMutex;
     std::recursive_mutex mWriteMutex;
     std::recursive_mutex mPendingLogicalMutex;
-    std::map<uint16_t, uint16_t> mLogicalPortRouting;
+    //std::map<uint16_t, uint16_t> mLogicalPortRouting;
 	Semaphore mNegotiationSemaphore;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
 
     void SocketConnected(const asio::error_code& error);
+    void PrepareAndSendCheckLogicalPortsRequest(uint16_t closedPort);
+    void SendPendingOpenLogicalPorts();
 
     TCPChannelResource(const TCPChannelResource&) = delete;
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;

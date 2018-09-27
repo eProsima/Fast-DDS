@@ -119,7 +119,7 @@ TCPTransportDescriptor* TCPv4Transport::GetConfiguration()
     return &mConfiguration_;
 }
 
-void TCPv4Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback)
+void TCPv4Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback) const
 {
     GetIP4s(locNames, return_loopback);
 }
@@ -139,7 +139,7 @@ uint16_t TCPv4Transport::GetMaxLogicalPort() const
     return mConfiguration_.max_logical_port;
 }
 
-bool TCPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
+bool TCPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip) const
 {
     if (mInterfaceWhiteList.empty())
         return true;
@@ -201,24 +201,24 @@ bool TCPv4Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_
     return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
-void TCPv4Transport::FillLocalIp(Locator_t& loc)
+void TCPv4Transport::FillLocalIp(Locator_t& loc) const
 {
     IPLocator::setIPv4(loc, "127.0.0.1");
 }
 
-ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port)
+ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port) const
 {
     asio::ip::address_v4::bytes_type remoteAddress;
     IPLocator::copyIPv4(loc, remoteAddress.data());
     return ip::tcp::endpoint(asio::ip::address_v4(remoteAddress), port);
 }
 
-ip::tcp::endpoint TCPv4Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t port)
+ip::tcp::endpoint TCPv4Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const
 {
     return ip::tcp::endpoint(asio::ip::address_v4(locatorToNative(loc)), port);
 }
 
-ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(uint16_t port)
+ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(uint16_t port) const
 {
     return asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port);
 }
@@ -228,7 +228,7 @@ asio::ip::tcp TCPv4Transport::GenerateProtocol() const
     return asio::ip::tcp::v4();
 }
 
-bool TCPv4Transport::IsInterfaceAllowed(const Locator_t& loc)
+bool TCPv4Transport::IsInterfaceAllowed(const Locator_t& loc) const
 {
     asio::ip::address_v4 ip = asio::ip::make_address_v4(IPLocator::toIPv4string(loc));
     return IsInterfaceAllowed(ip);

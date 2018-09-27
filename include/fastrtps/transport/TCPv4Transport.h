@@ -77,24 +77,24 @@ protected:
     virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const override;
     virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const override;
 
-    virtual void FillLocalIp(Locator_t& loc) override;
+    virtual void FillLocalIp(Locator_t& loc) const override;
 
     virtual const TCPTransportDescriptor* GetConfiguration() const override;
     virtual TCPTransportDescriptor* GetConfiguration() override;
 
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) override;
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) override;
-    virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) override;
+    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) const override;
+    virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) const override;
+    virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const override;
     virtual asio::ip::tcp GenerateProtocol() const override;
 
     virtual asio::ip::tcp GetProtocolType() const override { return asio::ip::tcp::v4(); }
 
-    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) override;
+    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) const override;
 
     //! Checks if the given ip has been included in the white list to use it.
-    bool IsInterfaceAllowed(const asio::ip::address_v4& ip);
+    bool IsInterfaceAllowed(const asio::ip::address_v4& ip) const;
 
-    virtual bool IsInterfaceAllowed(const Locator_t& loc) override;
+    virtual bool IsInterfaceAllowed(const Locator_t& loc) const override;
 
     virtual void SetReceiveBufferSize(uint32_t size) override;
     virtual void SetSendBufferSize(uint32_t size) override;

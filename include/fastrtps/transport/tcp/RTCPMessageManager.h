@@ -46,25 +46,28 @@ public:
     /** @name Send RTCP Message Methods.
     * These methods create RTPS messages for different types
     */
-    void sendConnectionRequest(TCPChannelResource *pChannelResource);
+    TCPTransactionId sendConnectionRequest(TCPChannelResource *pChannelResource);
 
-    void sendOpenLogicalPortRequest(TCPChannelResource *pChannelResource, OpenLogicalPortRequest_t &request);
+    TCPTransactionId sendOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+        OpenLogicalPortRequest_t &request);
 
-    void sendOpenLogicalPortRequest(TCPChannelResource *pChannelResource, uint16_t port);
+    TCPTransactionId sendOpenLogicalPortRequest(TCPChannelResource *pChannelResource, uint16_t port);
 
-    void sendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource, CheckLogicalPortsRequest_t &request);
+    TCPTransactionId sendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource,
+        CheckLogicalPortsRequest_t &request);
 
-    void sendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource, std::vector<uint16_t> &ports);
+    TCPTransactionId sendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource, std::vector<uint16_t> &ports);
 
-    void sendKeepAliveRequest(TCPChannelResource *pChannelResource, KeepAliveRequest_t &request);
+    TCPTransactionId sendKeepAliveRequest(TCPChannelResource *pChannelResource, KeepAliveRequest_t &request);
 
-    void sendKeepAliveRequest(TCPChannelResource *pChannelResource);
+    TCPTransactionId sendKeepAliveRequest(TCPChannelResource *pChannelResource);
 
-    void sendLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource, LogicalPortIsClosedRequest_t &request);
+    TCPTransactionId sendLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource,
+        LogicalPortIsClosedRequest_t &request);
 
-    void sendLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource, uint16_t port);
+    TCPTransactionId sendLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource, uint16_t port);
 
-    void sendUnbindConnectionRequest(TCPChannelResource *pChannelResource);
+    TCPTransactionId sendUnbindConnectionRequest(TCPChannelResource *pChannelResource);
 
     /** @name Process RTCP Message Methods.
     * These methods create RTPS messages for different types
@@ -72,8 +75,8 @@ public:
     bool processBindConnectionRequest(TCPChannelResource *pChannelResource, const ConnectionRequest_t &request,
         const TCPTransactionId &transactionId, Locator_t &localLocator);
 
-    virtual bool processOpenLogicalPortRequest(TCPChannelResource *pChannelResource, const OpenLogicalPortRequest_t &request,
-        const TCPTransactionId &transactionId);
+    virtual bool processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+        const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId);
 
     void processCheckLogicalPortsRequest(TCPChannelResource *pChannelResource,
         const CheckLogicalPortsRequest_t &request, const TCPTransactionId &transactionId);
@@ -112,7 +115,7 @@ protected:
         return myTransId++;
     }
 
-    void prepareAndSendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource);
+    //void prepareAndSendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource);
 
     size_t sendMessage(TCPChannelResource *pChannelResource, const CDRMessage_t &msg) const;
 

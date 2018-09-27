@@ -119,7 +119,7 @@ TCPTransportDescriptor* TCPv6Transport::GetConfiguration()
     return &mConfiguration_;
 }
 
-void TCPv6Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback)
+void TCPv6Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback) const
 {
     GetIP6s(locNames, return_loopback);
 }
@@ -139,7 +139,7 @@ uint16_t TCPv6Transport::GetMaxLogicalPort() const
     return mConfiguration_.max_logical_port;
 }
 
-bool TCPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip)
+bool TCPv6Transport::IsInterfaceAllowed(const ip::address_v6& ip) const
 {
     if (mInterfaceWhiteList.empty())
         return true;
@@ -201,24 +201,24 @@ bool TCPv6Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_
     return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
-void TCPv6Transport::FillLocalIp(Locator_t& loc)
+void TCPv6Transport::FillLocalIp(Locator_t& loc) const
 {
     IPLocator::setIPv6(loc, "::1");
 }
 
-ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port)
+ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port) const
 {
     asio::ip::address_v6::bytes_type remoteAddress;
     IPLocator::copyIPv6(loc, remoteAddress.data());
     return ip::tcp::endpoint(asio::ip::address_v6(remoteAddress), port);
 }
 
-ip::tcp::endpoint TCPv6Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t port)
+ip::tcp::endpoint TCPv6Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const
 {
     return ip::tcp::endpoint(asio::ip::address_v6(locatorToNative(loc)), port);
 }
 
-ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(uint16_t port)
+ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(uint16_t port) const
 {
     return asio::ip::tcp::endpoint(asio::ip::tcp::v6(), port);
 }
@@ -228,7 +228,7 @@ asio::ip::tcp TCPv6Transport::GenerateProtocol() const
     return asio::ip::tcp::v6();
 }
 
-bool TCPv6Transport::IsInterfaceAllowed(const Locator_t& loc)
+bool TCPv6Transport::IsInterfaceAllowed(const Locator_t& loc) const
 {
     asio::ip::address_v6 ip = asio::ip::make_address_v6(IPLocator::toIPv6string(loc));
     return IsInterfaceAllowed(ip);
