@@ -33,7 +33,8 @@ p = None
 id = 0
 for a in sub_list:
 	print("Launch Subscriber on: " + a)
-	subprocess.Popen("docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestPub" + str(id) + " ubuntu-test python3 \"/workspace/Multi-Node Manual Linux/test/SubscriberTests.py\"" + user + " " + password, shell=True)
+	p = subprocess.Popen("docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestSub" + str(id) + " ubuntu-test python3 \"/workspace/Multi-Node Manual Linux/test/SubscriberTests.py\"" + user + " " + password, shell=True)
 	id = id + 1
 
-p.communicate()
+if p != None:
+	p.communicate()
