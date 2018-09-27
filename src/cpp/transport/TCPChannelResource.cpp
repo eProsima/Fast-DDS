@@ -136,7 +136,9 @@ void TCPChannelResource::InputPortClosed(uint16_t port)
 
 void TCPChannelResource::ConnectionLost()
 {
-    if (mConnectionStatus != eConnectionStatus::eConnecting)
+    if (mAlive &&
+        mConnectionStatus != eConnectionStatus::eDisconnected &&
+        mConnectionStatus != eConnectionStatus::eConnecting)
     {
         { // Mark all logical ports as pending
             std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
