@@ -22,5 +22,5 @@ list = str.split(',')
 for a in list:
     print(a)
     os.system("docker -H" + a + " run --cap-add SYS_ADMIN --security-opt seccomp=unconfined " +
-	"--cap-add DAC_READ_SEARCH -ti ubuntu-test python3 \"/workspace/Multi-Node Manual Linux/test/PublisherTests.py\" " +
+	"--cap-add DAC_READ_SEARCH ubuntu-test python3 \"/workspace/Multi-Node Manual Linux/test/PublisherTests.py\" " +
 	user + " " + password)
