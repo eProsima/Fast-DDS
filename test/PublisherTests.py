@@ -15,5 +15,5 @@ else:
 
 
 os.system("mkdir /mnt/jenkins")
-os.system("mount -t cifs -o username=".user.",password=".password." //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
+os.system("mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
 os.system("touch /mnt/jenkins/pub.txt")
