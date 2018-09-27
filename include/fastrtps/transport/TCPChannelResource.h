@@ -224,6 +224,7 @@ private:
     void SocketConnected(const asio::error_code& error);
     void PrepareAndSendCheckLogicalPortsRequest(uint16_t closedPort);
     void SendPendingOpenLogicalPorts();
+    void CopyPendingPortsFrom(TCPChannelResource* from);
 
     TCPChannelResource(const TCPChannelResource&) = delete;
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;

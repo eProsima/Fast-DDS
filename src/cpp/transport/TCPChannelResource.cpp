@@ -108,7 +108,13 @@ void TCPChannelResource::ConnectionLost()
 {
     if (mConnectionStatus != eConnectionStatus::eConnecting)
     {
-        // TODO: SetAllLogicalPortsPending()
+        { // Mark all logical ports as pending
+            std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+            mPendingLogicalOutputPorts.insert(mPendingLogicalOutputPorts.end(),
+                mLogicalOutputPorts.begin(),
+                mLogicalOutputPorts.end());
+            mLogicalOutputPorts.clear();
+        }
         Disconnect();
         if (mAlive && !m_inputSocket)
         {
@@ -116,6 +122,15 @@ void TCPChannelResource::ConnectionLost()
             Connect();
         }
     }
+}
+
+void TCPChannelResource::CopyPendingPortsFrom(TCPChannelResource* from)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    std::unique_lock<std::recursive_mutex> fromLock(from->mPendingLogicalMutex);
+    mPendingLogicalOutputPorts.insert(mPendingLogicalOutputPorts.end(),
+        from->mPendingLogicalOutputPorts.begin(),
+        from->mPendingLogicalOutputPorts.end());
 }
 
 void TCPChannelResource::Disconnect()
