@@ -2,7 +2,6 @@
 
 import sys, os
 
-print(len(sys.argv))
 str = ""
 user = ""
 password = ""
@@ -20,7 +19,7 @@ else:
 
 list = str.split(',')
 for a in list:
-    print(a)
+    print("Launch Publisher on: " + a)
     os.system("docker -H" + a + " run --cap-add SYS_ADMIN --security-opt seccomp=unconfined " +
 	"--cap-add DAC_READ_SEARCH ubuntu-test python3 \"/workspace/Multi-Node Manual Linux/test/PublisherTests.py\" " +
 	user + " " + password)
