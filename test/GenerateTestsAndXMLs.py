@@ -2,7 +2,7 @@
 
 import sys, os, glob, datetime
 
-tests_list = ["Latency", "Throughput"]
+tests_list = ["LatencyTest", "ThroughputTest"]
 configs_list = [[["KEEP_LAST"], ["VOLATILE"], ["BEST_EFFORT", "RELIABLE"], ["SYNCHRONOUS", "ASYNCHRONOUS"]],
  [["KEEP_LAST"], ["VOLATILE"], ["BEST_EFFORT", "RELIABLE"], ["SYNCHRONOUS", "ASYNCHRONOUS"]]]
 
@@ -468,8 +468,8 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 		print("\t\tmyfile.write(testname + \"\\n\")", file=sub_test_file)
 		print("\t\tmyfile.write(\"*****************************************************************************\\n\")\n\n", file=sub_test_file)
 
-		pub_log_filename = "pub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + ".log"
-		sub_log_filename = "sub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + ".log"
+		pub_log_filename = "pub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
+		sub_log_filename = "sub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
 		pub_filename = ""
 		sub_filename = ""
 		for test_id, test in enumerate(tests_list):
