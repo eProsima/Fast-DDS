@@ -27,6 +27,7 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #if defined(_MSC_VER)
 #pragma warning (push)
@@ -76,15 +77,28 @@ struct Arg: public option::Arg
     static option::ArgStatus Numeric(const option::Option& option, bool msg)
     {
         char* endptr = 0;
-        if(option.arg != 0 && strtol(option.arg, &endptr, 10))
+        if (option.arg != 0 && strtol(option.arg, &endptr, 10))
         {
         }
-        if(endptr != option.arg && *endptr == 0)
+        if (endptr != option.arg && *endptr == 0)
         {
             return option::ARG_OK;
         }
 
         if (msg) printError("Option '", option, "' requires a numeric argument\n");
+        return option::ARG_ILLEGAL;
+    }
+
+    static option::ArgStatus String(const option::Option& option, bool msg)
+    {
+        if (option.arg != 0)
+        {
+            return option::ARG_OK;
+        }
+        if (msg)
+        {
+            printError("Option '", option, "' requires a numeric argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 };
@@ -101,7 +115,8 @@ enum  optionIndex {
     EXPORT_CSV,
     USE_SECURITY,
     CERTS_PATH,
-    LARGE_DATA
+    LARGE_DATA,
+    XML_FILE
 };
 
 const option::Descriptor usage[] = {
@@ -120,28 +135,31 @@ const option::Descriptor usage[] = {
     { USE_SECURITY, 0, "", "security",  Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
     { CERTS_PATH, 0, "", "certs",       Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
 #endif
-    { LARGE_DATA, 0, "l", "large",      Arg::None,      "  -l \t--large\tTest large data."},
+    { LARGE_DATA, 0, "l", "large",      Arg::None,      "  -l \t--large\tTest large data." },
+    { XML_FILE, 0, "", "xml",           Arg::String,    "\t--xml \tXML Configuration file." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
 const int c_n_samples = 10000;
 
-int main(int argc, char** argv){
-
+int main(int argc, char** argv)
+{
     int columns;
 
 #if defined(_WIN32)
     char* buf = nullptr;
     size_t sz = 0;
-    if (_dupenv_s(&buf, &sz, "COLUMNS") == 0 && buf != nullptr){
+    if (_dupenv_s(&buf, &sz, "COLUMNS") == 0 && buf != nullptr)
+    {
         columns = strtol(buf, nullptr, 10);
         free(buf);
     }
-    else{
+    else
+    {
         columns = 80;
     }
 #else
-    columns = getenv("COLUMNS")? atoi(getenv("COLUMNS")) : 80;
+    columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
 #endif
 
     bool pub_sub = false;
@@ -157,26 +175,33 @@ int main(int argc, char** argv){
     bool hostname = false;
     bool export_csv = false;
     bool large_data = false;
+    std::string sXMLConfigFile = "";
 
-    argc-=(argc>0); argv+=(argc>0); // skip program name argv[0] if present
-    if(argc){
-        if(strcmp(argv[0],"publisher") == 0){
+    argc -= (argc > 0);
+    argv += (argc > 0); // skip program name argv[0] if present
+    if (argc > 0)
+    {
+        if (strcmp(argv[0], "publisher") == 0)
+        {
             pub_sub = true;
         }
-        else if(strcmp(argv[0],"subscriber") == 0){
+        else if (strcmp(argv[0], "subscriber") == 0)
+        {
             pub_sub = false;
         }
-        else{
+        else
+        {
             option::printUsage(fwrite, stdout, usage, columns);
             return 0;
         }
     }
-    else{
+    else
+    {
         option::printUsage(fwrite, stdout, usage, columns);
         return 0;
     }
 
-    argc-=(argc>0); argv+=(argc>0); // skip pub/sub argument
+    argc -= (argc > 0); argv += (argc > 0); // skip pub/sub argument
     option::Stats stats(usage, argc, argv);
     std::vector<option::Option> options(stats.options_max);
     std::vector<option::Option> buffer(stats.buffer_max);
@@ -185,25 +210,31 @@ int main(int argc, char** argv){
     if (parse.error())
         return 1;
 
-    if (options[HELP]){
+    if (options[HELP])
+    {
         option::printUsage(fwrite, stdout, usage, columns);
         return 0;
     }
 
-    for (int i = 0; i < parse.optionsCount(); ++i){
+    for (int i = 0; i < parse.optionsCount(); ++i)
+    {
         option::Option& opt = buffer[i];
-        switch (opt.index()){
+        switch (opt.index())
+        {
             case HELP:
                 // not possible, because handled further above and exits the program
                 break;
             case RELIABILITY:
-                if(strcmp(opt.arg, "reliable") == 0){
+                if (strcmp(opt.arg, "reliable") == 0)
+                {
                     reliable = true;
                 }
-                else if(strcmp(opt.arg, "besteffort") == 0){
+                else if (strcmp(opt.arg, "besteffort") == 0)
+                {
                     reliable = false;
                 }
-                else{
+                else
+                {
                     option::printUsage(fwrite, stdout, usage, columns);
                     return 0;
                 }
@@ -221,13 +252,16 @@ int main(int argc, char** argv){
                 break;
 
             case ECHO_OPT:
-                if(strcmp(opt.arg, "true") == 0){
+                if (strcmp(opt.arg, "true") == 0)
+                {
                     echo = true;
                 }
-                else if(strcmp(opt.arg, "false") == 0){
+                else if (strcmp(opt.arg, "false") == 0)
+                {
                     echo = false;
                 }
-                else{
+                else
+                {
                     option::printUsage(fwrite, stdout, usage, columns);
                     return 0;
                 }
@@ -244,14 +278,25 @@ int main(int argc, char** argv){
             case LARGE_DATA:
                 large_data = true;
                 break;
+            case XML_FILE:
+                if (opt.arg != nullptr)
+                {
+                    sXMLConfigFile = opt.arg;
+                }
+                else
+                {
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
+                }
+                break;
 
 #if HAVE_SECURITY
             case USE_SECURITY:
-                if(strcmp(opt.arg, "true") == 0)
+                if (strcmp(opt.arg, "true") == 0)
                 {
                     use_security = true;
                 }
-                else if(strcmp(opt.arg, "false") == 0)
+                else if (strcmp(opt.arg, "false") == 0)
                 {
                     use_security = false;
                 }
@@ -275,64 +320,72 @@ int main(int argc, char** argv){
     }
 
     PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-                   pub_property_policy, sub_property_policy;
+        pub_property_policy, sub_property_policy;
 
 #if HAVE_SECURITY
-    if(use_security)
+    if (use_security)
     {
-        if(certs_path.empty())
+        if (certs_path.empty())
         {
             option::printUsage(fwrite, stdout, usage, columns);
             return -1;
         }
 
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                    "builtin.PKI-DH"));
+            "builtin.PKI-DH"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + certs_path + "/maincacert.pem"));
+            "file://" + certs_path + "/maincacert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + certs_path + "/mainsubcert.pem"));
+            "file://" + certs_path + "/mainsubcert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://" + certs_path + "/mainsubkey.pem"));
+            "file://" + certs_path + "/mainsubkey.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-                    "builtin.AES-GCM-GMAC"));
+            "builtin.AES-GCM-GMAC"));
         sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
         sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                    "builtin.PKI-DH"));
+            "builtin.PKI-DH"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + certs_path + "/maincacert.pem"));
+            "file://" + certs_path + "/maincacert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + certs_path + "/mainpubcert.pem"));
+            "file://" + certs_path + "/mainpubcert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://" + certs_path + "/mainpubkey.pem"));
+            "file://" + certs_path + "/mainpubkey.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-                    "builtin.AES-GCM-GMAC"));
+            "builtin.AES-GCM-GMAC"));
         pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     }
 #endif
 
-    if (pub_sub){
-        cout << "Performing test with "<< sub_number << " subscribers and "<<n_samples << " samples" <<endl;
+    // Load an XML file with predefined profiles for publisher and subscriber
+    if (sXMLConfigFile.length() > 0)
+    {
+        xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
+    }
+
+    if (pub_sub)
+    {
+        cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         LatencyTestPublisher latencyPub;
-        latencyPub.init(sub_number,n_samples, reliable, seed, hostname, export_csv, pub_part_property_policy,
-                pub_property_policy, large_data);
+        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, pub_part_property_policy,
+            pub_property_policy, large_data, sXMLConfigFile);
         latencyPub.run();
     }
-    else {
+    else
+    {
         LatencyTestSubscriber latencySub;
         latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-                large_data);
+            large_data, sXMLConfigFile);
         latencySub.run();
     }
 
     eClock::my_sleep(1000);
 
-    cout << "EVERYTHING STOPPED FINE"<<endl;
+    cout << "EVERYTHING STOPPED FINE" << endl;
 
     return 0;
 }
