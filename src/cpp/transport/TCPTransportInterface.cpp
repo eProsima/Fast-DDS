@@ -526,8 +526,8 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 }
 
 
-bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource,
-        uint32_t msgSize)
+bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderResource* /*senderResource*/,
+        uint32_t /*msgSize*/)
 {
     bool success = false;
     auto logicalPort = IPLocator::getLogicalPort(locator);
@@ -568,7 +568,7 @@ bool TCPTransportInterface::OpenExtraOutputChannel(const Locator_t& locator, Sen
 }
 
 bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
-    uint32_t maxMsgSize)
+    uint32_t /*maxMsgSize*/)
 {
     bool success = false;
     if (IsLocatorSupported(locator))
@@ -596,7 +596,6 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
         std::chrono::milliseconds(GetConfiguration()->keep_alive_frequency_ms);
     std::chrono::time_point<std::chrono::system_clock> timeout_time =
         time_now + std::chrono::milliseconds(GetConfiguration()->keep_alive_timeout_ms);
-    std::chrono::time_point<std::chrono::system_clock> negotiation_time = time_now;
 
     //*
     logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) \

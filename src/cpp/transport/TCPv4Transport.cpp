@@ -105,7 +105,7 @@ TCPv4Transport::~TCPv4Transport()
     Clean();
 }
 
-void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t& defaultList)
+void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t&)
 {
 }
 
