@@ -165,7 +165,7 @@ public:
 
     bool IsConnectionEstablished()
     {
-        std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
+        std::unique_lock<std::mutex> scoped(mStatusMutex);
         return mConnectionStatus == eConnectionStatus::eEstablished;
     }
 
@@ -178,13 +178,15 @@ public:
 
     void Connect();
     ResponseCode ProcessBindRequest(const Locator_t& locator);
-    void ConnectionLost();
+    // void ConnectionLost();
     void Disconnect();
+
+    bool WaitUntilPortIsOpenOrConnectionIsClosed(uint16_t port);
 
 protected:
     inline bool ChangeStatus(eConnectionStatus s)
     {
-        std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
+        std::unique_lock<std::mutex> scoped(mStatusMutex);
         if (mConnectionStatus != s)
         {
         	mConnectionStatus = s;
@@ -192,6 +194,7 @@ protected:
 	        {
 	            SendPendingOpenLogicalPorts();
 	        }
+            mNegotiationCondition.notify_all();
 	        return true;
 	    }
 	    return false;
@@ -221,12 +224,11 @@ private:
     std::recursive_mutex mReadMutex;
     std::recursive_mutex mWriteMutex;
     std::recursive_mutex mPendingLogicalMutex;
-    //std::map<uint16_t, uint16_t> mLogicalPortRouting;
-	Semaphore mNegotiationSemaphore;
+    std::condition_variable mNegotiationCondition;
     asio::io_service& mService;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
-    std::recursive_mutex mStatusMutex;
+    std::mutex mStatusMutex;
 
     void SocketConnected(const asio::error_code& error);
     void PrepareAndSendCheckLogicalPortsRequest(uint16_t closedPort);

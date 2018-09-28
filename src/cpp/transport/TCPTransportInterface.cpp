@@ -897,46 +897,28 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
         bool success = false;
         uint16_t logicalPort = IPLocator::getLogicalPort(remoteLocator);
 
-        bool bSendMsg = true;
-        if (!tcpChannelResource->IsLogicalPortOpened(logicalPort))
+        if (tcpChannelResource->IsLogicalPortAdded(logicalPort))
         {
-            // TODO review logic
-            bSendMsg = false;
-            /*
-            if (tcpChannelResource->IsLogicalPortAdded(logicalPort))
+            bool bShouldWait = GetConfiguration()->wait_for_tcp_negotiation;
+            bool bConnected = tcpChannelResource->IsAlive() && tcpChannelResource->IsConnectionEstablished();
+            while (bShouldWait && bConnected && !tcpChannelResource->IsLogicalPortOpened(logicalPort))
             {
-                if (GetConfiguration()->wait_for_tcp_negotiation)
-                {
-                    tcpChannelResource->mNegotiationSemaphore.wait();
-                }
-                else
-                {
-                    bSendMsg = false;
-                }
+                bConnected = tcpChannelResource->WaitUntilPortIsOpenOrConnectionIsClosed(logicalPort);
             }
-            else
+
+            if (bConnected && tcpChannelResource->IsLogicalPortOpened(logicalPort))
             {
-                bSendMsg = false;
-            }
-            */
-        }
+                TCPHeader tcp_header;
+                FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
 
-        if (bSendMsg && tcpChannelResource->IsAlive())
-        {
-            //CDRMessage_t msg(static_cast<uint32_t>(sendBufferSize + TCPHeader::getSize()));
-            TCPHeader tcp_header;
-            FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
-
-            //RTPSMessageCreator::addCustomContent(&msg, (octet*)&tcp_header, TCPHeader::getSize());
-            //RTPSMessageCreator::addCustomContent(&msg, sendBuffer, sendBufferSize);
-
-            {
-                std::unique_lock<std::recursive_mutex> sendLock(tcpChannelResource->GetWriteMutex());
-                success = SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()), remoteLocator, tcpChannelResource);
-
-                if (success)
                 {
-                    success = SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, tcpChannelResource);
+                    std::unique_lock<std::recursive_mutex> sendLock(tcpChannelResource->GetWriteMutex());
+                    success = SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()), remoteLocator, tcpChannelResource);
+
+                    if (success)
+                    {
+                        success = SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, tcpChannelResource);
+                    }
                 }
             }
         }
@@ -1075,13 +1057,6 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             mSocketAcceptors.at(IPLocator::getPhysicalPort(acceptor->mLocator))->Accept(this, mService);
         }
     }
-}
-
-bool TCPTransportInterface::IsUnboundChannel(const TCPChannelResource *channel) const
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    return std::find(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), channel)
-        != mUnboundChannelResources.end();
 }
 
 void TCPTransportInterface::SocketConnected(TCPChannelResource *outputSocket)

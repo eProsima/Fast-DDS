@@ -49,7 +49,6 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessag
     , m_inputSocket(false)
     , mWaitingForKeepAlive(false)
     , mRTCPThread(nullptr)
-    , mNegotiationSemaphore(0)
     , mService(service)
     , mSocket(createTCPSocket(service))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
@@ -65,7 +64,6 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessag
     , m_inputSocket(true)
     , mWaitingForKeepAlive(false)
     , mRTCPThread(nullptr)
-	, mNegotiationSemaphore(0)
     , mService(service)
 	, mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eWaitingForBind)
@@ -74,8 +72,6 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessag
 
 TCPChannelResource::~TCPChannelResource()
 {
-	mNegotiationSemaphore.disable();
-
     Clear();
 
     if (mRTCPThread != nullptr)
@@ -88,9 +84,6 @@ TCPChannelResource::~TCPChannelResource()
 
 void TCPChannelResource::Disable()
 {
-    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
-	mNegotiationSemaphore.disable();
-
 	ChannelResource::Disable();
 
     Disconnect();
@@ -98,7 +91,7 @@ void TCPChannelResource::Disable()
 
 void TCPChannelResource::Connect()
 {
-    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
+    std::unique_lock<std::mutex> scoped(mStatusMutex);
     if (mConnectionStatus == eConnectionStatus::eDisconnected)
     {
         mConnectionStatus = eConnectionStatus::eConnecting;
@@ -112,7 +105,7 @@ void TCPChannelResource::Connect()
 
 ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
+    std::unique_lock<std::mutex> scoped(mStatusMutex);
     if (mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
     {
         mLocator = locator;
@@ -143,6 +136,7 @@ void TCPChannelResource::InputPortClosed(uint16_t port)
     }
 }
 
+/*
 void TCPChannelResource::ConnectionLost()
 {
     mStatusMutex.lock();
@@ -163,6 +157,7 @@ void TCPChannelResource::ConnectionLost()
     }
     mStatusMutex.unlock();
 }
+*/
 
 void TCPChannelResource::SetAllPortsAsPending()
 {
@@ -203,27 +198,37 @@ void TCPChannelResource::SocketConnected(const asio::error_code& error)
 {
     // If we were disabled while trying to connect, this method will be
     // called with a 'canceled' error value. In that case we return directly
-    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
-    if (!mAlive)
-        return;
-
-    if (error.value())
+    auto err = error.value();
+    if (err)
     {
-        Disconnect();
-        eClock::my_sleep(100);
-        if(mAlive)
+        if (err != eConnectionAborted)
         {
-            Connect();
+            Disconnect();
+            bool stillAlive = mAlive;
+            if(stillAlive)
+            {
+                std::unique_lock<std::mutex> scoped(mStatusMutex);
+                eClock::my_sleep(100);
+                stillAlive = mAlive;
+            }
+            if (stillAlive)
+            {
+                Connect();
+            }
         }
     }
     else
     {
+        mStatusMutex.lock();
         if (mConnectionStatus == eConnectionStatus::eConnecting)
         {
             logInfo(RTCP, "Connected to " << mLocator);
             mConnectionStatus = eConnectionStatus::eConnected;
+            mStatusMutex.unlock();
             mParent->SocketConnected(this);
+            return;
         }
+        mStatusMutex.unlock();
     }
 }
 
@@ -239,6 +244,18 @@ bool TCPChannelResource::IsLogicalPortAdded(uint16_t port)
 	return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end()
            || std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
                 != mPendingLogicalOutputPorts.end();
+}
+
+bool TCPChannelResource::WaitUntilPortIsOpenOrConnectionIsClosed(uint16_t port)
+{
+    std::unique_lock<std::mutex> scoped(mStatusMutex);
+    bool bConnected = mAlive && mConnectionStatus == eConnectionStatus::eEstablished;
+    while (bConnected && !IsLogicalPortOpened(port))
+    {
+        mNegotiationCondition.wait(scoped);
+        bConnected = mAlive && mConnectionStatus == eConnectionStatus::eEstablished;
+    }
+    return bConnected;
 }
 
 std::thread* TCPChannelResource::ReleaseRTCPThread()
@@ -322,6 +339,7 @@ void TCPChannelResource::AddLogicalPortResponse(const TCPTransactionId &id, bool
             if (success)
             {
                 mLogicalOutputPorts.push_back(port);
+                mNegotiationCondition.notify_all();
                 logInfo(RTCP, "OpenedLogicalPort " << port);
             }
             else
