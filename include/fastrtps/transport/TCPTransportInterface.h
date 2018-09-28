@@ -46,39 +46,15 @@ public:
     std::vector<Locator_t> mPendingOutLocators;
 
     TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
-    ~TCPAcceptor() {    }
+    ~TCPAcceptor()
+    {
+        try{ mSocket.cancel(); } catch (...) {}
+        mSocket.close();
+    }
 
     //! Method to start the accepting process.
     void Accept(TCPTransportInterface* parent, asio::io_service&);
 };
-
-/*
-class TCPConnector
-{
-public:
-    friend class TCPChannelResource;
-
-    TCPConnector(asio::io_service& io_service, asio::ip::tcp type, asio::ip::tcp::endpoint endpoint);
-    ~TCPConnector();
-
-    //! Method to start the connecting process with the endpoint set in the locator.
-    void Connect(TCPChannelResource* channel);
-
-    //! Method to start the reconnection process.
-    void RetryConnect(TCPChannelResource* channel);
-
-    //inline eProsimaTCPSocket& getSocket() { return m_socket; }
-
-private:
-
-    eProsimaTCPSocket m_socket;
-    asio::io_service& m_service;
-    asio::ip::tcp m_type;
-    asio::ip::tcp::endpoint m_endpoint;
-
-    void SocketConnected(TCPChannelResource* channel, const asio::error_code& error);
-};
-*/
 
 /**
  * This is a default TCP Interface implementation.
@@ -102,10 +78,6 @@ public:
     friend class CleanTCPSocketsEvent;
 
     virtual ~TCPTransportInterface();
-    //! Stores the binding between the given locator and the given TCP socket.
-
-    //! Binds the output channel given by the locator to the sender resource.
-    void BindOutputChannel(const Locator_t&, SenderResource *senderResource = nullptr);
 
     //! Stores the binding between the given locator and the given TCP socket.
     TCPChannelResource* BindSocket(const Locator_t&, TCPChannelResource*);
@@ -245,6 +217,7 @@ protected:
 
     std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
+    std::vector<TCPChannelResource*> mUnboundChannelResources; // Needed to avoid memory leaks if client doesn't bound
     std::map<uint16_t, TransportReceiverInterface*> mReceiverResources; // The key is the logical port
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
@@ -252,7 +225,6 @@ protected:
     CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
 
     std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
-    // std::map<Locator_t, TCPConnector*> mSocketConnectors; // The key is the "Physical locator"
 
     TCPTransportInterface();
 

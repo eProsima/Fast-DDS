@@ -100,11 +100,11 @@ enum eConnectionStatus
 public:
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        eProsimaTCPSocketRef socket, const Locator_t& locator);
+        asio::io_service& service, const Locator_t& locator);
 
     // Constructor called when local server accepted connection
     TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        eProsimaTCPSocketRef socket);
+        asio::io_service& service, eProsimaTCPSocketRef socket);
 
     virtual ~TCPChannelResource();
 
@@ -165,6 +165,7 @@ public:
 
     bool IsConnectionEstablished()
     {
+        std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
         return mConnectionStatus == eConnectionStatus::eEstablished;
     }
 
@@ -183,6 +184,7 @@ public:
 protected:
     inline bool ChangeStatus(eConnectionStatus s)
     {
+        std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
         if (mConnectionStatus != s)
         {
         	mConnectionStatus = s;
@@ -221,13 +223,16 @@ private:
     std::recursive_mutex mPendingLogicalMutex;
     //std::map<uint16_t, uint16_t> mLogicalPortRouting;
 	Semaphore mNegotiationSemaphore;
+    asio::io_service& mService;
     eProsimaTCPSocket mSocket;
     eConnectionStatus mConnectionStatus;
+    std::recursive_mutex mStatusMutex;
 
     void SocketConnected(const asio::error_code& error);
     void PrepareAndSendCheckLogicalPortsRequest(uint16_t closedPort);
     void SendPendingOpenLogicalPorts();
     void CopyPendingPortsFrom(TCPChannelResource* from);
+    void SetAllPortsAsPending();
 
     TCPChannelResource(const TCPChannelResource&) = delete;
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;

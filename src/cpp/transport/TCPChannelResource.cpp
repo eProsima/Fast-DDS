@@ -41,28 +41,32 @@ static uint16_t GetBaseAutoPort(uint16_t currentPort)
 }
 
 TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        eProsimaTCPSocketRef socket, const Locator_t& locator)
+        asio::io_service& service, const Locator_t& locator)
     : ChannelResource()
     , mParent (parent)
     , mRTCPManager(rtcpManager)
     , mLocator(locator)
     , m_inputSocket(false)
     , mWaitingForKeepAlive(false)
+    , mRTCPThread(nullptr)
     , mNegotiationSemaphore(0)
-    , mSocket(moveSocket(socket))
+    , mService(service)
+    , mSocket(createTCPSocket(service))
     , mConnectionStatus(eConnectionStatus::eDisconnected)
 {
 }
 
 TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        eProsimaTCPSocketRef socket)
+        asio::io_service& service, eProsimaTCPSocketRef socket)
     : ChannelResource()
     , mParent(parent)
     , mRTCPManager(rtcpManager)
     , mLocator()
     , m_inputSocket(true)
     , mWaitingForKeepAlive(false)
+    , mRTCPThread(nullptr)
 	, mNegotiationSemaphore(0)
+    , mService(service)
 	, mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eWaitingForBind)
 {
@@ -93,6 +97,7 @@ void TCPChannelResource::Disable()
 
 void TCPChannelResource::Connect()
 {
+    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
     if (mConnectionStatus == eConnectionStatus::eDisconnected)
     {
         mConnectionStatus = eConnectionStatus::eConnecting;
@@ -106,7 +111,7 @@ void TCPChannelResource::Connect()
 
 ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
 {
-
+    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
     if (mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
     {
         mLocator = locator;
@@ -136,24 +141,32 @@ void TCPChannelResource::InputPortClosed(uint16_t port)
 
 void TCPChannelResource::ConnectionLost()
 {
+    mStatusMutex.lock();
     if (mAlive &&
         mConnectionStatus != eConnectionStatus::eDisconnected &&
         mConnectionStatus != eConnectionStatus::eConnecting)
     {
-        { // Mark all logical ports as pending
-            std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-            mPendingLogicalOutputPorts.insert(mPendingLogicalOutputPorts.end(),
-                mLogicalOutputPorts.begin(),
-                mLogicalOutputPorts.end());
-            mLogicalOutputPorts.clear();
-        }
         Disconnect();
+        SetAllPortsAsPending();
         if (mAlive && !m_inputSocket)
         {
+            mSocket = createTCPSocket(mService);
+            mStatusMutex.unlock();
             eClock::my_sleep(100);
+            mStatusMutex.lock();
             Connect();
         }
     }
+    mStatusMutex.unlock();
+}
+
+void TCPChannelResource::SetAllPortsAsPending()
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    mPendingLogicalOutputPorts.insert(mPendingLogicalOutputPorts.end(),
+        mLogicalOutputPorts.begin(),
+        mLogicalOutputPorts.end());
+    mLogicalOutputPorts.clear();
 }
 
 void TCPChannelResource::CopyPendingPortsFrom(TCPChannelResource* from)
@@ -197,8 +210,10 @@ void TCPChannelResource::SocketConnected(const asio::error_code& error)
     }
     else
     {
+        std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
         if (mConnectionStatus == eConnectionStatus::eConnecting)
         {
+            logInfo(RTCP, "Connected to " << mLocator);
             mConnectionStatus = eConnectionStatus::eConnected;
             mParent->SocketConnected(this);
         }
@@ -262,7 +277,7 @@ void TCPChannelResource::AddLogicalPort(uint16_t port)
             == mPendingLogicalOutputPorts.end()) // Check isn't enqueued already
         {
             mPendingLogicalOutputPorts.emplace_back(port);
-            if (mConnectionStatus == eConnectionStatus::eEstablished)
+            if (IsConnectionEstablished())
             {
                 TCPTransactionId id = mRTCPManager->sendOpenLogicalPortRequest(this, port);
                 mNegotiatingLogicalPorts[id] = port;

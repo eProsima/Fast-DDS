@@ -58,7 +58,7 @@ bool test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *
     }
     else
     {
-        if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
+        if (!pChannelResource->IsConnectionEstablished())
         {
             sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
         }

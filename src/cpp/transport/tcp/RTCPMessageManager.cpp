@@ -379,7 +379,7 @@ bool RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *pChann
 bool RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
     const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
-    if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
+    if (!pChannelResource->IsConnectionEstablished())
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
@@ -399,7 +399,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
     const CheckLogicalPortsRequest_t &request, const TCPTransactionId &transactionId)
 {
     CheckLogicalPortsResponse_t response;
-    if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
+    if (!pChannelResource->IsConnectionEstablished())
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
@@ -435,7 +435,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
 bool RTCPMessageManager::processKeepAliveRequest(TCPChannelResource *pChannelResource,
         const KeepAliveRequest_t &request, const TCPTransactionId &transactionId)
 {
-    if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
+    if (!pChannelResource->IsConnectionEstablished())
     {
         sendData(pChannelResource, KEEP_ALIVE_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
@@ -454,7 +454,7 @@ bool RTCPMessageManager::processKeepAliveRequest(TCPChannelResource *pChannelRes
 void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPChannelResource* pChannelResource,
         const LogicalPortIsClosedRequest_t &request, const TCPTransactionId & transactionId)
 {
-    if (pChannelResource->mConnectionStatus != TCPChannelResource::eConnectionStatus::eEstablished)
+    if (!pChannelResource->IsConnectionEstablished())
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
@@ -684,8 +684,8 @@ bool RTCPMessageManager::processRTCPMessage(TCPChannelResource *pChannelResource
     {
         logInfo(RTCP_SEQ, "Receive [UNBIND_CONNECTION_REQUEST] Seq:" << controlHeader.transactionId);
         logInfo(RTCP_MSG, "Receive [UNBIND_CONNECTION_REQUEST]");
-        pChannelResource->Disable();
-        bProcessOk = false;
+        mTransport->CloseTCPSocket(pChannelResource);
+        bProcessOk = true;
     }
     break;
     case OPEN_LOGICAL_PORT_RESPONSE:
