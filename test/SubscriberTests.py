@@ -5,7 +5,10 @@ import sys, os
 user = ""
 password = ""
 
-print("LAUNCH SUBSCRIBER TESTS")
+def writeTest(filename, text):
+	with open(filename, "a") as myfile:
+		myfile.write(text + "\n")
+
 if len(sys.argv) <= 2:
 	print("Error")
 	sys.exit(-1)
@@ -16,6 +19,8 @@ else:
 
 os.system("mkdir -p /mnt/jenkins")
 os.system("mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
-os.system("touch /mnt/jenkins/sub.log")
-os.system("python3 '/workspace/Multi-Node Manual Linux/test/GenerateTestsAndXMLs.py'")
-os.system("python3 '/workspace/Multi-Node Manual Linux/test/SubscriberTestList.py' /mnt/jenkins/")
+writeTest("/mnt/jenkins/sub.log", "Start Tests")
+os.system("cd '/workspace/Multi-Node Manual Linux/test' && python3 GenerateTestsAndXMLs.py")
+writeTest("/mnt/jenkins/sub.log", "Generated XML files")
+os.system("cd '/workspace/Multi-Node Manual Linux/test' && python3 SubscriberTestList.py /mnt/jenkins/")
+writeTest("/mnt/jenkins/sub.log", "Tests Completed")
