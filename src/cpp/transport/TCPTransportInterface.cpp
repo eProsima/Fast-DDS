@@ -139,7 +139,13 @@ void TCPTransportInterface::Clean()
 
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-        mDeletedSocketsPool.insert(mDeletedSocketsPool.end(), vDeletedSockets.begin(), vDeletedSockets.end());
+        std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [&](auto socket){
+            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), socket);
+            if (it != mDeletedSocketsPool.end())
+            {
+                mDeletedSocketsPool.emplace_back(socket);
+            }
+        });
     }
 
     CleanDeletedSockets();
@@ -503,7 +509,11 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 
         {
             std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
-            mDeletedSocketsPool.emplace_back(pChannelResource);
+            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), pChannelResource);
+            if (it != mDeletedSocketsPool.end())
+            {
+                mDeletedSocketsPool.emplace_back(pChannelResource);
+            }
         }
 
         if (newChannel != nullptr)
