@@ -493,8 +493,8 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 									for sub_reliabilily_id, sub_reliabilily in enumerate(reliabilily_kind):
 										'''
 										if pub_durability_id >= sub_durability_id and pub_reliabilily_id >= sub_reliabilily_id:
-											pub_filename = "xml/Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml"
-											sub_filename = "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(sub_reliabilily_id) + ".xml"
+											pub_filename = sys.argv[1] + "xml/Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml"
+											sub_filename = sys.argv[1] + "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(sub_reliabilily_id) + ".xml"
 
 											print("writeTestTitle(sys.argv[1] + \"" + pub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename + "\")", file=pub_test_file)
 											print("os.system(sys.argv[1] + \"" + test + " publisher --xml " + pub_filename + " >> \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
