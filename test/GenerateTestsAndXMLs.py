@@ -453,9 +453,9 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 		print("\tsys.exit(-1)\n", file=pub_test_file)
 		print("def writeTestTitle(filename, testname):", file=pub_test_file)
 		print("\twith open(filename, \"a\") as myfile:", file=pub_test_file)
-		print("\t\tmyfile.write(\"*****************************************************************************\")", file=pub_test_file)
-		print("\t\tmyfile.write(testname)", file=pub_test_file)
-		print("\t\tmyfile.write(\"*****************************************************************************\")\n\n", file=pub_test_file)
+		print("\t\tmyfile.write(\"\\n\\n*****************************************************************************\\n\")", file=pub_test_file)
+		print("\t\tmyfile.write(testname + \"\\n\")", file=pub_test_file)
+		print("\t\tmyfile.write(\"*****************************************************************************\\n\")\n\n", file=pub_test_file)
 		
 		print("#!/usr/bin/python3\n", file=sub_test_file)
 		print("import sys, os\n", file=sub_test_file)
@@ -464,12 +464,12 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 		print("\tsys.exit(-1)\n", file=sub_test_file)
 		print("def writeTestTitle(filename, testname):", file=sub_test_file)
 		print("\twith open(filename, \"a\") as myfile:", file=sub_test_file)
-		print("\t\tmyfile.write(\"*****************************************************************************\")", file=sub_test_file)
-		print("\t\tmyfile.write(testname)", file=sub_test_file)
-		print("\t\tmyfile.write(\"*****************************************************************************\")\n\n", file=sub_test_file)
+		print("\t\tmyfile.write(\"\\n\\n*****************************************************************************\\n\")", file=sub_test_file)
+		print("\t\tmyfile.write(testname + \"\\n\")", file=sub_test_file)
+		print("\t\tmyfile.write(\"*****************************************************************************\\n\")\n\n", file=sub_test_file)
 
-		pub_log_filename = "pub_" + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ".log"
-		sub_log_filename = "sub_" + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + ".log"
+		pub_log_filename = "pub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + ".log"
+		sub_log_filename = "sub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + ".log"
 		pub_filename = ""
 		sub_filename = ""
 		for test_id, test in enumerate(tests_list):
