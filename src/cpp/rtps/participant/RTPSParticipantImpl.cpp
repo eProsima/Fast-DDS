@@ -129,6 +129,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
+        // TODO: Each registered transport should add as many locators as they want
         Locator_t mandatoryMulticastLocator;
         m_network_Factory.fillDefaultMetatrafficMulticastLocator(mandatoryMulticastLocator, metatraffic_multicast_port);
         m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);

@@ -854,8 +854,10 @@ size_t TCPTransportInterface::Send(TCPChannelResource *pChannelResource, const o
 bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
     const Locator_t& remoteLocator)
 {
-    //    logInfo(RTCP, " SEND [RTPS Data] to locator " << IPLocator::getPhysicalPort(remoteLocator) << ":" << \
-            IPLocator::getLogicalPort(remoteLocator));
+    /*
+    logInfo(RTCP, " SEND [RTPS Data] to locator " << IPLocator::getPhysicalPort(remoteLocator) << ":" << \
+        IPLocator::getLogicalPort(remoteLocator));
+    */
 
     TCPChannelResource* channelResource = nullptr;
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
@@ -1108,9 +1110,21 @@ bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &, uint32_
 bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
         uint32_t metatraffic_unicast_port)
 {
-    if (locator.port == 0)
+    if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
+        auto config = GetConfiguration();
+        if (config != nullptr)
+        {
+            if (!config->listening_ports.empty())
+            {
+                IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
+            }
+            else
+            {
+                // TODO Think about a "virtual physical port" to avoid send the real one
+                IPLocator::setPhysicalPort(locator, 0);
+            }
+        }
     }
 
     if (IPLocator::getLogicalPort(locator) == 0)
@@ -1118,20 +1132,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_unicast_port));
     }
 
-    auto config = GetConfiguration();
-    if (config != nullptr)
-    {
-        if (!config->listening_ports.empty())
-        {
-            IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
-        }
-        else
-        {
-            // TODO Think about a "virtual physical port" to avoid send the real one
-            IPLocator::setPhysicalPort(locator, 0);
-        }
-        // TODO: Add WAN address
-    }
+    // TODO: Add WAN address
 
     return true;
 }
@@ -1181,9 +1182,21 @@ bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
 
 bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
 {
-    if (locator.port == 0)
+    if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        locator.port = well_known_port;
+        auto config = GetConfiguration();
+        if (config != nullptr)
+        {
+            if (!config->listening_ports.empty())
+            {
+                IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
+            }
+            else
+            {
+                // TODO Think about a "virtual physical port" to avoid send the real one
+                IPLocator::setPhysicalPort(locator, 0);
+            }
+        }
     }
 
     if (IPLocator::getLogicalPort(locator) == 0)
@@ -1191,20 +1204,7 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(well_known_port));
     }
 
-    auto config = GetConfiguration();
-    if (config != nullptr)
-    {
-        if (!config->listening_ports.empty())
-        {
-            IPLocator::setPhysicalPort(locator, *(config->listening_ports.begin()));
-        }
-        else
-        {
-            // TODO Think about a "virtual physical port" to avoid send the real one
-            IPLocator::setPhysicalPort(locator, 0);
-        }
-        // TODO: Add WAN address
-    }
+    // TODO: Add WAN address
 
     return true;
 }
