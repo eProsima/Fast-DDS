@@ -141,7 +141,7 @@ void TCPTransportInterface::Clean()
         std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
         std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [&](auto socket){
             auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), socket);
-            if (it != mDeletedSocketsPool.end())
+            if (it == mDeletedSocketsPool.end())
             {
                 mDeletedSocketsPool.emplace_back(socket);
             }
@@ -510,7 +510,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
         {
             std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
             auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), pChannelResource);
-            if (it != mDeletedSocketsPool.end())
+            if (it == mDeletedSocketsPool.end())
             {
                 mDeletedSocketsPool.emplace_back(pChannelResource);
             }
@@ -550,6 +550,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
             auto socket = createTCPSocket(mService);
             channel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator);
             mChannelResources[physicalLocator] = channel;
+            mUnboundChannelResources.push_back(channel);
             channel->Connect();
         }
 
@@ -1076,6 +1077,13 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
     }
 }
 
+bool TCPTransportInterface::IsUnboundChannel(const TCPChannelResource *channel) const
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    return std::find(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), channel)
+        != mUnboundChannelResources.end();
+}
+
 void TCPTransportInterface::SocketConnected(TCPChannelResource *outputSocket)
 {
     try
@@ -1084,6 +1092,15 @@ void TCPTransportInterface::SocketConnected(TCPChannelResource *outputSocket)
             new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
         outputSocket->SetRTCPThread(
             new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, outputSocket));
+
+        {
+            std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+            auto it = std::find(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), outputSocket);
+            if (it != mUnboundChannelResources.end())
+            {
+                mUnboundChannelResources.erase(it);
+            }
+        }
 
         // RTCP Control Message
         mRTCPMessageManager->sendConnectionRequest(outputSocket);

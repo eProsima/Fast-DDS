@@ -206,6 +206,8 @@ public:
 
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
 
+    bool IsUnboundChannel(const TCPChannelResource *channel) const;
+
 protected:
 
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
