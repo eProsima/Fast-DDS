@@ -383,13 +383,14 @@ bool RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChan
     {
         sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
     }
-    else if (request.logicalPort() == 0 ||
-        mTransport->mReceiverResources.find(request.logicalPort()) == mTransport->mReceiverResources.end())
+    else if (request.logicalPort() == 0 || !mTransport->IsInputPortOpen(request.logicalPort()))
     {
+        logInfo(RTCP_MSG, "Send [OPEN_LOGICAL_PORT_RESPONSE] Not found: " << request.logicalPort());
         sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
     }
     else
     {
+        logInfo(RTCP_MSG, "Send [OPEN_LOGICAL_PORT_RESPONSE] Found: " << request.logicalPort());
         sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
     }
     return true;
@@ -413,7 +414,7 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
 		{
 			for (uint16_t port : request.logicalPortsRange())
 			{
-				if (mTransport->mReceiverResources.find(port) != mTransport->mReceiverResources.end())
+				if (mTransport->IsInputPortOpen(port))
 				{
                     if (port == 0)
                     {

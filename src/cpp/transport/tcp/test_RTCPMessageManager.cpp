@@ -62,7 +62,7 @@ bool test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *
         {
             sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
         }
-        else if (mTransport->mReceiverResources.find(request.logicalPort()) == mTransport->mReceiverResources.end())
+        else if (!mTransport->IsInputPortOpen(request.logicalPort()))
         {
             //logInfo(RTCP, "OpenLogicalPortRequest [FAILED]: " << request.logicalPort());
             sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);

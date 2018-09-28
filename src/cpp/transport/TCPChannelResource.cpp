@@ -88,6 +88,7 @@ TCPChannelResource::~TCPChannelResource()
 
 void TCPChannelResource::Disable()
 {
+    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
 	mNegotiationSemaphore.disable();
 
 	ChannelResource::Disable();
@@ -136,7 +137,10 @@ ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
 
 void TCPChannelResource::InputPortClosed(uint16_t port)
 {
-    mRTCPManager->sendLogicalPortIsClosedRequest(this, port);
+    if (IsConnectionEstablished())
+    {
+        mRTCPManager->sendLogicalPortIsClosedRequest(this, port);
+    }
 }
 
 void TCPChannelResource::ConnectionLost()
@@ -199,6 +203,7 @@ void TCPChannelResource::SocketConnected(const asio::error_code& error)
 {
     // If we were disabled while trying to connect, this method will be
     // called with a 'canceled' error value. In that case we return directly
+    std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
     if (!mAlive)
         return;
 
@@ -206,11 +211,13 @@ void TCPChannelResource::SocketConnected(const asio::error_code& error)
     {
         Disconnect();
         eClock::my_sleep(100);
-        Connect();
+        if(mAlive)
+        {
+            Connect();
+        }
     }
     else
     {
-        std::unique_lock<std::recursive_mutex> scoped(mStatusMutex);
         if (mConnectionStatus == eConnectionStatus::eConnecting)
         {
             logInfo(RTCP, "Connected to " << mLocator);

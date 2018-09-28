@@ -241,9 +241,6 @@ protected:
     //! Cleans the sockets pending to delete.
     void CleanDeletedSockets();
 
-    //! Closes and removes the given socket from the input socket lists.
-    void CloseInputSocket(TCPChannelResource* pChannelResource);
-
     //! Closes the given pChannelResource and unbind it from every resource.
     void CloseTCPSocket(TCPChannelResource* pChannelResource);
 
@@ -265,6 +262,8 @@ protected:
     //! Checks if the socket of the given locator has been opened as an input socket.
     bool IsTCPInputSocket(const Locator_t& locator) const;
 
+    bool IsInputPortOpen(uint16_t port) const;
+
     //! Intermediate method to open an output socket.
     bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource, uint32_t maxMsgSize);
 
@@ -274,9 +273,6 @@ protected:
 
     bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
         TCPChannelResource* pChannelResource, std::size_t body_size);
-
-    //! Closes the physical socket and mark it to be deleted.
-    void ReleaseTCPSocket(TCPChannelResource* pChannelResource, bool force);
 
     size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size, eSocketErrorCodes &error) const;
     size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size) const;
