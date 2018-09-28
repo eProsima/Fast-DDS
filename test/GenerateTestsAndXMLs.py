@@ -22,190 +22,9 @@ else:
 
 # Generate xml testing files
 
-#### GENERATE THROUGHPUT TESTS
-filename = ""
-test = "Throughput";
-test_config = configs_list[1];
-for history_id, history in enumerate(test_config[0]):
-	for durability_id, durability in enumerate(test_config[1]):
-		for reliabilily_id, reliabilily in enumerate(test_config[2]):
-			for publish_id, publish in enumerate(test_config[3]):
-				for item in item_type:
-					if item == "Publisher": 
-						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + "_" + str(publish_id) + ".xml"
-					else:
-						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + ".xml"
-						
-					with open(filename, "w") as text_file:
-						print("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", file=text_file)
-						print("<profiles>", file=text_file)
-						print("\t<participant profile_name=\"participant_profile\">", file=text_file)
-						print("\t\t<rtps>", file=text_file)
-						print("\t\t\t<builtin>", file=text_file)
-						print("\t\t\t\t<domainId>0</domainId>", file=text_file)
-						print("\t\t\t\t<leaseDuration>", file=text_file)
-						print("\t\t\t\t\t<durationbyname>INFINITE</durationbyname>", file=text_file)
-						print("\t\t\t\t</leaseDuration>", file=text_file)
-						print("\t\t\t</builtin>", file=text_file)
-						if item == "Publisher": 
-							print("\t\t\t<name>Participant_publisher</name>", file=text_file)
-						else:
-							print("\t\t\t<name>Participant_subscriber</name>", file=text_file)
-						print("\t\t</rtps>", file=text_file)
-						print("\t</participant>\n", file=text_file)
-
-						if item == "Publisher": 
-							print("\t<publisher profile_name=\"publisher_profile\">", file=text_file)
-							print("\t\t<topic>", file=text_file)
-							print("\t\t\t<name>" + test + "_topic</name>", file=text_file)
-							print("\t\t\t<dataType>ThroughputType</dataType>", file=text_file)
-							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
-							print("\t\t\t<historyQos>", file=text_file)
-							print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
-							print("\t\t\t\t<depth>100</depth>", file=text_file)
-							print("\t\t\t</historyQos>", file=text_file)
-							print("\t\t</topic>", file=text_file)
-							print("\t\t<qos>", file=text_file)
-							print("\t\t\t<durability>", file=text_file)
-							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
-							print("\t\t\t</durability>", file=text_file)
-							print("\t\t\t<reliability>", file=text_file)							
-							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
-							print("\t\t\t</reliability>", file=text_file)
-							print("\t\t\t<publishMode>", file=text_file)
-							print("\t\t\t\t<kind>" + publish + "</kind>", file=text_file)
-							print("\t\t\t</publishMode>", file=text_file)
-							print("\t\t</qos>", file=text_file)
-
-							if reliabilily == "RELIABLE":
-								print("\t\t<times>", file=text_file)
-								print("\t\t\t<heartbeatPeriod>", file=text_file)
-								print("\t\t\t\t<durationbyval>", file=text_file)
-								print("\t\t\t\t\t<seconds>0</seconds>", file=text_file)
-								print("\t\t\t\t\t<fraction>429496700</fraction>", file=text_file)
-								print("\t\t\t\t</durationbyval>", file=text_file)
-								print("\t\t\t</heartbeatPeriod>", file=text_file)
-								print("\t\t</times>", file=text_file)
-
-							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
-							print("\t</publisher>\n", file=text_file)
-
-							print("\t<publisher profile_name=\"publisher_cmd_profile\">", file=text_file)
-							print("\t\t<topic>", file=text_file)
-							print("\t\t\t<name>" + test + "cmd_PUB2SUB</name>", file=text_file)
-							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
-							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
-							print("\t\t\t<historyQos>", file=text_file)
-							print("\t\t\t\t<kind>KEEP_LAST</kind>", file=text_file)
-							print("\t\t\t\t<depth>50</depth>", file=text_file)
-							print("\t\t\t</historyQos>", file=text_file)
-							print("\t\t</topic>", file=text_file)
-							print("\t\t<qos>", file=text_file)
-							print("\t\t\t<durability>", file=text_file)
-							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
-							print("\t\t\t</durability>", file=text_file)
-							print("\t\t\t<reliability>", file=text_file)
-							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
-							print("\t\t\t</reliability>", file=text_file)
-							print("\t\t\t<publishMode>", file=text_file)
-							print("\t\t\t\t<kind>SYNCHRONOUS</kind>", file=text_file)
-							print("\t\t\t</publishMode>", file=text_file)
-							print("\t\t</qos>", file=text_file)
-							print("\t</publisher>\n", file=text_file)
-
-							print("\t<subscriber profile_name=\"subscriber_cmd_profile\">", file=text_file)
-							print("\t\t<topic>", file=text_file)
-							print("\t\t\t<name>" + test + "cmd_SUB2PUB</name>", file=text_file)
-							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
-							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
-							print("\t\t\t<historyQos>", file=text_file)
-							print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
-							print("\t\t\t\t<depth>20</depth>", file=text_file)
-							print("\t\t\t</historyQos>", file=text_file)
-							print("\t\t</topic>", file=text_file)
-							print("\t\t<qos>", file=text_file)
-							print("\t\t\t<durability>", file=text_file)
-							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
-							print("\t\t\t</durability>", file=text_file)
-							print("\t\t\t<reliability>", file=text_file)
-							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
-							print("\t\t\t</reliability>", file=text_file)
-							print("\t\t</qos>", file=text_file)
-							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
-							print("\t</subscriber>\n", file=text_file)
-
-						if item == "Subscriber":
-							print("\t<subscriber profile_name=\"subscriber_profile\">", file=text_file)
-							print("\t\t<topic>", file=text_file)
-							print("\t\t\t<name>" + test + "_topic</name>", file=text_file)
-							print("\t\t\t<dataType>ThroughputType</dataType>", file=text_file)
-							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
-							print("\t\t\t<historyQos>", file=text_file)
-							print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
-							print("\t\t\t\t<depth>1</depth>", file=text_file)
-							print("\t\t\t</historyQos>", file=text_file)
-							print("\t\t</topic>", file=text_file)
-							print("\t\t<qos>", file=text_file)
-							print("\t\t\t<durability>", file=text_file)
-							print("\t\t\t\t<kind>VOLATILE</kind>", file=text_file)
-							print("\t\t\t</durability>", file=text_file)
-							print("\t\t\t<reliability>", file=text_file)
-							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
-							print("\t\t\t</reliability>", file=text_file)
-							print("\t\t</qos>", file=text_file)
-							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
-							print("\t</subscriber>\n", file=text_file)
-
-							print("\t<publisher profile_name=\"publisher_cmd_profile\">", file=text_file)
-							print("\t\t<topic>", file=text_file)
-							print("\t\t\t<name>" + test + "cmd_SUB2PUB</name>", file=text_file)
-							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
-							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
-							print("\t\t\t<historyQos>", file=text_file)
-							print("\t\t\t\t<kind>KEEP_LAST</kind>", file=text_file)
-							print("\t\t\t\t<depth>50</depth>", file=text_file)
-							print("\t\t\t</historyQos>", file=text_file)
-							print("\t\t</topic>", file=text_file)
-							print("\t\t<qos>", file=text_file)
-							print("\t\t\t<durability>", file=text_file)
-							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
-							print("\t\t\t</durability>", file=text_file)
-							print("\t\t\t<reliability>", file=text_file)
-							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
-							print("\t\t\t</reliability>", file=text_file)
-							print("\t\t\t<publishMode>", file=text_file)
-							print("\t\t\t\t<kind>SYNCHRONOUS</kind>", file=text_file)
-							print("\t\t\t</publishMode>", file=text_file)
-							print("\t\t</qos>", file=text_file)
-							print("\t</publisher>\n", file=text_file)
-
-							print("\t<subscriber profile_name=\"subscriber_cmd_profile\">", file=text_file)
-							print("\t\t<topic>", file=text_file)
-							print("\t\t\t<name>" + test + "cmd_PUB2SUB</name>", file=text_file)
-							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
-							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
-							print("\t\t\t<historyQos>", file=text_file)
-							print("\t\t\t\t<kind>KEEP_LAST</kind>", file=text_file)
-							print("\t\t\t\t<depth>20</depth>", file=text_file)
-							print("\t\t\t</historyQos>", file=text_file)
-							print("\t\t</topic>", file=text_file)
-							print("\t\t<qos>", file=text_file)
-							print("\t\t\t<durability>", file=text_file)
-							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
-							print("\t\t\t</durability>", file=text_file)
-							print("\t\t\t<reliability>", file=text_file)
-							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
-							print("\t\t\t</reliability>", file=text_file)
-							print("\t\t</qos>", file=text_file)
-							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
-							print("\t</subscriber>\n", file=text_file)
-
-						print("</profiles>", file=text_file)
-
-
 #### GENERATE LATENCY TESTS
 filename = ""
-test = "Latency"
+test = tests_list[0]
 test_config = configs_list[0];
 for history_id, history in enumerate(test_config[0]):
 	for durability_id, durability in enumerate(test_config[1]):
@@ -444,6 +263,187 @@ for history_id, history in enumerate(test_config[0]):
 
 						print("</profiles>", file=text_file)
 
+#### GENERATE THROUGHPUT TESTS
+filename = ""
+test = tests_list[1];
+test_config = configs_list[1];
+for history_id, history in enumerate(test_config[0]):
+	for durability_id, durability in enumerate(test_config[1]):
+		for reliabilily_id, reliabilily in enumerate(test_config[2]):
+			for publish_id, publish in enumerate(test_config[3]):
+				for item in item_type:
+					if item == "Publisher": 
+						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + "_" + str(publish_id) + ".xml"
+					else:
+						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + ".xml"
+						
+					with open(filename, "w") as text_file:
+						print("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", file=text_file)
+						print("<profiles>", file=text_file)
+						print("\t<participant profile_name=\"participant_profile\">", file=text_file)
+						print("\t\t<rtps>", file=text_file)
+						print("\t\t\t<builtin>", file=text_file)
+						print("\t\t\t\t<domainId>0</domainId>", file=text_file)
+						print("\t\t\t\t<leaseDuration>", file=text_file)
+						print("\t\t\t\t\t<durationbyname>INFINITE</durationbyname>", file=text_file)
+						print("\t\t\t\t</leaseDuration>", file=text_file)
+						print("\t\t\t</builtin>", file=text_file)
+						if item == "Publisher": 
+							print("\t\t\t<name>Participant_publisher</name>", file=text_file)
+						else:
+							print("\t\t\t<name>Participant_subscriber</name>", file=text_file)
+						print("\t\t</rtps>", file=text_file)
+						print("\t</participant>\n", file=text_file)
+
+						if item == "Publisher": 
+							print("\t<publisher profile_name=\"publisher_profile\">", file=text_file)
+							print("\t\t<topic>", file=text_file)
+							print("\t\t\t<name>" + test + "_topic</name>", file=text_file)
+							print("\t\t\t<dataType>ThroughputType</dataType>", file=text_file)
+							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
+							print("\t\t\t<historyQos>", file=text_file)
+							print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
+							print("\t\t\t\t<depth>100</depth>", file=text_file)
+							print("\t\t\t</historyQos>", file=text_file)
+							print("\t\t</topic>", file=text_file)
+							print("\t\t<qos>", file=text_file)
+							print("\t\t\t<durability>", file=text_file)
+							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
+							print("\t\t\t</durability>", file=text_file)
+							print("\t\t\t<reliability>", file=text_file)							
+							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
+							print("\t\t\t</reliability>", file=text_file)
+							print("\t\t\t<publishMode>", file=text_file)
+							print("\t\t\t\t<kind>" + publish + "</kind>", file=text_file)
+							print("\t\t\t</publishMode>", file=text_file)
+							print("\t\t</qos>", file=text_file)
+
+							if reliabilily == "RELIABLE":
+								print("\t\t<times>", file=text_file)
+								print("\t\t\t<heartbeatPeriod>", file=text_file)
+								print("\t\t\t\t<durationbyval>", file=text_file)
+								print("\t\t\t\t\t<seconds>0</seconds>", file=text_file)
+								print("\t\t\t\t\t<fraction>429496700</fraction>", file=text_file)
+								print("\t\t\t\t</durationbyval>", file=text_file)
+								print("\t\t\t</heartbeatPeriod>", file=text_file)
+								print("\t\t</times>", file=text_file)
+
+							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
+							print("\t</publisher>\n", file=text_file)
+
+							print("\t<publisher profile_name=\"publisher_cmd_profile\">", file=text_file)
+							print("\t\t<topic>", file=text_file)
+							print("\t\t\t<name>" + test + "cmd_PUB2SUB</name>", file=text_file)
+							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
+							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
+							print("\t\t\t<historyQos>", file=text_file)
+							print("\t\t\t\t<kind>KEEP_LAST</kind>", file=text_file)
+							print("\t\t\t\t<depth>50</depth>", file=text_file)
+							print("\t\t\t</historyQos>", file=text_file)
+							print("\t\t</topic>", file=text_file)
+							print("\t\t<qos>", file=text_file)
+							print("\t\t\t<durability>", file=text_file)
+							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
+							print("\t\t\t</durability>", file=text_file)
+							print("\t\t\t<reliability>", file=text_file)
+							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
+							print("\t\t\t</reliability>", file=text_file)
+							print("\t\t\t<publishMode>", file=text_file)
+							print("\t\t\t\t<kind>SYNCHRONOUS</kind>", file=text_file)
+							print("\t\t\t</publishMode>", file=text_file)
+							print("\t\t</qos>", file=text_file)
+							print("\t</publisher>\n", file=text_file)
+
+							print("\t<subscriber profile_name=\"subscriber_cmd_profile\">", file=text_file)
+							print("\t\t<topic>", file=text_file)
+							print("\t\t\t<name>" + test + "cmd_SUB2PUB</name>", file=text_file)
+							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
+							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
+							print("\t\t\t<historyQos>", file=text_file)
+							print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
+							print("\t\t\t\t<depth>20</depth>", file=text_file)
+							print("\t\t\t</historyQos>", file=text_file)
+							print("\t\t</topic>", file=text_file)
+							print("\t\t<qos>", file=text_file)
+							print("\t\t\t<durability>", file=text_file)
+							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
+							print("\t\t\t</durability>", file=text_file)
+							print("\t\t\t<reliability>", file=text_file)
+							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
+							print("\t\t\t</reliability>", file=text_file)
+							print("\t\t</qos>", file=text_file)
+							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
+							print("\t</subscriber>\n", file=text_file)
+
+						if item == "Subscriber":
+							print("\t<subscriber profile_name=\"subscriber_profile\">", file=text_file)
+							print("\t\t<topic>", file=text_file)
+							print("\t\t\t<name>" + test + "_topic</name>", file=text_file)
+							print("\t\t\t<dataType>ThroughputType</dataType>", file=text_file)
+							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
+							print("\t\t\t<historyQos>", file=text_file)
+							print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
+							print("\t\t\t\t<depth>1</depth>", file=text_file)
+							print("\t\t\t</historyQos>", file=text_file)
+							print("\t\t</topic>", file=text_file)
+							print("\t\t<qos>", file=text_file)
+							print("\t\t\t<durability>", file=text_file)
+							print("\t\t\t\t<kind>VOLATILE</kind>", file=text_file)
+							print("\t\t\t</durability>", file=text_file)
+							print("\t\t\t<reliability>", file=text_file)
+							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
+							print("\t\t\t</reliability>", file=text_file)
+							print("\t\t</qos>", file=text_file)
+							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
+							print("\t</subscriber>\n", file=text_file)
+
+							print("\t<publisher profile_name=\"publisher_cmd_profile\">", file=text_file)
+							print("\t\t<topic>", file=text_file)
+							print("\t\t\t<name>" + test + "cmd_SUB2PUB</name>", file=text_file)
+							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
+							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
+							print("\t\t\t<historyQos>", file=text_file)
+							print("\t\t\t\t<kind>KEEP_LAST</kind>", file=text_file)
+							print("\t\t\t\t<depth>50</depth>", file=text_file)
+							print("\t\t\t</historyQos>", file=text_file)
+							print("\t\t</topic>", file=text_file)
+							print("\t\t<qos>", file=text_file)
+							print("\t\t\t<durability>", file=text_file)
+							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
+							print("\t\t\t</durability>", file=text_file)
+							print("\t\t\t<reliability>", file=text_file)
+							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
+							print("\t\t\t</reliability>", file=text_file)
+							print("\t\t\t<publishMode>", file=text_file)
+							print("\t\t\t\t<kind>SYNCHRONOUS</kind>", file=text_file)
+							print("\t\t\t</publishMode>", file=text_file)
+							print("\t\t</qos>", file=text_file)
+							print("\t</publisher>\n", file=text_file)
+
+							print("\t<subscriber profile_name=\"subscriber_cmd_profile\">", file=text_file)
+							print("\t\t<topic>", file=text_file)
+							print("\t\t\t<name>" + test + "cmd_PUB2SUB</name>", file=text_file)
+							print("\t\t\t<dataType>ThroughputCommand</dataType>", file=text_file)
+							print("\t\t\t<kind>NO_KEY</kind>", file=text_file)
+							print("\t\t\t<historyQos>", file=text_file)
+							print("\t\t\t\t<kind>KEEP_LAST</kind>", file=text_file)
+							print("\t\t\t\t<depth>20</depth>", file=text_file)
+							print("\t\t\t</historyQos>", file=text_file)
+							print("\t\t</topic>", file=text_file)
+							print("\t\t<qos>", file=text_file)
+							print("\t\t\t<durability>", file=text_file)
+							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
+							print("\t\t\t</durability>", file=text_file)
+							print("\t\t\t<reliability>", file=text_file)
+							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
+							print("\t\t\t</reliability>", file=text_file)
+							print("\t\t</qos>", file=text_file)
+							print("\t\t<historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>", file=text_file)
+							print("\t</subscriber>\n", file=text_file)
+
+						print("</profiles>", file=text_file)
+
+
 with open("PublisherTestList.py", "w") as pub_test_file:
 	with open("SubscriberTestList.py", "w") as sub_test_file:		
 		print("#!/usr/bin/python3\n", file=pub_test_file)
@@ -493,8 +493,8 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 									for sub_reliabilily_id, sub_reliabilily in enumerate(reliabilily_kind):
 										'''
 										if pub_durability_id >= sub_durability_id and pub_reliabilily_id >= sub_reliabilily_id:
-											pub_filename = sys.argv[1] + "xml/Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml"
-											sub_filename = sys.argv[1] + "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(sub_reliabilily_id) + ".xml"
+											pub_filename = "'" + sys.argv[1] + "xml/Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml'"
+											sub_filename = "'" + sys.argv[1] + "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(sub_reliabilily_id) + ".xml'"
 
 											print("writeTestTitle(sys.argv[1] + \"" + pub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename + "\")", file=pub_test_file)
 											print("os.system(sys.argv[1] + \"" + test + " publisher --xml " + pub_filename + " >> \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
