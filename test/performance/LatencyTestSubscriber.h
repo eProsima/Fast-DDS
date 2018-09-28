@@ -49,7 +49,9 @@ class LatencyTestSubscriber
         int n_samples;
         bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data);
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
+                const std::string& sXMLConfigFile);
+
         void run();
         bool test(uint32_t datasize);
 
@@ -98,6 +100,7 @@ class LatencyTestSubscriber
         bool m_echo;
         LatencyDataType latency_t;
         TestCommandDataType command_t;
+        std::string m_sXMLConfigFile;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */

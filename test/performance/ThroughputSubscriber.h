@@ -46,7 +46,8 @@ class ThroughputSubscriber
 
         ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+                const std::string& sXMLConfigFile);
         virtual ~ThroughputSubscriber();
         eprosima::fastrtps::Participant* mp_par;
         eprosima::fastrtps::Subscriber* mp_datasub;
@@ -120,6 +121,7 @@ class ThroughputSubscriber
         void run();
         ThroughputDataType throughput_t;
         ThroughputCommandDataType throuputcommand_t;
+        std::string m_sXMLConfigFile;
 };
 
 #endif /* THROUGHPUTSUBSCRIBER_H_ */
