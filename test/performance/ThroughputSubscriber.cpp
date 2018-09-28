@@ -39,8 +39,14 @@ using namespace eprosima::fastrtps::rtps;
 int writecalls= 0;
 
 
-ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up):
-    m_up(up),lastseqnum(0),saved_lastseqnum(0),lostsamples(0),saved_lostsamples(0),first(true),throughputin(nullptr)
+ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up)
+    : m_up(up)
+    , lastseqnum(0)
+    , saved_lastseqnum(0)
+    , lostsamples(0)
+    , saved_lostsamples(0)
+    , first(true)
+    , throughputin(nullptr)
 {
 }
 
@@ -55,43 +61,44 @@ void ThroughputSubscriber::DataSubListener::reset()
     lostsamples=0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& match_info)
+void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& match_info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
 
-    if(match_info.status == MATCHED_MATCHING)
+    if (match_info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "DATA Sub Matched"<<C_DEF<<std::endl;
+        std::cout << C_RED << "DATA Sub Matched" << C_DEF << std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        std::cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF<<std::endl;
+        std::cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
         --m_up.disc_count_;
     }
 
     lock.unlock();
     m_up.disc_cond_.notify_one();
 }
+
 void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
     //	cout << "NEW DATA MSG: "<< throughputin->seqnum << endl;
-    while(subscriber->takeNextData((void*)throughputin, &info))
+    while (subscriber->takeNextData((void*)throughputin, &info))
     {
         //myfile << throughputin.seqnum << ",";
-        if(info.sampleKind == ALIVE)
+        if (info.sampleKind == ALIVE)
         {
             //cout << "R:"<<throughputin->seqnum<<std::flush;
-            if((lastseqnum+1)<throughputin->seqnum)
+            if ((lastseqnum + 1) < throughputin->seqnum)
             {
-                lostsamples+=throughputin->seqnum-lastseqnum-1;
+                lostsamples += throughputin->seqnum - lastseqnum - 1;
                 //	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
             }
             lastseqnum = throughputin->seqnum;
         }
         else
         {
-            std::cout << "NOT ALIVE DATA RECEIVED"<<std::endl;
+            std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
         }
     }
     //	cout << ";O|"<<std::flush;
@@ -103,100 +110,103 @@ void ThroughputSubscriber::DataSubListener::saveNumbers()
     saved_lostsamples = lostsamples;
 }
 
-
-
 ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up):m_up(up){}
 ThroughputSubscriber::CommandSubListener::~CommandSubListener(){}
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& match_info)
+
+void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& match_info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
-
-    if(match_info.status == MATCHED_MATCHING)
+    if (match_info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "COMMAND Sub Matched"<<C_DEF<<std::endl;
+        std::cout << C_RED << "COMMAND Sub Matched" << C_DEF << std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF<<std::endl;
+        std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
         --m_up.disc_count_;
     }
 
     lock.unlock();
     m_up.disc_cond_.notify_one();
 }
+
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
 {
     //cout << "Command Received: ";
-    if(subscriber->takeNextData((void*)&m_commandin,&info))
+    if (subscriber->takeNextData((void*)&m_commandin, &info))
     {
         //cout << "RECEIVED COMMAND: "<< m_commandin.m_command << endl;
-        switch(m_commandin.m_command)
+        switch (m_commandin.m_command)
         {
             default: break;
             case (DEFAULT): break;
-            case (BEGIN):{
-                             break;
-                         }
-            case (READY_TO_START):{
-                                      std::cout << "Command: READY_TO_START" << std::endl;
-                                      m_up.m_datasize = m_commandin.m_size;
-                                      m_up.m_demand = m_commandin.m_demand;
-                                      //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-                                      m_up.m_DataSubListener.throughputin = new ThroughputType((uint16_t)m_up.m_datasize);
-                                      ThroughputCommandType command(BEGIN);
-                                      eClock::my_sleep(50);
-                                      m_up.m_DataSubListener.reset();
-                                      //cout << "SEND COMMAND: "<< command.m_command << endl;
-                                      //cout << "writecall "<< ++writecalls << endl;
-                                      m_up.mp_commandpubli->write(&command);
-                                      break;
-                                  }
-            case (TEST_STARTS):{
-                                   m_up.t_start_ = std::chrono::steady_clock::now();
-                                   std::cout << "Command: TEST_STARTS" << std::endl;
-                                   break;
-                               }
-            case (TEST_ENDS):{
-                                 m_up.t_end_ = std::chrono::steady_clock::now();
-                                 m_up.m_DataSubListener.saveNumbers();
-                                 std::cout << "Command: TEST_ENDS" << std::endl;
-                                 std::unique_lock<std::mutex> lock(m_up.mutex_);
-                                 m_up.stop_count_ = 1;
-                                 lock.unlock();
-                                 m_up.stop_cond_.notify_one();
-                                 break;
-                             }
+            case (BEGIN):
+            {
+                break;
+            }
+            case (READY_TO_START):
+            {
+                std::cout << "Command: READY_TO_START" << std::endl;
+                m_up.m_datasize = m_commandin.m_size;
+                m_up.m_demand = m_commandin.m_demand;
+                //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
+                m_up.m_DataSubListener.throughputin = new ThroughputType((uint16_t)m_up.m_datasize);
+                ThroughputCommandType command(BEGIN);
+                eClock::my_sleep(50);
+                m_up.m_DataSubListener.reset();
+                //cout << "SEND COMMAND: "<< command.m_command << endl;
+                //cout << "writecall "<< ++writecalls << endl;
+                m_up.mp_commandpubli->write(&command);
+                break;
+            }
+            case (TEST_STARTS):
+            {
+                m_up.t_start_ = std::chrono::steady_clock::now();
+                std::cout << "Command: TEST_STARTS" << std::endl;
+                break;
+            }
+            case (TEST_ENDS):
+            {
+                m_up.t_end_ = std::chrono::steady_clock::now();
+                m_up.m_DataSubListener.saveNumbers();
+                std::cout << "Command: TEST_ENDS" << std::endl;
+                std::unique_lock<std::mutex> lock(m_up.mutex_);
+                m_up.stop_count_ = 1;
+                lock.unlock();
+                m_up.stop_cond_.notify_one();
+                break;
+            }
             case (ALL_STOPS):
-                             {
-                                 std::unique_lock<std::mutex> lock(m_up.mutex_);
-                                 m_up.stop_count_ = 2;
-                                 lock.unlock();
-                                 m_up.stop_cond_.notify_one();
-                                 std::cout << "Command: ALL_STOPS" << std::endl;
-                             }
+            {
+                std::unique_lock<std::mutex> lock(m_up.mutex_);
+                m_up.stop_count_ = 2;
+                lock.unlock();
+                m_up.stop_cond_.notify_one();
+                std::cout << "Command: ALL_STOPS" << std::endl;
+            }
         }
     }
     else
     {
-        std::cout << "Error reading command"<<std::endl;
+        std::cout << "Error reading command" << std::endl;
     }
 }
 
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up):m_up(up){}
 ThroughputSubscriber::CommandPubListener::~CommandPubListener(){}
-void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "COMMAND Pub Matched"<<C_DEF<<std::endl;
+        std::cout << C_RED << "COMMAND Pub Matched" << C_DEF << std::endl;
         ++m_up.disc_count_;
     }
     else
     {
-        std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF<<std::endl;
+        std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
         --m_up.disc_count_;
     }
 
@@ -204,111 +214,172 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(Publisher* /
     m_up.disc_cond_.notify_one();
 }
 
-
-
-ThroughputSubscriber::~ThroughputSubscriber(){Domain::stopAll();}
+ThroughputSubscriber::~ThroughputSubscriber()
+{
+    Domain::stopAll();
+}
 
 ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy) : disc_count_(0), stop_count_(0),
+    const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+    const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+    const std::string& sXMLConfigFile)
+    : disc_count_(0)
+    , stop_count_(0)
 #pragma warning(disable:4355)
-    m_DataSubListener(*this),m_CommandSubListener(*this),m_CommandPubListener(*this),
-    ready(true),m_datasize(0),m_demand(0)
+    , m_DataSubListener(*this)
+    , m_CommandSubListener(*this)
+    , m_CommandPubListener(*this)
+    , ready(true)
+    , m_datasize(0)
+    , m_demand(0)
+    , m_sXMLConfigFile(sXMLConfigFile)
 {
-    ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = pid % 230;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.setName("Participant_subscriber");
-    PParam.rtps.properties = part_property_policy;
-    mp_par = Domain::createParticipant(PParam);
-    if(mp_par == nullptr)
-    {
-        std::cout << "ERROR"<<std::endl;
-        ready = false;
-        return;
-    }
-    //REGISTER THE TYPES
-    Domain::registerType(mp_par,(TopicDataType*)&throughput_t);
-    Domain::registerType(mp_par,(TopicDataType*)&throuputcommand_t);
 
+    if (m_sXMLConfigFile.length() > 0)
+    {
+        // Create RTPSParticipant
+        std::string participant_profile_name = "participant_profile";
+        mp_par = Domain::createParticipant(participant_profile_name);
+        if (mp_par == nullptr)
+        {
+            std::cout << "ERROR creating participant" << std::endl;
+            ready = false;
+            return;
+        }
+
+        //REGISTER THE TYPES
+        Domain::registerType(mp_par, (TopicDataType*)&throughput_t);
+        Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
+
+        std::string profile_name = "subscriber_profile";
+        mp_datasub = Domain::createSubscriber(mp_par, profile_name, &this->m_DataSubListener);
+        if (mp_datasub == nullptr)
+        {
+            std::cout << "ERROR creating command subscriber" << std::endl;
+            ready = false;
+            return;
+        }
+
+        // Create Command Publisher
+        profile_name = "publisher_cmd_profile";
+        mp_commandpubli = Domain::createPublisher(mp_par, profile_name, (PublisherListener*)&this->m_CommandPubListener);
+        if (mp_commandpubli == nullptr)
+        {
+            std::cout << "ERROR creating command publisher" << std::endl;
+            ready = false;
+            return;
+        }
+        std::cout << "Command Publisher created" << std::endl;
+
+        profile_name = "subscriber_cmd_profile";
+        mp_commandsub = Domain::createSubscriber(mp_par, profile_name, &this->m_CommandSubListener);
+        if (mp_commandsub == nullptr)
+        {
+            std::cout << "ERROR creating command subscriber" << std::endl;
+            ready = false;
+            return;
+        }
+        std::cout << "Command Subscriber created" << std::endl;
+    }
+    else
+    {
+        ParticipantAttributes PParam;
+        PParam.rtps.builtin.domainId = pid % 230;
+        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+        PParam.rtps.setName("Participant_subscriber");
+        PParam.rtps.properties = part_property_policy;
+        mp_par = Domain::createParticipant(PParam);
+        if (mp_par == nullptr)
+        {
+            std::cout << "ERROR" << std::endl;
+            ready = false;
+            return;
+        }
+
+        //REGISTER THE TYPES
+        Domain::registerType(mp_par, (TopicDataType*)&throughput_t);
+        Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
+
+        //SUBSCRIBER DATA
+        SubscriberAttributes Sparam;
+        Sparam.topic.topicDataType = "ThroughputType";
+        Sparam.topic.topicKind = NO_KEY;
+        std::ostringstream st;
+        st << "ThroughputTest_";
+        if (hostname)
+            st << asio::ip::host_name() << "_";
+        st << pid << "_UP";
+        Sparam.topic.topicName = st.str();
+
+        if (reliable)
+        {
+            //RELIABLE
+            Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+            Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        }
+        else
+        {
+            //BEST EFFORT
+            Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        }
+
+        Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+        Sparam.topic.resourceLimitsQos.max_samples = 100000;
+        Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
+
+        Locator_t loc;
+        loc.port = 10110;
+        Sparam.unicastLocatorList.push_back(loc);
+        Sparam.properties = property_policy;
+        mp_datasub = Domain::createSubscriber(mp_par, Sparam, (SubscriberListener*)&this->m_DataSubListener);
+
+        //COMMAND
+        PublisherAttributes Wparam;
+        //Wparam.historyMaxSize = 20;
+        Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+        Wparam.topic.historyQos.depth = 50;
+        Wparam.topic.resourceLimitsQos.max_samples = 50;
+        Wparam.topic.resourceLimitsQos.allocated_samples = 50;
+        Wparam.topic.topicDataType = "ThroughputCommand";
+        Wparam.topic.topicKind = NO_KEY;
+        std::ostringstream pct;
+        pct << "ThroughputTest_Command_";
+        if (hostname)
+            pct << asio::ip::host_name() << "_";
+        pct << pid << "_SUB2PUB";
+        Wparam.topic.topicName = pct.str();
+        Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_commandpubli = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_CommandPubListener);
+
+        SubscriberAttributes Rparam;
+        Rparam.topic.topicDataType = "ThroughputCommand";
+        Rparam.topic.topicKind = NO_KEY;
+        Rparam.topic.topicName = "ThroughputCommandP2S";
+        std::ostringstream sct;
+        sct << "ThroughputTest_Command_";
+        if (hostname)
+            sct << asio::ip::host_name() << "_";
+        sct << pid << "_PUB2SUB";
+        Rparam.topic.topicName = sct.str();
+        Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+        Rparam.topic.historyQos.depth = 20;
+        Rparam.topic.resourceLimitsQos.max_samples = 20;
+        Rparam.topic.resourceLimitsQos.allocated_samples = 20;
+        loc.port = 7556;
+        Rparam.unicastLocatorList.push_back(loc);
+        mp_commandsub = Domain::createSubscriber(mp_par, Rparam, (SubscriberListener*)&this->m_CommandSubListener);
+    }
 
     t_start_ = std::chrono::steady_clock::now();
-    for(int i = 0; i < 1000; ++i)
+    for (int i = 0; i < 1000; ++i)
         t_end_ = std::chrono::steady_clock::now();
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << std::endl;
 
-    //SUBSCRIBER DATA
-    SubscriberAttributes Sparam;
-    Sparam.topic.topicDataType = "ThroughputType";
-    Sparam.topic.topicKind = NO_KEY;
-    std::ostringstream st;
-    st << "ThroughputTest_";
-    if(hostname)
-        st << asio::ip::host_name() << "_";
-    st << pid << "_UP";
-    Sparam.topic.topicName = st.str();
-
-    if(reliable)
-    {
-        //RELIABLE
-        Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
-        Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    }
-    else
-    {
-        //BEST EFFORT
-        Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-    }
-
-    Sparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Sparam.topic.resourceLimitsQos.max_samples = 100000;
-    Sparam.topic.resourceLimitsQos.allocated_samples = 10000;
-
-    Locator_t loc;
-    loc.port = 10110;
-    Sparam.unicastLocatorList.push_back(loc);
-    Sparam.properties = property_policy;
-    mp_datasub = Domain::createSubscriber(mp_par,Sparam,(SubscriberListener*)&this->m_DataSubListener);
-    //COMMAND
-    PublisherAttributes Wparam;
-    //Wparam.historyMaxSize = 20;
-    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 50;
-    Wparam.topic.resourceLimitsQos.max_samples = 50;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 50;
-    Wparam.topic.topicDataType = "ThroughputCommand";
-    Wparam.topic.topicKind = NO_KEY;
-    std::ostringstream pct;
-    pct << "ThroughputTest_Command_";
-    if(hostname)
-        pct << asio::ip::host_name() << "_";
-    pct << pid << "_SUB2PUB";
-    Wparam.topic.topicName = pct.str();
-    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_commandpubli = Domain::createPublisher(mp_par,Wparam,(PublisherListener*)&this->m_CommandPubListener);
-    SubscriberAttributes Rparam;
-    Rparam.topic.topicDataType = "ThroughputCommand";
-    Rparam.topic.topicKind = NO_KEY;
-    Rparam.topic.topicName = "ThroughputCommandP2S";
-    std::ostringstream sct;
-    sct << "ThroughputTest_Command_";
-    if(hostname)
-        sct << asio::ip::host_name() << "_";
-    sct << pid << "_PUB2SUB";
-    Rparam.topic.topicName = sct.str();
-    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Rparam.topic.historyQos.depth = 20;
-    Rparam.topic.resourceLimitsQos.max_samples = 20;
-    Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-    loc.port = 7556;
-    Rparam.unicastLocatorList.push_back(loc);
-    mp_commandsub = Domain::createSubscriber(mp_par,Rparam,(SubscriberListener*)&this->m_CommandSubListener);
-
-    if(mp_datasub == nullptr || mp_commandsub == nullptr || mp_commandpubli == nullptr)
+    if (mp_datasub == nullptr || mp_commandsub == nullptr || mp_commandpubli == nullptr)
         ready = false;
 
     eClock::my_sleep(1000);
@@ -316,12 +387,12 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 
 void ThroughputSubscriber::run()
 {
-    if(!ready)
+    if (!ready)
         return;
-    std::cout << "Waiting for discovery"<<std::endl;
+    std::cout << "Waiting for discovery" << std::endl;
     std::unique_lock<std::mutex> lock(mutex_);
-    while(disc_count_ != 3) disc_cond_.wait(lock);
-    std::cout << "Discovery complete"<<std::endl;
+    while (disc_count_ != 3) disc_cond_.wait(lock);
+    std::cout << "Discovery complete" << std::endl;
 
     while (stop_count_ != 2)
     {
@@ -343,13 +414,16 @@ void ThroughputSubscriber::run()
             comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
 
             auto total_time_count = (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
-            if(total_time_count < std::numeric_limits<uint64_t>::min()){
+            if (total_time_count < std::numeric_limits<uint64_t>::min())
+            {
                 comm.m_totaltime = std::numeric_limits<uint64_t>::min();
             }
-            else if(total_time_count > std::numeric_limits<uint64_t>::max()){
+            else if (total_time_count > std::numeric_limits<uint64_t>::max())
+            {
                 comm.m_totaltime = std::numeric_limits<uint64_t>::max();
             }
-            else{
+            else
+            {
                 comm.m_totaltime = static_cast<uint64_t>(total_time_count);
             }
 

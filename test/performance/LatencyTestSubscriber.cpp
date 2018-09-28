@@ -64,7 +64,8 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 }
 
 bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
-        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data)
+        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
+        const std::string& sXMLConfigFile)
 {
     if(!large_data)
     {
@@ -74,122 +75,178 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     {
         data_size_sub.assign(datassub_large, datassub_large + sizeof(datassub_large) / sizeof(uint32_t) );
     }
+    m_sXMLConfigFile = sXMLConfigFile;
     m_echo = echo;
     n_samples = nsam;
-    ParticipantAttributes PParam;
-    PParam.rtps.defaultSendPort = 10042;
-    PParam.rtps.builtin.domainId = pid % 230;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.sendSocketBufferSize = 65536;
-    PParam.rtps.listenSocketBufferSize = 2*65536;
-    PParam.rtps.setName("Participant_sub");
-    PParam.rtps.properties = part_property_policy;
-    mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant == nullptr)
-        return false;
-    Domain::registerType(mp_participant,(TopicDataType*)&latency_t);
-    Domain::registerType(mp_participant,(TopicDataType*)&command_t);
 
-    // DATA PUBLISHER
-    PublisherAttributes PubDataparam;
-    PubDataparam.topic.topicDataType = "LatencyType";
-    PubDataparam.topic.topicKind = NO_KEY;
-    std::ostringstream pt;
-    pt << "LatencyTest_";
-    if(hostname)
-        pt << asio::ip::host_name() << "_";
-    pt << pid << "_SUB2PUB";
-    PubDataparam.topic.topicName = pt.str();
-    PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    PubDataparam.topic.historyQos.depth = n_samples;
-    PubDataparam.topic.resourceLimitsQos.max_samples = n_samples + 1;
-    PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 1;
-    PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
-    if(!reliable)
-        PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-    //PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-    Locator_t loc;
-    loc.port = 15002;
-    PubDataparam.unicastLocatorList.push_back(loc);
-    PubDataparam.properties = property_policy;
-    if(large_data)
+    if (m_sXMLConfigFile.length() > 0)
     {
-        PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
-    }
-    mp_datapub = Domain::createPublisher(mp_participant,PubDataparam,(PublisherListener*)&this->m_datapublistener);
-    if(mp_datapub == nullptr)
-        return false;
+        // Create RTPSParticipant
+        std::string participant_profile_name = "participant_profile";
+        mp_participant = Domain::createParticipant(participant_profile_name);
+        if (mp_participant == nullptr)
+        {
+            return false;
+        }
 
-    //DATA SUBSCRIBER
-    SubscriberAttributes SubDataparam;
-    SubDataparam.topic.topicDataType = "LatencyType";
-    SubDataparam.topic.topicKind = NO_KEY;
-    std::ostringstream st;
-    st << "LatencyTest_";
-    if(hostname)
-        st << asio::ip::host_name() << "_";
-    st << pid << "_PUB2SUB";
-    SubDataparam.topic.topicName = st.str();
-    SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    SubDataparam.topic.historyQos.depth = 1;
-    if(reliable)
-        SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    loc.port = 15003;
-    SubDataparam.unicastLocatorList.push_back(loc);
-    SubDataparam.properties = property_policy;
-    //loc.set_IP4_address(239,255,0,2);
-    //SubDataparam.multicastLocatorList.push_back(loc);
-    if(large_data)
+        Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        Domain::registerType(mp_participant, (TopicDataType*)&command_t);
+
+        // Create Sending Publisher
+        std::string profile_name = "publisher_profile";
+        mp_datapub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
+        if (mp_datapub == nullptr)
+        {
+            return false;
+        }
+        std::cout << "Publisher created" << std::endl;
+
+        // Create Echo Subscriber
+        profile_name = "subscriber_profile";
+        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
+        if (mp_datasub == nullptr)
+        {
+            return false;
+        }
+        std::cout << "Echo Subscriber created" << std::endl;
+
+        // Create Command Publisher
+        profile_name = "publisher_cmd_profile";
+        mp_commandpub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_commandpublistener);
+        if (mp_commandpub == nullptr)
+        {
+            return false;
+        }
+        std::cout << "Publisher created" << std::endl;
+
+        profile_name = "subscriber_cmd_profile";
+        mp_commandsub = Domain::createSubscriber(mp_participant, profile_name, &this->m_commandsublistener);
+        if (mp_commandsub == nullptr)
+        {
+            return false;
+        }
+    }
+    else
     {
-        SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    }
-    mp_datasub = Domain::createSubscriber(mp_participant,SubDataparam,&this->m_datasublistener);
-    if(mp_datasub == nullptr)
-        return false;
+        ParticipantAttributes PParam;
+        PParam.rtps.defaultSendPort = 10042;
+        PParam.rtps.builtin.domainId = pid % 230;
+        PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+        PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+        PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+        PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+        PParam.rtps.sendSocketBufferSize = 65536;
+        PParam.rtps.listenSocketBufferSize = 2 * 65536;
+        PParam.rtps.setName("Participant_sub");
+        PParam.rtps.properties = part_property_policy;
+        mp_participant = Domain::createParticipant(PParam);
+        if (mp_participant == nullptr)
+        {
+            return false;
+        }
 
-    //COMMAND PUBLISHER
-    PublisherAttributes PubCommandParam;
-    PubCommandParam.topic.topicDataType = "TestCommandType";
-    PubCommandParam.topic.topicKind = NO_KEY;
-    std::ostringstream pct;
-    pct << "LatencyTest_Command_";
-    if(hostname)
-        pct << asio::ip::host_name() << "_";
-    pct << pid << "_SUB2PUB";
-    PubCommandParam.topic.topicName = pct.str();
-    PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    PubCommandParam.topic.historyQos.depth = 100;
-    PubCommandParam.topic.resourceLimitsQos.max_samples = 101;
-    PubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
-    PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_commandpub = Domain::createPublisher(mp_participant,PubCommandParam,&this->m_commandpublistener);
-    if(mp_commandpub == nullptr)
-        return false;
-    SubscriberAttributes SubCommandParam;
-    SubCommandParam.topic.topicDataType = "TestCommandType";
-    SubCommandParam.topic.topicKind = NO_KEY;
-    std::ostringstream sct;
-    sct << "LatencyTest_Command_";
-    if(hostname)
-        sct << asio::ip::host_name() << "_";
-    sct << pid << "_PUB2SUB";
-    SubCommandParam.topic.topicName = sct.str();
-    SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    SubCommandParam.topic.historyQos.depth = 100;
-    SubCommandParam.topic.resourceLimitsQos.max_samples = 101;
-    SubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
-    SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_commandsub = Domain::createSubscriber(mp_participant,SubCommandParam,&this->m_commandsublistener);
-    if(mp_commandsub == nullptr)
-        return false;
+        Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        Domain::registerType(mp_participant, (TopicDataType*)&command_t);
+
+        // DATA PUBLISHER
+        PublisherAttributes PubDataparam;
+        PubDataparam.topic.topicDataType = "LatencyType";
+        PubDataparam.topic.topicKind = NO_KEY;
+        std::ostringstream pt;
+        pt << "LatencyTest_";
+        if (hostname)
+            pt << asio::ip::host_name() << "_";
+        pt << pid << "_SUB2PUB";
+        PubDataparam.topic.topicName = pt.str();
+        PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+        PubDataparam.topic.historyQos.depth = n_samples;
+        PubDataparam.topic.resourceLimitsQos.max_samples = n_samples + 1;
+        PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 1;
+        PubDataparam.times.heartbeatPeriod.seconds = 0;
+        PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+        if (!reliable)
+            PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        //PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+
+        Locator_t loc;
+        loc.port = 15002;
+        PubDataparam.unicastLocatorList.push_back(loc);
+        PubDataparam.properties = property_policy;
+        if (large_data)
+        {
+            PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
+        }
+        mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
+        if (mp_datapub == nullptr)
+            return false;
+
+        //DATA SUBSCRIBER
+        SubscriberAttributes SubDataparam;
+        SubDataparam.topic.topicDataType = "LatencyType";
+        SubDataparam.topic.topicKind = NO_KEY;
+        std::ostringstream st;
+        st << "LatencyTest_";
+        if (hostname)
+            st << asio::ip::host_name() << "_";
+        st << pid << "_PUB2SUB";
+        SubDataparam.topic.topicName = st.str();
+        SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+        SubDataparam.topic.historyQos.depth = 1;
+        if (reliable)
+            SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        loc.port = 15003;
+        SubDataparam.unicastLocatorList.push_back(loc);
+        SubDataparam.properties = property_policy;
+        //loc.set_IP4_address(239,255,0,2);
+        //SubDataparam.multicastLocatorList.push_back(loc);
+        if (large_data)
+        {
+            SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        }
+        mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
+        if (mp_datasub == nullptr)
+            return false;
+
+        //COMMAND PUBLISHER
+        PublisherAttributes PubCommandParam;
+        PubCommandParam.topic.topicDataType = "TestCommandType";
+        PubCommandParam.topic.topicKind = NO_KEY;
+        std::ostringstream pct;
+        pct << "LatencyTest_Command_";
+        if (hostname)
+            pct << asio::ip::host_name() << "_";
+        pct << pid << "_SUB2PUB";
+        PubCommandParam.topic.topicName = pct.str();
+        PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+        PubCommandParam.topic.historyQos.depth = 100;
+        PubCommandParam.topic.resourceLimitsQos.max_samples = 101;
+        PubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
+        PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
+        if (mp_commandpub == nullptr)
+            return false;
+        SubscriberAttributes SubCommandParam;
+        SubCommandParam.topic.topicDataType = "TestCommandType";
+        SubCommandParam.topic.topicKind = NO_KEY;
+        std::ostringstream sct;
+        sct << "LatencyTest_Command_";
+        if (hostname)
+            sct << asio::ip::host_name() << "_";
+        sct << pid << "_PUB2SUB";
+        SubCommandParam.topic.topicName = sct.str();
+        SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+        SubCommandParam.topic.historyQos.depth = 100;
+        SubCommandParam.topic.resourceLimitsQos.max_samples = 101;
+        SubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
+        SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
+        if (mp_commandsub == nullptr)
+            return false;
+    }
     return true;
 }
 
@@ -312,8 +369,10 @@ void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscr
     //	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
     //	//	eClock::my_sleep(50);
     //		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;
-    if(mp_up->m_echo)
+    if (mp_up->m_echo)
+    {
         mp_up->mp_datapub->write((void*)mp_up->mp_latency);
+    }
 }
 
 
@@ -336,11 +395,11 @@ void LatencyTestSubscriber::run()
 
 bool LatencyTestSubscriber::test(uint32_t datasize)
 {
-    cout << "Preparing test with data size: " << datasize+4<<endl;
+    cout << "Preparing test with data size: " << datasize + 4 << endl;
     mp_latency = new LatencyType(datasize);
 
     std::unique_lock<std::mutex> lock(mutex_);
-    if(comm_count_ == 0) comm_cond_.wait(lock);
+    if (comm_count_ == 0) comm_cond_.wait(lock);
     --comm_count_;
     lock.unlock();
 
@@ -348,21 +407,26 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
     n_received = 0;
     TestCommandType command;
     command.m_command = BEGIN;
-    cout << "Testing with data size: " << datasize+4<<endl;
+    cout << "Testing with data size: " << datasize + 4 << endl;
     mp_commandpub->write(&command);
 
     lock.lock();
-    data_cond_.wait(lock, [&]() { return data_count_ > 0;});
+    data_cond_.wait(lock, [&]()
+    {
+        return data_count_ > 0;
+    });
     --data_count_;
     lock.unlock();
 
-    cout << "TEST OF SIZE: "<< datasize +4 << " ENDS"<<endl;
+    cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << endl;
     eClock::my_sleep(50);
     size_t removed;
     this->mp_datapub->removeAllChange(&removed);
     //cout << "REMOVED: "<< removed<<endl;
     delete(mp_latency);
-    if(m_status == -1)
+    if (m_status == -1)
+    {
         return false;
+    }
     return true;
 }
