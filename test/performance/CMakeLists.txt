@@ -51,6 +51,30 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_include_directories(ThroughputTest PRIVATE)
         target_link_libraries(ThroughputTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
+        if(VIDEO_TESTS)
+            set(VIDEOTEST_SOURCE
+                VideoTestPublisher.cpp
+                VideoTestSubscriber.cpp
+                VideoTestTypes.cpp
+                main_VideoTest.cpp
+                )
+            add_executable(VideoTest ${VIDEOTEST_SOURCE})
+            target_include_directories(VideoTest PUBLIC
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include)
+
+            target_link_libraries(VideoTest fastrtps 
+                ${CMAKE_THREAD_LIBS_INIT} 
+                ${CMAKE_DL_LIBS} 
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstapp-1.0.lib
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstbase-1.0.lib
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib
+                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib)
+        endif()
+        
         if(EPROSIMA_BUILD_TESTS)
             find_package(PythonInterp 3 REQUIRED)
 
@@ -294,6 +318,29 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     set_property(TEST ThroughputTest8192 APPEND PROPERTY ENVIRONMENT
                         "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
                 endif()
+
+                if(VIDEO_TESTS)
+                    ###############################################################################
+                    # VideoTest
+                    ###############################################################################
+                    add_test(NAME VideoTest
+                        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py)
+
+                    # Set test with label NoMemoryCheck
+                    set_property(TEST VideoTest PROPERTY LABELS "NoMemoryCheck")
+
+                    if(WIN32)
+                        set_property(TEST VideoTest PROPERTY ENVIRONMENT
+                            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
+                    endif()
+                    set_property(TEST VideoTest APPEND PROPERTY ENVIRONMENT
+                        "LATENCY_TEST_BIN=$<TARGET_FILE:VideoTest>")
+                    if(SECURITY)
+                        set_property(TEST VideoTest APPEND PROPERTY ENVIRONMENT
+                            "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                    endif()
+                endif()
+
             endif()
         endif()
     endif()
