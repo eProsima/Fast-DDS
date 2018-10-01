@@ -101,14 +101,10 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
     else if (transport == 3)
     {
         //uint32_t kind = LOCATOR_KIND_UDPv6;
-		PParam.rtps.use_IP4_to_send = false;
-		PParam.rtps.use_IP6_to_send = true;
     }
     else if (transport == 4)
     {
         uint32_t kind = LOCATOR_KIND_TCPv6;
-		PParam.rtps.use_IP4_to_send = false;
-		PParam.rtps.use_IP6_to_send = true;
         PParam.rtps.useBuiltinTransports = false;
 
         Locator_t initial_peer_locator;

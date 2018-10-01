@@ -21,7 +21,6 @@
 #define PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <mutex>
-#include "../../../qos/QosList.h"
 #include "../../../qos/ParameterList.h"
 
 #include "../../attributes/WriterAttributes.h"

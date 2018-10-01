@@ -807,6 +807,9 @@ BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
 
     replier.init();
 
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
     ASSERT_TRUE(replier.isInitialized());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
@@ -5287,6 +5290,18 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     reader.block_for_at_least(2);
 }
 
+// Regression test of Refs #3376, github ros2/rmw_fastrtps #226
+BLACKBOXTEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
+{
+    ReqRepAsReliableHelloWorldRequester requester;
+
+    requester.durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    requester.send(1);
+}
+
 // TCP and Domain management with logical ports tests
 BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
 {
@@ -5564,7 +5579,6 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D1_D0)
 
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
-
 }
 
 int main(int argc, char **argv)

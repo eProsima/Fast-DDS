@@ -82,7 +82,7 @@ MessageReceiver::~MessageReceiver()
 void MessageReceiver::associateEndpoint(Endpoint *to_add){
     bool found = false;
     std::lock_guard<std::mutex> guard(mtx);
-    if(to_add->getAttributes()->endpointKind == WRITER)
+    if(to_add->getAttributes().endpointKind == WRITER)
     {
         for(auto it = AssociatedWriters.begin(); it != AssociatedWriters.end(); ++it)
         {
@@ -111,7 +111,7 @@ void MessageReceiver::associateEndpoint(Endpoint *to_add){
 void MessageReceiver::removeEndpoint(Endpoint *to_remove){
 
     std::lock_guard<std::mutex> guard(mtx);
-    if(to_remove->getAttributes()->endpointKind == WRITER){
+    if(to_remove->getAttributes().endpointKind == WRITER){
         RTPSWriter* var = (RTPSWriter *)to_remove;
         for(auto it=AssociatedWriters.begin(); it !=AssociatedWriters.end(); ++it){
             if ((*it) == var){
@@ -863,7 +863,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
     {
         if((*it)->getGuid() == writerGUID)
         {
-            if((*it)->getAttributes()->reliabilityKind == RELIABLE)
+            if((*it)->getAttributes().reliabilityKind == RELIABLE)
             {
                 StatefulWriter* SF = (StatefulWriter*)(*it);
                 SF->process_acknack(readerGUID, Ackcount, SNSet, finalFlag);
@@ -1029,7 +1029,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
         std::lock_guard<std::recursive_mutex> guardW(*(*it)->getMutex());
         if ((*it)->getGuid() == writerGUID)
         {
-            if ((*it)->getAttributes()->reliabilityKind == RELIABLE)
+            if ((*it)->getAttributes().reliabilityKind == RELIABLE)
             {
                 StatefulWriter* SF = (StatefulWriter*)(*it);
 
