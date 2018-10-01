@@ -46,21 +46,6 @@ bool HelloWorldPublisher::init()
     ParticipantAttributes PParam;
     //PParam.rtps.use_IP6_to_send = true;
 
-    // TCP CONNECTION PEER.
-    uint32_t kind = LOCATOR_KIND_TCPv4;
-
-    Locator_t unicast_locator;
-    unicast_locator.kind = kind;
-    IPLocator::setIPv4(unicast_locator, "127.0.0.1");
-    unicast_locator.port = 5100;
-    PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
-
-    Locator_t meta_locator;
-    meta_locator.kind = kind;
-    IPLocator::setIPv4(meta_locator, "127.0.0.1");
-    meta_locator.port = 5100;
-    PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
-
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
@@ -72,7 +57,7 @@ bool HelloWorldPublisher::init()
 	descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
-    descriptor->set_WAN_address("127.0.0.1");
+    //descriptor->set_WAN_address("127.0.0.1");
     descriptor->add_listener_port(5100);
     PParam.rtps.userTransports.push_back(descriptor);
 
