@@ -134,7 +134,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
         m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
-            metatraffic_multicast_port);
+            metatraffic_unicast_port);
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
     else
