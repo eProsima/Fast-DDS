@@ -417,11 +417,28 @@ void TCPChannelResource::ProcessCheckLogicalPortsResponse(const TCPTransactionId
     }
 }
 
-void TCPChannelResource::RemoveLogicalPort(uint16_t port)
+void TCPChannelResource::SetLogicalPortPending(uint16_t port)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    auto it = std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port);
+    if (it != mLogicalOutputPorts.end())
+    {
+        mPendingLogicalOutputPorts.push_back(port);
+        mLogicalOutputPorts.erase(it);
+    }
+}
+
+bool TCPChannelResource::RemoveLogicalPort(uint16_t port)
 {
 	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    std::remove(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port);
-    std::remove(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port);
+    if (!IsLogicalPortAdded(port))
+        return false;
+
+    auto it = std::remove(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port);
+    mLogicalOutputPorts.erase(it, mLogicalOutputPorts.end());
+    it = std::remove(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port);
+    mPendingLogicalOutputPorts.erase(it, mPendingLogicalOutputPorts.end());
+    return true;
 }
 
 } // namespace rtps

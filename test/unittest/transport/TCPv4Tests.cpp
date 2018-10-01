@@ -101,6 +101,7 @@ TEST_F(TCPv4Tests, opening_and_closing_output_channel)
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     genericOutputChannelLocator.port = g_output_port; // arbitrary
+    IPLocator::setLogicalPort(genericOutputChannelLocator, g_output_port);
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));

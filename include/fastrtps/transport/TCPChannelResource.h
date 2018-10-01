@@ -117,7 +117,9 @@ public:
 
     void AddLogicalPort(uint16_t port);
 
-    void RemoveLogicalPort(uint16_t port);
+    void SetLogicalPortPending(uint16_t port);
+
+    bool RemoveLogicalPort(uint16_t port);
 
 	virtual void Disable() override;
 

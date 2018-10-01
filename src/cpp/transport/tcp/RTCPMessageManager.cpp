@@ -461,7 +461,7 @@ void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPChannelResource* p
     }
     else
     {
-        pChannelResource->RemoveLogicalPort(request.logicalPort());
+        pChannelResource->SetLogicalPortPending(request.logicalPort());
     }
 }
 

@@ -459,8 +459,7 @@ bool TCPTransportInterface::CloseOutputChannel(const Locator_t& locator)
     auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (socketIt != mChannelResources.end())
     {
-        socketIt->second->RemoveLogicalPort(IPLocator::getLogicalPort(locator));
-        return true;
+        return socketIt->second->RemoveLogicalPort(IPLocator::getLogicalPort(locator));
     }
     return false;
 }

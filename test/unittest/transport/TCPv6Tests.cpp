@@ -124,6 +124,8 @@ TEST_F(TCPv6Tests, opening_and_closing_output_channel)
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv6;
     genericOutputChannelLocator.port = g_default_port; // arbitrary
+    IPLocator::setLogicalPort(genericOutputChannelLocator, g_default_port);
+    IPLocator::setIPv6(genericOutputChannelLocator, "::1");
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
