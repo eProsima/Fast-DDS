@@ -1101,8 +1101,7 @@ void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
     }
 }
 
-bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
-    uint32_t metatraffic_multicast_port) const
+bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(LocatorList_t &, uint32_t ) const
 {
     // TCP doesn't have multicast support
     return true;

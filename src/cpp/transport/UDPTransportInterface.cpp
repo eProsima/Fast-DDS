@@ -260,7 +260,7 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
     return true;
 }
 
-bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, SenderResource *senderResource)
+bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, SenderResource *)
 {
     (void)locator;
 
