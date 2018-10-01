@@ -553,7 +553,6 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
             auto socket = createTCPSocket(mService);
             channel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator);
             mChannelResources[physicalLocator] = channel;
-            mUnboundChannelResources.push_back(channel);
             channel->Connect();
         }
 
@@ -1063,34 +1062,46 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
     }
 }
 
-void TCPTransportInterface::SocketConnected(TCPChannelResource *outputSocket)
+void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error_code& error)
 {
-    try
-    {
-        outputSocket->SetThread(
-            new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
-        outputSocket->SetRTCPThread(
-            new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, outputSocket));
+    TCPChannelResource* outputSocket = nullptr;
 
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
+        if (it != mChannelResources.end())
         {
-            std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-            auto it = std::find(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), outputSocket);
-            if (it != mUnboundChannelResources.end())
+            outputSocket = it->second;
+        }
+    }
+
+    if(outputSocket != nullptr)
+    {
+        if(error.value() == 0)
+        {
+            try
             {
-                mUnboundChannelResources.erase(it);
+                outputSocket->SetThread(
+                    new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
+                outputSocket->SetRTCPThread(
+                    new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, outputSocket));
+
+                // RTCP Control Message
+                mRTCPMessageManager->sendConnectionRequest(outputSocket);
+            }
+            catch (asio::system_error const& /*e*/)
+            {
+                /*
+                (void)e;
+                logInfo(RTCP_MSG_OUT, "TCPTransport Error establishing the connection at port:(" << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
+                CloseOutputChannel(locator);
+                */
             }
         }
-
-        // RTCP Control Message
-        mRTCPMessageManager->sendConnectionRequest(outputSocket);
-    }
-    catch (asio::system_error const& /*e*/)
-    {
-        /*
-        (void)e;
-        logInfo(RTCP_MSG_OUT, "TCPTransport Error establishing the connection at port:(" << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
-        CloseOutputChannel(locator);
-        */
+        else
+        {
+            CloseTCPSocket(outputSocket);
+        }
     }
 }
 

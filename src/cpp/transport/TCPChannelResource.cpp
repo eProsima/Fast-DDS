@@ -65,7 +65,7 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessag
     , mWaitingForKeepAlive(false)
     , mRTCPThread(nullptr)
     , mService(service)
-	, mSocket(moveSocket(socket))
+    , mSocket(moveSocket(socket))
     , mConnectionStatus(eConnectionStatus::eWaitingForBind)
 {
 }
@@ -84,7 +84,7 @@ TCPChannelResource::~TCPChannelResource()
 
 void TCPChannelResource::Disable()
 {
-	ChannelResource::Disable();
+    ChannelResource::Disable();
 
     Disconnect();
 }
@@ -98,8 +98,8 @@ void TCPChannelResource::Connect()
         auto type = mParent->GetProtocolType();
         auto endpoint = mParent->GenerateLocalEndpoint(mLocator, IPLocator::getPhysicalPort(mLocator));
         mSocket.open(type);
-        mSocket.async_connect(endpoint, std::bind(&TCPChannelResource::SocketConnected, this,
-            std::placeholders::_1));
+        mSocket.async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, mParent, 
+            mLocator, std::placeholders::_1));
     }
 }
 
@@ -136,29 +136,6 @@ void TCPChannelResource::InputPortClosed(uint16_t port)
     }
 }
 
-/*
-void TCPChannelResource::ConnectionLost()
-{
-    mStatusMutex.lock();
-    if (mAlive &&
-        mConnectionStatus != eConnectionStatus::eDisconnected &&
-        mConnectionStatus != eConnectionStatus::eConnecting)
-    {
-        Disconnect();
-        SetAllPortsAsPending();
-        if (mAlive && !m_inputSocket)
-        {
-            mSocket = createTCPSocket(mService);
-            mStatusMutex.unlock();
-            eClock::my_sleep(100);
-            mStatusMutex.lock();
-            Connect();
-        }
-    }
-    mStatusMutex.unlock();
-}
-*/
-
 void TCPChannelResource::SetAllPortsAsPending()
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
@@ -191,44 +168,6 @@ void TCPChannelResource::Disconnect()
             // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
         }
         mSocket.close();
-    }
-}
-
-void TCPChannelResource::SocketConnected(const asio::error_code& error)
-{
-    // If we were disabled while trying to connect, this method will be
-    // called with a 'canceled' error value. In that case we return directly
-    auto err = error.value();
-    if (err)
-    {
-        if (err != eConnectionAborted)
-        {
-            Disconnect();
-            bool stillAlive = mAlive;
-            if(stillAlive)
-            {
-                std::unique_lock<std::mutex> scoped(mStatusMutex);
-                eClock::my_sleep(100);
-                stillAlive = mAlive;
-            }
-            if (stillAlive)
-            {
-                Connect();
-            }
-        }
-    }
-    else
-    {
-        mStatusMutex.lock();
-        if (mConnectionStatus == eConnectionStatus::eConnecting)
-        {
-            logInfo(RTCP, "Connected to " << mLocator);
-            mConnectionStatus = eConnectionStatus::eConnected;
-            mStatusMutex.unlock();
-            mParent->SocketConnected(this);
-            return;
-        }
-        mStatusMutex.unlock();
     }
 }
 

@@ -180,7 +180,6 @@ public:
 
     void Connect();
     ResponseCode ProcessBindRequest(const Locator_t& locator);
-    // void ConnectionLost();
     void Disconnect();
 
     bool WaitUntilPortIsOpenOrConnectionIsClosed(uint16_t port);
@@ -216,10 +215,8 @@ private:
     Locator_t mLocator;
     bool m_inputSocket;
     bool mWaitingForKeepAlive;
-    //uint16_t mPendingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
     std::map<TCPTransactionId, uint16_t> mNegotiatingLogicalPorts; // Must be accessed after lock mPendingLogicalMutex
     std::map<TCPTransactionId, uint16_t> mLastCheckedLogicalPort;
-    //uint16_t mCheckingLogicalPort; // Must be accessed after lock mPendingLogicalMutex
     std::thread* mRTCPThread;
     std::vector<uint16_t> mPendingLogicalOutputPorts; // Must be accessed after lock mPendingLogicalMutex
     std::vector<uint16_t> mLogicalOutputPorts;
@@ -232,7 +229,6 @@ private:
     eConnectionStatus mConnectionStatus;
     std::mutex mStatusMutex;
 
-    void SocketConnected(const asio::error_code& error);
     void PrepareAndSendCheckLogicalPortsRequest(uint16_t closedPort);
     void SendPendingOpenLogicalPorts();
     void CopyPendingPortsFrom(TCPChannelResource* from);
