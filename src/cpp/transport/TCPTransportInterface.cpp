@@ -1188,15 +1188,12 @@ bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
         if (IPLocator::getLogicalPort(locator) == 0)
         {
             // TODO(Ricardo) Make configurable.
-            /*for(int32_t i = 0; i < 4; ++i)
+            for(int32_t i = 0; i < 4; ++i)
             {
                 Locator_t auxloc(locator);
                 IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, i)));
                 list.push_back(auxloc);
-            }*/
-            Locator_t auxloc(locator);
-            IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, 0)));
-            list.push_back(auxloc);
+            }
         }
         else
         {

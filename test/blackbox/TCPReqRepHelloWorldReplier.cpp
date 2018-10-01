@@ -71,25 +71,13 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t 
     // TCP CONNECTION PEER.
     uint32_t kind = LOCATOR_KIND_TCPv4;
 
-    Locator_t unicast_locator;
-    unicast_locator.kind = kind;
-    IPLocator::setIPv4(unicast_locator, "127.0.0.1");
-    unicast_locator.port = listeningPort;
-    pattr.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
-
-    Locator_t meta_locator;
-    meta_locator.kind = kind;
-    IPLocator::setIPv4(meta_locator, "127.0.0.1");
-    meta_locator.port = listeningPort;
-    pattr.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
-
     pattr.rtps.useBuiltinTransports = false;
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 	descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
-    descriptor->set_WAN_address("127.0.0.1");
+    // descriptor->set_WAN_address("127.0.0.1");
     descriptor->add_listener_port(listeningPort);
     pattr.rtps.userTransports.push_back(descriptor);
 
