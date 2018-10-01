@@ -494,19 +494,18 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
     {
         TCPChannelResource *newChannel = nullptr;
         auto physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
-        if (!pChannelResource->GetIsInputSocket())
-        {
-            newChannel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator);
-            pChannelResource->SetAllPortsAsPending();
-            newChannel->CopyPendingPortsFrom(pChannelResource);
-        }
-
         {
             std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
             pChannelResource->Disable();
             auto it = mChannelResources.find(physicalLocator);
             if (it != mChannelResources.end())
             {
+                if (!pChannelResource->GetIsInputSocket())
+                {
+                    newChannel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator);
+                    pChannelResource->SetAllPortsAsPending();
+                    newChannel->CopyPendingPortsFrom(pChannelResource);
+                }
                 mChannelResources.erase(it);
             }
         }
