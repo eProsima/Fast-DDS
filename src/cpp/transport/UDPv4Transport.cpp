@@ -126,6 +126,16 @@ bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(LocatorList_t &locator
     return true;
 }
 
+bool UDPv4Transport::getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const
+{
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    locator.set_Invalid_Address();
+    fillUnicastLocator(locator, unicast_port);
+    locators.push_back(locator);
+    return true;
+}
+
 void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
     Locator_t locator;

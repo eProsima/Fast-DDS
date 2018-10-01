@@ -127,6 +127,16 @@ bool UDPv6Transport::getDefaultMetatrafficUnicastLocators(LocatorList_t &locator
     return true;
 }
 
+bool UDPv6Transport::getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const
+{
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv6;
+    locator.set_Invalid_Address();
+    fillUnicastLocator(locator, unicast_port);
+    locators.push_back(locator);
+    return true;
+}
+
 void UDPv6Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
     // TODO What is the default IPv6 address?

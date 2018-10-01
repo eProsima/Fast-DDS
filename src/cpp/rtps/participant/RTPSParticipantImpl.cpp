@@ -189,14 +189,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
         hasLocatorsDefined = false;
 
-        LocatorList_t loclist;
-        IPFinder::getIP4Address(&loclist);
-        for (auto it = loclist.begin(); it != loclist.end(); ++it)
-        {
-            (*it).kind = LOCATOR_KIND_UDPv4; // Force UDPv4 as default
-            m_network_Factory.fillDefaultUnicastLocator((*it), m_att);
-            m_att.defaultUnicastLocatorList.push_back((*it));
-        }
+        m_network_Factory.getDefaultUnicastLocators(m_att.defaultUnicastLocatorList, m_att);
+        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
     else
     {

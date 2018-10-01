@@ -253,6 +253,16 @@ bool NetworkFactory::configureInitialPeerLocator(Locator_t &locator, RTPSPartici
     return result;
 }
 
+bool NetworkFactory::getDefaultUnicastLocators(LocatorList_t &locators, const RTPSParticipantAttributes& m_att) const
+{
+    bool result = false;
+    for (auto& transport : mRegisteredTransports)
+    {
+        result |= transport->getDefaultUnicastLocators(locators, calculateWellKnownPort(m_att));
+    }
+    return result;
+}
+
 bool NetworkFactory::fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const
 {
     bool result = false;

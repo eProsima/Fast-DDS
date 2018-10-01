@@ -1118,6 +1118,16 @@ bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(LocatorList_t &
     return true;
 }
 
+bool TCPTransportInterface::getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const
+{
+    Locator_t locator;
+    locator.kind = mTransportKind;
+    locator.set_Invalid_Address();
+    fillUnicastLocator(locator, unicast_port);
+    locators.push_back(locator);
+    return true;
+}
+
 bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &, uint32_t) const
 {
     // TCP doesn't have multicast support

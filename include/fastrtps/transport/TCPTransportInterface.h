@@ -202,6 +202,8 @@ public:
     virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators, 
         uint32_t metatraffic_unicast_port) const override;
 
+    bool getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const override;
+    
     virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
         uint32_t metatraffic_multicast_port) const override;
 

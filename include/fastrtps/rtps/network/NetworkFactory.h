@@ -125,6 +125,11 @@ class NetworkFactory
         bool configureInitialPeerLocator(Locator_t &locator, RTPSParticipantAttributes& m_att) const;
 
         /**
+         * Adds locators to the default unicast configuration.
+         * */
+        bool getDefaultUnicastLocators(LocatorList_t &locators, const RTPSParticipantAttributes& m_att) const;
+
+        /**
          * Fills the locator with the default unicast configuration.
          * */
         bool fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const;
