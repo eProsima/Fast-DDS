@@ -58,7 +58,7 @@ TCPReqRepHelloWorldReplier::~TCPReqRepHelloWorldReplier()
         Domain::removeParticipant(participant_);
 }
 
-void TCPReqRepHelloWorldReplier::init(int participantId, int domainId)
+void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t listeningPort)
 {
     ParticipantAttributes pattr;
     pattr.rtps.builtin.domainId = domainId;
@@ -74,13 +74,13 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId)
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
     IPLocator::setIPv4(unicast_locator, "127.0.0.1");
-    unicast_locator.port = 5100;
+    unicast_locator.port = listeningPort;
     pattr.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
 
     Locator_t meta_locator;
     meta_locator.kind = kind;
     IPLocator::setIPv4(meta_locator, "127.0.0.1");
-    meta_locator.port = 5100;
+    meta_locator.port = listeningPort;
     pattr.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
     pattr.rtps.useBuiltinTransports = false;
@@ -90,7 +90,7 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId)
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     descriptor->set_WAN_address("127.0.0.1");
-    descriptor->add_listener_port(5100);
+    descriptor->add_listener_port(listeningPort);
     pattr.rtps.userTransports.push_back(descriptor);
 
     participant_ = Domain::createParticipant(pattr);

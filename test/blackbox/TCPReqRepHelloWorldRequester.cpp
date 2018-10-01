@@ -59,7 +59,7 @@ TCPReqRepHelloWorldRequester::~TCPReqRepHelloWorldRequester()
         Domain::removeParticipant(participant_);
 }
 
-void TCPReqRepHelloWorldRequester::init(int participantId, int domainId)
+void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_t listeningPort)
 {
     ParticipantAttributes pattr;
 
@@ -68,19 +68,19 @@ void TCPReqRepHelloWorldRequester::init(int participantId, int domainId)
     Locator_t initial_peer_locator;
     initial_peer_locator.kind = kind;
     IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
-    initial_peer_locator.port = 5100;
+    initial_peer_locator.port = listeningPort;
     pattr.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
     Locator_t unicast_locator;
     unicast_locator.kind = kind;
     IPLocator::setIPv4(unicast_locator, "127.0.0.1");
-    unicast_locator.port = 5100;
+    unicast_locator.port = listeningPort;
     pattr.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Subscriber's data channel
 
     Locator_t meta_locator;
     meta_locator.kind = kind;
     IPLocator::setIPv4(meta_locator, "127.0.0.1");
-    meta_locator.port = 5100;
+    meta_locator.port = listeningPort;
     pattr.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
 
     pattr.rtps.useBuiltinTransports = false;

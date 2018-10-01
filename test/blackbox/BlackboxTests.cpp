@@ -5294,11 +5294,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
 
-    requester.init(0, 0);
+    requester.init(0, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(1, 0);
+    replier.init(1, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5322,11 +5322,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D1)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(0, 0);
+    requester.init(0, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(1, 1);
+    replier.init(1, 1, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5343,11 +5343,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(0, 1);
+    requester.init(0, 1, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(1, 0);
+    replier.init(1, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5366,11 +5366,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D0_D0)
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
 
-    requester.init(0, 0);
+    requester.init(0, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(4, 0);
+    replier.init(4, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5391,11 +5391,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D0_D1)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(0, 0);
+    requester.init(0, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(4, 1);
+    replier.init(4, 1, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5412,11 +5412,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P4_D1_D0)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(0, 1);
+    requester.init(0, 1, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(4, 0);
+    replier.init(4, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5435,11 +5435,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D0_D0)
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
 
-    requester.init(4, 0);
+    requester.init(4, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(0, 0);
+    replier.init(0, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5460,11 +5460,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D0_D1)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(4, 0);
+    requester.init(4, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(0, 1);
+    replier.init(0, 1, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5481,11 +5481,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P0_D1_D0)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(4, 1);
+    requester.init(4, 1, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(0, 0);
+    replier.init(0, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5504,11 +5504,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D0_D0)
     TCPReqRepHelloWorldReplier replier;
     const uint16_t nmsgs = 5;
 
-    requester.init(4, 0);
+    requester.init(4, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(5, 0);
+    replier.init(5, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5529,11 +5529,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D0_D1)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(4, 0);
+    requester.init(4, 0, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(5, 1);
+    replier.init(5, 1, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -5550,11 +5550,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P4_P5_D1_D0)
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
 
-    requester.init(4, 1);
+    requester.init(4, 1, global_port);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    replier.init(5, 0);
+    replier.init(5, 0, global_port);
 
     ASSERT_TRUE(replier.isInitialized());
 
