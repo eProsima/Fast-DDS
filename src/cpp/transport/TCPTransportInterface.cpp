@@ -164,7 +164,12 @@ TCPChannelResource* TCPTransportInterface::BindSocket(const Locator_t& locator, 
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (IsLocatorSupported(locator))
     {
-        std::remove(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), pChannelResource);
+        auto it_remove = std::find(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), pChannelResource);
+        if (it_remove != mUnboundChannelResources.end())
+        {
+            mUnboundChannelResources.erase(it_remove);
+        }
+
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
         auto it = mChannelResources.find(physicalLocator);
         if (it == mChannelResources.end())

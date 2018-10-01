@@ -69,7 +69,7 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t 
     pattr.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
 
     // TCP CONNECTION PEER.
-    uint32_t kind = LOCATOR_KIND_TCPv4;
+    //uint32_t kind = LOCATOR_KIND_TCPv4;
 
     pattr.rtps.useBuiltinTransports = false;
 

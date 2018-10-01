@@ -305,7 +305,11 @@ public:
 
     RTPS_DllAPI void erase(const Locator_t& loc)
     {
-        std::remove(m_locators.begin(), m_locators.end(), loc);
+        auto it = std::find(m_locators.begin(), m_locators.end(), loc);
+        if (it != m_locators.end())
+        {
+            m_locators.erase(it);
+        }
     }
 
     RTPS_DllAPI bool contains(const Locator_t& loc)
