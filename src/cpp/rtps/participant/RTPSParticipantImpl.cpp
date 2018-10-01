@@ -129,15 +129,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
-        // TODO: Each registered transport should add as many locators as they want
-        Locator_t mandatoryMulticastLocator;
-        m_network_Factory.fillDefaultMetatrafficMulticastLocator(mandatoryMulticastLocator, metatraffic_multicast_port);
-        m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
+        m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList, 
+            metatraffic_multicast_port);
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
-        Locator_t default_metatraffic_unicast_locator;
-        m_network_Factory.fillDefaultMetatrafficUnicastLocator(default_metatraffic_unicast_locator,
-                                                                metatraffic_unicast_port);
-        m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
+        m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
+            metatraffic_multicast_port);
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
     else

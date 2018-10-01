@@ -192,13 +192,15 @@ void NetworkFactory::GetDefaultOutputLocators(LocatorList_t &defaultLocators)
     }
 }
 
-bool NetworkFactory::fillDefaultMetatrafficMulticastLocator(Locator_t &locator,
+bool NetworkFactory::getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const
 {
-    locator.kind = LOCATOR_KIND_UDPv4;
-    locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    IPLocator::setIPv4(locator, 239, 255, 0, 1);
-    return true;
+    bool result = false;
+    for (auto& transport : mRegisteredTransports)
+    {
+        result |= transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
+    }
+    return result;
 }
 
 bool NetworkFactory::fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const
@@ -214,12 +216,14 @@ bool NetworkFactory::fillMetatrafficMulticastLocator(Locator_t &locator, uint32_
     return result;
 }
 
-bool NetworkFactory::fillDefaultMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
+bool NetworkFactory::getDefaultMetatrafficUnicastLocators(LocatorList_t &locators, uint32_t metatraffic_unicast_port) const
 {
-    locator.kind = LOCATOR_KIND_UDPv4;
-    locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
-    locator.set_Invalid_Address();
-    return true;
+    bool result = false;
+    for (auto& transport : mRegisteredTransports)
+    {
+        result |= transport->getDefaultMetatrafficUnicastLocators(locators, metatraffic_unicast_port);
+    }
+    return result;
 }
 
 bool NetworkFactory::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const

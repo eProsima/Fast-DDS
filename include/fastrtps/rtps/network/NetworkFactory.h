@@ -100,14 +100,14 @@ class NetworkFactory
         void GetDefaultOutputLocators(LocatorList_t &defaultLocators);
 
         /**
-         * Fills the locator with the default metatraffic multicast configuration.
+         * Adds locators to the metatraffic multicast list.
          * */
-        bool fillDefaultMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const;
+        bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators, uint32_t metatraffic_multicast_port) const;
 
         /**
-         * Fills the locator with the default metatraffic unicast configuration.
-         * */
-        bool fillDefaultMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const;
+        * Adds locators to the metatraffic unicast list.
+        * */
+        bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators, uint32_t metatraffic_unicast_port) const;
 
         /**
          * Fills the locator with the metatraffic multicast configuration.

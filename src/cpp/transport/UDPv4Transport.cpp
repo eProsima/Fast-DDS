@@ -104,6 +104,28 @@ UDPv4Transport::~UDPv4Transport()
     Clean();
 }
 
+bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+    uint32_t metatraffic_multicast_port) const
+{
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locators.push_back(locator);
+    return true;
+}
+
+bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+    uint32_t metatraffic_unicast_port) const
+{
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
+    locator.set_Invalid_Address();
+    locators.push_back(locator);
+    return true;
+}
+
 void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
 {
     Locator_t locator;

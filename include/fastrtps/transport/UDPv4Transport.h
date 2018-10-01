@@ -63,6 +63,12 @@ public:
 
     virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) override;
 
+    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+        uint32_t metatraffic_multicast_port) const override;
+
+    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+        uint32_t metatraffic_unicast_port) const override;
+
 protected:
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.

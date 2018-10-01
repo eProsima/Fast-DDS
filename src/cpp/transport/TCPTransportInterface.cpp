@@ -1101,6 +1101,24 @@ void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
     }
 }
 
+bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+    uint32_t metatraffic_multicast_port) const
+{
+    // TCP doesn't have multicast support
+    return true;
+}
+
+bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+    uint32_t metatraffic_unicast_port) const
+{
+    Locator_t locator;
+    locator.kind = mTransportKind;
+    locator.set_Invalid_Address();
+    fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+    locators.push_back(locator);
+    return true;
+}
+
 bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &, uint32_t) const
 {
     // TCP doesn't have multicast support
@@ -1108,7 +1126,7 @@ bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &, uint32_
 }
 
 bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
-        uint32_t metatraffic_unicast_port)
+        uint32_t metatraffic_unicast_port) const
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {

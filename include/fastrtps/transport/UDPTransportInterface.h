@@ -107,7 +107,7 @@ public:
     virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
         uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) override;
+    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const override;
 
     virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
         LocatorList_t& list) const override;

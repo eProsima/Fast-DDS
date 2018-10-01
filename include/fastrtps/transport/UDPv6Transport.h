@@ -61,6 +61,12 @@ public:
 
     TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
 
+    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+        uint32_t metatraffic_multicast_port) const override;
+
+    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+        uint32_t metatraffic_unicast_port) const override;
+
     virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) override;
 
 protected:

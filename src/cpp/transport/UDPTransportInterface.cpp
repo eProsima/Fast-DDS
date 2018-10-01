@@ -643,7 +643,7 @@ bool UDPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &locator,
 }
 
 bool UDPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
-        uint32_t metatraffic_unicast_port)
+        uint32_t metatraffic_unicast_port) const
 {
     if (locator.port == 0)
     {
