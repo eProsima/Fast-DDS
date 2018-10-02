@@ -20,13 +20,15 @@
 #include "VideoTestSubscriber.h"
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
+#include <numeric>
+#include <cmath>
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 
-VideoTestSubscriber::VideoTestSubscriber():
+VideoTestSubscriber::VideoTestSubscriber() :
     mp_participant(nullptr),
     mp_datapub(nullptr),
     mp_commandpub(nullptr),
@@ -41,7 +43,8 @@ VideoTestSubscriber::VideoTestSubscriber():
     m_datapublistener(nullptr),
     m_datasublistener(nullptr),
     m_commandpublistener(nullptr),
-    m_commandsublistener(nullptr)
+    m_commandsublistener(nullptr),
+    g_servertimestamp(0)
 {
     m_datapublistener.mp_up = this;
     m_datasublistener.mp_up = this;
@@ -76,10 +79,7 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
         const std::string& sXMLConfigFile)
 {
-    //ARCE:
     large_data = true;
-    //ARCE:
-
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = nsam;
 
@@ -269,6 +269,7 @@ void VideoTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*pub
     else
     {
         --mp_up->disc_count_;
+        mp_up->m_status = 0;
         mp_up->comm_cond_.notify_one();
     }
 
@@ -288,6 +289,7 @@ void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*s
     else
     {
         --mp_up->disc_count_;
+        mp_up->m_status = 0;
         mp_up->comm_cond_.notify_one();
     }
 
@@ -307,6 +309,7 @@ void VideoTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*
     else
     {
         --mp_up->disc_count_;
+        mp_up->m_status = 0;
         mp_up->comm_cond_.notify_one();
     }
 
@@ -326,6 +329,7 @@ void VideoTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* 
     else
     {
         --mp_up->disc_count_;
+        mp_up->m_status = 0;
         mp_up->comm_cond_.notify_one();
     }
 
@@ -389,7 +393,10 @@ void VideoTestSubscriber::run()
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    while(disc_count_ != 4) disc_cond_.wait(disc_lock);
+    while (disc_count_ != 4)
+    {
+        disc_cond_.wait(disc_lock);
+    }
     disc_lock.unlock();
 
     cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
@@ -415,34 +422,49 @@ void VideoTestSubscriber::gst_run(VideoTestSubscriber* sub)
 bool VideoTestSubscriber::test()
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    if (comm_count_ == 0) comm_cond_.wait(lock);
+    if (comm_count_ == 0)
+    {
+        comm_cond_.wait(lock);
+    }
     --comm_count_;
     lock.unlock();
 
     m_status = 0;
     n_received = 0;
+    times_.clear();
     TestCommandType command;
     command.m_command = BEGIN;
     mp_commandpub->write(&command);
 
-    //lock.lock();
-    //data_cond_.wait(lock, [&]()
-    //{
-    //    return data_count_ > 0;
-    //});
-    //--data_count_;
-    //lock.unlock();
+    lock.lock();
+    data_cond_.wait(lock, [&]()
+    {
+        return data_count_ > 0;
+    });
+    --data_count_;
+    lock.unlock();
 
     cout << "TEST FINISHED" << endl;
     eClock::my_sleep(50);
     size_t removed;
     this->mp_datapub->removeAllChange(&removed);
 
+    analyzeTimes();
+    if (m_stats.size() > 0)
+    {
+        printStat(m_stats.back());
+    }
+
     if (m_status == -1)
     {
         return false;
     }
     return true;
+}
+
+void VideoTestSubscriber::fps_stats_cb(GstElement* /*source*/, gdouble fps, gdouble droprate, gdouble avgfps, VideoTestSubscriber* /*sub*/)
+{
+    //std::cout << "stats: avg:" << std::to_string(fps) << " rate: " << std::to_string(droprate) << " drop: " << std::to_string(avgfps) << std::endl;
 }
 
 void VideoTestSubscriber::InitGStreamer()
@@ -459,6 +481,8 @@ void VideoTestSubscriber::InitGStreamer()
         ok = (appsrc != nullptr);
         if (ok)
         {
+            g_object_set(appsrc, "is-live", TRUE, NULL);
+            g_object_set(appsrc, "do-timestamp", TRUE, NULL);
             g_signal_connect(appsrc, "need-data", G_CALLBACK(start_feed_cb), this);
             g_signal_connect(appsrc, "enough-data", G_CALLBACK(stop_feed_cb), this);
 
@@ -466,16 +490,19 @@ void VideoTestSubscriber::InitGStreamer()
             ok = (videoconvert != nullptr);
             if (ok)
             {
-                sink = gst_element_factory_make("autovideosink", "sink"); //
+                g_object_set(videoconvert, "qos", TRUE, NULL);
+                sink = gst_element_factory_make("fpsdisplaysink", "sink"); //fpsdisplaysink autovideosink
                 ok = (sink != nullptr);
                 if (ok)
                 {
+                    g_object_set(sink, "signal-fps-measurements", TRUE, NULL);
+                    g_signal_connect(G_OBJECT(sink), "fps-measurements", (GCallback)fps_stats_cb, this);
                     GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
                         "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320, NULL);
                     gst_app_src_set_caps(GST_APP_SRC(appsrc), caps);
                     gst_caps_unref(caps);
 
-                    gst_bin_add_many(GST_BIN(pipeline), appsrc, /*decodebin, */videoconvert, sink, NULL);
+                    gst_bin_add_many(GST_BIN(pipeline), appsrc, videoconvert, sink, NULL);
 
                     caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
                         "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320, NULL);
@@ -485,6 +512,11 @@ void VideoTestSubscriber::InitGStreamer()
                     ok = gst_element_link_many(videoconvert, sink, NULL) == TRUE;
                     if (ok)
                     {
+                        GstBus* bus = gst_element_get_bus(pipeline);
+                        gst_bus_add_signal_watch(bus);
+                        g_signal_connect(G_OBJECT(bus), "message", (GCallback)message_cb, this);
+                        gst_object_unref(bus);
+
                         gst_element_set_state(pipeline, GST_STATE_PLAYING);
                         thread_ = std::thread(VideoTestSubscriber::gst_run, this);
                     }
@@ -549,6 +581,10 @@ gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
         while (chunk_size && sub->hasData())
         {
             VideoType& vpacket = sub->pop_video_packet();
+            sub->g_servertimestamp += vpacket.duration;
+            GST_BUFFER_PTS(buffer) = sub->g_servertimestamp;
+            GST_BUFFER_DURATION(buffer) = vpacket.duration;
+
             gsize size = vpacket.data.size();
             memmove(pos, vpacket.data.data(), size);
             pos += size;
@@ -578,4 +614,132 @@ void VideoTestSubscriber::stop()
 {
     m_bRunning = false;
     gst_element_set_state(pipeline, GST_STATE_NULL);
+}
+
+void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpointer /*user_data*/)
+{
+    //GMainLoop* loop = ((GstSink*)user_data)->gmain_loop_;
+    GError* err = nullptr;
+    gchar* debug_info = nullptr;
+
+    //std::cout << "MESSAGE TYPE : " << (uint32_t)GST_MESSAGE_TYPE(message) << std::endl;
+    switch (GST_MESSAGE_TYPE(message))
+    {
+        case GST_MESSAGE_ERROR:
+        {
+            gst_message_parse_error(message, &err, &debug_info);
+
+            printf("# GST INTERNAL # Error received from element: %s; message: %s\n", GST_OBJECT_NAME(message->src), err->message);
+            printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
+
+            g_clear_error(&err);
+            if (err) g_error_free(err);
+            if (debug_info) g_free(debug_info);
+
+            //if (loop) g_main_loop_quit(loop);
+        }
+        break;
+        case GST_MESSAGE_WARNING:
+        {
+            gst_message_parse_warning(message, &err, &debug_info);
+
+            printf("# GST INTERNAL # Warning received from element: %s; message: %s\n", GST_OBJECT_NAME(message->src), err->message);
+            printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
+
+            g_clear_error(&err);
+            if (err) g_error_free(err);
+            if (debug_info) g_free(debug_info);
+        }
+        break;
+        case GST_MESSAGE_INFO:
+        {
+            gst_message_parse_info(message, &err, &debug_info);
+
+            printf("# GST INTERNAL # Info received from element: %s; message: %s\n", GST_OBJECT_NAME(message->src), err->message);
+            printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
+
+            g_clear_error(&err);
+            g_error_free(err);
+            g_free(debug_info);
+        }
+        break;
+        case GST_MESSAGE_EOS:
+        {
+            printf("# GST INTERNAL # Got EOS\n");
+            //if (loop) g_main_loop_quit(loop);
+        }
+        break;
+
+        default:
+
+            break;
+    }
+}
+
+void VideoTestSubscriber::analyzeTimes()
+{
+    if (times_.size() > 0)
+    {
+        TimeStats TS;
+        TS.nbytes = 0;
+        TS.received = n_received;
+        TS.m_min = *std::min_element(times_.begin(), times_.end());
+        TS.m_max = *std::max_element(times_.begin(), times_.end());
+        TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size();
+
+        double auxstdev = 0;
+        for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
+        {
+            auxstdev += pow(((*tit).count() - TS.mean), 2);
+        }
+        auxstdev = sqrt(auxstdev / times_.size());
+        TS.stdev = static_cast<double>(round(auxstdev));
+
+        std::sort(times_.begin(), times_.end());
+        size_t elem = 0;
+
+        elem = static_cast<size_t>(times_.size() * 0.5);
+        if (elem > 0 && elem <= times_.size())
+            TS.p50 = times_.at(--elem).count();
+        else
+            TS.p50 = NAN;
+
+        elem = static_cast<size_t>(times_.size() * 0.9);
+        if (elem > 0 && elem <= times_.size())
+            TS.p90 = times_.at(--elem).count();
+        else
+            TS.p90 = NAN;
+
+        elem = static_cast<size_t>(times_.size() * 0.99);
+        if (elem > 0 && elem <= times_.size())
+            TS.p99 = times_.at(--elem).count();
+        else
+            TS.p99 = NAN;
+
+        elem = static_cast<size_t>(times_.size() * 0.9999);
+        if (elem > 0 && elem <= times_.size())
+            TS.p9999 = times_.at(--elem).count();
+        else
+            TS.p9999 = NAN;
+
+        m_stats.push_back(TS);
+    }
+}
+
+
+void VideoTestSubscriber::printStat(TimeStats& TS)
+{
+#ifdef _WIN32
+    printf("%8I64u,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
+        TS.nbytes, TS.received, TS.stdev, TS.mean,
+        TS.m_min.count(),
+        TS.p50, TS.p90, TS.p99, TS.p9999,
+        TS.m_max.count());
+#else
+    printf("%8" PRIu64 ",%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
+        TS.nbytes, TS.received, TS.stdev, TS.mean,
+        TS.m_min.count(),
+        TS.p50, TS.p90, TS.p99, TS.p9999,
+        TS.m_max.count());
+#endif
 }

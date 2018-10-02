@@ -30,16 +30,6 @@
 #include <condition_variable>
 #include <chrono>
 
-class TimeStats{
-public:
-    TimeStats() :nbytes(0), received(0), m_min(0), m_max(0), p50(0), p90(0), p99(0), p9999(0), mean(0), stdev(0){}
-    ~TimeStats(){}
-    uint64_t nbytes;
-    unsigned int received;
-    std::chrono::duration<double, std::micro>  m_min, m_max;
-    double p50, p90, p99, p9999, mean, stdev;
-};
-
 class VideoTestPublisher
 {
     public:
@@ -57,8 +47,6 @@ class VideoTestPublisher
         int n_subscribers;
         unsigned int n_samples;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
-        std::vector<std::chrono::duration<double, std::micro>> times_;
-        std::vector<TimeStats> m_stats;
         std::mutex mutex_;
         int disc_count_;
         std::condition_variable disc_cond_;
@@ -73,9 +61,7 @@ class VideoTestPublisher
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
                 const std::string& sXMLConfigFile);
         void run();
-        void analyzeTimes(uint32_t datasize);
         bool test(uint32_t datasize);
-        void printStat(TimeStats& TS);
 
         class DataPubListener : public eprosima::fastrtps::PublisherListener
         {
@@ -130,6 +116,7 @@ class VideoTestPublisher
 
         GstElement* pipeline;
         GstElement* filesrc;
+        GstElement* videorate;
         GstElement* sink;
 
     protected:

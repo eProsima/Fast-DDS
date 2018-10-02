@@ -22,17 +22,18 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-bool VideoDataType::serialize(void*data,SerializedPayload_t* payload)
+bool VideoDataType::serialize(void*data, SerializedPayload_t* payload)
 {
     VideoType* lt = (VideoType*)data;
 
 
     *(uint32_t*)payload->data = lt->seqnum;
-    *(uint32_t*)(payload->data+4) = (uint32_t)lt->data.size();
+    *(uint32_t*)(payload->data + 4) = lt->timestamp;
+    *(uint32_t*)(payload->data + 12) = lt->duration;
+    *(uint32_t*)(payload->data + 20) = (uint32_t)lt->data.size();
+    memcpy(payload->data + 24, lt->data.data(), lt->data.size());
 
-    //std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
-    memcpy(payload->data + 8, lt->data.data(), lt->data.size());
-    payload->length = (uint32_t)(8+lt->data.size());
+    payload->length = (uint32_t)(24 + lt->data.size());
     return true;
 }
 
@@ -40,9 +41,11 @@ bool VideoDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
     VideoType* lt = (VideoType*)data;
     lt->seqnum = *(uint32_t*)payload->data;
-    uint32_t siz = *(uint32_t*)(payload->data+4);
+    lt->timestamp = *(uint32_t*)(payload->data + 4);
+    lt->duration = *(uint32_t*)(payload->data + 12);
+    uint32_t siz = *(uint32_t*)(payload->data + 20);
     lt->data.resize(siz + 1);
-    std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
+    std::copy(payload->data+24,payload->data+24+siz,lt->data.begin());
     return true;
 }
 
@@ -53,7 +56,7 @@ std::function<uint32_t()> VideoDataType::getSerializedSizeProvider(void* data)
         VideoType *tdata = static_cast<VideoType*>(data);
         uint32_t size = 0;
 
-        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size());
+        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint32_t) + tdata->data.size());
 
         return size;
     };
@@ -102,11 +105,9 @@ std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(void*)
 
 void* TestCommandDataType::createData()
 {
-
     return (void*)new TestCommandType();
 }
 void TestCommandDataType::deleteData(void* data)
 {
-
     delete((TestCommandType*)data);
 }
