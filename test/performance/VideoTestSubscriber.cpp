@@ -27,24 +27,23 @@ using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-
-VideoTestSubscriber::VideoTestSubscriber() :
-    mp_participant(nullptr),
-    mp_datapub(nullptr),
-    mp_commandpub(nullptr),
-    mp_datasub(nullptr),
-    mp_commandsub(nullptr),
-    disc_count_(0),
-    comm_count_(0),
-    data_count_(0),
-    m_status(0),
-    n_received(0),
-    n_samples(0),
-    m_datapublistener(nullptr),
-    m_datasublistener(nullptr),
-    m_commandpublistener(nullptr),
-    m_commandsublistener(nullptr),
-    g_servertimestamp(0)
+VideoTestSubscriber::VideoTestSubscriber()
+    : mp_participant(nullptr)
+    , mp_datapub(nullptr)
+    , mp_commandpub(nullptr)
+    , mp_datasub(nullptr)
+    , mp_commandsub(nullptr)
+    , disc_count_(0)
+    , comm_count_(0)
+    , data_count_(0)
+    , m_status(0)
+    , n_received(0)
+    , n_samples(0)
+    , m_datapublistener(nullptr)
+    , m_datasublistener(nullptr)
+    , m_commandpublistener(nullptr)
+    , m_commandsublistener(nullptr)
+    , g_servertimestamp(0)
 {
     m_datapublistener.mp_up = this;
     m_datasublistener.mp_up = this;
@@ -255,8 +254,6 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     return true;
 }
 
-
-
 void VideoTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
@@ -373,7 +370,6 @@ void VideoTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subsc
             std::cout << "Something is wrong" << std::endl;
         }
     }
-    //cout << "SAMPLE INFO: "<< mp_up->m_sampleinfo.writerGUID << mp_up->m_sampleinfo.sampleKind << endl;
 }
 
 void VideoTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
@@ -382,7 +378,6 @@ void VideoTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscrib
     eprosima::fastrtps::SampleInfo_t info;
     subscriber->takeNextData((void*)&videoData, &info);
     {
-        //std::cout << "NEW SAMPLE RECEIVED: " << videoData.seqnum << std::endl;
         mp_up->push_video_packet(videoData);
     }
 }
@@ -485,31 +480,27 @@ void VideoTestSubscriber::InitGStreamer()
             g_object_set(appsrc, "do-timestamp", TRUE, NULL);
             g_signal_connect(appsrc, "need-data", G_CALLBACK(start_feed_cb), this);
             g_signal_connect(appsrc, "enough-data", G_CALLBACK(stop_feed_cb), this);
+            GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
+                "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320, NULL);
+            gst_app_src_set_caps(GST_APP_SRC(appsrc), caps);
+            gst_caps_unref(caps);
 
             videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
             ok = (videoconvert != nullptr);
             if (ok)
             {
                 g_object_set(videoconvert, "qos", TRUE, NULL);
+
                 sink = gst_element_factory_make("fpsdisplaysink", "sink"); //fpsdisplaysink autovideosink
                 ok = (sink != nullptr);
                 if (ok)
                 {
+                    g_object_set(sink, "text-overlay", FALSE, NULL);
                     g_object_set(sink, "signal-fps-measurements", TRUE, NULL);
                     g_signal_connect(G_OBJECT(sink), "fps-measurements", (GCallback)fps_stats_cb, this);
-                    GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                        "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320, NULL);
-                    gst_app_src_set_caps(GST_APP_SRC(appsrc), caps);
-                    gst_caps_unref(caps);
 
                     gst_bin_add_many(GST_BIN(pipeline), appsrc, videoconvert, sink, NULL);
-
-                    caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                        "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320, NULL);
-                    ok = gst_element_link_filtered(appsrc, videoconvert, caps) == TRUE;
-                    gst_caps_unref(caps);
-
-                    ok = gst_element_link_many(videoconvert, sink, NULL) == TRUE;
+                    ok = gst_element_link_many(appsrc, videoconvert, sink, NULL) == TRUE;
                     if (ok)
                     {
                         GstBus* bus = gst_element_get_bus(pipeline);
@@ -618,11 +609,8 @@ void VideoTestSubscriber::stop()
 
 void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpointer /*user_data*/)
 {
-    //GMainLoop* loop = ((GstSink*)user_data)->gmain_loop_;
     GError* err = nullptr;
     gchar* debug_info = nullptr;
-
-    //std::cout << "MESSAGE TYPE : " << (uint32_t)GST_MESSAGE_TYPE(message) << std::endl;
     switch (GST_MESSAGE_TYPE(message))
     {
         case GST_MESSAGE_ERROR:
@@ -669,9 +657,7 @@ void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpoin
             //if (loop) g_main_loop_quit(loop);
         }
         break;
-
         default:
-
             break;
     }
 }
