@@ -117,7 +117,8 @@ enum  optionIndex {
     USE_SECURITY,
     CERTS_PATH,
     LARGE_DATA,
-    XML_FILE
+    XML_FILE,
+    TEST_TIME
 };
 
 const option::Descriptor usage[] = {
@@ -138,6 +139,7 @@ const option::Descriptor usage[] = {
 #endif
     { LARGE_DATA, 0, "l", "large",      Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",           Arg::String,    "\t--xml \tXML Configuration file." },
+    { TEST_TIME, 0, "", "testtime",           Arg::String,    "\t--testtime \tTest duration time." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -165,6 +167,7 @@ int main(int argc, char** argv)
 
     bool pub_sub = false;
     int sub_number = 1;
+    int test_time = 100;
     int n_samples = c_n_samples;
 #if HAVE_SECURITY
     bool use_security = false;
@@ -290,6 +293,10 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
+            case TEST_TIME:
+                test_time = strtol(opt.arg, nullptr, 10);
+                break;
+
 
 #if HAVE_SECURITY
             case USE_SECURITY:
@@ -376,7 +383,7 @@ int main(int argc, char** argv)
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         VideoTestPublisher pub;
         pub.init(sub_number, n_samples, reliable, seed, hostname, pub_part_property_policy,
-            pub_property_policy, large_data, sXMLConfigFile);
+            pub_property_policy, large_data, sXMLConfigFile, test_time);
         pub.run();
     }
     else

@@ -42,8 +42,7 @@ class VideoTestPublisher
         eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
         VideoType* mp_video_out;
-        std::chrono::steady_clock::time_point t_start_, t_end_;
-        std::chrono::duration<double, std::micro> t_overhead_;
+        std::chrono::steady_clock::time_point t_start_;
         int n_subscribers;
         unsigned int n_samples;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
@@ -59,7 +58,7 @@ class VideoTestPublisher
         bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile);
+                const std::string& sXMLConfigFile, int test_time);
         void run();
         bool test(uint32_t datasize);
 
@@ -109,7 +108,7 @@ class VideoTestPublisher
                 int n_matched;
         } m_commandsublistener;
 
-        VideoDataType latency_t;
+        VideoDataType video_t;
         TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
         bool reliable_;
@@ -118,6 +117,7 @@ class VideoTestPublisher
         GstElement* filesrc;
         GstElement* videorate;
         GstElement* sink;
+        int m_testTime;
 
     protected:
 
