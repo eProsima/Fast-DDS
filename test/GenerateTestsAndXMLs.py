@@ -745,7 +745,7 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 											sub_filename = "'" + output_folder + "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(sub_reliabilily_id) + ".xml'"
 
 											print("writeTestTitle(sys.argv[1] + \"" + pub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename + "\")", file=pub_test_file)
-											print("os.system(sys.argv[1] + \"" + test + " publisher --xml " + pub_filename + " 2>&1 | tee \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
+											print("os.system(sys.argv[1] + \"" + test + " publisher --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
 
 											print("writeTestTitle(sys.argv[1] + \"" + sub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename +  "\")", file=sub_test_file)
-											print("os.system(sys.argv[1] + \"" + test + " subscriber --xml " + sub_filename + " 2>&1 | tee \" + sys.argv[1] + \"" + sub_log_filename + "\")", file=sub_test_file)
+											print("os.system(sys.argv[1] + \"" + test + " subscriber --xml " + sub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \" " + sub_log_filename + "\")", file=sub_test_file)
