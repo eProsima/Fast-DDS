@@ -4,23 +4,33 @@ import sys, os
 
 user = ""
 password = ""
+folder = ""
 
 def writeTest(filename, text):
-	with open(filename, "a") as myfile:
-		myfile.write(text + "\n")
+        with open(filename, "a") as myfile:
+                myfile.write(text + "\n")
 
-if len(sys.argv) <= 3:
-	if len(sys.argv) == 2:
-		folder = sys.argv[1]
-	else:
-		print("Error")
-		sys.exit(-1)
-else:
-	user = sys.argv[1]
-	password = sys.argv[2]
-	folder = sys.argv[3]
-	os.system("mkdir -p /mnt/jenkins")
-	os.system("mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
+if len(sys.argv) == 1:
+    folder = os.getcwd()
+
+if len(sys.argv) == 2:
+    folder = os.path.abspath(sys.argv[1])
+
+if len(sys.argv) == 4:
+    user = sys.argv[1]
+    password = sys.argv[2]
+    folder = os.path.abspath(sys.argv[3])
+    if not os.path.ismount("/mnt/jenkins"):
+        os.system("mkdir -p /mnt/jenkins")
+        os.system("mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
+        print("/mnt/jenkins mounted")
+    else:
+        print("/mnt/jenkins is already mounted")
+
+if not folder:
+    print("Error")
+    sys.exit(-1)
+
 
 writeTest("/mnt/jenkins/sub.log", "Start Subscriber Tests")
 writeTest("/mnt/jenkins/sub.log", "Arguments:")
