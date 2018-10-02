@@ -36,7 +36,6 @@ VideoTestPublisher::VideoTestPublisher():
     mp_datasub(nullptr),
     mp_commandsub(nullptr),
     mp_video_out(nullptr),
-    t_overhead_(0.0),
     n_subscribers(0),
     n_samples(0),
     disc_count_(0),
@@ -68,9 +67,10 @@ VideoTestPublisher::~VideoTestPublisher()
 
 bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile)
+        const std::string& sXMLConfigFile, int test_time)
 {
     large_data = true;
+    m_testTime = test_time;
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = n_sam;
     n_subscribers = n_sub;
@@ -90,7 +90,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
         }
 
         // Register the type
-        Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        Domain::registerType(mp_participant, (TopicDataType*)&video_t);
         Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
         // Create Sending Publisher
@@ -147,7 +147,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
             return false;
         }
 
-        Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        Domain::registerType(mp_participant, (TopicDataType*)&video_t);
         Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
         // DATA PUBLISHER
@@ -245,13 +245,6 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
         if (mp_commandsub == nullptr)
             return false;
     }
-
-    // Calculate overhead
-    t_start_ = std::chrono::steady_clock::now();
-    for (int i = 0; i < 1000; ++i)
-        t_end_ = std::chrono::steady_clock::now();
-    t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
-    cout << "Overhead " << t_overhead_.count() << " ns" << endl;
 
     return true;
 }
@@ -409,8 +402,10 @@ void VideoTestPublisher::run()
     Domain::removeSubscriber(mp_commandsub);
 
     std::string str_reliable = "besteffort";
-    if(reliable_)
+    if (reliable_)
+    {
         str_reliable = "reliable";
+    }
 }
 
 bool VideoTestPublisher::test(uint32_t datasize)
@@ -444,7 +439,7 @@ bool VideoTestPublisher::test(uint32_t datasize)
     {
         send_end = std::chrono::steady_clock::now();
     }
-    while (std::chrono::duration<double, std::deci>(send_end - send_start_).count() < 300); //ARCE
+    while (std::chrono::duration<double, std::deci>(send_end - send_start_).count() < m_testTime);
 
     gst_element_set_state(pipeline, GST_STATE_PAUSED);
 
