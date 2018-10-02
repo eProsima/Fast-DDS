@@ -28,8 +28,8 @@ bool VideoDataType::serialize(void*data, SerializedPayload_t* payload)
 
 
     *(uint32_t*)payload->data = lt->seqnum;
-    *(uint32_t*)(payload->data + 4) = lt->timestamp;
-    *(uint32_t*)(payload->data + 12) = lt->duration;
+    *(uint64_t*)(payload->data + 4) = lt->timestamp;
+    *(uint64_t*)(payload->data + 12) = lt->duration;
     *(uint32_t*)(payload->data + 20) = (uint32_t)lt->data.size();
     memcpy(payload->data + 24, lt->data.data(), lt->data.size());
 
@@ -41,8 +41,8 @@ bool VideoDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
     VideoType* lt = (VideoType*)data;
     lt->seqnum = *(uint32_t*)payload->data;
-    lt->timestamp = *(uint32_t*)(payload->data + 4);
-    lt->duration = *(uint32_t*)(payload->data + 12);
+    lt->timestamp = *(uint64_t*)(payload->data + 4);
+    lt->duration = *(uint64_t*)(payload->data + 12);
     uint32_t siz = *(uint32_t*)(payload->data + 20);
     lt->data.resize(siz + 1);
     std::copy(payload->data+24,payload->data+24+siz,lt->data.begin());
