@@ -27,12 +27,15 @@ class VideoType
     public:
 
         uint32_t seqnum;
+        uint64_t timestamp;
+        uint64_t duration;
         std::vector<uint8_t> data;
 
-        VideoType(): seqnum(0) {}
+        VideoType(): seqnum(0), timestamp(0), duration(0)
+        {}
 
         VideoType(uint32_t number) :
-            seqnum(0), data(number, 0)
+            seqnum(0), timestamp(0), duration(0), data(number, 0)
         {
         }
 
@@ -42,8 +45,13 @@ class VideoType
 
 inline bool operator==(const VideoType& lt1, const VideoType& lt2)
 {
-    if(lt1.seqnum!=lt2.seqnum)
+    if (lt1.seqnum != lt2.seqnum)
         return false;
+    if (lt1.timestamp != lt2.timestamp)
+        return false;
+    if (lt1.duration != lt2.duration)
+        return false;
+
     if(lt1.data.size()!=lt2.data.size())
         return false;
     for(size_t i = 0;i<lt1.data.size();++i)

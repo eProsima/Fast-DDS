@@ -27,6 +27,21 @@
 #include <gstreamer-1.0/gst/app/gstappsink.h>
 #include <gstreamer-1.0/gst/gst.h>
 
+class TimeStats
+{
+public:
+    TimeStats() :nbytes(0), received(0), m_min(0), m_max(0), p50(0), p90(0), p99(0), p9999(0), mean(0), stdev(0)
+    {
+    }
+    ~TimeStats()
+    {
+    }
+    uint64_t nbytes;
+    unsigned int received;
+    std::chrono::duration<double, std::micro>  m_min, m_max;
+    double p50, p90, p99, p9999, mean, stdev;
+};
+
 class VideoTestSubscriber
 {
     public:
@@ -110,20 +125,26 @@ class VideoTestSubscriber
         GstElement* videoconvert;
         guint source_id_;      // To control the GSource
         GMainLoop* gmain_loop_; // GLib's Main Loop
+        guint64 g_servertimestamp;
 
         std::thread thread_;
         std::deque<VideoType> packet_deque_;
         std::mutex deque_mutex_;
         std::mutex gst_mutex_;
 
+        std::vector<std::chrono::duration<double, std::micro>> times_;
+        std::vector<TimeStats> m_stats;
+
 protected:
 
     static void start_feed_cb(GstElement* source, guint size, VideoTestSubscriber* sub);
     static void stop_feed_cb(GstElement* source, VideoTestSubscriber* sub);
     static gboolean push_data_cb(VideoTestSubscriber* sub);
-
+    static void fps_stats_cb(GstElement* source, gdouble fps, gdouble droprate, gdouble avgfps, VideoTestSubscriber* sub);
     void InitGStreamer();
     void stop();
+    void analyzeTimes();
+    void printStat(TimeStats& TS);
 
     void push_video_packet(VideoType& packet)
     {
@@ -161,6 +182,7 @@ protected:
     }
 
     static void gst_run(VideoTestSubscriber* sub);
+    static void message_cb(GstBus* bus, GstMessage* message, gpointer user_data);
 };
 
 #endif /* VIDEOTESTSUBSCRIBER_H_ */

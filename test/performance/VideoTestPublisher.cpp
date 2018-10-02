@@ -20,8 +20,6 @@
 #include "VideoTestPublisher.h"
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
-#include <numeric>
-#include <cmath>
 #include <fstream>
 #include <inttypes.h>
 
@@ -60,6 +58,7 @@ VideoTestPublisher::VideoTestPublisher():
 VideoTestPublisher::~VideoTestPublisher()
 {
     if (sink)   gst_object_unref(GST_OBJECT(sink)), sink = nullptr;
+    if (videorate)   gst_object_unref(GST_OBJECT(videorate)), videorate = nullptr;
     if (filesrc)   gst_object_unref(GST_OBJECT(filesrc)), filesrc = nullptr;
     if (pipeline)   gst_object_unref(GST_OBJECT(pipeline)), pipeline = nullptr;
 
@@ -71,10 +70,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
         const std::string& sXMLConfigFile)
 {
-    //ARCE:
     large_data = true;
-    //ARCE:
-
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = n_sam;
     n_subscribers = n_sub;
@@ -405,16 +401,7 @@ void VideoTestPublisher::run()
 
     cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
 
-    mp_video_out = new VideoType();
-    gst_element_set_state(pipeline, GST_STATE_PLAYING);
-
-    std::chrono::steady_clock::time_point send_start_ = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point send_end = send_start_;
-    do
-    {
-        send_end = std::chrono::steady_clock::now();
-    }
-    while (std::chrono::duration<double, std::deci>(send_end - send_start_).count() < 50); //ARCE
+    this->test(0);
 
     cout << "REMOVING PUBLISHER"<<endl;
     Domain::removePublisher(this->mp_commandpub);
@@ -432,36 +419,34 @@ bool VideoTestPublisher::test(uint32_t datasize)
     m_status = 0;
     n_received = 0;
     mp_video_out = new VideoType(datasize);
-    times_.clear();
+
     TestCommandType command;
     command.m_command = READY;
     mp_commandpub->write(&command);
 
     //cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
     std::unique_lock<std::mutex> lock(mutex_);
-    while(comm_count_ != n_subscribers) comm_cond_.wait(lock);
+    while (comm_count_ != n_subscribers)
+    {
+        comm_cond_.wait(lock);
+    }
     --comm_count_;
     lock.unlock();
     //cout << endl;
     //BEGIN THE TEST:
 
-    //for(unsigned int count = 1; count <= n_samples; ++count)
-    //{
-    //    mp_video_in->seqnum = 0;
-    //    mp_video_out->seqnum = count;
+    mp_video_out = new VideoType();
+    gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
-    //    t_start_ = std::chrono::steady_clock::now();
-    //    mp_datapub->write((void*)mp_video_out);
+    std::chrono::steady_clock::time_point send_start_ = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point send_end = send_start_;
+    do
+    {
+        send_end = std::chrono::steady_clock::now();
+    }
+    while (std::chrono::duration<double, std::deci>(send_end - send_start_).count() < 300); //ARCE
 
-    //    lock.lock();
-    //    data_cond_.wait_for(lock, std::chrono::seconds(1), [&]() { return data_count_ > 0; });
-
-    //    if(data_count_ > 0)
-    //    {
-    //        --data_count_;
-    //    }
-    //    lock.unlock();
-    //}
+    gst_element_set_state(pipeline, GST_STATE_PAUSED);
 
     command.m_command = STOP;
     mp_commandpub->write(&command);
@@ -475,77 +460,9 @@ bool VideoTestPublisher::test(uint32_t datasize)
     size_t removed=0;
     mp_datapub->removeAllChange(&removed);
     //cout << "   REMOVED: "<< removed<<endl;
-    analyzeTimes(datasize);
-    printStat(m_stats.back());
-
     delete(mp_video_out);
 
     return true;
-}
-
-void VideoTestPublisher::analyzeTimes(uint32_t datasize)
-{
-    TimeStats TS;
-    TS.nbytes = datasize+4;
-    TS.received = n_received;
-    TS.m_min = *std::min_element(times_.begin(), times_.end());
-    TS.m_max = *std::max_element(times_.begin(), times_.end());
-    TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size();
-
-    double auxstdev=0;
-    for(std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
-    {
-        auxstdev += pow(((*tit).count() - TS.mean), 2);
-    }
-    auxstdev = sqrt(auxstdev / times_.size());
-    TS.stdev = static_cast<double>(round(auxstdev));
-
-    std::sort(times_.begin(), times_.end());
-    size_t elem = 0;
-
-    elem = static_cast<size_t>(times_.size() * 0.5);
-    if(elem > 0 && elem <= times_.size())
-        TS.p50 = times_.at(--elem).count();
-    else
-        TS.p50 = NAN;
-
-    elem = static_cast<size_t>(times_.size() * 0.9);
-    if(elem > 0 && elem <= times_.size())
-        TS.p90 = times_.at(--elem).count();
-    else
-        TS.p90 = NAN;
-
-    elem = static_cast<size_t>(times_.size() * 0.99);
-    if(elem > 0 && elem <= times_.size())
-        TS.p99 = times_.at(--elem).count();
-    else
-        TS.p99 = NAN;
-
-    elem = static_cast<size_t>(times_.size() * 0.9999);
-    if(elem > 0 && elem <= times_.size())
-        TS.p9999 = times_.at(--elem).count();
-    else
-        TS.p9999 = NAN;
-
-    m_stats.push_back(TS);
-}
-
-
-void VideoTestPublisher::printStat(TimeStats& TS)
-{
-#ifdef _WIN32
-    printf("%8I64u,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
-        TS.nbytes, TS.received, TS.stdev, TS.mean,
-        TS.m_min.count(),
-        TS.p50, TS.p90, TS.p99, TS.p9999,
-        TS.m_max.count());
-#else
-    printf("%8" PRIu64 ",%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
-        TS.nbytes, TS.received, TS.stdev, TS.mean,
-        TS.m_min.count(),
-        TS.p50, TS.p90, TS.p99, TS.p9999,
-        TS.m_max.count());
-#endif
 }
 
 void VideoTestPublisher::InitGStreamer()
@@ -562,23 +479,31 @@ void VideoTestPublisher::InitGStreamer()
         ok = (filesrc != nullptr);
         if (ok)
         {
-            sink = gst_element_factory_make("appsink", "sink"); //autovideosink
-            ok = (sink != nullptr);
+            g_object_set(filesrc, "is-live", TRUE, NULL);
+
+            videorate = gst_element_factory_make("videorate", "rate"); //autovideosink
+            ok = (videorate != nullptr);
             if (ok)
             {
-                g_object_set(sink, "emit-signals", TRUE, NULL); // "caps", audio_caps,
-                g_signal_connect(sink, "new-sample", G_CALLBACK(new_sample), this);
-                //gst_caps_unref(audio_caps);
-
-                GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                    "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320, NULL);
-
-                // Link the camera source and colorspace filter using capabilities specified
-                gst_bin_add_many(GST_BIN(pipeline), filesrc, sink, NULL);
-                ok = gst_element_link_filtered(filesrc, sink, caps) == TRUE;
-                gst_caps_unref(caps);
+                sink = gst_element_factory_make("appsink", "sink"); //autovideosink appsink fpsdisplaysink
+                ok = (sink != nullptr);
                 if (ok)
                 {
+                    g_object_set(sink, "emit-signals", TRUE, NULL);
+                    g_signal_connect(sink, "new-sample", G_CALLBACK(new_sample), this);
+
+                    GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
+                        "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320/*, "framerate", G_TYPE_STRING, "25/1"*/, NULL);
+
+                    // Link the camera source and colorspace filter using capabilities specified
+                    gst_bin_add_many(GST_BIN(pipeline), filesrc, videorate, sink, NULL);
+                    //ok = gst_element_link_filtered(filesrc, sink, caps) == TRUE;
+                    ok = gst_element_link_filtered(filesrc, videorate, caps) == TRUE;
+                    ok = gst_element_link_filtered(videorate, sink, caps) == TRUE;
+                    gst_caps_unref(caps);
+                    if (ok)
+                    {
+                    }
                 }
             }
         }
@@ -590,22 +515,31 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
 {
     if (sub->mp_video_out != nullptr)
     {
+        //ARCE: eClock::my_sleep(rand() % 500);
         GstSample* sample = gst_app_sink_pull_sample(GST_APP_SINK(sink));
         if (sample)
         {
             GstBuffer* buffer = gst_sample_get_buffer(sample);
             if (buffer != nullptr)
             {
+                GstClockTime timestamp = GST_BUFFER_PTS(buffer);
+                GstClockTime duration = GST_BUFFER_DURATION(buffer);
                 GstMapInfo map;
                 if (gst_buffer_map(buffer, &map, GST_MAP_READ))
                 {
                     sub->mp_video_out->seqnum++;
+                    sub->mp_video_out->duration = duration;
+                    sub->mp_video_out->timestamp = timestamp;
 
                     //std::cout << "NEW SAMPLE " << sub->mp_video_out->seqnum << std::endl;
 
                     sub->mp_video_out->data.assign(map.data, map.data + map.size);
                     sub->t_start_ = std::chrono::steady_clock::now();
-                    sub->mp_datapub->write((void*)sub->mp_video_out);
+
+                    if (rand() % 100 > 20)
+                    {
+                        sub->mp_datapub->write((void*)sub->mp_video_out);
+                    }
                     gst_buffer_unmap(buffer, &map);
                 }
             }
