@@ -19,8 +19,6 @@ else:
 	user = sys.argv[1]
 	password = sys.argv[2]
 	folder = sys.argv[3]
-
-if len(sys.argv) == 4:
 	os.system("mkdir -p /mnt/jenkins")
 	os.system("mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
 

@@ -25,7 +25,7 @@ else:
 #### GENERATE LATENCY TESTS
 filename = ""
 test = tests_list[0]
-test_config = configs_list[0];
+test_config = configs_list[0]
 for history_id, history in enumerate(test_config[0]):
 	for durability_id, durability in enumerate(test_config[1]):
 		for reliabilily_id, reliabilily in enumerate(test_config[2]):
