@@ -15,7 +15,7 @@ item_type = ["Publisher", "Subscriber"]
 # Create or clean the output folder
 if not os.path.exists("./xml"):
     os.makedirs("./xml")
-else:	
+else:
 	files = glob.glob('./xml/*')
 	for f in files:
 		os.remove(f)
@@ -31,11 +31,11 @@ for history_id, history in enumerate(test_config[0]):
 		for reliabilily_id, reliabilily in enumerate(test_config[2]):
 			for publish_id, publish in enumerate(test_config[3]):
 				for item in item_type:
-					if item == "Publisher": 
+					if item == "Publisher":
 						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + "_" + str(publish_id) + ".xml"
 					else:
 						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + ".xml"
-						
+
 					with open(filename, "w") as text_file:
 						print("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", file=text_file)
 						print("<profiles>", file=text_file)
@@ -57,15 +57,15 @@ for history_id, history in enumerate(test_config[0]):
 						print("\t\t\t\t</leaseDuration>", file=text_file)
 						print("\t\t\t</builtin>", file=text_file)
 
-						if item == "Publisher": 
+						if item == "Publisher":
 							print("\t\t\t<name>Participant_pub</name>", file=text_file)
 						else:
 							print("\t\t\t<name>Participant_sub</name>", file=text_file)
-						
+
 						print("\t\t</rtps>", file=text_file)
 						print("\t</participant>\n", file=text_file)
 
-						if item == "Publisher": 
+						if item == "Publisher":
 							print("\t<publisher profile_name=\"publisher_profile\">", file=text_file)
 							print("\t\t<topic>", file=text_file)
 							print("\t\t\t<name>" + test + "_PUB2SUB</name>", file=text_file)
@@ -272,11 +272,11 @@ for history_id, history in enumerate(test_config[0]):
 		for reliabilily_id, reliabilily in enumerate(test_config[2]):
 			for publish_id, publish in enumerate(test_config[3]):
 				for item in item_type:
-					if item == "Publisher": 
+					if item == "Publisher":
 						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + "_" + str(publish_id) + ".xml"
 					else:
 						filename = "xml/" + item + "_" + test + "_" + str(history_id) + "_" + str(durability_id) + "_" + str(reliabilily_id) + ".xml"
-						
+
 					with open(filename, "w") as text_file:
 						print("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", file=text_file)
 						print("<profiles>", file=text_file)
@@ -288,14 +288,14 @@ for history_id, history in enumerate(test_config[0]):
 						print("\t\t\t\t\t<durationbyname>INFINITE</durationbyname>", file=text_file)
 						print("\t\t\t\t</leaseDuration>", file=text_file)
 						print("\t\t\t</builtin>", file=text_file)
-						if item == "Publisher": 
+						if item == "Publisher":
 							print("\t\t\t<name>Participant_publisher</name>", file=text_file)
 						else:
 							print("\t\t\t<name>Participant_subscriber</name>", file=text_file)
 						print("\t\t</rtps>", file=text_file)
 						print("\t</participant>\n", file=text_file)
 
-						if item == "Publisher": 
+						if item == "Publisher":
 							print("\t<publisher profile_name=\"publisher_profile\">", file=text_file)
 							print("\t\t<topic>", file=text_file)
 							print("\t\t\t<name>" + test + "_topic</name>", file=text_file)
@@ -310,7 +310,7 @@ for history_id, history in enumerate(test_config[0]):
 							print("\t\t\t<durability>", file=text_file)
 							print("\t\t\t\t<kind>TRANSIENT_LOCAL</kind>", file=text_file)
 							print("\t\t\t</durability>", file=text_file)
-							print("\t\t\t<reliability>", file=text_file)							
+							print("\t\t\t<reliability>", file=text_file)
 							print("\t\t\t\t<kind>" + reliabilily + "</kind>", file=text_file)
 							print("\t\t\t</reliability>", file=text_file)
 							print("\t\t\t<publishMode>", file=text_file)
@@ -445,7 +445,7 @@ for history_id, history in enumerate(test_config[0]):
 
 
 with open("PublisherTestList.py", "w") as pub_test_file:
-	with open("SubscriberTestList.py", "w") as sub_test_file:		
+	with open("SubscriberTestList.py", "w") as sub_test_file:
 		print("#!/usr/bin/python3\n", file=pub_test_file)
 		print("import sys, os\n", file=pub_test_file)
 		print("if len(sys.argv) < 2:", file=pub_test_file)
@@ -456,7 +456,7 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 		print("\t\tmyfile.write(\"\\n\\n*****************************************************************************\\n\")", file=pub_test_file)
 		print("\t\tmyfile.write(testname + \"\\n\")", file=pub_test_file)
 		print("\t\tmyfile.write(\"*****************************************************************************\\n\")\n\n", file=pub_test_file)
-		
+
 		print("#!/usr/bin/python3\n", file=sub_test_file)
 		print("import sys, os\n", file=sub_test_file)
 		print("if len(sys.argv) < 2:", file=sub_test_file)
@@ -487,7 +487,7 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 				for pub_durability_id, pub_durability in enumerate(durability_kind):
 					for pub_reliabilily_id, pub_reliabilily in enumerate(reliabilily_kind):
 						for pub_publish_id, pub_publish in enumerate(publish_mode):
-						
+
 							for sub_history_id, sub_history in enumerate(history_kind):
 								for sub_durability_id, sub_durability in enumerate(durability_kind):
 									for sub_reliabilily_id, sub_reliabilily in enumerate(reliabilily_kind):
@@ -497,7 +497,7 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 											sub_filename = "'" + sys.argv[1] + "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(sub_reliabilily_id) + ".xml'"
 
 											print("writeTestTitle(sys.argv[1] + \"" + pub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename + "\")", file=pub_test_file)
-											print("os.system(sys.argv[1] + \"" + test + " publisher --xml " + pub_filename + " >> \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
+											print("os.system(sys.argv[1] + \"" + test + " publisher --xml " + pub_filename + " 2>$1 | tee \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
 
 											print("writeTestTitle(sys.argv[1] + \"" + sub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename +  "\")", file=sub_test_file)
-											print("os.system(sys.argv[1] + \"" + test + " subscriber --xml " + sub_filename + " >> \" + sys.argv[1] + \"" + sub_log_filename + "\")", file=sub_test_file)
+											print("os.system(sys.argv[1] + \"" + test + " subscriber --xml " + sub_filename + " 2>$1 | tee \" + sys.argv[1] + \"" + sub_log_filename + "\")", file=sub_test_file)
