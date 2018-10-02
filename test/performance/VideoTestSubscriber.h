@@ -30,16 +30,19 @@
 class TimeStats
 {
 public:
-    TimeStats() :nbytes(0), received(0), m_min(0), m_max(0), p50(0), p90(0), p99(0), p9999(0), mean(0), stdev(0)
+    TimeStats() : received(0), m_minAvg(0), m_maxAvg(0), pDrop50(0), pDrop90(0), pDrop99(0), pDrop9999(0), pDropMean(0),
+        pDropStdev(0), pAvg50(0), pAvg90(0), pAvg99(0), pAvg9999(0), pAvgMean(0), pAvgStdev(0)
     {
     }
     ~TimeStats()
     {
     }
-    uint64_t nbytes;
+
     unsigned int received;
-    std::chrono::duration<double, std::micro>  m_min, m_max;
-    double p50, p90, p99, p9999, mean, stdev;
+    double  m_minDrop, m_maxDrop, m_minAvg, m_maxAvg;
+    double pDrop50, pDrop90, pDrop99, pDrop9999, pDropMean, pDropStdev;
+    double pAvg50, pAvg90, pAvg99, pAvg9999, pAvgMean, pAvgStdev;
+
 };
 
 class VideoTestSubscriber
@@ -125,14 +128,20 @@ class VideoTestSubscriber
         GstElement* videoconvert;
         guint source_id_;      // To control the GSource
         GMainLoop* gmain_loop_; // GLib's Main Loop
-        guint64 g_servertimestamp;
+        guint64 g_servertimestamp, g_clienttimestamp;
+        gint64 g_framesDropped;
 
         std::thread thread_;
         std::deque<VideoType> packet_deque_;
+        std::mutex stats_mutex_;
         std::mutex deque_mutex_;
         std::mutex gst_mutex_;
 
-        std::vector<std::chrono::duration<double, std::micro>> times_;
+        std::chrono::steady_clock::time_point t_start_, t_end_;
+        std::chrono::steady_clock::time_point t_drop_start_, t_drop_end_;
+        std::vector<std::chrono::duration<double, std::micro>> samples_;
+        std::vector<double> drops_;
+        std::vector<double> avgs_;
         std::vector<TimeStats> m_stats;
 
 protected:

@@ -510,7 +510,7 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
 {
     if (sub->mp_video_out != nullptr)
     {
-        //ARCE: eClock::my_sleep(rand() % 500);
+        //TEST SLEEPS: eClock::my_sleep(rand() % 500);
         GstSample* sample = gst_app_sink_pull_sample(GST_APP_SINK(sink));
         if (sample)
         {
@@ -526,12 +526,13 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
                     sub->mp_video_out->duration = duration;
                     sub->mp_video_out->timestamp = timestamp;
 
-                    //std::cout << "NEW SAMPLE " << sub->mp_video_out->seqnum << std::endl;
+                    //std::cout << "NEW SAMPLE " << timestamp << std::endl;
 
                     sub->mp_video_out->data.assign(map.data, map.data + map.size);
                     sub->t_start_ = std::chrono::steady_clock::now();
 
-                    if (rand() % 100 > 20)
+                    //TEST DROPS:
+                    //if (rand() % 100 > 20)
                     {
                         sub->mp_datapub->write((void*)sub->mp_video_out);
                     }
