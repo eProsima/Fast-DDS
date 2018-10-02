@@ -4,7 +4,7 @@ import sys, os, glob, datetime
 
 output_folder = ""
 if len(sys.argv) >= 2:
-	output_folder = sys.argv[1]
+	output_folder = os.path.join(os.path.abspath(sys.argv[1]), "")
 
 tests_list = ["LatencyTest", "ThroughputTest", "VideoTest"]
 configs_list = [[["KEEP_LAST"], ["VOLATILE"], ["BEST_EFFORT", "RELIABLE"], ["SYNCHRONOUS", "ASYNCHRONOUS"]],
@@ -272,8 +272,8 @@ for history_id, history in enumerate(test_config[0]):
 
 #### GENERATE THROUGHPUT TESTS
 filename = ""
-test = tests_list[1];
-test_config = configs_list[1];
+test = tests_list[1]
+test_config = configs_list[1]
 for history_id, history in enumerate(test_config[0]):
 	for durability_id, durability in enumerate(test_config[1]):
 		for reliabilily_id, reliabilily in enumerate(test_config[2]):
