@@ -83,7 +83,6 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 
                 if (family == AF_INET || family == AF_INET6) //IP4
                 {
-                    //printf("\t%s ",  family == AF_INET ? "IPv4":"IPv6");
                     memset(buf, 0, BUFSIZ);
                     getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST);
                     info_IP info;
@@ -132,7 +131,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 
     if (getifaddrs(&ifaddr) == -1) {
         perror("getifaddrs");
-        exit(EXIT_FAILURE);
+	return false;
     }
 
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
@@ -149,7 +148,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             if (s != 0) {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 freeifaddrs(ifaddr);
-                exit(EXIT_FAILURE);
+		return false;
             }
             info_IP info;
             info.type = IP4;
@@ -167,7 +166,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             if (s != 0) {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 freeifaddrs(ifaddr);
-                exit(EXIT_FAILURE);
+		return false;
             }
             struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
             info_IP info;
@@ -181,7 +180,6 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                 if (return_loopback || info.type != IP6_LOCAL)
                     vec_name->push_back(info);
             }
-            //printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
         }
     }
 
