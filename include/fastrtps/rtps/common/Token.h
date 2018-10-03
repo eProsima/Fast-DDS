@@ -112,9 +112,10 @@ class DataHolder
 typedef std::vector<DataHolder> DataHolderSeq;
 typedef DataHolder Token;
 typedef Token IdentityToken;
+typedef Token IdentityStatusToken;
 typedef Token PermissionsToken;
+typedef Token AuthenticatedPeerCredentialToken;
 typedef Token PermissionsCredentialToken;
-
 
 class DataHolderHelper
 {

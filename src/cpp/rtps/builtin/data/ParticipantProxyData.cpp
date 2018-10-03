@@ -42,6 +42,7 @@ namespace fastrtps{
 namespace rtps {
 
 ParticipantProxyData::ParticipantProxyData():
+    m_protocolVersion(c_ProtocolVersion),
     m_VendorId(c_VendorId_Unknown),
     m_expectsInlineQos(false),
     m_availableBuiltinEndpoints(0),

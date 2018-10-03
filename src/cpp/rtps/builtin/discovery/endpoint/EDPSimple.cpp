@@ -761,7 +761,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     }
 
     auxendp = endp;
-    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
     if(auxendp != 0 && sedp_builtin_publications_secure_writer_.first!=nullptr)
@@ -807,7 +807,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     }
 
     auxendp = endp;
-    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
     if(auxendp != 0 && sedp_builtin_subscriptions_secure_writer_.first!=nullptr)
