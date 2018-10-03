@@ -619,10 +619,12 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         EndpointSecurityAttributes reader_attributes;
                         EndpointSecurityAttributes writer_attributes;
 
-                        reader_attributes.is_discovered_protected = topic_rule.enable_discovery_protection;
-                        writer_attributes.is_discovered_protected = topic_rule.enable_discovery_protection;
-                        reader_attributes.is_access_protected = topic_rule.enable_read_access_control;
-                        writer_attributes.is_access_protected = topic_rule.enable_write_access_control;
+                        reader_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
+                        writer_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
+                        reader_attributes.is_read_protected = topic_rule.enable_read_access_control;
+                        reader_attributes.is_write_protected = topic_rule.enable_write_access_control;
+                        writer_attributes.is_read_protected = topic_rule.enable_read_access_control;
+                        writer_attributes.is_write_protected = topic_rule.enable_write_access_control;
 
                         if(topic_rule.metadata_protection_kind == ProtectionKind::NONE)
                         {
@@ -1029,7 +1031,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     if((attributes = is_topic_in_sec_attributes(topic_name, lah->governance_writer_topic_rules_)) != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_write_protected)
         {
             return true;
         }
@@ -1105,7 +1107,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     if((attributes = is_topic_in_sec_attributes(topic_name, lah->governance_reader_topic_rules_)) != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_read_protected)
         {
             return true;
         }
@@ -1181,7 +1183,7 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
     if((attributes = is_topic_in_sec_attributes(publication_data.topicName(),rah->governance_writer_topic_rules_))
             != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_write_protected)
         {
             return true;
         }
@@ -1240,7 +1242,7 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
     if((attributes = is_topic_in_sec_attributes(subscription_data.topicName(),rah->governance_reader_topic_rules_))
             != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_read_protected)
         {
             return true;
         }

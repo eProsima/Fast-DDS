@@ -450,7 +450,7 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
-    if(local_reader->getAttributes().security_attributes().is_discovered_protected)
+    if(local_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
         reader = &sedp_builtin_subscriptions_secure_reader_;
@@ -515,7 +515,7 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
     auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
-    if(local_writer->getAttributes().security_attributes().is_discovered_protected)
+    if(local_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
         reader = &sedp_builtin_publications_secure_reader_;
@@ -576,7 +576,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
     auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
-    if(W->getAttributes().security_attributes().is_discovered_protected)
+    if(W->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
         reader = &sedp_builtin_publications_secure_reader_;
@@ -621,7 +621,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
     auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
-    if(R->getAttributes().security_attributes().is_discovered_protected)
+    if(R->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
         reader = &sedp_builtin_subscriptions_secure_reader_;
