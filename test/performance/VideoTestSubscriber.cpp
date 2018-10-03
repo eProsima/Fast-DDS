@@ -80,13 +80,14 @@ VideoTestSubscriber::~VideoTestSubscriber()
 
 bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool export_csv)
+        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_folder)
 {
     large_data = true;
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = nsam;
     m_bReliable = reliable;
     m_bExportCsv = export_csv;
+    m_sExportFolder = export_folder;
 
     InitGStreamer();
 
@@ -820,7 +821,13 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
 
     if (m_bExportCsv)
     {
-        outFile.open("perf_VideoTest_" + str_reliable + ".csv", std::fstream::app);
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+        std::stringstream ss;
+        struct tm timeinfo;
+        localtime_s(&timeinfo, &in_time_t);
+        ss << std::put_time(&timeinfo, "%Y-%m-%d_%H-%M-%S");
+        outFile.open(m_sExportFolder + "perf_VideoTest_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_csv.str();
     }
 }

@@ -115,6 +115,7 @@ enum  optionIndex {
     FILE_R,
     HOSTNAME,
     EXPORT_CSV,
+    EXPORT_FOLDER,
     USE_SECURITY,
     CERTS_PATH,
     XML_FILE
@@ -134,6 +135,7 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
     { HOSTNAME,0,"","hostname",             Arg::None,      "" },
     { EXPORT_CSV,0,"","export_csv",         Arg::None,      "" },
+    { EXPORT_FOLDER,0,"","export_folder",   Arg::String,    "\t--export_folder \tFolder to store the CSV files." },
     { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg>   \tFile to read the payload demands from.\t" },
 #if HAVE_SECURITY
     { USE_SECURITY, 0, "", "security",      Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
@@ -173,6 +175,7 @@ int main(int argc, char** argv)
     uint32_t seed = 80;
     bool hostname = false;
     bool export_csv = false;
+    std::string export_folder = "";
     std::string file_name = "";
     std::string sXMLConfigFile = "";
 #if HAVE_SECURITY
@@ -274,6 +277,19 @@ int main(int argc, char** argv)
                 export_csv = true;
                 break;
 
+            case EXPORT_FOLDER:
+            {
+                if (opt.arg != nullptr)
+                {
+                    export_folder = opt.arg;
+                }
+                else
+                {
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
+                }
+                break;
+            }
             case XML_FILE:
                 if (opt.arg != nullptr)
                 {
@@ -367,7 +383,7 @@ int main(int argc, char** argv)
 
     if (pub_sub)
     {
-        ThroughputPublisher tpub(reliable, seed, hostname, export_csv, pub_part_property_policy,
+        ThroughputPublisher tpub(reliable, seed, hostname, export_csv, export_folder, pub_part_property_policy,
             pub_property_policy, sXMLConfigFile);
         tpub.m_file_name = file_name;
         tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
