@@ -22,8 +22,6 @@
 
 #include "fastrtps/TopicDataType.h"
 
-
-
 #include "HelloWorld.h"
 
 using namespace eprosima::fastrtps;

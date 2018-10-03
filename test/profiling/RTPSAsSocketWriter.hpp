@@ -31,7 +31,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class RTPSAsSocketWriter 
+class RTPSAsSocketWriter
 {
     public:
         RTPSAsSocketWriter();
