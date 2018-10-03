@@ -698,7 +698,11 @@ for history_id, history in enumerate(test_config[0]):
 with open("PublisherTestList.py", "w") as pub_test_file:
 	with open("SubscriberTestList.py", "w") as sub_test_file:
 		print("#!/usr/bin/python3\n", file=pub_test_file)
-		print("import sys, os\n", file=pub_test_file)
+		print("import sys, os, signal\n", file=pub_test_file)
+		print("def signal_handler(sig, frame):", file=pub_test_file)
+		print("\tprint('Execution aborted by user')", file=pub_test_file)
+		print("\tsys.exit(0)", file=pub_test_file)
+		print("signal.signal(signal.SIGINT, signal_handler)\n", file=pub_test_file)
 		print("if len(sys.argv) < 2:", file=pub_test_file)
 		print("\tprint (\"Error. Invalid Input Parameters\")", file=pub_test_file)
 		print("\tsys.exit(-1)\n", file=pub_test_file)
@@ -709,7 +713,11 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 		print("\t\tmyfile.write(\"*****************************************************************************\\n\")\n\n", file=pub_test_file)
 
 		print("#!/usr/bin/python3\n", file=sub_test_file)
-		print("import sys, os\n", file=sub_test_file)
+		print("import sys, os, signal\n", file=sub_test_file)
+		print("def signal_handler(sig, frame):", file=sub_test_file)
+		print("\tprint('Execution aborted by user')", file=sub_test_file)
+		print("\tsys.exit(0)", file=sub_test_file)
+		print("signal.signal(signal.SIGINT, signal_handler)\n", file=sub_test_file)
 		print("if len(sys.argv) < 2:", file=sub_test_file)
 		print("\tprint (\"Error. Invalid Input Parameters\")", file=sub_test_file)
 		print("\tsys.exit(-1)\n", file=sub_test_file)
