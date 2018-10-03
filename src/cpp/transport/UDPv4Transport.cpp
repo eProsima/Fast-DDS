@@ -543,7 +543,7 @@ LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
             locator.address[14] == 0x0 && locator.address[15] == 0x0)
     {
         std::vector<IPFinder::info_IP> locNames;
-        GetIP4s(locNames);
+        GetIP4s(locNames, true);
         for (const auto& infoIP : locNames)
         {
             Locator_t newloc(locator);

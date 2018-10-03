@@ -191,14 +191,14 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 bool IPFinder::getIP4Address(LocatorList_t* locators)
 {
     std::vector<info_IP> ip_names;
-    if(IPFinder::getIPs(&ip_names))
+    if(IPFinder::getIPs(&ip_names, true))
     {
 
         locators->clear();
         for(auto it=ip_names.begin();
                 it!=ip_names.end();++it)
         {
-            if (it->type == IP4)
+            if (it->type == IP4 || it->type == IP4_LOCAL)
             {
                 locators->push_back(it->locator);
             }
