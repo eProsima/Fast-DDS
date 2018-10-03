@@ -115,7 +115,6 @@ class ThroughputPublisher
         uint32_t payload;
         bool reliable_;
         std::string m_sXMLConfigFile;
-        std::string m_sExecutionTime;
         std::string m_sExportPrefix;
 };
 

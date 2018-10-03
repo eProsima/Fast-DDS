@@ -25,10 +25,6 @@
 #include <fstream>
 #include <inttypes.h>
 
-#ifndef _WIN32
-#define localtime_s(X, Y) localtime_r(Y, X)
-#endif
-
 #define TIME_LIMIT_US 10000
 
 using namespace eprosima;
@@ -545,12 +541,6 @@ void LatencyTestPublisher::run()
 
     if (n_export_csv)
     {
-        auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now);
-        std::stringstream ss;
-        struct tm timeinfo;
-        localtime_s(&timeinfo, &in_time_t);
-        ss << std::put_time(&timeinfo, "%Y-%m-%d_%H-%M-%S");
         std::ofstream outFile;
 
         std::string prefix = m_exportPrefix;
@@ -559,43 +549,43 @@ void LatencyTestPublisher::run()
             prefix = "perf_LatencyTest";
         }
 
-        outFile.open(prefix + "_minimum_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_minimum_" + str_reliable + ".csv");
         outFile << output_file_minimum.str();
         outFile.close();
-        outFile.open(prefix + "_average_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_average_" + str_reliable + ".csv");
         outFile << output_file_average.str();
         outFile.close();
-        outFile.open(prefix + "_16_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_16_" + str_reliable + ".csv");
         outFile << output_file_16.str();
         outFile.close();
-        outFile.open(prefix + "_32_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_32_" + str_reliable + ".csv");
         outFile << output_file_32.str();
         outFile.close();
-        outFile.open(prefix + "_64_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_64_" + str_reliable + ".csv");
         outFile << output_file_64.str();
         outFile.close();
-        outFile.open(prefix + "_128_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_128_" + str_reliable + ".csv");
         outFile << output_file_128.str();
         outFile.close();
-        outFile.open(prefix + "_256_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_256_" + str_reliable + ".csv");
         outFile << output_file_256.str();
         outFile.close();
-        outFile.open(prefix + "_512_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_512_" + str_reliable + ".csv");
         outFile << output_file_512.str();
         outFile.close();
-        outFile.open(prefix + "_1024_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_1024_" + str_reliable + ".csv");
         outFile << output_file_1024.str();
         outFile.close();
-        outFile.open(prefix + "_2048_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_2048_" + str_reliable + ".csv");
         outFile << output_file_2048.str();
         outFile.close();
-        outFile.open(prefix + "_4096_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_4096_" + str_reliable + ".csv");
         outFile << output_file_4096.str();
         outFile.close();
-        outFile.open(prefix + "_8192_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_8192_" + str_reliable + ".csv");
         outFile << output_file_8192.str();
         outFile.close();
-        outFile.open(prefix + "_16384_" + str_reliable + "_" + ss.str() + ".csv");
+        outFile.open(prefix + "_16384_" + str_reliable + ".csv");
         outFile << output_file_16384.str();
         outFile.close();
     }
