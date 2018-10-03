@@ -597,11 +597,11 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
 
                     if(rule.discovery_protection_kind == ProtectionKind::NONE)
                     {
-                        ah->governance_rule_.is_discovered_protected = false;
+                        ah->governance_rule_.is_discovery_protected = false;
                     }
                     else
                     {
-                        ah->governance_rule_.is_discovered_protected = true;
+                        ah->governance_rule_.is_discovery_protected = true;
                     }
 
                     if(rule.rtps_protection_kind == ProtectionKind::NONE)

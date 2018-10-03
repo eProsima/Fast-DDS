@@ -314,7 +314,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.times.initialHeartbeatDelay.seconds = 0;
         watt.times.initialHeartbeatDelay.fraction = 0;
         watt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+            mp_RTPSParticipant->security_attributes().is_discovery_protected;
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
@@ -349,7 +349,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.times.initialAcknackDelay.seconds = 0;
         ratt.times.initialAcknackDelay.fraction = 0;
         ratt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+            mp_RTPSParticipant->security_attributes().is_discovery_protected;
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, sedp_builtin_subscriptions_secure_reader_.second,
                 mp_subListen, sedp_builtin_subscriptions_secure_reader, true);
         if(created)
@@ -385,7 +385,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.times.initialAcknackDelay.seconds = 0;
         ratt.times.initialAcknackDelay.fraction = 0;
         ratt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+            mp_RTPSParticipant->security_attributes().is_discovery_protected;
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, sedp_builtin_publications_secure_reader_.second,
                 mp_pubListen, sedp_builtin_publications_secure_reader, true);
         if(created)
@@ -417,7 +417,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.times.initialHeartbeatDelay.seconds = 0;
         watt.times.initialHeartbeatDelay.fraction = 0;
         watt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+            mp_RTPSParticipant->security_attributes().is_discovery_protected;
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
