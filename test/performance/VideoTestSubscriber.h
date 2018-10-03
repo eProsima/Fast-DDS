@@ -70,7 +70,7 @@ class VideoTestSubscriber
         bool init(int nsam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile, bool export_csv, const std::string& export_folder);
+                const std::string& sXMLConfigFile, bool export_csv, const std::string& export_file);
 
         void run();
         bool test();
@@ -132,7 +132,7 @@ class VideoTestSubscriber
         gint64 g_framesDropped;
         bool m_bReliable;
         bool m_bExportCsv;
-        std::string m_sExportFolder;
+        std::string m_sExportPrefix;
 
         std::thread thread_;
         std::deque<VideoType> packet_deque_;
