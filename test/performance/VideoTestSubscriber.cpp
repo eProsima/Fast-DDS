@@ -827,20 +827,13 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
 
     if (m_bExportCsv)
     {
-        auto now = std::chrono::system_clock::now();
-        auto in_time_t = std::chrono::system_clock::to_time_t(now);
-        std::stringstream ss;
-        struct tm timeinfo;
-        localtime_s(&timeinfo, &in_time_t);
-        ss << std::put_time(&timeinfo, "%Y-%m-%d_%H-%M-%S");
-
         if (m_sExportPrefix.length() > 0)
         {
-            outFile.open(m_sExportPrefix + "_" + ss.str() + ".csv");
+            outFile.open(m_sExportPrefix + ".csv");
         }
         else
         {
-            outFile.open("perf_VideoTest_" + str_reliable + "_" + ss.str() + ".csv");
+            outFile.open("perf_VideoTest_" + str_reliable + ".csv");
         }
 
         outFile << output_file_csv.str();
