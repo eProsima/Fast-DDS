@@ -114,6 +114,7 @@ enum  optionIndex {
     ECHO_OPT,
     HOSTNAME,
     EXPORT_CSV,
+    EXPORT_FOLDER,
     USE_SECURITY,
     CERTS_PATH,
     LARGE_DATA,
@@ -127,17 +128,18 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "Usage: VideoTest <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0,"h", "help",                   Arg::None,      "  -h \t--help  \tProduce help message." },
     { RELIABILITY,0,"r","reliability",          Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
-    { SAMPLES,0,"s","samples",                  Arg::Numeric,  "  -s <num>, \t--samples=<num>  \tNumber of samples." },
-    { SEED,0,"","seed",                         Arg::Numeric,  "  \t--seed=<num>  \tNumber of subscribers." },
+    { SAMPLES,0,"s","samples",                  Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
+    { SEED,0,"","seed",                         Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
     { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nPublisher options:"},
-    { SUBSCRIBERS,0,"n","subscribers",          Arg::Numeric,  "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
+    { SUBSCRIBERS,0,"n","subscribers",          Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
     { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nSubscriber options:"},
     { ECHO_OPT, 0,"e","echo",                   Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
     { HOSTNAME,0,"","hostname",                 Arg::None,      "" },
     { EXPORT_CSV,0,"","export_csv",             Arg::None,      "" },
+    { EXPORT_FOLDER,0,"","export_folder",       Arg::String,    "\t--export_folder \tFolder to store the CSV files." },
 #if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",          Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",               Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
+    { USE_SECURITY, 0, "", "security",          Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    { CERTS_PATH, 0, "", "certs",               Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
 #endif
     { LARGE_DATA, 0, "l", "large",              Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",                   Arg::String,    "\t--xml \tXML Configuration file." },
@@ -185,6 +187,7 @@ int main(int argc, char** argv)
     bool hostname = false;
     bool export_csv = false;
     bool large_data = false;
+    std::string export_folder = "";
     std::string sXMLConfigFile = "";
 
     argc -= (argc > 0);
@@ -284,7 +287,19 @@ int main(int argc, char** argv)
             case EXPORT_CSV:
                 export_csv = true;
                 break;
-
+            case EXPORT_FOLDER:
+            {
+                if (opt.arg != nullptr)
+                {
+                    export_folder = opt.arg;
+                }
+                else
+                {
+                    option::printUsage(fwrite, stdout, usage, columns);
+                    return 0;
+                }
+                break;
+            }
             case LARGE_DATA:
                 large_data = true;
                 break;
@@ -404,7 +419,7 @@ int main(int argc, char** argv)
     {
         VideoTestSubscriber sub;
         sub.init(n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile, export_csv);
+            large_data, sXMLConfigFile, export_csv, export_folder);
         sub.run();
     }
 

@@ -104,6 +104,7 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
 }
 
 ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv,
+        const std::string& export_folder,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
         const std::string& sXMLConfigFile)
@@ -117,6 +118,14 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     reliable_(reliable),
     m_sXMLConfigFile(sXMLConfigFile)
 {
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    std::stringstream ss;
+    struct tm timeinfo;
+    localtime_s(&timeinfo, &in_time_t);
+    ss << std::put_time(&timeinfo, "%Y-%m-%d_%H-%M-%S");
+    m_sExecutionTime = ss.str();
+    m_sExportFolder = export_folder;
 
     if (m_sXMLConfigFile.length() > 0)
     {
@@ -362,7 +371,9 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
         {
             str_reliable = "reliable";
         }
-        outFile.open("perf_ThroughputTest_" + std::to_string(payload) + "B_" + str_reliable + ".csv");
+
+        outFile.open(m_sExportFolder + "perf_ThroughputTest_" + std::to_string(payload) + "B_" + str_reliable +
+            "_" + m_sExecutionTime + ".csv");
         outFile << output_file.str();
         outFile.close();
     }
@@ -430,10 +441,10 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
                 {
                     str_reliable = "reliable";
                 }
-                std::string fileName = "perf_ThroughputTest_" +
+                std::string fileName = m_sExportFolder + "perf_ThroughputTest_" +
                     std::to_string(result.payload_size) + "B_" + str_reliable + "_" +
                     std::to_string(result.demand) + "demand"
-                    ".csv";
+                    "_" + m_sExecutionTime + ".csv";
                 outFile.open(fileName);
                 outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (" + str_reliable + ")\"" << std::endl;
                 outFile << "\"" << result.subscriber.MBitssec << "\"";
