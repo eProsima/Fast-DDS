@@ -29,24 +29,26 @@ using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-VideoTestPublisher::VideoTestPublisher():
-    mp_participant(nullptr),
-    mp_datapub(nullptr),
-    mp_commandpub(nullptr),
-    mp_datasub(nullptr),
-    mp_commandsub(nullptr),
-    mp_video_out(nullptr),
-    n_subscribers(0),
-    n_samples(0),
-    disc_count_(0),
-    comm_count_(0),
-    data_count_(0),
-    m_status(0),
-    n_received(0),
-    m_datapublistener(nullptr),
-    m_datasublistener(nullptr),
-    m_commandpublistener(nullptr),
-    m_commandsublistener(nullptr)
+VideoTestPublisher::VideoTestPublisher()
+    : mp_participant(nullptr)
+    , mp_datapub(nullptr)
+    , mp_commandpub(nullptr)
+    , mp_datasub(nullptr)
+    , mp_commandsub(nullptr)
+    , mp_video_out(nullptr)
+    , n_subscribers(0)
+    , n_samples(0)
+    , disc_count_(0)
+    , comm_count_(0)
+    , data_count_(0)
+    , m_status(0)
+    , n_received(0)
+    , m_datapublistener(nullptr)
+    , m_datasublistener(nullptr)
+    , m_commandpublistener(nullptr)
+    , m_commandsublistener(nullptr)
+    , m_dropRate(0)
+    , m_sendSleepTime(0)
 {
     m_datapublistener.mp_up = this;
     m_datasublistener.mp_up = this;
@@ -67,10 +69,12 @@ VideoTestPublisher::~VideoTestPublisher()
 
 bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, int test_time)
+        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time)
 {
     large_data = true;
     m_testTime = test_time;
+    m_dropRate = drop_rate;
+    m_sendSleepTime = max_sleep_time;
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = n_sam;
     n_subscribers = n_sub;
@@ -510,7 +514,11 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
 {
     if (sub->mp_video_out != nullptr)
     {
-        //TEST SLEEPS: eClock::my_sleep(rand() % 500);
+        if (sub->m_sendSleepTime != 0)
+        {
+            eClock::my_sleep(rand() % sub->m_sendSleepTime);
+        }
+
         GstSample* sample = gst_app_sink_pull_sample(GST_APP_SINK(sink));
         if (sample)
         {
@@ -531,8 +539,7 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
                     sub->mp_video_out->data.assign(map.data, map.data + map.size);
                     sub->t_start_ = std::chrono::steady_clock::now();
 
-                    //TEST DROPS:
-                    //if (rand() % 100 > 20)
+                    if (rand() % 100 > sub->m_dropRate)
                     {
                         sub->mp_datapub->write((void*)sub->mp_video_out);
                     }

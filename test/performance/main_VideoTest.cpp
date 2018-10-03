@@ -118,28 +118,32 @@ enum  optionIndex {
     CERTS_PATH,
     LARGE_DATA,
     XML_FILE,
-    TEST_TIME
+    TEST_TIME,
+    DROP_RATE,
+    SEND_SLEEP_TIME
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "Usage: VideoTest <publisher|subscriber>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",           Arg::None,      "  -h \t--help  \tProduce help message." },
-    { RELIABILITY,0,"r","reliability",  Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
-    { SAMPLES,0,"s","samples",          Arg::Numeric,  "  -s <num>, \t--samples=<num>  \tNumber of samples." },
-    { SEED,0,"","seed",                 Arg::Numeric,  "  \t--seed=<num>  \tNumber of subscribers." },
-    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "\nPublisher options:"},
-    { SUBSCRIBERS,0,"n","subscribers",  Arg::Numeric,  "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
-    { UNKNOWN_OPT, 0,"", "",            Arg::None,      "\nSubscriber options:"},
-    { ECHO_OPT, 0,"e","echo",           Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
-    { HOSTNAME,0,"","hostname",         Arg::None,      "" },
-    { EXPORT_CSV,0,"","export_csv",     Arg::None,      "" },
+    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "Usage: VideoTest <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,    0,"h", "help",                   Arg::None,      "  -h \t--help  \tProduce help message." },
+    { RELIABILITY,0,"r","reliability",          Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
+    { SAMPLES,0,"s","samples",                  Arg::Numeric,  "  -s <num>, \t--samples=<num>  \tNumber of samples." },
+    { SEED,0,"","seed",                         Arg::Numeric,  "  \t--seed=<num>  \tNumber of subscribers." },
+    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nPublisher options:"},
+    { SUBSCRIBERS,0,"n","subscribers",          Arg::Numeric,  "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
+    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nSubscriber options:"},
+    { ECHO_OPT, 0,"e","echo",                   Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
+    { HOSTNAME,0,"","hostname",                 Arg::None,      "" },
+    { EXPORT_CSV,0,"","export_csv",             Arg::None,      "" },
 #if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",  Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",       Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
+    { USE_SECURITY, 0, "", "security",          Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    { CERTS_PATH, 0, "", "certs",               Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
 #endif
-    { LARGE_DATA, 0, "l", "large",      Arg::None,      "  -l \t--large\tTest large data." },
-    { XML_FILE, 0, "", "xml",           Arg::String,    "\t--xml \tXML Configuration file." },
-    { TEST_TIME, 0, "", "testtime",           Arg::String,    "\t--testtime \tTest duration time." },
+    { LARGE_DATA, 0, "l", "large",              Arg::None,      "  -l \t--large\tTest large data." },
+    { XML_FILE, 0, "", "xml",                   Arg::String,    "\t--xml \tXML Configuration file." },
+    { TEST_TIME, 0, "", "testtime",             Arg::Numeric,   "\t--testtime \tTest duration time." },
+    { DROP_RATE, 0, "", "droprate",             Arg::Numeric,   "\t--droprate \tSending drop percentage ( 0 - 100 )." },
+    { SEND_SLEEP_TIME, 0, "", "sleeptime",      Arg::Numeric,   "\t--sleeptime \tMaximum sleep time before shipments (milliseconds)." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -168,6 +172,8 @@ int main(int argc, char** argv)
     bool pub_sub = false;
     int sub_number = 1;
     int test_time = 100;
+    int drop_rate = 0;
+    int max_sleep_time = 0;
     int n_samples = c_n_samples;
 #if HAVE_SECURITY
     bool use_security = false;
@@ -296,6 +302,14 @@ int main(int argc, char** argv)
             case TEST_TIME:
                 test_time = strtol(opt.arg, nullptr, 10);
                 break;
+            case DROP_RATE:
+                drop_rate = strtol(opt.arg, nullptr, 10);
+                break;
+            case SEND_SLEEP_TIME:
+                max_sleep_time = strtol(opt.arg, nullptr, 10);
+                break;
+
+
 
 
 #if HAVE_SECURITY
@@ -383,14 +397,14 @@ int main(int argc, char** argv)
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         VideoTestPublisher pub;
         pub.init(sub_number, n_samples, reliable, seed, hostname, pub_part_property_policy,
-            pub_property_policy, large_data, sXMLConfigFile, test_time);
+            pub_property_policy, large_data, sXMLConfigFile, test_time, drop_rate, max_sleep_time);
         pub.run();
     }
     else
     {
         VideoTestSubscriber sub;
         sub.init(n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile);
+            large_data, sXMLConfigFile, export_csv);
         sub.run();
     }
 

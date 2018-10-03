@@ -70,7 +70,7 @@ class VideoTestSubscriber
         bool init(int nsam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile);
+                const std::string& sXMLConfigFile, bool export_csv);
 
         void run();
         bool test();
@@ -130,6 +130,8 @@ class VideoTestSubscriber
         GMainLoop* gmain_loop_; // GLib's Main Loop
         guint64 g_servertimestamp, g_clienttimestamp;
         gint64 g_framesDropped;
+        bool m_bReliable;
+        bool m_bExportCsv;
 
         std::thread thread_;
         std::deque<VideoType> packet_deque_;
