@@ -28,7 +28,7 @@
 
 
 
-class RTPSAsSocketWriter 
+class RTPSAsSocketWriter
 {
     public:
         RTPSAsSocketWriter();

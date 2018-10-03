@@ -34,6 +34,10 @@
 #include <map>
 #include <fstream>
 
+#ifndef _WIN32
+#define localtime_s(X, Y) localtime_r(Y, X)
+#endif
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -536,24 +540,6 @@ bool ThroughputPublisher::loadDemandsPayload()
     fi.close();
 
     payload += 8;
-
-    //////////////////////////////
-    /*
-       char date_buffer[9];
-       char time_buffer[7];
-       time_t t = time(0);   // get time now
-       struct tm * now = localtime(&t);
-       strftime(date_buffer, 9, "%Y%m%d", now);
-       strftime(time_buffer, 7, "%H%M%S", now);
-       *//*
-            output_file_name << "perf_ThroughputTest.csv";
-            for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it) {
-            output_file << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
-            if (it != data_size_pub.end() - 1)
-            output_file << ",";
-            }
-            output_file << std::endl;
-    //////////////////////////////*/
 
     std::cout << "Performing test with this payloads/demands:" << std::endl;
     for (auto sit = m_demand_payload.begin(); sit != m_demand_payload.end(); ++sit)

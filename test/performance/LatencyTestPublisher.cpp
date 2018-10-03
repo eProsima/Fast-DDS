@@ -25,6 +25,10 @@
 #include <fstream>
 #include <inttypes.h>
 
+#ifndef _WIN32
+#define localtime_s(X, Y) localtime_r(Y, X)
+#endif
+
 #define TIME_LIMIT_US 10000
 
 using namespace eprosima;
