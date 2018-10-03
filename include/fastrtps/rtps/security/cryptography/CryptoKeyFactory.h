@@ -19,6 +19,7 @@
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 
 #include "CryptoTypes.h"
+#include "../accesscontrol/EndpointSecurityAttributes.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -73,6 +74,7 @@ class CryptoKeyFactory
         virtual DatawriterCryptoHandle * register_local_datawriter(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
+                const EndpointSecurityAttributes &datawriter_sec_attr,
                 SecurityException &exception) = 0;
 
         /**
@@ -103,6 +105,7 @@ class CryptoKeyFactory
         virtual DatareaderCryptoHandle * register_local_datareader(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
+                const EndpointSecurityAttributes &datareader_security_attributes,
                 SecurityException &exception) = 0;
 
         /**

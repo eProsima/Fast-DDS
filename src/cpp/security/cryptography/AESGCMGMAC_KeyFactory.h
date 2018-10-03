@@ -51,6 +51,7 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
         DatawriterCryptoHandle * register_local_datawriter(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
+                const EndpointSecurityAttributes &datawriter_security_properties,
                 SecurityException &exception) override;
 
         DatareaderCryptoHandle * register_matched_remote_datareader(
@@ -63,6 +64,7 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
         DatareaderCryptoHandle * register_local_datareader(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
+                const EndpointSecurityAttributes &datareader_security_properties,
                 SecurityException &exception) override;
 
         DatawriterCryptoHandle * register_matched_remote_datawriter(

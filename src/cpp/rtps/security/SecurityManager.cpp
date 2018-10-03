@@ -2017,7 +2017,7 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
                 security_attributes.is_payload_protected))
     {
         DatawriterCryptoHandle* writer_handle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
-                *local_participant_crypto_handle_, writer_properties.properties(), exception);
+                *local_participant_crypto_handle_, writer_properties.properties(), security_attributes, exception);
 
         if(writer_handle != nullptr && !writer_handle->nil())
         {
@@ -2042,7 +2042,7 @@ bool SecurityManager::register_local_builtin_writer(const GUID_t& writer_guid, E
     if(crypto_plugin_ != nullptr && security_attributes.is_submessage_protected)
     {
         DatawriterCryptoHandle* writer_handle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
-                *local_participant_crypto_handle_, PropertySeq(), exception);
+                *local_participant_crypto_handle_, PropertySeq(), security_attributes, exception);
 
         if(writer_handle != nullptr && !writer_handle->nil())
         {
@@ -2175,7 +2175,7 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
     {
 
         DatareaderCryptoHandle* reader_handle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(
-                *local_participant_crypto_handle_, reader_properties.properties(), exception);
+                *local_participant_crypto_handle_, reader_properties.properties(), security_attributes, exception);
 
         if(reader_handle != nullptr && !reader_handle->nil())
         {
@@ -2200,7 +2200,7 @@ bool SecurityManager::register_local_builtin_reader(const GUID_t& reader_guid, E
     if(crypto_plugin_ != nullptr && security_attributes.is_submessage_protected)
     {
         DatareaderCryptoHandle* reader_handle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(
-                *local_participant_crypto_handle_, PropertySeq(), exception);
+                *local_participant_crypto_handle_, PropertySeq(), security_attributes, exception);
 
         if(reader_handle != nullptr && !reader_handle->nil())
         {

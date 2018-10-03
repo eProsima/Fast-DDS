@@ -286,6 +286,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
+                const EndpointSecurityAttributes& /*datawriter_security_properties*/,
                 SecurityException& /*exception*/){
 
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
@@ -419,6 +420,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
+                const EndpointSecurityAttributes& /*datareder_security_attributes*/,
                 SecurityException& /*exception*/)
 {
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
