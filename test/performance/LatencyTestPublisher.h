@@ -66,9 +66,9 @@ class LatencyTestPublisher {
         int m_status;
         unsigned int n_received;
         bool n_export_csv;
-        std::string m_exportFolder;
+        std::string m_exportPrefix;
         bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
-                const std::string& export_folder,
+                const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
                 const std::string& sXMLConfigFile);

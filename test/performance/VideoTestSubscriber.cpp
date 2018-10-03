@@ -53,6 +53,8 @@ VideoTestSubscriber::VideoTestSubscriber()
     m_commandpublistener.mp_up = this;
     m_commandsublistener.mp_up = this;
 
+    m_sExportPrefix = "";
+
     m_bRunning = true;
     source_id_ = 0;
 }
@@ -80,14 +82,14 @@ VideoTestSubscriber::~VideoTestSubscriber()
 
 bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_folder)
+        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix)
 {
     large_data = true;
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = nsam;
     m_bReliable = reliable;
     m_bExportCsv = export_csv;
-    m_sExportFolder = export_folder;
+    m_sExportPrefix = export_prefix;
 
     InitGStreamer();
 
@@ -594,7 +596,7 @@ gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
         guint8* pos = map.data;
         while (chunk_size && sub->hasData())
         {
-            VideoType& vpacket = sub->pop_video_packet();
+            const VideoType& vpacket = sub->pop_video_packet();
             {
                 std::unique_lock<std::mutex> stats_lock(sub->stats_mutex_);
                 sub->g_framesDropped = static_cast<gint64>((vpacket.timestamp - sub->g_servertimestamp) / 33333333);
@@ -827,7 +829,16 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
         struct tm timeinfo;
         localtime_s(&timeinfo, &in_time_t);
         ss << std::put_time(&timeinfo, "%Y-%m-%d_%H-%M-%S");
-        outFile.open(m_sExportFolder + "perf_VideoTest_" + str_reliable + "_" + ss.str() + ".csv");
+
+        if (m_sExportPrefix.length() > 0)
+        {
+            outFile.open(m_sExportPrefix + "_" + ss.str() + ".csv");
+        }
+        else
+        {
+            outFile.open("perf_VideoTest_" + str_reliable + "_" + ss.str() + ".csv");
+        }
+
         outFile << output_file_csv.str();
     }
 }

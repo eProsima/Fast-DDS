@@ -114,7 +114,7 @@ enum  optionIndex {
     ECHO_OPT,
     HOSTNAME,
     EXPORT_CSV,
-    EXPORT_FOLDER,
+    EXPORT_PREFIX,
     USE_SECURITY,
     CERTS_PATH,
     LARGE_DATA,
@@ -136,7 +136,7 @@ const option::Descriptor usage[] = {
     { ECHO_OPT, 0,"e","echo",                   Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
     { HOSTNAME,0,"","hostname",                 Arg::None,      "" },
     { EXPORT_CSV,0,"","export_csv",             Arg::None,      "" },
-    { EXPORT_FOLDER,0,"","export_folder",       Arg::String,    "\t--export_folder \tFolder to store the CSV files." },
+    { EXPORT_PREFIX,0,"","export_prefix",       Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
 #if HAVE_SECURITY
     { USE_SECURITY, 0, "", "security",          Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
     { CERTS_PATH, 0, "", "certs",               Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
@@ -187,7 +187,7 @@ int main(int argc, char** argv)
     bool hostname = false;
     bool export_csv = false;
     bool large_data = false;
-    std::string export_folder = "";
+    std::string export_prefix = "";
     std::string sXMLConfigFile = "";
 
     argc -= (argc > 0);
@@ -287,11 +287,11 @@ int main(int argc, char** argv)
             case EXPORT_CSV:
                 export_csv = true;
                 break;
-            case EXPORT_FOLDER:
+            case EXPORT_PREFIX:
             {
                 if (opt.arg != nullptr)
                 {
-                    export_folder = opt.arg;
+                    export_prefix = opt.arg;
                 }
                 else
                 {
@@ -409,7 +409,7 @@ int main(int argc, char** argv)
 
     if (pub_sub)
     {
-        cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
+        cout << "Performing video test" << endl;
         VideoTestPublisher pub;
         pub.init(sub_number, n_samples, reliable, seed, hostname, pub_part_property_policy,
             pub_property_policy, large_data, sXMLConfigFile, test_time, drop_rate, max_sleep_time);
@@ -419,7 +419,7 @@ int main(int argc, char** argv)
     {
         VideoTestSubscriber sub;
         sub.init(n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile, export_csv, export_folder);
+            large_data, sXMLConfigFile, export_csv, export_prefix);
         sub.run();
     }
 

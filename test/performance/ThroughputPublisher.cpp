@@ -104,7 +104,7 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
 }
 
 ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv,
-        const std::string& export_folder,
+        const std::string& export_prefix,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
         const std::string& sXMLConfigFile)
@@ -125,7 +125,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     localtime_s(&timeinfo, &in_time_t);
     ss << std::put_time(&timeinfo, "%Y-%m-%d_%H-%M-%S");
     m_sExecutionTime = ss.str();
-    m_sExportFolder = export_folder;
+    m_sExportPrefix = export_prefix;
 
     if (m_sXMLConfigFile.length() > 0)
     {
@@ -366,14 +366,21 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
     if (m_export_csv)
     {
         std::ofstream outFile;
-        std::string str_reliable = "besteffort";
-        if (reliable_)
+        if (m_sExportPrefix.length() == 0)
         {
-            str_reliable = "reliable";
+            std::string str_reliable = "besteffort";
+            if (reliable_)
+            {
+                str_reliable = "reliable";
+            }
+            outFile.open("perf_ThroughputTest_" + std::to_string(payload) + "B_" + str_reliable +
+                "_" + m_sExecutionTime + ".csv");
+        }
+        else
+        {
+            outFile.open(m_sExportPrefix + "_" + m_sExecutionTime + ".csv");
         }
 
-        outFile.open(m_sExportFolder + "perf_ThroughputTest_" + std::to_string(payload) + "B_" + str_reliable +
-            "_" + m_sExecutionTime + ".csv");
         outFile << output_file.str();
         outFile.close();
     }
@@ -441,7 +448,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
                 {
                     str_reliable = "reliable";
                 }
-                std::string fileName = m_sExportFolder + "perf_ThroughputTest_" +
+                std::string fileName = m_sExportPrefix + "perf_ThroughputTest_" +
                     std::to_string(result.payload_size) + "B_" + str_reliable + "_" +
                     std::to_string(result.demand) + "demand"
                     "_" + m_sExecutionTime + ".csv";
