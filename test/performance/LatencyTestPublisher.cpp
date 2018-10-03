@@ -71,13 +71,14 @@ LatencyTestPublisher::~LatencyTestPublisher()
 
 
 bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
-        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile)
+        const std::string& export_folder, const PropertyPolicy& part_property_policy,
+        const PropertyPolicy& property_policy, bool large_data, const std::string& sXMLConfigFile)
 {
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = n_sam;
     n_subscribers = n_sub;
     n_export_csv = export_csv;
+    m_exportFolder = export_folder;
     reliable_ = reliable;
 
     if(!large_data)
@@ -539,44 +540,50 @@ void LatencyTestPublisher::run()
 
     if (n_export_csv)
     {
+        auto now = std::chrono::system_clock::now();
+        auto in_time_t = std::chrono::system_clock::to_time_t(now);
+        std::stringstream ss;
+        struct tm timeinfo;
+        localtime_s(&timeinfo, &in_time_t);
+        ss << std::put_time(&timeinfo, "%Y-%m-%d_%H-%M-%S");
         std::ofstream outFile;
-        outFile.open("perf_LatencyTest_minimum_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_minimum_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_minimum.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_average_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_average_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_average.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_16_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_16_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_16.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_32_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_32_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_32.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_64_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_64_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_64.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_128_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_128_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_128.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_256_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_256_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_256.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_512_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_512_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_512.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_1024_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_1024_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_1024.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_2048_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_2048_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_2048.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_4096_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_4096_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_4096.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_8192_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_8192_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_8192.str();
         outFile.close();
-        outFile.open("perf_LatencyTest_16384_" + str_reliable + ".csv");
+        outFile.open(m_exportFolder + "perf_LatencyTest_16384_" + str_reliable + "_" + ss.str() + ".csv");
         outFile << output_file_16384.str();
         outFile.close();
     }
