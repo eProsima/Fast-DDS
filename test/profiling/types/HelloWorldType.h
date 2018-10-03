@@ -22,9 +22,10 @@
 
 #include "fastrtps/TopicDataType.h"
 
-
-
 #include "HelloWorld.h"
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 class HelloWorldType:public TopicDataType {
 public:

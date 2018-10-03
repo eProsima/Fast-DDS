@@ -29,6 +29,9 @@
 
 #include <asio.hpp>
 
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 RTPSAsSocketReader::RTPSAsSocketReader(): listener_(*this), lastvalue_(std::numeric_limits<uint16_t>::max()),
     participant_(nullptr), reader_(nullptr), history_(nullptr), initialized_(false)
 {
