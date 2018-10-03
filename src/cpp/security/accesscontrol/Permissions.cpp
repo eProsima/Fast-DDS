@@ -618,6 +618,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         std::string topic_expression = topic_rule.topic_expression;
                         EndpointSecurityAttributes reader_attributes;
                         EndpointSecurityAttributes writer_attributes;
+                        PluginEndpointSecurityAttributes plugin_attributes;
 
                         reader_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
                         writer_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
@@ -633,21 +634,45 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         }
                         else
                         {
+                            bool hasEncryption = 
+                                (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT) ||
+                                (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
+                            bool hasOriginAuth =
+                                (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
+                                (topic_rule.metadata_protection_kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
+                            plugin_attributes.is_submessage_encrypted = hasEncryption;
+                            plugin_attributes.is_submessage_origin_authenticated = hasOriginAuth;
+
                             reader_attributes.is_submessage_protected = true;
                             writer_attributes.is_submessage_protected = true;
                         }
 
                         if(topic_rule.data_protection_kind == ProtectionKind::NONE)
                         {
-                            reader_attributes.is_payload_protected = false;
+                            reader_attributes.is_payload_protected= false;
+							reader_attributes.is_key_protected = false;
                             writer_attributes.is_payload_protected = false;
+							writer_attributes.is_key_protected = false;
+                        }
+                        else if (topic_rule.data_protection_kind == ProtectionKind::SIGN)
+                        {
+                            plugin_attributes.is_payload_encrypted = false;
+                            reader_attributes.is_payload_protected = true;
+							reader_attributes.is_key_protected = false;
+                            writer_attributes.is_payload_protected = true;
+							writer_attributes.is_key_protected = false;
                         }
                         else
                         {
+                            plugin_attributes.is_payload_encrypted = true;
                             reader_attributes.is_payload_protected = true;
+							reader_attributes.is_key_protected = true;
                             writer_attributes.is_payload_protected = true;
+							writer_attributes.is_key_protected = true;
                         }
 
+                        reader_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
+                        writer_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
 
                         ah->governance_reader_topic_rules_.insert(std::pair<std::string, EndpointSecurityAttributes>(
                                     topic_expression, std::move(reader_attributes)));
