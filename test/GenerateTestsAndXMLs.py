@@ -740,22 +740,17 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 							for sub_history_id, sub_history in enumerate(test_config[0]):
 								for sub_durability_id, sub_durability in enumerate(test_config[1]):
 									for sub_reliabilily_id, sub_reliabilily in enumerate(test_config[2]):
-										'''
-		for pub_history_id, pub_history in enumerate(history_kind):
-			for pub_durability_id, pub_durability in enumerate(durability_kind):
-				for pub_reliabilily_id, pub_reliabilily in enumerate(reliabilily_kind):
-					for pub_publish_id, pub_publish in enumerate(publish_mode):
-
-						for sub_history_id, sub_history in enumerate(history_kind):
-							for sub_durability_id, sub_durability in enumerate(durability_kind):
-								for sub_reliabilily_id, sub_reliabilily in enumerate(reliabilily_kind):
-									'''
 										if pub_durability_id >= sub_durability_id and pub_reliabilily_id >= sub_reliabilily_id:
-											pub_filename = "'" + output_folder + "xml/Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml'"
-											sub_filename = "'" + output_folder + "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + ".xml'"
-
+											pub_filename = "'" + output_folder + "xml\\Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml'"
+											sub_filename = "'" + output_folder + "xml\\Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + ".xml'"
+											log_filename = test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + "_" + str(pub_publish_id) + "__" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id)
+											
 											print("writeTestTitle(sys.argv[1] + \"" + pub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename + "\")", file=pub_test_file)
-											print("os.system(sys.argv[1] + \"" + test + " publisher --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
+											
+											if test == "ThroughputTest":
+												print("os.system(sys.argv[1] + \"" + test + " publisher -f \" + sys.argv[1] + \"\\payloads_demands.csv --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
+											else:
+												print("os.system(sys.argv[1] + \"" + test + " publisher --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
 
 											print("writeTestTitle(sys.argv[1] + \"" + sub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename +  "\")", file=sub_test_file)
-											print("os.system(sys.argv[1] + \"" + test + " subscriber --xml " + sub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \" " + sub_log_filename + "\")", file=sub_test_file)
+											print("os.system(sys.argv[1] + \"" + test + " subscriber --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + sub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \" " + sub_log_filename + "\")", file=sub_test_file)
