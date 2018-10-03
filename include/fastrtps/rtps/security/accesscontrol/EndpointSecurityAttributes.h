@@ -23,6 +23,42 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+typedef uint32_t PluginEndpointSecurityAttributesMask;
+
+#define PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED            (0x00000001UL << 0)
+#define PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED               (0x00000001UL << 1)
+#define PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED (0x00000001UL << 2)
+#define PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID                           (0x00000001UL << 31)
+
+#define PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_MASK_DEFAULT PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID
+
+struct PluginEndpointSecurityAttributes
+{
+    PluginEndpointSecurityAttributes() : 
+        is_submessage_encrypted(false), is_submessage_origin_authenticated(false), is_payload_encrypted(false)
+    { }
+
+    explicit PluginEndpointSecurityAttributes(const PluginEndpointSecurityAttributesMask mask) :
+        is_submessage_encrypted((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0),
+        is_submessage_origin_authenticated((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0),
+        is_payload_encrypted((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED) != 0)
+    {
+    }
+
+    bool is_submessage_encrypted;
+    bool is_submessage_origin_authenticated;
+    bool is_payload_encrypted;
+
+    PluginEndpointSecurityAttributesMask mask() const
+    {
+        PluginEndpointSecurityAttributesMask rv = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (is_submessage_encrypted) rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+        if (is_submessage_origin_authenticated) rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        if (is_payload_encrypted) rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
+        return rv;
+    }
+};
+
 typedef uint32_t EndpointSecurityAttributesMask;
 
 #define ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED       (0x00000001UL << 0)
@@ -39,7 +75,8 @@ struct EndpointSecurityAttributes
     EndpointSecurityAttributes() : 
         is_read_protected(true), is_write_protected(true),
         is_discovery_protected(false), is_liveliness_protected(false),
-        is_submessage_protected(false), is_payload_protected(false), is_key_protected(false)
+        is_submessage_protected(false), is_payload_protected(false), is_key_protected(false),
+        plugin_endpoint_attributes(PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_MASK_DEFAULT)
     {}
 
     explicit EndpointSecurityAttributes(const EndpointSecurityAttributesMask mask) :
@@ -49,7 +86,8 @@ struct EndpointSecurityAttributes
         is_liveliness_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED) != 0),
         is_submessage_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_PROTECTED) != 0),
         is_payload_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED) != 0),
-        is_key_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED) != 0)
+        is_key_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED) != 0),
+        plugin_endpoint_attributes(PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_MASK_DEFAULT)
     {}
 
     bool is_read_protected;
@@ -65,6 +103,8 @@ struct EndpointSecurityAttributes
     bool is_payload_protected;
 
     bool is_key_protected;
+
+    PluginEndpointSecurityAttributesMask plugin_endpoint_attributes;
 
     EndpointSecurityAttributesMask mask()
     {
