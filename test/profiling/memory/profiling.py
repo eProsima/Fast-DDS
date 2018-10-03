@@ -21,7 +21,7 @@ for binary in binaries:
     filename = ntpath.basename(binary)
     print (binary)
     print (filename)
-    proc = subprocess.call([valgrind, "--tool=massif","--time-unit=ms","--massif-out-file=massifLog_" + filename, binary,"100"])
+    proc = subprocess.call([valgrind, "--tool=massif","--stacks=yes","--time-unit=ms","--massif-out-file=massifLog_" + filename, binary,"100"])
 
     heap_values = []
     heap_tree_tags = []
