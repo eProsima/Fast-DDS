@@ -22,6 +22,7 @@
 #include "fastrtps/log/Colors.h"
 #include <numeric>
 #include <cmath>
+#include <fstream>
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
@@ -69,20 +70,23 @@ VideoTestSubscriber::~VideoTestSubscriber()
         gmain_loop_ = nullptr;
     }
 
-    if (pipeline)   gst_object_unref(GST_OBJECT(pipeline)), pipeline = nullptr;
-    if (sink)   gst_object_unref(GST_OBJECT(sink)), sink = nullptr;
-    if (videoconvert)   gst_object_unref(GST_OBJECT(videoconvert)), videoconvert = nullptr;
-    if (appsrc)   gst_object_unref(GST_OBJECT(appsrc)), appsrc = nullptr;
+    gst_bin_remove_many(GST_BIN(pipeline), appsrc, videoconvert, sink, NULL);
+    //if (pipeline)   gst_object_unref(GST_OBJECT(pipeline)), pipeline = nullptr;
+    //if (sink)   gst_object_unref(GST_OBJECT(sink)), sink = nullptr;
+    //if (videoconvert)   gst_object_unref(GST_OBJECT(videoconvert)), videoconvert = nullptr;
+    //if (appsrc)   gst_object_unref(GST_OBJECT(appsrc)), appsrc = nullptr;
     thread_.join();
 }
 
 bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile)
+        const std::string& sXMLConfigFile, bool export_csv)
 {
     large_data = true;
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = nsam;
+    m_bReliable = reliable;
+    m_bExportCsv = export_csv;
 
     InitGStreamer();
 
@@ -412,8 +416,6 @@ void VideoTestSubscriber::gst_run(VideoTestSubscriber* sub)
     // Create a GLib Main Loop and set it to run
     sub->gmain_loop_ = g_main_loop_new(NULL, FALSE);
     g_main_loop_run(sub->gmain_loop_);
-
-    std::cout << "GstSink END!" << std::endl;
 }
 
 bool VideoTestSubscriber::test()
@@ -785,9 +787,26 @@ void VideoTestSubscriber::analyzeTimes()
 
 void VideoTestSubscriber::printStat(TimeStats& TS)
 {
+    std::ofstream outFile;
+    std::stringstream output_file_csv;
+    std::string str_reliable = "besteffort";
+    if (m_bReliable)
+    {
+        str_reliable = "reliable";
+    }
+
     printf("Statistics for video test \n");
-    printf("     Samples,   Avg stdev,    Avg Mean,     min Avg,     Avg 50%%,     Avg 90%%,   Avg 99%%,    Avg 99.99%%,     Avg max,  Drop stdev,   Drop Mean,    min Drop,    Drop 50%%,    Drop 90%%,    Drop 99%%, Drop 99.99%%,    Drop max\n");
-    printf("------------,------------,------------,------------,------------,------------,------------,------------,------------,------------,------------,------------,------------,------------,------------,------------,------------\n");
+    printf("     Samples,   Avg stdev,    Avg Mean,     min Avg,     Avg 50%%,     Avg 90%%,   Avg 99%%,\
+    Avg 99.99%%,     Avg max,  Drop stdev,   Drop Mean,    min Drop,    Drop 50%%,    Drop 90%%,    Drop 99%%,\
+ Drop 99.99%%,    Drop max\n");
+    printf("------------,------------,------------,------------,------------,------------,------------,\
+------------,------------,------------,------------,------------,------------,------------,------------,\
+------------,------------\n");
+
+    output_file_csv << TS.received << "," << TS.pAvgMean << "," << TS.m_minAvg << "," << TS.m_minAvg << "," <<
+        TS.pAvg50 << "," << TS.pAvg90 << "," << TS.pAvg99 << "," << TS.pAvg9999 << "," << TS.m_maxAvg << "," <<
+        TS.pDropMean << "," << TS.m_minDrop << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
+        "," << TS.pDrop99 << "," << TS.pDrop9999 << "," << TS.m_maxDrop << "," << std::endl;
 
 #ifdef _WIN32
     printf("%12u,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f \n",
@@ -798,4 +817,10 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
         TS.received, TS.pAvgMean, TS.m_minAvg, TS.m_minAvg, TS.pAvg50, TS.pAvg90, TS.pAvg99, TS.pAvg9999, TS.m_maxAvg,
         TS.pDropMean, TS.m_minDrop, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
 #endif
+
+    if (m_bExportCsv)
+    {
+        outFile.open("perf_VideoTest_" + str_reliable + ".csv", std::fstream::app);
+        outFile << output_file_csv.str();
+    }
 }
