@@ -58,7 +58,7 @@ class VideoTestPublisher
         bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile, int test_time);
+                const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time);
         void run();
         bool test(uint32_t datasize);
 
@@ -118,6 +118,8 @@ class VideoTestPublisher
         GstElement* videorate;
         GstElement* sink;
         int m_testTime;
+        int m_dropRate;
+        int m_sendSleepTime;
 
     protected:
 
