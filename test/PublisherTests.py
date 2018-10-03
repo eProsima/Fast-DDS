@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
-import sys, os
+import sys, os, signal
+
+def signal_handler(sig, frame):
+	print('Execution aborted by user')
+	sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
 
 user = ""
 password = ""
