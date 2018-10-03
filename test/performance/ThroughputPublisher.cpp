@@ -378,7 +378,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
                 str_reliable = "reliable";
             }
             outFile.open("perf_ThroughputTest_" + std::to_string(payload) + "B_" + str_reliable +
-                "_" + m_sExecutionTime + ".csv");
+                "_all_" + m_sExecutionTime + ".csv");
         }
         else
         {
