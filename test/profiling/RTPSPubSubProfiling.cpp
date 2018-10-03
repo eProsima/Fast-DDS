@@ -16,7 +16,7 @@
 #include "PubSubWriter.hpp"
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/log/Log.h>
-#include "types/HelloWorldType.h"
+#include "types/HelloWorldPubSubTypes.h"
 
 #include <string>
 
@@ -35,8 +35,8 @@ std::list<HelloWorld> default_helloworld_data_generator();
 int main(void)
 {
    const std::string topic_name("Profiling");
-   PubSubReader<HelloWorldType> reader(topic_name);
-   PubSubWriter<HelloWorldType> writer(topic_name);
+   PubSubReader<HelloWorldPubSubType> reader(topic_name);
+   PubSubWriter<HelloWorldPubSubType> writer(topic_name);
    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
    writer.init();
@@ -47,7 +47,7 @@ int main(void)
    reader.waitDiscovery();
 
    auto data = default_helloworld_data_generator();
-   
+
    reader.expected_data(data);
    reader.startReception();
 
