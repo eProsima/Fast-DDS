@@ -1,5 +1,5 @@
 /*************************************************************************************************/
-/**********                      STEPS FOR JENKINS PROJECT                              **********/
+/**********                          STEPS FOR JENKINS PROJECT                          **********/
 /*************************************************************************************************/
 
 STEP 1:
@@ -32,6 +32,8 @@ STEP 3:
 	cp "/workspace/Multi-Node Manual Linux/test/PublisherTests.py" /mnt/jenkins
 	cp "/workspace/Multi-Node Manual Linux/test/SubscriberTests.py" /mnt/jenkins
 	cp "/workspace/Multi-Node Manual Linux/test/AnalyzeTests.py" /mnt/jenkins
+	cp "/workspace/Multi-Node Manual Linux/test/LaunchTests.py" /mnt/jenkins
+	cp "/workspace/Multi-Node Manual Linux/test/CopyAndRenameCSV.py" /mnt/jenkins
 
 STEP 4:
 	// Launch Tests	
