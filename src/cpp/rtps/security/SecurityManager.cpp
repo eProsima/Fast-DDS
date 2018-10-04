@@ -206,6 +206,7 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
                     local_participant_crypto_handle_ = crypto_plugin_->cryptokeyfactory()->register_local_participant(*local_identity_handle_,
                             *local_permissions_handle_,
                             participant_->getRTPSParticipantAttributes().properties.properties(),
+                            participant_->security_attributes(),
                             exception);
 
                     if(local_participant_crypto_handle_ != nullptr)

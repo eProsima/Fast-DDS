@@ -39,6 +39,7 @@ class AESGCMGMAC_KeyFactory : public CryptoKeyFactory
                 const IdentityHandle &participant_identity, 
                 const PermissionsHandle &participant_permissions, 
                 const PropertySeq &participant_properties, 
+                const ParticipantSecurityAttributes &participant_security_attributes,
                 SecurityException &exception) override;
 
         ParticipantCryptoHandle * register_matched_remote_participant(

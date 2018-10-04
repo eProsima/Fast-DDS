@@ -48,6 +48,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
                 const IdentityHandle& /*participant_identity*/,
                 const PermissionsHandle& /*participant_permissions*/,
                 const PropertySeq &participant_properties,
+                const ParticipantSecurityAttributes& /*participant_security_attributes*/,
                 SecurityException& /*exception*/)
 {
 

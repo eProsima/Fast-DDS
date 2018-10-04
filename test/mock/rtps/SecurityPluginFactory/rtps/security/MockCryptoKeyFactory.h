@@ -36,10 +36,11 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
 
         virtual ~MockCryptoKeyFactory(){}
 
-        MOCK_METHOD4(register_local_participant, ParticipantCryptoHandle* (
+        MOCK_METHOD5(register_local_participant, ParticipantCryptoHandle* (
                 const IdentityHandle&,
                 const PermissionsHandle&,
                 const PropertySeq&,
+                const ParticipantSecurityAttributes&,
                 SecurityException&));
 
         MOCK_METHOD5(register_matched_remote_participant, ParticipantCryptoHandle* (

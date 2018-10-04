@@ -20,6 +20,7 @@
 
 #include "CryptoTypes.h"
 #include "../accesscontrol/EndpointSecurityAttributes.h"
+#include "../accesscontrol/ParticipantSecurityAttributes.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,6 +45,7 @@ class CryptoKeyFactory
                 const IdentityHandle &participant_identity, 
                 const PermissionsHandle &participant_permissions, 
                 const PropertySeq &participant_properties, 
+                const ParticipantSecurityAttributes &participant_security_attributes,
                 SecurityException &exception) = 0;
 
         /**
