@@ -26,8 +26,8 @@ if len(sys.argv) == 3:
 
 pubsub = sys.argv[1]
 
-valgrind_command_rel = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./consumption_" + pubsub + "_rel.out"]
-valgrind_command_be = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./consumption_" + pubsub + "_be.out"]
+valgrind_command_rel = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_rel.out"]
+valgrind_command_be = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_be.out"]
 
 security_options = []
 
@@ -41,7 +41,7 @@ proc = subprocess.Popen(valgrind_command_be +
 
 proc.communicate()
 
-py_command = "python3 ./memory_analysis.py ./consumption_" + pubsub + "_be.out ./MemoryTest_" + pubsub + "_be.csv"
+py_command = "python3 ./memory_analysis.py ./output/consumption_" + pubsub + "_be.out ./output/MemoryTest_" + pubsub + "_be.csv"
 p = subprocess.Popen(py_command, shell=True)
 
 # Reliable
@@ -51,7 +51,7 @@ proc = subprocess.Popen(valgrind_command_rel +
 
 proc.communicate()
 
-py_command = "python3 ./memory_analysis.py ./consumption_" + pubsub + "_rel.out ./MemoryTest_" + pubsub + "_rel.csv"
+py_command = "python3 ./memory_analysis.py ./output/consumption_" + pubsub + "_rel.out ./output/MemoryTest_" + pubsub + "_rel.csv"
 # print("Command: " + py_command)
 p = subprocess.Popen(py_command, shell=True)
 
