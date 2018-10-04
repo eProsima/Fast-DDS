@@ -37,16 +37,16 @@ if not folder:
     sys.exit(-1)
 
 
-writeTest("/mnt/jenkins/sub.log", "Start Subscriber Tests")
-writeTest("/mnt/jenkins/sub.log", "Arguments:")
+writeTest("/mnt/jenkins/output/sub.log", "Start Subscriber Tests")
+writeTest("/mnt/jenkins/output/sub.log", "Arguments:")
 for x in sys.argv:
-	writeTest("/mnt/jenkins/sub.log", "\t" + x)
+	writeTest("/mnt/jenkins/output/sub.log", "\t" + x)
 
 os.system("mkdir -p /mnt/jenkins/output")	
-writeTest("/mnt/jenkins/sub.log", "Start Tests")
+writeTest("/mnt/jenkins/output/sub.log", "Start Tests")
 os.chdir(folder)
 os.system("python3 GenerateTestsAndXMLs.py '" + folder + "'")
-writeTest("/mnt/jenkins/sub.log", "Generated XML files")
-writeTest("/mnt/jenkins/sub.log", "Start Tests")
+writeTest("/mnt/jenkins/output/sub.log", "Generated XML files")
+writeTest("/mnt/jenkins/output/sub.log", "Start Tests")
 os.system("python3 SubscriberTestList.py /mnt/jenkins/ '" + folder + "'")
-writeTest("/mnt/jenkins/sub.log", "Tests Completed")
+writeTest("/mnt/jenkins/output/sub.log", "Tests Completed")
