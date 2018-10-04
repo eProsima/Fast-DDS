@@ -3,7 +3,7 @@
 import sys, os, glob, datetime, csv
 
 tests_list = ["LatencyTest", "ThroughputTest", "VideoTest", "MemoryTest"]
-filter_list = [["_average", "_minimum"], ["_all_"], []]
+filter_list = [["_average", "_minimum"], ["_all_"], [], []]
 
 def AnalyzeTestFiles(test_name, file_list):
 	print("Start " + test_name)
