@@ -569,7 +569,8 @@ gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
         int counter = 0;
         while (!sub->hasData() && counter < WAIT_AFTER_LAST_FEED_MS)
         {
-            Sleep(1); if (feeding) ++counter;
+            eClock::my_sleep(1);
+            if (feeding) ++counter;
         }
         if (counter == WAIT_AFTER_LAST_FEED_MS)
         {
@@ -815,15 +816,9 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
         TS.pDropMean << "," << TS.m_minDrop << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
         "," << TS.pDrop99 << "," << TS.pDrop9999 << "," << TS.m_maxDrop << "," << std::endl;
 
-#ifdef _WIN32
     printf("%12u,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f \n",
         TS.received, TS.pAvgMean, TS.m_minAvg, TS.m_minAvg, TS.pAvg50, TS.pAvg90, TS.pAvg99, TS.pAvg9999, TS.m_maxAvg,
         TS.pDropMean, TS.m_minDrop, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
-#else
-    printf("%12u,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%8u,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f \n",
-        TS.received, TS.pAvgMean, TS.m_minAvg, TS.m_minAvg, TS.pAvg50, TS.pAvg90, TS.pAvg99, TS.pAvg9999, TS.m_maxAvg,
-        TS.pDropMean, TS.m_minDrop, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
-#endif
 
     if (m_bExportCsv)
     {
