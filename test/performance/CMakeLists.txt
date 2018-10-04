@@ -52,6 +52,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_link_libraries(ThroughputTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
         if(VIDEO_TESTS)
+			if(NOT WIN32)
+				find_package(PkgConfig) 
+				pkg_check_modules(GST REQUIRED gstreamer-1.0>=1.4 
+					gstreamer-sdp-1.0>=1.4 
+					gstreamer-video-1.0>=1.4
+					gstreamer-app-1.0>=1.4)
+			endif()
+			
             set(VIDEOTEST_SOURCE
                 VideoTestPublisher.cpp
                 VideoTestSubscriber.cpp
@@ -59,7 +67,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 main_VideoTest.cpp
                 )
             add_executable(VideoTest ${VIDEOTEST_SOURCE})
+			
+			target_compile_options(VideoTest PUBLIC ${GST_CFLAGS})
+			
             target_include_directories(VideoTest PUBLIC
+				${GST_INCLUDE_DIRS}
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0
@@ -68,6 +80,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             target_link_libraries(VideoTest fastrtps
                 ${CMAKE_THREAD_LIBS_INIT}
                 ${CMAKE_DL_LIBS}
+				${GST_LIBRARIES}
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstapp-1.0.lib
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstbase-1.0.lib
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib
