@@ -440,9 +440,18 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
                 {
                     str_reliable = "reliable";
                 }
-                std::string fileName = m_sExportPrefix + "perf_ThroughputTest_" +
-                    std::to_string(result.payload_size) + "B_" + str_reliable + "_" +
-                    std::to_string(result.demand) + "demand.csv";
+
+                std::string fileName = "";
+                if (m_sExportPrefix.length() > 0)
+                {
+                    fileName = m_sExportPrefix + std::to_string(result.payload_size) + "B_" + str_reliable + "_" +
+                        std::to_string(result.demand) + "demand.csv";
+                }
+                else
+                {
+                    fileName = "perf_ThroughputTest_" + std::to_string(result.payload_size) +
+                        "B_" + str_reliable + "_" + std::to_string(result.demand) + "demand.csv";
+                }
                 outFile.open(fileName);
                 outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (" + str_reliable + ")\"" << std::endl;
                 outFile << "\"" << result.subscriber.MBitssec << "\"";
