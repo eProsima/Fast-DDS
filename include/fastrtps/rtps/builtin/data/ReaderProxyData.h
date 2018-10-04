@@ -27,7 +27,9 @@
 
 #include "../../attributes/WriterAttributes.h"
 
-
+#if HAVE_SECURITY
+#include "../../security/accesscontrol/EndpointSecurityAttributes.h"
+#endif
 
 namespace eprosima {
 namespace fastrtps{
@@ -298,6 +300,15 @@ class ReaderProxyData
         bool m_expectsInlineQos;
         //!Reader Qos
         ReaderQos m_qos;
+
+#if HAVE_SECURITY
+        //!EndpointSecurityInfo.endpoint_security_attributes
+        security::EndpointSecurityAttributesMask security_attributes_;
+
+        //!EndpointSecurityInfo.plugin_endpoint_security_attributes
+        security::PluginEndpointSecurityAttributesMask plugin_security_attributes_;
+#endif
+
         /**
          * Clear (put to default) the information.
          */

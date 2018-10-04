@@ -18,6 +18,8 @@
 #ifndef __RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H__
 #define __RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H__
 
+#include "./SecurityMaskUtilities.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -49,7 +51,7 @@ struct PluginEndpointSecurityAttributes
     bool is_submessage_origin_authenticated;
     bool is_payload_encrypted;
 
-    PluginEndpointSecurityAttributesMask mask() const
+    inline PluginEndpointSecurityAttributesMask mask() const
     {
         PluginEndpointSecurityAttributesMask rv = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (is_submessage_encrypted) rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
@@ -106,7 +108,7 @@ struct EndpointSecurityAttributes
 
     PluginEndpointSecurityAttributesMask plugin_endpoint_attributes;
 
-    EndpointSecurityAttributesMask mask()
+    inline EndpointSecurityAttributesMask mask() const
     {
         EndpointSecurityAttributesMask rv = ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (is_read_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED;
@@ -117,6 +119,13 @@ struct EndpointSecurityAttributes
         if (is_payload_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED;
         if (is_key_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED;
         return rv;
+    }
+
+    inline bool match(const EndpointSecurityAttributesMask remoteMask,
+        const PluginEndpointSecurityAttributesMask remotePluginMask) const
+    {
+        return security_mask_matches(mask(), remoteMask) &&
+            security_mask_matches(plugin_endpoint_attributes, remotePluginMask);
     }
 };
 

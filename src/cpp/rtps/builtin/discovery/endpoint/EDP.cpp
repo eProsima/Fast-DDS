@@ -75,6 +75,10 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, Read
     rpd.topicDiscoveryKind(att.getTopicDiscoveryKind());
     rpd.m_qos = rqos;
     rpd.userDefinedId(reader->getAttributes().getUserDefinedID());
+#if HAVE_SECURITY
+    rpd.security_attributes_ = reader->getAttributes().security_attributes().mask();
+    rpd.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+#endif
     reader->m_acceptMessagesFromUnkownWriters = false;
 
     if (att.getTopicDiscoveryKind() != NO_CHECK)
@@ -153,6 +157,10 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
     wpd.m_qos = wqos;
     wpd.userDefinedId(writer->getAttributes().getUserDefinedID());
     wpd.persistence_guid(writer->getAttributes().persistence_guid);
+#if HAVE_SECURITY
+    wpd.security_attributes_ = writer->getAttributes().security_attributes().mask();
+    wpd.plugin_security_attributes_ = writer->getAttributes().security_attributes().plugin_endpoint_attributes;
+#endif
 
     if (att.getTopicDiscoveryKind() != NO_CHECK)
     {
@@ -354,6 +362,11 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
                 << rdata->guid() << " has different Ownership Kind");
         return false;
     }
+
+#if HAVE_SECURITY
+    // TODO: Check EndpointSecurityInfo
+#endif
+
     //Partition check:
     bool matched = false;
     if(wdata->m_qos.m_partition.names.empty() && rdata->m_qos.m_partition.names.empty())
@@ -450,6 +463,10 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer " << wdata->guid() << " has different Ownership Kind" << endl;);
         return false;
     }
+#if HAVE_SECURITY
+    // TODO: Check EndpointSecurityInfo
+#endif
+
     //Partition check:
     bool matched = false;
     if(rdata->m_qos.m_partition.names.empty() && wdata->m_qos.m_partition.names.empty())

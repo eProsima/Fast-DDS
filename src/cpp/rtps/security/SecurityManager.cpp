@@ -2302,6 +2302,11 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
     SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
 
+    if (!security_attributes.match(remote_reader_data.security_attributes_, remote_reader_data.plugin_security_attributes_))
+    {
+        return false;
+    }
+
     if(remote_participant_key == participant_->getGuid())
     {
         remote_participant_crypto_handle = local_participant_crypto_handle_;
@@ -2584,6 +2589,11 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
     PermissionsHandle* remote_permissions = nullptr;
     ParticipantCryptoHandle* remote_participant_crypto_handle = nullptr;
     SharedSecretHandle* shared_secret_handle = &SharedSecretHandle::nil_handle;
+
+    if (!security_attributes.match(remote_writer_data.security_attributes_, remote_writer_data.plugin_security_attributes_))
+    {
+        return false;
+    }
 
     if(remote_participant_key == participant_->getGuid())
     {

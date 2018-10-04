@@ -778,6 +778,18 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     valid &= CDRMessage::readUInt32(msg, &p->plugin_security_attributes);
                     IF_VALID_ADD
                 }
+
+                case PID_ENDPOINT_SECURITY_INFO:
+                {
+                    if (plength != PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
+                    {
+                        return -1;
+                    }
+                    ParameterEndpointSecurityInfo_t* p = new ParameterEndpointSecurityInfo_t(pid, plength);
+                    valid &= CDRMessage::readUInt32(msg, &p->security_attributes);
+                    valid &= CDRMessage::readUInt32(msg, &p->plugin_security_attributes);
+                    IF_VALID_ADD
+                }
 #endif
 
                 case PID_PAD:

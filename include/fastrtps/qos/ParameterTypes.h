@@ -24,6 +24,7 @@
 
 #if HAVE_SECURITY
 #include "../rtps/security/accesscontrol/ParticipantSecurityAttributes.h"
+#include "../rtps/security/accesscontrol/EndpointSecurityAttributes.h"
 #endif
 
 #include <string>
@@ -583,6 +584,35 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
 };
 
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
+
+class ParameterEndpointSecurityInfo_t : public Parameter_t
+{
+    public:
+        rtps::security::EndpointSecurityAttributesMask security_attributes;
+        rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
+
+        ParameterEndpointSecurityInfo_t() : Parameter_t(PID_ENDPOINT_SECURITY_INFO, 0)
+        {
+        }
+
+        /**
+        * Constructor using a parameter PID and the parameter length
+        * @param pid Pid of the parameter
+        * @param in_length Its associated length
+        */
+        ParameterEndpointSecurityInfo_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid, in_length)
+        {
+        }
+
+        /**
+        * Add the parameter to a CDRMessage_t message.
+        * @param[in,out] msg Pointer to the message where the parameter should be added.
+        * @return True if the parameter was correctly added.
+        */
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+#define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
 
 #endif
 

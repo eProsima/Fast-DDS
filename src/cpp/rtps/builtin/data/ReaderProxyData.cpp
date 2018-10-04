@@ -245,6 +245,13 @@ ParameterList_t ReaderProxyData::toParameterList()
             parameter_list.m_parameters.push_back((Parameter_t*)p);
         }
     }
+#if HAVE_SECURITY
+    {
+        ParameterEndpointSecurityInfo_t*p = new ParameterEndpointSecurityInfo_t();
+        p->security_attributes = security_attributes_;
+        p->plugin_security_attributes = plugin_security_attributes_;
+    }
+#endif
 
     logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << parameter_list.m_parameters.size()<< " parameters");
     return parameter_list;
@@ -449,6 +456,14 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         }
                         break;
                     }
+#if HAVE_SECURITY
+                case PID_ENDPOINT_SECURITY_INFO:
+                    {
+                        ParameterEndpointSecurityInfo_t*p=(ParameterEndpointSecurityInfo_t*)(*it);
+                        security_attributes_ = p->security_attributes;
+                        plugin_security_attributes_ = p->plugin_security_attributes;
+                    }
+#endif
                 default:
                     {
                         //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED");

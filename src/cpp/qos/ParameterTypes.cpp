@@ -240,4 +240,13 @@ bool ParameterParticipantSecurityInfo_t::addToCDRMessage(CDRMessage_t*msg)
     return valid;
 }
 
+bool ParameterEndpointSecurityInfo_t::addToCDRMessage(CDRMessage_t*msg)
+{
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+    valid &= CDRMessage::addUInt16(msg, PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH);//this->length);
+    valid &= CDRMessage::addUInt32(msg, this->security_attributes);
+    valid &= CDRMessage::addUInt32(msg, this->plugin_security_attributes);
+    return valid;
+}
+
 #endif
