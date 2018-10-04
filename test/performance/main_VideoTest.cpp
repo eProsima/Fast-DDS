@@ -111,7 +111,6 @@ enum  optionIndex {
     SAMPLES,
     SEED,
     SUBSCRIBERS,
-    ECHO_OPT,
     HOSTNAME,
     EXPORT_CSV,
     EXPORT_PREFIX,
@@ -133,7 +132,6 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nPublisher options:"},
     { SUBSCRIBERS,0,"n","subscribers",          Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
     { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nSubscriber options:"},
-    { ECHO_OPT, 0,"e","echo",                   Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
     { HOSTNAME,0,"","hostname",                 Arg::None,      "" },
     { EXPORT_CSV,0,"","export_csv",             Arg::None,      "" },
     { EXPORT_PREFIX,0,"","export_prefix",       Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
@@ -181,7 +179,6 @@ int main(int argc, char** argv)
     bool use_security = false;
     std::string certs_path;
 #endif
-    bool echo = true;
     bool reliable = false;
     uint32_t seed = 80;
     bool hostname = false;
@@ -262,22 +259,6 @@ int main(int argc, char** argv)
 
             case SUBSCRIBERS:
                 sub_number = strtol(opt.arg, nullptr, 10);
-                break;
-
-            case ECHO_OPT:
-                if (strcmp(opt.arg, "true") == 0)
-                {
-                    echo = true;
-                }
-                else if (strcmp(opt.arg, "false") == 0)
-                {
-                    echo = false;
-                }
-                else
-                {
-                    option::printUsage(fwrite, stdout, usage, columns);
-                    return 0;
-                }
                 break;
 
             case HOSTNAME:
