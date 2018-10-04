@@ -84,15 +84,24 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                     $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include)
             endif()
 
-            target_link_libraries(VideoTest fastrtps
-                ${CMAKE_THREAD_LIBS_INIT}
-                ${CMAKE_DL_LIBS}
-				${GST_LIBRARIES}
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstapp-1.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstbase-1.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib)
+            if (WIN32)
+                target_link_libraries(VideoTest fastrtps
+                    ${CMAKE_THREAD_LIBS_INIT}
+                    ${CMAKE_DL_LIBS}
+                    ${GST_LIBRARIES}
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstapp-1.0.lib
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstbase-1.0.lib
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib)
+            else()
+                target_link_libraries(VideoTest fastrtps
+                    ${CMAKE_THREAD_LIBS_INIT}
+                    ${CMAKE_DL_LIBS}
+                    ${GST_LIBRARIES}
+                    gstapp-1.0
+                    )
+            endif()
         endif()
 
         if(EPROSIMA_BUILD_TESTS)
