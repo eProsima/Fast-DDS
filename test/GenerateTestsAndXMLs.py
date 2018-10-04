@@ -750,16 +750,16 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 											print("writeTestTitle(sys.argv[1] + \"" + pub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename + "\")", file=pub_test_file)
 
 											if test == "ThroughputTest":
-												print("os.system(sys.argv[1] + \"" + test + " publisher -f \" + sys.argv[1] + \"\\payloads_demands.csv --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
+												print("os.system(sys.argv[1] + \"" + test + " publisher -f \" + sys.argv[1] + \"\\payloads_demands.csv --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + pub_log_filename + "\")", file=pub_test_file)
 											else:
 												if not test == "memory_tests.py":
-													print("os.system(sys.argv[1] + \"" + test + " publisher --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
+													print("os.system(sys.argv[1] + \"" + test + " publisher --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + pub_log_filename + "\")", file=pub_test_file)
 												else:
-													print("os.system(\"python3 \" + sys.argv[1] + \"" + test + " publisher \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"" + pub_log_filename + "\")", file=pub_test_file)
+													print("os.system(\"python3 \" + sys.argv[1] + \"" + test + " publisher \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + pub_log_filename + "\")", file=pub_test_file)
 
 											print("writeTestTitle(sys.argv[1] + \"" + sub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename +  "\")", file=sub_test_file)
 
 											if not test == "memory_tests.py":
-												print("os.system(sys.argv[1] + \"" + test + " subscriber --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + sub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \" " + sub_log_filename + "\")", file=sub_test_file)
+												print("os.system(sys.argv[1] + \"" + test + " subscriber --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + sub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + sub_log_filename + "\")", file=sub_test_file)
 											else:
-												print("os.system(\"python3 \" + sys.argv[1] + \"" + test + " subscriber \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"" + sub_log_filename + "\")", file=sub_test_file)
+												print("os.system(\"python3 \" + sys.argv[1] + \"" + test + " subscriber \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + sub_log_filename + "\")", file=sub_test_file)
