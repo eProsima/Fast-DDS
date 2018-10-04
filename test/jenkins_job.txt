@@ -10,9 +10,9 @@ STEP 1:
 
 STEP 2:
 	// Build FastRTPS
-	exit `ctest -VV --no-compress-output --output-on-failure -DJENKINS_BUILD_NAME="${BUILD_TAG}" \
-	-DJENKINS_BUILD_OPTIONS="-DEPROSIMA_BUILD=ON -DPERFORMANCE_TESTS=ON -DVIDEO_TESTS=ON -DGTEST_INDIVIDUAL=ON  -DDISABLE_UDPV6_TESTS=ON -DSECURITY=${security}" \
-    -DJENKINS_BUILD_CONFIGURATION=RelWithDebInfo -DDISABLE_CTEST_COVERAGE=ON -DJENKINS_DASHBOARD="Experimental" -S CTestJenkins.cmake 1>&2 | tail -n 1`
+	mkdir build && cd build
+	cmake .. -DTHIRDPARTY=ON -DPERFORMANCE_TESTS=ON -DVIDEO_TESTS=ON -DMEMORY_TESTS=ON
+	make
 
 STEP 3:
 	// Copy Binary files
