@@ -15,6 +15,6 @@ now = datetime.datetime.now()
 os.system("mkdir -p " + csvs_folder)
 for file in os.listdir(output_folder):
 	if file.endswith(".csv"):
-		shutil.copy(output_folder + "\\" + file, csvs_folder + "\\" + file[:-4] + now.strftime("%Y-%m-%d_%H-%M-%S") + ".csv")
+		shutil.copy(output_folder + "/" + file, csvs_folder + "/" + file[:-4] + now.strftime("%Y-%m-%d_%H-%M-%S") + ".csv")
 
 			

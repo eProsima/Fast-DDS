@@ -116,10 +116,10 @@ for test_id, test in enumerate(tests_list):
 			if result == -1:
 				global_result = -1
 				file_name = files_by_test[name][-1]
-				file_path = file_name.split("\\")
+				file_path = file_name.split("/")
 				file_name = ""
 				for field in file_path[:-1]:
-					file_name += field + "\\"
+					file_name += field + "/"
 				file_name += "w_" + file_path[-1]
 				os.rename(files_by_test[name][-1], file_name)
 
