@@ -710,13 +710,7 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                             break;
                         }
                     }
-                case PID_IDENTITY_TOKEN:
-                    {
-                        ParameterToken_t* p = new ParameterToken_t(pid, plength);
-                        valid &= CDRMessage::readDataHolder(msg, p->token);
-                        msg->pos += (4 - msg->pos % 4) & 3; //align
-                        IF_VALID_ADD
-                    }
+
                 case PID_DATA_REPRESENTATION:
                 {
                     DataRepresentationQosPolicy * p = new DataRepresentationQosPolicy();
@@ -762,6 +756,30 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                     valid &= p->readFromCDRMessage(msg, plength);
                     IF_VALID_ADD
                 }
+
+#if HAVE_SECURITY
+                case PID_IDENTITY_TOKEN:
+                case PID_PERMISSIONS_TOKEN:
+				{
+					ParameterToken_t* p = new ParameterToken_t(pid, plength);
+					valid &= CDRMessage::readDataHolder(msg, p->token);
+					msg->pos += (4 - msg->pos % 4) & 3; //align
+					IF_VALID_ADD
+				}
+
+                case PID_PARTICIPANT_SECURITY_INFO:
+                {
+                    if (plength != PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
+                    {
+                        return -1;
+                    }
+                    ParameterParticipantSecurityInfo_t* p = new ParameterParticipantSecurityInfo_t(pid, plength);
+                    valid &= CDRMessage::readUInt32(msg, &p->security_attributes);
+                    valid &= CDRMessage::readUInt32(msg, &p->plugin_security_attributes);
+                    IF_VALID_ADD
+                }
+#endif
+
                 case PID_PAD:
                 default:
                     {

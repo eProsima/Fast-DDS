@@ -186,6 +186,10 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
         participant_data->permissions_token_ = std::move(*permissions_token);
         mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
     }
+
+    auto sec_attrs = mp_RTPSParticipant->security_attributes();
+    participant_data->security_attributes_ = sec_attrs.mask();
+    participant_data->plugin_security_attributes_ = sec_attrs.plugin_participant_attributes;
 #endif
 }
 

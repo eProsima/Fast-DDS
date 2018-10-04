@@ -22,6 +22,9 @@
 #include "../rtps/common/all_common.h"
 #include "../rtps/common/Token.h"
 
+#if HAVE_SECURITY
+#include "../rtps/security/accesscontrol/ParticipantSecurityAttributes.h"
+#endif
 
 #include <string>
 #include <vector>
@@ -525,6 +528,8 @@ class ParameterSampleIdentity_t : public Parameter_t
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 };
 
+#if HAVE_SECURITY
+
 /**
  *
  */
@@ -550,7 +555,36 @@ class ParameterToken_t : public Parameter_t
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 };
 
+class ParameterParticipantSecurityInfo_t : public Parameter_t
+{
+    public:
+        rtps::security::ParticipantSecurityAttributesMask security_attributes;
+        rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
 
+        ParameterParticipantSecurityInfo_t() : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, 0)
+        {
+        }
+
+        /**
+        * Constructor using a parameter PID and the parameter length
+        * @param pid Pid of the parameter
+        * @param in_length Its associated length
+        */
+        ParameterParticipantSecurityInfo_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid, in_length)
+        {
+        }
+
+        /**
+        * Add the parameter to a CDRMessage_t message.
+        * @param[in,out] msg Pointer to the message where the parameter should be added.
+        * @return True if the parameter was correctly added.
+        */
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+#define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
+
+#endif
 
 ///@}
 

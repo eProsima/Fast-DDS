@@ -23,6 +23,10 @@
 #include <fastrtps/rtps/common/Token.h>
 #include <fastrtps/qos/ParameterList.h>
 
+#if HAVE_SECURITY
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -44,9 +48,13 @@ class ParticipantProxyData
         uint32_t m_availableBuiltinEndpoints;
         LocatorList_t m_metatrafficUnicastLocatorList;
         LocatorList_t m_metatrafficMulticastLocatorList;
-        IdentityToken identity_token_;
         VendorId_t m_VendorId;
+#if HAVE_SECURITY
+        IdentityToken identity_token_;
         PermissionsToken permissions_token_;
+        security::ParticipantSecurityAttributesMask security_attributes_;
+        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
+#endif
 };
 
 } // namespace rtps

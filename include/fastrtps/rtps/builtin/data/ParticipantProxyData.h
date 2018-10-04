@@ -27,6 +27,10 @@
 #include "../../attributes/ReaderAttributes.h"
 #include "../../common/Token.h"
 
+#if HAVE_SECURITY
+#include "../../security/accesscontrol/ParticipantSecurityAttributes.h"
+#endif
+
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
 #define DISCOVERY_PUBLICATION_DATA_MAX_SIZE 5000
@@ -103,10 +107,16 @@ class ParticipantProxyData
         InstanceHandle_t m_key;
         //!
         Duration_t m_leaseDuration;
+#if HAVE_SECURITY
         //!
         IdentityToken identity_token_;
         //!
         PermissionsToken permissions_token_;
+        //!
+        security::ParticipantSecurityAttributesMask security_attributes_;
+        //!
+        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
+#endif
         //!
         bool isAlive;
         //!

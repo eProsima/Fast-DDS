@@ -18,6 +18,8 @@
 #ifndef __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__
 #define __RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H__
 
+#include "./SecurityMaskUtilities.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -62,7 +64,7 @@ struct PluginParticipantSecurityAttributes
 
     bool is_liveliness_origin_authenticated;
 
-    PluginParticipantSecurityAttributesMask mask() const
+    inline PluginParticipantSecurityAttributesMask mask() const
     {
         PluginParticipantSecurityAttributesMask rv = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (is_rtps_encrypted) rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED;
@@ -108,13 +110,20 @@ struct ParticipantSecurityAttributes
 
     PluginParticipantSecurityAttributesMask plugin_participant_attributes;
 
-    ParticipantSecurityAttributesMask mask() const
+    inline ParticipantSecurityAttributesMask mask() const
     {
         ParticipantSecurityAttributesMask rv = PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (is_rtps_protected) rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_PROTECTED;
         if (is_discovery_protected) rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED;
         if (is_liveliness_protected) rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED;
         return rv;
+    }
+
+    inline bool match(const ParticipantSecurityAttributesMask remoteMask, 
+        const PluginParticipantSecurityAttributesMask remotePluginMask) const
+    {
+        return security_mask_matches(mask(), remoteMask) && 
+            security_mask_matches(plugin_participant_attributes, remotePluginMask);
     }
 };
 
