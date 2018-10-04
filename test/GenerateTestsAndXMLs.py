@@ -85,6 +85,20 @@ for history_id, history in enumerate(test_config[0]):
 								print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
 								print("\t\t\t\t<depth>20</depth>", file=text_file)
 								print("\t\t\t</historyQos>", file=text_file)
+								'''
+								TODO Avoid issue #3463. Remove section when resolve.
+								https://eprosima.easyredmine.com/issues/3463
+								'''
+								if reliabilily_pub_id == 1:
+									print("\t\t\t<resourceLimitsQos>", file=text_file)
+									print("\t\t\t\t<max_samples>199</max_samples>", file=text_file)
+									print("\t\t\t\t<max_instances>199</max_instances>", file=text_file)
+									print("\t\t\t\t<max_samples_per_instance>199</max_samples_per_instance>", file=text_file)
+									print("\t\t\t\t<allocated_samples>199</allocated_samples>", file=text_file)
+									print("\t\t\t</resourceLimitsQos>", file=text_file)
+								'''
+								TODO End issue #3463
+								'''
 								print("\t\t</topic>", file=text_file)
 								print("\t\t<qos>", file=text_file)
 								print("\t\t\t<durability>", file=text_file)
@@ -183,6 +197,20 @@ for history_id, history in enumerate(test_config[0]):
 								print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
 								print("\t\t\t\t<depth>20</depth>", file=text_file)
 								print("\t\t\t</historyQos>", file=text_file)
+								'''
+								TODO Avoid issue #3463. Remove section when resolve.
+								https://eprosima.easyredmine.com/issues/3463
+								'''
+								if reliabilily_pub_id == 1:
+									print("\t\t\t<resourceLimitsQos>", file=text_file)
+									print("\t\t\t\t<max_samples>199</max_samples>", file=text_file)
+									print("\t\t\t\t<max_instances>199</max_instances>", file=text_file)
+									print("\t\t\t\t<max_samples_per_instance>199</max_samples_per_instance>", file=text_file)
+									print("\t\t\t\t<allocated_samples>199</allocated_samples>", file=text_file)
+									print("\t\t\t</resourceLimitsQos>", file=text_file)
+								'''
+								TODO End issue #3463
+								'''
 								print("\t\t</topic>", file=text_file)
 								print("\t\t<qos>", file=text_file)
 								print("\t\t\t<durability>", file=text_file)
@@ -316,6 +344,20 @@ for history_id, history in enumerate(test_config[0]):
 								print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
 								print("\t\t\t\t<depth>100</depth>", file=text_file)
 								print("\t\t\t</historyQos>", file=text_file)
+								'''
+								TODO Avoid issue #3463. Remove section when resolve.
+								https://eprosima.easyredmine.com/issues/3463
+								'''
+								if reliabilily_pub_id == 1:
+									print("\t\t\t<resourceLimitsQos>", file=text_file)
+									print("\t\t\t\t<max_samples>199</max_samples>", file=text_file)
+									print("\t\t\t\t<max_instances>199</max_instances>", file=text_file)
+									print("\t\t\t\t<max_samples_per_instance>199</max_samples_per_instance>", file=text_file)
+									print("\t\t\t\t<allocated_samples>199</allocated_samples>", file=text_file)
+									print("\t\t\t</resourceLimitsQos>", file=text_file)
+								'''
+								TODO End issue #3463
+								'''
 								print("\t\t</topic>", file=text_file)
 								print("\t\t<qos>", file=text_file)
 								print("\t\t\t<durability>", file=text_file)
@@ -509,6 +551,20 @@ for history_id, history in enumerate(test_config[0]):
 								print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
 								print("\t\t\t\t<depth>20</depth>", file=text_file)
 								print("\t\t\t</historyQos>", file=text_file)
+								'''
+								TODO Avoid issue #3463. Remove section when resolve.
+								https://eprosima.easyredmine.com/issues/3463
+								'''
+								if reliabilily_pub_id == 1:
+									print("\t\t\t<resourceLimitsQos>", file=text_file)
+									print("\t\t\t\t<max_samples>199</max_samples>", file=text_file)
+									print("\t\t\t\t<max_instances>199</max_instances>", file=text_file)
+									print("\t\t\t\t<max_samples_per_instance>199</max_samples_per_instance>", file=text_file)
+									print("\t\t\t\t<allocated_samples>199</allocated_samples>", file=text_file)
+									print("\t\t\t</resourceLimitsQos>", file=text_file)
+								'''
+								TODO End issue #3463
+								'''
 								print("\t\t</topic>", file=text_file)
 								print("\t\t<qos>", file=text_file)
 								print("\t\t\t<durability>", file=text_file)
@@ -607,6 +663,20 @@ for history_id, history in enumerate(test_config[0]):
 								print("\t\t\t\t<kind>KEEP_ALL</kind>", file=text_file)
 								print("\t\t\t\t<depth>20</depth>", file=text_file)
 								print("\t\t\t</historyQos>", file=text_file)
+								'''
+								TODO Avoid issue #3463. Remove section when resolve.
+								https://eprosima.easyredmine.com/issues/3463
+								'''
+								if reliabilily_pub_id == 1:
+									print("\t\t\t<resourceLimitsQos>", file=text_file)
+									print("\t\t\t\t<max_samples>199</max_samples>", file=text_file)
+									print("\t\t\t\t<max_instances>199</max_instances>", file=text_file)
+									print("\t\t\t\t<max_samples_per_instance>199</max_samples_per_instance>", file=text_file)
+									print("\t\t\t\t<allocated_samples>199</allocated_samples>", file=text_file)
+									print("\t\t\t</resourceLimitsQos>", file=text_file)
+								'''
+								TODO End issue #3463
+								'''
 								print("\t\t</topic>", file=text_file)
 								print("\t\t<qos>", file=text_file)
 								print("\t\t\t<durability>", file=text_file)
