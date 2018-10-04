@@ -729,8 +729,8 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 		print("\t\tmyfile.write(testname + \"\\n\")", file=sub_test_file)
 		print("\t\tmyfile.write(\"*****************************************************************************\\n\")\n\n", file=sub_test_file)
 
-		pub_log_filename = "pub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
-		sub_log_filename = "sub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
+		pub_log_filename = "/pub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
+		sub_log_filename = "/sub_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
 		pub_filename = ""
 		sub_filename = ""
 		for test_id, test in enumerate(tests_list):
@@ -743,23 +743,23 @@ with open("PublisherTestList.py", "w") as pub_test_file:
 								for sub_durability_id, sub_durability in enumerate(test_config[1]):
 									for sub_reliabilily_id, sub_reliabilily in enumerate(test_config[2]):
 										if pub_durability_id >= sub_durability_id and pub_reliabilily_id >= sub_reliabilily_id:
-											pub_filename = "'" + output_folder + "xml\\Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml'"
-											sub_filename = "'" + output_folder + "xml\\Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + ".xml'"
+											pub_filename = "'" + output_folder + "xml/Publisher_" + test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + "_" + str(pub_publish_id) + ".xml'"
+											sub_filename = "'" + output_folder + "xml/Subscriber_" + test + "_" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + ".xml'"
 											log_filename = test + "_" + str(pub_history_id) + "_" + str(pub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id) + "_" + str(pub_publish_id) + "__" + str(sub_history_id) + "_" + str(sub_durability_id) + "_" + str(pub_reliabilily_id) + "_" + str(sub_reliabilily_id)
 
 											print("writeTestTitle(sys.argv[1] + \"" + pub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename + "\")", file=pub_test_file)
 
 											if test == "ThroughputTest":
-												print("os.system(sys.argv[1] + \"" + test + " publisher -f \" + sys.argv[1] + \"\\payloads_demands.csv --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + pub_log_filename + "\")", file=pub_test_file)
+												print("os.system(\"LD_LIBRARY_PATH=\" + sys.argv[1] + \" \" + sys.argv[1] + \"" + test + " publisher -f \" + sys.argv[1] + \"\\payloads_demands.csv --export_csv --export_prefix \" + sys.argv[1] + \"/output/" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"/output/" + pub_log_filename + "\")", file=pub_test_file)
 											else:
 												if not test == "memory_tests.py":
-													print("os.system(sys.argv[1] + \"" + test + " publisher --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + pub_log_filename + "\")", file=pub_test_file)
+													print("os.system(\"LD_LIBRARY_PATH=\" + sys.argv[1] + \" \" + sys.argv[1] + \"" + test + " publisher --export_csv --export_prefix \" + sys.argv[1] + \"/output/" + log_filename + " --xml " + pub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"/output/" + pub_log_filename + "\")", file=pub_test_file)
 												else:
-													print("os.system(\"python3 \" + sys.argv[1] + \"" + test + " publisher \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + pub_log_filename + "\")", file=pub_test_file)
+													print("os.system(\"LD_LIBRARY_PATH=\" + sys.argv[1] + \" python3 \" + sys.argv[1] + \"" + test + " publisher \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"/output/" + pub_log_filename + "\")", file=pub_test_file)
 
 											print("writeTestTitle(sys.argv[1] + \"" + sub_log_filename + "\", \"" + pub_filename + " -> " + sub_filename +  "\")", file=sub_test_file)
 
 											if not test == "memory_tests.py":
-												print("os.system(sys.argv[1] + \"" + test + " subscriber --export_csv --export_prefix \" + sys.argv[1] + \"\\output\\" + log_filename + " --xml " + sub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + sub_log_filename + "\")", file=sub_test_file)
+												print("os.system(\"LD_LIBRARY_PATH=\" + sys.argv[1] + \" \" + sys.argv[1] + \"" + test + " subscriber --export_csv --export_prefix \" + sys.argv[1] + \"/output/" + log_filename + " --xml " + sub_filename + " 2>&1 | tee -a \" + sys.argv[1] + \"/output/" + sub_log_filename + "\")", file=sub_test_file)
 											else:
-												print("os.system(\"python3 \" + sys.argv[1] + \"" + test + " subscriber \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"\\output\\" + sub_log_filename + "\")", file=sub_test_file)
+												print("os.system(\"LD_LIBRARY_PATH=\" + sys.argv[1] + \" python3 \" + sys.argv[1] + \"" + test + " subscriber \" + sys.argv[1] + \"" + "MemoryTest" + " 2>&1 | tee -a \" + sys.argv[1] + \"/output/" + sub_log_filename + "\")", file=sub_test_file)

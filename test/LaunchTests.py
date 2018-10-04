@@ -24,10 +24,12 @@ pub_list = pub_str.split(',')
 sub_list = sub_str.split(',')
 
 id = 0
+last_docker = None
 for a in pub_list:
 	print("Launch Publisher on: " + a)
-	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestPub" + str(id) + " ubuntu-test python3 \"/workspace/Multi-Node Manual Linux/test/PublisherTests.py\" " + user + " " + password + " \"/workspace/Multi-Node Manual Linux/test/\""
+	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestPub" + str(id) + " ubuntu-test python3 \"/mnt/jenkins/PublisherTests.py\" " + user + " " + password + " \"/mnt/jenkins/\""
 	print("Command: " + command)
+	last_docker = "TestPub" + str(id)
 	subprocess.Popen(command, shell=True)
 	id = id + 1
 
@@ -35,10 +37,15 @@ p = None
 id = 0
 for a in sub_list:
 	print("Launch Subscriber on: " + a)
-	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestSub" + str(id) + " ubuntu-test python3 \"/workspace/Multi-Node Manual Linux/test/SubscriberTests.py\" " + user + " " + password + " \"/workspace/Multi-Node Manual Linux/test/\""
+	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestSub" + str(id) + " ubuntu-test python3 \"/mnt/jenkins/SubscriberTests.py\" " + user + " " + password + " \"/mnt/jenkins/\""
 	print("Command: " + command)
+	last_docker = "TestSub" + str(id)
 	p = subprocess.Popen(command, shell=True)
 	id = id + 1
 
 if p != None:
 	p.communicate()
+	if last_docker != None:
+		os.system("docker wait " + last_docker)
+
+	

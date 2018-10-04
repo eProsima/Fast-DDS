@@ -27,7 +27,6 @@ if len(sys.argv) == 4:
     folder = os.path.abspath(sys.argv[3])
     if not os.path.ismount("/mnt/jenkins"):
         os.system("mkdir -p /mnt/jenkins")
-        os.system("mkdir -p /mnt/jenkins/output")
         os.system("mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins")
         print("/mnt/jenkins mounted")
     else:
@@ -43,6 +42,7 @@ writeTest("/mnt/jenkins/sub.log", "Arguments:")
 for x in sys.argv:
 	writeTest("/mnt/jenkins/sub.log", "\t" + x)
 
+os.system("mkdir -p /mnt/jenkins/output")	
 writeTest("/mnt/jenkins/sub.log", "Start Tests")
 os.chdir(folder)
 os.system("python3 GenerateTestsAndXMLs.py '" + folder + "'")
