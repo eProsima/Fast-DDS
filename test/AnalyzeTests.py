@@ -2,7 +2,7 @@
 
 import sys, os, glob, datetime, csv
 
-tests_list = ["LatencyTest", "ThroughputTest", "VideoTest"]
+tests_list = ["LatencyTest", "ThroughputTest", "VideoTest", "MemoryTest"]
 filter_list = [["_average", "_minimum"], ["_all_"], []]
 
 def AnalyzeTestFiles(test_name, file_list):
@@ -38,9 +38,11 @@ def AnalyzeFiles(test_id, file_list):
 			elif "_minimum" in file_list[0]:
 				return AnalyzeTestFiles("Latency Minimum Test", file_list)
 		elif test_id == 1:
-			return AnalyzeTestFiles("throughput Test", file_list)
+			return AnalyzeTestFiles("Throughput Test", file_list)
 		elif test_id == 2:
 			return AnalyzeTestFiles("Video Test", file_list)
+		elif test_id == 3:
+			return AnalyzeTestFiles("Memory Test", file_list)			
 	else:
 		print("There aren't enough files to analyze the test: " + tests_list[test_id])
 
