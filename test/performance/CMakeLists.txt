@@ -53,13 +53,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         if(VIDEO_TESTS)
 			if(NOT WIN32)
-				find_package(PkgConfig) 
+				find_package(PkgConfig)
 				pkg_check_modules(GST REQUIRED gstreamer-1.0>=1.4)
-					# gstreamer-sdp-1.0>=1.4 
+					# gstreamer-sdp-1.0>=1.4
 					# gstreamer-video-1.0>=1.4
 					# gstreamer-app-1.0>=1.4)
 			endif()
-			
+
             set(VIDEOTEST_SOURCE
                 VideoTestPublisher.cpp
                 VideoTestSubscriber.cpp
@@ -67,15 +67,22 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 main_VideoTest.cpp
                 )
             add_executable(VideoTest ${VIDEOTEST_SOURCE})
-			
-			target_compile_options(VideoTest PUBLIC ${GST_CFLAGS})
-			
-            target_include_directories(VideoTest PUBLIC
-				${GST_INCLUDE_DIRS}
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include)
+
+            target_compile_options(VideoTest PUBLIC ${GST_CFLAGS})
+
+            message("--------------> " ${GST_INCLUDE_DIRS})
+
+            if(NOT WIN32)
+                target_include_directories(VideoTest PUBLIC
+                    ${GST_INCLUDE_DIRS}
+                    )
+            else()
+                target_include_directories(VideoTest PUBLIC
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0
+                    $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include)
+            endif()
 
             target_link_libraries(VideoTest fastrtps
                 ${CMAKE_THREAD_LIBS_INIT}
