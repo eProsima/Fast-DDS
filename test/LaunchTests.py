@@ -27,7 +27,7 @@ id = 0
 last_docker = None
 for a in pub_list:
 	print("Launch Publisher on: " + a)
-	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestPub" + str(id) + " ubuntu-test-image bash -c \"mkdir -p /mnt/jenkins; mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins; python3 /mnt/jenkins/PublisherTests.py " + user + " " + password + " /mnt/jenkins/\""
+	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --cap-add=DAC_READ_SEARCH --rm -d --name TestPub" + str(id) + " ubuntu-test-image bash -c \"mkdir -p /mnt/jenkins; mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins; python3 /mnt/jenkins/PublisherTests.py " + user + " " + password + " /mnt/jenkins/\""
 	print("Command: " + command)
 	last_docker = "TestPub" + str(id)
 	subprocess.Popen(command, shell=True)
@@ -37,7 +37,7 @@ p = None
 id = 0
 for a in sub_list:
 	print("Launch Subscriber on: " + a)
-	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --cap-add=DAC_READ_SEARCH --rm -d --network=host --name TestSub" + str(id) + " ubuntu-test-image bash -c \"mkdir -p /mnt/jenkins; mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins; python3 /mnt/jenkins/SubscriberTests.py " + user + " " + password + " /mnt/jenkins/\""
+	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --cap-add=DAC_READ_SEARCH --rm -d --name TestSub" + str(id) + " ubuntu-test-image bash -c \"mkdir -p /mnt/jenkins; mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins; python3 /mnt/jenkins/SubscriberTests.py " + user + " " + password + " /mnt/jenkins/\""
 	print("Command: " + command)
 	last_docker = "TestSub" + str(id)
 	p = subprocess.Popen(command, shell=True)
