@@ -550,6 +550,14 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
     return returned_value;
 }
 
+static void process_protection_kind(const ProtectionKind kind, bool& protected_flag, bool& encrypted_flag, bool& orig_auth_flag)
+{
+    protected_flag = kind != ProtectionKind::NONE;
+    encrypted_flag = (kind == ProtectionKind::ENCRYPT) || (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
+    orig_auth_flag = (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
+        (kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
+}
+
 static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle& ah, const uint32_t domain_id,
         DomainAccessRules& governance, PermissionsData& permissions, SecurityException& exception)
 {
@@ -595,23 +603,24 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                 {
                     ah->governance_rule_.is_access_protected = rule.enable_join_access_control;
 
-                    if(rule.discovery_protection_kind == ProtectionKind::NONE)
-                    {
-                        ah->governance_rule_.is_discovery_protected = false;
-                    }
-                    else
-                    {
-                        ah->governance_rule_.is_discovery_protected = true;
-                    }
+                    PluginParticipantSecurityAttributes plug_part_attr;
 
-                    if(rule.rtps_protection_kind == ProtectionKind::NONE)
-                    {
-                        ah->governance_rule_.is_rtps_protected = false;
-                    }
-                    else
-                    {
-                        ah->governance_rule_.is_rtps_protected = true;
-                    }
+                    process_protection_kind(rule.discovery_protection_kind,
+                        ah->governance_rule_.is_discovery_protected,
+                        plug_part_attr.is_discovery_encrypted,
+                        plug_part_attr.is_discovery_origin_authenticated);
+
+                    process_protection_kind(rule.rtps_protection_kind,
+                        ah->governance_rule_.is_rtps_protected,
+                        plug_part_attr.is_rtps_encrypted,
+                        plug_part_attr.is_rtps_origin_authenticated);
+
+                    process_protection_kind(rule.liveliness_protection_kind,
+                        ah->governance_rule_.is_liveliness_protected,
+                        plug_part_attr.is_liveliness_encrypted,
+                        plug_part_attr.is_liveliness_origin_authenticated);
+
+                    ah->governance_rule_.plugin_participant_attributes = plug_part_attr.mask();
 
                     for(auto topic_rule : rule.topic_rules)
                     {
@@ -627,49 +636,26 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         writer_attributes.is_read_protected = topic_rule.enable_read_access_control;
                         writer_attributes.is_write_protected = topic_rule.enable_write_access_control;
 
-                        if(topic_rule.metadata_protection_kind == ProtectionKind::NONE)
-                        {
-                            reader_attributes.is_submessage_protected = false;
-                            writer_attributes.is_submessage_protected = false;
-                        }
-                        else
-                        {
-                            bool hasEncryption = 
-                                (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT) ||
-                                (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
-                            bool hasOriginAuth =
-                                (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
-                                (topic_rule.metadata_protection_kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
-                            plugin_attributes.is_submessage_encrypted = hasEncryption;
-                            plugin_attributes.is_submessage_origin_authenticated = hasOriginAuth;
+                        bool hasEncryption =
+                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT) ||
+                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
+                        bool hasOriginAuth =
+                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
+                            (topic_rule.metadata_protection_kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
+                        plugin_attributes.is_submessage_encrypted = hasEncryption;
+                        plugin_attributes.is_submessage_origin_authenticated = hasOriginAuth;
 
-                            reader_attributes.is_submessage_protected = true;
-                            writer_attributes.is_submessage_protected = true;
-                        }
+                        reader_attributes.is_submessage_protected =
+                            writer_attributes.is_submessage_protected = 
+                            (topic_rule.metadata_protection_kind != ProtectionKind::NONE);
 
-                        if(topic_rule.data_protection_kind == ProtectionKind::NONE)
-                        {
-                            reader_attributes.is_payload_protected= false;
-							reader_attributes.is_key_protected = false;
-                            writer_attributes.is_payload_protected = false;
-							writer_attributes.is_key_protected = false;
-                        }
-                        else if (topic_rule.data_protection_kind == ProtectionKind::SIGN)
-                        {
-                            plugin_attributes.is_payload_encrypted = false;
-                            reader_attributes.is_payload_protected = true;
-							reader_attributes.is_key_protected = false;
-                            writer_attributes.is_payload_protected = true;
-							writer_attributes.is_key_protected = false;
-                        }
-                        else
-                        {
-                            plugin_attributes.is_payload_encrypted = true;
-                            reader_attributes.is_payload_protected = true;
-							reader_attributes.is_key_protected = true;
-                            writer_attributes.is_payload_protected = true;
-							writer_attributes.is_key_protected = true;
-                        }
+                        plugin_attributes.is_payload_encrypted =
+                            reader_attributes.is_key_protected =
+                            writer_attributes.is_key_protected =
+                            (topic_rule.data_protection_kind == ProtectionKind::ENCRYPT);
+                        reader_attributes.is_payload_protected =
+                            writer_attributes.is_payload_protected =
+                                (topic_rule.data_protection_kind != ProtectionKind::NONE);
 
                         reader_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
                         writer_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
