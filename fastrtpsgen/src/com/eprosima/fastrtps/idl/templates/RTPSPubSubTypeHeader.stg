@@ -21,9 +21,14 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This h
 #ifndef _$ctx.headerGuardName$_PUBSUBTYPES_H_
 #define _$ctx.headerGuardName$_PUBSUBTYPES_H_
 
+#include <fastrtps/config.h>
 #include <fastrtps/TopicDataType.h>
 
 #include "$ctx.filename$.h"
+
+#if !defined(GEN_API_VER) || (GEN_API_VER != 1)
+#error Generated $ctx.filename$ is not compatible with current installed Fast-RTPS. Please, regenerate it with fastrtpsgen.
+#endif
 
 $definitions; separator="\n"$
 

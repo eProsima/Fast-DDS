@@ -97,14 +97,14 @@ void HelloMsgPubSubType::deleteData(void* data) {
     delete((HelloMsg*)data);
 }
 
-bool HelloMsgPubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool HelloMsgPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     if(!m_isGetKeyDefined)
         return false;
     HelloMsg* p_type = (HelloMsg*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,HelloMsg::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
     p_type->serializeKey(ser);
-    if(HelloMsg::getKeyMaxCdrSerializedSize()>16)	{
+    if(force_md5 || HelloMsg::getKeyMaxCdrSerializedSize()>16)	{
         m_md5.init();
         m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
         m_md5.finalize();

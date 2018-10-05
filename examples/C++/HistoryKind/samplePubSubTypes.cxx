@@ -96,14 +96,14 @@ void samplePubSubType::deleteData(void* data) {
     delete((sample*)data);
 }
 
-bool samplePubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool samplePubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     if(!m_isGetKeyDefined)
         return false;
     sample* p_type = (sample*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,sample::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
     p_type->serializeKey(ser);
-    if(sample::getKeyMaxCdrSerializedSize()>16)	{
+    if(force_md5 || sample::getKeyMaxCdrSerializedSize()>16)	{
         m_md5.init();
         m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
         m_md5.finalize();
