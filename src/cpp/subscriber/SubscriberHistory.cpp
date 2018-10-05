@@ -151,7 +151,11 @@ bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_
         {
             logInfo(RTPS_HISTORY, "Getting Key of change with no Key transmitted")
                 mp_subImpl->getType()->deserialize(&a_change->serializedPayload, mp_getKeyObject);
-            if (!mp_subImpl->getType()->getKey(mp_getKeyObject, &a_change->instanceHandle))
+            bool is_key_protected = false;
+#if HAVE_SECURITY
+            is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
+#endif
+            if(!mp_subImpl->getType()->getKey(mp_getKeyObject, &a_change->instanceHandle, is_key_protected))
                 return false;
 
         }
@@ -385,7 +389,11 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
             {
-                this->mp_subImpl->getType()->getKey(data, &change->instanceHandle);
+                bool is_key_protected = false;
+#if HAVE_SECURITY
+                is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
+#endif
+                this->mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
             }
             info->iHandle = change->instanceHandle;
             info->related_sample_identity = change->write_params.sample_identity();
@@ -433,7 +441,11 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
             {
-                this->mp_subImpl->getType()->getKey(data, &change->instanceHandle);
+                bool is_key_protected = false;
+#if HAVE_SECURITY
+                is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
+#endif
+                this->mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
             }
             info->iHandle = change->instanceHandle;
             info->related_sample_identity = change->write_params.sample_identity();
