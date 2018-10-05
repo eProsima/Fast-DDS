@@ -42,19 +42,26 @@ class TopicAttributes
          * Default constructor
          */
         TopicAttributes()
-        {
-            topicKind = rtps::NO_KEY;
-            topicName = "UNDEF";
-            topicDataType = "UNDEF";
-        }
+            : topicKind(rtps::NO_KEY),
+              topicName("UNDEF"),
+              topicDataType("UNDEF")
+        {}
+
         //!Constructor, you need to provide the topic name and the topic data type.
         TopicAttributes(const char* name, const char* dataType, rtps::TopicKind_t tKind= rtps::NO_KEY)
+            : topicKind(tKind),
+              topicName(std::string(name)),
+              topicDataType(std::string(dataType))
+        {}
+
+        virtual ~TopicAttributes() {}
+
+        bool operator==(const TopicAttributes& b) const
         {
-            topicKind = tKind;
-            topicName = std::string(name);
-            topicDataType = std::string(dataType);
-        }
-        virtual ~TopicAttributes() {
+            return (this->topicKind == b.topicKind) &&
+                   (this->topicName == b.topicName) &&
+                   (this->topicDataType == b.topicDataType) &&
+                   (this->historyQos == b.historyQos);
         }
 
         /**
@@ -136,8 +143,8 @@ class TopicAttributes
 
 /**
  * Check if two topic attributes are not equal
- * @param t1 First instance of TopicAttributes to compare 
- * @param t2 Second instance of TopicAttributes to compare 
+ * @param t1 First instance of TopicAttributes to compare
+ * @param t2 Second instance of TopicAttributes to compare
  * @return True if the instances are not equal. False if the instances are equal.
  */
 bool inline operator!=(const TopicAttributes& t1, const TopicAttributes& t2)

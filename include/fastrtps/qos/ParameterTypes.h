@@ -113,26 +113,37 @@ enum ParameterId_t	: uint16_t
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
 //!@ingroup PARAMETER_MODULE
-class Parameter_t {
-    public:
-        //!Parameter ID
-        ParameterId_t Pid;
-        //!Parameter length
-        uint16_t length;
-        RTPS_DllAPI Parameter_t();
-        virtual RTPS_DllAPI ~Parameter_t();
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param length Its associated length
-         */
-        RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length);
-        /**
-         * Virtual method used to add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
+class Parameter_t
+{
+public:
+    RTPS_DllAPI Parameter_t();
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param length Its associated length
+     */
+    RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length);
+
+    virtual RTPS_DllAPI ~Parameter_t();
+
+    bool operator==(const Parameter_t& b) const
+    {
+        return (this->Pid == b.Pid) &&
+               (this->length == b.length);
+    }
+
+    /**
+     * Virtual method used to add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
+
+public:
+    //!Parameter ID
+    ParameterId_t Pid;
+    //!Parameter length
+    uint16_t length;
 };
 
 /**

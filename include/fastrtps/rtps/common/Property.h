@@ -65,6 +65,12 @@ class Property
             return *this;
         }
 
+        bool operator==(const Property& b) const
+        {
+            return (this->name_ == b.name_) &&
+                   (this->value_ == b.value_);
+        }
+
         void name(const std::string& name)
         {
             name_ = name;
