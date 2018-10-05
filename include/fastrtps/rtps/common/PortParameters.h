@@ -31,57 +31,67 @@ namespace rtps {
  */
 class PortParameters
 {
-    public:
-        PortParameters()
-        {
-            portBase = 7400;
-            participantIDGain = 2;
-            domainIDGain = 250;
-            offsetd0 = 0;
-            offsetd1 = 10;
-            offsetd2 = 1;
-            offsetd3 = 11;
-        };
+public:
+    PortParameters()
+        : portBase(7400),
+          domainIDGain(250),
+          participantIDGain(2),
+          offsetd0(0),
+          offsetd1(10),
+          offsetd2(1),
+          offsetd3(11)
+    {}
 
-        virtual ~PortParameters(){}
+    virtual ~PortParameters(){}
 
-        /**
-         * Get a multicast port based on the domain ID.
-         *
-         * @param domainId Domain ID.
-         * @return Multicast port
-         */
-        inline uint32_t getMulticastPort(uint32_t domainId) const
-        {
-            return portBase + domainIDGain * domainId + offsetd0;
-        }
+    bool operator==(const PortParameters& b) const
+    {
+        return (this->portBase == b.portBase) &&
+               (this->domainIDGain == b.domainIDGain) &&
+               (this->participantIDGain == b.participantIDGain) &&
+               (this->offsetd0 == b.offsetd0) &&
+               (this->offsetd1 == b.offsetd1) &&
+               (this->offsetd2 == b.offsetd2) &&
+               (this->offsetd3 == b.offsetd3);
+    }
 
-        /**
-         * Get a unicast port baes on the domain ID and the participant ID.
-         *
-         * @param domainId Domain ID.
-         * @param RTPSParticipantID Participant ID.
-         * @return Unicast port
-         */
-        inline uint32_t getUnicastPort(uint32_t domainId, uint32_t RTPSParticipantID) const
-        {
-            return portBase + domainIDGain * domainId + offsetd1 + participantIDGain * RTPSParticipantID;
-        }
+    /**
+     * Get a multicast port based on the domain ID.
+     *
+     * @param domainId Domain ID.
+     * @return Multicast port
+     */
+    inline uint32_t getMulticastPort(uint32_t domainId) const
+    {
+        return portBase+ domainIDGain * domainId+ offsetd0;
+    }
+    /**
+     * Get a unicast port baes on the domain ID and the participant ID.
+     *
+     * @param domainId Domain ID.
+     * @param RTPSParticipantID Participant ID.
+     * @return Unicast port
+     */
+    inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID) const
+    {
+        return portBase+ domainIDGain * domainId + offsetd1	+ participantIDGain * RTPSParticipantID;
+    }
 
-        //!PortBase, default value 7400.
-        uint16_t portBase;
-        //!DomainID gain, default value 250.
-        uint16_t domainIDGain;
-        //!ParticipantID gain, default value 2.
-        uint16_t participantIDGain;
-        //!Offset d0, default value 0.
-        uint16_t offsetd0;
-        //!Offset d1, default value 10.
-        uint16_t offsetd1;
-        //!Offset d2, default value 1.
-        uint16_t offsetd2;
-        //!Offset d3, default value 11.
-        uint16_t offsetd3;
+public:
+    //!PortBase, default value 7400.
+    uint16_t portBase;
+    //!DomainID gain, default value 250.
+    uint16_t domainIDGain;
+    //!ParticipantID gain, default value 2.
+    uint16_t participantIDGain;
+    //!Offset d0, default value 0.
+    uint16_t offsetd0;
+    //!Offset d1, default value 10.
+    uint16_t offsetd1;
+    //!Offset d2, default value 1.
+    uint16_t offsetd2;
+    //!Offset d3, default value 11.
+    uint16_t offsetd3;
 };
 
 }
