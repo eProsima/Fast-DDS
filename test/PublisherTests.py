@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, signal
+import sys, os, signal, datetime
 
 def signal_handler(sig, frame):
 	print('Execution aborted by user')
@@ -36,10 +36,10 @@ if not folder:
     print("Error")
     sys.exit(-1)
 
-writeTest("/mnt/jenkins/output/pub.log", "Start Publisher Tests")
-writeTest("/mnt/jenkins/output/pub.log", "Arguments:")
-for x in sys.argv:
-        writeTest("/mnt/jenkins/output/pub.log", "\t" + x)
+now = datetime.datetime.now()
+
+writeTest("/mnt/jenkins/output/pub.log", "---------------------------------")
+writeTest("/mnt/jenkins/output/pub.log", "Start Publisher Test - " + now.strftime("%Y-%m-%d_%H-%M-%S"))
 os.system("mkdir -p /mnt/jenkins/output")
 writeTest("/mnt/jenkins/output/pub.log", "Start Tests")
 os.chdir(folder)

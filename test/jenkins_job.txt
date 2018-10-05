@@ -4,8 +4,8 @@
 
 STEP 1:
 	// Clean old dockers
-	docker rm $(docker stop $(docker ps -q --filter="name=TestPub"))
-	docker rm $(docker stop $(docker ps -q --filter="name=TestSub"))
+	for ip in ${publisher_ips}; do docker -H $ip rm $(docker -H $ip stop $(docker -H $ip ps -q --filter="name=TestPub")) || true; done
+	for ip in ${subscriber_ips}; do docker -H $ip rm $(docker  -H $ip stop $(docker -H $ip ps -q --filter="name=TestSub")) || true; done
 
 STEP 2:
 	// Mount shared folder
