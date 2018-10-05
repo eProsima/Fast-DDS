@@ -78,7 +78,7 @@ class  TopicDataType {
          * @param[out] ihandle Pointer to the Handle.
          * @return True if correct.
          */
-        RTPS_DllAPI virtual bool getKey(void* data, rtps::InstanceHandle_t* ihandle){ (void) data; (void) ihandle; return false; }
+        RTPS_DllAPI virtual bool getKey(void* data, rtps::InstanceHandle_t* ihandle, bool force_md5 = false) = 0;
 
         /**
          * Set topic data type name
