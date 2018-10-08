@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <fastrtps/rtps/security/common/SharedSecretHandle.h>
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #include <mutex>
 #include <limits>
@@ -164,6 +165,8 @@ class  ParticipantKeyHandle
 
         static const char* const class_id_;
 
+        //Plugin security options
+        PluginParticipantSecurityAttributesMask ParticipantPluginAttributes;
         //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
         KeyMaterial_AES_GCM_GMAC ParticipantKeyMaterial;
         //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer

@@ -56,11 +56,12 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
+    auto plugin_attrs = participant_security_attributes.plugin_participant_attributes;
+    (*PCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
     //Default to AES128 if the user does not specify otherwise (GCM / GMAC depending of RTPS protection kind)
-    bool is_rtps_encrypted = (participant_security_attributes.plugin_participant_attributes & 
-        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0;
+    bool is_rtps_encrypted = (plugin_attrs &  PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0;
     std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; 
     if (!is_rtps_encrypted) {
         transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
@@ -153,9 +154,12 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     //Put both elements in the local and remote ParticipantCryptoHandle
 
     const AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
+    auto plugin_attrs = local_participant_handle->ParticipantPluginAttributes;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
     AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function
 
     (*RPCrypto)->transformation_kind = local_participant_handle->transformation_kind;
+    (*RPCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
@@ -165,12 +169,15 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         buffer.transformation_kind = local_participant_handle->ParticipantKeyMaterial.transformation_kind;
         buffer.master_salt = local_participant_handle->ParticipantKeyMaterial.master_salt;
         buffer.master_sender_key = local_participant_handle->ParticipantKeyMaterial.master_sender_key;
+        buffer.sender_key_id = local_participant_handle->ParticipantKeyMaterial.sender_key_id;
         //Generation of remainder values (Remote specific key)
-        buffer.sender_key_id = make_unique_KeyId();
-        buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
-        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
-
+        buffer.receiver_specific_key_id = { 0,0,0,0 };
+        if (is_origin_auth)
+        {
+            buffer.receiver_specific_key_id = make_unique_KeyId();
+            RAND_bytes(buffer.master_receiver_specific_key.data(), 16);
+        }
         //Attach to both local and remote CryptoHandles
         (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
     }
