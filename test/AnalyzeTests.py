@@ -53,7 +53,7 @@ else:
 	print("Invalid input parameters")
 	exit(-2)
 
-minimum_test_files = 2
+minimum_test_files = 5
 maximum_historic_files = 10
 
 global_result = 0
