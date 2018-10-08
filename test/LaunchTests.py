@@ -4,21 +4,13 @@ import sys, os, subprocess
 
 pub_str = ""
 sub_str = ""
-user = ""
-password = ""
 
-if len(sys.argv) <= 4:
+if len(sys.argv) <= 2:
 	pub_str = "192.168.1.59:2376"
 	sub_str = "192.168.1.59:2376"
-	user = ""
-	password = ""
-#     print ("Error.")
-#   sys.exit(-1)
 else:
-	user = sys.argv[1] 
-	password = sys.argv[2]
-	pub_str = sys.argv[3]
-	sub_str = sys.argv[4]
+	pub_str = sys.argv[1]
+	sub_str = sys.argv[2]
 
 pub_list = pub_str.split(',')
 sub_list = sub_str.split(',')
@@ -28,7 +20,7 @@ last_docker = None
 last_ip = None
 for a in pub_list:
 	print("Launch Publisher on: " + a)
-	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestPub" + str(id) + " ubuntu-test-image bash -c \"mkdir -p /mnt/jenkins; mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins; python3 /mnt/jenkins/PublisherTests.py " + user + " " + password + " /mnt/jenkins/\""
+	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestPub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/multinodetest/PublisherTests.py /mnt/perfshare/\""
 	print("Command: " + command)
 	last_ip = a
 	last_docker = "TestPub" + str(id)
@@ -39,7 +31,7 @@ p = None
 id = 0
 for a in sub_list:
 	print("Launch Subscriber on: " + a)
-	command = "docker -H "+ a + " run --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestSub" + str(id) + " ubuntu-test-image bash -c \"mkdir -p /mnt/jenkins; mount -t cifs -o username=" + user + ",password=" + password + " //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins; python3 /mnt/jenkins/SubscriberTests.py " + user + " " + password + " /mnt/jenkins/\""
+	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestSub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/multinodetest/SubscriberTests.py /mnt/multinodetest/\""
 	print("Command: " + command)
 	last_ip = a
 	last_docker = "TestSub" + str(id)
