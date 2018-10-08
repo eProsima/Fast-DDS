@@ -88,14 +88,16 @@ struct ParticipantSecurityAttributes
 {
     ParticipantSecurityAttributes() : 
         allow_unauthenticated_participants(false), is_access_protected(true), 
-        is_rtps_protected(false), is_discovery_protected(false), is_liveliness_protected(false) 
+        is_rtps_protected(false), is_discovery_protected(false), is_liveliness_protected(false),
+        plugin_participant_attributes (0UL)
     {}
 
     explicit ParticipantSecurityAttributes(const ParticipantSecurityAttributesMask mask) :
         allow_unauthenticated_participants(false), is_access_protected(true),
         is_rtps_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_PROTECTED) != 0),
         is_discovery_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED) != 0),
-        is_liveliness_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED) != 0)
+        is_liveliness_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED) != 0),
+        plugin_participant_attributes(0UL)
     {}
 
     bool allow_unauthenticated_participants;

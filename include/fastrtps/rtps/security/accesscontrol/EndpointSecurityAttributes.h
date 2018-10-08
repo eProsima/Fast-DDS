@@ -78,7 +78,7 @@ struct EndpointSecurityAttributes
         is_read_protected(true), is_write_protected(true),
         is_discovery_protected(false), is_liveliness_protected(false),
         is_submessage_protected(false), is_payload_protected(false), is_key_protected(false),
-        plugin_endpoint_attributes(PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_MASK_DEFAULT)
+        plugin_endpoint_attributes(0UL)
     {}
 
     explicit EndpointSecurityAttributes(const EndpointSecurityAttributesMask mask) :
@@ -89,7 +89,7 @@ struct EndpointSecurityAttributes
         is_submessage_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_PROTECTED) != 0),
         is_payload_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED) != 0),
         is_key_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED) != 0),
-        plugin_endpoint_attributes(PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_MASK_DEFAULT)
+        plugin_endpoint_attributes(0UL)
     {}
 
     bool is_read_protected;

@@ -47,6 +47,10 @@ ParticipantProxyData::ParticipantProxyData():
     m_expectsInlineQos(false),
     m_availableBuiltinEndpoints(0),
     m_manualLivelinessCount(0),
+#if HAVE_SECURITY
+    security_attributes_(0UL),
+    plugin_security_attributes_(0UL),
+#endif
     isAlive(false),
     mp_leaseDurationTimer(nullptr)
     {
@@ -189,7 +193,7 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
 
-    if ((this->security_attributes_ != 0UL) || (this->security_attributes_ != 0UL))
+    if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
         ParameterParticipantSecurityInfo_t* p = new ParameterParticipantSecurityInfo_t();
         p->security_attributes = this->security_attributes_;
