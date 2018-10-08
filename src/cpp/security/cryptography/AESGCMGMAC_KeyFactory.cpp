@@ -441,7 +441,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
-                const EndpointSecurityAttributes& /*datareder_security_attributes*/,
+                const EndpointSecurityAttributes& datareder_security_attributes,
                 SecurityException& /*exception*/)
 {
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
@@ -454,27 +454,40 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     AESGCMGMAC_ReaderCryptoHandle* RCrypto = nullptr;
 
     RCrypto = new AESGCMGMAC_ReaderCryptoHandle();
+    auto plugin_attrs = datareder_security_attributes.plugin_endpoint_attributes;
+    (*RCrypto)->EndpointPluginAttributes = plugin_attrs;
+    bool is_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
 
     std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
+    if (!is_encrypted)
+    {
+        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+    }
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datareader_properties.empty()){
-          for(auto it=datareader_properties.begin(); it!=datareader_properties.end(); ++it){
-              if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
-                      if( it->value() == std::string("AES128_GCM") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                      if( it->value() == std::string("AES128_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                      if( it->value() == std::string("AES256_GCM") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                      if( it->value() == std::string("AES256_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
-              }// endif
-              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
-                  try{
-                      maxblockspersession = std::stoi( (it)->value() );
-                  }catch(std::invalid_argument){}
-              }
-          }//endfor
+        for(auto it=datareader_properties.begin(); it!=datareader_properties.end(); ++it){
+            if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
+                auto value = it->value().c_str();
+                if (is_encrypted) {
+                    if (strcmp("AES128_GCM", value) == 0)
+                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
+                    else if (strcmp("AES256_GCM", value) == 0)
+                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
+                }
+                else
+                {
+                    if (strcmp("AES128_GMAC", value) == 0)
+                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+                    else if (strcmp("AES256_GMAC", value) == 0)
+                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
+                }
+            }// endif
+            if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
+                try{
+                    maxblockspersession = std::stoi( (it)->value() );
+                }catch(std::invalid_argument){}
+            }
+        }//endfor
     }//endif
 
     (*RCrypto)->transformation_kind = transformationtype;

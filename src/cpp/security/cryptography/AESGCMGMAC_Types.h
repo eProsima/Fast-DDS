@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <fastrtps/rtps/security/common/SharedSecretHandle.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <mutex>
 #include <limits>
@@ -74,6 +75,7 @@ struct KeyMaterial_AES_GCM_GMAC{
     std::array<uint8_t, 32> master_receiver_specific_key;
 };
 
+typedef std::vector<KeyMaterial_AES_GCM_GMAC> KeyMaterial_AES_GCM_GMAC_Seq;
 /* SecureSubMessageElements
  * ------------------------
  */
@@ -128,6 +130,8 @@ class  EntityKeyHandle
 
         static const char* const class_id_;
 
+        //Plugin security options
+        PluginEndpointSecurityAttributesMask EndpointPluginAttributes;
         //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
         KeyMaterial_AES_GCM_GMAC EntityKeyMaterial;
         //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
@@ -135,9 +139,9 @@ class  EntityKeyHandle
         ParticipantCryptoHandle* Parent_participant;
 
         //(Direct) ReceiverSpecific Keys - Inherently hold the master_key of the writer
-        std::vector<KeyMaterial_AES_GCM_GMAC> Entity2RemoteKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC_Seq Entity2RemoteKeyMaterial;
         //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
-        std::vector<KeyMaterial_AES_GCM_GMAC> Remote2EntityKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC_Seq Remote2EntityKeyMaterial;
         //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
         KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
 
