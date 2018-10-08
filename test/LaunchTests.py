@@ -20,7 +20,7 @@ last_docker = None
 last_ip = None
 for a in pub_list:
 	print("Launch Publisher on: " + a)
-	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestPub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/multinodetest/PublisherTests.py /mnt/perfshare/\""
+	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestPub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/perfshare/PublisherTests.py /mnt/perfshare/\""
 	print("Command: " + command)
 	last_ip = a
 	last_docker = "TestPub" + str(id)
@@ -31,7 +31,7 @@ p = None
 id = 0
 for a in sub_list:
 	print("Launch Subscriber on: " + a)
-	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestSub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/multinodetest/SubscriberTests.py /mnt/multinodetest/\""
+	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestSub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/perfshare/SubscriberTests.py /mnt/perfshare/\""
 	print("Command: " + command)
 	last_ip = a
 	last_docker = "TestSub" + str(id)
