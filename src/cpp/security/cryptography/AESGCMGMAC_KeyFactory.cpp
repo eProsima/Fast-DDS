@@ -538,11 +538,14 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     }
 
     std::unique_lock<std::mutex> reader_lock(local_reader_handle->mutex_);
+    auto plugin_attrs = local_reader_handle->EndpointPluginAttributes;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0;
 
     AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
 
     (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
     (*RWCrypto)->transformation_kind = local_reader_handle->transformation_kind;
+    (*RWCrypto)->EndpointPluginAttributes = local_reader_handle->EndpointPluginAttributes;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
@@ -551,13 +554,15 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         buffer.transformation_kind = local_reader_handle->EntityKeyMaterial.transformation_kind;
         buffer.master_salt = local_reader_handle->EntityKeyMaterial.master_salt;
         buffer.master_sender_key = local_reader_handle->EntityKeyMaterial.master_sender_key;
-        //Generation of remainder values (Remote specific key)
-
         buffer.sender_key_id = local_reader_handle->EntityKeyMaterial.sender_key_id;
-        //buffer.sender_key_id = make_unique_KeyId();
-        buffer.receiver_specific_key_id = make_unique_KeyId();
+        //Generation of remainder values (Remote specific key)
         buffer.master_receiver_specific_key.fill(0);
-        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
+        buffer.receiver_specific_key_id = { 0,0,0,0 };
+        if (is_origin_auth)
+        {
+            buffer.receiver_specific_key_id = make_unique_KeyId();
+            RAND_bytes(buffer.master_receiver_specific_key.data(), 16);
+        }
 
         //Attach to both local and remote CryptoHandles
         (*RWCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
