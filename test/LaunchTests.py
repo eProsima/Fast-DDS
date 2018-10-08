@@ -5,12 +5,16 @@ import sys, os, subprocess
 pub_str = ""
 sub_str = ""
 
-if len(sys.argv) <= 2:
+if len(sys.argv) <= 4:
 	pub_str = "192.168.1.59:2376"
 	sub_str = "192.168.1.59:2376"
+	subfolder = sys.argv[1]
+	docker_image = sys.argv[2]
 else:
 	pub_str = sys.argv[1]
 	sub_str = sys.argv[2]
+	subfolder = sys.argv[3]
+	docker_image = sys.argv[4]
 
 pub_list = pub_str.split(',')
 sub_list = sub_str.split(',')
@@ -20,7 +24,7 @@ last_docker = None
 last_ip = None
 for a in pub_list:
 	print("Launch Publisher on: " + a)
-	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestPub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/perfshare/PublisherTests.py /mnt/perfshare/\""
+	command = "docker -H "+ a + " run -v /mnt/perfshare/" + subfolder + ":/mnt/perfshare/" + subfolder + " --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestPub" + str(id) + " " + docker_image + " bash -c \"python3 /mnt/perfshare/" + subfolder + "/PublisherTests.py /mnt/perfshare/" + subfolder + "/\""
 	print("Command: " + command)
 	last_ip = a
 	last_docker = "TestPub" + str(id)
@@ -31,7 +35,7 @@ p = None
 id = 0
 for a in sub_list:
 	print("Launch Subscriber on: " + a)
-	command = "docker -H "+ a + " run -v /mnt/perfshare:/mnt/perfshare --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestSub" + str(id) + " ubuntu-test-image bash -c \"python3 /mnt/perfshare/SubscriberTests.py /mnt/perfshare/\""
+	command = "docker -H "+ a + " run -v /mnt/perfshare/" + subfolder + ":/mnt/perfshare/" + subfolder + " --cap-add=SYS_ADMIN --network=host --cap-add=DAC_READ_SEARCH --rm -d --name TestSub" + str(id) + " " + docker_image + " bash -c \"python3 /mnt/perfshare/" + subfolder + "/SubscriberTests.py /mnt/perfshare/" + subfolder + "/\""
 	print("Command: " + command)
 	last_ip = a
 	last_docker = "TestSub" + str(id)
