@@ -373,8 +373,8 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     //Now lets do the same with 256GCM
     //Fill prop_handle with info about the new mode we want
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GMAC");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
@@ -782,8 +782,8 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
 
     //Lets do it with the 256 version
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GCM");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
@@ -949,8 +949,8 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
 
     //Test the GCM256 version
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GCM");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
@@ -1122,8 +1122,8 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
 
     //Test the GCM256 version    
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GCM");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
