@@ -339,7 +339,6 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
         }//endfor
     }//endif
 
-    // TODO: Add to SEQ
     std::array<uint8_t, 4> transformationtype = is_sub_encrypted
         ? use_256_bits
             ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}
@@ -349,16 +348,19 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
             : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
 
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
-    (*WCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
-    (*WCrypto)->EntityKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*WCrypto)->EntityKeyMaterial.master_salt.data(), 16 );
+    KeyMaterial_AES_GCM_GMAC buffer;
+    buffer.transformation_kind = transformationtype;
+    buffer.master_salt.fill(0);
+    RAND_bytes(buffer.master_salt.data(), 16 );
         
-    (*WCrypto)->EntityKeyMaterial.sender_key_id = make_unique_KeyId();
-    (*WCrypto)->EntityKeyMaterial.master_sender_key.fill(0);
-    RAND_bytes( (*WCrypto)->EntityKeyMaterial.master_sender_key.data(), 16 );
+    buffer.sender_key_id = make_unique_KeyId();
+    buffer.master_sender_key.fill(0);
+    RAND_bytes(buffer.master_sender_key.data(), 16 );
         
-    (*WCrypto)->EntityKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    (*WCrypto)->EntityKeyMaterial.master_receiver_specific_key.fill(0);
+    buffer.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
+    buffer.master_receiver_specific_key.fill(0);
+
+    (*WCrypto)->EntityKeyMaterial.push_back(buffer);
         
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
     (*WCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
@@ -401,11 +403,11 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 
         //These values must match the ones in ParticipantKeymaterial
-        buffer.transformation_kind = local_writer_handle->EntityKeyMaterial.transformation_kind;
-        buffer.master_salt = local_writer_handle->EntityKeyMaterial.master_salt;
-        buffer.master_sender_key = local_writer_handle->EntityKeyMaterial.master_sender_key;
+        buffer.transformation_kind = local_writer_handle->EntityKeyMaterial.at(0).transformation_kind;
+        buffer.master_salt = local_writer_handle->EntityKeyMaterial.at(0).master_salt;
+        buffer.master_sender_key = local_writer_handle->EntityKeyMaterial.at(0).master_sender_key;
 
-        buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.sender_key_id;
+        buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.at(0).sender_key_id;
         //buffer.sender_key_id = make_unique_KeyId();  //Unique identifier within the Participant (used to identity submessage types)
         //Generation of remainder values (Remote specific key)
         buffer.receiver_specific_key_id = make_unique_KeyId();
@@ -488,18 +490,21 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
             ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
             : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
 
-    (*RCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
+    KeyMaterial_AES_GCM_GMAC buffer;
+    buffer.transformation_kind = transformationtype;
 
-    (*RCrypto)->EntityKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*RCrypto)->EntityKeyMaterial.master_salt.data(), 16 );
+    buffer.master_salt.fill(0);
+    RAND_bytes(buffer.master_salt.data(), 16 );
 
-    (*RCrypto)->EntityKeyMaterial.sender_key_id = make_unique_KeyId();
+    buffer.sender_key_id = make_unique_KeyId();
 
-    (*RCrypto)->EntityKeyMaterial.master_sender_key.fill(0);
-    RAND_bytes( (*RCrypto)->EntityKeyMaterial.master_sender_key.data(), 16 );
+    buffer.master_sender_key.fill(0);
+    RAND_bytes(buffer.master_sender_key.data(), 16 );
 
-    (*RCrypto)->EntityKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    (*RCrypto)->EntityKeyMaterial.master_receiver_specific_key.fill(0);
+    buffer.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
+    buffer.master_receiver_specific_key.fill(0);
+
+    (*RCrypto)->EntityKeyMaterial.push_back(buffer);
 
     (*RCrypto)->max_blocks_per_session = maxblockspersession;
     (*RCrypto)->session_block_counter = maxblockspersession+1;
@@ -545,10 +550,10 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 
         //These values must match the ones in ParticipantKeymaterial
-        buffer.transformation_kind = local_reader_handle->EntityKeyMaterial.transformation_kind;
-        buffer.master_salt = local_reader_handle->EntityKeyMaterial.master_salt;
-        buffer.master_sender_key = local_reader_handle->EntityKeyMaterial.master_sender_key;
-        buffer.sender_key_id = local_reader_handle->EntityKeyMaterial.sender_key_id;
+        buffer.transformation_kind = local_reader_handle->EntityKeyMaterial.at(0).transformation_kind;
+        buffer.master_salt = local_reader_handle->EntityKeyMaterial.at(0).master_salt;
+        buffer.master_sender_key = local_reader_handle->EntityKeyMaterial.at(0).master_sender_key;
+        buffer.sender_key_id = local_reader_handle->EntityKeyMaterial.at(0).sender_key_id;
         //Generation of remainder values (Remote specific key)
         buffer.master_receiver_specific_key.fill(0);
         buffer.receiver_specific_key_id = { 0,0,0,0 };

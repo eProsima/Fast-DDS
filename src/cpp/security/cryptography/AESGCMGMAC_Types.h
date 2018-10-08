@@ -133,7 +133,7 @@ class  EntityKeyHandle
         //Plugin security options
         PluginEndpointSecurityAttributesMask EndpointPluginAttributes;
         //Storage for the LocalCryptoHandle master_key, not used in RemoteCryptoHandles
-        KeyMaterial_AES_GCM_GMAC EntityKeyMaterial;
+        KeyMaterial_AES_GCM_GMAC_Seq EntityKeyMaterial;
         //KeyId of the master_key of the parent Participant and pointer to the relevant CryptoHandle
         CryptoTransformKeyId Participant_master_key_id;
         ParticipantCryptoHandle* Parent_participant;
