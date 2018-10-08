@@ -62,37 +62,33 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
     //Default to AES128 if the user does not specify otherwise (GCM / GMAC depending of RTPS protection kind)
     bool is_rtps_encrypted = (plugin_attrs &  PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0;
-    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; 
-    if (!is_rtps_encrypted) {
-        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-    }
+    bool use_256_bits = false;
     int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if(!participant_properties.empty()){
-          for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
-              if( (it)->name() == "dds.sec.crypto.keysize"){
-                  auto value = it->value().c_str();
-                  if (is_rtps_encrypted)
-                  {
-                      if(strcmp("128", value) == 0)
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                      else if(strcmp("256", value) == 0)
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                  }
-                  else
-                  {
-                      if (strcmp("128", value) == 0)
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                      else if (strcmp("256", value) == 0)
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
-                  }
-              }// endif
-              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
-                  try{
-                      maxblockspersession = std::stoi( (it)->value() );
-                  }catch(std::invalid_argument){}
-              }
-          }//endfor
+        for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
+            if( (it)->name().compare("dds.sec.crypto.keysize") == 0)
+            {
+                if (it->value().compare("256") == 0) 
+                {
+                    use_256_bits = true;
+                }
+            }
+            if( (it)->name().compare("dds.sec.crypto.maxblockspersession") == 0)
+            {
+                try{
+                    maxblockspersession = std::stoi( (it)->value() );
+                }catch(std::invalid_argument){}
+            }
+        }//endfor
     }//endif
+
+    std::array<uint8_t, 4> transformationtype = is_rtps_encrypted 
+        ? use_256_bits 
+            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} 
+            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
+        : use_256_bits
+            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
+            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
 
     (*PCrypto)->ParticipantKeyMaterial.transformation_kind =
         transformationtype;
@@ -322,34 +318,20 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     (*WCrypto)->EndpointPluginAttributes = plugin_attrs;
 
     bool is_sub_encrypted = plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
-    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
-    if (!is_sub_encrypted)
-    {
-        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-    }
+    bool use_256_bits = false;
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datawriter_prop.empty()){
         for(auto it=datawriter_prop.begin(); it!=datawriter_prop.end(); ++it)
         {
-            if( (it)->name() == "dds.sec.crypto.keysize")
+            if( (it)->name().compare("dds.sec.crypto.keysize") == 0)
             {
-                auto value = it->value().c_str();
-                if (is_sub_encrypted)
+                if (it->value().compare("256") == 0)
                 {
-                    if (strcmp("128", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                    else if (strcmp("256", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
+                    use_256_bits = true;
                 }
-                else
-                {
-                    if (strcmp("128", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                    else if (strcmp("256", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
-                }
-            }// endif
-            if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
+            }
+            if( (it)->name().compare("dds.sec.crypto.maxblockspersession") == 0)
+            {
                 try{
                     maxblockspersession = std::stoi( (it)->value() );
                 }catch(std::invalid_argument){}
@@ -358,6 +340,13 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     }//endif
 
     // TODO: Add to SEQ
+    std::array<uint8_t, 4> transformationtype = is_sub_encrypted
+        ? use_256_bits
+            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}
+            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
+        : use_256_bits
+            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
+            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
 
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
     (*WCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
@@ -468,33 +457,20 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     RCrypto = new AESGCMGMAC_ReaderCryptoHandle();
     auto plugin_attrs = datareder_security_attributes.plugin_endpoint_attributes;
     (*RCrypto)->EndpointPluginAttributes = plugin_attrs;
-    bool is_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
-
-    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
-    if (!is_encrypted)
-    {
-        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-    }
+    bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
+    bool use_256_bits = false;
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datareader_properties.empty()){
         for(auto it=datareader_properties.begin(); it!=datareader_properties.end(); ++it){
-            if( (it)->name() == "dds.sec.crypto.keysize"){
-                auto value = it->value().c_str();
-                if (is_encrypted) {
-                    if (strcmp("128", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                    else if (strcmp("256", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                }
-                else
+            if ((it)->name().compare("dds.sec.crypto.keysize") == 0)
+            {
+                if (it->value().compare("256") == 0)
                 {
-                    if (strcmp("128", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                    else if (strcmp("256", value) == 0)
-                        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
+                    use_256_bits = true;
                 }
-            }// endif
-            if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
+            }
+            if( (it)->name().compare("dds.sec.crypto.maxblockspersession") == 0)
+            {
                 try{
                     maxblockspersession = std::stoi( (it)->value() );
                 }catch(std::invalid_argument){}
@@ -503,6 +479,14 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     }//endif
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
+
+    std::array<uint8_t, 4> transformationtype = is_sub_encrypted
+        ? use_256_bits
+            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}
+            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
+        : use_256_bits
+            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
+            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
 
     (*RCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
 
