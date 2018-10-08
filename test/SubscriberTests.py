@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, signal, datetime
+import sys, os, signal, datetime, time
 
 def signal_handler(sig, frame):
 	print('Execution aborted by user')
@@ -39,11 +39,12 @@ if not folder:
 now = datetime.datetime.now()
 
 writeTest("/mnt/jenkins/output/sub.log", "---------------------------------")
-writeTest("/mnt/jenkins/output/sub.log", "Start Publisher Test - " + now.strftime("%Y-%m-%d_%H-%M-%S"))
+writeTest("/mnt/jenkins/output/sub.log", "Start Subscriber Test - " + now.strftime("%Y-%m-%d_%H-%M-%S"))
 os.system("mkdir -p /mnt/jenkins/output")
 writeTest("/mnt/jenkins/output/sub.log", "Start Tests")
 os.chdir(folder)
 os.system("python3 GenerateTestsAndXMLs.py '" + folder + "'")
+time.sleep(5)
 writeTest("/mnt/jenkins/output/sub.log", "Generated XML files")
 writeTest("/mnt/jenkins/output/sub.log", "Start Tests")
 os.system("python3 SubscriberTestList.py /mnt/jenkins/ '" + folder + "'")

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, signal, datetime
+import sys, os, signal, datetime, time
 
 def signal_handler(sig, frame):
 	print('Execution aborted by user')
@@ -44,6 +44,7 @@ os.system("mkdir -p /mnt/jenkins/output")
 writeTest("/mnt/jenkins/output/pub.log", "Start Tests")
 os.chdir(folder)
 os.system("python3 GenerateTestsAndXMLs.py '" + folder + "'")
+time.sleep(5)
 writeTest("/mnt/jenkins/output/pub.log", "Generated XML files")
 writeTest("/mnt/jenkins/output/pub.log", "Start Tests")
 os.system("python3 PublisherTestList.py /mnt/jenkins/ '" + folder + "'")
