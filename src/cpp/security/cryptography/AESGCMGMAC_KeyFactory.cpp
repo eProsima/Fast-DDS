@@ -48,7 +48,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
                 const IdentityHandle& /*participant_identity*/,
                 const PermissionsHandle& /*participant_permissions*/,
                 const PropertySeq &participant_properties,
-                const ParticipantSecurityAttributes& /*participant_security_attributes*/,
+                const ParticipantSecurityAttributes& participant_security_attributes,
                 SecurityException& /*exception*/)
 {
 
@@ -58,19 +58,32 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
-    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM if the user does not specify otherwise
+    //Default to AES128 if the user does not specify otherwise (GCM / GMAC depending of RTPS protection kind)
+    bool is_rtps_encrypted = (participant_security_attributes.plugin_participant_attributes & 
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0;
+    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; 
+    if (!is_rtps_encrypted) {
+        transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+    }
     int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if(!participant_properties.empty()){
           for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
               if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
-                      if( it->value() == std::string("AES128_GCM") )
+                  auto value = it->value().c_str();
+                  if (is_rtps_encrypted)
+                  {
+                      if(strcmp("AES128_GCM", value) == 0)
                           transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                      if( it->value() == std::string("AES128_GMAC") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                      if( it->value() == std::string("AES256_GCM") )
+                      else if(strcmp("AES256_GCM", value) == 0)
                           transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                      if( it->value() == std::string("AES256_GMAC") )
+                  }
+                  else
+                  {
+                      if (strcmp("AES128_GMAC", value) == 0)
+                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+                      else if (strcmp("AES256_GMAC", value) == 0)
                           transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
+                  }
               }// endif
               if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
                   try{
