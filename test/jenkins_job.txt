@@ -8,46 +8,40 @@ STEP 1:
 	for ip in ${subscriber_ips}; do docker -H $ip rm $(docker  -H $ip stop $(docker -H $ip ps -q --filter="name=TestSub")) || true; done
 
 STEP 2:
-	// Mount shared folder
-	mkdir /mnt/jenkins
-	mount -t cifs -o username=${network_user},password=${network_password} //mainserver.intranet.eprosima.com/Public/JenkinsTests /mnt/jenkins
-
-
-STEP 3:
 	// Build FastRTPS
 	mkdir build && cd build
 	cmake .. -DTHIRDPARTY=ON -DPERFORMANCE_TESTS=ON -DVIDEO_TESTS=ON -DMEMORY_TESTS=ON
 	make
 
-STEP 4:
+STEP 3:
 	// Copy Binary files
-	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1.6.0" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so.1.0.7" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/test/performance/LatencyTest" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/test/performance/ThroughputTest" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/test/performance/VideoTest" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/build/test/memory/MemoryTest" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_analysis.py" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_tests.py" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands.csv" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/GenerateTestsAndXMLs.py" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/PublisherTests.py" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/SubscriberTests.py" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/AnalyzeTests.py" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/LaunchTests.py" /mnt/jenkins
-	cp "/workspace/Multi-Node Manual Linux/test/CopyAndRenameCSV.py" /mnt/jenkins
+	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1.6.0" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so.1.0.7" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/test/performance/LatencyTest" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/test/performance/ThroughputTest" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/test/performance/VideoTest" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/build/test/memory/MemoryTest" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_analysis.py" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_tests.py" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands.csv" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/GenerateTestsAndXMLs.py" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/PublisherTests.py" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/SubscriberTests.py" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/AnalyzeTests.py" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/LaunchTests.py" /mnt/perfshare
+	cp "/workspace/Multi-Node Manual Linux/test/CopyAndRenameCSV.py" /mnt/perfshare
+
+STEP 4:
+	// Launch Tests	
+	python3 "/mnt/perfshare/LaunchTests.py" ${publisher_ips} ${subscriber_ips}
 
 STEP 5:
-	// Launch Tests	
-	python3 "/mnt/jenkins/LaunchTests.py" ${network_user} ${network_password} ${publisher_ips} ${subscriber_ips}
+	// Copy and Rename output files
+	python3 "/mnt/perfshare/CopyAndRenameCSV.py" "/mnt/perfshare/output" "/mnt/perfshare/csv"
 
 STEP 6:
-	// Copy and Rename output files
-	python3 "/mnt/jenkins/CopyAndRenameCSV.py" "/mnt/jenkins/output" "/mnt/jenkins/csv"
-
-STEP 7:
 	// Analize results
-	python3 "/mnt/jenkins/AnalyzeTests.py" "/mnt/jenkins/csv"
+	python3 "/mnt/perfshare/AnalyzeTests.py" "/mnt/perfshare/csv"
