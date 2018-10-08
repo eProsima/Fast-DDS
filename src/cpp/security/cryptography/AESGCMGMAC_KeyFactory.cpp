@@ -342,7 +342,6 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
             }
         }//endfor
     }//endif
-    (*WCrypto)->transformation_kind = transformationtype;
     //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
 
     (*WCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
@@ -391,8 +390,6 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     std::unique_lock<std::mutex> writer_lock(local_writer_handle->mutex_);
 
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
-
-    (*RRCrypto)->transformation_kind = local_writer_handle->transformation_kind;
 
     (*RRCrypto)->Participant_master_key_id = local_writer_handle->Participant_master_key_id;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
@@ -490,7 +487,6 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
         }//endfor
     }//endif
 
-    (*RCrypto)->transformation_kind = transformationtype;
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
 
     (*RCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
@@ -544,7 +540,6 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
 
     (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
-    (*RWCrypto)->transformation_kind = local_reader_handle->transformation_kind;
     (*RWCrypto)->EndpointPluginAttributes = local_reader_handle->EndpointPluginAttributes;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer

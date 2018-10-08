@@ -150,7 +150,6 @@ class  EntityKeyHandle
         std::array<uint8_t,32> SessionKey;
         uint64_t session_block_counter;
         uint64_t max_blocks_per_session;
-        CryptoTransformKind transformation_kind;
         std::mutex mutex_;
 };
 typedef HandleImpl<EntityKeyHandle> AESGCMGMAC_WriterCryptoHandle;
