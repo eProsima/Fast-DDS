@@ -4,8 +4,11 @@
 
 STEP 1:
 	// Clean old dockers
-	for ip in ${publisher_ips}; do docker -H $ip rm $(docker -H $ip stop $(docker -H $ip ps -q --filter="name=TestPub")) || true; done
-	for ip in ${subscriber_ips}; do docker -H $ip rm $(docker  -H $ip stop $(docker -H $ip ps -q --filter="name=TestSub")) || true; done
+	for ip in ${publisher_ips}; do docker -H $ip stop $(docker -H $ip ps -q --filter="name=TestPub") || true; done
+	for ip in ${subscriber_ips}; do docker -H $ip stop $(docker -H $ip ps -q --filter="name=TestSub") || true; done
+
+	for ip in ${publisher_ips}; do docker -H $ip rm $(docker -H $ip ps -q --filter="name=TestPub") || true; done
+	for ip in ${subscriber_ips}; do docker -H $ip rm $(docker -H $ip ps -q --filter="name=TestSub") || true; done
 
 STEP 2:
 	// Build FastRTPS
@@ -15,33 +18,36 @@ STEP 2:
 
 STEP 3:
 	// Copy Binary files
-	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1.6.0" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so.1.0.7" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/test/performance/LatencyTest" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/test/performance/ThroughputTest" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/test/performance/VideoTest" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/build/test/memory/MemoryTest" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_analysis.py" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_tests.py" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands.csv" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/GenerateTestsAndXMLs.py" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/PublisherTests.py" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/SubscriberTests.py" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/AnalyzeTests.py" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/LaunchTests.py" /mnt/perfshare
-	cp "/workspace/Multi-Node Manual Linux/test/CopyAndRenameCSV.py" /mnt/perfshare
+	mkdir -p /mnt/perfshare/${subfolder}
+	mkdir -p /mnt/perfshare/${subfolder}/output
+	chmod a+w /mnt/perfshare/${subfolder}
+	chmod a+w /mnt/perfshare/${subfolder}/output
+	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1.6.0" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so.1" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/src/cpp/libfastrtps.so" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so.1.0.7" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/thirdparty/fastcdr/src/cpp/libfastcdr.so" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/test/performance/LatencyTest" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/test/performance/ThroughputTest" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/test/performance/VideoTest" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/build/test/memory/MemoryTest" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_analysis.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_tests.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/GenerateTestsAndXMLs.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/PublisherTests.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/SubscriberTests.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/AnalyzeTests.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/LaunchTests.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/CopyAndRenameCSV.py" /mnt/perfshare/${subfolder}
 
 STEP 4:
-	// Launch Tests	
-	python3 "/mnt/perfshare/LaunchTests.py" ${publisher_ips} ${subscriber_ips}
+	// Launch Tests
+	python3 "/mnt/perfshare/${subfolder}/LaunchTests.py" ${publisher_ips} ${subscriber_ips} ${subfolder} ${docker_image}
 
 STEP 5:
 	// Copy and Rename output files
-	python3 "/mnt/perfshare/CopyAndRenameCSV.py" "/mnt/perfshare/output" "/mnt/perfshare/csv"
-
+	python3 "/mnt/perfshare/${subfolder}/CopyAndRenameCSV.py" "/mnt/perfshare/${subfolder}/output" "/mnt/perfshare/${subfolder}/csv"
 STEP 6:
 	// Analize results
-	python3 "/mnt/perfshare/AnalyzeTests.py" "/mnt/perfshare/csv"
+	python3 "/mnt/perfshare/${subfolder}/AnalyzeTests.py" "/mnt/perfshare/${subfolder}/csv"
