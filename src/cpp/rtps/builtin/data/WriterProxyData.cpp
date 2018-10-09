@@ -29,7 +29,13 @@ namespace rtps {
 
 
 WriterProxyData::WriterProxyData()
+#if HAVE_SECURITY
+    : security_attributes_(0)
+    , plugin_security_attributes_(0)
+    , m_userDefinedId(0)
+#else
     : m_userDefinedId(0)
+#endif
     , m_typeMaxSerialized(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
@@ -39,7 +45,13 @@ WriterProxyData::WriterProxyData()
     }
 
 WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
+#if HAVE_SECURITY
+    : security_attributes_(0)
+    , plugin_security_attributes_(0)
+    , m_guid(writerInfo.m_guid)
+#else
     : m_guid(writerInfo.m_guid)
+#endif
     , m_unicastLocatorList(writerInfo.m_unicastLocatorList)
     , m_multicastLocatorList(writerInfo.m_multicastLocatorList)
     , m_key(writerInfo.m_key)
