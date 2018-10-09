@@ -33,13 +33,23 @@ STEP 3:
 	cp "/workspace/Multi-Node Manual Linux/build/test/memory/MemoryTest" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_analysis.py" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/memory/memory_tests.py" /mnt/perfshare/${subfolder}
-	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands.csv" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/GenerateTestsAndXMLs.py" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/PublisherTests.py" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/SubscriberTests.py" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/AnalyzeTests.py" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/LaunchTests.py" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/CopyAndRenameCSV.py" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_16.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_32.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_64.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_128.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_256.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_512.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_1024.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_2048.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_4096.csv" /mnt/perfshare/${subfolder}
+	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_8192.csv" /mnt/perfshare/${subfolder}
 
 STEP 4:
 	// Launch Tests
