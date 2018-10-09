@@ -3,6 +3,16 @@
 /*************************************************************************************************/
 
 STEP 1:
+	// copy the previous output files to avoid issues in the configuration page during the building process
+	mkdir -p /mnt/perfshare/${subfolder}
+	mkdir -p /mnt/perfshare/${subfolder}/output
+	chmod a+w /mnt/perfshare/${subfolder}
+	chmod a+w /mnt/perfshare/${subfolder}/output
+	mkdir -p "/workspace/Multi-Node Manual Linux/output"
+	chmod a+w "/workspace/Multi-Node Manual Linux/output"
+	/bin/cp -rf /mnt/perfshare/${subfolder}/output/*.csv "/workspace/Multi-Node Manual Linux/output"
+
+STEP 2:
 	// Clean old dockers
 	for ip in ${publisher_ips}; do docker -H $ip stop $(docker -H $ip ps -q --filter="name=TestPub") || true; done
 	for ip in ${subscriber_ips}; do docker -H $ip stop $(docker -H $ip ps -q --filter="name=TestSub") || true; done
@@ -10,13 +20,13 @@ STEP 1:
 	for ip in ${publisher_ips}; do docker -H $ip rm $(docker -H $ip ps -q --filter="name=TestPub") || true; done
 	for ip in ${subscriber_ips}; do docker -H $ip rm $(docker -H $ip ps -q --filter="name=TestSub") || true; done
 
-STEP 2:
+STEP 3:
 	// Build FastRTPS
 	mkdir build && cd build
 	cmake .. -DTHIRDPARTY=ON -DPERFORMANCE_TESTS=ON -DVIDEO_TESTS=ON -DMEMORY_TESTS=ON
 	make
 
-STEP 3:
+STEP 4:
 	// Copy Binary files
 	mkdir -p /mnt/perfshare/${subfolder}
 	mkdir -p /mnt/perfshare/${subfolder}/output
@@ -51,13 +61,19 @@ STEP 3:
 	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_4096.csv" /mnt/perfshare/${subfolder}
 	cp "/workspace/Multi-Node Manual Linux/test/performance/payloads_demands_8192.csv" /mnt/perfshare/${subfolder}
 
-STEP 4:
+STEP 5:
 	// Launch Tests
 	python3 "/mnt/perfshare/${subfolder}/LaunchTests.py" ${publisher_ips} ${subscriber_ips} ${subfolder} ${docker_image}
 
-STEP 5:
+STEP 6:
 	// Copy and Rename output files
 	python3 "/mnt/perfshare/${subfolder}/CopyAndRenameCSV.py" "/mnt/perfshare/${subfolder}/output" "/mnt/perfshare/${subfolder}/csv"
-STEP 6:
+
+STEP 7:
 	// Analize results
 	python3 "/mnt/perfshare/${subfolder}/AnalyzeTests.py" "/mnt/perfshare/${subfolder}/csv"
+
+STEP 8:
+	// Copy the output files to be used by the plots.
+	/bin/cp -rf /mnt/perfshare/${subfolder}/output/*.csv "/workspace/Multi-Node Manual Linux/output"
+	
