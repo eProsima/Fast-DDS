@@ -41,8 +41,6 @@ namespace rtps {
 #define LOCATOR_KIND_TCPv4 4
 #define LOCATOR_KIND_TCPv6 8
 
-// TODO Make this class a base class for each kind of locator?
-
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.
 //!@ingroup COMMON_MODULE
@@ -63,7 +61,7 @@ public:
 
     //!Default constructor
     Locator_t()
-        : kind(1)
+        : kind(LOCATOR_KIND_UDPv4)
     {
         port = 0;
         LOCATOR_ADDRESS_INVALID(address);

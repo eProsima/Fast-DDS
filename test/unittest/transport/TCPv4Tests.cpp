@@ -105,7 +105,7 @@ TEST_F(TCPv4Tests, opening_and_closing_output_channel)
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -173,7 +173,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator, nullptr));
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
 
         Semaphore sem;
@@ -216,7 +216,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     genericOutputChannelLocator.port = g_output_port;
     IPLocator::setLogicalPort(genericOutputChannelLocator, 7400);
-    transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr);
+    transportUnderTest.OpenOutputChannel(genericOutputChannelLocator);
 
     Locator_t destinationLocator;
     destinationLocator.kind = LOCATOR_KIND_TCPv4;
@@ -276,7 +276,7 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setLogicalPort(outputChannelLocator, 7400);
     IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     Locator_t wrongLocator(outputChannelLocator);

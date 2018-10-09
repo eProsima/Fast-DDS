@@ -126,7 +126,7 @@ public:
     virtual bool IsOutputChannelOpen(const Locator_t&) const override;
 
     //! Opens an additional output socket on the given address and port.
-    virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
+    virtual bool OpenExtraOutputChannel(const Locator_t&) override;
 
     /** Opens an input channel to receive incomming connections.
     *   If there is an existing channel it registers the receiver resource.
@@ -134,7 +134,7 @@ public:
     virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
+    virtual bool OpenOutputChannel(const Locator_t&) override;
 
     /**
     * Converts a given remote locator (that is, a locator referring to a remote
@@ -275,7 +275,7 @@ protected:
     bool IsInputPortOpen(uint16_t port) const;
 
     //! Intermediate method to open an output socket.
-    bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource, uint32_t maxMsgSize);
+    bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource);
 
     //! Functions to be called from new threads, which takes cares of performing a blocking receive
     void performListenOperation(TCPChannelResource* pChannelResource);

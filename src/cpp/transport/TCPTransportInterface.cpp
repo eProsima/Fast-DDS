@@ -20,9 +20,7 @@
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "asio.hpp"
-#include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPChannelResource.h>
@@ -539,8 +537,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 }
 
 
-bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderResource* /*senderResource*/,
-        uint32_t /*msgSize*/)
+bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
 {
     bool success = false;
     auto logicalPort = IPLocator::getLogicalPort(locator);
@@ -573,10 +570,9 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderRe
     return success;
 }
 
-bool TCPTransportInterface::OpenExtraOutputChannel(const Locator_t& locator, SenderResource* senderResource,
-        uint32_t msgSize)
+bool TCPTransportInterface::OpenExtraOutputChannel(const Locator_t& locator)
 {
-    return OpenOutputChannel(locator, senderResource, msgSize);
+    return OpenOutputChannel(locator);
 }
 
 bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
@@ -609,14 +605,12 @@ void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pCha
     std::chrono::time_point<std::chrono::system_clock> timeout_time =
         time_now + std::chrono::milliseconds(GetConfiguration()->keep_alive_timeout_ms);
 
-    //*
     logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) \
-        << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" \
-        << pChannelResource->getSocket()->local_endpoint().address() << ":" \
-        << pChannelResource->getSocket()->local_endpoint().port() << "->" \
-        << pChannelResource->getSocket()->remote_endpoint().address() << ":" \
-        << pChannelResource->getSocket()->remote_endpoint().port() << ")");
-    //*/
+            << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" \
+            << pChannelResource->getSocket()->local_endpoint().address() << ":" \
+            << pChannelResource->getSocket()->local_endpoint().port() << "->" \
+            << pChannelResource->getSocket()->remote_endpoint().address() << ":" \
+            << pChannelResource->getSocket()->remote_endpoint().port() << ")");
 
     while (pChannelResource->IsAlive())
     {
@@ -652,11 +646,7 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
 {
     Locator_t remoteLocator;
     uint16_t logicalPort(0);
-    /*
-    logInfo(RTCP, "START PerformListenOperation " << pChannelResource->GetLocator() << " (" << \
-        pChannelResource->getSocket()->local_endpoint().address() << "->" << \
-        pChannelResource->getSocket()->remote_endpoint().address() << ")");
-    */
+
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.

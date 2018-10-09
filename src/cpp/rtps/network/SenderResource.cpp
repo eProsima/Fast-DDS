@@ -22,12 +22,12 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator, uint32_t size)
+SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator)
 : mValid(false)
 //, m_pChannelResource(nullptr)
 {
     // Internal channel is opened and assigned to this resource.
-    mValid = transport.OpenOutputChannel(locator, this, size);
+    mValid = transport.OpenOutputChannel(locator);
     if (!mValid)
     {
         return; // Invalid resource, will be discarded by the factory.
@@ -39,9 +39,9 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
             transport.CloseOutputChannel(locator);
         };
 
-    AddSenderLocatorToManagedChannel = [&transport, size](const Locator_t& destination, SenderResource *senderResource)->bool
+    AddSenderLocatorToManagedChannel = [&transport](const Locator_t& destination)->bool
         {
-            return transport.OpenExtraOutputChannel(destination, senderResource, size);
+            return transport.OpenExtraOutputChannel(destination);
         };
 
     SendThroughAssociatedChannel =
@@ -72,7 +72,7 @@ bool SenderResource::AddSenderLocator(const Locator_t& destination)
 {
     if (AddSenderLocatorToManagedChannel)
     {
-        return AddSenderLocatorToManagedChannel(destination, this);
+        return AddSenderLocatorToManagedChannel(destination);
     }
     return false;
 }

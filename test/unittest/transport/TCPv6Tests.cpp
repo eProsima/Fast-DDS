@@ -129,7 +129,7 @@ TEST_F(TCPv6Tests, opening_and_closing_output_channel)
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -184,7 +184,7 @@ TEST_F(TCPv6Tests, send_and_receive_between_ports)
     MockReceiverResource receiver(transportUnderTest, localLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr)); // Includes loopback
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(localLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
@@ -230,7 +230,7 @@ TEST_F(TCPv6Tests, send_to_loopback)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 

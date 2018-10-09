@@ -64,8 +64,8 @@ public:
    virtual bool IsOutputChannelOpen(const Locator_t&) const override;
 
    //! Opens a socket on the given address and port (as long as they are white listed).
-   virtual bool OpenOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
-   virtual bool OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size = 0) override;
+   virtual bool OpenOutputChannel(const Locator_t&) override;
+   virtual bool OpenExtraOutputChannel(const Locator_t&) override;
 
    /**
    * Blocking Receive from the specified channel.
@@ -74,8 +74,8 @@ public:
    * @param localLocator Locator mapping to the local channel we're listening to.
    * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
    */
-   bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-       ChannelResource* pChannelResource, const Locator_t& inputLocator, Locator_t& remoteLocator);
+   bool Receive(ChannelResource* pChannelResource, octet* receiveBuffer, uint32_t receiveBufferCapacity,
+           uint32_t& receiveBufferSize, const Locator_t& inputLocator, Locator_t& remoteLocator);
 
    //! Release the listening socket for the specified port.
    virtual bool ReleaseInputChannel(const Locator_t&) override;
@@ -152,7 +152,7 @@ protected:
     bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
         uint32_t maxMsgSize);
     eProsimaUDPSocket OpenAndBindInputSocket(uint16_t port, bool is_multicast);
-    bool OpenAndBindOutputSockets(const Locator_t& locator, SenderResource*);
+    bool OpenAndBindOutputSockets(const Locator_t& locator);
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
     /** Function to be called from a new thread, which takes cares of performing a blocking receive
     operation on the ReceiveResource

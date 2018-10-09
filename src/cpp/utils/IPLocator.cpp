@@ -299,27 +299,43 @@ bool IPLocator::copyIPv6(const Locator_t &locator, unsigned char* dest)
 bool IPLocator::setLogicalPort(Locator_t &locator, uint16_t port)
 {
     uint16_t *loc_logical = reinterpret_cast<uint16_t*>(&locator.port);
+#if __BIG_ENDIAN__
+    loc_logical[0] = port; // Logical port is stored at 2nd and 3rd bytes of port
+#else
     loc_logical[1] = port; // Logical port is stored at 2nd and 3rd bytes of port
+#endif
     return port != 0;
 }
 
 uint16_t IPLocator::getLogicalPort(const Locator_t &locator)
 {
     const uint16_t *loc_logical = reinterpret_cast<const uint16_t*>(&locator.port);
+#if __BIG_ENDIAN__
+    return loc_logical[0];
+#else
     return loc_logical[1];
+#endif
 }
 
 bool IPLocator::setPhysicalPort(Locator_t &locator, uint16_t port)
 {
     uint16_t *loc_physical = reinterpret_cast<uint16_t*>(&locator.port);
+#if __BIG_ENDIAN__
+    loc_physical[1] = port; // Physical port is stored at 0 and 1st bytes of port
+#else
     loc_physical[0] = port; // Physical port is stored at 0 and 1st bytes of port
+#endif
     return port != 0;
 }
 
 uint16_t IPLocator::getPhysicalPort(const Locator_t &locator)
 {
     const uint16_t *loc_physical = reinterpret_cast<const uint16_t*>(&locator.port);
+#if __BIG_ENDIAN__
+    return loc_physical[1];
+#else
     return loc_physical[0];
+#endif
 }
 
 // TCPv4

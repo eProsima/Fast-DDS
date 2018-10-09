@@ -25,9 +25,8 @@ public:
     RTPS_DllAPI virtual void Consume(const Log::Entry&);
 
 private:
-    static std::recursive_mutex stdOutMutex;
-    void PrintHeader(std::stringstream &ss, const Log::Entry&) const;
-    void PrintContext(std::stringstream &ss, const Log::Entry&) const;
+    void PrintHeader(const Log::Entry&) const;
+    void PrintContext(const Log::Entry&) const;
 };
 
 } // namespace fastrtps

@@ -21,8 +21,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
 
 using namespace std;
 using namespace asio;
@@ -260,7 +258,7 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
     return true;
 }
 
-bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator, SenderResource *)
+bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
 {
     (void)locator;
 
@@ -358,36 +356,35 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(const ip
     return socket;
 }
 
-bool UDPTransportInterface::OpenOutputChannel(const Locator_t& locator, SenderResource* senderResource, uint32_t /*msgSize*/)
+bool UDPTransportInterface::OpenOutputChannel(const Locator_t& locator)
 {
     if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
         return false;
 
-    return OpenAndBindOutputSockets(locator, senderResource);
+    return OpenAndBindOutputSockets(locator);
 }
 
-bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&, SenderResource*, uint32_t size)
+bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&)
 {
-    (void)size;
     return false;
 }
 
 void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator, uint32_t maxMsgSize)
 {
-    std::vector<octet> data(maxMsgSize);
     Locator_t remoteLocator;
+
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.
-        uint32_t length;
-        if (!Receive(data.data(), maxMsgSize, length, pChannelResource, input_locator, remoteLocator))
+        auto msg = pChannelResource->GetMessageBuffer();
+        if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, input_locator, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
         auto receiver = pChannelResource->GetMessageReceiver();
         if (receiver != nullptr)
         {
-            receiver->OnDataReceived(data.data(), length, input_locator, remoteLocator);
+            receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remoteLocator);
         }
         else
         {
@@ -396,8 +393,8 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
     }
 }
 
-bool UDPTransportInterface::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-    ChannelResource* pChannelResource, const Locator_t& inputLocator, Locator_t& remoteLocator)
+bool UDPTransportInterface::Receive(ChannelResource* pChannelResource, octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
+    const Locator_t& inputLocator, Locator_t& remoteLocator)
 {
     if (!pChannelResource->IsAlive())
     {

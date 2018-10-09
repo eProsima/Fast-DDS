@@ -100,7 +100,7 @@ TEST_F(UDPv4Tests, opening_and_closing_output_channel)
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
     ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
     ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
@@ -145,7 +145,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr)); // Includes loopback
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
@@ -188,7 +188,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
@@ -223,7 +223,7 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     genericOutputChannelLocator.port = g_default_port;
-    transportUnderTest.OpenOutputChannel(genericOutputChannelLocator, nullptr);
+    transportUnderTest.OpenOutputChannel(genericOutputChannelLocator);
 
     Locator_t destinationLocator;
     destinationLocator.kind = LOCATOR_KIND_UDPv4;
@@ -284,7 +284,7 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator, nullptr));
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     IPLocator::setIPv4(outputChannelLocator, 111,111,111,111);
