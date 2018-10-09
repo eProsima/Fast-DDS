@@ -355,7 +355,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
                 DatawriterCryptoHandle &local_datawriter_crypto_handle,
                 ParticipantCryptoHandle &remote_participant_crypto,
                 const SharedSecretHandle& /*shared_secret*/,
-                const bool /*relay_only*/,
+                const bool relay_only,
                 SecurityException& /*exception*/)
 {
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
@@ -368,9 +368,11 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     }
 
     std::unique_lock<std::mutex> writer_lock(local_writer_handle->mutex_);
-
+    auto plugin_attrs = local_writer_handle->EndpointPluginAttributes;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0;
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
 
+    (*RRCrypto)->EndpointPluginAttributes = plugin_attrs;
     (*RRCrypto)->Participant_master_key_id = local_writer_handle->Participant_master_key_id;
     /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
@@ -383,13 +385,35 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 
         buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.at(0).sender_key_id;
         //Generation of remainder values (Remote specific key)
-        buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
-        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
+        buffer.receiver_specific_key_id = { 0,0,0,0 };
+        if (is_origin_auth)
+        {
+            buffer.receiver_specific_key_id = make_unique_KeyId();
+            RAND_bytes(buffer.master_receiver_specific_key.data(), 16);
+        }
 
         //Attach to both local and remote CryptoHandles
         (*RRCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
-        local_writer_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        if (is_origin_auth)
+        {
+            local_writer_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        }
+    }
+
+    if (!relay_only && local_writer_handle->EntityKeyMaterial.size() > 1)
+    {
+        KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
+
+        buffer.transformation_kind = local_writer_handle->EntityKeyMaterial.at(1).transformation_kind;
+        buffer.master_salt = local_writer_handle->EntityKeyMaterial.at(1).master_salt;
+        buffer.master_sender_key = local_writer_handle->EntityKeyMaterial.at(1).master_sender_key;
+        buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.at(1).sender_key_id;
+        buffer.master_receiver_specific_key.fill(0);
+        buffer.receiver_specific_key_id = { 0,0,0,0 };
+
+        //Attach only to remote CryptoHandles
+        (*RRCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
     }
 
     (*RRCrypto)->max_blocks_per_session = local_writer_handle->max_blocks_per_session;
@@ -517,7 +541,10 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
 
         //Attach to both local and remote CryptoHandles
         (*RWCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
-        local_reader_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        if (is_origin_auth)
+        {
+            local_reader_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        }
     }
 
     (*RWCrypto)->max_blocks_per_session = local_reader_handle->max_blocks_per_session;
