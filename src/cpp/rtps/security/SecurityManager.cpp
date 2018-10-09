@@ -101,7 +101,7 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
     SecurityException exception;
     domain_id_ = participant_->getRTPSParticipantAttributes().builtin.domainId;
 
-    authentication_plugin_ = factory_.create_authentication_plugin(participant_->getRTPSParticipantAttributes().properties);
+    authentication_plugin_ = factory_.create_authentication_plugin(participant_properties);
 
     if(authentication_plugin_ != nullptr)
     {
@@ -127,7 +127,7 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
             // Set participant guid
             participant_->setGuid(adjusted_participant_key);
 
-            access_plugin_ = factory_.create_access_control_plugin(participant_->getRTPSParticipantAttributes().properties);
+            access_plugin_ = factory_.create_access_control_plugin(participant_properties);
 
             if(access_plugin_ != nullptr)
             {
@@ -198,33 +198,36 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
                 }
             }
 
+            if (access_plugin_ == nullptr)
+            {
+                // Read participant properties.
+                const std::string* property_value = PropertyPolicyHelper::find_property(participant_properties,
+                    "rtps.participant.rtps_protection_kind");
+                if (property_value != nullptr && property_value->compare("ENCRYPT") == 0)
+                {
+                    attributes.is_rtps_protected = true;
+                    attributes.plugin_participant_attributes |=
+                        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
+                        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+                        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+                }
+            }
+
             if(access_plugin_ == nullptr || local_permissions_handle_ != nullptr)
             {
-                crypto_plugin_ = factory_.create_cryptography_plugin(participant_->getRTPSParticipantAttributes().properties);
+                crypto_plugin_ = factory_.create_cryptography_plugin(participant_properties);
 
                 if(crypto_plugin_ != nullptr)
                 {
                     local_participant_crypto_handle_ = crypto_plugin_->cryptokeyfactory()->register_local_participant(*local_identity_handle_,
                             *local_permissions_handle_,
-                            participant_->getRTPSParticipantAttributes().properties.properties(),
-                            participant_->security_attributes(),
+                            participant_properties.properties(),
+                            attributes,
                             exception);
 
                     if(local_participant_crypto_handle_ != nullptr)
                     {
                         assert(!local_participant_crypto_handle_->nil());
-
-                        if(access_plugin_ == nullptr)
-                        {
-                            // Read participant properties.
-                            const std::string* property_value = PropertyPolicyHelper::find_property(participant_properties,
-                                    "rtps.participant.rtps_protection_kind");
-                            if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
-                            {
-                                attributes.is_rtps_protected = true;
-                            }
-                        }
-
                     }
                     else
                     {
