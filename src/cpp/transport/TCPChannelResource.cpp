@@ -98,7 +98,7 @@ void TCPChannelResource::Connect()
         auto type = mParent->GetProtocolType();
         auto endpoint = mParent->GenerateLocalEndpoint(mLocator, IPLocator::getPhysicalPort(mLocator));
         mSocket.open(type);
-        mSocket.async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, mParent, 
+        mSocket.async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, mParent,
             mLocator, std::placeholders::_1));
     }
 }
@@ -113,7 +113,9 @@ ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
         if (oldChannel != nullptr)
         {
             CopyPendingPortsFrom(oldChannel);
-            delete oldChannel;
+            oldChannel->Disable();
+            mParent->DeleteUnboundSocket(oldChannel);
+            //delete oldChannel;
         }
 
         mConnectionStatus = eConnectionStatus::eEstablished;

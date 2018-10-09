@@ -215,6 +215,17 @@ void TCPTransportInterface::CleanDeletedSockets()
     mDeletedSocketsPool.clear();
 }
 
+void TCPTransportInterface::DeleteUnboundSocket(TCPChannelResource *channelResource)
+{
+    std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
+    auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), channelResource);
+    if (it == mDeletedSocketsPool.end())
+    {
+        channelResource->Disable();
+        mDeletedSocketsPool.emplace_back(channelResource);
+    }
+}
+
 bool TCPTransportInterface::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size) const
 {
     uint32_t crc(0);
@@ -490,12 +501,12 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
 void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 {
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (pChannelResource->IsAlive())
     {
         TCPChannelResource *newChannel = nullptr;
         auto physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
         {
-            std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
             pChannelResource->Disable();
             auto it = mChannelResources.find(physicalLocator);
             if (it != mChannelResources.end())
@@ -521,7 +532,6 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 
         if (newChannel != nullptr)
         {
-            std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
             mChannelResources[physicalLocator] = newChannel;
             newChannel->Connect();
         }
@@ -650,7 +660,7 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.
-        auto msg = pChannelResource->GetMessageBuffer();
+        auto& msg = pChannelResource->GetMessageBuffer();
         CDRMessage::initCDRMsg(&msg);
         if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, remoteLocator))
         {
@@ -1065,14 +1075,12 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error_code& error)
 {
     TCPChannelResource* outputSocket = nullptr;
+    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
 
+    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
+    if (it != mChannelResources.end())
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-        if (it != mChannelResources.end())
-        {
-            outputSocket = it->second;
-        }
+        outputSocket = it->second;
     }
 
     if(outputSocket != nullptr)
@@ -1100,6 +1108,8 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
         }
         else
         {
+            // On error don't try too soon
+            eClock::my_sleep(100);
             CloseTCPSocket(outputSocket);
         }
     }

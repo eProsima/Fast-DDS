@@ -196,14 +196,14 @@ public:
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);
 
-    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators, 
+    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators, 
+    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
         uint32_t metatraffic_unicast_port) const override;
 
     bool getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const override;
-    
+
     virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
         uint32_t metatraffic_multicast_port) const override;
 
@@ -213,6 +213,8 @@ public:
         LocatorList_t& list) const override;
 
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
+
+    void DeleteUnboundSocket(TCPChannelResource *channelResource);
 
 protected:
 
