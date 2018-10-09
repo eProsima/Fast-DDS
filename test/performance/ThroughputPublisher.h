@@ -40,8 +40,10 @@ class ThroughputPublisher
     public:
 
         ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv,
+                const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+                const std::string& sXMLConfigFile);
         virtual ~ThroughputPublisher();
         eprosima::fastrtps::Participant* mp_par;
         eprosima::fastrtps::Publisher* mp_datapub;
@@ -112,6 +114,8 @@ class ThroughputPublisher
         std::stringstream output_file;
         uint32_t payload;
         bool reliable_;
+        std::string m_sXMLConfigFile;
+        std::string m_sExportPrefix;
 };
 
 

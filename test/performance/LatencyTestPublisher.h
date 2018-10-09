@@ -66,9 +66,12 @@ class LatencyTestPublisher {
         int m_status;
         unsigned int n_received;
         bool n_export_csv;
+        std::string m_exportPrefix;
         bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
+                const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data);
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
+                const std::string& sXMLConfigFile);
         void run();
         void analyzeTimes(uint32_t datasize);
         bool test(uint32_t datasize);
@@ -138,7 +141,7 @@ class LatencyTestPublisher {
         std::stringstream output_file_16384;
         std::stringstream output_file_64000;
         std::stringstream output_file_131072;
-
+        std::string m_sXMLConfigFile;
         bool reliable_;
 };
 

@@ -13,29 +13,38 @@
 // limitations under the License.
 
 /**
- * @file LatencyTestSubscriber.h
+ * @file VideoPublisher.h
  *
  */
 
-#ifndef LATENCYTESTSUBSCRIBER_H_
-#define LATENCYTESTSUBSCRIBER_H_
+#ifndef VIDEOPUBLISHER_H_
+#define VIDEOPUBLISHER_H_
 
 #include <asio.hpp>
-#include <condition_variable>
-#include "LatencyTestTypes.h"
 
-class LatencyTestSubscriber
+#include "VideoTestTypes.h"
+#include <gstreamer-1.0/gst/app/gstappsrc.h>
+#include <gstreamer-1.0/gst/app/gstappsink.h>
+#include <gstreamer-1.0/gst/gst.h>
+
+#include <condition_variable>
+#include <chrono>
+
+class VideoTestPublisher
 {
     public:
-        LatencyTestSubscriber();
-        virtual ~LatencyTestSubscriber();
+        VideoTestPublisher();
+        virtual ~VideoTestPublisher();
 
         eprosima::fastrtps::Participant* mp_participant;
         eprosima::fastrtps::Publisher* mp_datapub;
         eprosima::fastrtps::Publisher* mp_commandpub;
         eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
-        LatencyType* mp_latency;
+        VideoType* mp_video_out;
+        std::chrono::steady_clock::time_point t_start_;
+        int n_subscribers;
+        unsigned int n_samples;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
         std::mutex mutex_;
         int disc_count_;
@@ -45,62 +54,79 @@ class LatencyTestSubscriber
         int data_count_;
         std::condition_variable data_cond_;
         int m_status;
-        int n_received;
-        int n_samples;
-        bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
+        unsigned int n_received;
+        bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile);
-
+                const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time);
         void run();
         bool test(uint32_t datasize);
 
         class DataPubListener : public eprosima::fastrtps::PublisherListener
         {
             public:
-                DataPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                DataPubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
                 ~DataPubListener(){}
                 void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
                         eprosima::fastrtps::rtps::MatchingInfo& info);
-                LatencyTestSubscriber* mp_up;
+                VideoTestPublisher* mp_up;
+                int n_matched;
         } m_datapublistener;
 
         class DataSubListener : public eprosima::fastrtps::SubscriberListener
         {
             public:
-                DataSubListener(LatencyTestSubscriber* up):mp_up(up){}
+                DataSubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
                 ~DataSubListener(){}
                 void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
                         eprosima::fastrtps::rtps::MatchingInfo& into);
                 void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                LatencyTestSubscriber* mp_up;
+                VideoTestPublisher* mp_up;
+                int n_matched;
         } m_datasublistener;
 
         class CommandPubListener : public eprosima::fastrtps::PublisherListener
         {
             public:
-                CommandPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                CommandPubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
                 ~CommandPubListener(){}
                 void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
                         eprosima::fastrtps::rtps::MatchingInfo& info);
-                LatencyTestSubscriber* mp_up;
+                VideoTestPublisher* mp_up;
+                int n_matched;
         } m_commandpublistener;
 
         class CommandSubListener : public eprosima::fastrtps::SubscriberListener
         {
             public:
-                CommandSubListener(LatencyTestSubscriber* up):mp_up(up){}
+                CommandSubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
                 ~CommandSubListener(){}
                 void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
                         eprosima::fastrtps::rtps::MatchingInfo& into);
                 void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                LatencyTestSubscriber* mp_up;
+                VideoTestPublisher* mp_up;
+                int n_matched;
         } m_commandsublistener;
 
-        bool m_echo;
-        LatencyDataType latency_t;
+        VideoDataType video_t;
         TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
+        bool reliable_;
+
+        GstElement* pipeline;
+        GstElement* filesrc;
+        GstElement* videorate;
+        GstElement* sink;
+        int m_testTime;
+        int m_dropRate;
+        int m_sendSleepTime;
+
+    protected:
+
+        void InitGStreamer();
+        static GstFlowReturn new_sample(GstElement *sink, VideoTestPublisher *sub);
+
 };
 
-#endif /* LATENCYTESTSUBSCRIBER_H_ */
+
+#endif /* VIDEOPUBLISHER_H_ */

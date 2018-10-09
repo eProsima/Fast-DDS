@@ -33,8 +33,8 @@ if(PROFILING_TESTS)
 
     set(RTPSPUBSUBPROFILING_SOURCE
         RTPSPubSubProfiling.cpp
-        types/HelloWorld.cpp
-        types/HelloWorldType.cpp)
+        types/HelloWorld.cxx
+        types/HelloWorldPubSubTypes.cxx)
 
     add_executable(RTPSPubSubProfiling ${RTPSPUBSUBPROFILING_SOURCE})
     target_compile_definitions(RTPSPubSubProfiling PRIVATE FASTRTPS_NO_LIB)

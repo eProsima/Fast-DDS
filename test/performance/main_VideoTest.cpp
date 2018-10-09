@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "LatencyTestPublisher.h"
-#include "LatencyTestSubscriber.h"
+#include "VideoTestPublisher.h"
+#include "VideoTestSubscriber.h"
 
 #include "optionparser.h"
 
@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <bitset>
 #include <cstdint>
+#include <gstreamer-1.0/gst/gst.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/Domain.h>
@@ -110,35 +111,39 @@ enum  optionIndex {
     SAMPLES,
     SEED,
     SUBSCRIBERS,
-    ECHO_OPT,
     HOSTNAME,
     EXPORT_CSV,
     EXPORT_PREFIX,
     USE_SECURITY,
     CERTS_PATH,
     LARGE_DATA,
-    XML_FILE
+    XML_FILE,
+    TEST_TIME,
+    DROP_RATE,
+    SEND_SLEEP_TIME
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: LatencyTest <publisher|subscriber>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
-    { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
-    { SAMPLES,0,"s","samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
-    { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
-    { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
-    { ECHO_OPT, 0,"e","echo",               Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
-    { HOSTNAME,0,"","hostname",             Arg::None,      "" },
-    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "" },
-    { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
+    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "Usage: VideoTest <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,    0,"h", "help",                   Arg::None,      "  -h \t--help  \tProduce help message." },
+    { RELIABILITY,0,"r","reliability",          Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
+    { SAMPLES,0,"s","samples",                  Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
+    { SEED,0,"","seed",                         Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
+    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nPublisher options:"},
+    { SUBSCRIBERS,0,"n","subscribers",          Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
+    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nSubscriber options:"},
+    { HOSTNAME,0,"","hostname",                 Arg::None,      "" },
+    { EXPORT_CSV,0,"","export_csv",             Arg::None,      "" },
+    { EXPORT_PREFIX,0,"","export_prefix",       Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
 #if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",      Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",           Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
+    { USE_SECURITY, 0, "", "security",          Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    { CERTS_PATH, 0, "", "certs",               Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
 #endif
-    { LARGE_DATA, 0, "l", "large",          Arg::None,      "  -l \t--large\tTest large data." },
-    { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
+    { LARGE_DATA, 0, "l", "large",              Arg::None,      "  -l \t--large\tTest large data." },
+    { XML_FILE, 0, "", "xml",                   Arg::String,    "\t--xml \tXML Configuration file." },
+    { TEST_TIME, 0, "", "testtime",             Arg::Numeric,   "\t--testtime \tTest duration time." },
+    { DROP_RATE, 0, "", "droprate",             Arg::Numeric,   "\t--droprate \tSending drop percentage ( 0 - 100 )." },
+    { SEND_SLEEP_TIME, 0, "", "sleeptime",      Arg::Numeric,   "\t--sleeptime \tMaximum sleep time before shipments (milliseconds)." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -166,12 +171,14 @@ int main(int argc, char** argv)
 
     bool pub_sub = false;
     int sub_number = 1;
+    int test_time = 100;
+    int drop_rate = 0;
+    int max_sleep_time = 0;
     int n_samples = c_n_samples;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
 #endif
-    bool echo = true;
     bool reliable = false;
     uint32_t seed = 80;
     bool hostname = false;
@@ -254,22 +261,6 @@ int main(int argc, char** argv)
                 sub_number = strtol(opt.arg, nullptr, 10);
                 break;
 
-            case ECHO_OPT:
-                if (strcmp(opt.arg, "true") == 0)
-                {
-                    echo = true;
-                }
-                else if (strcmp(opt.arg, "false") == 0)
-                {
-                    echo = false;
-                }
-                else
-                {
-                    option::printUsage(fwrite, stdout, usage, columns);
-                    return 0;
-                }
-                break;
-
             case HOSTNAME:
                 hostname = true;
                 break;
@@ -277,7 +268,6 @@ int main(int argc, char** argv)
             case EXPORT_CSV:
                 export_csv = true;
                 break;
-
             case EXPORT_PREFIX:
             {
                 if (opt.arg != nullptr)
@@ -305,6 +295,18 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
+            case TEST_TIME:
+                test_time = strtol(opt.arg, nullptr, 10);
+                break;
+            case DROP_RATE:
+                drop_rate = strtol(opt.arg, nullptr, 10);
+                break;
+            case SEND_SLEEP_TIME:
+                max_sleep_time = strtol(opt.arg, nullptr, 10);
+                break;
+
+
+
 
 #if HAVE_SECURITY
             case USE_SECURITY:
@@ -383,20 +385,23 @@ int main(int argc, char** argv)
         xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
     }
 
+    int num_args = 0;
+    gst_init(&num_args, nullptr);
+
     if (pub_sub)
     {
-        cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
-        LatencyTestPublisher latencyPub;
-        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
-            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile);
-        latencyPub.run();
+        cout << "Performing video test" << endl;
+        VideoTestPublisher pub;
+        pub.init(sub_number, n_samples, reliable, seed, hostname, pub_part_property_policy,
+            pub_property_policy, large_data, sXMLConfigFile, test_time, drop_rate, max_sleep_time);
+        pub.run();
     }
     else
     {
-        LatencyTestSubscriber latencySub;
-        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile);
-        latencySub.run();
+        VideoTestSubscriber sub;
+        sub.init(n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+            large_data, sXMLConfigFile, export_csv, export_prefix);
+        sub.run();
     }
 
     eClock::my_sleep(1000);

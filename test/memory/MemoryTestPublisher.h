@@ -13,29 +13,32 @@
 // limitations under the License.
 
 /**
- * @file LatencyTestSubscriber.h
+ * @file MemoryPublisher.h
  *
  */
 
-#ifndef LATENCYTESTSUBSCRIBER_H_
-#define LATENCYTESTSUBSCRIBER_H_
+#ifndef MEMORYPUBLISHER_H_
+#define MEMORYPUBLISHER_H_
 
 #include <asio.hpp>
-#include <condition_variable>
-#include "LatencyTestTypes.h"
 
-class LatencyTestSubscriber
-{
+#include "MemoryTestTypes.h"
+
+#include <condition_variable>
+#include <chrono>
+
+class MemoryTestPublisher {
     public:
-        LatencyTestSubscriber();
-        virtual ~LatencyTestSubscriber();
+        MemoryTestPublisher();
+        virtual ~MemoryTestPublisher();
 
         eprosima::fastrtps::Participant* mp_participant;
         eprosima::fastrtps::Publisher* mp_datapub;
         eprosima::fastrtps::Publisher* mp_commandpub;
-        eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
-        LatencyType* mp_latency;
+        MemoryType* mp_memory;
+        int n_subscribers;
+        unsigned int n_samples;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
         std::mutex mutex_;
         int disc_count_;
@@ -45,62 +48,57 @@ class LatencyTestSubscriber
         int data_count_;
         std::condition_variable data_cond_;
         int m_status;
-        int n_received;
-        int n_samples;
-        bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
+        unsigned int n_received;
+        bool n_export_csv;
+        std::string m_exportPrefix;
+        bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
+                const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile);
-
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+                const std::string& sXMLConfigFile, uint32_t data_size);
         void run();
         bool test(uint32_t datasize);
 
         class DataPubListener : public eprosima::fastrtps::PublisherListener
         {
             public:
-                DataPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                DataPubListener(MemoryTestPublisher* up):mp_up(up),n_matched(0){}
                 ~DataPubListener(){}
                 void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
                         eprosima::fastrtps::rtps::MatchingInfo& info);
-                LatencyTestSubscriber* mp_up;
+                MemoryTestPublisher* mp_up;
+                int n_matched;
         } m_datapublistener;
-
-        class DataSubListener : public eprosima::fastrtps::SubscriberListener
-        {
-            public:
-                DataSubListener(LatencyTestSubscriber* up):mp_up(up){}
-                ~DataSubListener(){}
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& into);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                LatencyTestSubscriber* mp_up;
-        } m_datasublistener;
 
         class CommandPubListener : public eprosima::fastrtps::PublisherListener
         {
             public:
-                CommandPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                CommandPubListener(MemoryTestPublisher* up):mp_up(up),n_matched(0){}
                 ~CommandPubListener(){}
                 void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
                         eprosima::fastrtps::rtps::MatchingInfo& info);
-                LatencyTestSubscriber* mp_up;
+                MemoryTestPublisher* mp_up;
+                int n_matched;
         } m_commandpublistener;
 
         class CommandSubListener : public eprosima::fastrtps::SubscriberListener
         {
             public:
-                CommandSubListener(LatencyTestSubscriber* up):mp_up(up){}
+                CommandSubListener(MemoryTestPublisher* up):mp_up(up),n_matched(0){}
                 ~CommandSubListener(){}
                 void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
                         eprosima::fastrtps::rtps::MatchingInfo& into);
                 void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                LatencyTestSubscriber* mp_up;
+                MemoryTestPublisher* mp_up;
+                int n_matched;
         } m_commandsublistener;
 
-        bool m_echo;
-        LatencyDataType latency_t;
+        MemoryDataType memory_t;
         TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
+        bool reliable_;
+        uint32_t m_data_size;
 };
 
-#endif /* LATENCYTESTSUBSCRIBER_H_ */
+
+#endif /* MEMORYPUBLISHER_H_ */
