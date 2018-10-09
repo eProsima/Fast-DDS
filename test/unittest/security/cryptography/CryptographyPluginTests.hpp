@@ -183,7 +183,8 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     eprosima::fastrtps::rtps::security::KeyMaterial_AES_GCM_GMAC base = Participant_A->ParticipantKeyMaterial;
 
     std::vector<uint8_t> serialized = CryptoPlugin->keyexchange()->KeyMaterialCDRSerialize(base);
-    eprosima::fastrtps::rtps::security::KeyMaterial_AES_GCM_GMAC result = CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(&serialized);
+    eprosima::fastrtps::rtps::security::KeyMaterial_AES_GCM_GMAC result;
+    CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized);
     ASSERT_TRUE(
             (base.transformation_kind == result.transformation_kind) &
             (base.master_salt == result.master_salt) &
