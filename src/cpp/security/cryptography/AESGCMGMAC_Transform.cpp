@@ -36,6 +36,23 @@ using namespace eprosima::fastrtps::rtps::security;
 
 CONSTEXPR int initialization_vector_suffix_length = 8;
 
+static KeyMaterial_AES_GCM_GMAC* find_key(KeyMaterial_AES_GCM_GMAC_Seq& keys, const CryptoTransformIdentifier& id)
+{
+    for (auto& it : keys)
+    {
+        if (it.transformation_kind == id.transformation_kind)
+        {
+            if ((it.sender_key_id == id.transformation_key_id) ||
+                (it.receiver_specific_key_id == id.transformation_key_id))
+            {
+                return &it;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
 AESGCMGMAC_Transform::AESGCMGMAC_Transform()
 {
 }
@@ -69,13 +86,17 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
 
     std::unique_lock<std::mutex> lock(local_writer->mutex_);
 
+    // Payload is always protected by the last key
+    auto nKeys = local_writer->EntityKeyMaterial.size();
+    auto& keyMat = local_writer->EntityKeyMaterial.at(nKeys - 1);
+
     //If the maximum number of blocks have been processed, generate a new SessionKey
     if(local_writer->session_block_counter >= local_writer->max_blocks_per_session)
     {
         local_writer->session_id += 1;
 
-        local_writer->SessionKey = compute_sessionkey(local_writer->EntityKeyMaterial.at(0).master_sender_key,
-                local_writer->EntityKeyMaterial.at(0).master_salt,
+        local_writer->SessionKey = compute_sessionkey(keyMat.master_sender_key,
+                keyMat.master_salt,
                 local_writer->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
@@ -96,8 +117,8 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     //Header
     try
     {
-        serialize_SecureDataHeader(serializer, local_writer->EntityKeyMaterial.at(0).transformation_kind,
-                local_writer->EntityKeyMaterial.at(0).sender_key_id, session_id, initialization_vector_suffix);
+        serialize_SecureDataHeader(serializer, keyMat.transformation_kind,
+                keyMat.sender_key_id, session_id, initialization_vector_suffix);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
@@ -110,7 +131,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_writer->EntityKeyMaterial.at(0).transformation_kind, local_writer->SessionKey,
+        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, local_writer->SessionKey,
                     initialization_vector, output_buffer, payload.data, payload.length, tag))
         {
             return false;
@@ -125,7 +146,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     try
     {
         std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list;
-        if(!serialize_SecureDataTag(serializer, local_writer->EntityKeyMaterial.at(0).transformation_kind, local_writer->session_id,
+        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, local_writer->session_id,
                     initialization_vector, receiving_datareader_crypto_list, false, tag))
         {
             return false;
@@ -169,14 +190,17 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
     std::unique_lock<std::mutex> lock(local_writer->mutex_);
 
+    // Submessage is always protected by the first key
+    auto& keyMat = local_writer->EntityKeyMaterial.at(0);
+
     bool update_specific_keys = false;
     //If the maximum number of blocks have been processed, generate a new SessionKey
     if(local_writer->session_block_counter >= local_writer->max_blocks_per_session)
     {
         local_writer->session_id += 1;
         update_specific_keys = true;
-        local_writer->SessionKey = compute_sessionkey(local_writer->EntityKeyMaterial.at(0).master_sender_key,
-                local_writer->EntityKeyMaterial.at(0).master_salt,
+        local_writer->SessionKey = compute_sessionkey(keyMat.master_sender_key,
+                keyMat.master_salt,
                 local_writer->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
@@ -212,8 +236,8 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        serialize_SecureDataHeader(serializer, local_writer->EntityKeyMaterial.at(0).transformation_kind,
-                local_writer->EntityKeyMaterial.at(0).sender_key_id, session_id, initialization_vector_suffix);
+        serialize_SecureDataHeader(serializer, keyMat.transformation_kind,
+            keyMat.sender_key_id, session_id, initialization_vector_suffix);
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
@@ -233,7 +257,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_writer->EntityKeyMaterial.at(0).transformation_kind, local_writer->SessionKey,
+        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, local_writer->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos],
                     plain_rtps_submessage.length - plain_rtps_submessage.pos, tag))
         {
@@ -256,7 +280,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        if(!serialize_SecureDataTag(serializer, local_writer->EntityKeyMaterial.at(0).transformation_kind, local_writer->session_id,
+        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, local_writer->session_id,
                     initialization_vector, receiving_datareader_crypto_list, update_specific_keys, tag))
         {
             return false;
@@ -959,12 +983,19 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         return false;
     }
 
+    auto keyMat = find_key(sending_writer->Entity2RemoteKeyMaterial, header.transform_identifier);
+    if (keyMat == nullptr)
+    {
+        logWarning(SECURITY_CRYPTO, "Key material not found");
+        return false;
+    }
+
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
     std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_sender_key,
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_salt,
+            keyMat->master_sender_key,
+            keyMat->master_salt,
             session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
@@ -1020,10 +1051,10 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
         SecurityException exception;
 
-        if(!deserialize_SecureDataTag(decoder, tag, sending_writer->EntityKeyMaterial.at(0).transformation_kind,
-                sending_writer->Entity2RemoteKeyMaterial.at(0).receiver_specific_key_id,
-                sending_writer->Entity2RemoteKeyMaterial.at(0).master_receiver_specific_key,
-                sending_writer->Entity2RemoteKeyMaterial.at(0).master_salt,
+        if(!deserialize_SecureDataTag(decoder, tag, keyMat->transformation_kind,
+                keyMat->receiver_specific_key_id,
+                keyMat->master_receiver_specific_key,
+                keyMat->master_salt,
                 initialization_vector, session_id, exception))
         {
             return false;
@@ -1043,7 +1074,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     uint32_t length = plain_rtps_submessage.max_size - plain_rtps_submessage.pos;
     if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_writer->EntityKeyMaterial.at(0).transformation_kind, session_key, initialization_vector,
+        keyMat->transformation_kind, session_key, initialization_vector,
             &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
@@ -1132,12 +1163,19 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
         return false;
     }
 
+    auto keyMat = find_key(sending_reader->Entity2RemoteKeyMaterial, header.transform_identifier);
+    if (keyMat == nullptr)
+    {
+        logWarning(SECURITY_CRYPTO, "Could not find key material");
+        return false;
+    }
+
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
     std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_reader->Entity2RemoteKeyMaterial.at(0).master_sender_key,
-            sending_reader->Entity2RemoteKeyMaterial.at(0).master_salt,
+            keyMat->master_sender_key,
+            keyMat->master_salt,
             session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
@@ -1193,10 +1231,10 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
         SecurityException exception;
 
-        if(!deserialize_SecureDataTag(decoder, tag, sending_reader->EntityKeyMaterial.at(0).transformation_kind,
-                sending_reader->Entity2RemoteKeyMaterial.at(0).receiver_specific_key_id,
-                sending_reader->Entity2RemoteKeyMaterial.at(0).master_receiver_specific_key,
-                sending_reader->Entity2RemoteKeyMaterial.at(0).master_salt,
+        if(!deserialize_SecureDataTag(decoder, tag, keyMat->transformation_kind,
+                keyMat->receiver_specific_key_id,
+                keyMat->master_receiver_specific_key,
+                keyMat->master_salt,
                 initialization_vector, session_id, exception))
         {
             return false;
@@ -1216,7 +1254,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     uint32_t length = plain_rtps_submessage.max_size - plain_rtps_submessage.pos;
     if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_reader->EntityKeyMaterial.at(0).transformation_kind, session_key, initialization_vector,
+            keyMat->transformation_kind, session_key, initialization_vector,
             &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
@@ -1274,14 +1312,19 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         return false;
     }
 
+    auto keyMat = find_key(sending_writer->Entity2RemoteKeyMaterial, header.transform_identifier);
+    if (keyMat == nullptr)
+    {
+        logWarning(SECURITY_CRYPTO, "Key material not found");
+        return false;
+    }
+
     uint32_t session_id;
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_sender_key,
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_salt,
-            session_id);
+    std::array<uint8_t,32> session_key = compute_sessionkey(keyMat->master_sender_key,
+            keyMat->master_salt, session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -1507,6 +1550,13 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         {
             logWarning(SECURITY_CRYPTO, "No key material yet");
             continue;
+        }
+
+        if (remote_entity->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id != std::array<uint8_t, 4>{0, 0, 0, 0})
+        {
+            // This means origin authentication is disabled. As it is configured on the writer, we know all other
+            // receiving entities will have its specific key to null value, and we can skip the whole loop
+            break;
         }
 
         //Update the key if needed
