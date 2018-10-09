@@ -242,7 +242,7 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
         UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
         pChannelResource->SetMessageReceiver(receiver);
         std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
-            pChannelResource, locator, maxMsgSize);
+            pChannelResource, locator);
         pChannelResource->SetThread(newThread);
         mInputSockets.emplace(IPLocator::getPhysicalPort(locator), pChannelResource);
     }
@@ -369,7 +369,7 @@ bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&)
     return false;
 }
 
-void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator, uint32_t maxMsgSize)
+void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator)
 {
     Locator_t remoteLocator;
 

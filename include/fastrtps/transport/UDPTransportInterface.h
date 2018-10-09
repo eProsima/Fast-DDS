@@ -158,7 +158,7 @@ protected:
     operation on the ReceiveResource
     @param input_locator - Locator that triggered the creation of the resource
     */
-    void performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator, uint32_t maxMsgSize);
+    void performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator);
 
     bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
         eProsimaUDPSocketRef socket);
