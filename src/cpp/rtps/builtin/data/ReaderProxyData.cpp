@@ -250,6 +250,7 @@ ParameterList_t ReaderProxyData::toParameterList()
         ParameterEndpointSecurityInfo_t*p = new ParameterEndpointSecurityInfo_t();
         p->security_attributes = security_attributes_;
         p->plugin_security_attributes = plugin_security_attributes_;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
 #endif
 

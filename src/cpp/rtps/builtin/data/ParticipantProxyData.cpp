@@ -198,6 +198,7 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
         ParameterParticipantSecurityInfo_t* p = new ParameterParticipantSecurityInfo_t();
         p->security_attributes = this->security_attributes_;
         p->plugin_security_attributes = this->plugin_security_attributes_;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
 #endif
 
