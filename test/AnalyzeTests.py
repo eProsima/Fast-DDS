@@ -3,7 +3,7 @@
 import sys, os, glob, datetime, csv
 
 tests_list = ["LatencyTest", "ThroughputTest", "VideoTest", "MemoryTest"]
-filter_list = [["_average", "_minimum"], ["_all_"], [], []]
+filter_list = [["_minimum"], ["_all_"], [], []]
 
 def AnalyzeTestFiles(test_name, file_list):
 	print("Start " + test_name)
@@ -25,8 +25,10 @@ def AnalyzeTestFiles(test_name, file_list):
 	for column_id in columns:
 		min_value = min(stats[column_id][:-1])
 		max_value = max(stats[column_id][:-1])
-		if stats[column_id][-1] > max_value and abs(max_value - min_value) < abs(stats[column_id][-1] - max_value):
+		if stats[column_id][-1] > max_value and abs(max_value - min_value) < stats[column_id][-1] - max_value:
 			print("ALARM!! " + test_name + ". Unexpectly high value for column: " + column_id)
+			print("	Max Difference: " + str(abs(max_value - min_value)))
+			print("	Values: " + str(stats[column_id]))
 			return -1
 	return 0
 
