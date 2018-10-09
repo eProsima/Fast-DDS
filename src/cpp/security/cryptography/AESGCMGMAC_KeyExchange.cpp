@@ -138,20 +138,23 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
 
     //Flush previously present CryptoTokens
     local_datawriter_crypto_tokens.clear();
-    //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
-    DatawriterCryptoToken temp;
-    temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
-    BinaryProperty prop;
-    prop.name() = std::string("dds.cryp.keymat");
-    std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_reader->Remote2EntityKeyMaterial.at(0));
-    prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
-    prop.propagate(true);
+    for (auto& it : remote_reader->Remote2EntityKeyMaterial)
+    {
+        //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
+        DatawriterCryptoToken temp;
+        temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
+        BinaryProperty prop;
+        prop.name() = std::string("dds.cryp.keymat");
+        std::vector<uint8_t> plaintext = KeyMaterialCDRSerialize(it);
+        prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
+        prop.propagate(true);
 
-    if(prop.value().size() == 0)
-        return false;
+        if (prop.value().size() == 0)
+            return false;
 
-    temp.binary_properties().push_back(std::move(prop));
-    local_datawriter_crypto_tokens.push_back(std::move(temp));
+        temp.binary_properties().push_back(std::move(prop));
+        local_datawriter_crypto_tokens.push_back(std::move(temp));
+    }
 
     return true;
 }
@@ -174,13 +177,14 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
 
     local_datareader_crypto_tokens.clear();
     //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
+    for (auto& it : remote_writer->Remote2EntityKeyMaterial)
     {
         //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
         DatareaderCryptoToken temp;
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
-        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_writer->Remote2EntityKeyMaterial.at(0));
+        std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(it);
         prop.value() = aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
         prop.propagate(true);
 
@@ -206,44 +210,49 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle received");
         return false;
     }
-    //As only relevant KeyMaterials are tokenized, only one Token is exchanged
-    if(remote_datareader_tokens.size() != 1){
+    //As only relevant KeyMaterials are tokenized, only one or two Token are exchanged
+    auto nTokens = remote_datareader_tokens.size();
+    if(nTokens != 1 && nTokens != 2){
         logWarning(SECURITY_CRYPTO,"Malformed CryptoTokenSequence");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
-    if(remote_datareader_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
-        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
-        exception = SecurityException("Incorrect token type received");
-        return false;
-    }
-
-    if(remote_datareader_tokens.at(0).binary_properties().size() !=1 || remote_datareader_tokens.at(0).properties().size() != 0 ||
-            remote_datareader_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat")
+    for (size_t i = 0; i < nTokens; i++)
     {
-        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
-        exception = SecurityException("Malformed CryptoToken");
-        return false;
-    }
+        if (remote_datareader_tokens.at(i).class_id() != "DDS:Crypto:AES_GCM_GMAC")
+        {
+            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            exception = SecurityException("Incorrect token type received");
+            return false;
+        }
 
-    std::unique_lock<std::mutex> remote_reader_lock(remote_reader->mutex_);
+        if (remote_datareader_tokens.at(i).binary_properties().size() != 1 || remote_datareader_tokens.at(i).properties().size() != 0 ||
+            remote_datareader_tokens.at(i).binary_properties().at(0).name() != "dds.cryp.keymat")
+        {
+            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            exception = SecurityException("Malformed CryptoToken");
+            return false;
+        }
 
-    //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
-    std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datareader_tokens.at(0).binary_properties().at(0).value(),
+        std::unique_lock<std::mutex> remote_reader_lock(remote_reader->mutex_);
+
+        //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
+        std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datareader_tokens.at(i).binary_properties().at(0).value(),
             remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
 
-    if(plaintext.size() == 0)
-        return false;
+        if (plaintext.size() == 0)
+            return false;
 
-    KeyMaterial_AES_GCM_GMAC keymat;
-    keymat = KeyMaterialCDRDeserialize(&plaintext);
-    remote_reader->Entity2RemoteKeyMaterial.push_back(keymat);
+        KeyMaterial_AES_GCM_GMAC keymat;
+        keymat = KeyMaterialCDRDeserialize(&plaintext);
+        remote_reader->Entity2RemoteKeyMaterial.push_back(keymat);
 
-    remote_reader_lock.unlock();
+        remote_reader_lock.unlock();
 
-    std::unique_lock<std::mutex> local_writer_lock(local_writer->mutex_);
+        std::unique_lock<std::mutex> local_writer_lock(local_writer->mutex_);
 
-    local_writer->Remote2EntityKeyMaterial.push_back(keymat);
+        local_writer->Remote2EntityKeyMaterial.push_back(keymat);
+    }
 
     return true;
  }
@@ -261,46 +270,52 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle"); 
         return false;
     }
-    //As only relevant KeyMaterials are tokenized, only one Token is exchanged
-    if(remote_datawriter_tokens.size() != 1){
+    //As only relevant KeyMaterials are tokenized, only one or two Token are exchanged
+    auto nTokens = remote_datawriter_tokens.size();
+    if(nTokens != 1 && nTokens != 2){
         logWarning(SECURITY_CRYPTO,"Malformed CryptoTokenSequence");
         exception = SecurityException("Incorrect remote CryptoSequence length");
         return false;
     }
-    if(remote_datawriter_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
-        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
-        exception = SecurityException("Incorrect token type received");
-        return false;
-    }
 
-    if(remote_datawriter_tokens.at(0).binary_properties().size() !=1 || remote_datawriter_tokens.at(0).properties().size() != 0 ||
-            remote_datawriter_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat")
+    for (size_t i = 0; i < nTokens; i++)
     {
-        logWarning(SECURITY_CRYPTO,"Malformed CryptoToken");
-        exception = SecurityException("Malformed CryptoToken");
-        return false;
-    }
+        if (remote_datawriter_tokens.at(i).class_id() != "DDS:Crypto:AES_GCM_GMAC")
+        {
+            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            exception = SecurityException("Incorrect token type received");
+            return false;
+        }
 
-    std::unique_lock<std::mutex> remote_writer_lock(remote_writer->mutex_);
+        if (remote_datawriter_tokens.at(i).binary_properties().size() != 1 || remote_datawriter_tokens.at(i).properties().size() != 0 ||
+            remote_datawriter_tokens.at(i).binary_properties().at(0).name() != "dds.cryp.keymat")
+        {
+            logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
+            exception = SecurityException("Malformed CryptoToken");
+            return false;
+        }
 
-    //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
-    std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datawriter_tokens.at(0).binary_properties().at(0).value(),
+        std::unique_lock<std::mutex> remote_writer_lock(remote_writer->mutex_);
+
+        //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
+        std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datawriter_tokens.at(i).binary_properties().at(0).value(),
             remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
 
-    if(plaintext.size() == 0)
-        return false;
+        if (plaintext.size() == 0)
+            return false;
 
-    KeyMaterial_AES_GCM_GMAC keymat;
-    keymat = KeyMaterialCDRDeserialize(&plaintext);
+        KeyMaterial_AES_GCM_GMAC keymat;
+        keymat = KeyMaterialCDRDeserialize(&plaintext);
 
-    remote_writer->Entity2RemoteKeyMaterial.push_back(keymat);
+        remote_writer->Entity2RemoteKeyMaterial.push_back(keymat);
 
-    remote_writer_lock.unlock();
+        remote_writer_lock.unlock();
 
-    std::unique_lock<std::mutex> local_writer_lock(local_reader->mutex_);
+        std::unique_lock<std::mutex> local_writer_lock(local_reader->mutex_);
 
-    //TODO(Ricardo) Why?
-    local_reader->Remote2EntityKeyMaterial.push_back(keymat);
+        //TODO(Ricardo) Why?
+        local_reader->Remote2EntityKeyMaterial.push_back(keymat);
+    }
 
     return true;
 }
