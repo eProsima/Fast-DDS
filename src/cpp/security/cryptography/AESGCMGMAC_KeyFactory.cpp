@@ -82,27 +82,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
         }//endfor
     }//endif
 
-    std::array<uint8_t, 4> transformationtype = is_rtps_encrypted 
-        ? use_256_bits 
-            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} 
-            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
-        : use_256_bits
-            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
-            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-
-    (*PCrypto)->ParticipantKeyMaterial.transformation_kind =
-        transformationtype;
-    (*PCrypto)->ParticipantKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 16 );
-
-    (*PCrypto)->ParticipantKeyMaterial.sender_key_id = make_unique_KeyId();
-
-    (*PCrypto)->ParticipantKeyMaterial.master_sender_key.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 16 );
-
-    //These values are set by the standard
-    (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
+    create_key((*PCrypto)->ParticipantKeyMaterial, is_rtps_encrypted, use_256_bits);
 
     //Set values related to key update policy
     (*PCrypto)->max_blocks_per_session = maxblockspersession;
@@ -316,6 +296,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     (*WCrypto)->EndpointPluginAttributes = plugin_attrs;
 
     bool is_sub_encrypted = plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    bool is_payload_encrypted = plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
     bool use_256_bits = false;
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datawriter_prop.empty()){
@@ -337,28 +318,23 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
         }//endfor
     }//endif
 
-    std::array<uint8_t, 4> transformationtype = is_sub_encrypted
-        ? use_256_bits
-            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}
-            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
-        : use_256_bits
-            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
-            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+    if (datawriter_security_properties.is_submessage_protected)
+    {
+        KeyMaterial_AES_GCM_GMAC buffer;
+        create_key(buffer, is_sub_encrypted, use_256_bits);
+        (*WCrypto)->EntityKeyMaterial.push_back(buffer);
+    }
 
-    //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
-    KeyMaterial_AES_GCM_GMAC buffer;
-    buffer.transformation_kind = transformationtype;
-    buffer.master_salt.fill(0);
-    RAND_bytes(buffer.master_salt.data(), 16 );
-        
-    buffer.sender_key_id = make_unique_KeyId();
-    buffer.master_sender_key.fill(0);
-    RAND_bytes(buffer.master_sender_key.data(), 16 );
-        
-    buffer.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    buffer.master_receiver_specific_key.fill(0);
-
-    (*WCrypto)->EntityKeyMaterial.push_back(buffer);
+    if (datawriter_security_properties.is_payload_protected)
+    {
+        // TODO: let user decide on key reuse
+        if (is_payload_encrypted != is_sub_encrypted)
+        {
+            KeyMaterial_AES_GCM_GMAC buffer;
+            create_key(buffer, is_payload_encrypted, use_256_bits);
+            (*WCrypto)->EntityKeyMaterial.push_back(buffer);
+        }
+    }
         
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
     (*WCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
@@ -406,7 +382,6 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         buffer.master_sender_key = local_writer_handle->EntityKeyMaterial.at(0).master_sender_key;
 
         buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.at(0).sender_key_id;
-        //buffer.sender_key_id = make_unique_KeyId();  //Unique identifier within the Participant (used to identity submessage types)
         //Generation of remainder values (Remote specific key)
         buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
@@ -479,29 +454,8 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     }//endif
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
-
-    std::array<uint8_t, 4> transformationtype = is_sub_encrypted
-        ? use_256_bits
-            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}
-            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
-        : use_256_bits
-            ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
-            : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-
     KeyMaterial_AES_GCM_GMAC buffer;
-    buffer.transformation_kind = transformationtype;
-
-    buffer.master_salt.fill(0);
-    RAND_bytes(buffer.master_salt.data(), 16 );
-
-    buffer.sender_key_id = make_unique_KeyId();
-
-    buffer.master_sender_key.fill(0);
-    RAND_bytes(buffer.master_sender_key.data(), 16 );
-
-    buffer.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    buffer.master_receiver_specific_key.fill(0);
-
+    create_key(buffer, is_sub_encrypted, use_256_bits);
     (*RCrypto)->EntityKeyMaterial.push_back(buffer);
 
     (*RCrypto)->max_blocks_per_session = maxblockspersession;
@@ -704,6 +658,29 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
     }
 
     return false;
+}
+
+void AESGCMGMAC_KeyFactory::create_key(KeyMaterial_AES_GCM_GMAC& key, bool encrypt_then_sign, bool use_256_bits)
+{
+    std::array<uint8_t, 4> transformationtype = encrypt_then_sign
+        ? use_256_bits
+        ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}
+    : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
+    : use_256_bits
+        ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
+    : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+
+    key.transformation_kind = transformationtype;
+
+    key.master_salt.fill(0);
+    RAND_bytes(key.master_salt.data(), 16);
+
+    key.sender_key_id = make_unique_KeyId();
+    key.master_sender_key.fill(0);
+    RAND_bytes(key.master_sender_key.data(), 16);
+
+    key.receiver_specific_key_id = { { 0, 0, 0, 0 } };
+    key.master_receiver_specific_key.fill(0);
 }
 
 CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId(){
