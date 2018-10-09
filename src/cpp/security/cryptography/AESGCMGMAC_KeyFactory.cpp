@@ -92,7 +92,6 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
 
     (*PCrypto)->ParticipantKeyMaterial.transformation_kind =
         transformationtype;
-    (*PCrypto)->transformation_kind = transformationtype;
     (*PCrypto)->ParticipantKeyMaterial.master_salt.fill(0);
     RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 16 );
 
@@ -154,7 +153,6 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     bool is_origin_auth = (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
     AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function
 
-    (*RPCrypto)->transformation_kind = local_participant_handle->transformation_kind;
     (*RPCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */

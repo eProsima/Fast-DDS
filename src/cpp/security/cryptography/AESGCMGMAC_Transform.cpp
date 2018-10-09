@@ -510,7 +510,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_participant->transformation_kind, local_participant->SessionKey,
+        if(!serialize_SecureDataBody(serializer, local_participant->ParticipantKeyMaterial.transformation_kind, local_participant->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_message.buffer[plain_rtps_message.pos],
                     plain_rtps_message.length - plain_rtps_message.pos, tag))
         {
@@ -699,7 +699,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
         SecurityException exception;
 
-        if(!deserialize_SecureDataTag(decoder, tag, sending_participant->transformation_kind,
+        if(!deserialize_SecureDataTag(decoder, tag, sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind,
                 sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).receiver_specific_key_id,
                 sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
                 sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_salt,
@@ -722,7 +722,8 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
     uint32_t length = plain_buffer.max_size - plain_buffer.pos;
     if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_participant->transformation_kind, session_key, initialization_vector,
+            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind, 
+            session_key, initialization_vector,
             &plain_buffer.buffer[plain_buffer.pos], length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
@@ -1611,8 +1612,9 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        if(local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-                local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+        auto& trans_kind = remote_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind;
+        if(trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
+            trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()),
                         initialization_vector.data()))
@@ -1622,8 +1624,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                 continue;
             }
         }
-        else if(local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-                local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+        else if(trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
+            trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()),
                         initialization_vector.data()))
