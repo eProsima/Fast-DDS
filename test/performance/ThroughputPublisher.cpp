@@ -370,7 +370,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
         }
         else
         {
-            outFile.open(m_sExportPrefix + "_all_.csv");
+            outFile.open(m_sExportPrefix + std::to_string(payload) + "_all_.csv");
         }
 
         outFile << output_file.str();
