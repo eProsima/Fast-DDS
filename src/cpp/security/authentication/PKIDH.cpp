@@ -440,11 +440,11 @@ static bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const 
     assert(data);
 
     bool returnedValue = false;
-    EVP_MD_CTX* ctx = 
+
 #if IS_OPENSSL_1_1
-        EVP_MD_CTX_new();
+    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
 #else
-        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+    EVP_MD_CTX* ctx = (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
 #endif
     EVP_MD_CTX_init(ctx);
 
@@ -751,11 +751,11 @@ static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, Securi
         const unsigned char* pointer = buffer.data();
 
 #if IS_OPENSSL_1_1
-        BIGNUM* p_ptr = BN_new();
+        BIGNUM* p_ptr;
         BIGNUM** p = &p_ptr;
-        BIGNUM* g_ptr = BN_new();
+        BIGNUM* g_ptr;
         BIGNUM** g = &g_ptr;
-        BIGNUM* pub_key_ptr = BN_new();
+        BIGNUM* pub_key_ptr;
         BIGNUM** pub_key = &pub_key_ptr;
 #else
         BIGNUM** p = &dh->p;
@@ -1675,7 +1675,7 @@ ValidationResult_t PKIDH::process_handshake(HandshakeMessageToken** handshake_me
         {
             returnedValue = process_handshake_reply(handshake_message_out, std::move(handshake_message_in),
                     handshake, exception);
-        } 
+        }
         else
         {
             logWarning(SECURITY_AUTHENTICATION, "Handshake message not supported (" << handshake->handshake_message_.class_id() << ")");
