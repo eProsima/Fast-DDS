@@ -62,6 +62,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
     //Default to AES128 if the user does not specify otherwise (GCM / GMAC depending of RTPS protection kind)
     bool is_rtps_encrypted = (plugin_attrs &  PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
     bool use_256_bits = false;
     int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if(!participant_properties.empty()){
@@ -98,8 +99,16 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     buffer.master_salt = (*PCrypto)->ParticipantKeyMaterial.master_salt;
     buffer.master_sender_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
     buffer.sender_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
-    buffer.receiver_specific_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
-    buffer.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key;
+    if (is_origin_auth)
+    {
+        buffer.receiver_specific_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
+        buffer.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
+    }
+    else
+    {
+        buffer.receiver_specific_key_id = (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id;
+        buffer.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key;
+    }
 
     (*PCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
     (*PCrypto)->RemoteParticipant2ParticipantKeyMaterial.push_back(buffer);

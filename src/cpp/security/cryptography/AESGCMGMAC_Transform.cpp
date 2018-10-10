@@ -1552,7 +1552,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
             continue;
         }
 
-        if (remote_entity->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id != std::array<uint8_t, 4>{0, 0, 0, 0})
+        if (remote_entity->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id == std::array<uint8_t, 4>{0, 0, 0, 0})
         {
             // This means origin authentication is disabled. As it is configured on the writer, we know all other
             // receiving entities will have its specific key to null value, and we can skip the whole loop
@@ -1645,6 +1645,13 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         {
             logWarning(SECURITY_CRYPTO, "No key material yet");
             continue;
+        }
+
+        if (remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id == std::array<uint8_t, 4>{0, 0, 0, 0})
+        {
+            // This means origin authentication is disabled. As it is configured on the writer, we know all other
+            // receiving entities will have its specific key to null value, and we can skip the whole loop
+            break;
         }
 
         //Update the key if needed
