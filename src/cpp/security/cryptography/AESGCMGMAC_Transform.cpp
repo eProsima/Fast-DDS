@@ -851,16 +851,16 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             {
                 AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
 
-                if(reader->Entity2RemoteKeyMaterial.size() == 0)
+                if(reader->Remote2EntityKeyMaterial.size() == 0)
                 {
                     logWarning(SECURITY_CRYPTO, "No key material yet");
                     continue;
                 }
 
-                for(size_t i=0; i < reader->Entity2RemoteKeyMaterial.size(); ++i)
+                for(size_t i=0; i < reader->Remote2EntityKeyMaterial.size(); ++i)
                 {
-                    if(reader->Entity2RemoteKeyMaterial.at(i).receiver_specific_key_id ==
-                            writer->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id)
+                    if(reader->Remote2EntityKeyMaterial.at(i).sender_key_id == 
+                        header.transform_identifier.transformation_key_id)
                     {
                         *datareader_crypto = *itt;
                         return true;
@@ -890,10 +890,10 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             for(std::vector<DatawriterCryptoHandle *>::iterator itt = local_participant->Writers.begin(); itt != local_participant->Writers.end(); ++itt)
             {
                 AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**itt);
-                for(size_t i = 0; i < writer->Entity2RemoteKeyMaterial.size(); ++i)
+                for(size_t i = 0; i < writer->Remote2EntityKeyMaterial.size(); ++i)
                 {
-                    if(writer->Entity2RemoteKeyMaterial.at(i).receiver_specific_key_id ==
-                            reader->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id)
+                    if(writer->Remote2EntityKeyMaterial.at(i).sender_key_id ==
+                        header.transform_identifier.transformation_key_id)
                     {
                         *datawriter_crypto = *itt;
                         return true;
