@@ -89,9 +89,9 @@ class TCPReqRepHelloWorldReplier
         void init(int participantId, int domainId, uint16_t listeningPort);
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity sample_identity, uint16_t number);
-        void waitDiscovery(uint32_t expectMatch = 2, int maxWait = 0);
+        void waitDiscovery();
         void matched();
-        bool isMatched() { return matched_ > 0; }
+        bool isMatched() { return matched_ > 1; }
 
         virtual void configSubscriber(const std::string& suffix)
         {

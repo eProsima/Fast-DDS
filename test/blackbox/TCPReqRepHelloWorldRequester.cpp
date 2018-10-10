@@ -138,38 +138,22 @@ void TCPReqRepHelloWorldRequester::block(const std::chrono::seconds &seconds)
     ASSERT_EQ(current_number_, number_received_);
 }
 
-void TCPReqRepHelloWorldRequester::waitDiscovery(uint32_t expectMatch, int maxWait)
+void TCPReqRepHelloWorldRequester::waitDiscovery()
 {
+    std::cout << "Requester waiting for discovery..." << std::endl;
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-    if(matched_ < expectMatch || expectMatch == 0)
-    {
-        if (maxWait > 0 || expectMatch == 0)
-        {
-            cvDiscovery_.wait_for(lock, std::chrono::seconds(maxWait),
-                    [&](){return matched_ > 0 && matched_ == expectMatch;});
-        }
-        else
-        {
-            cvDiscovery_.wait(lock, [&](){return matched_ == expectMatch;});
-        }
-    }
+    if(matched_ == 0)
+        cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
-    if (expectMatch > 0)
-    {
-        ASSERT_GE(matched_, expectMatch);
-    }
-    else
-    {
-        ASSERT_EQ(matched_, 0);
-    }
+    std::cout << "Requester discovery phase finished" << std::endl;
 }
 
 void TCPReqRepHelloWorldRequester::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
-    if(matched_ >= 2)
+    if(matched_ > 1)
         cvDiscovery_.notify_one();
 }
 

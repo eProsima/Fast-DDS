@@ -117,38 +117,22 @@ void TCPReqRepHelloWorldReplier::newNumber(SampleIdentity sample_identity, uint1
     ASSERT_EQ(reply_publisher_->write((void*)&hello, wparams), true);
 }
 
-void TCPReqRepHelloWorldReplier::waitDiscovery(uint32_t expectMatch, int maxWait)
+void TCPReqRepHelloWorldReplier::waitDiscovery()
 {
+    std::cout << "Replier waiting for discovery..." << std::endl;
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-    if(matched_ < expectMatch || expectMatch == 0)
-    {
-        if (maxWait > 0 || expectMatch == 0)
-        {
-            cvDiscovery_.wait_for(lock, std::chrono::seconds(maxWait),
-                    [&](){return matched_ > 0 && matched_ == expectMatch;});
-        }
-        else
-        {
-            cvDiscovery_.wait(lock, [&](){return matched_ == expectMatch;});
-        }
-    }
+    if(matched_ == 0)
+        cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
 
-    if (expectMatch > 0)
-    {
-        ASSERT_GE(matched_, expectMatch);
-    }
-    else
-    {
-        ASSERT_EQ(matched_, 0);
-    }
+    std::cout << "Replier discovery phase finished" << std::endl;
 }
 
 void TCPReqRepHelloWorldReplier::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
-    if(matched_ >= 2)
+    if(matched_ > 1)
         cvDiscovery_.notify_one();
 }
 
