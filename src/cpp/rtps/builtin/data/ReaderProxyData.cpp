@@ -30,6 +30,10 @@ namespace rtps {
 
 ReaderProxyData::ReaderProxyData()
     : m_expectsInlineQos(false)
+#if HAVE_SECURITY
+    , security_attributes_(0UL)
+    , plugin_security_attributes_(0UL)
+#endif
     , m_userDefinedId(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
