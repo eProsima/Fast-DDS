@@ -58,7 +58,9 @@ public:
                (this->times == b.times) &&
                (this->unicastLocatorList == b.unicastLocatorList) &&
                (this->multicastLocatorList == b.multicastLocatorList) &&
-               (this->remoteLocatorList == b.remoteLocatorList);
+               (this->remoteLocatorList == b.remoteLocatorList) &&
+               (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
+               (this->properties == b.properties);
     }
 
     //!Topic Attributes for the Publisher
