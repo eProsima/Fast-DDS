@@ -1780,8 +1780,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
         return false;
     }
 
-    if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size,
-                (unsigned char*)decoder.getCurrentPosition(), body_length))
+    unsigned char* input_buffer = (unsigned char*)decoder.getCurrentPosition();
+    if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, body_length))
     {
         logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
         return false;
@@ -1796,7 +1796,17 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     }
     EVP_CIPHER_CTX_free(d_ctx);
 
+    if (plain_buffer_len < actual_size + final_size)
+    {
+        logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
+        return false;
+    }
+
     plain_buffer_len = actual_size + final_size;
+    if (output_buffer == nullptr)
+    {
+        memcpy(plain_buffer, input_buffer, plain_buffer_len);
+    }
 
     decoder.setState(current_state);
 
