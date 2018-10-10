@@ -36,8 +36,8 @@ class WriterProxyData
         GUID_t guid() { return m_guid; }
 
 #if HAVE_SECURITY
-        security::EndpointSecurityAttributesMask security_attributes_;
-        security::PluginEndpointSecurityAttributesMask plugin_security_attributes_;
+        security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
+        security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif
 
     private:

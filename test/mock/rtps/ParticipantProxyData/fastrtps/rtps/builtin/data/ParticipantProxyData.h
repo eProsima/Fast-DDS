@@ -52,8 +52,8 @@ class ParticipantProxyData
 #if HAVE_SECURITY
         IdentityToken identity_token_;
         PermissionsToken permissions_token_;
-        security::ParticipantSecurityAttributesMask security_attributes_;
-        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
+        security::ParticipantSecurityAttributesMask security_attributes_ = 0UL;
+        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif
 };
 
