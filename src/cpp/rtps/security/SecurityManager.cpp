@@ -2014,6 +2014,10 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
         if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
         {
             security_attributes.is_submessage_protected = true;
+            security_attributes.plugin_endpoint_attributes |=
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
         }
 
         property_value = PropertyPolicyHelper::find_property(writer_properties,
@@ -2022,6 +2026,10 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
         if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
         {
             security_attributes.is_payload_protected = true;
+            security_attributes.is_key_protected = true;
+            security_attributes.plugin_endpoint_attributes |=
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
         }
     }
 
@@ -2171,6 +2179,10 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
         if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
         {
             security_attributes.is_submessage_protected = true;
+            security_attributes.plugin_endpoint_attributes |=
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
         }
 
         property_value = PropertyPolicyHelper::find_property(reader_properties,
@@ -2179,6 +2191,10 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
         if(property_value != nullptr && property_value->compare("ENCRYPT") == 0)
         {
             security_attributes.is_payload_protected = true;
+            security_attributes.is_key_protected = true;
+            security_attributes.plugin_endpoint_attributes |=
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
         }
     }
 
