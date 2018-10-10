@@ -1436,6 +1436,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
                     initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
 
@@ -1453,6 +1454,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
                     initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
 
@@ -1473,6 +1475,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
                 (plain_buffer_len + (2* cipher_block_size) - 1))
         {
             logError(SECURITY_CRYPTO, "Not enough memory to cipher payload");
+            EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
     }
@@ -1481,12 +1484,14 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
                 static_cast<int>(plain_buffer_len)))
     {
         logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+        EVP_CIPHER_CTX_free(e_ctx);
         return false;
     }
 
     if(!EVP_EncryptFinal(e_ctx, (unsigned char*)output_buffer_raw, &final_size))
     {
         logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+        EVP_CIPHER_CTX_free(e_ctx);
         return false;
     }
 
@@ -1579,6 +1584,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
@@ -1589,17 +1595,20 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
         if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         if(!EVP_EncryptFinal(e_ctx, NULL, &final_size))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         serializer << remote_entity->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id;
@@ -1677,7 +1686,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
-                //TODO(Ricardo) Free context;
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
@@ -1688,17 +1697,20 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
         if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         if(!EVP_EncryptFinal(e_ctx, NULL, &final_size))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         serializer << remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id;
@@ -1745,6 +1757,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
         if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
@@ -1761,6 +1774,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
         if(!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
@@ -1777,6 +1791,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     if(output_buffer != nullptr && (plain_buffer_len < (body_length + cipher_block_size)))
     {
         logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
+        EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
 
@@ -1784,6 +1799,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, body_length))
     {
         logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
+        EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
 
@@ -1792,6 +1808,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     if(!EVP_DecryptFinal(d_ctx, output_buffer, &final_size))
     {
         logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
+        EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
     EVP_CIPHER_CTX_free(d_ctx);
@@ -1916,6 +1933,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
         else
         {
             logError(SECURITY_CRYPTO, "Invalid transformation kind)");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
@@ -1923,28 +1941,31 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
                     initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
         if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.receiver_mac.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
         if(!EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
         if(!EVP_DecryptFinal_ex(d_ctx, NULL, &final_size))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptFinal_ex function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
-        // TODO(Ricardo) No freed in errors.
         EVP_CIPHER_CTX_free(d_ctx);
     }
 
