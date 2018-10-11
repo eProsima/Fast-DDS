@@ -17,11 +17,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         find_package(Threads REQUIRED)
 
         if(WIN32)
-            if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-                add_definitions(-D_WIN32_WINNT=0x0603)
-            else()
-                add_definitions(-D_WIN32_WINNT=0x0601)
-            endif()
+            target_compile_definitions(${PROJECT_NAME} PRIVATE
+                $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
+                $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
+                )
         endif()
 
         add_definitions(
