@@ -332,6 +332,9 @@ const EntityId_t sedp_builtin_subscriptions_secure_reader = ENTITYID_SEDP_BUILTI
 
 const EntityId_t participant_volatile_message_secure_writer_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER;
 const EntityId_t participant_volatile_message_secure_reader_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER;
+
+const EntityId_t c_EntityId_WriterLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_WRITER;
+const EntityId_t c_EntityId_ReaderLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_READER;
 #endif
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
