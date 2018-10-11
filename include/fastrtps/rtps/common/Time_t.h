@@ -30,7 +30,8 @@ namespace rtps{
  * Structure Time_t, used to describe times.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI Time_t{
+struct RTPS_DllAPI Time_t
+{
     //!Seconds
     int32_t seconds;
     //!Fraction of second (1 fraction = 1/(2^32) seconds)
@@ -93,9 +94,9 @@ static inline bool operator==(const Time_t& t1,const Time_t& t2)
  */
 static inline bool operator!=(const Time_t& t1,const Time_t& t2)
 {
-    if(t1.seconds!=t2.seconds)
+    if (t1.seconds != t2.seconds)
         return true;
-    if(t1.fraction!=t2.fraction)
+    if (t1.fraction != t2.fraction)
         return true;
     return false;
 }
