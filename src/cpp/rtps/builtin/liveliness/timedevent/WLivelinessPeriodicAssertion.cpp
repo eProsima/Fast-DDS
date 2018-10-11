@@ -67,7 +67,7 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
     if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_LIVELINESS,"Period: "<< this->getIntervalMilliSec());
-        if(this->mp_WLP->mp_builtinWriter->getMatchedReadersSize()>0)
+        if(this->mp_WLP->getBuiltinWriter()->getMatchedReadersSize()>0)
         {
             if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
                 AutomaticLivelinessAssertion();
@@ -92,8 +92,10 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
     if(this->mp_WLP->m_livAutomaticWriters.size()>0)
     {
-        std::lock_guard<std::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
-        CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,m_iHandle);
+        auto writer = this->mp_WLP->getBuiltinWriter();
+        auto history = this->mp_WLP->getBuiltinWriterHistory();
+        std::lock_guard<std::recursive_mutex> wguard(*writer->getMutex());
+        CacheChange_t* change=writer->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,m_iHandle);
         if(change!=nullptr)
         {
             //change->instanceHandle = m_iHandle;
@@ -107,19 +109,19 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
                 change->serializedPayload.data[i] = 0;
             change->serializedPayload.data[15] = m_livelinessKind+1;
             change->serializedPayload.length = 12+4+4+4;
-            if(mp_WLP->mp_builtinWriterHistory->getHistorySize() > 0)
+            if(history->getHistorySize() > 0)
             {
-                for(std::vector<CacheChange_t*>::iterator chit = mp_WLP->mp_builtinWriterHistory->changesBegin();
-                        chit!=mp_WLP->mp_builtinWriterHistory->changesEnd();++chit)
+                for(std::vector<CacheChange_t*>::iterator chit = history->changesBegin();
+                        chit!=history->changesEnd();++chit)
                 {
                     if((*chit)->instanceHandle == change->instanceHandle)
                     {
-                        mp_WLP->mp_builtinWriterHistory->remove_change(*chit);
+                        history->remove_change(*chit);
                         break;
                     }
                 }
             }
-            mp_WLP->mp_builtinWriterHistory->add_change(change);
+            history->add_change(change);
         }
     }
     return true;
@@ -140,8 +142,10 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
     }
     if(livelinessAsserted)
     {
-        std::lock_guard<std::recursive_mutex> wguard(*this->mp_WLP->mp_builtinWriter->getMutex());
-        CacheChange_t* change=this->mp_WLP->mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE);
+        auto writer = this->mp_WLP->getBuiltinWriter();
+        auto history = this->mp_WLP->getBuiltinWriterHistory();
+        std::lock_guard<std::recursive_mutex> wguard(*writer->getMutex());
+        CacheChange_t* change=writer->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE);
         if(change!=nullptr)
         {
             change->instanceHandle = m_iHandle;
@@ -156,15 +160,15 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
                 change->serializedPayload.data[i] = 0;
             change->serializedPayload.data[15] = m_livelinessKind+1;
             change->serializedPayload.length = 12+4+4+4;
-            for(auto ch = mp_WLP->mp_builtinWriterHistory->changesBegin();
-                    ch!=mp_WLP->mp_builtinWriterHistory->changesEnd();++ch)
+            for(auto ch = history->changesBegin();
+                    ch!=history->changesEnd();++ch)
             {
                 if((*ch)->instanceHandle == change->instanceHandle)
                 {
-                    mp_WLP->mp_builtinWriterHistory->remove_change(*ch);
+                    history->remove_change(*ch);
                 }
             }
-            mp_WLP->mp_builtinWriterHistory->add_change(change);
+            history->add_change(change);
         }
     }
     return false;

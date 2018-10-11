@@ -119,6 +119,18 @@ public:
 	 * @return RTPS participant
 	 */
 	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
+
+    /**
+     * Get the livelines builtin writer
+     * @return stateful writer
+     */
+    StatefulWriter* getBuiltinWriter();
+
+    /**
+    * Get the livelines builtin writer's history
+    * @return writer history
+    */
+    WriterHistory* getBuiltinWriterHistory();
 	
 private:
 	//!Pointer to the local RTPSParticipant.

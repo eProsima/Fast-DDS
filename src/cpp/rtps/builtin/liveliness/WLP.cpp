@@ -618,6 +618,34 @@ bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
     return true;
 }
 
+StatefulWriter* WLP::getBuiltinWriter()
+{
+    StatefulWriter* ret_val = mp_builtinWriter;
+
+#if HAVE_SECURITY
+    if (mp_participant->security_attributes().is_liveliness_protected)
+    {
+        ret_val = mp_builtinWriterSecure;
+    }
+#endif
+
+    return ret_val;
+}
+
+WriterHistory* WLP::getBuiltinWriterHistory()
+{
+    WriterHistory* ret_val = mp_builtinWriterHistory;
+
+#if HAVE_SECURITY
+    if (mp_participant->security_attributes().is_liveliness_protected)
+    {
+        ret_val = mp_builtinWriterSecureHistory;
+    }
+#endif
+
+    return ret_val;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
