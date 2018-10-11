@@ -47,7 +47,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            )  
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            )
 
         # External sources
         if(TINYXML2_SOURCE_DIR)
@@ -60,9 +62,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(XMLProfileParserTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(XMLProfileParserTests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+
         target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLProfileParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
+        endif()
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLProfileParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}
@@ -72,18 +84,21 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
 
         set(XMLPARSER_SOURCE
-        XMLParserTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp     
-        )            
+            XMLParserTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+        )
 
         # External sources
         if(TINYXML2_SOURCE_DIR)
@@ -97,11 +112,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(XMLParserTests ${XMLPARSER_SOURCE})
         target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLParserTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES})
+        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} )
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
+        endif()
         if(TINYXML2_LIBRARY)
             target_link_libraries(XMLParserTests ${PRIVACY}
                 ${TINYXML2_LIBRARY}

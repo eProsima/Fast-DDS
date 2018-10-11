@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
 #include <gtest/gtest.h>
 #include <thread>
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/log/Log.h>
+#include <fastrtps/utils/IPLocator.h>
+//#include <fastrtps/log/Log.h>
 #include <memory>
 #include <asio.hpp>
+#include <MockReceiverResource.h>
 
 
 using namespace eprosima::fastrtps;
@@ -58,7 +62,7 @@ class UDPv4Tests: public ::testing::Test
 
         ~UDPv4Tests()
         {
-            Log::KillThread();
+            //Log::KillThread();
         }
 
         void HELPER_SetDescriptorDefaults();
@@ -112,11 +116,11 @@ TEST_F(UDPv4Tests, opening_and_closing_input_channel)
     Locator_t multicastFilterLocator;
     multicastFilterLocator.kind = LOCATOR_KIND_UDPv4;
     multicastFilterLocator.port = g_default_port; // arbitrary
-    multicastFilterLocator.set_IP4_address(239, 255, 0, 1);
+    IPLocator::setIPv4(multicastFilterLocator, 239, 255, 0, 1);
 
     // Then
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastFilterLocator));
+    ASSERT_TRUE  (transportUnderTest.OpenInputChannel(multicastFilterLocator, nullptr, 0x8FFF));
     ASSERT_TRUE  (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
     ASSERT_TRUE  (transportUnderTest.CloseInputChannel(multicastFilterLocator));
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
@@ -132,34 +136,38 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     Locator_t multicastLocator;
     multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv4;
-    multicastLocator.set_IP4_address(239, 255, 0, 1);
+    IPLocator::setIPv4(multicastLocator, 239, 255, 0, 1);
 
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
+
+    MockReceiverResource receiver(transportUnderTest, multicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
-    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
+
+    Semaphore sem;
+    std::function<void()> recCallback = [&]()
+    {
+        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
+        sem.post();
+    };
+
+    msg_recv->setCallback(recCallback);
 
     auto sendThreadFunction = [&]()
     {
         EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]()
-    {
-        octet receiveBuffer[ReceiveBufferCapacity];
-        uint32_t receiveBufferSize;
-
-        Locator_t remoteLocatorToReceive;
-        EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
-        EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
-    };
-
-    receiverThread.reset(new std::thread(receiveThreadFunction));
     senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
-    receiverThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 
 TEST_F(UDPv4Tests, send_to_loopback)
@@ -170,35 +178,39 @@ TEST_F(UDPv4Tests, send_to_loopback)
     Locator_t multicastLocator;
     multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv4;
-    multicastLocator.set_IP4_address(239, 255, 0, 1);
+    IPLocator::setIPv4(multicastLocator, 239, 255, 0, 1);
 
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
+    IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
+
+    MockReceiverResource receiver(transportUnderTest, multicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
-    ASSERT_TRUE(transportUnderTest.OpenInputChannel(multicastLocator));
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
+
+    Semaphore sem;
+    std::function<void()> recCallback = [&]()
+    {
+        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
+        sem.post();
+    };
+
+    msg_recv->setCallback(recCallback);
 
     auto sendThreadFunction = [&]()
     {
-        ASSERT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
+        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
     };
 
-    auto receiveThreadFunction = [&]()
-    {
-        octet receiveBuffer[ReceiveBufferCapacity];
-        uint32_t receiveBufferSize;
-
-        Locator_t remoteLocatorToReceive;
-        EXPECT_TRUE(transportUnderTest.Receive(receiveBuffer, ReceiveBufferCapacity, receiveBufferSize, multicastLocator, remoteLocatorToReceive));
-        EXPECT_EQ(memcmp(message,receiveBuffer,5), 0);
-    };
-
-    receiverThread.reset(new std::thread(receiveThreadFunction));
     senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
-    receiverThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 #endif
 
@@ -220,6 +232,8 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
+
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
 }
 
 TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -231,7 +245,7 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     Locator_t remoteLocator;
     remoteLocator.kind = LOCATOR_KIND_UDPv4;
     remoteLocator.port = g_default_port;
-    remoteLocator.set_IP4_address(222,222,222,222);
+    IPLocator::setIPv4(remoteLocator, 222,222,222,222);
 
     // When
     Locator_t mainLocalLocator = transportUnderTest.RemoteToMainLocal(remoteLocator);
@@ -239,7 +253,7 @@ TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     ASSERT_EQ(mainLocalLocator.port, remoteLocator.port);
     ASSERT_EQ(mainLocalLocator.kind, remoteLocator.kind);
 
-    ASSERT_EQ(mainLocalLocator.to_IP4_string(), "0.0.0.0");
+    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), "0.0.0.0");
 }
 
 TEST_F(UDPv4Tests, match_if_port_AND_address_matches)
@@ -250,15 +264,15 @@ TEST_F(UDPv4Tests, match_if_port_AND_address_matches)
 
     Locator_t locatorAlpha;
     locatorAlpha.port = g_default_port;
-    locatorAlpha.set_IP4_address(239, 255, 0, 1);
+    IPLocator::setIPv4(locatorAlpha, 239, 255, 0, 1);
     Locator_t locatorBeta = locatorAlpha;
 
     // Then
-    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+    ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 
-    locatorBeta.set_IP4_address(100, 100, 100, 100);
+    IPLocator::setIPv4(locatorBeta, 100, 100, 100, 100);
     // Then
-    ASSERT_TRUE(transportUnderTest.DoLocatorsMatch(locatorAlpha, locatorBeta));
+    ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
 
 TEST_F(UDPv4Tests, send_to_wrong_interface)
@@ -269,13 +283,15 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    outputChannelLocator.set_IP4_address(127,0,0,1); // Loopback
+    IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
-    outputChannelLocator.set_IP4_address(111,111,111,111);
+    IPLocator::setIPv4(outputChannelLocator, 111,111,111,111);
     std::vector<octet> message = { 'H','e','l','l','o' };
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, Locator_t()));
+
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
 
 TEST_F(UDPv4Tests, shrink_locator_lists)
@@ -295,11 +311,11 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     locResult3.port = g_default_port;
 
     // Check shrink of only one locator list unicast.
-    locator.set_IP4_address(192,168,1,4);
-    locResult1.set_IP4_address(192,168,1,4);
+    IPLocator::setIPv4(locator, 192,168,1,4);
+    IPLocator::setIPv4(locResult1, 192,168,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(192,168,2,5);
-    locResult2.set_IP4_address(192,168,2,5);
+    IPLocator::setIPv4(locator, 192,168,2,5);
+    IPLocator::setIPv4(locResult2, 192,168,2,5);
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
@@ -309,7 +325,7 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.clear();
 
     // Check shrink of only one locator list with multicast.
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
@@ -319,13 +335,13 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.clear();
 
     // Check shrink of only one locator list with multicast and unicast.
-    locator.set_IP4_address(192,168,1,4);
-    locResult1.set_IP4_address(192,168,1,4);
+    IPLocator::setIPv4(locator, 192,168,1,4);
+    IPLocator::setIPv4(locResult1, 192,168,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(192,168,2,5);
-    locResult2.set_IP4_address(192,168,2,5);
+    IPLocator::setIPv4(locator, 192,168,2,5);
+    IPLocator::setIPv4(locResult2, 192,168,2,5);
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
@@ -335,18 +351,18 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.clear();
 
     // Three. Two use same multicast, the other unicast
-    locator.set_IP4_address(192,168,1,4);
+    IPLocator::setIPv4(locator, 192,168,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list2.push_back(locator);
-    locator.set_IP4_address(192,168,2,4);
+    IPLocator::setIPv4(locator, 192,168,2,4);
     list2.push_back(locator);
-    locator.set_IP4_address(192,168,3,4);
+    IPLocator::setIPv4(locator, 192,168,3,4);
     list3.push_back(locator);
-    locResult1.set_IP4_address(239,255,1,4);
-    locResult2.set_IP4_address(192,168,3,4);
+    IPLocator::setIPv4(locResult1, 239,255,1,4);
+    IPLocator::setIPv4(locResult2, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
     ASSERT_EQ(result.size(), 2);
@@ -368,20 +384,20 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list3.clear();
 
     // Three. Two use same multicast, the other another multicast
-    locator.set_IP4_address(192,168,1,4);
+    IPLocator::setIPv4(locator, 192,168,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list2.push_back(locator);
-    locator.set_IP4_address(192,168,2,4);
+    IPLocator::setIPv4(locator, 192,168,2,4);
     list2.push_back(locator);
-    locator.set_IP4_address(192,168,3,4);
+    IPLocator::setIPv4(locator, 192,168,3,4);
     list3.push_back(locator);
-    locator.set_IP4_address(239,255,2,4);
+    IPLocator::setIPv4(locator, 239,255,2,4);
     list3.push_back(locator);
-    locResult1.set_IP4_address(239,255,1,4);
-    locResult2.set_IP4_address(192,168,3,4);
+    IPLocator::setIPv4(locResult1, 239,255,1,4);
+    IPLocator::setIPv4(locResult2, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
     ASSERT_EQ(result.size(), 2);
@@ -403,17 +419,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list3.clear();
 
     // Three. One uses multicast, the others unicast
-    locator.set_IP4_address(192,168,1,4);
+    IPLocator::setIPv4(locator, 192,168,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(192,168,2,4);
+    IPLocator::setIPv4(locator, 192,168,2,4);
     list2.push_back(locator);
-    locator.set_IP4_address(192,168,3,4);
+    IPLocator::setIPv4(locator, 192,168,3,4);
     list3.push_back(locator);
-    locResult1.set_IP4_address(192,168,1,4);
-    locResult2.set_IP4_address(192,168,2,4);
-    locResult3.set_IP4_address(192,168,3,4);
+    IPLocator::setIPv4(locResult1, 192,168,1,4);
+    IPLocator::setIPv4(locResult2, 192,168,2,4);
+    IPLocator::setIPv4(locResult3, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
     ASSERT_EQ(result.size(), 3);
@@ -435,15 +451,15 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list3.clear();
 
     // Three using same multicast
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list1.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list2.push_back(locator);
-    locator.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locator, 239,255,1,4);
     list3.push_back(locator);
-    locator.set_IP4_address(192,168,3,4);
+    IPLocator::setIPv4(locator, 192,168,3,4);
     list3.push_back(locator);
-    locResult1.set_IP4_address(239,255,1,4);
+    IPLocator::setIPv4(locResult1, 239,255,1,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
     ASSERT_EQ(result.size(), 1);
@@ -474,7 +490,7 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
+    Log::SetVerbosity(Log::Warning);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);

@@ -17,11 +17,15 @@
 
 #include <functional>
 #include <vector>
-#include <fastrtps/transport/TransportInterface.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+class RTPSParticipantImpl;
+class MessageReceiver;
+class ChannelResource;
+class TransportInterface;
 
 /**
  * RAII object that encapsulates the Send operation over one chanel in an unknown transport.
@@ -30,7 +34,7 @@ namespace rtps{
  * closes it.
  * @ingroup NETWORK_MODULE
  */
-class SenderResource 
+class SenderResource
 {
    //! Only NetworkFactory is ever allowed to construct a SenderResource from scratch.
    //! In doing so, it guarantees the transport and channel are in a valid state for
@@ -48,19 +52,27 @@ public:
     */
    bool Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator);
 
-   /** 
+   /**
    * Reports whether this resource supports the given local locator (i.e., said locator
    * maps to the transport channel managed by this resource).
    */
    bool SupportsLocator(const Locator_t& local);
-   /** 
+
+   /**
+   * Communicate to the transport that this locator is going to be used to send messages
+   */
+   bool AddSenderLocator(const Locator_t& local);
+
+   /**
    * Reports whether this resource supports the given remote locator (i.e., this resource
    * maps to a transport channel capable of sending to it).
    */
    bool CanSendToRemoteLocator(const Locator_t& remote);
-   
+
+   //void SetChannelResource(ChannelResource* pChannelResource) { m_pChannelResource = pChannelResource; }
+
    /**
-   * Resources can only be transfered through move semantics. Copy, assignment, and 
+   * Resources can only be transfered through move semantics. Copy, assignment, and
    * construction outside of the factory are forbidden.
    */
    SenderResource(SenderResource&&);
@@ -73,10 +85,12 @@ private:
 
    SenderResource(TransportInterface&, Locator_t&);
    std::function<void()> Cleanup;
-   std::function<bool(const octet* data, uint32_t dataLength, const Locator_t&)> SendThroughAssociatedChannel;
+   std::function<bool(const Locator_t&)> AddSenderLocatorToManagedChannel;
+   std::function<bool(const octet*, uint32_t, const Locator_t&, ChannelResource*)> SendThroughAssociatedChannel;
    std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
    std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
    bool mValid; // Post-construction validity check for the NetworkFactory
+   //ChannelResource* m_pChannelResource;
 };
 
 } // namespace rtps

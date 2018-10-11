@@ -63,7 +63,7 @@ namespace eprosima
                  * @param wdata Attributes of the writer to add.
                  * @return True if correctly added.
                  */
-                RTPS_DllAPI virtual bool matched_writer_add(const RemoteWriterAttributes& wdata) = 0;
+                RTPS_DllAPI virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
 
                 /**
                  * Remove a writer represented by its attributes from the matched writers.
@@ -129,7 +129,7 @@ namespace eprosima
                 /**
                  * Switch the ReaderListener kind for the Reader.
                  * If the RTPSReader does not belong to the built-in protocols it switches out the old one.
-                 * If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the 
+                 * If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the
                  * built-in ReaderListener ones.
                  * @param target Pointed to ReaderLister to attach
                  * @return True is correctly set.

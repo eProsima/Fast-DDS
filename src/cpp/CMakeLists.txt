@@ -23,6 +23,7 @@ set(${PROJECT_NAME}_source_files
     utils/IPFinder.cpp
     utils/md5.cpp
     utils/StringMatching.cpp
+    utils/IPLocator.cpp
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
     rtps/resources/TimedEventImpl.cpp
@@ -73,9 +74,21 @@ set(${PROJECT_NAME}_source_files
     subscriber/Subscriber.cpp
     subscriber/SubscriberImpl.cpp
     subscriber/SubscriberHistory.cpp
+    transport/timedevent/CleanTCPSocketsEvent.cpp
+    transport/ChannelResource.cpp
+    transport/UDPChannelResource.cpp
+    transport/TCPChannelResource.cpp
     transport/UDPv4Transport.cpp
+    transport/TCPTransportInterface.cpp
+    transport/UDPTransportInterface.cpp
+    transport/TCPv4Transport.cpp
     transport/UDPv6Transport.cpp
+    transport/TCPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
+    transport/test_TCPv4Transport.cpp
+    transport/tcp/TCPControlMessage.cxx
+    transport/tcp/RTCPMessageManager.cpp
+    transport/tcp/test_RTCPMessageManager.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosPolicies.cpp
@@ -225,7 +238,9 @@ elseif(NOT EPROSIMA_INSTALLER)
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
         $<INSTALL_INTERFACE:include>
         PRIVATE

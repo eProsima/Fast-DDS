@@ -108,6 +108,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/Data1mbType.cpp
             ReqRepHelloWorldRequester.cpp
             ReqRepHelloWorldReplier.cpp
+            TCPReqRepHelloWorldRequester.cpp
+            TCPReqRepHelloWorldReplier.cpp
             )
 
         # Prepare static discovery xml file for blackbox tests.

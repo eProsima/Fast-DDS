@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDPV4_TRANSPORT_DESCRIPTOR 
+#ifndef UDPV4_TRANSPORT_DESCRIPTOR
 #define UDPV4_TRANSPORT_DESCRIPTOR
 
-#include "TransportInterface.h"
+#include "./UDPTransportDescriptor.h"
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+class TransportInterface;
 
 /**
  * Transport configuration
@@ -31,21 +33,16 @@ namespace rtps{
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv4TransportDescriptor: public TransportDescriptorInterface {
-   //! Length of the send buffer.
-   uint32_t sendBufferSize;
-   //! Length of the receive buffer.
-   uint32_t receiveBufferSize;
-   //! Allowed interfaces in an IP string format.
-   std::vector<std::string> interfaceWhiteList;
-   //! Specified time to live (8bit - 255 max TTL)
-   uint8_t TTL;
-
+typedef struct UDPv4TransportDescriptor: public UDPTransportDescriptor
+{
    virtual ~UDPv4TransportDescriptor(){}
+
+   virtual TransportInterface* create_transport() const override;
 
    RTPS_DllAPI UDPv4TransportDescriptor();
 
    RTPS_DllAPI UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t);
+
 } UDPv4TransportDescriptor;
 
 } // namespace rtps

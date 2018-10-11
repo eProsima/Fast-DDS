@@ -28,6 +28,7 @@
 #include "fastrtps/rtps/attributes/HistoryAttributes.h"
 
 #include "fastrtps/rtps/history/WriterHistory.h"
+#include "fastrtps/utils/IPLocator.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -72,8 +73,8 @@ bool TestWriterSocket::init(std::string ip, uint32_t port)
 	//ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
 	RemoteReaderAttributes ratt;
 	Locator_t loc;
-	loc.set_IP4_address(ip);
-	loc.port = port;
+	IPLocator::setIPv4(loc, ip);
+	loc.port = static_cast<uint16_t>(port);
 	ratt.endpoint.multicastLocatorList.push_back(loc);
 	mp_writer->matched_reader_add(ratt);
 	return true;

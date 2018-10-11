@@ -42,18 +42,19 @@ namespace fastrtps{
 namespace rtps {
 
 ParticipantProxyData::ParticipantProxyData():
+    m_VendorId(c_VendorId_Unknown),
     m_expectsInlineQos(false),
     m_availableBuiltinEndpoints(0),
     m_manualLivelinessCount(0),
     isAlive(false),
     mp_leaseDurationTimer(nullptr)
     {
-        set_VendorId_Unknown(m_VendorId);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     m_protocolVersion(pdata.m_protocolVersion),
     m_guid(pdata.m_guid),
+    m_VendorId(pdata.m_VendorId),
     m_expectsInlineQos(pdata.m_expectsInlineQos),
     m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints),
     m_metatrafficUnicastLocatorList(pdata.m_metatrafficUnicastLocatorList),
@@ -71,8 +72,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     m_userData(pdata.m_userData),
     mp_leaseDurationTimer(nullptr)
     {
-        m_VendorId[0] = pdata.m_VendorId[0];
-        m_VendorId[1] = pdata.m_VendorId[1];
     }
 
 ParticipantProxyData::~ParticipantProxyData()
@@ -348,7 +347,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
     {
         m_protocolVersion = ProtocolVersion_t();
         m_guid = GUID_t();
-        set_VendorId_Unknown(m_VendorId);
+        //set_VendorId_Unknown(m_VendorId);
+        m_VendorId = c_VendorId_Unknown;
         m_expectsInlineQos = false;
         m_availableBuiltinEndpoints = 0;
         m_metatrafficUnicastLocatorList.clear();

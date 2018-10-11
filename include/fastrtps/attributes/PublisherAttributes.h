@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PublisherAttributes.h	
+ * @file PublisherAttributes.h
  */
 
 #ifndef PUBLISHERATTRIBUTES_H_
@@ -49,7 +49,7 @@ class PublisherAttributes
             m_entityID = -1;
             historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
         }
-        virtual ~PublisherAttributes(){}
+        virtual ~PublisherAttributes() {}
         //!Topic Attributes for the Publisher
         TopicAttributes topic;
         //!QOS for the Publisher
@@ -60,8 +60,8 @@ class PublisherAttributes
         rtps::LocatorList_t unicastLocatorList;
         //!Multicast locator list
         rtps::LocatorList_t multicastLocatorList;
-        //!Output locator list
-        rtps::LocatorList_t outLocatorList;
+        //!Remote locator list
+        rtps::LocatorList_t remoteLocatorList;
         //!Throughput controller
         rtps::ThroughputControllerDescriptor throughputController;
         //!Underlying History memory policy
@@ -72,13 +72,13 @@ class PublisherAttributes
          * Get the user defined ID
          * @return User defined ID
          */
-        inline int16_t getUserDefinedID() const {return m_userDefinedID;}
+        inline int16_t getUserDefinedID() const { return m_userDefinedID; }
 
         /**
          * Get the entity defined ID
          * @return Entity ID
          */
-        inline int16_t getEntityID() const {return m_entityID;}
+        inline int16_t getEntityID() const { return m_entityID; }
 
         /**
          * Set the user defined ID

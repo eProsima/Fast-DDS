@@ -49,7 +49,7 @@ EprosimaClient::~EprosimaClient()
 		delete(mp_resultdatatype);
 	if(mp_operationdatatype!=nullptr)
 		delete(mp_operationdatatype);
-	
+
 }
 
 bool EprosimaClient::init()
@@ -58,7 +58,6 @@ bool EprosimaClient::init()
 
 	//CREATE RTPSParticipant
 	ParticipantAttributes PParam;
-	PParam.rtps.defaultSendPort = 10042;
 	PParam.rtps.builtin.domainId = 80;
 	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;

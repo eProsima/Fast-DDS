@@ -214,14 +214,16 @@ inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, Time_t* ts)
 }
 
 
-inline bool CDRMessage::readLocator(CDRMessage_t* msg,Locator_t* loc)
+inline bool CDRMessage::readLocator(CDRMessage_t* msg, Locator_t* loc)
 {
-    if(msg->pos+24>msg->length)
+    if(msg->pos + 24 > msg->length)
+    {
         return false;
-    bool valid = readInt32(msg,&loc->kind);
-    valid&=readUInt32(msg,&loc->port);
+    }
 
-    valid&=readData(msg,loc->address,16);
+    bool valid = readInt32(msg, &loc->kind);
+    valid &= readUInt32(msg, &loc->port);
+    valid &= readData(msg, loc->address, 16);
 
     return valid;
 }
@@ -606,11 +608,9 @@ inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
 }
 
 inline bool CDRMessage::addLocator(CDRMessage_t* msg, Locator_t* loc) {
-    addInt32(msg,loc->kind);
-    addUInt32(msg,loc->port);
-
-    addData(msg,loc->address,16);
-
+    addInt32(msg, loc->kind);
+    addUInt32(msg, loc->port);
+    addData(msg, loc->address, 16);
     return true;
 }
 

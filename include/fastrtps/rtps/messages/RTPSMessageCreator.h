@@ -68,6 +68,14 @@ class RTPSMessageCreator
         static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix);
 
         /**
+         * Add a custom content to the serialized message.
+         * @param msg Pointer to the Message.
+         * @param content content to create.
+         * @param contentSize size of the content.
+         * @return True if correct.
+         */
+        static bool addCustomContent(CDRMessage_t*msg, const octet* content, const size_t contentSize);
+        /**
          * Create SubmessageHeader.
          * @param msg Pointer to the CDRMessage.
          * @param id SubMessage Id.
@@ -136,7 +144,6 @@ class RTPSMessageCreator
 
         static bool addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP);
 };
-
 }
 } /* namespace rtps */
 } /* namespace eprosima */

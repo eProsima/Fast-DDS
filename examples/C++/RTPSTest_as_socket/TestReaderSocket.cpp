@@ -28,9 +28,10 @@
 #include "fastrtps/rtps/attributes/HistoryAttributes.h"
 
 #include "fastrtps/rtps/history/ReaderHistory.h"
+#include "fastrtps/utils/IPLocator.h"
 
 using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps; 
+using namespace eprosima::fastrtps::rtps;
 
 TestReaderSocket::TestReaderSocket():
 mp_participant(nullptr),
@@ -64,8 +65,8 @@ bool TestReaderSocket::init(std::string ip, uint32_t port)
 	//CREATE READER
 	ReaderAttributes ratt;
 	Locator_t loc;
-	loc.set_IP4_address(ip);
-	loc.port = port;
+	IPLocator::setIPv4(loc, ip);
+	loc.port = static_cast<uint16_t>(port);
 	ratt.endpoint.multicastLocatorList.push_back(loc);
 	mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
 	if(mp_reader == nullptr)

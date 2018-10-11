@@ -52,7 +52,7 @@ class StatefulReader:public RTPSReader
          * @param wdata Pointer to the WPD object to add.
          * @return True if correctly added.
          */
-        bool matched_writer_add(const RemoteWriterAttributes& wdata);
+        bool matched_writer_add(RemoteWriterAttributes& wdata);
         /**
          * Remove a WriterProxyData from the matached writers.
          * @param wdata Pointer to the WPD object.

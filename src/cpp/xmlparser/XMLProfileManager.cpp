@@ -29,6 +29,7 @@ SubscriberAttributes default_subscriber_attributes;
 std::map<std::string, up_topic_t>       XMLProfileManager::m_topic_profiles;
 TopicAttributes default_topic_attributes;
 std::map<std::string, XMLP_ret>         XMLProfileManager::m_xml_files;
+sp_transport_map_t XMLProfileManager::m_transport_profiles;
 
 BaseNode* XMLProfileManager::root = nullptr;
 
@@ -103,6 +104,70 @@ void XMLProfileManager::getDefaultTopicAttributes(TopicAttributes& topic_attribu
 XMLP_ret XMLProfileManager::loadDefaultXMLFile()
 {
     return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
+}
+
+XMLP_ret XMLProfileManager::loadXMLProfiles(tinyxml2::XMLElement& profiles)
+{
+    up_base_node_t root_node;
+    XMLParser::loadXMLProfiles(profiles, root_node);
+
+    if (!root_node)
+    {
+        logError(XMLPARSER, "Error parsing node");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    logInfo(XMLPARSER, "Node parsed successfully");
+
+    if (NodeType::PROFILES == root_node->getType())
+    {
+        return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
+    }
+
+    if (NodeType::ROOT == root_node->getType())
+    {
+        for (auto&& child: root_node->getChildren())
+        {
+            if (NodeType::PROFILES == child.get()->getType())
+            {
+                return XMLProfileManager::extractProfiles(std::move(child), "-XML Node-");
+            }
+        }
+    }
+
+    return XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLProfileManager::loadXMLNode(tinyxml2::XMLDocument& doc)
+{
+    up_base_node_t root_node;
+    XMLParser::loadXML(doc, root_node);
+
+    if (!root_node)
+    {
+        logError(XMLPARSER, "Error parsing node");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    logInfo(XMLPARSER, "Node parsed successfully");
+
+    if (NodeType::PROFILES == root_node->getType())
+    {
+        return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
+    }
+
+    if (NodeType::ROOT == root_node->getType())
+    {
+        for (auto&& child: root_node->getChildren())
+        {
+            if (NodeType::PROFILES == child.get()->getType())
+            {
+                return XMLProfileManager::extractProfiles(std::move(child), "-XML Node-");
+            }
+        }
+    }
+
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
@@ -299,6 +364,26 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(up_base_node_t& profile, co
         default_subscriber_attributes = *(emplace.first->second.get() );
     }
     return XMLP_ret::XML_OK;
+}
+
+bool XMLProfileManager::insertTransportById(const std::string& sId, sp_transport_t transport)
+{
+    if (m_transport_profiles.find(sId) == m_transport_profiles.end())
+    {
+        m_transport_profiles[sId] = transport;
+        return true;
+    }
+    logError(XMLPARSER, "Error adding the transport " << sId << ". There is other transport with the same id");
+    return false;
+}
+
+sp_transport_t XMLProfileManager::getTransportById(const std::string& sId)
+{
+    if (m_transport_profiles.find(sId) != m_transport_profiles.end())
+    {
+        return m_transport_profiles[sId];
+    }
+    return nullptr;
 }
 
 XMLP_ret XMLProfileManager::extractTopicProfile(up_base_node_t& profile, const std::string& filename)

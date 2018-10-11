@@ -50,30 +50,25 @@ namespace fastrtps{
 namespace rtps {
 
 
-MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant) : participant_(participant) {}
-
 MessageReceiver::MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size) :
-    m_rec_msg(rec_buffer_size),
 #if HAVE_SECURITY
     m_crypto_msg(rec_buffer_size),
 #endif
-    participant_(participant)
-    {
-    }
+    sourceVendorId(c_VendorId_Unknown), participant_(participant)
+{
+    init(rec_buffer_size);
+}
 
 void MessageReceiver::init(uint32_t rec_buffer_size){
     destVersion = c_ProtocolVersion;
     sourceVersion = c_ProtocolVersion;
-    set_VendorId_Unknown(sourceVendorId);
+    sourceVendorId = c_VendorId_Unknown;
     sourceGuidPrefix = c_GuidPrefix_Unknown;
     destGuidPrefix = c_GuidPrefix_Unknown;
     haveTimestamp = false;
     timestamp = c_TimeInvalid;
 
-    defUniLoc.kind = LOCATOR_KIND_UDPv4;
-    LOCATOR_ADDRESS_INVALID(defUniLoc.address);
-    defUniLoc.port = LOCATOR_PORT_INVALID;
-    logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<<m_rec_msg.max_size);
+    logInfo(RTPS_MSG_IN,"Created with CDRMessage of size: "<< rec_buffer_size);
     mMaxPayload_ = ((uint32_t)std::numeric_limits<uint16_t>::max() < rec_buffer_size) ? std::numeric_limits<uint16_t>::max() : (uint16_t)rec_buffer_size;
 }
 
@@ -140,24 +135,17 @@ void MessageReceiver::removeEndpoint(Endpoint *to_remove){
 void MessageReceiver::reset(){
     destVersion = c_ProtocolVersion;
     sourceVersion = c_ProtocolVersion;
-    set_VendorId_Unknown(sourceVendorId);
+    sourceVendorId = c_VendorId_Unknown;
     sourceGuidPrefix = c_GuidPrefix_Unknown;
     destGuidPrefix = c_GuidPrefix_Unknown;
     haveTimestamp = false;
     timestamp = c_TimeInvalid;
-
-    unicastReplyLocatorList.clear();
-    unicastReplyLocatorList.reserve(1);
-    multicastReplyLocatorList.clear();
-    multicastReplyLocatorList.reserve(1);
-    Locator_t  loc;
-    unicastReplyLocatorList.push_back(loc);
-    multicastReplyLocatorList.push_back(defUniLoc);
 }
 
-void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
-        Locator_t* loc, CDRMessage_t*msg)
+void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
 {
+    (void)loc;
+
     if(msg->length < RTPSMESSAGE_HEADER_SIZE)
     {
         logWarning(RTPS_MSG_IN,IDSTRING"Received message too short, ignoring");
@@ -166,25 +154,9 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
 
     this->reset();
 
-    destGuidPrefix = RTPSParticipantguidprefix;
-    unicastReplyLocatorList.begin()->kind = loc->kind;
+    GuidPrefix_t participantGuidPrefix = participant_->getGuid().guidPrefix;
+    destGuidPrefix = participantGuidPrefix;
 
-    uint8_t n_start = 0;
-    if(loc->kind == 1)
-        n_start = 12;
-    else if(loc->kind == 2)
-        n_start = 0;
-    else
-    {
-        logWarning(RTPS_MSG_IN,IDSTRING"Locator kind invalid");
-        return;
-    }
-
-    for(uint8_t i = n_start;i<16;i++)
-    {
-        unicastReplyLocatorList.begin()->address[i] = loc->address[i];
-    }
-    unicastReplyLocatorList.begin()->port = loc->port;
     msg->pos = 0; //Start reading at 0
 
     //Once everything is set, the reading begins:
@@ -253,7 +225,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
         {
             case DATA:
                 {
-                    if(this->destGuidPrefix != RTPSParticipantguidprefix)
+                    if(this->destGuidPrefix != participantGuidPrefix)
                     {
                         submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg ignored, DST is another RTPSParticipant");
@@ -266,7 +238,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                     break;
                 }
             case DATA_FRAG:
-                if (this->destGuidPrefix != RTPSParticipantguidprefix)
+                if (this->destGuidPrefix != participantGuidPrefix)
                 {
                     submessage->pos += submsgh.submessageLength;
                     logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg ignored, DST is another RTPSParticipant");
@@ -279,7 +251,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 break;
             case GAP:
                 {
-                    if(this->destGuidPrefix != RTPSParticipantguidprefix)
+                    if(this->destGuidPrefix != participantGuidPrefix)
                     {
                         submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg ignored, DST is another RTPSParticipant...");
@@ -293,7 +265,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 }
             case ACKNACK:
                 {
-                    if(this->destGuidPrefix != RTPSParticipantguidprefix)
+                    if(this->destGuidPrefix != participantGuidPrefix)
                     {
                         submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg ignored, DST is another RTPSParticipant...");
@@ -307,7 +279,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 }
             case NACK_FRAG:
                 {
-                    if (this->destGuidPrefix != RTPSParticipantguidprefix)
+                    if (this->destGuidPrefix != participantGuidPrefix)
                     {
                         submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg ignored, DST is another RTPSParticipant...");
@@ -321,7 +293,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 }
             case HEARTBEAT:
                 {
-                    if(this->destGuidPrefix != RTPSParticipantguidprefix)
+                    if(this->destGuidPrefix != participantGuidPrefix)
                     {
                         submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"HB Submsg ignored, DST is another RTPSParticipant...");
@@ -335,7 +307,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
                 }
             case HEARTBEAT_FRAG:
                 {
-                    if (this->destGuidPrefix != RTPSParticipantguidprefix)
+                    if (this->destGuidPrefix != participantGuidPrefix)
                     {
                         submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"HBFrag Submsg ignored, DST is another RTPSParticipant...");
@@ -1009,7 +981,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
         msg->pos+=4;
         CDRMessage::readOctet(msg,&this->sourceVersion.m_major);
         CDRMessage::readOctet(msg,&this->sourceVersion.m_minor);
-        CDRMessage::readData(msg,this->sourceVendorId,2);
+        CDRMessage::readData(msg,&this->sourceVendorId[0],2);
         CDRMessage::readData(msg,this->sourceGuidPrefix.value,12);
         //Is the final message?
         if(smh->submessageLength == 0)

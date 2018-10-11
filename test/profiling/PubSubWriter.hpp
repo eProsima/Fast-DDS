@@ -20,6 +20,8 @@
 #ifndef _TEST_PROFILING_PUBSUBWRITER_HPP_
 #define _TEST_PROFILING_PUBSUBWRITER_HPP_
 
+#include "RTPSProfilingCommon.h"
+
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/participant/Participant.h>
@@ -32,6 +34,9 @@
 #include <list>
 #include <condition_variable>
 #include <asio.hpp>
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 template<class TypeSupport>
 class PubSubWriter

@@ -185,12 +185,6 @@ public:
 #endif
 
 #if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
-    #define COMPOSITE_LOG_NO_INFO 1
-#else
-    #define COMPOSITE_LOG_NO_INFO 0
-#endif
-
-#if COMPOSITE_LOG_NO_INFO 
    #define logInfo_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Info) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); } }
 #else
    #define logInfo_(cat, msg)

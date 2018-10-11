@@ -1,0 +1,4 @@
+struct BenchMark
+{
+	unsigned long index;
+};

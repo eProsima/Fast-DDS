@@ -92,6 +92,7 @@ bool WLP::createEndpoints()
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    watt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
     //	Wparam.topic.topicName = "DCPSRTPSParticipantMessage";
     //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
     watt.endpoint.topicKind = WITH_KEY;
@@ -124,6 +125,7 @@ bool WLP::createEndpoints()
     ratt.expectsInlineQos = true;
     ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
     //Rparam.topic.topicName = "DCPSRTPSParticipantMessage";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
     ratt.endpoint.topicKind = WITH_KEY;

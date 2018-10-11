@@ -21,6 +21,7 @@
 
 #include "../common/Time_t.h"
 #include "../common/Locator.h"
+#include "../common/PortParameters.h"
 #include "PropertyPolicy.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "../../transport/TransportInterface.h"
@@ -61,61 +62,6 @@ class SimpleEDPAttributes
         {
 
         }
-};
-
-/**
- * Class PortParameters, to define the port parameters and gains related with the RTPS protocol.
- * @ingroup RTPS_ATTRIBUTES_MODULE
- */
-class PortParameters
-{
-    public:
-        PortParameters()
-        {
-            portBase = 7400;
-            participantIDGain = 2;
-            domainIDGain = 250;
-            offsetd0 = 0;
-            offsetd1 = 10;
-            offsetd2 = 1;
-            offsetd3 = 11;
-        };
-        virtual ~PortParameters(){}
-        /**
-         * Get a multicast port based on the domain ID.
-         *
-         * @param domainId Domain ID.
-         * @return Multicast port
-         */
-        inline uint32_t getMulticastPort(uint32_t domainId) const
-        {
-            return portBase+ domainIDGain * domainId+ offsetd0;
-        }
-        /**
-         * Get a unicast port baes on the domain ID and the participant ID.
-         *
-         * @param domainId Domain ID.
-         * @param RTPSParticipantID Participant ID.
-         * @return Unicast port
-         */
-        inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID) const
-        {
-            return portBase+ domainIDGain * domainId	+ offsetd1	+ participantIDGain * RTPSParticipantID;
-        }
-        //!PortBase, default value 7400.
-        uint16_t portBase;
-        //!DomainID gain, default value 250.
-        uint16_t domainIDGain;
-        //!ParticipantID gain, default value 2.
-        uint16_t participantIDGain;
-        //!Offset d0, default value 0.
-        uint16_t offsetd0;
-        //!Offset d1, default value 10.
-        uint16_t offsetd1;
-        //!Offset d2, default value 1.
-        uint16_t offsetd2;
-        //!Offset d3, default value 11.
-        uint16_t offsetd3;
 };
 
 /**
@@ -210,7 +156,6 @@ class RTPSParticipantAttributes
 
         RTPSParticipantAttributes()
         {
-            defaultSendPort = 10040;
             setName("RTPSParticipant");
             sendSocketBufferSize = 0;
             listenSocketBufferSize = 0;
@@ -231,19 +176,6 @@ class RTPSParticipantAttributes
          * that it was defined with NO UnicastLocators. This is usually left empty.
          */
         LocatorList_t defaultMulticastLocatorList;
-
-        /**
-         * Default list of Locators used to send messages through. Used to link with SenderResources in the case and 
-         * Endpoint is created with NO outLocators. This list contains the default outLocators for the Transports implemented
-         * by eProsima.
-         */
-        LocatorList_t defaultOutLocatorList;
-
-        /**
-         * Default send port that all Endpoints in the RTPSParticipant would use to send messages, default value 10040.
-         * In this release all Endpoints use the same resource (socket) to send messages.
-         */
-        uint32_t defaultSendPort;
 
         /*!
          * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
@@ -269,7 +201,7 @@ class RTPSParticipantAttributes
         //!Get the name of the participant.
         inline const char* getName() const {return name.c_str();}
         //!Throughput controller parameters. Leave default for uncontrolled flow.
-        ThroughputControllerDescriptor throughputController; 
+        ThroughputControllerDescriptor throughputController;
         //!User defined transports to use alongside or in place of builtins.
         std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
         //!Set as false to disable the default UDPv4 implementation.
