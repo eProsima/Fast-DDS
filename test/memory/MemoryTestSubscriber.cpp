@@ -165,9 +165,6 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
         pct << pid << "_SUB2PUB";
         PubCommandParam.topic.topicName = pct.str();
         PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        PubCommandParam.topic.historyQos.depth = 100;
-        PubCommandParam.topic.resourceLimitsQos.max_samples = 101;
-        PubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
         PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
         if (mp_commandpub == nullptr)
@@ -182,9 +179,6 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
         sct << pid << "_PUB2SUB";
         SubCommandParam.topic.topicName = sct.str();
         SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        SubCommandParam.topic.historyQos.depth = 100;
-        SubCommandParam.topic.resourceLimitsQos.max_samples = 101;
-        SubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
         SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
@@ -304,7 +298,9 @@ void MemoryTestSubscriber::run()
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 3 Matchings (Comd Pub+Sub and publisher or subscriber)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    while(disc_count_ != 3) disc_cond_.wait(disc_lock);
+    disc_cond_.wait(disc_lock, [&](){
+        return disc_count_ != 3;
+    });
     disc_lock.unlock();
 
     cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
