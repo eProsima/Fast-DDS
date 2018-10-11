@@ -1105,8 +1105,6 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
         }
         else
         {
-            // On error don't try too soon
-            eClock::my_sleep(100);
             CloseTCPSocket(outputSocket);
         }
     }
