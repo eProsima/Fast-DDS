@@ -176,6 +176,10 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
     eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
 
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle& Participant_A = eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantA);
@@ -211,6 +215,10 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
+
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
@@ -292,6 +300,10 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
+
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;

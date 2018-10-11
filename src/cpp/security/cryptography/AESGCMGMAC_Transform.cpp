@@ -1644,7 +1644,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
 
     eprosima::fastcdr::Cdr::state current_state = serializer.getState();
     serializer.setState(length_state);
-    serializer << length;
+    serializer.serialize(length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
     serializer.setState(current_state);
     return true;
 }
@@ -1746,7 +1746,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
 
     eprosima::fastcdr::Cdr::state current_state = serializer.getState();
     serializer.setState(length_state);
-    serializer << length;
+    serializer.serialize(length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
     serializer.setState(current_state);
     return true;
 }
@@ -1899,7 +1899,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
     decoder >> tag.common_mac;
 
     uint32_t sequence_length = 0;
-    decoder >> sequence_length;
+    decoder.deserialize(sequence_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 
     if(sequence_length > 0)
     {
