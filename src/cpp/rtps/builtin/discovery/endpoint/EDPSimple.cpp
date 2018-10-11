@@ -295,6 +295,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
     bool created = true;
     RTPSReader* raux = nullptr;
     RTPSWriter* waux = nullptr;
+
+    auto& part_attr = mp_RTPSParticipant->security_attributes();
+    security::PluginParticipantSecurityAttributes plugin_part_attr(part_attr.plugin_participant_attributes);
+
     if(m_discovery.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
         hatt.initialReservedCaches = 100;
@@ -313,8 +317,16 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.times.nackResponseDelay.fraction = 0;
         watt.times.initialHeartbeatDelay.seconds = 0;
         watt.times.initialHeartbeatDelay.fraction = 0;
-        watt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovery_protected;
+        watt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
+
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
@@ -348,8 +360,15 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.times.heartbeatResponseDelay.fraction = 0;
         ratt.times.initialAcknackDelay.seconds = 0;
         ratt.times.initialAcknackDelay.fraction = 0;
-        ratt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovery_protected;
+        ratt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, sedp_builtin_subscriptions_secure_reader_.second,
                 mp_subListen, sedp_builtin_subscriptions_secure_reader, true);
         if(created)
@@ -384,8 +403,15 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.times.heartbeatResponseDelay.fraction = 0;
         ratt.times.initialAcknackDelay.seconds = 0;
         ratt.times.initialAcknackDelay.fraction = 0;
-        ratt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovery_protected;
+        ratt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, sedp_builtin_publications_secure_reader_.second,
                 mp_pubListen, sedp_builtin_publications_secure_reader, true);
         if(created)
@@ -416,8 +442,15 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.times.nackResponseDelay.fraction = 0;
         watt.times.initialHeartbeatDelay.seconds = 0;
         watt.times.initialHeartbeatDelay.fraction = 0;
-        watt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovery_protected;
+        watt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;

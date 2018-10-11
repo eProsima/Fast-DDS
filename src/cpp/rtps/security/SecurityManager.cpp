@@ -440,7 +440,7 @@ bool SecurityManager::restore_discovered_participant_info(const GUID_t& remote_p
 bool SecurityManager::discovered_participant(const ParticipantProxyData& participant_data)
 {
     // Early return when ParticipantSecurityInfo does not match
-    auto sec_attrs = participant_->security_attributes();
+    auto& sec_attrs = participant_->security_attributes();
     if(!sec_attrs.match(participant_data.security_attributes_, participant_data.plugin_security_attributes_))
     {
         return false;
