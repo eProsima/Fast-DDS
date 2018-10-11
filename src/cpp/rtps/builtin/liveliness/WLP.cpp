@@ -55,14 +55,23 @@ WLP::WLP(BuiltinProtocols* p):	m_minAutomatic_MilliSec(std::numeric_limits<doubl
     mp_listener(nullptr),
     mp_livelinessAutomatic(nullptr),
     mp_livelinessManRTPSParticipant(nullptr)
-    {
-
-
-    }
+#if HAVE_SECURITY
+    ,mp_builtinWriterSecure(nullptr)
+    ,mp_builtinReaderSecure(nullptr)
+    ,mp_builtinWriterSecureHistory(nullptr)
+    ,mp_builtinReaderSecureHistory(nullptr)
+#endif
+{
+}
 
 WLP::~WLP()
 {
-    // TODO Auto-generated destructor stub
+#if HAVE_SECURITY
+    mp_participant->deleteUserEndpoint(mp_builtinReaderSecure);
+    mp_participant->deleteUserEndpoint(mp_builtinWriterSecure);
+    delete(this->mp_builtinReaderSecureHistory);
+    delete(this->mp_builtinWriterSecureHistory);
+#endif
     mp_participant->deleteUserEndpoint(mp_builtinReader);
     mp_participant->deleteUserEndpoint(mp_builtinWriter);
     delete(this->mp_builtinReaderHistory);
@@ -78,7 +87,12 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 {
     logInfo(RTPS_LIVELINESS,"Beginning Liveliness Protocol");
     mp_participant = p;
-    return createEndpoints();
+
+    bool retVal = createEndpoints();
+#if HAVE_SECURITY
+    if(retVal) createSecureEndpoints();
+#endif
+    return retVal;
 }
 
 bool WLP::createEndpoints()
@@ -150,16 +164,103 @@ bool WLP::createEndpoints()
     return true;
 }
 
+#if HAVE_SECURITY
+
+bool WLP::createSecureEndpoints()
+{
+    //CREATE WRITER
+    HistoryAttributes hatt;
+    hatt.initialReservedCaches = 20;
+    hatt.maximumReservedCaches = 1000;
+    hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+    mp_builtinWriterSecureHistory = new WriterHistory(hatt);
+    WriterAttributes watt;
+    watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
+    watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    //	Wparam.topic.topicName = "DCPSParticipantMessageSecure";
+    //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
+    watt.endpoint.topicKind = WITH_KEY;
+    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    watt.endpoint.reliabilityKind = RELIABLE;
+    if (mp_participant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
+        mp_participant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+        watt.mode = ASYNCHRONOUS_WRITER;
+
+    const security::ParticipantSecurityAttributes& part_attrs = mp_participant->security_attributes();
+    security::PluginParticipantSecurityAttributes plugin_attrs(part_attrs.plugin_participant_attributes);
+    security::EndpointSecurityAttributes& sec_attrs = watt.endpoint.security_attributes();
+    sec_attrs.is_submessage_protected = part_attrs.is_liveliness_protected;
+    if (part_attrs.is_liveliness_protected)
+    {
+        sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (plugin_attrs.is_liveliness_encrypted)
+            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+        if (plugin_attrs.is_liveliness_origin_authenticated)
+            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+    }
+
+    RTPSWriter* wout;
+    if (mp_participant->createWriter(&wout, watt, mp_builtinWriterSecureHistory, nullptr, c_EntityId_WriterLivelinessSecure, true))
+    {
+        mp_builtinWriterSecure = dynamic_cast<StatefulWriter*>(wout);
+        logInfo(RTPS_LIVELINESS, "Builtin Secure Liveliness Writer created");
+    }
+    else
+    {
+        logError(RTPS_LIVELINESS, "Secure Liveliness Writer Creation failed ");
+        delete(mp_builtinWriterSecureHistory);
+        mp_builtinWriterSecureHistory = nullptr;
+        return false;
+    }
+    hatt.initialReservedCaches = 100;
+    hatt.maximumReservedCaches = 2000;
+    hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+    mp_builtinReaderSecureHistory = new ReaderHistory(hatt);
+    ReaderAttributes ratt;
+    ratt.endpoint.topicKind = WITH_KEY;
+    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    ratt.endpoint.reliabilityKind = RELIABLE;
+    ratt.expectsInlineQos = true;
+    ratt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    //Rparam.topic.topicName = "DCPSParticipantMessageSecure";
+    //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
+    ratt.endpoint.topicKind = WITH_KEY;
+    sec_attrs = ratt.endpoint.security_attributes();
+    sec_attrs.is_submessage_protected = part_attrs.is_liveliness_protected;
+    if (part_attrs.is_liveliness_protected)
+    {
+        sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (plugin_attrs.is_liveliness_encrypted)
+            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+        if (plugin_attrs.is_liveliness_origin_authenticated)
+            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+    }
+    RTPSReader* rout;
+    if (mp_participant->createReader(&rout, ratt, mp_builtinReaderSecureHistory, (ReaderListener*)mp_listener, c_EntityId_ReaderLivelinessSecure, true))
+    {
+        mp_builtinReaderSecure = dynamic_cast<StatefulReader*>(rout);
+        logInfo(RTPS_LIVELINESS, "Builtin Liveliness Reader created");
+    }
+    else
+    {
+        logError(RTPS_LIVELINESS, "Liveliness Reader Creation failed.");
+        delete(mp_builtinReaderSecureHistory);
+        mp_builtinReaderSecureHistory = nullptr;
+        return false;
+    }
+
+    return true;
+}
+#endif
+
 bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
-    //TODO Hacer el check con RTI y solo añadirlo cuando el vendor ID sea RTI.
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
-    //auxendp = 1;
-    //FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
 
     if((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
     {
@@ -177,8 +278,6 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     }
     auxendp = endp;
     auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
-    //auxendp = 1;
-    //FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
     if((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
     {
         logInfo(RTPS_LIVELINESS,"Adding remote reader to my local Builtin Writer");
@@ -193,6 +292,44 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_builtinWriter->matched_reader_add(ratt);
     }
+
+#if HAVE_SECURITY
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinReaderSecure != nullptr)
+    {
+        logInfo(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Secure Reader");
+        RemoteWriterAttributes watt(pdata.m_VendorId);
+        watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_WriterLivelinessSecure;
+        watt.endpoint.persistence_guid = watt.guid;
+        watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        watt.endpoint.topicKind = WITH_KEY;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.security_attributes() = mp_builtinReaderSecure->getAttributes().security_attributes();
+        mp_builtinReaderSecure->matched_writer_add(watt);
+    }
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriterSecure != nullptr)
+    {
+        logInfo(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Secure Writer");
+        RemoteReaderAttributes ratt(pdata.m_VendorId);
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_ReaderLivelinessSecure;
+        ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        ratt.endpoint.topicKind = WITH_KEY;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+        ratt.endpoint.security_attributes() = mp_builtinWriterSecure->getAttributes().security_attributes();
+        mp_builtinWriterSecure->matched_reader_add(ratt);
+    }
+#endif
+
     return true;
 }
 
@@ -202,15 +339,12 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
-    //TODO Hacer el check con RTI y solo añadirlo cuando el vendor ID sea RTI.
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
-    //auxendp = 1;
-    //FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
 
     if((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
     {
-        logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader");
+        logInfo(RTPS_LIVELINESS,"Removing remote writer from my local Builtin Reader");
         RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_WriterLiveliness;
@@ -224,11 +358,9 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
     }
     auxendp = endp;
     auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
-    //auxendp = 1;
-    //FIXME: WRITERLIVELINESS PUT THIS BACK TO THE ORIGINAL LINE
     if((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
     {
-        logInfo(RTPS_LIVELINESS,"Adding remote reader to my local Builtin Writer");
+        logInfo(RTPS_LIVELINESS,"Removing remote reader from my local Builtin Writer");
         RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
@@ -240,6 +372,43 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_builtinWriter->matched_reader_remove(ratt);
     }
+
+#if HAVE_SECURITY
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinReaderSecure != nullptr)
+    {
+        logInfo(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Secure Reader");
+        RemoteWriterAttributes watt;
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_WriterLivelinessSecure;
+        watt.endpoint.persistence_guid = watt.guid;
+        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        watt.endpoint.topicKind = WITH_KEY;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.security_attributes() = mp_builtinReaderSecure->getAttributes().security_attributes();
+        mp_builtinReaderSecure->matched_writer_remove(watt);
+    }
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+    if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriterSecure != nullptr)
+    {
+        logInfo(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Secure Writer");
+        RemoteReaderAttributes ratt;
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_ReaderLivelinessSecure;
+        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.topicKind = WITH_KEY;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+        ratt.endpoint.security_attributes() = mp_builtinWriterSecure->getAttributes().security_attributes();
+        mp_builtinWriterSecure->matched_reader_remove(ratt);
+    }
+#endif
 }
 
 
