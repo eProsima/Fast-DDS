@@ -74,7 +74,7 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t 
     pattr.rtps.useBuiltinTransports = false;
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
-	descriptor->wait_for_tcp_negotiation = false;
+    descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     // descriptor->set_WAN_address("127.0.0.1");
@@ -107,8 +107,6 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t 
 
 void TCPReqRepHelloWorldReplier::newNumber(SampleIdentity sample_identity, uint16_t number)
 {
-    waitDiscovery();
-
     WriteParams wparams;
     HelloWorld hello;
     hello.index(number);

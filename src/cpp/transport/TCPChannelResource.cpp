@@ -175,16 +175,16 @@ void TCPChannelResource::Disconnect()
 
 bool TCPChannelResource::IsLogicalPortOpened(uint16_t port)
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-	return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end();
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end();
 }
 
 bool TCPChannelResource::IsLogicalPortAdded(uint16_t port)
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-	return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end()
-           || std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
-                != mPendingLogicalOutputPorts.end();
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end()
+        || std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
+        != mPendingLogicalOutputPorts.end();
 }
 
 bool TCPChannelResource::WaitUntilPortIsOpenOrConnectionIsClosed(uint16_t port)
@@ -208,7 +208,7 @@ std::thread* TCPChannelResource::ReleaseRTCPThread()
 
 void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     Locator_t temp = mLocator;
     for (uint16_t port : mPendingLogicalOutputPorts)
     {
@@ -224,12 +224,12 @@ void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)
 
 uint32_t TCPChannelResource::GetMsgSize() const
 {
-	return m_rec_msg.max_size;
+    return m_rec_msg.max_size;
 }
 
 void TCPChannelResource::AddLogicalPort(uint16_t port)
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     // Already opened?
     if (std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) == mLogicalOutputPorts.end())
     {
@@ -239,7 +239,7 @@ void TCPChannelResource::AddLogicalPort(uint16_t port)
         } // But let's continue...
 
         if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
-            == mPendingLogicalOutputPorts.end()) // Check isn't enqueued already
+                == mPendingLogicalOutputPorts.end()) // Check isn't enqueued already
         {
             mPendingLogicalOutputPorts.emplace_back(port);
             if (IsConnectionEstablished())
@@ -253,7 +253,7 @@ void TCPChannelResource::AddLogicalPort(uint16_t port)
 
 void TCPChannelResource::SendPendingOpenLogicalPorts()
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     if (!mPendingLogicalOutputPorts.empty())
     {
         for (uint16_t port : mPendingLogicalOutputPorts)
@@ -267,7 +267,7 @@ void TCPChannelResource::SendPendingOpenLogicalPorts()
 
 void TCPChannelResource::AddLogicalPortResponse(const TCPTransactionId &id, bool success)
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     auto it = mNegotiatingLogicalPorts.find(id);
     if (it != mNegotiatingLogicalPorts.end())
     {
@@ -315,7 +315,7 @@ void TCPChannelResource::PrepareAndSendCheckLogicalPortsRequest(uint16_t closedP
         // Don't add ports just tested and already pendings
         if (p <= max_port && p != closedPort)
         {
-	        std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+            std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
             auto pendingIt = std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), p);
             if (pendingIt == mPendingLogicalOutputPorts.end())
             {
@@ -328,11 +328,11 @@ void TCPChannelResource::PrepareAndSendCheckLogicalPortsRequest(uint16_t closedP
     {
         logError(RTCP, "Cannot find an available logical port.");
     }
-	else
-	{
-		TCPTransactionId id = mRTCPManager->sendCheckLogicalPortsRequest(this, candidatePorts);
+    else
+    {
+        TCPTransactionId id = mRTCPManager->sendCheckLogicalPortsRequest(this, candidatePorts);
         mLastCheckedLogicalPort[id] = candidatePorts.back();
-	}
+    }
 }
 
 void TCPChannelResource::ProcessCheckLogicalPortsResponse(const TCPTransactionId &transactionId,
@@ -371,7 +371,7 @@ void TCPChannelResource::SetLogicalPortPending(uint16_t port)
 
 bool TCPChannelResource::RemoveLogicalPort(uint16_t port)
 {
-	std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
     if (!IsLogicalPortAdded(port))
         return false;
 

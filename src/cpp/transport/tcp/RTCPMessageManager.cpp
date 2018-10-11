@@ -406,25 +406,25 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *pCh
     }
     else
     {
-		if (request.logicalPortsRange().empty())
-		{
-			logWarning(RTCP, "No available logical ports.");
-		}
-		else
-		{
-			for (uint16_t port : request.logicalPortsRange())
-			{
-				if (mTransport->IsInputPortOpen(port))
-				{
+        if (request.logicalPortsRange().empty())
+        {
+            logWarning(RTCP, "No available logical ports.");
+        }
+        else
+        {
+            for (uint16_t port : request.logicalPortsRange())
+            {
+                if (mTransport->IsInputPortOpen(port))
+                {
                     if (port == 0)
                     {
-					    logInfo(RTCP, "FoundOpenedLogicalPort 0, but will not be considered");
+                        logInfo(RTCP, "FoundOpenedLogicalPort 0, but will not be considered");
                     }
-					logInfo(RTCP, "FoundOpenedLogicalPort: " << port);
-					response.availableLogicalPorts().emplace_back(port);
-				}
-			}
-		}
+                    logInfo(RTCP, "FoundOpenedLogicalPort: " << port);
+                    response.availableLogicalPorts().emplace_back(port);
+                }
+            }
+        }
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             CheckLogicalPortsResponse_t::getBufferCdrSerializedSize(response)));

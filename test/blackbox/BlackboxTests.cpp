@@ -5327,7 +5327,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         requester.send(count);
-        requester.block(std::chrono::seconds(10));
+        requester.block();
     }
 
 }
@@ -5396,7 +5396,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D0)
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         requester.send(count);
-        requester.block(std::chrono::seconds(10));
+        requester.block();
     }
 
 }
@@ -5465,7 +5465,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D0)
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         requester.send(count);
-        requester.block(std::chrono::seconds(10));
+        requester.block();
     }
 
 }
@@ -5534,7 +5534,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D0)
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         requester.send(count);
-        requester.block(std::chrono::seconds(10));
+        requester.block();
     }
 
 }

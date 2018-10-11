@@ -90,7 +90,7 @@ class TCPReqRepHelloWorldRequester
         void init(int participantId, int domainId, uint16_t listeningPort);
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
-        void block(const std::chrono::seconds &seconds);
+        void block();
         void waitDiscovery();
         void matched();
         void send(const uint16_t number);

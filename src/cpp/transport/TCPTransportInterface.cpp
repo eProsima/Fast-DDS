@@ -53,7 +53,7 @@ void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_ser
     // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
     // std::cout << std::put_time(std::localtime(&now_c), "%F %T") << "--> Async_Accept" << std::endl;
 
-	mAcceptor.async_accept(getTCPSocketRef(mSocket), mEndPoint, std::bind(&TCPTransportInterface::SocketAccepted,
+    mAcceptor.async_accept(getTCPSocketRef(mSocket), mEndPoint, std::bind(&TCPTransportInterface::SocketAccepted,
         parent, this, std::placeholders::_1));
 }
 
@@ -659,10 +659,12 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
 
         // Processes the data through the CDR Message interface.
         logicalPort = IPLocator::getLogicalPort(remoteLocator);
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         auto it = mReceiverResources.find(logicalPort);
         //TransportReceiverInterface* receiver = pChannelResource->GetMessageReceiver(logicalPort);
         if (it != mReceiverResources.end())
         {
+            scopedLock.unlock();
             it->second->OnDataReceived(msg.buffer, msg.length, pChannelResource->GetLocator(), remoteLocator);
         }
         else
@@ -925,6 +927,11 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
                 }
             }
         }
+        else
+        {
+            tcpChannelResource->AddLogicalPort(logicalPort);
+        }
+
         return success;
     }
     else

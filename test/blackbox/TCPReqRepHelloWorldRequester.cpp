@@ -84,7 +84,7 @@ void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_
 
     pattr.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
-	descriptor->wait_for_tcp_negotiation = false;
+    descriptor->wait_for_tcp_negotiation = false;
     pattr.rtps.userTransports.push_back(descriptor);
 
     pattr.rtps.builtin.domainId = domainId;
@@ -126,16 +126,12 @@ void TCPReqRepHelloWorldRequester::newNumber(SampleIdentity related_sample_ident
         cv_.notify_one();
 }
 
-void TCPReqRepHelloWorldRequester::block(const std::chrono::seconds &seconds)
+void TCPReqRepHelloWorldRequester::block()
 {
     std::unique_lock<std::mutex> lock(mutex_);
-
-    if(current_number_ != number_received_)
-    {
-        ASSERT_EQ(cv_.wait_for(lock, seconds), std::cv_status::no_timeout);
-    }
-
-    ASSERT_EQ(current_number_, number_received_);
+    cv_.wait(lock, [this]() -> bool {
+                    return current_number_ == number_received_;
+                    });
 }
 
 void TCPReqRepHelloWorldRequester::waitDiscovery()
@@ -176,8 +172,6 @@ void TCPReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(Subscriber *s
 
 void TCPReqRepHelloWorldRequester::send(const uint16_t number)
 {
-    waitDiscovery();
-
     WriteParams wparams;
     HelloWorld hello;
     hello.index(number);
