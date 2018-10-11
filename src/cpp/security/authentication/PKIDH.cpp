@@ -160,6 +160,16 @@ static bool get_signature_algorithm(X509* certificate, std::string& signature_al
                         signature_algorithm = ECDSA_SHA256;
                         returnedValue = true;
                     }
+                    else if (strncmp(ptr->data, "sha256WithRSAEncryption", ptr->length) == 0)
+                    {
+                        signature_algorithm = RSA_SHA256;
+                        returnedValue = true;
+                    }
+                    else if (strncmp(ptr->data, "sha1WithRSAEncryption", ptr->length) == 0)
+                    {
+                        signature_algorithm = RSA_SHA256;
+                        returnedValue = true;
+                    }
                 }
                 else
                     exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
@@ -325,16 +335,24 @@ static bool verify_certificate(X509_STORE* store, X509* cert, const bool there_a
     unsigned long flags = there_are_crls ? X509_V_FLAG_CRL_CHECK : 0;
     if(X509_STORE_CTX_init(ctx, store, cert, NULL) > 0)
     {
-        X509_STORE_CTX_set_flags(ctx, flags | X509_V_FLAG_X509_STRICT |
+        X509_STORE_CTX_set_flags(ctx, flags | /*X509_V_FLAG_X509_STRICT |*/
                 X509_V_FLAG_CHECK_SS_SIGNATURE | X509_V_FLAG_POLICY_CHECK);
 
-        if(X509_verify_cert(ctx) > 0 && X509_STORE_CTX_get_error(ctx) == X509_V_OK)
+        if(X509_verify_cert(ctx) > 0)
         {
             returnedValue = true;
         }
         else
         {
-            logWarning(SECURITY_AUTHENTICATION, "Invalidation error of certificate  (" << X509_STORE_CTX_get_error(ctx) << ")");
+            int errorCode = X509_STORE_CTX_get_error(ctx);
+            if (errorCode == X509_V_OK)
+            {
+                logWarning(SECURITY_AUTHENTICATION, "Invalidation error of certificate, but no error code returned.");
+            }
+            else
+            {
+                logWarning(SECURITY_AUTHENTICATION, "Invalidation error of certificate  (" << X509_verify_cert_error_string(errorCode) << ")");
+            }
         }
 
         X509_STORE_CTX_cleanup(ctx);

@@ -187,6 +187,16 @@ static bool get_signature_algorithm(X509* certificate, std::string& signature_al
                         signature_algorithm = ECDSA_SHA256;
                         returnedValue = true;
                     }
+                    else if (strncmp(ptr->data, "sha256WithRSAEncryption", ptr->length) == 0)
+                    {
+                        signature_algorithm = RSA_SHA256;
+                        returnedValue = true;
+                    }
+                    else if (strncmp(ptr->data, "sha1WithRSAEncryption", ptr->length) == 0)
+                    {
+                        signature_algorithm = RSA_SHA256;
+                        returnedValue = true;
+                    }
                 }
                 else
                     exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
@@ -646,7 +656,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         plugin_attributes.is_submessage_origin_authenticated = hasOriginAuth;
 
                         reader_attributes.is_submessage_protected =
-                            writer_attributes.is_submessage_protected = 
+                            writer_attributes.is_submessage_protected =
                             (topic_rule.metadata_protection_kind != ProtectionKind::NONE);
 
                         plugin_attributes.is_payload_encrypted =
