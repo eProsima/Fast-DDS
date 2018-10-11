@@ -133,7 +133,15 @@ class AESGCMGMAC_Transform : public CryptoTransform
 
     SecureDataHeader deserialize_SecureDataHeader(eprosima::fastcdr::Cdr& decoder);
 
+    /**
+     * Get information on the data between a Header and a Tag submessage.
+     * @param decoder Cdr decoding stream pointing to the first byte after the Header submessage
+     * @param body_length Outputs length of protected data
+     * @param body_align Outputs number of alignment bytes after protected data
+     * @return true when protected data is encrypted (i.e. it is a SEC_BODY submessage)
+     */
     bool predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length, uint32_t& body_align);
+
     bool deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
             eprosima::fastcdr::Cdr::state& body_state, SecureDataTag& tag, uint32_t body_length,
             const std::array<uint8_t, 4> transformation_kind,

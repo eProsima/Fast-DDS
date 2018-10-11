@@ -676,13 +676,12 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
-        {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
-        }
+    {
+        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
@@ -745,10 +744,11 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     }
 
     uint32_t length = plain_buffer.max_size - plain_buffer.pos;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind, 
-            session_key, initialization_vector,
-            &plain_buffer.buffer[plain_buffer.pos], length))
+    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag, 
+        is_encrypted ? body_length : body_length + 4,
+        sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind, 
+        session_key, initialization_vector,
+        &plain_buffer.buffer[plain_buffer.pos], length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
         return false;
@@ -1004,15 +1004,14 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
-        {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
-        }
+    {
+        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1073,9 +1072,10 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     }
 
     uint32_t length = plain_rtps_submessage.max_size - plain_rtps_submessage.pos;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
+    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag,
+        is_encrypted ? body_length : body_length + 4,
         keyMat->transformation_kind, session_key, initialization_vector,
-            &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
+        &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
         return false;
@@ -1184,15 +1184,14 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
-        {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
-        }
+    {
+        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1253,9 +1252,10 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     }
 
     uint32_t length = plain_rtps_submessage.max_size - plain_rtps_submessage.pos;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            keyMat->transformation_kind, session_key, initialization_vector,
-            &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
+    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag,
+        is_encrypted ? body_length : body_length + 4,
+        keyMat->transformation_kind, session_key, initialization_vector,
+        &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
         return false;
@@ -1332,15 +1332,14 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
-        {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
-        }
+    {
+        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1361,9 +1360,10 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     }
 
     uint32_t length = plain_payload.max_size;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_writer->Entity2RemoteKeyMaterial.at(0).transformation_kind, session_key, initialization_vector,
-            plain_payload.data, length))
+    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag,
+        is_encrypted ? body_length : body_length + 4,
+        sending_writer->Entity2RemoteKeyMaterial.at(0).transformation_kind, session_key, initialization_vector,
+        plain_payload.data, length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
         return false;
@@ -1406,34 +1406,18 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         eprosima::fastcdr::FastBuffer& output_buffer, octet* plain_buffer, uint32_t plain_buffer_len,
         SecureDataTag& tag)
 {
-#if __BIG_ENDIAN__
-    octet flags = 0x0;
-    serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
-#else
-    octet flags = BIT(0);
-    serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
-#endif
-
-    serializer << SecureBodySubmessage << flags;
-
-    // Store current state to serialize sequence length at the end of the function
-    eprosima::fastcdr::Cdr::state sequence_length_state = serializer.getState();
-
-    // Serialize dummy length
-    uint16_t length = 0;
-    serializer << length;
-
-    //Cypher the plain rtps message -> SecureDataBody
+    bool do_encryption = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
+        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM});
+    bool use_256_bits = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
+        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC});
 
     // AES_BLOCK_SIZE = 16
     int cipher_block_size = 0, actual_size = 0, final_size = 0;
-    char* output_buffer_raw = nullptr;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-            transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+    if (!use_256_bits)
     {
-        if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(session_key.data()),
-                    initialization_vector.data()))
+        if (!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(session_key.data()),
+            initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
@@ -1441,17 +1425,11 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_128_gcm());
-
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM})
-        {
-            output_buffer_raw = serializer.getCurrentPosition();
-        }
     }
-    else if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-            transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+    else
     {
-        if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(session_key.data()),
-                    initialization_vector.data()))
+        if (!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(session_key.data()),
+            initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
             EVP_CIPHER_CTX_free(e_ctx);
@@ -1459,62 +1437,107 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
-
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM})
-        {
-            output_buffer_raw = serializer.getCurrentPosition();
-        }
     }
 
-    if(output_buffer_raw != nullptr)
+    if (!do_encryption)
     {
+        // Auth only. SEC_BODY should not be created. Plain buffer should be copied instead.
+        if ((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
+            plain_buffer_len)
+        {
+            logError(SECURITY_CRYPTO, "Not enough memory to copy payload");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+        memcpy(serializer.getCurrentPosition(), plain_buffer, plain_buffer_len);
+        serializer.jump(plain_buffer_len);
+
+        if (!EVP_EncryptUpdate(e_ctx, nullptr, &actual_size, plain_buffer, static_cast<int>(plain_buffer_len)))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+
+        if (!EVP_EncryptFinal(e_ctx, nullptr, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+    }
+    else
+    {
+#if __BIG_ENDIAN__
+        octet flags = 0x0;
+        serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+#else
+        octet flags = BIT(0);
+        serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
+#endif
+
+        serializer << SecureBodySubmessage << flags;
+
+        // Store current state to serialize sequence length at the end of the function
+        eprosima::fastcdr::Cdr::state sequence_length_state = serializer.getState();
+
+        // Serialize dummy length
+        uint16_t length = 0;
+        serializer << length;
+
+        // Serialize dummy content length
+        uint32_t cnt_length = 0;
+        serializer << cnt_length;
+
+        //Cypher the plain rtps message -> SecureDataBody
+
+        unsigned char* output_buffer_raw = (unsigned char*)serializer.getCurrentPosition();
+
         // Check output_buffer contains enough memory to cypher.
         // - EVP_EncryptUpdate needs at maximum: plain_buffer_len + cipher_block_size - 1.
         // - EVP_EncryptFinal needs ad maximun cipher_block_size.
-        if((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
-                (plain_buffer_len + (2* cipher_block_size) - 1))
+        if ((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
+            (plain_buffer_len + (2 * cipher_block_size) - 1))
         {
             logError(SECURITY_CRYPTO, "Not enough memory to cipher payload");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
-    }
 
-    if(!EVP_EncryptUpdate(e_ctx, (unsigned char*)output_buffer_raw, &actual_size, plain_buffer,
-                static_cast<int>(plain_buffer_len)))
-    {
-        logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
-        EVP_CIPHER_CTX_free(e_ctx);
-        return false;
-    }
+        if (!EVP_EncryptUpdate(e_ctx, output_buffer_raw, &actual_size, plain_buffer,
+            static_cast<int>(plain_buffer_len)))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
 
-    if(!EVP_EncryptFinal(e_ctx, (unsigned char*)output_buffer_raw, &final_size))
-    {
-        logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
-        EVP_CIPHER_CTX_free(e_ctx);
-        return false;
-    }
+        if (!EVP_EncryptFinal(e_ctx, output_buffer_raw, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
 
-    if(output_buffer_raw != nullptr)
-    {
         serializer.jump(actual_size + final_size);
-    }
-    else
-    {
-        memcpy(serializer.getCurrentPosition(), plain_buffer, plain_buffer_len);
-        serializer.jump(plain_buffer_len);
+
+        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+
+        // Serialize body sequence length;
+        cnt_length = static_cast<uint32_t>(actual_size + final_size);
+        length = static_cast<uint16_t>(actual_size + final_size + sizeof(uint32_t));
+        serializer.setState(sequence_length_state);
+        serializer << length;
+
+        serializer.serialize(cnt_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+
+        serializer.setState(current_state);
+
     }
 
+    // Get commmon_mac
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, AES_BLOCK_SIZE, tag.common_mac.data());
     EVP_CIPHER_CTX_free(e_ctx);
-
-    eprosima::fastcdr::Cdr::state current_state = serializer.getState();
-
-    // Serialize body sequence length;
-    serializer.setState(sequence_length_state);
-    serializer << static_cast<uint16_t>(actual_size + final_size);
-
-    serializer.setState(current_state);
 
     // Align submessage to 4.
     size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
@@ -1747,12 +1770,15 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     eprosima::fastcdr::Cdr::state current_state = decoder.getState();
     decoder.setState(body_state);
 
+    bool do_encryption = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
+        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM});
+    bool use_256_bits = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
+        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC});
+
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
     int cipher_block_size = 0, actual_size = 0, final_size = 0;
-    octet* output_buffer = nullptr;
 
-    if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-            transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+    if(!use_256_bits)
     {
         if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
         {
@@ -1762,14 +1788,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_128_gcm());
-
-        if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM})
-        {
-            output_buffer = plain_buffer;
-        }
     }
-    if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-            transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+    else
     {
         if(!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
         {
@@ -1779,24 +1799,26 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
+    }
 
-        if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM})
+    uint32_t protected_len = body_length;
+    if (do_encryption)
+    {
+        decoder.deserialize(protected_len, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+
+        // Check plain_payload contains enough memory to cypher.
+        // - EVP_DecryptUpdate needs at maximum: body_length + cipher_block_size.
+        if (plain_buffer_len < (protected_len + cipher_block_size))
         {
-            output_buffer = plain_buffer;
+            logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
+            EVP_CIPHER_CTX_free(d_ctx);
+            return false;
         }
     }
 
-    // Check plain_payload contains enough memory to cypher.
-    // - EVP_DecryptUpdate needs at maximum: body_length + cipher_block_size.
-    if(output_buffer != nullptr && (plain_buffer_len < (body_length + cipher_block_size)))
-    {
-        logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
-        EVP_CIPHER_CTX_free(d_ctx);
-        return false;
-    }
-
+    octet* output_buffer = do_encryption ? plain_buffer : nullptr;
     unsigned char* input_buffer = (unsigned char*)decoder.getCurrentPosition();
-    if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, body_length))
+    if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, protected_len))
     {
         logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
@@ -1813,13 +1835,14 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     }
     EVP_CIPHER_CTX_free(d_ctx);
 
-    if (plain_buffer_len < actual_size + final_size)
+    uint32_t cnt_len = do_encryption ? static_cast<uint32_t>(actual_size + final_size) : body_length;
+    if (plain_buffer_len < cnt_len)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
         return false;
     }
 
-    plain_buffer_len = actual_size + final_size;
+    plain_buffer_len = cnt_len;
     if (output_buffer == nullptr)
     {
         memcpy(plain_buffer, input_buffer, plain_buffer_len);
@@ -1846,12 +1869,6 @@ bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr&
 
     decoder >> secure_submsg_id;
 
-    if(secure_submsg_id != SecureBodySubmessage)
-    {
-        logError(SECURITY_CRYPTO, "Expected SecureDataBody submsg id");
-        return false;
-    }
-
     decoder >> flags;
 
     if(flags & BIT(0))
@@ -1870,7 +1887,7 @@ bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr&
     body_align = static_cast<uint32_t>(decoder.alignment((decoder.getCurrentPosition() + body_length) -
                 decoder.getBufferPointer(), sizeof(int32_t)));
 
-    return true;
+    return (secure_submsg_id == SecureBodySubmessage);
 }
 
 bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& decoder, SecureDataTag& tag,
