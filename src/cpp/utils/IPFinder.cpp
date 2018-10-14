@@ -131,7 +131,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 
     if (getifaddrs(&ifaddr) == -1) {
         perror("getifaddrs");
-	return false;
+        return false;
     }
 
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
@@ -148,7 +148,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             if (s != 0) {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 freeifaddrs(ifaddr);
-		return false;
+                return false;
             }
             info_IP info;
             info.type = IP4;
@@ -166,7 +166,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             if (s != 0) {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 freeifaddrs(ifaddr);
-		return false;
+                return false;
             }
             struct sockaddr_in6 * so = (struct sockaddr_in6 *)ifa->ifa_addr;
             info_IP info;
