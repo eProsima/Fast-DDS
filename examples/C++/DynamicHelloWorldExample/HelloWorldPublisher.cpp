@@ -71,7 +71,6 @@ bool HelloWorldPublisher::init(bool dynamic)
     }
 
     ParticipantAttributes PParam;
-    PParam.rtps.use_IP6_to_send = true;
     PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
@@ -153,7 +152,7 @@ void HelloWorldPublisher::PartListener::onParticipantDiscovery(Participant*, Par
     }
     else if (info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
     {
-        std::cout << "Participant " << info.rtps.m_RTPSParticipantName << " removed" << std::endl;
+        std::cout << "Participant removed" << std::endl;
     }
     else if (info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
     {

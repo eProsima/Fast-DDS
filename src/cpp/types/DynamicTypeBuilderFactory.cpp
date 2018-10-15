@@ -568,7 +568,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateStringBuilder(uint32_t boun
     pDescriptor.mElementType = CreateType(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
 
-    pDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, false, false);
+    pDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, false, true);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
     AddBuilderToList(pNewTypeBuilder);
@@ -746,7 +746,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::CreateWstringBuilder(uint32_t bou
     pDescriptor.mElementType = CreateType(&pCharDescriptor);
     pDescriptor.mBound.push_back(bound);
 
-    pDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, true, false);
+    pDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, true, true);
 
     DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
     AddBuilderToList(pNewTypeBuilder);
@@ -1791,7 +1791,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::CreateStringType(uint32_t bound /*= M
         bound = MAX_STRING_LENGTH;
     }
     TypeDescriptor pStringDescriptor("", TK_STRING8);
-    pStringDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, false, false);
+    pStringDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, false, true);
     pStringDescriptor.mElementType = CreateChar8Type();
     pStringDescriptor.mBound.push_back(bound);
 
@@ -1807,8 +1807,8 @@ DynamicType_ptr DynamicTypeBuilderFactory::CreateWstringType(uint32_t bound /*= 
     }
 
     TypeDescriptor pStringDescriptor("", TK_STRING16);
-    pStringDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, true, false);
-    pStringDescriptor.mElementType = CreateChar8Type();
+    pStringDescriptor.mName = TypeNamesGenerator::getStringTypeName(bound, true, true);
+    pStringDescriptor.mElementType = CreateChar16Type();
     pStringDescriptor.mBound.push_back(bound);
 
     return new DynamicType(&pStringDescriptor);

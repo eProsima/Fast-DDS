@@ -127,7 +127,6 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode);
-    RTPS_DllAPI static XMLP_ret parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
 
 

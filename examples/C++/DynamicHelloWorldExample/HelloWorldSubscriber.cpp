@@ -140,7 +140,7 @@ void HelloWorldSubscriber::PartListener::onParticipantDiscovery(Participant*, Pa
     }
     else if (info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
     {
-        std::cout << "Participant " << info.rtps.m_RTPSParticipantName << " removed" << std::endl;
+        std::cout << "Participant removed" << std::endl;
     }
     else if (info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
     {
