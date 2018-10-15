@@ -1247,10 +1247,12 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
 
 bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle,
         const uint32_t domain_id, const ReaderProxyData& subscription_data,
-        SecurityException& exception)
+        bool& relay_only, SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
+
+    relay_only = false;
 
     if(rah.nil())
     {
@@ -1288,6 +1290,17 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
                 {
                     exception = _SecurityException_(subscription_data.topicName() +
                             std::string(" topic denied by deny rule."));
+                }
+
+                break;
+            }
+
+            if (is_topic_in_criterias(subscription_data.topicName(), rule.relays))
+            {
+                if (rule.allow)
+                {
+                    relay_only = true;
+                    returned_value = true;
                 }
 
                 break;

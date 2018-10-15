@@ -2345,13 +2345,14 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     // assert(access_plugin_ == nullptr || remote_permissions != nullptr);
     // assert(crypto_plugin_ == nullptr || remote_participant_crypto_handle != nullptr);
 
+    bool relay_only = false;
     bool returned_value = true;
     SecurityException exception;
 
     if(!is_builtin && access_plugin_ != nullptr && remote_permissions != nullptr)
     {
         if((returned_value = access_plugin_->check_remote_datareader(
-                        *remote_permissions, domain_id_, remote_reader_data, exception)) == false)
+                        *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
         {
             logError(SECURITY, "Error checking create remote reader " << remote_reader_data.guid() << " (" << exception.what() << ")");
         }
@@ -2369,7 +2370,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
             {
                 DatareaderCryptoHandle* remote_reader_handle = crypto_plugin_->cryptokeyfactory()->register_matched_remote_datareader(
                         *local_writer->second.writer_handle, *remote_participant_crypto_handle,
-                        *shared_secret_handle, false, exception);
+                        *shared_secret_handle, relay_only, exception);
 
                 if(remote_reader_handle != nullptr && !remote_reader_handle->nil())
                 {

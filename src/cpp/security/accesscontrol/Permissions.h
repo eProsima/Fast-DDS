@@ -81,7 +81,7 @@ class Permissions : public AccessControl
 
         bool check_remote_datareader(const PermissionsHandle& remote_handle,
                 const uint32_t domain_id, const ReaderProxyData& subscription_data,
-                SecurityException& exception) override;
+                bool& relay_only, SecurityException& exception) override;
 
         bool get_participant_sec_attributes(const PermissionsHandle& local_handle,
                 ParticipantSecurityAttributes& attributes, SecurityException& exception) override;
