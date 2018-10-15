@@ -21,7 +21,6 @@
 #define DOMAIN_H_
 
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima{
 namespace fastrtps{

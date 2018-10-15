@@ -14,54 +14,46 @@
 
 package com.eprosima.fastrtps;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.text.ParseException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.HashMap;
-
-import javax.swing.plaf.basic.BasicFormattedTextFieldUI;
-
-import org.antlr.stringtemplate.CommonGroupLoader;
-import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateErrorListener;
-import org.antlr.stringtemplate.StringTemplateGroup;
-import org.antlr.stringtemplate.StringTemplateGroupLoader;
-import org.antlr.stringtemplate.language.DefaultTemplateLexer;
-import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-
+import com.eprosima.fastcdr.idl.generator.TypesGenerator;
 import com.eprosima.fastrtps.exceptions.BadArgumentException;
 import com.eprosima.fastrtps.idl.grammar.Context;
 import com.eprosima.fastrtps.solution.Project;
 import com.eprosima.fastrtps.solution.Solution;
 import com.eprosima.fastrtps.util.Utils;
 import com.eprosima.fastrtps.util.VSConfiguration;
+import com.eprosima.idl.generator.manager.TemplateExtension;
 import com.eprosima.idl.generator.manager.TemplateGroup;
 import com.eprosima.idl.generator.manager.TemplateManager;
-import com.eprosima.idl.generator.manager.TemplateExtension;
 import com.eprosima.idl.parser.grammar.IDLLexer;
 import com.eprosima.idl.parser.grammar.IDLParser;
-import com.eprosima.idl.parser.tree.Interface;
-import com.eprosima.idl.parser.tree.Specification;
 import com.eprosima.idl.parser.tree.AnnotationDeclaration;
 import com.eprosima.idl.parser.tree.AnnotationMember;
+import com.eprosima.idl.parser.tree.Specification;
+import com.eprosima.idl.parser.typecode.Kind;
 import com.eprosima.idl.parser.typecode.PrimitiveTypeCode;
 import com.eprosima.idl.parser.typecode.TypeCode;
 import com.eprosima.idl.util.Util;
 import com.eprosima.log.ColorMessage;
-import com.eprosima.fastcdr.idl.generator.TypesGenerator;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import org.antlr.stringtemplate.StringTemplate;
+import org.antlr.stringtemplate.StringTemplateErrorListener;
+import org.antlr.stringtemplate.StringTemplateGroup;
+import org.antlr.stringtemplate.language.DefaultTemplateLexer;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
+
+
 
 // TODO: Implement Solution & Project in com.eprosima.fastrtps.solution
 
@@ -491,11 +483,11 @@ public class fastrtpsgen {
 
             // Create default @Key annotation.
             AnnotationDeclaration keyann = ctx.createAnnotationDeclaration("Key", null);
-            keyann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN), "true"));
+            keyann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(Kind.KIND_BOOLEAN), "true"));
 
             // Create default @Topic annotation.
             AnnotationDeclaration topicann = ctx.createAnnotationDeclaration("Topic", null);
-            topicann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(TypeCode.KIND_BOOLEAN), "true"));
+            topicann.addMember(new AnnotationMember("value", new PrimitiveTypeCode(Kind.KIND_BOOLEAN), "true"));
 
             // Create template manager
             TemplateManager tmanager = new TemplateManager("FastCdrCommon:eprosima:Common");
