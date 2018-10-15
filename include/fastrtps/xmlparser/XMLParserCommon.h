@@ -53,6 +53,7 @@ extern const char* RECEIVE_BUFFER_SIZE;
 extern const char* SEND_BUFFER_SIZE;
 extern const char* TTL;
 extern const char* WHITE_LIST;
+extern const char* MAX_MESSAGE_SIZE;
 extern const char* KEEP_ALIVE_FREQUENCY;
 extern const char* KEEP_ALIVE_TIMEOUT;
 extern const char* MAX_LOGICAL_PORT;
@@ -221,6 +222,8 @@ extern const char* STATIC;
 extern const char* PUBWRITER_SUBREADER;
 extern const char* PUBREADER_SUBWRITER;
 extern const char* STATIC_ENDPOINT_XML;
+extern const char* READER_HIST_MEM_POLICY;
+extern const char* WRITER_HIST_MEM_POLICY;
 extern const char* ACCESS_SCOPE;
 
 // Endpoint parser

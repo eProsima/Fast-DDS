@@ -38,6 +38,8 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         <xs:element name="metatrafficMulticastLocatorList" type="locatorListType"/>
         <xs:element name="initialPeersList" type="locatorListType"/>
         <xs:element name="staticEndpointXMLFilename" type="stringType"/>
+        <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType"/>
+        <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType"/>
       </xs:all>
     </xs:complexType>*/
 
@@ -144,6 +146,19 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident)) return XMLP_ret::XML_ERROR;
         builtin.setStaticEndpointXMLFilename(s.c_str());
     }
+    // readerhistoryMemoryPolicy
+    if (nullptr != (p_aux0 = elem->FirstChildElement(READER_HIST_MEM_POLICY)))
+    {
+        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, builtin.readerHistoryMemoryPolicy, ident))
+            return XMLP_ret::XML_ERROR;
+    }
+    // writerhistoryMemoryPolicy
+    if (nullptr != (p_aux0 = elem->FirstChildElement(WRITER_HIST_MEM_POLICY)))
+    {
+        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, builtin.writerHistoryMemoryPolicy, ident))
+            return XMLP_ret::XML_ERROR;
+    }
+
 
     return XMLP_ret::XML_OK;
 
@@ -1310,28 +1325,28 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
           <xs:all minOccurs="0">
             <xs:element name="kind" type="locatorKindType"/>
             <xs:choice>
-            <xs:element name="port" type="uint32Type"/>
-            <xs:element name="ports_" type="uint32Type">
-            <xs:complexType>
-            <xs:all minOccurs="0">
-            <xs:element name="physical_port" type="uint16Type"/>
-            <xs:element name="logical_port" type="uint16Type"/>
-            </xs:all>
-            </xs:complexType>
-            </xs:element>
+                <xs:element name="port" type="uint32Type"/>
+                <xs:element name="ports_" type="uint32Type">
+                <xs:complexType>
+                    <xs:all minOccurs="0">
+                        <xs:element name="physical_port" type="uint16Type"/>
+                        <xs:element name="logical_port" type="uint16Type"/>
+                    </xs:all>
+                </xs:complexType>
+                </xs:element>
             </xs:choice>
             <xs:choice>
-            <xs:element name="address" type="stringType"/> <!-- octet address[4] -->
-            <xs:element name="ipv6_address" type="stringType"/> <!-- octet address[16] -->
-            <xs:element name="addresses_" type="stringType">
-            <xs:complexType>
-            <xs:all minOccurs="0">
-            <xs:element name="unique_lan_id" type="stringType"/><!-- octet address[8] -->
-            <xs:element name="wan_address" type="stringType"/><!-- octet address[4] -->
-            <xs:element name="ip_address" type="stringType"/><!-- octet address[4] -->
-            </xs:all>
-            </xs:complexType>
-            </xs:element>
+                <xs:element name="address" type="stringType"/> <!-- octet address[4] -->
+                <xs:element name="ipv6_address" type="stringType"/> <!-- octet address[16] -->
+                <xs:element name="addresses_" type="stringType">
+                <xs:complexType>
+                    <xs:all minOccurs="0">
+                        <xs:element name="unique_lan_id" type="stringType"/><!-- octet address[8] -->
+                        <xs:element name="wan_address" type="stringType"/><!-- octet address[4] -->
+                        <xs:element name="ip_address" type="stringType"/><!-- octet address[4] -->
+                    </xs:all>
+                </xs:complexType>
+                </xs:element>
             </xs:choice>
           </xs:all>
         </xs:complexType>*/

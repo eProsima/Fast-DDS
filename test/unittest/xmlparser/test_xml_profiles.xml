@@ -75,6 +75,8 @@
                         <port>21120</port>
                     </locator>
                 </initialPeersList>
+                <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
+                <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
             </builtin>
             <port>
                 <portBase>12</portBase>
