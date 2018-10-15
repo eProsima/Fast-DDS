@@ -381,8 +381,6 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
     IPLocator::setIPv4(locator, 192, 168, 1, 1);
     locator.port = 1979;
-    //EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
-    //EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
     EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
@@ -412,6 +410,8 @@ TEST_F(XMLParserTests, Data)
     IPLocator::setIPv4(locator, 239, 255, 0, 1);
     locator.port = 21120;
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
     EXPECT_EQ(port.participantIDGain, 56);
@@ -467,8 +467,6 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
     IPLocator::setIPv4(locator, 192, 168, 1, 1);
     locator.port = 1979;
-    //EXPECT_EQ(*rtps_atts.defaultOutLocatorList.begin(), locator);
-    //EXPECT_EQ(rtps_atts.defaultSendPort, 80);
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
     EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
@@ -498,6 +496,8 @@ TEST_F(XMLParserTests, DataBuffer)
     IPLocator::setIPv4(locator, 239, 255, 0, 1);
     locator.port = 21120;
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
     EXPECT_EQ(port.participantIDGain, 56);

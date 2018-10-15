@@ -196,6 +196,8 @@
         <xs:element name="metatrafficMulticastLocatorList" type="locatorListType"/>
         <xs:element name="initialPeersList" type="locatorListType"/>
         <xs:element name="staticEndpointXMLFilename" type="stringType"/>
+        <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType"/>
+        <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType"/>
       </xs:all>
     </xs:complexType>
     
@@ -472,18 +474,14 @@
       <xs:all minOccurs="0">
         <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
         <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
-        <xs:element name="defaultOutLocatorList" type="locatorListType"/>
-        <xs:element name="defaultSendPort" type="uint32Type"/>
         <xs:element name="sendSocketBufferSize" type="uint32Type"/>
         <xs:element name="listenSocketBufferSize" type="uint32Type"/>
         <xs:element name="builtin" type="builtinAttributesType"/>
         <xs:element name="port" type="portType"/>
         <xs:element name="userData" type="octetVectorType"/>
         <xs:element name="participantID" type="int32Type"/>
-        <xs:element name="use_IP4_to_send" type="boolType"/>
-        <xs:element name="use_IP6_to_send" type="boolType"/>
         <xs:element name="throughputController" type="throughputControllerType"/>
-        <!-- <xs:element name="userTransports" type="XXX"/> -->
+        <xs:element name="userTransports" type="stringListType"/>
         <xs:element name="useBuiltinTransports" type="boolType"/>
         <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
         <xs:element name="name" type="stringType"/>
@@ -540,6 +538,7 @@
         <xs:element name="sendBufferSize" type="int32Type"/>
         <xs:element name="receiveBufferSize" type="int32Type"/>
         <xs:element name="TTL" type="uint8Type"/>
+        <xs:element name="maxMessageSize" type="uint32Type"/>
         <xs:element name="interfaceWhiteList" type="stringListType"/>
         <xs:sequence>
           <xs:element name="id" type="stringType"/>
