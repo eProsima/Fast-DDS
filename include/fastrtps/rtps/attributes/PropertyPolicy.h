@@ -54,6 +54,12 @@ class PropertyPolicy
             return *this;
         }
 
+        RTPS_DllAPI bool operator==(const PropertyPolicy& b) const
+        {
+            return (this->properties_ == b.properties_) &&
+                   (this->binary_properties_ == b.binary_properties_);
+        }
+
         RTPS_DllAPI const PropertySeq& properties() const
         {
             return properties_;

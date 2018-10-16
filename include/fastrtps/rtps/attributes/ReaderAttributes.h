@@ -34,17 +34,25 @@ namespace rtps{
  */
 class ReaderTimes
 {
-    public:
-        ReaderTimes()
-        {
-            initialAcknackDelay.fraction = 200*1000*1000;
-            heartbeatResponseDelay.fraction = 20*1000*1000;
-        };
-        virtual ~ReaderTimes(){};
-        //!Initial AckNack delay. Default value ~45ms.
-        Duration_t initialAcknackDelay;
-        //!Delay to be applied when a hearbeat message is received, default value ~4.5ms.
-        Duration_t heartbeatResponseDelay;
+public:
+    ReaderTimes()
+    {
+        initialAcknackDelay.fraction = 200*1000*1000;
+        heartbeatResponseDelay.fraction = 20*1000*1000;
+    }
+
+    virtual ~ReaderTimes() {}
+
+    bool operator==(const ReaderTimes& b) const
+    {
+        return (this->initialAcknackDelay == b.initialAcknackDelay)  &&
+               (this->heartbeatResponseDelay == b.heartbeatResponseDelay);
+    }
+
+    //!Initial AckNack delay. Default value ~45ms.
+    Duration_t initialAcknackDelay;
+    //!Delay to be applied when a hearbeat message is received, default value ~4.5ms.
+    Duration_t heartbeatResponseDelay;
 };
 
 /**
