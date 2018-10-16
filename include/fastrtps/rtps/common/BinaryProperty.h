@@ -67,6 +67,12 @@ class BinaryProperty
             return *this;
         }
 
+        bool operator==(const BinaryProperty& b) const
+        {
+            return (this->name_ == b.name_) &&
+                   (this->value_ == b.value_);
+        }
+
         void name(const std::string& name)
         {
             name_ = name;

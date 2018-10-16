@@ -67,6 +67,18 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                         root->addChild(std::move(profiles_node));
                     }
                 }
+                else if (strcmp(tag, PARTICIPANT) == 0)
+                {
+                    ret = parseXMLParticipantProf(node, *root);
+                }
+                else if (strcmp(tag, PUBLISHER) == 0 || strcmp(tag, DATA_WRITER) == 0)
+                {
+                    ret = parseXMLPublisherProf(node, *root);
+                }
+                else if (strcmp(tag, SUBSCRIBER) == 0 || strcmp(tag, DATA_READER) == 0)
+                {
+                    ret = parseXMLSubscriberProf(node, *root);
+                }
                 else if (strcmp(tag, TOPIC) == 0)
                 {
                     ret = parseXMLTopicData(node, *root);
@@ -511,11 +523,11 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 parseXMLParticipantProf(p_profile, profilesNode);
             }
-            else if (strcmp(tag, PUBLISHER) == 0)
+            else if (strcmp(tag, PUBLISHER) == 0 || strcmp(tag, DATA_WRITER) == 0)
             {
                 parseXMLPublisherProf(p_profile, profilesNode);
             }
-            else if (strcmp(tag, SUBSCRIBER) == 0)
+            else if (strcmp(tag, SUBSCRIBER) == 0 || strcmp(tag, DATA_READER) == 0)
             {
                 parseXMLSubscriberProf(p_profile, profilesNode);
             }
@@ -645,12 +657,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         return XMLP_ret::XML_ERROR;
     }
 
-    if (nullptr == p_profile->Attribute(PROFILE_NAME))
-    {
-        logError(XMLPARSER, "Not found '" << PROFILE_NAME << "' attribute");
-        return XMLP_ret::XML_ERROR;
-    }
-
     addAllAttributes(p_profile, participant_node);
 
     tinyxml2::XMLElement* p_element = p_profile->FirstChildElement(RTPS);
@@ -773,11 +779,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
         logError(XMLPARSER, "Bad parameters!");
         return XMLP_ret::XML_ERROR;
     }
-    if (nullptr == p_profile->Attribute(PROFILE_NAME))
-    {
-        logError(XMLPARSER, "Not found '" << PROFILE_NAME << "' attribute");
-        return XMLP_ret::XML_ERROR;
-    }
 
     addAllAttributes(p_profile, publisher_node);
 
@@ -879,12 +880,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
     if (nullptr == p_profile)
     {
         logError(XMLPARSER, "Bad parameters!");
-        return XMLP_ret::XML_ERROR;
-    }
-
-    if (nullptr == p_profile->Attribute(PROFILE_NAME))
-    {
-        logError(XMLPARSER, "Not found '" << PROFILE_NAME << "' attribute");
         return XMLP_ret::XML_ERROR;
     }
 

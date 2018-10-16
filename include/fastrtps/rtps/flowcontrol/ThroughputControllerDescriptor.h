@@ -36,6 +36,12 @@ struct ThroughputControllerDescriptor
 
     RTPS_DllAPI ThroughputControllerDescriptor();
     RTPS_DllAPI ThroughputControllerDescriptor(uint32_t size, uint32_t time);
+
+    bool operator==(const ThroughputControllerDescriptor& b) const
+    {
+        return (this->bytesPerPeriod == b.bytesPerPeriod) &&
+               (this->periodMillisecs == b.periodMillisecs);
+    }
 };
 
 } // namespace rtps

@@ -62,6 +62,18 @@ class SimpleEDPAttributes
         {
 
         }
+
+        bool operator==(const SimpleEDPAttributes& b) const
+        {
+            return (this->use_PublicationWriterANDSubscriptionReader == b.use_PublicationWriterANDSubscriptionReader) &&
+#if HAVE_SECURITY
+                   (this->enable_builtin_secure_publications_writer_and_subscriptions_reader ==
+                    b.enable_builtin_secure_publications_writer_and_subscriptions_reader) &&
+                   (this->enable_builtin_secure_subscriptions_writer_and_publications_reader ==
+                    b.enable_builtin_secure_subscriptions_writer_and_publications_reader) &&
+#endif
+                   (this->use_PublicationReaderANDSubscriptionWriter == b.use_PublicationReaderANDSubscriptionWriter);
+        }
 };
 
 /**
@@ -127,18 +139,37 @@ class BuiltinAttributes{
             use_WriterLivelinessProtocol = true;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
-        };
-        virtual ~BuiltinAttributes(){};
+        }
+        virtual ~BuiltinAttributes() {}
+
+        bool operator==(const BuiltinAttributes& b) const
+        {
+            return (this->use_SIMPLE_RTPSParticipantDiscoveryProtocol == b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
+                   (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
+                   (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
+                   (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
+                   (this->domainId == b.domainId) &&
+                   (this->leaseDuration == b.leaseDuration) &&
+                   (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
+                   (this->m_simpleEDP == b.m_simpleEDP) &&
+                   (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
+                   (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
+                   (this->initialPeersList == b.initialPeersList) &&
+                   (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
+                   (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
+                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename);
+        }
+
         /**
          * Get the static endpoint XML filename
          * @return Static endpoint XML filename
          */
-        const char* getStaticEndpointXMLFilename() const { return m_staticEndpointXMLFilename.c_str(); };
+        const char* getStaticEndpointXMLFilename() const { return m_staticEndpointXMLFilename.c_str(); }
         /**
          * Set the static endpoint XML filename
          * @param str Static endpoint XML filename
          */
-        void setStaticEndpointXMLFilename(const char* str){ m_staticEndpointXMLFilename = std::string(str); };
+        void setStaticEndpointXMLFilename(const char* str){ m_staticEndpointXMLFilename = std::string(str); }
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
         std::string m_staticEndpointXMLFilename;
@@ -163,7 +194,23 @@ class RTPSParticipantAttributes
             useBuiltinTransports = true;
         }
 
-        virtual ~RTPSParticipantAttributes(){};
+        virtual ~RTPSParticipantAttributes() {}
+
+        bool operator==(const RTPSParticipantAttributes& b) const
+        {
+            return (this->name == b.name) &&
+                   (this->defaultUnicastLocatorList == b.defaultUnicastLocatorList) &&
+                   (this->defaultMulticastLocatorList == b.defaultMulticastLocatorList) &&
+                   (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
+                   (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
+                   (this->builtin == b.builtin) &&
+                   (this->port == b.port) &&
+                   (this->userData == b.userData) &&
+                   (this->participantID == b.participantID) &&
+                   (this->throughputController == b.throughputController) &&
+                   (this->useBuiltinTransports == b.useBuiltinTransports) &&
+                   (this->properties == b.properties);
+        }
 
         /**
          * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
