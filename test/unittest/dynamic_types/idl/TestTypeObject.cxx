@@ -1216,7 +1216,7 @@ const TypeObject* GetMinimalBasicStructObject()
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
     mst_my_string.common().member_flags().IS_DEFAULT(false);
-    mst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, false));
+    mst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
 
 
     MD5 my_string_hash("my_string");
@@ -1235,7 +1235,7 @@ const TypeObject* GetMinimalBasicStructObject()
     mst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_wstring.common().member_flags().IS_KEY(false);
     mst_my_wstring.common().member_flags().IS_DEFAULT(false);
-    mst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, true));
+    mst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, true));
 
 
     MD5 my_wstring_hash("my_wstring");
@@ -1605,7 +1605,7 @@ const TypeObject* GetCompleteBasicStructObject()
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
     cst_my_string.common().member_flags().IS_DEFAULT(false);
-    cst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, false));
+    cst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
 
 
     cst_my_string.detail().name("my_string");
@@ -1622,7 +1622,7 @@ const TypeObject* GetCompleteBasicStructObject()
     cst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_wstring.common().member_flags().IS_KEY(false);
     cst_my_wstring.common().member_flags().IS_DEFAULT(false);
-    cst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, true));
+    cst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, true));
 
 
     cst_my_wstring.detail().name("my_wstring");
@@ -2443,7 +2443,7 @@ const TypeObject* GetMinimalMySequenceLongObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifier(TypeNamesGenerator::getSequenceTypeName("int32_t", 255), false);
+    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifier(TypeNamesGenerator::getSequenceTypeName("int32_t", 100), false);
 
 
     if (relatedType != nullptr)
@@ -2480,7 +2480,7 @@ const TypeObject* GetMinimalMySequenceLongObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 255));
+    TypeObjectFactory::GetInstance()->AddAlias("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 100));
 
     TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", &identifier, type_object);
     delete type_object;
@@ -2522,7 +2522,7 @@ const TypeObject* GetCompleteMySequenceLongObject()
     //type_object->complete().alias_type().body().common().ann_custom()
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(TypeNamesGenerator::getSequenceTypeName("int32_t", 255));
+    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(TypeNamesGenerator::getSequenceTypeName("int32_t", 100));
 
 
     if (relatedType != nullptr)
@@ -2559,7 +2559,7 @@ const TypeObject* GetCompleteMySequenceLongObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 255));
+    TypeObjectFactory::GetInstance()->AddAlias("MySequenceLong", TypeNamesGenerator::getSequenceTypeName("int32_t", 100));
 
     TypeObjectFactory::GetInstance()->AddTypeObject("MySequenceLong", &identifier, type_object);
     delete type_object;
@@ -2716,7 +2716,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_sequence_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_struct.common().member_flags().IS_KEY(false);
     mst_my_sequence_struct.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 255, false));
+    mst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 100, false));
 
 
     MD5 my_sequence_struct_hash("my_sequence_struct");
@@ -2828,7 +2828,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_map_long_seq_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_KEY(false);
     mst_my_map_long_seq_octet.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 255), 255), 100, false));
+    mst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 100), 100), 100, false));
 
 
     MD5 my_map_long_seq_octet_hash("my_map_long_seq_octet");
@@ -3172,7 +3172,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_sequence_struct.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_struct.common().member_flags().IS_KEY(false);
     cst_my_sequence_struct.common().member_flags().IS_DEFAULT(false);
-    cst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 255, true));
+    cst_my_sequence_struct.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("BasicStruct", 100, true));
 
 
     cst_my_sequence_struct.detail().name("my_sequence_struct");
@@ -3272,7 +3272,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_map_long_seq_octet.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_long_seq_octet.common().member_flags().IS_KEY(false);
     cst_my_map_long_seq_octet.common().member_flags().IS_DEFAULT(false);
-    cst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 255), 255), 100, true));
+    cst_my_map_long_seq_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getSequenceTypeName(TypeNamesGenerator::getSequenceTypeName("uint8_t", 100), 100), 100, true));
 
 
     cst_my_map_long_seq_octet.detail().name("my_map_long_seq_octet");
@@ -3803,7 +3803,7 @@ const TypeObject* GetMinimalMyUnion2Object()
     mst_imString.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_imString.common().member_flags().IS_KEY(false);
     mst_imString.common().member_flags().IS_DEFAULT(false);
-    mst_imString.common().type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, false));
+    mst_imString.common().type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
 
 
     mst_imString.common().label_seq().emplace_back(B);
@@ -3938,7 +3938,7 @@ const TypeObject* GetCompleteMyUnion2Object()
     cst_imString.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_imString.common().member_flags().IS_KEY(false);
     cst_imString.common().member_flags().IS_DEFAULT(false);
-    cst_imString.common().type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(100, false));
+    cst_imString.common().type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
 
 
     cst_imString.common().label_seq().emplace_back(B);

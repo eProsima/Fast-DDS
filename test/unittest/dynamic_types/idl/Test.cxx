@@ -198,9 +198,9 @@ size_t BasicStruct::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 100 + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (100) * 4; // 32 bits
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (255) * 4; // 32 bits
 
 
     return current_alignment - initial_alignment;
@@ -514,7 +514,7 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    for(size_t a = 0; a < 255; ++a)
+    for(size_t a = 0; a < 100; ++a)
     {
         current_alignment += BasicStruct::getMaxCdrSerializedSize(current_alignment);}
 
@@ -557,11 +557,11 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-        for(size_t b = 0; b < 255; ++b)
+        for(size_t b = 0; b < 100; ++b)
         {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-            current_alignment += (255 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
         }
@@ -622,7 +622,7 @@ size_t ComplexStruct::getMaxCdrSerializedSize(size_t current_alignment)
     {
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-        current_alignment += (255 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+        current_alignment += (100 * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     }
@@ -1555,7 +1555,7 @@ size_t MyUnion2::getMaxCdrSerializedSize(size_t current_alignment)
         
         reset_alignment = current_alignment;
 
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + 100 + 1;
+        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + 255 + 1;
 
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
