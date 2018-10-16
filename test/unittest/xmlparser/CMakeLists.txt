@@ -24,6 +24,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
 
+        include_directories(${ASIO_INCLUDE_DIR})
+        
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
             COPYONLY)
@@ -71,6 +73,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${TINYXML2_LIBRARY}
                 )
         endif()
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLProfileParserTests ${PRIVACY}
+                iphlpapi Shlwapi
+                )
+        endif()        
         add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
 
 
@@ -113,6 +120,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${TINYXML2_LIBRARY}
                 )
         endif()
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(XMLParserTests ${PRIVACY}
+                iphlpapi Shlwapi
+                )
+        endif()        
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
     endif()
 endif()
