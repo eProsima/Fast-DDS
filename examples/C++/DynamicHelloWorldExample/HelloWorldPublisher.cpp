@@ -18,7 +18,6 @@
  */
 
 #include "HelloWorldPublisher.h"
-#include "HelloWorldTypeObject.h"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
@@ -39,73 +38,42 @@ HelloWorldPublisher::HelloWorldPublisher()
     : mp_participant(nullptr)
     , mp_publisher(nullptr)
     , m_DynType(nullptr)
-    , m_dynamic(false)
 {
-    m_Hello = nullptr;
 }
 
-bool HelloWorldPublisher::init(bool dynamic)
+bool HelloWorldPublisher::init()
 {
-    m_dynamic = dynamic;
-    if (dynamic)
-    {
-        // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+    // Create basic builders
+    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
 
-        // Add members to the struct.
-        struct_type_builder->AddMember(0, "index", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-        struct_type_builder->AddMember(1, "message", DynamicTypeBuilderFactory::GetInstance()->CreateStringType());
-        struct_type_builder->SetName("HelloWorld");
+    // Add members to the struct.
+    struct_type_builder->AddMember(0, "index", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+    struct_type_builder->AddMember(1, "message", DynamicTypeBuilderFactory::GetInstance()->CreateStringType());
+    struct_type_builder->SetName("HelloWorld");
 
-        DynamicType_ptr dynType = struct_type_builder->Build();
-        m_DynType.SetDynamicType(dynType);
-        m_DynHello = DynamicDataFactory::GetInstance()->CreateData(dynType);
-        m_DynHello->SetUint32Value(0, 0);
-        m_DynHello->SetStringValue("HelloWorld", 1);
-    }
-    else
-    {
-        m_Hello = new HelloWorld;
-        m_Hello->index(0);
-        m_Hello->message("HelloWorld");
-    }
+    DynamicType_ptr dynType = struct_type_builder->Build();
+    m_DynType.SetDynamicType(dynType);
+    m_DynHello = DynamicDataFactory::GetInstance()->CreateData(dynType);
+    m_DynHello->SetUint32Value(0, 0);
+    m_DynHello->SetStringValue("HelloWorld", 1);
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 5;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("DynHelloWorld_pub");
     mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
 
     if(mp_participant==nullptr)
         return false;
-    //REGISTER THE TYPE
 
-    if (m_dynamic)
-    {
-        Domain::registerDynamicType(mp_participant, &m_DynType);
-    }
-    else
-    {
-        Domain::registerType(mp_participant, &m_type);
-    }
+    //REGISTER THE TYPE
+    Domain::registerDynamicType(mp_participant, &m_DynType);
 
     //CREATE THE PUBLISHER
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "DynamicHelloWorldTopic";
+    Wparam.topic.topicName = "HelloWorldTopic";
     Wparam.topic.topicDiscoveryKind = MINIMAL;
-    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 30;
-    Wparam.topic.resourceLimitsQos.max_samples = 50;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
-    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;
@@ -118,13 +86,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 {
     Domain::removeParticipant(mp_participant);
 
-    // TODO Auto-generated destructor stub
-    if (m_dynamic)
-    {
-        DynamicDataFactory::GetInstance()->DeleteData(m_DynHello);
-    }
-
-    delete m_Hello;
+    DynamicDataFactory::GetInstance()->DeleteData(m_DynHello);
 
     Domain::stopAll();
 }
@@ -162,53 +124,21 @@ void HelloWorldPublisher::PartListener::onParticipantDiscovery(Participant*, Par
 
 void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
 {
-    if (samples == 0)
-    {
-        while(!stop)
-        {
-            if(publish(false))
-            {
-                if (m_dynamic)
-                {
-                    std::string message;
-                    m_DynHello->GetStringValue(message, 1);
-                    uint32_t index;
-                    m_DynHello->GetUint32Value(index, 0);
+    uint32_t i = 0;
 
-                    std::cout << "Message: "<<message<< " with index: "<<index<< " SENT"<<std::endl;
-                }
-                else
-                {
-                    std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
-                }
-            }
-            eClock::my_sleep(sleep);
-        }
-    }
-    else
+    while(!stop && (i < samples || samples == 0))
     {
-        for(uint32_t i = 0;i<samples;++i)
+        if(publish(samples != 0))
         {
-            if(!publish())
-                --i;
-            else
-            {
-                if (m_dynamic)
-                {
-                    std::string message;
-                    m_DynHello->GetStringValue(message, 1);
-                    uint32_t index;
-                    m_DynHello->GetUint32Value(index, 0);
+            std::string message;
+            m_DynHello->GetStringValue(message, 1);
+            uint32_t index;
+            m_DynHello->GetUint32Value(index, 0);
 
-                    std::cout << "Message: "<<message<< " with index: "<<index<< " SENT"<<std::endl;
-                }
-                else
-                {
-                    std::cout << "Message: "<<m_Hello->message()<< " with index: "<< m_Hello->index()<< " SENT"<<std::endl;
-                }
-            }
-            eClock::my_sleep(sleep);
+            std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
+            ++i;
         }
+        eClock::my_sleep(sleep);
     }
 }
 
@@ -233,18 +163,10 @@ bool HelloWorldPublisher::publish(bool waitForListener)
 {
     if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
-        if (m_dynamic)
-        {
-            uint32_t index;
-            m_DynHello->GetUint32Value(index, 0);
-            m_DynHello->SetUint32Value(index+1, 0);
-            mp_publisher->write((void*)m_DynHello);
-        }
-        else
-        {
-            m_Hello->index(m_Hello->index()+1);
-            mp_publisher->write((void*)m_Hello);
-        }
+        uint32_t index;
+        m_DynHello->GetUint32Value(index, 0);
+        m_DynHello->SetUint32Value(index+1, 0);
+        mp_publisher->write((void*)m_DynHello);
         return true;
     }
     return false;

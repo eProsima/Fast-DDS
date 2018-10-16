@@ -32,14 +32,12 @@ using namespace rtps;
 int type = 1;
 int count = 10;
 long sleep = 100;
-bool dynamic = true;
 
 void usage()
 {
     std::cout << "USAGE:" << std::endl;
-    std::cout << "DynamicHelloWorld [role] [static] [-c count] [-s sleep]" << std::endl;
+    std::cout << "DynamicHelloWorld [role] [-c count] [-s sleep]" << std::endl;
     std::cout << "role: Can be 'publisher' (default) or 'subscriber'." << std::endl;
-    std::cout << "static: If defined, will register the type statically usign the IDL definition." << std::endl;
     std::cout << "count: Number of samples sent by a publisher. Without effect on subcribers." << std::endl;
     std::cout << "sleep: Time between samples sent by a publisher in millisecond. Without effect on subcribers." << std::endl;
 }
@@ -79,10 +77,6 @@ bool parseArgs(int argc, char** argv)
                     return false;
                 }
             }
-            else if(strcmp(argv[i],"static")==0)
-            {
-                dynamic = false;
-            }
             else if(strcmp(argv[i],"-c")==0)
             {
                 if (argc <= i+1)
@@ -111,31 +105,6 @@ bool parseArgs(int argc, char** argv)
         return false;
     }
 
-/*
-    if(argc > 1)
-    {
-        if(strcmp(argv[1],"publisher")==0)
-        {
-            type = 1;
-            if (argc >= 3)
-            {
-                count = atoi(argv[2]);
-                if (argc == 4)
-                {
-                    sleep = atoi(argv[3]);
-                }
-            }
-        }
-        else if(strcmp(argv[1],"subscriber")==0)
-            type = 2;
-    }
-    else
-    {
-        std::cout << "publisher OR subscriber argument needed" << std::endl;
-        Log::Reset();
-        return false;
-    }
-*/
     return true;
 }
 
@@ -159,7 +128,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if(mypub.init(dynamic))
+                if(mypub.init())
                 {
                     mypub.run(count, sleep);
                 }
@@ -168,7 +137,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if(mysub.init(dynamic))
+                if(mysub.init())
                 {
                     mysub.run();
                 }

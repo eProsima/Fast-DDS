@@ -20,8 +20,6 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
-#include "HelloWorldPubSubTypes.h"
-
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
@@ -31,14 +29,12 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 
 
-#include "HelloWorld.h"
-
 class HelloWorldPublisher {
 public:
 	HelloWorldPublisher();
 	virtual ~HelloWorldPublisher();
 	//!Initialize
-	bool init(bool dynamic);
+	bool init();
 	//!Publish a sample
 	bool publish(bool waitForListener = true);
 	//!Run for number samples
@@ -63,13 +59,9 @@ private:
 	}m_part_list;
 	void runThread(uint32_t number, uint32_t sleep);
 
-	// Static types
-	HelloWorld *m_Hello;
-	HelloWorldPubSubType m_type;
 	// Dynamic Types
 	eprosima::fastrtps::types::DynamicData* m_DynHello;
 	eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-	bool m_dynamic;
 };
 
 

@@ -18,7 +18,6 @@
  */
 
 #include "HelloWorldSubscriber.h"
-#include "HelloWorldTypeObject.h"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/Subscriber.h>
@@ -42,60 +41,35 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 {
 }
 
-bool HelloWorldSubscriber::init(bool dynamic)
+bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 5;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("DynHelloWorld_sub");
     mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
     if(mp_participant==nullptr)
         return false;
 
+    //  Create basic types and add members to the struct.
+    DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
+    DynamicTypeBuilder_ptr created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder();
+    DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
+    struct_type_builder->AddMember(0, "index", created_type_ulong.get());
+    struct_type_builder->AddMember(1, "message", created_type_string.get());
+    struct_type_builder->SetName("HelloWorld");
+    DynamicType_ptr dynType = struct_type_builder->Build();
+    m_DynType.SetDynamicType(dynType);
+    m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(dynType);
+
     //REGISTER THE TYPE
-    m_dynamic = dynamic;
-    m_listener.m_dynamic = dynamic;
-    if (dynamic)
-    {
-        // Create basic types
-        DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
-        DynamicTypeBuilder_ptr created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder();
-        DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
-
-        // Add members to the struct.
-        struct_type_builder->AddMember(0, "index", created_type_ulong.get());
-        struct_type_builder->AddMember(1, "message", created_type_string.get());
-        struct_type_builder->SetName("HelloWorld");
-
-        DynamicType_ptr dynType = struct_type_builder->Build();
-        m_DynType.SetDynamicType(dynType);
-        m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(dynType);
-
-        Domain::registerDynamicType(mp_participant, &m_DynType);
-    }
-    else
-    {
-        m_listener.m_Hello = new HelloWorld;
-        Domain::registerType(mp_participant,&m_type);
-    }
+    Domain::registerDynamicType(mp_participant, &m_DynType);
 
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
-    Rparam.topic.topicName = "DynamicHelloWorldTopic";
+    Rparam.topic.topicName = "HelloWorldTopic";
     Rparam.topic.topicDiscoveryKind = MINIMAL;
-    //Rparam.topic.topicDiscoveryKind = NO_CHECK;
-    Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Rparam.topic.historyQos.depth = 30;
-    Rparam.topic.resourceLimitsQos.max_samples = 50;
-    Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
@@ -110,10 +84,7 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
     // TODO Auto-generated destructor stub
     Domain::removeParticipant(mp_participant);
 
-    if (m_dynamic)
-    {
-        DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
-    }
+    DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
 
     Domain::stopAll();
 }
@@ -150,33 +121,18 @@ void HelloWorldSubscriber::PartListener::onParticipantDiscovery(Participant*, Pa
 
 void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-    if (m_dynamic)
+    if(sub->takeNextData((void*)m_DynHello, &m_info))
     {
-        if(sub->takeNextData((void*)m_DynHello, &m_info))
+        if(m_info.sampleKind == ALIVE)
         {
-            if(m_info.sampleKind == ALIVE)
-            {
-                this->n_samples++;
-                // Print your structure data here.
-                std::string message;
-                m_DynHello->GetStringValue(message, 1);
-                uint32_t index;
-                m_DynHello->GetUint32Value(index, 0);
+            this->n_samples++;
+            // Print your structure data here.
+            std::string message;
+            m_DynHello->GetStringValue(message, 1);
+            uint32_t index;
+            m_DynHello->GetUint32Value(index, 0);
 
-                std::cout << "Message: "<<message<< " with index: "<<index<< " RECEIVED"<<std::endl;
-            }
-        }
-    }
-    else
-    {
-        if(sub->takeNextData((void*)m_Hello, &m_info))
-        {
-            if(m_info.sampleKind == ALIVE)
-            {
-                this->n_samples++;
-                // Print your structure data here.
-                std::cout << "Message "<<m_Hello->message()<< " "<< m_Hello->index()<< " RECEIVED"<<std::endl;
-            }
+            std::cout << "Message: "<<message<< " with index: "<<index<< " RECEIVED"<<std::endl;
         }
     }
 }
