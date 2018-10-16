@@ -205,11 +205,11 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
     return parameter_list;
 }
 
-bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
+bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation)
 {
     ParameterList_t parameter_list;
 
-    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, true) > 0)
+    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, use_encapsulation) > 0)
     {
         for(std::vector<Parameter_t*>::iterator it = parameter_list.m_parameters.begin();
                 it!=parameter_list.m_parameters.end();++it)

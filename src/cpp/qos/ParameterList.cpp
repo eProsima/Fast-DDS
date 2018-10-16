@@ -304,9 +304,11 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         if(plength != length_diff)
                         {
                             delete(p);
-                            return -1;
                         }
-                        plist->m_parameters.push_back((Parameter_t*)p);
+                        else
+                        {
+                            plist->m_parameters.push_back((Parameter_t*)p);
+                        }
                         paramlist_byte_size += plength;
                         break;
                     }

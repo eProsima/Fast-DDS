@@ -713,11 +713,11 @@ bool SecurityManager::on_process_handshake(const ParticipantProxyData& participa
 #if __BIG_ENDIAN__
             aux_msg.msg_endian = BIGEND;
             change->serializedPayload.encapsulation = PL_CDR_BE;
-            CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+            CDRMessage::addOctet(&aux_msg, CDR_BE);
 #else
             aux_msg.msg_endian = LITTLEEND;
             change->serializedPayload.encapsulation = PL_CDR_LE;
-            CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+            CDRMessage::addOctet(&aux_msg, CDR_LE);
 #endif
             CDRMessage::addUInt16(&aux_msg, 0);
 
@@ -1136,9 +1136,9 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
     aux_msg.pos += 1;
     octet encapsulation = 0;
     CDRMessage::readOctet(&aux_msg, &encapsulation);
-    if(encapsulation == PL_CDR_BE)
+    if(encapsulation == CDR_BE)
         aux_msg.msg_endian = BIGEND;
-    else if(encapsulation == PL_CDR_LE)
+    else if(encapsulation == CDR_LE)
         aux_msg.msg_endian = LITTLEEND;
     else
         return;
@@ -1334,9 +1334,9 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
     aux_msg.pos += 1;
     octet encapsulation = 0;
     CDRMessage::readOctet(&aux_msg, &encapsulation);
-    if(encapsulation == PL_CDR_BE)
+    if(encapsulation == CDR_BE)
         aux_msg.msg_endian = BIGEND;
-    else if(encapsulation == PL_CDR_LE)
+    else if(encapsulation == CDR_LE)
         aux_msg.msg_endian = LITTLEEND;
     else
         return;
@@ -1795,11 +1795,11 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(con
 #if __BIG_ENDIAN__
                 aux_msg.msg_endian = BIGEND;
                 change->serializedPayload.encapsulation = PL_CDR_BE;
-                CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+                CDRMessage::addOctet(&aux_msg, CDR_BE);
 #else
                 aux_msg.msg_endian = LITTLEEND;
                 change->serializedPayload.encapsulation = PL_CDR_LE;
-                CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+                CDRMessage::addOctet(&aux_msg, CDR_LE);
 #endif
                 CDRMessage::addUInt16(&aux_msg, 0);
 
@@ -2451,11 +2451,11 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
 #if __BIG_ENDIAN__
                                 aux_msg.msg_endian = BIGEND;
                                 change->serializedPayload.encapsulation = PL_CDR_BE;
-                                CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+                                CDRMessage::addOctet(&aux_msg, CDR_BE);
 #else
                                 aux_msg.msg_endian = LITTLEEND;
                                 change->serializedPayload.encapsulation = PL_CDR_LE;
-                                CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+                                CDRMessage::addOctet(&aux_msg, CDR_LE);
 #endif
                                 CDRMessage::addUInt16(&aux_msg, 0);
 
@@ -2739,11 +2739,11 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
 #if __BIG_ENDIAN__
                                 aux_msg.msg_endian = BIGEND;
                                 change->serializedPayload.encapsulation = PL_CDR_BE;
-                                CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+                                CDRMessage::addOctet(&aux_msg, CDR_BE);
 #else
                                 aux_msg.msg_endian = LITTLEEND;
                                 change->serializedPayload.encapsulation = PL_CDR_LE;
-                                CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+                                CDRMessage::addOctet(&aux_msg, CDR_LE);
 #endif
                                 CDRMessage::addUInt16(&aux_msg, 0);
 

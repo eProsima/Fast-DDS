@@ -148,7 +148,7 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
     CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3));
     cdrmessage.msg_endian = BIGEND;
-    CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "hash_c1");
+    CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "c.",false);
     unsigned char md[SHA256_DIGEST_LENGTH];
     ASSERT_TRUE(EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL));
     ASSERT_TRUE(memcmp(md, hash_c1->data(), SHA256_DIGEST_LENGTH) == 0);
@@ -261,7 +261,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
     CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3));
     cdrmessage.msg_endian = BIGEND;
-    CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "hash_c2");
+    CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "c.",false);
     unsigned char md[SHA256_DIGEST_LENGTH];
     ASSERT_TRUE(EVP_Digest(cdrmessage.buffer, cdrmessage.length, md, NULL, EVP_sha256(), NULL));
     ASSERT_TRUE(memcmp(md, hash_c2->data(), SHA256_DIGEST_LENGTH) == 0);
@@ -374,7 +374,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     //add dh1
     CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "dh1"));
     //add hash_c1
-    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "hash_c1"));
+    CDRMessage::addBinaryProperty(&cdrmessage2, *DataHolderHelper::find_binary_property(message, "hash_c1"), false);
     EVP_MD_CTX* ctx =
 #if IS_OPENSSL_1_1
         EVP_MD_CTX_new();
@@ -455,7 +455,7 @@ void AuthenticationPluginTest::check_handshake_final_message(const HandshakeHand
     //add dh2
     CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "dh2"));
     //add hash_c2
-    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "hash_c2"));
+    CDRMessage::addBinaryProperty(&cdrmessage, *DataHolderHelper::find_binary_property(message, "hash_c2"), false);
     EVP_MD_CTX* ctx =
 #if IS_OPENSSL_1_1
         EVP_MD_CTX_new();

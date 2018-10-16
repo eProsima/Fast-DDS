@@ -892,7 +892,7 @@ CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endia
     cdr_msg.msg_endian = endian;
 
     ParameterList_t parameter_list = getLocalParticipantProxyData()->AllQostoParameterList();
-    if(!ParameterList::writeParameterListToCDRMsg(&cdr_msg, &parameter_list, true))
+    if(!ParameterList::writeParameterListToCDRMsg(&cdr_msg, &parameter_list, false))
     {
         cdr_msg.pos = 0;
         cdr_msg.length = 0;

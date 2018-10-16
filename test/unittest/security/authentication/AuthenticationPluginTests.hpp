@@ -197,7 +197,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     eprosima::fastrtps::ParameterList_t parameter_list1 = participant_data1.AllQostoParameterList();
     eprosima::fastrtps::rtps::CDRMessage_t auxMsg;
     auxMsg.msg_endian = eprosima::fastrtps::rtps::BIGEND;
-    ASSERT_TRUE(eprosima::fastrtps::ParameterList::writeParameterListToCDRMsg(&auxMsg, &parameter_list1, true));
+    ASSERT_TRUE(eprosima::fastrtps::ParameterList::writeParameterListToCDRMsg(&auxMsg, &parameter_list1, false));
 
     result = plugin.begin_handshake_request(&handshake_handle,
             &handshake_message,
@@ -220,7 +220,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     auxMsg.length = 0;
     auxMsg.pos = 0;
 
-    ASSERT_TRUE(eprosima::fastrtps::ParameterList::writeParameterListToCDRMsg(&auxMsg, &parameter_list2, true));
+    ASSERT_TRUE(eprosima::fastrtps::ParameterList::writeParameterListToCDRMsg(&auxMsg, &parameter_list2, false));
 
     result = plugin.begin_handshake_reply(&handshake_handle_reply,
             &handshake_message_reply,

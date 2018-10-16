@@ -902,8 +902,8 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             } //For each datawriter present in the local participant
         }
     }
-    logWarning(SECURITY_CRYPTO,"Unable to determine the nature of the message");
 
+    // logWarning(SECURITY_CRYPTO,"Unable to determine the nature of the message");
     return false;
 }
 

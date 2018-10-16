@@ -148,7 +148,7 @@ class ParticipantProxyData
          * Read the parameter list from a recevied CDRMessage_t
          * @return True on success
          */
-        bool readFromCDRMessage(CDRMessage_t* msg);
+        bool readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation=true);
         //!Clear the data (restore to default state.)
         void clear();
         /**
