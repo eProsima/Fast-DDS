@@ -56,7 +56,7 @@ class ThroughputSubscriber
         std::chrono::steady_clock::time_point t_start_, t_end_;
         std::chrono::duration<double, std::micro> t_overhead_;
         std::mutex mutex_;
-        int disc_count_;
+        uint32_t disc_count_;
         std::condition_variable disc_cond_;
         //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
         int stop_count_;
