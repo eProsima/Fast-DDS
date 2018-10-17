@@ -125,7 +125,7 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: ThroughputTest <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
-    { SEED,0,"s","seed",                    Arg::Numeric,   "  \t--seed=<num>  \tSeed to calculate domain and topic, to isolate test." },
+    { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tSeed to calculate domain and topic, to isolate test." },
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
     { TIME, 0,"t","time",                   Arg::Numeric,   "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
     { RECOVERY_TIME, 0,"","recovery_time",  Arg::Numeric,   "  \t--recovery_time=<num>  \tHow long to sleep after writing a demand in milliseconds." },
