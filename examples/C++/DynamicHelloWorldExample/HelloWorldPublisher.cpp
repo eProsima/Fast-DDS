@@ -58,7 +58,7 @@ bool HelloWorldPublisher::init()
     m_DynHello->SetStringValue("HelloWorld", 1);
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 5;
+    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.setName("DynHelloWorld_pub");
     mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
 
@@ -73,7 +73,7 @@ bool HelloWorldPublisher::init()
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "HelloWorldTopic";
-    Wparam.topic.topicDiscoveryKind = MINIMAL;
+    //Wparam.topic.topicDiscoveryKind = NO_CHECK;  // Do it compatible with other HelloWorlds
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;

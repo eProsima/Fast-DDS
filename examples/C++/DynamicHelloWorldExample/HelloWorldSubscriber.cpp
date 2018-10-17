@@ -44,7 +44,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 5;
+    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.setName("DynHelloWorld_sub");
     mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
     if(mp_participant==nullptr)
@@ -69,7 +69,7 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
     Rparam.topic.topicName = "HelloWorldTopic";
-    Rparam.topic.topicDiscoveryKind = MINIMAL;
+    //Rparam.topic.topicDiscoveryKind = NO_CHECK; // Do it compatible with other HelloWorlds
 
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
