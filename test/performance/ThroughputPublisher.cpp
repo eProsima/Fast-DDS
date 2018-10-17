@@ -175,6 +175,10 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
         PParam.rtps.setName("Participant_publisher");
         PParam.rtps.properties = part_property_policy;
+        // Buffer sizes
+        PParam.rtps.sendSocketBufferSize = 1048576;
+        PParam.rtps.listenSocketBufferSize = 4194304;
+
         mp_par = Domain::createParticipant(PParam);
         if (mp_par == nullptr)
         {

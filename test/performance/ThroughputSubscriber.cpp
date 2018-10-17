@@ -288,6 +288,10 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
         PParam.rtps.setName("Participant_subscriber");
         PParam.rtps.properties = part_property_policy;
+        // Buffer sizes
+        PParam.rtps.sendSocketBufferSize = 1048576;
+        PParam.rtps.listenSocketBufferSize = 4194304;
+
         mp_par = Domain::createParticipant(PParam);
         if (mp_par == nullptr)
         {
