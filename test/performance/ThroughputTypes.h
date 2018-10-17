@@ -48,6 +48,7 @@ struct TroughputResults
         std::chrono::duration<double, std::micro>  totaltime_us;
         uint64_t send_samples;
         double MBitssec;
+        double Packssec;
     }publisher;
     struct SubscriberResults
     {
@@ -55,28 +56,32 @@ struct TroughputResults
         uint64_t recv_samples;
         uint32_t lost_samples;
         double MBitssec;
+        double Packssec;
     }subscriber;
     void compute()
     {
         publisher.MBitssec = (double)publisher.send_samples * payload_size * 8 / publisher.totaltime_us.count();//bits/us==Mbits/s)
+        publisher.Packssec = (double)publisher.send_samples * 1000000 / publisher.totaltime_us.count();
         subscriber.MBitssec = (double)subscriber.recv_samples * payload_size * 8 / subscriber.totaltime_us.count();
+        subscriber.Packssec = (double)subscriber.recv_samples * 1000000 / subscriber.totaltime_us.count();
     }
 };
 
 
 inline void printResultTitle()
 {
-    printf("[     TEST     ][              PUBLISHER              ][                     SUBSCRIBER                 ]\n");
-    printf("[ Bytes, Demand][Sent Samples,Send Time(us), MBits/sec][Rec Samples,Lost Samples,Rec Time(us), MBits/sec]\n");
-    printf("[------,-------][------------,-------------,----------][-----------,------------,------------,----------]\n");
+    printf("[     TEST     ][                   PUBLISHER                    ][                          SUBSCRIBER                       ]\n");
+    printf("[ Bytes, Demand][Sent Samples,Send Time(us), Packs/sec, MBits/sec][Rec Samples,Lost Samples,Rec Time(us), Packs/sec, MBits/sec]\n");
+    printf("[------,-------][------------,-------------,----------,----------][-----------,------------,------------,----------,----------]\n");
 }
 
 inline void printResults(TroughputResults& res)
 {
-    printf("%7u,%7u,%12.0f,%13.0f,%10.3f,%12.0f,%12.0f,%13.0f,%10.3f\n", res.payload_size, res.demand, (double)res.publisher.send_samples,
-            res.publisher.totaltime_us.count(), res.publisher.MBitssec,
-            (double)res.subscriber.recv_samples,(double)res.subscriber.lost_samples, res.subscriber.totaltime_us.count(),
-            (double)res.subscriber.MBitssec);
+    printf("%7u,%7u,%12.0f,%13.0f,%11.3f,%10.3f,%12.0f,%12.0f,%12.0f,%10.3f,%10.3f\n",
+        res.payload_size, res.demand, (double)res.publisher.send_samples,
+        res.publisher.totaltime_us.count(), res.publisher.Packssec, res.publisher.MBitssec,
+        (double)res.subscriber.recv_samples,(double)res.subscriber.lost_samples,
+        res.subscriber.totaltime_us.count(),(double)res.subscriber.Packssec,(double)res.subscriber.MBitssec);
     //cout << "res: " <<res.payload_size << " "<<res.demand<< " "<<res.publisher.send_samples<< " "<<
     //															res.publisher.totaltime_us<< " "<<res.publisher.MBitssec<< " "<<
     //															res.subscriber.recv_samples<< " "<<res.subscriber.lost_samples<< " "<<res.subscriber.totaltime_us<< " "<<

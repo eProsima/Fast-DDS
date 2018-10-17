@@ -390,8 +390,13 @@ void ThroughputSubscriber::run()
     if (!ready)
         return;
     std::cout << "Waiting for discovery" << std::endl;
+    //std::unique_lock<std::mutex> lock(mutex_);
+    //while (disc_count_ != 3) disc_cond_.wait(lock);
     std::unique_lock<std::mutex> lock(mutex_);
-    while (disc_count_ != 3) disc_cond_.wait(lock);
+    disc_cond_.wait(lock, [&](){
+        return disc_count_ == 3;
+    });
+    lock.unlock();
     std::cout << "Discovery complete" << std::endl;
 
     while (stop_count_ != 2)
@@ -429,6 +434,9 @@ void ThroughputSubscriber::run()
 
             std::cout << "Last Received Sample: " << comm.m_lastrecsample << std::endl;
             std::cout << "Lost Samples: " << comm.m_lostsamples << std::endl;
+            std::cout << "Samples per second: "
+                << (double)(comm.m_lastrecsample - comm.m_lostsamples) * 1000000 / comm.m_totaltime
+                << std::endl;
             std::cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << std::endl;
             mp_commandpubli->write(&comm);
 
