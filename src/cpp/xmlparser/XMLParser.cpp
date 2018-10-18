@@ -621,7 +621,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
 
     if (value == nullptr)
     {
-        valueBuilder = parseXMLMemberDynamicType(p_root->FirstChildElement(), nullptr, -1);
+        valueBuilder = parseXMLMemberDynamicType(p_root->FirstChildElement(), nullptr, MEMBER_ID_INVALID);
     }
     else
     {
@@ -653,9 +653,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
     </enum>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
-    const char* name = p_root->Attribute(NAME);
-
-
+    const char* enumName = p_root->Attribute(NAME);
     p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::GetInstance()->CreateEnumBuilder();
 
     uint32_t currValue = 0;
@@ -676,8 +674,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
         typeBuilder->AddEmptyMember(currValue++, name);
     }
 
-    XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
-
+    XMLProfileManager::insertDynamicTypeByName(enumName, typeBuilder);
     return ret;
 }
 
@@ -1156,7 +1153,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         p_dynamictypebuilder_t contentType;
         if (seqType == nullptr)
         {
-            contentType = parseXMLMemberDynamicType(p_root->FirstChildElement(), nullptr, -1);
+            contentType = parseXMLMemberDynamicType(p_root->FirstChildElement(), nullptr, MEMBER_ID_INVALID);
         }
         else
         {
@@ -1219,7 +1216,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
                 logError(XMLPARSER, "Error parsing key_value element: Not found.");
                 return nullptr;
             }
-            keyTypeBuilder = parseXMLMemberDynamicType(keyElement->FirstChildElement(), nullptr, -1);
+            keyTypeBuilder = parseXMLMemberDynamicType(keyElement->FirstChildElement(), nullptr, MEMBER_ID_INVALID);
         }
         else
         {
@@ -1243,7 +1240,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
                 logError(XMLPARSER, "Error parsing value_value element: Not found.");
                 return nullptr;
             }
-            valueTypeBuilder = parseXMLMemberDynamicType(valueElement->FirstChildElement(), nullptr, -1);
+            valueTypeBuilder = parseXMLMemberDynamicType(valueElement->FirstChildElement(), nullptr, MEMBER_ID_INVALID);
         }
         else
         {
