@@ -21,7 +21,18 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
+class DynamicDataFactoryReleaser
+{
+public:
+    ~DynamicDataFactoryReleaser()
+    {
+        DynamicDataFactory::DeleteInstance();
+    }
+};
+
+static DynamicDataFactoryReleaser s_releaser;
 static DynamicDataFactory* s_instance = nullptr;
+
 DynamicDataFactory* DynamicDataFactory::GetInstance()
 {
     if (s_instance == nullptr)

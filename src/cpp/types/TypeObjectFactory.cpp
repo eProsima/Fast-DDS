@@ -28,6 +28,16 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
+class TypeObjectFactoryReleaser
+{
+public:
+    ~TypeObjectFactoryReleaser()
+    {
+        TypeObjectFactory::DeleteInstance();
+    }
+};
+
+static TypeObjectFactoryReleaser s_releaser;
 static TypeObjectFactory* g_instance = nullptr;
 TypeObjectFactory* TypeObjectFactory::GetInstance()
 {

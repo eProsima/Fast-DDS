@@ -83,6 +83,16 @@ static std::string GenerateTypeName(const std::string &kind)
     return tempKind;// + "_" + std::to_string(++s_typeNameCounter);
 }
 
+class DynamicTypeBuilderFactoryReleaser
+{
+public:
+    ~DynamicTypeBuilderFactoryReleaser()
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+    }
+};
+
+static DynamicTypeBuilderFactoryReleaser s_releaser;
 static DynamicTypeBuilderFactory* g_instance = nullptr;
 DynamicTypeBuilderFactory* DynamicTypeBuilderFactory::GetInstance()
 {
