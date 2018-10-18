@@ -38,6 +38,7 @@ const char* RECEIVE_BUFFER_SIZE = "receiveBufferSize";
 const char* SEND_BUFFER_SIZE = "sendBufferSize";
 const char* TTL = "TTL";
 const char* WHITE_LIST = "interfaceWhiteList";
+const char* MAX_MESSAGE_SIZE = "maxMessageSize";
 const char* KEEP_ALIVE_FREQUENCY = "keep_alive_frequency_ms";
 const char* KEEP_ALIVE_TIMEOUT = "keep_alive_timeout_ms";
 const char* MAX_LOGICAL_PORT = "max_logical_port";
@@ -204,6 +205,8 @@ const char* STATIC = "STATIC";
 const char* PUBWRITER_SUBREADER = "PUBWRITER_SUBREADER";
 const char* PUBREADER_SUBWRITER = "PUBREADER_SUBWRITER";
 const char* STATIC_ENDPOINT_XML = "staticEndpointXMLFilename";
+const char* READER_HIST_MEM_POLICY = "readerHistoryMemoryPolicy";
+const char* WRITER_HIST_MEM_POLICY = "writerHistoryMemoryPolicy";
 const char* ACCESS_SCOPE = "access_scope";
 
 // Endpoint parser

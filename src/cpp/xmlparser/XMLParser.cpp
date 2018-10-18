@@ -139,6 +139,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
     <xs:element name="sendBufferSize" type="int32Type"/>
     <xs:element name="receiveBufferSize" type="int32Type"/>
     <xs:element name="TTL" type="int8Type"/>
+    <xs:element name="maxMessageSize" type="uint32Type"/>
     <xs:element name="interfaceWhiteList" type="stringListType"/>
     <xs:sequence>
     <xs:element name="id" type="stringType"/>
@@ -263,6 +264,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
     <xs:element name="sendBufferSize" type="int32Type"/>
     <xs:element name="receiveBufferSize" type="int32Type"/>
     <xs:element name="TTL" type="int8Type"/>
+    <xs:element name="maxMessageSize" type="uint32Type"/>
     <xs:element name="interfaceWhiteList" type="stringListType"/>
     <xs:sequence>
     <xs:element name="id" type="stringType"/>
@@ -282,6 +284,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             return XMLP_ret::XML_ERROR;
         pDesc->sendBufferSize = iSize;
     }
+
     // receiveBufferSize - int32Type
     if (nullptr != (p_aux = p_root->FirstChildElement(RECEIVE_BUFFER_SIZE)))
     {
@@ -298,6 +301,15 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
         if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iTTL, 0) || iTTL < 0 || iTTL > 255)
             return XMLP_ret::XML_ERROR;
         pDesc->TTL = static_cast<uint8_t>(iTTL);
+    }
+
+    // maxMessageSize - uint32Type
+    if (nullptr != (p_aux = p_root->FirstChildElement(MAX_MESSAGE_SIZE)))
+    {
+        uint32_t uSize = 0;
+        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &uSize, 0))
+            return XMLP_ret::XML_ERROR;
+        pDesc->maxMessageSize = uSize;
     }
 
     // InterfaceWhiteList stringListType
@@ -755,6 +767,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
         <xs:element name="outLocatorList" type="locatorListType"/>
         <xs:element name="throughputController" type="throughputControllerType"/>
         <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
+        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
         <xs:element name="userDefinedID" type="int16Type"/>
         <xs:element name="entityID" type="int16Type"/>
       </xs:all>
