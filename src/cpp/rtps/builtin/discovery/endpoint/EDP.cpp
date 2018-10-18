@@ -309,7 +309,6 @@ bool EDP::unpairReaderProxy(const GUID_t& participant_guid, const GUID_t& reader
 
 bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata)
 {
-    //TODO: //GASCO: TYPE CHECKING
     if (wdata->topicName() != rdata->topicName())
     {
         return false;
@@ -410,7 +409,6 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
 
 bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata)
 {
-    //TODO: //GASCO: TYPE CHECKING
     if (rdata->topicName() != wdata->topicName())
     {
         return false;

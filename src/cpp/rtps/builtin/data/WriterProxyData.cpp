@@ -234,7 +234,7 @@ ParameterList_t WriterProxyData::toParameterList()
         *p = m_qos.m_groupData;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
-    //TODO: //GASCO: PID_TYPE_IDV1
+
     if (m_topicDiscoveryKind != NO_CHECK)
     {
         if (m_type_id.m_type_identifier->_d() != 0)
@@ -244,7 +244,6 @@ ParameterList_t WriterProxyData::toParameterList()
             parameter_list.m_parameters.push_back((Parameter_t*)p);
         }
 
-        //TODO: //GASCO: PID_TYPE_OBJECTV1
         if (m_type.m_type_object->_d() != 0)
         {
             TypeObjectV1 * p = new TypeObjectV1();
@@ -428,7 +427,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         iHandle2GUID(m_guid,m_key);
                         break;
                     }
-                case PID_TYPE_IDV1: //TODO: //GASCO:
+                case PID_TYPE_IDV1:
                     {
                         TypeIdV1 * p = (TypeIdV1*)(*it);
                         m_type_id = *p;
@@ -439,7 +438,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         }
                         break;
                     }
-                case PID_TYPE_OBJECTV1: //TODO: //GASCO:
+                case PID_TYPE_OBJECTV1:
                     {
                         TypeObjectV1 * p = (TypeObjectV1*)(*it);
                         m_type = *p;
