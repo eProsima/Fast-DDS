@@ -1338,22 +1338,6 @@ XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNo
         ret = XMLP_ret::XML_ERROR;
     }
 
-    if (ret == XMLP_ret::XML_OK)
-    {
-        // Has publishers or subscribers?
-        for (tinyxml2::XMLElement* p_pub_element = p_root->FirstChildElement(PUBLISHER);
-                p_pub_element != nullptr; p_pub_element = p_pub_element->NextSiblingElement(PUBLISHER))
-        {
-            parseXMLPublisherProf(p_pub_element, rootNode);
-        }
-
-        for (tinyxml2::XMLElement* p_sub_element = p_root->FirstChildElement(SUBSCRIBER);
-                p_sub_element != nullptr; p_sub_element = p_sub_element->NextSiblingElement(SUBSCRIBER))
-        {
-            parseXMLSubscriberProf(p_sub_element, rootNode);
-        }
-    }
-
     return ret;
 }
 
