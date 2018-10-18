@@ -22,7 +22,7 @@ const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
 const char* ROOT = "dds";
 const char* PROFILES = "profiles";
-const char* TRANSPORTS = "transports";
+const char* TRANSPORT_DESCRIPTORS = "transport_descriptors";
 const char* PROFILE_NAME = "profile_name";
 const char* DEFAULT_PROF = "is_default_profile";
 const char* PARTICIPANT = "participant";
@@ -31,7 +31,7 @@ const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
 const char* TYPES = "types";
 
-const char* TRANSPORT = "transport";
+const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";
 const char* UDP_OUTPUT_PORT = "output_port";
 const char* TCP_WAN_ADDR = "wan_addr";

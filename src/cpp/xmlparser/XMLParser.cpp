@@ -143,7 +143,7 @@ XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TRANSPORT);
+    tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TRANSPORT_DESCRIPTORS);
     while(p_element != nullptr)
     {
         ret = parseXMLTransportData(p_element);
@@ -151,7 +151,7 @@ XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
         {
             return ret;
         }
-        p_element = p_element->NextSiblingElement(TRANSPORT);
+        p_element = p_element->NextSiblingElement(TRANSPORT_DESCRIPTOR);
     }
     return ret;
 }
@@ -1417,7 +1417,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
         if (nullptr != (tag = p_profile->Value()))
         {
             // If profile parsing functions fails, log and continue.
-            if (strcmp(tag, TRANSPORTS) == 0)
+            if (strcmp(tag, TRANSPORT_DESCRIPTORS) == 0)
             {
                 parseXMLTransportsProf(p_profile);
             }
