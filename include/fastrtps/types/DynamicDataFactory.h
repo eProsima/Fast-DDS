@@ -23,9 +23,9 @@
 #include <mutex>
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class DynamicDataFactory
 {

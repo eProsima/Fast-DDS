@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class TypeNamesGenerator
 {

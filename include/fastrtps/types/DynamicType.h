@@ -18,9 +18,9 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class AnnotationDescriptor;
 class TypeDescriptor;
@@ -42,12 +42,18 @@ public:
     ResponseCode GetDescriptor(TypeDescriptor* descriptor) const;
 
     bool GetKeyAnnotation() const;
-    inline TypeKind GetKind() const { return mKind; }
+    inline TypeKind GetKind() const
+    {
+        return mKind;
+    }
     std::string GetName() const;
     MemberId GetMembersCount() const;
     uint32_t GetTotalBounds() const;
 
-    const TypeDescriptor* getTypeDescriptor() const { return mDescriptor; }
+    const TypeDescriptor* getTypeDescriptor() const
+    {
+        return mDescriptor;
+    }
 
     bool HasChildren() const;
     bool IsConsistent() const;
@@ -97,11 +103,11 @@ protected:
     ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string& name);
 
     TypeDescriptor* mDescriptor;
-	std::vector<AnnotationDescriptor*> mAnnotation;
-	std::map<MemberId, DynamicTypeMember*> mMemberById;         // Aggregated members
+    std::vector<AnnotationDescriptor*> mAnnotation;
+    std::map<MemberId, DynamicTypeMember*> mMemberById;         // Aggregated members
     std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
     std::string mName;
-	TypeKind mKind;
+    TypeKind mKind;
     bool mIsKeyDefined;
 };
 

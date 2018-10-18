@@ -30,92 +30,92 @@ namespace fastcdr{
 }
 }
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
 using namespace rtps;
 
-namespace types{
+namespace types {
 
 const std::string ANNOTATION_KEY_ID = "@Key";
 const std::string ANNOTATION_TOPIC_ID = "@Topic";
 
-const std::string TKNAME_BOOLEAN    = "bool";
-const std::string TKNAME_INT16      = "int16_t";
-const std::string TKNAME_UINT16     = "uint16_t";
-const std::string TKNAME_INT32      = "int32_t";
-const std::string TKNAME_UINT32     = "uint32_t";
-const std::string TKNAME_INT64      = "int64_t";
-const std::string TKNAME_UINT64     = "uint64_t";
-const std::string TKNAME_CHAR8      = "char";
-const std::string TKNAME_BYTE       = "octet";
-const std::string TKNAME_INT8       = "int8_t";
-const std::string TKNAME_UINT8      = "uint8_t";
-const std::string TKNAME_CHAR16     = "wchar";
-const std::string TKNAME_CHAR16T    = "wchar_t";
-const std::string TKNAME_FLOAT32    = "float";
-const std::string TKNAME_FLOAT64    = "double";
-const std::string TKNAME_FLOAT128   = "longdouble";
+const std::string TKNAME_BOOLEAN = "bool";
+const std::string TKNAME_INT16 = "int16_t";
+const std::string TKNAME_UINT16 = "uint16_t";
+const std::string TKNAME_INT32 = "int32_t";
+const std::string TKNAME_UINT32 = "uint32_t";
+const std::string TKNAME_INT64 = "int64_t";
+const std::string TKNAME_UINT64 = "uint64_t";
+const std::string TKNAME_CHAR8 = "char";
+const std::string TKNAME_BYTE = "octet";
+const std::string TKNAME_INT8 = "int8_t";
+const std::string TKNAME_UINT8 = "uint8_t";
+const std::string TKNAME_CHAR16 = "wchar";
+const std::string TKNAME_CHAR16T = "wchar_t";
+const std::string TKNAME_FLOAT32 = "float";
+const std::string TKNAME_FLOAT64 = "double";
+const std::string TKNAME_FLOAT128 = "longdouble";
 
-const std::string TKNAME_STRING8    = "string";
-const std::string TKNAME_STRING16   = "wstring";
-const std::string TKNAME_ALIAS      = "alias";
-const std::string TKNAME_ENUM       = "enum";
-const std::string TKNAME_BITMASK    = "bitmask";
+const std::string TKNAME_STRING8 = "string";
+const std::string TKNAME_STRING16 = "wstring";
+const std::string TKNAME_ALIAS = "alias";
+const std::string TKNAME_ENUM = "enum";
+const std::string TKNAME_BITMASK = "bitmask";
 const std::string TKNAME_ANNOTATION = "annotation";
-const std::string TKNAME_STRUCTURE  = "structure";
-const std::string TKNAME_UNION      = "union";
-const std::string TKNAME_BITSET     = "bitset";
-const std::string TKNAME_SEQUENCE   = "sequence";
-const std::string TKNAME_ARRAY      = "array";
-const std::string TKNAME_MAP        = "map";
+const std::string TKNAME_STRUCTURE = "structure";
+const std::string TKNAME_UNION = "union";
+const std::string TKNAME_BITSET = "bitset";
+const std::string TKNAME_SEQUENCE = "sequence";
+const std::string TKNAME_ARRAY = "array";
+const std::string TKNAME_MAP = "map";
 
 // ---------- Equivalence Kinds ------------------
 typedef octet EquivalenceKind;
-const octet EK_MINIMAL   = 0xF1; // 0x1111 0001
-const octet EK_COMPLETE  = 0xF2; // 0x1111 0010
-const octet EK_BOTH      = 0xF3; // 0x1111 0011
+const octet EK_MINIMAL = 0xF1; // 0x1111 0001
+const octet EK_COMPLETE = 0xF2; // 0x1111 0010
+const octet EK_BOTH = 0xF3; // 0x1111 0011
 
 // ---------- TypeKinds (begin) ------------------
 typedef octet TypeKind;        // Primitive TKs
 
-const octet TK_NONE       = 0x00;
-const octet TK_BOOLEAN    = 0x01;
-const octet TK_BYTE       = 0x02;
-const octet TK_INT16      = 0x03;
-const octet TK_INT32      = 0x04;
-const octet TK_INT64      = 0x05;
-const octet TK_UINT16     = 0x06;
-const octet TK_UINT32     = 0x07;
-const octet TK_UINT64     = 0x08;
-const octet TK_FLOAT32    = 0x09;
-const octet TK_FLOAT64    = 0x0A;
-const octet TK_FLOAT128   = 0x0B;
-const octet TK_CHAR8      = 0x10;
-const octet TK_CHAR16     = 0x11;
+const octet TK_NONE = 0x00;
+const octet TK_BOOLEAN = 0x01;
+const octet TK_BYTE = 0x02;
+const octet TK_INT16 = 0x03;
+const octet TK_INT32 = 0x04;
+const octet TK_INT64 = 0x05;
+const octet TK_UINT16 = 0x06;
+const octet TK_UINT32 = 0x07;
+const octet TK_UINT64 = 0x08;
+const octet TK_FLOAT32 = 0x09;
+const octet TK_FLOAT64 = 0x0A;
+const octet TK_FLOAT128 = 0x0B;
+const octet TK_CHAR8 = 0x10;
+const octet TK_CHAR16 = 0x11;
 
 // String TKs
-const octet TK_STRING8    = 0x20;
-const octet TK_STRING16   = 0x21;
+const octet TK_STRING8 = 0x20;
+const octet TK_STRING16 = 0x21;
 
 
 // Constructed/Named types
-const octet TK_ALIAS      = 0x30;
+const octet TK_ALIAS = 0x30;
 
 // Enumerated TKs
-const octet TK_ENUM       = 0x40;
-const octet TK_BITMASK    = 0x41;
+const octet TK_ENUM = 0x40;
+const octet TK_BITMASK = 0x41;
 
 // Structured TKs
 const octet TK_ANNOTATION = 0x50;
-const octet TK_STRUCTURE  = 0x51;
-const octet TK_UNION      = 0x52;
-const octet TK_BITSET     = 0x53;
+const octet TK_STRUCTURE = 0x51;
+const octet TK_UNION = 0x52;
+const octet TK_BITSET = 0x53;
 
 // Collection TKs
-const octet TK_SEQUENCE   = 0x60;
-const octet TK_ARRAY      = 0x61;
-const octet TK_MAP        = 0x62;
+const octet TK_SEQUENCE = 0x60;
+const octet TK_ARRAY = 0x61;
+const octet TK_MAP = 0x62;
 
 // ---------- TypeKinds (end) ------------------
 
@@ -182,44 +182,92 @@ const SBound INVALID_SBOUND = 0;
 class MemberFlag
 {
 private:
-	std::bitset<16> m_MemberFlag;
+    std::bitset<16> m_MemberFlag;
 public:
-    MemberFlag() {}
-    MemberFlag(const MemberFlag &x) : m_MemberFlag(x.m_MemberFlag) {}
-    MemberFlag(MemberFlag &&x) : m_MemberFlag(std::move(x.m_MemberFlag)) {}
+    MemberFlag()
+    {
+    }
+    MemberFlag(const MemberFlag &x) : m_MemberFlag(x.m_MemberFlag)
+    {
+    }
+    MemberFlag(MemberFlag &&x) : m_MemberFlag(std::move(x.m_MemberFlag))
+    {
+    }
     MemberFlag& operator=(const MemberFlag &x)
-	{
-		m_MemberFlag = x.m_MemberFlag;
-		return *this;
-	}
+    {
+        m_MemberFlag = x.m_MemberFlag;
+        return *this;
+    }
 
     MemberFlag& operator=(MemberFlag &&x)
-	{
-		m_MemberFlag = std::move(x.m_MemberFlag);
-		return *this;
-	}
-	// T1 | 00 = INVALID, 01 = DISCARD
-	bool TRY_CONSTRUCT1() const { return m_MemberFlag.test(0); }
-	void TRY_CONSTRUCT1(bool b) { b ? m_MemberFlag.set(0) : m_MemberFlag.reset(0); }
-	// T2 | 10 = USE_DEFAULT, 11 = TRIM
-	bool TRY_CONSTRUCT2() const { return m_MemberFlag.test(1); }
-	void TRY_CONSTRUCT2(bool b) { b ? m_MemberFlag.set(1) : m_MemberFlag.reset(1); }
-	// X  StructMember, UnionMember,
-	//    CollectionElement
-	bool IS_EXTERNAL() const { return m_MemberFlag.test(2); }
-	void IS_EXTERNAL(bool b) { b ? m_MemberFlag.set(2) : m_MemberFlag.reset(2); }
-	// O  StructMember
-	bool IS_OPTIONAL() const { return m_MemberFlag.test(3); }
-	void IS_OPTIONAL(bool b) { b ? m_MemberFlag.set(3) : m_MemberFlag.reset(3); }
-	// M  StructMember
-	bool IS_MUST_UNDERSTAND() const { return m_MemberFlag.test(4); }
-	void IS_MUST_UNDERSTAND(bool b) { b ? m_MemberFlag.set(4) : m_MemberFlag.reset(4); }
-	// K  StructMember, UnionDiscriminator
-	bool IS_KEY() const { return m_MemberFlag.test(5); }
-	void IS_KEY(bool b) { b ? m_MemberFlag.set(5) : m_MemberFlag.reset(5); }
-	// D  UnionMember, EnumerationLiteral
-	bool IS_DEFAULT() const { return m_MemberFlag.test(6); }
-	void IS_DEFAULT(bool b) { b ? m_MemberFlag.set(6) : m_MemberFlag.reset(6); }
+    {
+        m_MemberFlag = std::move(x.m_MemberFlag);
+        return *this;
+    }
+    // T1 | 00 = INVALID, 01 = DISCARD
+    bool TRY_CONSTRUCT1() const
+    {
+        return m_MemberFlag.test(0);
+    }
+    void TRY_CONSTRUCT1(bool b)
+    {
+        b ? m_MemberFlag.set(0) : m_MemberFlag.reset(0);
+    }
+// T2 | 10 = USE_DEFAULT, 11 = TRIM
+    bool TRY_CONSTRUCT2() const
+    {
+        return m_MemberFlag.test(1);
+    }
+    void TRY_CONSTRUCT2(bool b)
+    {
+        b ? m_MemberFlag.set(1) : m_MemberFlag.reset(1);
+    }
+// X  StructMember, UnionMember,
+//    CollectionElement
+    bool IS_EXTERNAL() const
+    {
+        return m_MemberFlag.test(2);
+    }
+    void IS_EXTERNAL(bool b)
+    {
+        b ? m_MemberFlag.set(2) : m_MemberFlag.reset(2);
+    }
+// O  StructMember
+    bool IS_OPTIONAL() const
+    {
+        return m_MemberFlag.test(3);
+    }
+    void IS_OPTIONAL(bool b)
+    {
+        b ? m_MemberFlag.set(3) : m_MemberFlag.reset(3);
+    }
+// M  StructMember
+    bool IS_MUST_UNDERSTAND() const
+    {
+        return m_MemberFlag.test(4);
+    }
+    void IS_MUST_UNDERSTAND(bool b)
+    {
+        b ? m_MemberFlag.set(4) : m_MemberFlag.reset(4);
+    }
+// K  StructMember, UnionDiscriminator
+    bool IS_KEY() const
+    {
+        return m_MemberFlag.test(5);
+    }
+    void IS_KEY(bool b)
+    {
+        b ? m_MemberFlag.set(5) : m_MemberFlag.reset(5);
+    }
+// D  UnionMember, EnumerationLiteral
+    bool IS_DEFAULT() const
+    {
+        return m_MemberFlag.test(6);
+    }
+    void IS_DEFAULT(bool b)
+    {
+        b ? m_MemberFlag.set(6) : m_MemberFlag.reset(6);
+    }
 
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
 
@@ -244,38 +292,74 @@ typedef MemberFlag BitsetMemberFlag;        // Unused. No flags apply
 class TypeFlag
 {
 private:
-	std::bitset<16> m_TypeFlag;
+    std::bitset<16> m_TypeFlag;
 public:
-    TypeFlag() {}
-    TypeFlag(const TypeFlag &x) : m_TypeFlag(x.m_TypeFlag) {}
-    TypeFlag(TypeFlag &&x) : m_TypeFlag(std::move(x.m_TypeFlag)) {}
+    TypeFlag()
+    {
+    }
+    TypeFlag(const TypeFlag &x) : m_TypeFlag(x.m_TypeFlag)
+    {
+    }
+    TypeFlag(TypeFlag &&x) : m_TypeFlag(std::move(x.m_TypeFlag))
+    {
+    }
     TypeFlag& operator=(const TypeFlag &x)
-	{
-		m_TypeFlag = x.m_TypeFlag;
-		return *this;
-	}
+    {
+        m_TypeFlag = x.m_TypeFlag;
+        return *this;
+    }
 
     TypeFlag& operator=(TypeFlag &&x)
-	{
-		m_TypeFlag = std::move(x.m_TypeFlag);
-		return *this;
-	}
+    {
+        m_TypeFlag = std::move(x.m_TypeFlag);
+        return *this;
+    }
 
-	// F |
-	bool IS_FINAL() const { return m_TypeFlag.test(0); }
-	void IS_FINAL(bool b) { b ? m_TypeFlag.set(0) : m_TypeFlag.reset(0); }
-	// A |-  Struct, Union
-	bool IS_APPENDABLE() const { return m_TypeFlag.test(1); }
-	void IS_APPENDABLE(bool b) { b ? m_TypeFlag.set(1) : m_TypeFlag.reset(1); }
-	// M |   (exactly one flag)
-	bool IS_MUTABLE() const { return m_TypeFlag.test(2); }
-	void IS_MUTABLE(bool b) { b ? m_TypeFlag.set(2) : m_TypeFlag.reset(2); }
-	// N     Struct, Union
-	bool IS_NESTED() const { return m_TypeFlag.test(3); }
-	void IS_NESTED(bool b) { b ? m_TypeFlag.set(3) : m_TypeFlag.reset(3); }
-	// H     Struct
-	bool IS_AUTOID_HASH() const { return m_TypeFlag.test(4); }
-	void IS_AUTOID_HASH(bool b) { b ? m_TypeFlag.set(4) : m_TypeFlag.reset(4); }
+    // F |
+    bool IS_FINAL() const
+    {
+        return m_TypeFlag.test(0);
+    }
+    void IS_FINAL(bool b)
+    {
+        b ? m_TypeFlag.set(0) : m_TypeFlag.reset(0);
+    }
+// A |-  Struct, Union
+    bool IS_APPENDABLE() const
+    {
+        return m_TypeFlag.test(1);
+    }
+    void IS_APPENDABLE(bool b)
+    {
+        b ? m_TypeFlag.set(1) : m_TypeFlag.reset(1);
+    }
+// M |   (exactly one flag)
+    bool IS_MUTABLE() const
+    {
+        return m_TypeFlag.test(2);
+    }
+    void IS_MUTABLE(bool b)
+    {
+        b ? m_TypeFlag.set(2) : m_TypeFlag.reset(2);
+    }
+// N     Struct, Union
+    bool IS_NESTED() const
+    {
+        return m_TypeFlag.test(3);
+    }
+    void IS_NESTED(bool b)
+    {
+        b ? m_TypeFlag.set(3) : m_TypeFlag.reset(3);
+    }
+// H     Struct
+    bool IS_AUTOID_HASH() const
+    {
+        return m_TypeFlag.test(4);
+    }
+    void IS_AUTOID_HASH(bool b)
+    {
+        b ? m_TypeFlag.set(4) : m_TypeFlag.reset(4);
+    }
 
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
 

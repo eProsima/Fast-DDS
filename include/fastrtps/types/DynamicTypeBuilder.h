@@ -18,9 +18,9 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class AnnotationDescriptor;
 class TypeDescriptor;
@@ -56,9 +56,15 @@ public:
     RTPS_DllAPI ResponseCode CopyFrom(const DynamicTypeBuilder* other);
 
     ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members);
-    RTPS_DllAPI inline TypeKind GetKind() const { return mKind; }
+    RTPS_DllAPI inline TypeKind GetKind() const
+    {
+        return mKind;
+    }
     RTPS_DllAPI std::string GetName() const;
-    const TypeDescriptor* getTypeDescriptor() const { return mDescriptor; }
+    const TypeDescriptor* getTypeDescriptor() const
+    {
+        return mDescriptor;
+    }
 
     bool IsConsistent() const;
     bool IsDiscriminatorType() const;

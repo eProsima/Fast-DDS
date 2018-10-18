@@ -28,12 +28,12 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
 using namespace rtps;
 
-namespace types{
+namespace types {
 
 TypeObjectHashId::TypeObjectHashId()
 {
@@ -48,14 +48,14 @@ TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
 {
     m__d = x.m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_hash, x.m_hash, 14);
-        break;
+            memcpy(m_hash, x.m_hash, 14);
+            break;
         default:
-        break;
+            break;
     }
 }
 
@@ -63,14 +63,14 @@ TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
 {
     m__d = x.m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_hash, x.m_hash, 14);
-        break;
+            memcpy(m_hash, x.m_hash, 14);
+            break;
         default:
-        break;
+            break;
     }
 }
 
@@ -78,14 +78,14 @@ TypeObjectHashId& TypeObjectHashId::operator=(const TypeObjectHashId &x)
 {
     m__d = x.m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_hash, x.m_hash, 14);
-        break;
+            memcpy(m_hash, x.m_hash, 14);
+            break;
         default:
-        break;
+            break;
     }
 
     return *this;
@@ -95,14 +95,14 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
 {
     m__d = x.m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        memcpy(m_hash, x.m_hash, 14);
-        break;
+            memcpy(m_hash, x.m_hash, 14);
+            break;
         default:
-        break;
+            break;
     }
 
     return *this;
@@ -113,23 +113,23 @@ void TypeObjectHashId::_d(uint8_t __d) // Special case to ease... sets the curre
     bool b = false;
     m__d = __d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        switch(__d)
-        {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-            b = true;
+            switch (__d)
+            {
+                case EK_COMPLETE:
+                case EK_MINIMAL:
+                    b = true;
+                    break;
+                default:
+                    break;
+            }
             break;
-            default:
-            break;
-        }
-        break;
     }
 
-    if(!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
+    if (!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
 
     m__d = __d;
 }
@@ -160,14 +160,14 @@ const EquivalenceHash& TypeObjectHashId::hash() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -182,14 +182,14 @@ EquivalenceHash& TypeObjectHashId::hash()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -207,13 +207,13 @@ size_t TypeObjectHashId::getCdrSerializedSize(const TypeObjectHashId& data, size
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-    switch(data.m__d)
+    switch (data.m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);break;
+            current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1); break;
         default:
-        break;
+            break;
     }
 
     return current_alignment - initial_alignment;
@@ -223,17 +223,17 @@ void TypeObjectHashId::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        for (int i = 0; i < 14; ++i)
-        {
-            scdr << m_hash[i];
-        }
-        break;
+            for (int i = 0; i < 14; ++i)
+            {
+                scdr << m_hash[i];
+            }
+            break;
         default:
-        break;
+            break;
     }
 }
 
@@ -241,17 +241,17 @@ void TypeObjectHashId::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-        for (int i = 0; i < 14; ++i)
-        {
-            dcdr >> m_hash[i];
-        }
-        break;
+            for (int i = 0; i < 14; ++i)
+            {
+                dcdr >> m_hash[i];
+            }
+            break;
         default:
-        break;
+            break;
     }
 }
 

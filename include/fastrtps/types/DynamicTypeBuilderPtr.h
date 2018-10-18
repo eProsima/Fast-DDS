@@ -17,9 +17,9 @@
 
 #include <fastrtps/types/TypesBase.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class DynamicTypeBuilder;
 
@@ -33,7 +33,9 @@ public:
     using Base::operator*;
     using Base::operator bool;
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr() {}
+    RTPS_DllAPI DynamicTypeBuilder_ptr()
+    {
+    }
 
     RTPS_DllAPI DynamicTypeBuilder_ptr(DynamicTypeBuilder* pType);
 

@@ -17,9 +17,9 @@
 
 #include <fastrtps/types/TypesBase.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class DynamicData;
 
@@ -33,7 +33,9 @@ public:
     using Base::operator*;
     using Base::operator bool;
 
-    DynamicData_ptr() {}
+    DynamicData_ptr()
+    {
+    }
 
     RTPS_DllAPI DynamicData_ptr(DynamicData* pData);
 

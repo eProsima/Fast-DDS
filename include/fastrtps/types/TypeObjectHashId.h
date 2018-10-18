@@ -37,12 +37,12 @@ namespace eprosima
 }
 
 // The types in this file shall be serialized with XCDR encoding version 2
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
 using namespace rtps;
 
-namespace types{
+namespace types {
 
 // First 14 bytes of MD5 of the serialized TypeObject using XCDR
 // version 2 with Little Endian encoding

@@ -24,9 +24,9 @@
 #include <fastrtps/log/Log.h>
 #include <sstream>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 static TypeObjectFactory* g_instance = nullptr;
 TypeObjectFactory* TypeObjectFactory::GetInstance()
@@ -430,14 +430,14 @@ const TypeIdentifier* TypeObjectFactory::GetStoredTypeIdentifier(const TypeIdent
     if (identifier == nullptr) return nullptr;
     if (identifier->_d() == EK_COMPLETE)
     {
-        for(auto& it : m_CompleteIdentifiers)
+        for (auto& it : m_CompleteIdentifiers)
         {
             if (*(it.second) == *identifier) return it.second;
         }
     }
     else
     {
-        for(auto& it : m_Identifiers)
+        for (auto& it : m_Identifiers)
         {
             if (*(it.second) == *identifier) return it.second;
         }
@@ -451,14 +451,14 @@ std::string TypeObjectFactory::GetTypeName(const TypeIdentifier* identifier) con
     if (identifier == nullptr) return "<NULLPTR>";
     if (identifier->_d() == EK_COMPLETE)
     {
-        for(auto& it : m_CompleteIdentifiers)
+        for (auto& it : m_CompleteIdentifiers)
         {
             if (*(it.second) == *identifier) return it.first;
         }
     }
     else
     {
-        for(auto& it : m_Identifiers)
+        for (auto& it : m_Identifiers)
         {
             if (*(it.second) == *identifier) return it.first;
         }
@@ -526,7 +526,7 @@ void TypeObjectFactory::AddTypeIdentifier(const std::string &type_name, const Ty
 }
 
 void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
-        const TypeObject* object)
+    const TypeObject* object)
 {
     AddTypeIdentifier(type_name, identifier);
 
@@ -537,7 +537,7 @@ void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeId
         if (object->_d() == EK_MINIMAL)
         {
             const TypeIdentifier* typeId = m_Identifiers[type_name];
-            if(m_Objects.find(typeId) == m_Objects.end())
+            if (m_Objects.find(typeId) == m_Objects.end())
             {
                 TypeObject* obj = new TypeObject;
                 *obj = *object;
@@ -547,7 +547,7 @@ void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeId
         else if (object->_d() == EK_COMPLETE)
         {
             const TypeIdentifier* typeId = m_CompleteIdentifiers[type_name];
-            if(m_CompleteObjects.find(typeId) == m_CompleteObjects.end())
+            if (m_CompleteObjects.find(typeId) == m_CompleteObjects.end())
             {
                 TypeObject* obj = new TypeObject;
                 *obj = *object;
@@ -589,7 +589,7 @@ const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, boo
 }
 
 const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string &type_name,
-        uint32_t bound, bool complete)
+    uint32_t bound, bool complete)
 {
     std::string auxType = TypeNamesGenerator::getSequenceTypeName(type_name, bound, false);
 
@@ -602,8 +602,8 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
     else
     {
         const TypeIdentifier* innerIdent = (complete)
-                        ? GetTypeIdentifierTryingComplete(type_name)
-                        : GetTypeIdentifier(type_name);
+            ? GetTypeIdentifierTryingComplete(type_name)
+            : GetTypeIdentifier(type_name);
 
         TypeIdentifier auxIdent;
         if (bound < 256)
@@ -643,7 +643,7 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
 }
 
 const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &type_name,
-        const std::vector<uint32_t> &bound, bool complete)
+    const std::vector<uint32_t> &bound, bool complete)
 {
     uint32_t size;
     std::string auxType = TypeNamesGenerator::getArrayTypeName(type_name, bound, size, false);
@@ -657,8 +657,8 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
     else
     {
         const TypeIdentifier* innerIdent = (complete)
-                        ? GetTypeIdentifierTryingComplete(type_name)
-                        : GetTypeIdentifier(type_name);
+            ? GetTypeIdentifierTryingComplete(type_name)
+            : GetTypeIdentifier(type_name);
 
         TypeIdentifier auxIdent;
         if (size < 256)
@@ -704,7 +704,7 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
 }
 
 const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key_type_name,
-        const std::string &value_type_name, uint32_t bound, bool complete)
+    const std::string &value_type_name, uint32_t bound, bool complete)
 {
     std::string auxType = TypeNamesGenerator::getMapTypeName(key_type_name, value_type_name, bound, false);
 
@@ -717,11 +717,11 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
     else
     {
         const TypeIdentifier* keyIdent = (complete)
-                        ? GetTypeIdentifierTryingComplete(key_type_name)
-                        : GetTypeIdentifier(key_type_name);
+            ? GetTypeIdentifierTryingComplete(key_type_name)
+            : GetTypeIdentifier(key_type_name);
         const TypeIdentifier* valIdent = (complete)
-                        ? GetTypeIdentifierTryingComplete(value_type_name)
-                        : GetTypeIdentifier(value_type_name);
+            ? GetTypeIdentifierTryingComplete(value_type_name)
+            : GetTypeIdentifier(value_type_name);
 
         TypeIdentifier auxIdent;
         if (bound < 256)
@@ -779,7 +779,7 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
 static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
 {
     if (identifier == nullptr) return TK_NONE;
-    switch(identifier->_d())
+    switch (identifier->_d())
     {
         case TI_STRING8_SMALL:
         case TI_STRING8_LARGE:
@@ -830,97 +830,97 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
     case TK_CHAR16:
         break;
     */
-    case TK_STRING8:
-    {
-        if (identifier->_d() == TI_STRING8_SMALL)
+        case TK_STRING8:
         {
-            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
-        }
-        else
-        {
-            descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
-        }
-        descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Type();
-        break;
-    }
-    case TK_STRING16:
-    {
-        if (identifier->_d() == TI_STRING16_SMALL)
-        {
-            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
-        }
-        else
-        {
-            descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
-        }
-        descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Type();
-        break;
-    }
-    case TK_SEQUENCE:
-    {
-        if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
-        {
-            const TypeIdentifier *aux = TryGetComplete(identifier->seq_sdefn().element_identifier());
-            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
-            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
-        }
-        else
-        {
-            const TypeIdentifier *aux = TryGetComplete(identifier->seq_ldefn().element_identifier());
-            descriptor.mBound.emplace_back(identifier->seq_ldefn().bound());
-            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
-        }
-        break;
-    }
-    case TK_ARRAY:
-    {
-        if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
-        {
-            const TypeIdentifier *aux = TryGetComplete(identifier->array_sdefn().element_identifier());
-            for (octet b : identifier->array_sdefn().array_bound_seq())
+            if (identifier->_d() == TI_STRING8_SMALL)
             {
-                descriptor.mBound.emplace_back(static_cast<uint32_t>(b));
+                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
             }
-            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            else
+            {
+                descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
+            }
+            descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Type();
+            break;
         }
-        else
+        case TK_STRING16:
         {
-            const TypeIdentifier *aux = identifier->array_ldefn().element_identifier();
-            descriptor.mBound = identifier->array_ldefn().array_bound_seq();
-            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            if (identifier->_d() == TI_STRING16_SMALL)
+            {
+                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+            }
+            else
+            {
+                descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
+            }
+            descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Type();
+            break;
         }
-        break;
-    }
-    case TK_MAP:
-    {
-        if (identifier->_d() == TI_PLAIN_MAP_SMALL)
+        case TK_SEQUENCE:
         {
-            const TypeIdentifier *aux = TryGetComplete(identifier->map_sdefn().element_identifier());
-            const TypeIdentifier *aux2 = TryGetComplete(identifier->map_sdefn().key_identifier());
-            descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
-            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
-            descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
+            if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
+            {
+                const TypeIdentifier *aux = TryGetComplete(identifier->seq_sdefn().element_identifier());
+                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
+                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            }
+            else
+            {
+                const TypeIdentifier *aux = TryGetComplete(identifier->seq_ldefn().element_identifier());
+                descriptor.mBound.emplace_back(identifier->seq_ldefn().bound());
+                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            }
+            break;
         }
-        else
+        case TK_ARRAY:
         {
-            const TypeIdentifier *aux = TryGetComplete(identifier->map_ldefn().element_identifier());
-            const TypeIdentifier *aux2 = TryGetComplete(identifier->map_ldefn().key_identifier());
-            descriptor.mBound.emplace_back(identifier->map_ldefn().bound());
-            descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
-            descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
+            if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
+            {
+                const TypeIdentifier *aux = TryGetComplete(identifier->array_sdefn().element_identifier());
+                for (octet b : identifier->array_sdefn().array_bound_seq())
+                {
+                    descriptor.mBound.emplace_back(static_cast<uint32_t>(b));
+                }
+                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            }
+            else
+            {
+                const TypeIdentifier *aux = identifier->array_ldefn().element_identifier();
+                descriptor.mBound = identifier->array_ldefn().array_bound_seq();
+                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            }
+            break;
         }
-        break;
-    }
-    case EK_MINIMAL:
-    case EK_COMPLETE:
-        // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
-        if (object != nullptr && object->_d() == EK_COMPLETE)
+        case TK_MAP:
         {
-            return BuildDynamicType(descriptor, object);
+            if (identifier->_d() == TI_PLAIN_MAP_SMALL)
+            {
+                const TypeIdentifier *aux = TryGetComplete(identifier->map_sdefn().element_identifier());
+                const TypeIdentifier *aux2 = TryGetComplete(identifier->map_sdefn().key_identifier());
+                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
+                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+                descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
+            }
+            else
+            {
+                const TypeIdentifier *aux = TryGetComplete(identifier->map_ldefn().element_identifier());
+                const TypeIdentifier *aux2 = TryGetComplete(identifier->map_ldefn().key_identifier());
+                descriptor.mBound.emplace_back(identifier->map_ldefn().bound());
+                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+                descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
+            }
+            break;
         }
-        break;
-    default:
-        break;
+        case EK_MINIMAL:
+        case EK_COMPLETE:
+            // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
+            if (object != nullptr && object->_d() == EK_COMPLETE)
+            {
+                return BuildDynamicType(descriptor, object);
+            }
+            break;
+        default:
+            break;
     }
 
     DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
@@ -939,7 +939,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
     // Change descriptor's kind
     descriptor.SetKind(object->complete()._d());
 
-    switch(object->complete()._d())
+    switch (object->complete()._d())
     {
         // From here, we need TypeObject
         case TK_ALIAS:

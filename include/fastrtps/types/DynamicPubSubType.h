@@ -20,9 +20,9 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicDataPtr.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class DynamicPubSubType : public eprosima::fastrtps::TopicDataType
 {
@@ -47,7 +47,7 @@ protected:
 
     void UpdateDynamicTypeInfo();
 
-	DynamicType_ptr mDynamicType;
+    DynamicType_ptr mDynamicType;
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 };

@@ -21,9 +21,9 @@
 class MemberDescriptor;
 class DynamicType;
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class TypeDescriptor
 {
@@ -34,9 +34,9 @@ public:
 
     ~TypeDescriptor();
 
-	ResponseCode CopyFrom(const TypeDescriptor* descriptor);
-	bool Equals(const TypeDescriptor* descriptor) const;
-	bool IsConsistent() const;
+    ResponseCode CopyFrom(const TypeDescriptor* descriptor);
+    bool Equals(const TypeDescriptor* descriptor) const;
+    bool IsConsistent() const;
 
     DynamicType_ptr GetBaseType() const;
     uint32_t GetBounds(uint32_t index = 0) const;
@@ -60,11 +60,11 @@ protected:
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;
 
-	TypeKind mKind;                         // Type Kind.
-	std::string mName;                      // Type Name.
+    TypeKind mKind;                         // Type Kind.
+    std::string mName;                      // Type Name.
     DynamicType_ptr mBaseType;                 // SuperType of an structure or base type of an alias type.
     DynamicType_ptr mDiscriminatorType;        // Discrimination type for a union.
-	std::vector<uint32_t> mBound;           // Length for strings, arrays, sequences, maps and bitmasks.
+    std::vector<uint32_t> mBound;           // Length for strings, arrays, sequences, maps and bitmasks.
     DynamicType_ptr mElementType;              // Value Type for arrays, sequences, maps, bitmasks.
     DynamicType_ptr mKeyElementType;           // Key Type for maps.
 };

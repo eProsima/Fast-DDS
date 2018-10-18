@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
@@ -5900,135 +5899,135 @@ size_t DynamicData::getEmptyCdrSerializedSize(const DynamicType* type, size_t cu
 
 void DynamicData::SerializeEmptyData(const DynamicType_ptr pType, eprosima::fastcdr::Cdr &cdr) const
 {
-    switch(pType->GetKind())
+    switch (pType->GetKind())
     {
-    default:
-        break;
-    case TK_ALIAS:
-    {
-        SerializeEmptyData(pType->GetBaseType(), cdr);
-        break;
-    }
-    case TK_INT32:
-    {
-        cdr << static_cast<int32_t>(0);
-        break;
-    }
-    case TK_UINT32:
-    {
-        cdr << static_cast<uint32_t>(0);
-        break;
-    }
-    case TK_INT16:
-    {
-        cdr << static_cast<int16_t>(0);
-        break;
-    }
-    case TK_UINT16:
-    {
-        cdr << static_cast<uint16_t>(0);
-        break;
-    }
-    case TK_INT64:
-    {
-        cdr << static_cast<int64_t>(0);
-        break;
-    }
-    case TK_UINT64:
-    {
-        cdr << static_cast<uint64_t>(0);
-        break;
-    }
-    case TK_FLOAT32:
-    {
-        cdr << static_cast<float>(0.0f);
-        break;
-    }
-    case TK_FLOAT64:
-    {
-        cdr << static_cast<double>(0.0);
-        break;
-    }
-    case TK_FLOAT128:
-    {
-        cdr << static_cast<long double>(0.0);
-        break;
-    }
-    case TK_CHAR8:
-    {
-        cdr << static_cast<char>(0);
-        break;
-    }
-    case TK_CHAR16:
-    {
-        cdr << static_cast<uint32_t>(0);
-        break;
-    }
-    case TK_BOOLEAN:
-    {
-        cdr << static_cast<uint8_t>(0);
-        break;
-    }
-    case TK_BYTE:
-    {
-        cdr << static_cast<uint8_t>(0);
-        break;
-    }
-    case TK_STRING8:
-    {
-        cdr << std::string();
-        break;
-    }
-    case TK_STRING16:
-    {
-        cdr << std::wstring();
-        break;
-    }
-    case TK_ENUM:
-    {
-        cdr << static_cast<uint32_t>(0);
-        break;
-    }
-    case TK_BITSET:
-    case TK_BITMASK:
-    {
-        cdr << static_cast<uint64_t>(0);
-        break;
-    }
-    case TK_UNION:
-    {
-        cdr << static_cast<uint32_t>(MEMBER_ID_INVALID);
-        break;
-    }
-    case TK_SEQUENCE: // Sequence is like structure, but with size
-    {
-        cdr << static_cast<uint32_t>(0);
-        break;
-    }
-    case TK_STRUCTURE:
-    {
-        for (uint32_t idx = 0; idx < pType->mMemberById.size(); ++idx)
+        default:
+            break;
+        case TK_ALIAS:
         {
-            auto it = pType->mMemberById.at(idx);
-            SerializeEmptyData(it->mDescriptor.mType, cdr);
+            SerializeEmptyData(pType->GetBaseType(), cdr);
+            break;
         }
-        break;
-    }
-    case TK_ARRAY:
-    {
-        uint32_t arraySize = pType->GetTotalBounds();
-        //cdr << arraySize;
-        for (uint32_t i = 0; i < arraySize; ++i)
+        case TK_INT32:
         {
-            SerializeEmptyData(pType->GetElementType(), cdr);
+            cdr << static_cast<int32_t>(0);
+            break;
         }
-        break;
-    }
-    case TK_MAP:
-    {
-        cdr << static_cast<uint32_t>(0);
-        break;
-    }
+        case TK_UINT32:
+        {
+            cdr << static_cast<uint32_t>(0);
+            break;
+        }
+        case TK_INT16:
+        {
+            cdr << static_cast<int16_t>(0);
+            break;
+        }
+        case TK_UINT16:
+        {
+            cdr << static_cast<uint16_t>(0);
+            break;
+        }
+        case TK_INT64:
+        {
+            cdr << static_cast<int64_t>(0);
+            break;
+        }
+        case TK_UINT64:
+        {
+            cdr << static_cast<uint64_t>(0);
+            break;
+        }
+        case TK_FLOAT32:
+        {
+            cdr << static_cast<float>(0.0f);
+            break;
+        }
+        case TK_FLOAT64:
+        {
+            cdr << static_cast<double>(0.0);
+            break;
+        }
+        case TK_FLOAT128:
+        {
+            cdr << static_cast<long double>(0.0);
+            break;
+        }
+        case TK_CHAR8:
+        {
+            cdr << static_cast<char>(0);
+            break;
+        }
+        case TK_CHAR16:
+        {
+            cdr << static_cast<uint32_t>(0);
+            break;
+        }
+        case TK_BOOLEAN:
+        {
+            cdr << static_cast<uint8_t>(0);
+            break;
+        }
+        case TK_BYTE:
+        {
+            cdr << static_cast<uint8_t>(0);
+            break;
+        }
+        case TK_STRING8:
+        {
+            cdr << std::string();
+            break;
+        }
+        case TK_STRING16:
+        {
+            cdr << std::wstring();
+            break;
+        }
+        case TK_ENUM:
+        {
+            cdr << static_cast<uint32_t>(0);
+            break;
+        }
+        case TK_BITSET:
+        case TK_BITMASK:
+        {
+            cdr << static_cast<uint64_t>(0);
+            break;
+        }
+        case TK_UNION:
+        {
+            cdr << static_cast<uint32_t>(MEMBER_ID_INVALID);
+            break;
+        }
+        case TK_SEQUENCE: // Sequence is like structure, but with size
+        {
+            cdr << static_cast<uint32_t>(0);
+            break;
+        }
+        case TK_STRUCTURE:
+        {
+            for (uint32_t idx = 0; idx < pType->mMemberById.size(); ++idx)
+            {
+                auto it = pType->mMemberById.at(idx);
+                SerializeEmptyData(it->mDescriptor.mType, cdr);
+            }
+            break;
+        }
+        case TK_ARRAY:
+        {
+            uint32_t arraySize = pType->GetTotalBounds();
+            //cdr << arraySize;
+            for (uint32_t i = 0; i < arraySize; ++i)
+            {
+                SerializeEmptyData(pType->GetElementType(), cdr);
+            }
+            break;
+        }
+        case TK_MAP:
+        {
+            cdr << static_cast<uint32_t>(0);
+            break;
+        }
     }
 }
 

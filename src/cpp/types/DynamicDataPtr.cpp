@@ -21,7 +21,10 @@ namespace fastrtps {
 namespace types {
 
 DynamicData_ptr::DynamicData_ptr(DynamicData* pData)
-    : Base(pData, [](DynamicData* pData) { DynamicDataFactory::GetInstance()->DeleteData(pData); })
+    : Base(pData, [](DynamicData* pData)
+{
+    DynamicDataFactory::GetInstance()->DeleteData(pData);
+})
 {
 }
 

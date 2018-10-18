@@ -18,9 +18,9 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/MemberDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class AnnotationDescriptor;
 class DynamicType;
@@ -49,7 +49,10 @@ public:
     std::string GetName() const;
     bool IsDefaultUnionValue() const;
 
-    const MemberDescriptor* GetDescriptor() const { return &mDescriptor; }
+    const MemberDescriptor* GetDescriptor() const
+    {
+        return &mDescriptor;
+    }
 
 protected:
 
@@ -63,8 +66,8 @@ protected:
 
     DynamicType* mParent;
     MemberDescriptor mDescriptor;
-	std::vector<AnnotationDescriptor*> mAnnotation;
-	MemberId mId;
+    std::vector<AnnotationDescriptor*> mAnnotation;
+    MemberId mId;
 };
 
 } // namespace types

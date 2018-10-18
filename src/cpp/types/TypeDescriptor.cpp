@@ -83,7 +83,7 @@ ResponseCode TypeDescriptor::CopyFrom(const TypeDescriptor* descriptor)
             mKeyElementType = descriptor->mKeyElementType;
             return ResponseCode::RETCODE_OK;
         }
-        catch(std::exception& /*e*/)
+        catch (std::exception& /*e*/)
         {
             return ResponseCode::RETCODE_ERROR;
         }
@@ -187,7 +187,7 @@ bool TypeDescriptor::IsConsistent() const
 
     // These types need one bound with the length of the field.
     if (mBound.size() != 1 && (mKind == TK_SEQUENCE || mKind == TK_MAP || mKind == TK_BITMASK ||
-                                mKind == TK_STRING8 || mKind == TK_STRING16))
+        mKind == TK_STRING8 || mKind == TK_STRING16))
     {
         return false;
     }
@@ -200,7 +200,7 @@ bool TypeDescriptor::IsConsistent() const
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
     if ((mElementType == nullptr) == (mKind == TK_ARRAY || mKind == TK_SEQUENCE || mKind == TK_STRING8 ||
-                                    mKind == TK_STRING16 || mKind == TK_MAP || mKind == TK_BITMASK))
+        mKind == TK_STRING16 || mKind == TK_MAP || mKind == TK_BITMASK))
     {
         return false;
     }

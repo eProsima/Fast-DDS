@@ -21,9 +21,9 @@
 
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class AnnotationDescriptor;
 class DynamicTypeBuilder;
@@ -47,7 +47,7 @@ public:
     RTPS_DllAPI ResponseCode DeleteType(DynamicType* type);
 
     RTPS_DllAPI DynamicTypeBuilder* CreateCustomBuilder(const TypeDescriptor* descriptor, const std::string& name = "");
-	RTPS_DllAPI DynamicTypeBuilder* CreateBuilderCopy(const DynamicTypeBuilder* type);
+    RTPS_DllAPI DynamicTypeBuilder* CreateBuilderCopy(const DynamicTypeBuilder* type);
     RTPS_DllAPI DynamicTypeBuilder* CreateInt32Builder();
     RTPS_DllAPI DynamicTypeBuilder* CreateUint32Builder();
     RTPS_DllAPI DynamicTypeBuilder* CreateInt16Builder();
@@ -62,8 +62,8 @@ public:
     RTPS_DllAPI DynamicTypeBuilder* CreateBoolBuilder();
     RTPS_DllAPI DynamicTypeBuilder* CreateByteBuilder();
     RTPS_DllAPI DynamicTypeBuilder* CreateStringBuilder(uint32_t bound = MAX_STRING_LENGTH);
-	RTPS_DllAPI DynamicTypeBuilder* CreateWstringBuilder(uint32_t bound = MAX_STRING_LENGTH);
-	RTPS_DllAPI DynamicTypeBuilder* CreateSequenceBuilder(const DynamicTypeBuilder* element_type, uint32_t bound = MAX_ELEMENTS_COUNT);
+    RTPS_DllAPI DynamicTypeBuilder* CreateWstringBuilder(uint32_t bound = MAX_STRING_LENGTH);
+    RTPS_DllAPI DynamicTypeBuilder* CreateSequenceBuilder(const DynamicTypeBuilder* element_type, uint32_t bound = MAX_ELEMENTS_COUNT);
     RTPS_DllAPI DynamicTypeBuilder* CreateSequenceBuilder(const DynamicType_ptr type, uint32_t bound = MAX_ELEMENTS_COUNT);
     RTPS_DllAPI DynamicTypeBuilder* CreateArrayBuilder(const DynamicTypeBuilder* element_type, const std::vector<uint32_t>& bounds);
     RTPS_DllAPI DynamicTypeBuilder* CreateArrayBuilder(const DynamicType_ptr type, const std::vector<uint32_t>& bounds);
@@ -80,7 +80,7 @@ public:
     RTPS_DllAPI DynamicTypeBuilder* CreateUnionBuilder(DynamicType_ptr discriminator_type);
     //DynamicTypeBuilder* CreateTypeWTypeObject(TypeObject* type_object);
     //DynamicTypeBuilder* CreateTypeWUri(const std::string& document_url, const std::string& type_name, IncludePathSeq include_paths);
-	//DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
+    //DynamicTypeBuilder* CreateTypeWDocument(const std::string& document, const std::string& type_name, IncludePathSeq include_paths);
 
     RTPS_DllAPI DynamicType_ptr CreateAnnotationPrimitive();
     RTPS_DllAPI DynamicType_ptr CreateType(const TypeDescriptor* descriptor, const std::string& name = "");
@@ -117,7 +117,7 @@ public:
     RTPS_DllAPI bool IsEmpty() const;
 
 protected:
-	DynamicTypeBuilderFactory();
+    DynamicTypeBuilderFactory();
 
     inline void AddBuilderToList(DynamicTypeBuilder* pBuilder);
 

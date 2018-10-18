@@ -20,9 +20,9 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <mutex>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class TypeObjectFactory
 {
@@ -64,7 +64,7 @@ public:
     }
 
 protected:
-	TypeObjectFactory();
+    TypeObjectFactory();
     std::map<const std::string, const TypeIdentifier*> m_Identifiers; // Basic, builtin and EK_MINIMAL
     std::map<const std::string, const TypeIdentifier*> m_CompleteIdentifiers; // Only EK_COMPLETE
     std::map<const TypeIdentifier*, const TypeObject*> m_Objects; // EK_MINIMAL

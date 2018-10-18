@@ -37,12 +37,12 @@ namespace eprosima
     }
 }
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
 using namespace rtps;
 
-namespace types{
+namespace types {
 
 typedef octet TypeIdentiferKind;
 const octet TI_STRING8_SMALL = 0x70;
