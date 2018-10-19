@@ -230,7 +230,7 @@ asio::ip::tcp TCPv6Transport::GenerateProtocol() const
 
 bool TCPv6Transport::IsInterfaceAllowed(const Locator_t& loc) const
 {
-    asio::ip::address_v6 ip = asio::ip::make_address_v6(IPLocator::toIPv6string(loc));
+    asio::ip::address_v6 ip = asio::ip::address_v6::from_string(IPLocator::toIPv6string(loc));
     return IsInterfaceAllowed(ip);
 }
 
