@@ -230,7 +230,7 @@ asio::ip::tcp TCPv4Transport::GenerateProtocol() const
 
 bool TCPv4Transport::IsInterfaceAllowed(const Locator_t& loc) const
 {
-    asio::ip::address_v4 ip = asio::ip::make_address_v4(IPLocator::toIPv4string(loc));
+    asio::ip::address_v4 ip = asio::ip::address_v4::from_string(IPLocator::toIPv4string(loc));
     return IsInterfaceAllowed(ip);
 }
 
