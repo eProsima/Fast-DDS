@@ -27,7 +27,6 @@
 
 namespace eprosima{
 namespace fastrtps{
-
 namespace rtps{
 class EDP;
 }
@@ -109,7 +108,10 @@ class DurabilityQosPolicy : private Parameter_t, public QosPolicy
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -127,7 +129,10 @@ class DeadlineQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -145,7 +150,10 @@ class LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -180,7 +188,10 @@ class LivelinessQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -212,7 +223,10 @@ class ReliabilityQosPolicy : private Parameter_t, public QosPolicy
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 
@@ -240,7 +254,10 @@ class OwnershipQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -269,7 +286,10 @@ class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 
@@ -287,7 +307,10 @@ class UserDataQosPolicy : private Parameter_t, public QosPolicy{
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+	{
+		return true;
+	}
 
     /**
      * Returns raw data vector.
@@ -321,7 +344,10 @@ class TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -358,7 +384,10 @@ class PresentationQosPolicy : private Parameter_t, public QosPolicy
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 
@@ -377,7 +406,10 @@ class  PartitionQosPolicy : private Parameter_t, public QosPolicy
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+	{
+		return true;
+	}
 
     /**
      * Appends a name to the list of partition names.
@@ -419,7 +451,10 @@ class  TopicDataQosPolicy : private Parameter_t, public QosPolicy
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+	{
+		return true;
+	}
 
     /**
      * Appends topic data.
@@ -460,7 +495,10 @@ class  GroupDataQosPolicy : private Parameter_t, public QosPolicy
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+	{
+		return true;
+	}
 
     /**
      * Appends group data.
@@ -512,7 +550,10 @@ class HistoryQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -536,7 +577,10 @@ class ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 
@@ -568,7 +612,10 @@ class DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -586,7 +633,10 @@ class LifespanQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -603,7 +653,10 @@ class OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy {
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 
@@ -623,7 +676,10 @@ class TransportPriorityQosPolicy : private Parameter_t , public QosPolicy{
          * @param msg Message to append the QoS Policy to.
          * @return True if the modified CDRMessage is valid.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -668,7 +724,10 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 enum TypeConsistencyKind : uint32_t
@@ -697,7 +756,10 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+		{
+			return true;
+		}
 };
 
 /**
@@ -748,8 +810,14 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+	bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+	{
+		return true;
+	}
+    bool readFromCDRMessage(rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/)
+	{
+		return true;
+	}
 };
 
 /**
@@ -799,8 +867,15 @@ public:
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
-    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+	bool addToCDRMessage(rtps::CDRMessage_t* /*msg*/) override
+	{
+		return true;
+	}
+
+    bool readFromCDRMessage(rtps::CDRMessage_t* /*msg*/, uint32_t /*size*/)
+	{
+		return true;
+	}
 };
 
 }
