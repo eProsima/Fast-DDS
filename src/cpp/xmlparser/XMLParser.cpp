@@ -143,7 +143,7 @@ XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TRANSPORT_DESCRIPTORS);
+    tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TRANSPORT_DESCRIPTOR);
     while(p_element != nullptr)
     {
         ret = parseXMLTransportData(p_element);
