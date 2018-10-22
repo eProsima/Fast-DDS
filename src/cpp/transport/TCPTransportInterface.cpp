@@ -131,20 +131,9 @@ void TCPTransportInterface::Clean()
         mUnboundChannelResources.clear();
     }
 
-    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [](auto it){
-        it->Disable(); // Disable all added TCPChannelResources
+    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](auto it){
+        DeleteSocket(it); // Disable all added TCPChannelResources
     });
-
-    {
-        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-        std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [&](auto socket){
-            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), socket);
-            if (it == mDeletedSocketsPool.end())
-            {
-                mDeletedSocketsPool.emplace_back(socket);
-            }
-        });
-    }
 
     CleanDeletedSockets();
 
@@ -192,8 +181,15 @@ TCPChannelResource* TCPTransportInterface::BindSocket(const Locator_t& locator, 
 
 void TCPTransportInterface::CleanDeletedSockets()
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-    for (auto it = mDeletedSocketsPool.begin(); it != mDeletedSocketsPool.end(); ++it)
+    std::vector<TCPChannelResource*> deleteList;
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+        deleteList = mDeletedSocketsPool;
+        //deleteList.insert(deleteList.end(), mDeletedSocketsPool.begin(), mDeletedSocketsPool.end());
+        mDeletedSocketsPool.clear();
+    }
+
+    for (auto it = deleteList.begin(); it != deleteList.end(); ++it)
     {
         std::thread* rtcpThread = (*it)->ReleaseRTCPThread();
         std::thread* thread = (*it)->ReleaseThread();
@@ -210,17 +206,21 @@ void TCPTransportInterface::CleanDeletedSockets()
 
         delete(*it);
     }
-    mDeletedSocketsPool.clear();
 }
 
-void TCPTransportInterface::DeleteUnboundSocket(TCPChannelResource *channelResource)
+void TCPTransportInterface::DeleteSocket(TCPChannelResource *channelResource)
 {
-    std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
-    auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), channelResource);
-    if (it == mDeletedSocketsPool.end())
+    if (channelResource != nullptr && channelResource->IsAlive())
     {
         channelResource->Disable();
-        mDeletedSocketsPool.emplace_back(channelResource);
+        {
+            std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
+            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), channelResource);
+            if (it == mDeletedSocketsPool.end())
+            {
+                mDeletedSocketsPool.emplace_back(channelResource);
+            }
+        }
     }
 }
 
@@ -505,7 +505,6 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
         TCPChannelResource *newChannel = nullptr;
         auto physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
         {
-            pChannelResource->Disable();
             auto it = mChannelResources.find(physicalLocator);
             if (it != mChannelResources.end())
             {
@@ -519,14 +518,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
             }
         }
 
-        {
-            std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
-            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), pChannelResource);
-            if (it == mDeletedSocketsPool.end())
-            {
-                mDeletedSocketsPool.emplace_back(pChannelResource);
-            }
-        }
+        DeleteSocket(pChannelResource);
 
         if (newChannel != nullptr)
         {
@@ -1073,7 +1065,6 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
 {
     TCPChannelResource* outputSocket = nullptr;
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-
     auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (it != mChannelResources.end())
     {
@@ -1105,6 +1096,7 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
         }
         else
         {
+            //ARCE:
             CloseTCPSocket(outputSocket);
         }
     }

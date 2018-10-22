@@ -113,8 +113,7 @@ ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
         if (oldChannel != nullptr)
         {
             CopyPendingPortsFrom(oldChannel);
-            oldChannel->Disable();
-            mParent->DeleteUnboundSocket(oldChannel);
+            mParent->DeleteSocket(oldChannel);
             //delete oldChannel;
         }
 
