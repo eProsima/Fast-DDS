@@ -500,7 +500,14 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
 void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (pChannelResource->IsAlive())
+
+    // This check has been added because ASIO sends callbacks sometimes when the channel resource has been deleted.
+    auto searchIt = std::find_if(mChannelResources.begin(), mChannelResources.end(), [pChannelResource](const std::pair<Locator_t, TCPChannelResource*>& p)
+    {
+        return p.second == pChannelResource;
+    });
+
+    if (searchIt != mChannelResources.end() && pChannelResource->IsAlive())
     {
         TCPChannelResource *newChannel = nullptr;
         auto physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
@@ -1096,7 +1103,6 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
         }
         else
         {
-            //ARCE:
             CloseTCPSocket(outputSocket);
         }
     }
