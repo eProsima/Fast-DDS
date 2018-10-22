@@ -15,13 +15,13 @@
 /**
  * @file ParticipantProxyData.h
  */
-// TODO(Ricardo) Remove these mock when ParticipantProxyData doesn't contain functionality, only data.
 #ifndef _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Token.h>
+#include <fastrtps/qos/ParameterList.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -32,6 +32,13 @@ class ParticipantProxyData
     public:
 
         ParticipantProxyData() : m_availableBuiltinEndpoints(0), m_VendorId(c_VendorId_Unknown) {}
+        ~ParticipantProxyData()
+        {
+        }
+
+        ParameterList_t AllQostoParameterList() { return ParameterList_t(); }
+
+        bool readFromCDRMessage(CDRMessage_t* /*msg*/) { return true; }
 
         GUID_t m_guid;
         uint32_t m_availableBuiltinEndpoints;

@@ -270,6 +270,51 @@ class WriterProxyData
             return m_topicKind;
         }
 
+        RTPS_DllAPI void type_id(TypeIdV1 type_id)
+        {
+            m_type_id = type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1 type_id() const
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1& type_id()
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI void type(TypeObjectV1 type)
+        {
+            m_type = type;
+        }
+
+        RTPS_DllAPI TypeObjectV1 type() const
+        {
+            return m_type;
+        }
+
+        RTPS_DllAPI TypeObjectV1& type()
+        {
+            return m_type;
+        }
+
+        RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
+        {
+            m_topicDiscoveryKind = topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
+        {
+            return m_topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
+        {
+            return m_topicDiscoveryKind;
+        }
+
         //!WriterQOS
         WriterQos m_qos;
         //!Clear the information and return the object to the default state.
@@ -326,6 +371,15 @@ class WriterProxyData
 
         //!Persistence GUID
         GUID_t persistence_guid_;
+
+        //!Topic Discovery Kind
+        TopicDiscoveryKind_t m_topicDiscoveryKind;
+
+        //!Type Identifier
+        TypeIdV1 m_type_id;
+
+        //!Type Object
+        TypeObjectV1 m_type;
 };
 
 }

@@ -75,6 +75,13 @@ typedef enum TopicKind_t
     WITH_KEY
 }TopicKind_t;
 
+//!Topic discovery kind
+typedef enum TopicDiscoveryKind_t
+{
+    NO_CHECK,
+    MINIMAL,
+    COMPLETE
+}TopicDiscoveryKind_t;
 
 #if __BIG_ENDIAN__
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
@@ -128,7 +135,6 @@ struct RTPS_DllAPI ProtocolVersion_t
     {
         return m_major != v.m_major || m_minor != v.m_minor;
     }
-
 };
 
 const ProtocolVersion_t c_ProtocolVersion_2_0(2,0);

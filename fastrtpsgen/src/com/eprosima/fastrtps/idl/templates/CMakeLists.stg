@@ -40,4 +40,5 @@ target_link_libraries($project.name$_lib $solution.libraries : {$it$}; separator
 add_executable($project.name$ $project.projectSrcFiles : {$it$}; separator=" "$)
 target_link_libraries($project.name$ $solution.libraries : {$it$}; separator=" "$
         $project.name$_lib $project.dependencies : {$it$_lib}; separator=" "$)
+
 >>

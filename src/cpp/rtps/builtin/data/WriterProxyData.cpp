@@ -28,28 +28,32 @@ namespace fastrtps{
 namespace rtps {
 
 
-WriterProxyData::WriterProxyData():
-    m_userDefinedId(0),
-    m_typeMaxSerialized(0),
-    m_isAlive(true),
-    m_topicKind(NO_KEY)
+WriterProxyData::WriterProxyData()
+    : m_userDefinedId(0)
+    , m_typeMaxSerialized(0)
+    , m_isAlive(true)
+    , m_topicKind(NO_KEY)
+    , m_topicDiscoveryKind(NO_CHECK)
     {
         // TODO Auto-generated constructor stub
     }
 
-WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo) :
-    m_guid(writerInfo.m_guid),
-    m_unicastLocatorList(writerInfo.m_unicastLocatorList),
-    m_multicastLocatorList(writerInfo.m_multicastLocatorList),
-    m_key(writerInfo.m_key),
-    m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey),
-    m_typeName(writerInfo.m_typeName),
-    m_topicName(writerInfo.m_topicName),
-    m_userDefinedId(writerInfo.m_userDefinedId),
-    m_typeMaxSerialized(writerInfo.m_typeMaxSerialized),
-    m_isAlive(writerInfo.m_isAlive),
-    m_topicKind(writerInfo.m_topicKind),
-    persistence_guid_(writerInfo.persistence_guid_)
+WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
+    : m_guid(writerInfo.m_guid)
+    , m_unicastLocatorList(writerInfo.m_unicastLocatorList)
+    , m_multicastLocatorList(writerInfo.m_multicastLocatorList)
+    , m_key(writerInfo.m_key)
+    , m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey)
+    , m_typeName(writerInfo.m_typeName)
+    , m_topicName(writerInfo.m_topicName)
+    , m_userDefinedId(writerInfo.m_userDefinedId)
+    , m_typeMaxSerialized(writerInfo.m_typeMaxSerialized)
+    , m_isAlive(writerInfo.m_isAlive)
+    , m_topicKind(writerInfo.m_topicKind)
+    , persistence_guid_(writerInfo.persistence_guid_)
+    , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
+    , m_type_id(writerInfo.m_type_id)
+    , m_type(writerInfo.m_type)
 {
     m_qos.setQos(writerInfo.m_qos, true);
 }
@@ -74,6 +78,9 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
+    m_topicDiscoveryKind = writerInfo.m_topicDiscoveryKind;
+    m_type_id = writerInfo.m_type_id;
+    m_type = writerInfo.m_type;
 
     return *this;
 }
@@ -99,7 +106,7 @@ ParameterList_t WriterProxyData::toParameterList()
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
-        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,m_topicName);
+        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME, 0, m_topicName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
@@ -227,6 +234,24 @@ ParameterList_t WriterProxyData::toParameterList()
         *p = m_qos.m_groupData;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
+
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        if (m_type_id.m_type_identifier->_d() != 0)
+        {
+            TypeIdV1 * p = new TypeIdV1();
+            *p = m_type_id;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
+
+        if (m_type.m_type_object->_d() != 0)
+        {
+            TypeObjectV1 * p = new TypeObjectV1();
+            *p = m_type;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
+    }
+
     logInfo(RTPS_PROXY_DATA," with " << parameter_list.m_parameters.size()<< " parameters");
     return parameter_list;
 }
@@ -341,11 +366,11 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         break;
                     }
                 case PID_TOPIC_NAME:
-                    {
-                        ParameterString_t*p = (ParameterString_t*)(*it);
-                        m_topicName = std::string(p->getName());
-                        break;
-                    }
+                {
+                    ParameterString_t*p = (ParameterString_t*)(*it);
+                    m_topicName = std::string(p->getName());
+                    break;
+                }
                 case PID_TYPE_NAME:
                     {
                         ParameterString_t*p = (ParameterString_t*)(*it);
@@ -402,6 +427,28 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         iHandle2GUID(m_guid,m_key);
                         break;
                     }
+                case PID_TYPE_IDV1:
+                    {
+                        TypeIdV1 * p = (TypeIdV1*)(*it);
+                        m_type_id = *p;
+                        m_topicDiscoveryKind = MINIMAL;
+                        if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
+                        {
+                            m_topicDiscoveryKind = COMPLETE;
+                        }
+                        break;
+                    }
+                case PID_TYPE_OBJECTV1:
+                    {
+                        TypeObjectV1 * p = (TypeObjectV1*)(*it);
+                        m_type = *p;
+                        m_topicDiscoveryKind = MINIMAL;
+                        if (m_type.m_type_object->_d() == EK_COMPLETE)
+                        {
+                            m_topicDiscoveryKind = COMPLETE;
+                        }
+                        break;
+                    }
                 default:
                     {
                         //logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(*it)->Pid <<" NOT CONSIDERED");
@@ -450,6 +497,12 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     m_isAlive = wdata->m_isAlive;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
+    m_topicDiscoveryKind = wdata->m_topicDiscoveryKind;
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        m_type_id = wdata->m_type_id;
+        m_type = wdata->m_type;
+    }
 }
 
 

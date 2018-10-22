@@ -1,0 +1,94 @@
+
+enum MyEnum
+{
+    A,
+    B,
+    C
+};
+
+typedef MyEnum MyAliasEnum;
+typedef MyAliasEnum MyAliasEnum2;
+typedef MyAliasEnum2 MyAliasEnum3;
+
+struct BasicStruct
+{
+    boolean my_bool;
+    //byte my_byte;
+    octet my_octet;
+    short my_int16;
+    long my_int32;
+    long long my_int64;
+    unsigned short my_uint16;
+    unsigned long my_uint32;
+    unsigned long long my_uint64;
+    float my_float32;
+    double my_float64;
+    long double my_float128;
+    char my_char;
+    wchar my_wchar;
+    string my_string;
+    wstring my_wstring;
+};
+
+typedef octet MyOctetArray500[500];
+typedef BasicStruct BSAlias5[5];
+typedef MyAliasEnum3 MA3[42];
+typedef long MyMiniArray[2];
+typedef sequence<long> MySequenceLong;
+
+struct ComplexStruct
+{
+    octet my_octet;
+    BasicStruct my_basic_struct;
+    MyAliasEnum my_alias_enum;
+    MyEnum my_enum;
+    sequence<octet, 55> my_sequence_octet;
+    sequence<BasicStruct> my_sequence_struct;
+    char my_array_octet[500][5][4];
+    MyOctetArray500 my_octet_array_500;
+    BasicStruct my_array_struct[5];
+    map<octet, short> my_map_octet_short;
+    map<long, BasicStruct> my_map_long_struct;
+    map<long, sequence< sequence<octet> > > my_map_long_seq_octet;
+    map<long, MyOctetArray500> my_map_long_octet_array_500;
+    map<long, map<octet, BSAlias5> > my_map_long_lol_type;
+    string<128> my_small_string_8;
+    wstring<64> my_small_string_16;
+    string<500> my_large_string_8;
+    wstring<1024> my_large_string_16;
+    string<75> my_array_string[5][5];
+    MA3 multi_alias_array_42;
+    MyMiniArray my_array_arrays[5];
+    MySequenceLong my_sequences_array[23];
+};
+
+union MyUnion switch (MyEnum)
+{
+    case A:
+        BasicStruct basic;
+    case B:
+    case C:
+        ComplexStruct complex;
+};
+
+union MyUnion2 switch (octet)
+{
+    case A:
+        long uno;
+    case B:
+        string imString;
+    case C:
+        long tres;
+};
+
+struct CompleteStruct
+{
+    MyUnion my_union;
+    MyUnion2 my_union_2;
+};
+
+struct KeyedStruct
+{
+    @Key octet key;
+    BasicStruct basic;
+};

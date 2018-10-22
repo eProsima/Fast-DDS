@@ -28,11 +28,12 @@ namespace fastrtps{
 namespace rtps {
 
 
-ReaderProxyData::ReaderProxyData() :
-    m_expectsInlineQos(false),
-    m_userDefinedId(0),
-    m_isAlive(true),
-    m_topicKind(NO_KEY)
+ReaderProxyData::ReaderProxyData()
+    : m_expectsInlineQos(false)
+    , m_userDefinedId(0)
+    , m_isAlive(true)
+    , m_topicKind(NO_KEY)
+    , m_topicDiscoveryKind(NO_CHECK)
     {
 
     }
@@ -42,18 +43,21 @@ ReaderProxyData::~ReaderProxyData()
     logInfo(RTPS_PROXY_DATA,"ReaderProxyData destructor: "<< this->m_guid;);
 }
 
-ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo) :
-    m_expectsInlineQos(readerInfo.m_expectsInlineQos),
-    m_guid(readerInfo.m_guid),
-    m_unicastLocatorList(readerInfo.m_unicastLocatorList),
-    m_multicastLocatorList(readerInfo.m_multicastLocatorList),
-    m_key(readerInfo.m_key),
-    m_RTPSParticipantKey(readerInfo.m_RTPSParticipantKey),
-    m_typeName(readerInfo.m_typeName),
-    m_topicName(readerInfo.m_topicName),
-    m_userDefinedId(readerInfo.m_userDefinedId),
-    m_isAlive(readerInfo.m_isAlive),
-    m_topicKind(readerInfo.m_topicKind)
+ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo)
+    : m_expectsInlineQos(readerInfo.m_expectsInlineQos)
+    , m_guid(readerInfo.m_guid)
+    , m_unicastLocatorList(readerInfo.m_unicastLocatorList)
+    , m_multicastLocatorList(readerInfo.m_multicastLocatorList)
+    , m_key(readerInfo.m_key)
+    , m_RTPSParticipantKey(readerInfo.m_RTPSParticipantKey)
+    , m_typeName(readerInfo.m_typeName)
+    , m_topicName(readerInfo.m_topicName)
+    , m_userDefinedId(readerInfo.m_userDefinedId)
+    , m_isAlive(readerInfo.m_isAlive)
+    , m_topicKind(readerInfo.m_topicKind)
+    , m_topicDiscoveryKind(readerInfo.m_topicDiscoveryKind)
+    , m_type_id(readerInfo.m_type_id)
+    , m_type(readerInfo.m_type)
 {
     m_qos.setQos(readerInfo.m_qos, true);
 }
@@ -73,6 +77,9 @@ ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
     m_expectsInlineQos = readerInfo.m_expectsInlineQos;
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
+    m_topicDiscoveryKind = readerInfo.m_topicDiscoveryKind;
+    m_type_id = readerInfo.m_type_id;
+    m_type = readerInfo.m_type;
 
     return *this;
 }
@@ -102,7 +109,7 @@ ParameterList_t ReaderProxyData::toParameterList()
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
-        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME,0,m_topicName);
+        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME, 0, m_topicName);
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
     {
@@ -220,6 +227,23 @@ ParameterList_t ReaderProxyData::toParameterList()
         TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
         *p = m_qos.m_timeBasedFilter;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        if (m_type_id.m_type_identifier->_d() != 0)
+        {
+            TypeIdV1 * p = new TypeIdV1();
+            *p = m_type_id;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
+
+        if (m_type.m_type_object->_d() != 0)
+        {
+            TypeObjectV1 * p = new TypeObjectV1();
+            *p = m_type;
+            parameter_list.m_parameters.push_back((Parameter_t*)p);
+        }
     }
 
     logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << parameter_list.m_parameters.size()<< " parameters");
@@ -391,6 +415,40 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         iHandle2GUID(m_guid,m_key);
                         break;
                     }
+                case PID_DATA_REPRESENTATION:
+                {
+                    DataRepresentationQosPolicy * p = (DataRepresentationQosPolicy*)(*it);
+                    m_qos.m_dataRepresentation = *p;
+                    break;
+                }
+                case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+                {
+                    TypeConsistencyEnforcementQosPolicy * p = (TypeConsistencyEnforcementQosPolicy*)(*it);
+                    m_qos.m_typeConsistency = *p;
+                    break;
+                }
+                case PID_TYPE_IDV1:
+                    {
+                        TypeIdV1 * p = (TypeIdV1*)(*it);
+                        m_type_id = *p;
+                        m_topicDiscoveryKind = MINIMAL;
+                        if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
+                        {
+                            m_topicDiscoveryKind = COMPLETE;
+                        }
+                        break;
+                    }
+                case PID_TYPE_OBJECTV1:
+                    {
+                        TypeObjectV1 * p = (TypeObjectV1*)(*it);
+                        m_type = *p;
+                        m_topicDiscoveryKind = MINIMAL;
+                        if (m_type.m_type_object->_d() == EK_COMPLETE)
+                        {
+                            m_topicDiscoveryKind = COMPLETE;
+                        }
+                        break;
+                    }
                 default:
                     {
                         //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED");
@@ -448,6 +506,12 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
     m_expectsInlineQos = rdata->m_expectsInlineQos;
     m_isAlive = rdata->m_isAlive;
     m_topicKind = rdata->m_topicKind;
+    m_topicDiscoveryKind = rdata->m_topicDiscoveryKind;
+    if (m_topicDiscoveryKind != NO_CHECK)
+    {
+        m_type_id = rdata->m_type_id;
+        m_type = rdata->m_type;
+    }
 }
 
 RemoteReaderAttributes ReaderProxyData::toRemoteReaderAttributes() const

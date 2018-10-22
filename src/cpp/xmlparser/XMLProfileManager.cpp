@@ -30,6 +30,7 @@ std::map<std::string, up_topic_t>       XMLProfileManager::m_topic_profiles;
 TopicAttributes default_topic_attributes;
 std::map<std::string, XMLP_ret>         XMLProfileManager::m_xml_files;
 sp_transport_map_t XMLProfileManager::m_transport_profiles;
+p_dynamictype_map_t XMLProfileManager::m_dynamictypes;
 
 BaseNode* XMLProfileManager::root = nullptr;
 
@@ -138,6 +139,11 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(tinyxml2::XMLElement& profiles)
     return XMLP_ret::XML_ERROR;
 }
 
+XMLP_ret XMLProfileManager::loadXMLDynamicTypes(tinyxml2::XMLElement& types)
+{
+    return XMLParser::loadXMLDynamicTypes(types);
+}
+
 XMLP_ret XMLProfileManager::loadXMLNode(tinyxml2::XMLDocument& doc)
 {
     up_base_node_t root_node;
@@ -186,7 +192,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
     }
 
     up_base_node_t root_node;
-    XMLParser::loadXML(filename, root_node);
+    XMLP_ret loadedRet = XMLParser::loadXML(filename, root_node);
     if (!root_node)
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
@@ -204,6 +210,11 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
         return XMLProfileManager::extractProfiles(std::move(root_node), filename);
     }
 
+    if (NodeType::TYPES == root_node->getType())
+    {
+        return loadedRet;
+    }
+
     if (NodeType::ROOT == root_node->getType())
     {
         for (auto&& child: root_node->getChildren())
@@ -216,6 +227,44 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
     }
 
     return XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLProfileManager::extractDynamicTypes(up_base_node_t profiles, const std::string& filename)
+{
+    if (nullptr == profiles)
+    {
+        logError(XMLPARSER, "Bad parameters");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    unsigned int profileCount = 0u;
+
+    for (auto&& profile: profiles->getChildren())
+    {
+        if (NodeType::TYPE == profile->getType())
+        {
+            tinyxml2::XMLElement* p_node = dynamic_cast<tinyxml2::XMLElement*>(profile.get());
+            if (XMLP_ret::XML_OK == XMLParser::loadXMLDynamicTypes(*p_node))
+            {
+                ++profileCount;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Not expected tag");
+        }
+    }
+
+    if (0 == profileCount)
+    {
+        m_xml_files.emplace(filename, XMLP_ret::XML_ERROR);
+        logError(XMLPARSER, "Error, file '" << filename << "' bad content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    m_xml_files.emplace(filename, XMLP_ret::XML_OK);
+
+    return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::string& filename)
@@ -382,6 +431,26 @@ sp_transport_t XMLProfileManager::getTransportById(const std::string& sId)
     if (m_transport_profiles.find(sId) != m_transport_profiles.end())
     {
         return m_transport_profiles[sId];
+    }
+    return nullptr;
+}
+
+bool XMLProfileManager::insertDynamicTypeByName(const std::string& sName, p_dynamictypebuilder_t type)
+{
+    if (m_dynamictypes.find(sName) == m_dynamictypes.end())
+    {
+        m_dynamictypes[sName] = type;
+        return true;
+    }
+    logError(XMLPARSER, "Error adding the type " << sName << ". There is other type with the same name.");
+    return false;
+}
+
+p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(const std::string& sName)
+{
+    if (m_dynamictypes.find(sName) != m_dynamictypes.end())
+    {
+        return m_dynamictypes[sName];
     }
     return nullptr;
 }

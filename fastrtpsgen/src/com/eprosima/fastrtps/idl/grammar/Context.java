@@ -14,20 +14,20 @@
 
 package com.eprosima.fastrtps.idl.grammar;
 
+import com.eprosima.fastrtps.idl.parser.typecode.StructTypeCode;
+import com.eprosima.idl.parser.tree.Annotation;
+import com.eprosima.idl.parser.tree.Interface;
+import com.eprosima.idl.parser.tree.TypeDeclaration;
+import com.eprosima.idl.parser.typecode.Kind;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import com.eprosima.idl.parser.tree.Interface;
-import com.eprosima.idl.parser.tree.TypeDeclaration;
-import com.eprosima.idl.parser.tree.Annotation;
-import com.eprosima.idl.parser.typecode.TypeCode;
-import com.eprosima.fastrtps.idl.parser.typecode.StructTypeCode;
 
 public class Context extends com.eprosima.idl.context.Context implements com.eprosima.fastcdr.idl.context.Context
 {
     // TODO Remove middleware parameter. It is temporal while cdr and rest don't have async functions.
     public Context(String filename, String file, ArrayList includePaths, boolean subscribercode, boolean publishercode,
-            String appProduct)
+            String appProduct, boolean generate_type_object)
     {
         super(filename, file, includePaths);
         m_fileNameUpper = filename.toUpperCase();
@@ -39,8 +39,10 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
         m_appProduct = appProduct;
         //m_protocol = protocol;
         //m_ddstypes = ddstypes;
+
+        m_type_object = generate_type_object;
     }
-    
+
     public void setTypelimitation(String lt)
     {
         m_typelimitation = lt;
@@ -62,7 +64,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     {
         super.addTypeDeclaration(typedecl);
 
-        if(typedecl.getTypeCode().getKind() == TypeCode.KIND_STRUCT && typedecl.isInScope())
+        if(typedecl.getTypeCode().getKind() == Kind.KIND_STRUCT && typedecl.isInScope())
         {
             Annotation topicann = typedecl.getAnnotations().get("Topic");
 
@@ -75,12 +77,12 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
                 m_lastStructure = typedecl;
         }
     }
-    
+
     public boolean isClient()
     {
         return m_subscribercode;
     }
-    
+
     public boolean isServer()
     {
         return m_publishercode;
@@ -110,7 +112,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     {
         return m_randomGenNames.pop();
     }
-    
+
     /*** Functions inherated from FastCDR Context ***/
 
     @Override
@@ -195,7 +197,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     //// End Java block ////
 
     private String m_typelimitation = null;
-    
+
     //! Cache the first interface.
     private Interface m_firstinterface = null;
     //! Cache the first exception.
@@ -206,7 +208,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     private Stack<String> m_randomGenNames = null;
     // TODO Lleva la cuenta del nombre de variables para bucles anidados.
     private char m_loopVarName = 'a';
-    
+
     // Stores if the user will generate the client source.
     private boolean m_subscribercode = true;
     // Stores if the user will generate the server source.
@@ -214,9 +216,17 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 
     // TODO Remove
     private String m_appProduct = null;
-    
+
     private TypeDeclaration m_lastStructure = null;
-    
+
+    private boolean m_type_object = false;
+
+    @Override
+    public boolean isGenerateTypeObject()
+    {
+        return m_type_object;
+    }
+
     public String getHeaderGuardName ()
     {
         if(m_lastStructure!=null)
@@ -234,7 +244,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
         String name = new String("");
 
         if(m_lastStructure!=null)
-        {    
+        {
             if(m_lastStructure.getParent() instanceof Interface)
             {
                 name = name + ((Interface)m_lastStructure.getParent()).getScopedname() + "_" + m_lastStructure.getName();
@@ -244,7 +254,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
         }
         return name;
     }
-    
+
     public String getM_lastStructureScopedName(){
         if(m_lastStructure!=null)
         {
@@ -264,7 +274,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     {
         return m_lastStructure;
     }
-    
+
     public boolean existsLastStructure()
     {
         if(m_lastStructure != null)
@@ -273,7 +283,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     }
 
     private String m_fileNameUpper = null;
-    
+
     public void setFilename(String filename)
     {
         super.setFilename(filename);
@@ -288,7 +298,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     {
         return getFilename().replace("_", "_1");
     }
-    
+
     //// Java block ////
     // Java package name.
     private String m_package = "";
@@ -297,5 +307,5 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     private String m_packageDir = "";
     private boolean activateFusion_ = false;
     //// End Java block
-    
+
 }

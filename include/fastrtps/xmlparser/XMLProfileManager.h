@@ -22,6 +22,9 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 #include <map>
 
 
@@ -78,6 +81,13 @@ public:
     RTPS_DllAPI static XMLP_ret loadXMLProfiles(tinyxml2::XMLElement& profiles);
 
     /**
+    * Load a dynamic types XML node.
+    * @param dynamic types Node to be loaded.
+    * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+    */
+    RTPS_DllAPI static XMLP_ret loadXMLDynamicTypes(tinyxml2::XMLElement& types);
+
+    /**
     * Search for the profile specified and fill the structure.
     * @param profile_name Name for the profile to be used to fill the structure.
     * @param atts Structure to be filled.
@@ -119,9 +129,40 @@ public:
     RTPS_DllAPI static XMLP_ret fillTopicAttributes(const std::string& profile_name, TopicAttributes& atts);
 
     RTPS_DllAPI static void getDefaultTopicAttributes(TopicAttributes& topic_attributes);
+    
+    RTPS_DllAPI static bool insertDynamicTypeByName(const std::string& sName, p_dynamictypebuilder_t type);
+    RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(const std::string& sName);
+
+    RTPS_DllAPI static void DeleteInstance()
+    {
+        m_participant_profiles.clear();
+        m_publisher_profiles.clear();
+        m_subscriber_profiles.clear();
+        m_xml_files.clear();
+
+        for (auto pair : m_dynamictypes)
+        {
+            types::DynamicTypeBuilderFactory::GetInstance()->DeleteBuilder(pair.second);
+        }
+        m_dynamictypes.clear();
+    }
+
+    RTPS_DllAPI static types::DynamicPubSubType* CreateDynamicPubSubType(const std::string& typeName)
+    {
+        if (m_dynamictypes.find(typeName) != m_dynamictypes.end())
+        {
+            return new types::DynamicPubSubType(m_dynamictypes[typeName]->Build());
+        }
+        return nullptr;
+    }
+
+    RTPS_DllAPI static void DeleteDynamicPubSubType(types::DynamicPubSubType *type)
+    {
+        delete type;
+    }
 
 private:
-
+    RTPS_DllAPI static XMLP_ret extractDynamicTypes(up_base_node_t properties, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractProfiles(up_base_node_t properties, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractParticipantProfile(up_base_node_t& profile, const std::string& filename);
     RTPS_DllAPI static XMLP_ret extractPublisherProfile(up_base_node_t& profile, const std::string& filename);
@@ -135,6 +176,7 @@ private:
     static topic_map_t       m_topic_profiles;
     static xmlfiles_map_t    m_xml_files;
     static sp_transport_map_t m_transport_profiles;
+    static p_dynamictype_map_t m_dynamictypes;
 };
 
 } /* xmlparser */

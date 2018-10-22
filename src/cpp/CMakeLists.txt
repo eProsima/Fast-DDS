@@ -89,6 +89,29 @@ set(${PROJECT_NAME}_source_files
     transport/tcp/TCPControlMessage.cxx
     transport/tcp/RTCPMessageManager.cpp
     transport/tcp/test_RTCPMessageManager.cpp
+
+    types/AnnotationDescriptor.cpp
+    types/AnnotationParameterValue.cpp
+    types/DynamicData.cpp
+    types/DynamicDataFactory.cpp
+    types/DynamicType.cpp
+    types/DynamicPubSubType.cpp
+    types/DynamicTypePtr.cpp
+    types/DynamicDataPtr.cpp
+    types/DynamicTypeBuilder.cpp
+    types/DynamicTypeBuilderPtr.cpp
+    types/DynamicTypeBuilderFactory.cpp
+    types/DynamicTypeMember.cpp
+    types/MemberDescriptor.cpp
+    types/TypeDescriptor.cpp
+    types/TypeIdentifier.cpp
+    types/TypeIdentifierTypes.cpp
+    types/TypeObject.cpp
+    types/TypeObjectHashId.cpp
+    types/TypeObjectFactory.cpp
+    types/TypeNamesGenerator.cpp
+    types/TypesBase.cpp
+
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosPolicies.cpp

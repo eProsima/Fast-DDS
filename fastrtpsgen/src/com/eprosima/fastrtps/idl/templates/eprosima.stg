@@ -37,7 +37,9 @@ varDel(variable) ::= <<>>
 member_default_init(member) ::= <<
 $if(member.typecode.primitive)$
 m_$member.name$ = $member.typecode.initialValue$;
-$endif$
+$elseif(member.typecode.isType_f)$$if(member.typecode.contentTypeCode.primitive)$
+memset(&m_$member.name$, 0, $member.typecode.size$ * $member.typecode.contentTypeCode.size$);
+$endif$$endif$
 >>
 
 getTypenameOperation(operation, suffix, varname) ::= <<
@@ -105,9 +107,9 @@ $endif$
 extractParamFromTopic(param, varname, isReply) ::= <<
 $if(param.typecode.primitive)$
 $param.name$ = $varname$.$param.name$();
-$else$ 
+$else$
 $param.name$ = std::move($varname$.$param.name$()); //TODO Probar que esto funciona.
-$endif$ 
+$endif$
 >>
 
 extractExceptionMemberFromTopic(exception, member, varname) ::= <<

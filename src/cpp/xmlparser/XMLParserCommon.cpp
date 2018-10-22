@@ -22,15 +22,16 @@ const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
 const char* ROOT = "dds";
 const char* PROFILES = "profiles";
-const char* TRANSPORTS = "transports";
+const char* TRANSPORT_DESCRIPTORS = "transport_descriptors";
 const char* PROFILE_NAME = "profile_name";
 const char* DEFAULT_PROF = "is_default_profile";
 const char* PARTICIPANT = "participant";
 const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
+const char* TYPES = "types";
 
-const char* TRANSPORT = "transport";
+const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";
 const char* UDP_OUTPUT_PORT = "output_port";
 const char* TCP_WAN_ADDR = "wan_addr";
@@ -241,6 +242,42 @@ const char* _INF = "INF";
 const char* EPROSIMA_UNKNOWN_STRING = "EPROSIMA_UNKNOWN_STRING";
 const char* _OWNERSHIP_KIND_NOT_PRESENT = "OWNERSHIP_KIND_NOT_PRESENT";
 const char* STRENGTH = "strength";
+
+// TYPES parser
+const char* STRUCT = "struct";
+const char* UNION = "union";
+const char* BOOLEAN = "boolean";
+const char* CHAR = "char";
+const char* WCHAR = "wchar";
+const char* OCTET = "octet";
+const char* SHORT = "short";
+const char* LONG = "long";
+const char* USHORT = "unsignedshort";
+const char* ULONG = "unsignedlong";
+const char* LONGLONG = "longlong";
+const char* ULONGLONG = "unsignedlonglong";
+const char* FLOAT = "float";
+const char* DOUBLE = "double";
+const char* LONGDOUBLE = "longdouble";
+const char* STRING = "string";
+const char* WSTRING = "wstring";
+const char* BOUNDEDSTRING = "boundedString";
+const char* BOUNDEDWSTRING = "boundedWString";
+const char* SEQUENCE = "sequence";
+const char* MAP = "map";
+const char* TYPEDEF = "typedef";
+const char* ENUM = "enum";
+const char* LITERAL = "literal";
+const char* CASE = "case";
+const char* CASEVALUE = "caseValue";
+const char* DEFAULT = "default";
+const char* DISCRIMINATOR = "discriminator";
+const char* DIMENSIONS = "dimensions";
+const char* KEY = "key";
+const char* KEY_TYPE = "key_type";
+const char* VALUE_TYPE = "value_type";
+const char* LENGHT = "length";
+const char* MAXLENGTH = "maxLength";
 
 
 } /* xmlparser */

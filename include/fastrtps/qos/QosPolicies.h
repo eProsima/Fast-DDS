@@ -21,9 +21,10 @@
 #define QOS_POLICIES_H_
 
 #include <vector>
-#include "../rtps/common/Types.h"
-#include "../rtps/common/Time_t.h"
+#include <fastrtps/rtps/common/Types.h>
+#include <fastrtps/rtps/common/Time_t.h>
 #include "ParameterTypes.h"
+#include <fastrtps/types/TypeObject.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -31,6 +32,8 @@ namespace fastrtps{
 namespace rtps{
 class EDP;
 }
+
+using namespace eprosima::fastrtps::types;
 
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
@@ -93,13 +96,6 @@ public:
 
     virtual RTPS_DllAPI ~DurabilityQosPolicy() {}
 
-    bool operator==(const DurabilityQosPolicy& b) const
-    {
-        return (this->kind == b.kind) &&
-               Parameter_t::operator==(b) &&
-               QosPolicy::operator==(b);
-    }
-
     /**
      * Translates kind to rtps layer equivalent
      */
@@ -113,6 +109,13 @@ public:
             case TRANSIENT_DURABILITY_QOS: return rtps::TRANSIENT;
             case PERSISTENT_DURABILITY_QOS: return rtps::PERSISTENT;
         }
+    }
+
+    bool operator==(const DurabilityQosPolicy& b) const
+    {
+        return (this->kind == b.kind) &&
+               Parameter_t::operator==(b) &&
+               QosPolicy::operator==(b);
     }
 
     /**
@@ -918,7 +921,198 @@ class PublishModeQosPolicy : public QosPolicy {
         virtual RTPS_DllAPI ~PublishModeQosPolicy(){};
 };
 
+/**
+* Enum DataRepresentationId, different kinds of topic data representation
+*/
+typedef enum DataRepresentationId : int16_t {
+    XCDR_DATA_REPRESENTATION,	//!<
+    XML_DATA_REPRESENTATION,	//!<
+    XCDR2_DATA_REPRESENTATION	//!<
+}DataRepresentationId_t;
+
+/**
+* Class DataRepresentationQosPolicy,
+*/
+class DataRepresentationQosPolicy :private Parameter_t, public QosPolicy
+{
+public:
+    std::vector<DataRepresentationId_t> m_value;
+    RTPS_DllAPI DataRepresentationQosPolicy() {};
+    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() {};
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+enum TypeConsistencyKind : uint32_t
+{
+    DISALLOW_TYPE_COERCION,
+    ALLOW_TYPE_COERCION
+};
+
+/**
+* Class DataRepresentationQosPolicy,
+*/
+class TypeConsistencyEnforcementQosPolicy : private Parameter_t, public QosPolicy
+{
+public:
+    TypeConsistencyKind m_kind;
+    bool m_ignore_sequence_bounds;
+    bool m_ignore_string_bounds;
+    bool m_ignore_member_names;
+    bool m_prevent_type_widening;
+    bool m_force_type_validation;
+
+    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy() {};
+    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() {};
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+/**
+* Class TypeIdV1,
+*/
+class TypeIdV1 : private Parameter_t, public QosPolicy
+{
+public:
+    TypeIdentifier* m_type_identifier;
+
+    RTPS_DllAPI TypeIdV1() : Parameter_t(PID_TYPE_IDV1, 0), QosPolicy(false)
+    {
+        m_type_identifier = new TypeIdentifier();
+        //m_type_identifier->_d(EK_MINIMAL);
+    }
+
+    RTPS_DllAPI TypeIdV1(const TypeIdV1& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_identifier = new TypeIdentifier();
+        *m_type_identifier = *type.m_type_identifier;
+    }
+
+    RTPS_DllAPI TypeIdV1(TypeIdV1&& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_identifier = type.m_type_identifier;
+        type.m_type_identifier = nullptr;
+    }
+
+    RTPS_DllAPI TypeIdV1& operator=(const TypeIdV1& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        delete m_type_identifier;
+        m_type_identifier = new TypeIdentifier();
+        *m_type_identifier = *type.m_type_identifier;
+
+        return *this;
+    }
+
+    RTPS_DllAPI TypeIdV1& operator=(TypeIdV1&& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        m_type_identifier = type.m_type_identifier;
+        type.m_type_identifier = nullptr;
+
+        return *this;
+    }
+
+    virtual RTPS_DllAPI ~TypeIdV1()
+    {
+        delete m_type_identifier;
+    }
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+};
+
+/**
+* Class TypeObjectV1,
+*/
+class TypeObjectV1 : private Parameter_t, public QosPolicy
+{
+public:
+    TypeObject* m_type_object;
+
+    RTPS_DllAPI TypeObjectV1() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false)
+    {
+        m_type_object = new TypeObject();
+        //m_type_object->_d(EK_MINIMAL);
+    }
+
+    RTPS_DllAPI TypeObjectV1(const TypeObjectV1& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_object = new TypeObject();
+        *m_type_object = *type.m_type_object;
+    }
+
+    RTPS_DllAPI TypeObjectV1(TypeObjectV1&& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_object = type.m_type_object;
+        type.m_type_object = nullptr;
+    }
+
+    RTPS_DllAPI TypeObjectV1& operator=(const TypeObjectV1& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        delete m_type_object;
+        m_type_object = new TypeObject();
+        *m_type_object = *type.m_type_object;
+
+        return *this;
+    }
+
+    RTPS_DllAPI TypeObjectV1& operator=(TypeObjectV1&& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        m_type_object = type.m_type_object;
+        type.m_type_object = nullptr;
+
+        return *this;
+    }
+
+    virtual RTPS_DllAPI ~TypeObjectV1()
+    {
+        delete m_type_object;
+    }
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+};
+
 }
 }
+
+
+
+
 
 #endif /* QOS_POLICIES_H_ */
