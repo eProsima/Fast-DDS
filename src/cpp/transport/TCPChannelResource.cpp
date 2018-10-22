@@ -190,13 +190,13 @@ bool TCPChannelResource::IsLogicalPortAdded(uint16_t port)
 bool TCPChannelResource::WaitUntilPortIsOpenOrConnectionIsClosed(uint16_t port)
 {
     std::unique_lock<std::mutex> scoped(mStatusMutex);
-    bool bConnected = mAlive && mConnectionStatus == eConnectionStatus::eEstablished;
-    while (bConnected && !IsLogicalPortOpened(port))
-    {
-        mNegotiationCondition.wait(scoped);
-        bConnected = mAlive && mConnectionStatus == eConnectionStatus::eEstablished;
-    }
-    return bConnected;
+
+    mNegotiationCondition.wait(scoped, [&](){
+        bool result = mAlive && mConnectionStatus == eConnectionStatus::eEstablished && IsLogicalPortOpened(port);
+        return result;
+    });
+
+    return mAlive && mConnectionStatus == eConnectionStatus::eEstablished && IsLogicalPortOpened(port);
 }
 
 std::thread* TCPChannelResource::ReleaseRTCPThread()
