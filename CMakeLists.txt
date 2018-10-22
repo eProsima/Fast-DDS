@@ -245,7 +245,6 @@ add_subdirectory(src/cpp)
 # Testing options
 ###############################################################################
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
-option(MEMORY_TESTS "Activate the building and execution of memory usage tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
 option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
 
@@ -267,11 +266,6 @@ endif()
 # Performance tests
 ###############################################################################
 add_subdirectory(test/performance)
-
-###############################################################################
-# Memory tests
-###############################################################################
-add_subdirectory(test/memory)
 
 ###############################################################################
 # Profiling tests
