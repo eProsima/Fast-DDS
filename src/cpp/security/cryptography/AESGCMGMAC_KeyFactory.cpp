@@ -39,6 +39,59 @@
 #undef max
 #endif
 
+static bool create_kx_key(std::array<uint8_t, 32>& out_data, const std::vector<uint8_t>* first_data, 
+    const char* cookie, const std::vector<uint8_t>* second_data, const std::vector<uint8_t>* shared_secret)
+{
+    uint8_t tmp_data[32 + 16 + 32];
+    uint8_t sha256[32];
+
+    out_data.fill(0);
+
+    memcpy(tmp_data, first_data->data(), 32);
+    memcpy(&tmp_data[32], cookie, 16);
+    memcpy(&tmp_data[32 + 16], second_data->data(), 32);
+
+    if (!EVP_Digest(tmp_data, 32 + 16 + 32, sha256, NULL, EVP_sha256(), NULL))
+    {
+        return false;
+    }
+
+    //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret
+    EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, sha256, 32);
+    EVP_MD_CTX* ctx =
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    EVP_MD_CTX_init(ctx);
+    EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
+    EVP_DigestSignUpdate(ctx, shared_secret->data(), shared_secret->size());
+    size_t length = 0;
+    EVP_DigestSignFinal(ctx, NULL, &length);
+    if (length > 32)
+    {
+        EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_free(ctx);
+#else
+        EVP_MD_CTX_cleanup(ctx);
+        free(ctx);
+#endif
+        return false;
+    }
+    EVP_DigestSignFinal(ctx, out_data.data(), &length);
+    EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    EVP_MD_CTX_cleanup(ctx);
+    free(ctx);
+#endif
+
+    return true;
+}
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
@@ -159,7 +212,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         if (is_origin_auth)
         {
             buffer.receiver_specific_key_id = make_unique_KeyId();
-            RAND_bytes(buffer.master_receiver_specific_key.data(), 16);
+            RAND_bytes(buffer.master_receiver_specific_key.data(), 32);
         }
         //Attach to both local and remote CryptoHandles
         (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
@@ -169,110 +222,27 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer; //Buffer = Participant2ParticipantKxKeyMaterial
 
-        buffer.transformation_kind = std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-        buffer.master_salt.fill(0);
+        buffer.transformation_kind = std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
+        buffer.sender_key_id.fill(0);
+        buffer.receiver_specific_key_id.fill(0);
+        buffer.master_receiver_specific_key.fill(0);
 
-        std::vector<uint8_t> concatenation(challenge_1->size() + 16 +
-                challenge_2->size()); //Assembly of the source concatenated sequence that is used to generate master_salt
-
-        std::string KxKeyCookie("key exchange key");
-        memcpy(concatenation.data(), challenge_1->data(), challenge_1->size());
-        memcpy(concatenation.data() + challenge_1->size(), KxKeyCookie.data(), 16);
-        memcpy(concatenation.data() + challenge_1->size() + 16, challenge_2->data(), challenge_2->size());
-
-        //concatenation is used to generate the key to encode the shared_secret and produce the master_salt
-        buffer.master_salt.fill(0);
-        std::array<uint8_t,32> p_master_salt;
-        if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
-            logWarning(SECURITY_CRYPTO,"Error generating the keys to perform token transaction");
-            delete RPCrypto;
-            return nullptr;
-        }
-        //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret
-        EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
-        EVP_MD_CTX* ctx = 
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_new();
-#else
-            (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
-        EVP_MD_CTX_init(ctx);
-        EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
-        EVP_DigestSignUpdate(ctx, shared_secret_ss->data(), shared_secret_ss->size());
-        size_t length = 0;
-        EVP_DigestSignFinal(ctx, NULL, &length);
-        if(length > 32){
-            logWarning(SECURITY_CRYPTO,"Error generating the keys to perform token transaction");
+        if (!create_kx_key(buffer.master_salt, challenge_1, "keyexchange salt", challenge_2, shared_secret_ss))
+        {
+            logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
             exception = SecurityException("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
-            EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_free(ctx);
-#else
-            EVP_MD_CTX_cleanup(ctx);
-            free(ctx);
-#endif
             return nullptr;
         }
-        EVP_DigestSignFinal(ctx, buffer.master_salt.data(), &length);
-        EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-        EVP_MD_CTX_free(ctx);
-#else
-        EVP_MD_CTX_cleanup(ctx);
-        free(ctx);
-#endif
 
-        //Repeat process - concatenation is used to store the sequence to generate master_sender_key
-        std::string KxSaltCookie("keyexchange salt");
-        memcpy(concatenation.data(), challenge_2->data(), challenge_2->size());
-        memcpy(concatenation.data() + challenge_2->size(), KxSaltCookie.data(), 16);
-        memcpy(concatenation.data() + challenge_2->size() + 16, challenge_1->data(), challenge_1->size() );
-        //Compute key to produce master_sender_key
-        buffer.master_sender_key.fill(0);
-        if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
-            logWarning(SECURITY_CRYPTO,"Error generating master key material");
+        if(!create_kx_key(buffer.master_sender_key, challenge_2, "key exchange key", challenge_1, shared_secret_ss))
+        {
+            logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
+            exception = SecurityException("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
             return nullptr;
         }
-        //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret that will go into master_sender_key
-        key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
-        ctx =
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_new();
-#else
-            (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
-        EVP_MD_CTX_init(ctx);
 
-        EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
-        EVP_DigestSignUpdate(ctx, shared_secret_ss->data(), shared_secret_ss->size());
-        length = 0;
-        EVP_DigestSignFinal(ctx, NULL, &length);
-        if(length > 32){
-            logWarning(SECURITY_CRYPTO,"Error generating master key material");
-            delete RPCrypto;
-            EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_free(ctx);
-#else
-            EVP_MD_CTX_cleanup(ctx);
-            free(ctx);
-#endif
-            return nullptr;
-        }
-        EVP_DigestSignFinal(ctx, buffer.master_sender_key.data(), &length);
-        EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-        EVP_MD_CTX_free(ctx);
-#else
-        EVP_MD_CTX_cleanup(ctx);
-        free(ctx);
-#endif
-
-        buffer.sender_key_id.fill(0); //Specified by standard
-        buffer.receiver_specific_key_id.fill(0); //Specified by standard
-        buffer.master_receiver_specific_key.fill(0); //Specified by standard
 
         (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
         (*RPCrypto)->session_block_counter = local_participant_handle->session_block_counter;
