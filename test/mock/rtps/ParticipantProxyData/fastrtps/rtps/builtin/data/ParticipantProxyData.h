@@ -15,7 +15,6 @@
 /**
  * @file ParticipantProxyData.h
  */
-// TODO(Ricardo) Remove these mock when ParticipantProxyData doesn't contain functionality, only data.
 #ifndef _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
@@ -37,9 +36,9 @@ class ParticipantProxyData
         {
         }
 
-        ParameterList_t ParticipantProxyData::AllQostoParameterList() { return ParameterList_t(); }
+        ParameterList_t AllQostoParameterList() { return ParameterList_t(); }
 
-        bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* /*msg*/) { return true; }
+        bool readFromCDRMessage(CDRMessage_t* /*msg*/) { return true; }
 
         GUID_t m_guid;
         uint32_t m_availableBuiltinEndpoints;
