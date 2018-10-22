@@ -828,6 +828,8 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         return false;
     }
 
+    bool is_key_id_zero = (header.transform_identifier.transformation_key_id == c_transformKeyIdZero);
+
     //TODO(Ricardo) Deserializing header two times, here preprocessing and decoding submessage.
     //KeyId is present in Header->transform_identifier->transformation_key_id and contains the sender_key_id
 
@@ -846,8 +848,11 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         {
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
             *datawriter_crypto = *it;
+
+            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant = is_key_id_zero ? remote_participant : local_participant;
+
             //We have the remote writer, now lets look for the local datareader
-            for(std::vector<DatareaderCryptoHandle *>::iterator itt = local_participant->Readers.begin(); itt != local_participant->Readers.end(); ++itt)
+            for(std::vector<DatareaderCryptoHandle *>::iterator itt = lookup_participant->Readers.begin(); itt != lookup_participant->Readers.end(); ++itt)
             {
                 AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
 

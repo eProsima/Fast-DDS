@@ -143,7 +143,7 @@ class  EntityKeyHandle
         //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
         KeyMaterial_AES_GCM_GMAC_Seq Remote2EntityKeyMaterial;
         //Copy of the Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
-        KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
+        // KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
 
         //Data used to store the current session keys and to determine when it has to be updated
         uint32_t session_id;

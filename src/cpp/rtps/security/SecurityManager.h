@@ -354,6 +354,8 @@ class SecurityManager
 
         void match_builtin_endpoints(const ParticipantProxyData& participant_data);
 
+        void match_builtin_key_exchange_endpoints(const ParticipantProxyData& participant_data);
+
         void unmatch_builtin_endpoints(const ParticipantProxyData& participant_data);
 
         ParticipantCryptoHandle* register_and_match_crypto_endpoint(const GUID_t& remote_participant_guid, IdentityHandle& remote_participant_identity,

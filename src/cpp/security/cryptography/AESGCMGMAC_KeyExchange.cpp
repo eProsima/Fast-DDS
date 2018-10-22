@@ -62,7 +62,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(0));
-        prop.value() = aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
+        prop.value() = plaintext; //  aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
         prop.propagate(true);
 
         if(prop.value().size() == 0)
@@ -107,8 +107,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
         return false;
     }
     //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
-    std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
-        remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
+    std::vector<uint8_t> plaintext = remote_participant_tokens.at(0).binary_properties().at(0).value();
+    // std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_participant_tokens.at(0).binary_properties().at(0).value(),
+    //     remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
 
     if(plaintext.size() == 0)
         return false;
@@ -146,7 +147,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datawriter_crypto_tokens(
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext = KeyMaterialCDRSerialize(it);
-        prop.value() = aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
+        prop.value() = plaintext; // aes_128_gcm_encrypt(plaintext, remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
         prop.propagate(true);
 
         if (prop.value().size() == 0)
@@ -185,7 +186,7 @@ bool AESGCMGMAC_KeyExchange::create_local_datareader_crypto_tokens(
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext= KeyMaterialCDRSerialize(it);
-        prop.value() = aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
+        prop.value() = plaintext; // aes_128_gcm_encrypt(plaintext, remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
         prop.propagate(true);
 
         if(prop.value().size() == 0)
@@ -237,8 +238,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
         std::unique_lock<std::mutex> remote_reader_lock(remote_reader->mutex_);
 
         //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
-        std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datareader_tokens.at(i).binary_properties().at(0).value(),
-            remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
+        std::vector<uint8_t> plaintext = remote_datareader_tokens.at(i).binary_properties().at(0).value();
+        // std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datareader_tokens.at(i).binary_properties().at(0).value(),
+        //     remote_reader->Participant2ParticipantKxKeyMaterial.master_sender_key);
 
         if (plaintext.size() == 0)
             return false;
@@ -298,8 +300,9 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
         std::unique_lock<std::mutex> remote_writer_lock(remote_writer->mutex_);
 
         //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
-        std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datawriter_tokens.at(i).binary_properties().at(0).value(),
-            remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
+        std::vector<uint8_t> plaintext = remote_datawriter_tokens.at(i).binary_properties().at(0).value();
+        // std::vector<uint8_t> plaintext = aes_128_gcm_decrypt(remote_datawriter_tokens.at(i).binary_properties().at(0).value(),
+        //     remote_writer->Participant2ParticipantKxKeyMaterial.master_sender_key);
 
         if (plaintext.size() == 0)
             return false;
@@ -477,6 +480,7 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(KeyMaterial_AES_GCM_GMAC&
     }
 }
 
+/*
 std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_encrypt(const std::vector<uint8_t>& plaintext,
         const std::array<uint8_t,32>& key)
 {
@@ -562,3 +566,4 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::aes_128_gcm_decrypt(const std::vect
 
     return plaintext;
 }
+*/
