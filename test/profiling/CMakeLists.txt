@@ -12,36 +12,92 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(PROFILING_TESTS)
+if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
+    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
+    check_gtest()
 
-    add_definitions(
-      -DBOOST_ASIO_STANDALONE
-      -DASIO_STANDALONE
-    )
+    if(GTEST_FOUND)
+        if(PROFILING_TESTS)
+            enable_testing()
+            find_package(Threads REQUIRED)
 
-    include_directories(${ASIO_INCLUDE_DIR})
+            if(WIN32)
+                target_compile_definitions(${PROJECT_NAME} PRIVATE
+                    $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
+                    $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
+                    )
+            endif()
 
-    set(RTPSCOMMSPROFILING_SOURCE
-        RTPSCommsProfiling.cpp
-        RTPSAsSocketReader.cpp
-        RTPSAsSocketWriter.cpp)
+            add_definitions(
+            -DBOOST_ASIO_STANDALONE
+            -DASIO_STANDALONE
+            )
 
-    add_executable(RTPSCommsProfiling ${RTPSCOMMSPROFILING_SOURCE})
-    target_compile_definitions(RTPSCommsProfiling PRIVATE FASTRTPS_NO_LIB)
-    target_include_directories(RTPSCommsProfiling PRIVATE ../ ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-    target_link_libraries(RTPSCommsProfiling fastrtps fastcdr ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            include_directories(${ASIO_INCLUDE_DIR})
 
-    set(RTPSPUBSUBPROFILING_SOURCE
-        RTPSPubSubProfiling.cpp
-        types/HelloWorld.cxx
-        types/HelloWorldPubSubTypes.cxx)
+            ###############################################################################
+            # Binaries
+            ###############################################################################
+            set(MEMORYTEST_SOURCE MemoryTestPublisher.cpp
+                MemoryTestSubscriber.cpp
+                MemoryTestTypes.cpp
+                main_MemoryTest.cpp
+                )
+            add_executable(MemoryTest ${MEMORYTEST_SOURCE})
+            target_link_libraries(MemoryTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
-    add_executable(RTPSPubSubProfiling ${RTPSPUBSUBPROFILING_SOURCE})
-    target_compile_definitions(RTPSPubSubProfiling PRIVATE FASTRTPS_NO_LIB)
-    target_include_directories(RTPSPubSubProfiling PRIVATE ../ ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-    target_link_libraries(RTPSPubSubProfiling fastrtps fastcdr ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            configure_file("cycles_tests.py" "cycles_tests.py")
+            configure_file("memory_tests.py" "memory_tests.py")
+            configure_file("memory_analysis.py" "memory_analysis.py")
 
-    add_subdirectory(memory)
-    add_subdirectory(cycles)
+            find_package(PythonInterp 3 REQUIRED)
 
+            if(PYTHONINTERP_FOUND)
+                ###############################################################################
+                # MemoryTest
+                ###############################################################################
+                add_test(NAME MemoryTest
+                    COMMAND ${PYTHON_EXECUTABLE} memory_tests.py)
+
+                # Set test with label NoMemoryCheck
+                set_property(TEST MemoryTest PROPERTY LABELS "NoMemoryCheck")
+
+                if(WIN32)
+                    set_property(TEST MemoryTest PROPERTY ENVIRONMENT
+                        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
+                endif()
+                set_property(TEST MemoryTest APPEND PROPERTY ENVIRONMENT
+                    "PROFILING_BINS=$<TARGET_FILE:MemoryTest>")
+                set_property(TEST MemoryTest APPEND PROPERTY ENVIRONMENT
+                    "VALGRIND_BIN=${CTEST_MEMORYCHECK_COMMAND}")
+                if(SECURITY)
+                    set_property(TEST MemoryTest APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
+
+                ###############################################################################
+                # CyclesTest
+                ###############################################################################
+                add_test(NAME CyclesTest
+                    COMMAND ${PYTHON_EXECUTABLE} cycles_tests.py)
+
+                # Set test with label NoMemoryCheck
+                set_property(TEST CyclesTest PROPERTY LABELS "NoMemoryCheck")
+
+                if(WIN32)
+                    set_property(TEST CyclesTest PROPERTY ENVIRONMENT
+                        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
+                endif()
+                set_property(TEST CyclesTest APPEND PROPERTY ENVIRONMENT
+                    "PROFILING_BINS=$<TARGET_FILE:MemoryTest>")
+                set_property(TEST CyclesTest APPEND PROPERTY ENVIRONMENT
+                    "VALGRIND_BIN=valgrind")
+                if(SECURITY)
+                    set_property(TEST CyclesTest APPEND PROPERTY ENVIRONMENT
+                        "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
+                endif()
+
+            endif()
+        endif()
+    endif()
 endif()
