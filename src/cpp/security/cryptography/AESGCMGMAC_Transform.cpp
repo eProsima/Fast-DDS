@@ -26,6 +26,12 @@
 #include <openssl/rand.h>
 #include <cstring>
 
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#define IS_OPENSSL_1_1 1
+#else
+#define IS_OPENSSL_1_1 0
+#endif
+
  // Solve error with Win32 macro
 #ifdef WIN32
 #undef max
@@ -95,9 +101,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     {
         local_writer->session_id += 1;
 
-        local_writer->SessionKey = compute_sessionkey(keyMat.master_sender_key,
-                keyMat.master_salt,
-                local_writer->session_id);
+        compute_sessionkey(local_writer->SessionKey, keyMat, local_writer->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
         local_writer->session_block_counter = 0;
@@ -199,9 +203,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     {
         local_writer->session_id += 1;
         update_specific_keys = true;
-        local_writer->SessionKey = compute_sessionkey(keyMat.master_sender_key,
-                keyMat.master_salt,
-                local_writer->session_id);
+        compute_sessionkey(local_writer->SessionKey, keyMat, local_writer->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
         local_writer->session_block_counter = 0;
@@ -336,8 +338,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     if(local_reader->session_block_counter >= local_reader->max_blocks_per_session){
         local_reader->session_id += 1;
         update_specific_keys = true;
-        local_reader->SessionKey = compute_sessionkey(local_reader->EntityKeyMaterial.at(0).master_sender_key,
-                local_reader->EntityKeyMaterial.at(0).master_salt,
+        compute_sessionkey(local_reader->SessionKey, local_reader->EntityKeyMaterial.at(0),
                 local_reader->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
@@ -475,8 +476,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     {
         local_participant->session_id += 1;
         update_specific_keys = true;
-        local_participant->SessionKey = compute_sessionkey(local_participant->ParticipantKeyMaterial.master_sender_key,
-                local_participant->ParticipantKeyMaterial.master_salt,
+        compute_sessionkey(local_participant->SessionKey, local_participant->ParticipantKeyMaterial,
                 local_participant->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
@@ -665,9 +665,9 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key,
-            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_salt,
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key,
+            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0),
             session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
@@ -998,10 +998,8 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            keyMat->master_sender_key,
-            keyMat->master_salt,
-            session_id);
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key, *keyMat, session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -1178,10 +1176,8 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            keyMat->master_sender_key,
-            keyMat->master_salt,
-            session_id);
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key, *keyMat, session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -1328,8 +1324,8 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(keyMat->master_sender_key,
-            keyMat->master_salt, session_id);
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key, *keyMat, session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -1380,22 +1376,62 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     return true;
 }
 
-std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(const std::array<uint8_t,32>& master_sender_key,
-        const std::array<uint8_t,32>& master_salt , const uint32_t session_id)
+void AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t, 32>& session_key, 
+    const KeyMaterial_AES_GCM_GMAC& key_mat, const uint32_t session_id)
 {
+    bool use_256_bits = (key_mat.transformation_kind == c_transfrom_kind_aes256_gcm ||
+        key_mat.transformation_kind == c_transfrom_kind_aes256_gmac);
+    int key_len = use_256_bits ? 32 : 16;
 
-    std::array<uint8_t,32> session_key;
-    unsigned char *source = (unsigned char*)malloc(32 + 10 + 32 + 4);
-    memcpy(source, master_sender_key.data(), 32);
-    char seq[] = "SessionKey";
-    memcpy(source+32, seq, 10);
-    memcpy(source+32+10, master_salt.data(),32);
-    memcpy(source+32+10+32, &(session_id),4);
+    compute_sessionkey(session_key, false, key_mat.master_sender_key, key_mat.master_salt, session_id, key_len);
+}
 
-    EVP_Digest(source, 32+10+32+4, session_key.data(), NULL, EVP_sha256(), NULL);
+void AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t, 32>& session_key, bool receiver_specific,
+    const std::array<uint8_t, 32>& master_key, const std::array<uint8_t, 32>& master_salt,
+    const uint32_t session_id, int key_len)
+{
+    int sourceLen = 0;
+    unsigned char source[18 + 32 + 4];
+    const char seq[] = "SessionKey";
+    const char receiver_seq[] = "SessionReceiverKey";
+    if (receiver_specific)
+    {
+        memcpy(source, receiver_seq, 18);
+        sourceLen = 18;
+    }
+    else
+    {
+        memcpy(source, seq, 10);
+        sourceLen = 10;
+    }
+    memcpy(source + sourceLen, master_salt.data(), key_len);
+    sourceLen += key_len;
+    memcpy(source + sourceLen, &session_id, 4);
+    sourceLen += 4;
 
-    free(source);
-    return session_key;
+    EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, master_key.data(), key_len);
+    EVP_MD_CTX* ctx =
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    int rc;
+    rc = EVP_MD_CTX_init(ctx);
+    rc = EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
+    rc = EVP_DigestSignUpdate(ctx, source, sourceLen);
+
+    size_t finalLen;
+    rc = EVP_DigestSignFinal(ctx, NULL, &finalLen);
+    rc = EVP_DigestSignFinal(ctx, session_key.data(), &finalLen);
+
+    EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    EVP_MD_CTX_cleanup(ctx);
+    free(ctx);
+#endif
 }
 
 void AESGCMGMAC_Transform::serialize_SecureDataHeader(eprosima::fastcdr::Cdr& serializer,
@@ -1411,10 +1447,10 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         eprosima::fastcdr::FastBuffer& output_buffer, octet* plain_buffer, uint32_t plain_buffer_len,
         SecureDataTag& tag)
 {
-    bool do_encryption = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM});
-    bool use_256_bits = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC});
+    bool do_encryption = (transformation_kind == c_transfrom_kind_aes128_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gcm);
+    bool use_256_bits = (transformation_kind == c_transfrom_kind_aes256_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gmac);
 
     // AES_BLOCK_SIZE = 16
     int cipher_block_size = 0, actual_size = 0, final_size = 0;
@@ -1597,16 +1633,15 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         {
             //Update triggered!
             remote_entity->session_id = session_id;
-            remote_entity->SessionKey = compute_sessionkey(remote_entity->Remote2EntityKeyMaterial.at(0).master_receiver_specific_key,
-                    remote_entity->Remote2EntityKeyMaterial.at(0).master_salt,
+            compute_sessionkey(remote_entity->SessionKey, remote_entity->Remote2EntityKeyMaterial.at(0),
                     remote_entity->session_id);
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-                transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+        if(transformation_kind == c_transfrom_kind_aes128_gcm ||
+                transformation_kind == c_transfrom_kind_aes128_gmac)
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_entity->SessionKey.data()),
                         initialization_vector.data()))
@@ -1616,8 +1651,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                 continue;
             }
         }
-        else if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-                transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+        else if(transformation_kind == c_transfrom_kind_aes256_gcm ||
+                transformation_kind == c_transfrom_kind_aes256_gmac)
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_entity->SessionKey.data()),
                         initialization_vector.data()))
@@ -1697,9 +1732,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         {
             //Update triggered!
             remote_participant->session_id = local_participant->session_id;
-            remote_participant->SessionKey = compute_sessionkey(
-                    remote_participant->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
-                    remote_participant->Participant2ParticipantKeyMaterial.at(0).master_salt,
+            compute_sessionkey(remote_participant->SessionKey,
+                    remote_participant->Participant2ParticipantKeyMaterial.at(0),
                     remote_participant->session_id);
         }
 
@@ -1707,8 +1741,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
         auto& trans_kind = remote_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind;
-        if(trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-            trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+        if(trans_kind == c_transfrom_kind_aes128_gcm ||
+            trans_kind == c_transfrom_kind_aes128_gmac)
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()),
                         initialization_vector.data()))
@@ -1718,8 +1752,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
                 continue;
             }
         }
-        else if(trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-            trans_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+        else if(trans_kind == c_transfrom_kind_aes256_gcm ||
+            trans_kind == c_transfrom_kind_aes256_gmac)
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()),
                         initialization_vector.data()))
@@ -1775,10 +1809,10 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     eprosima::fastcdr::Cdr::state current_state = decoder.getState();
     decoder.setState(body_state);
 
-    bool do_encryption = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM});
-    bool use_256_bits = (transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-        transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC});
+    bool do_encryption = (transformation_kind == c_transfrom_kind_aes128_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gcm);
+    bool use_256_bits = (transformation_kind == c_transfrom_kind_aes256_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gmac);
 
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
     int cipher_block_size = 0, actual_size = 0, final_size = 0;
@@ -1938,17 +1972,17 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
         int actual_size = 0, final_size = 0;
 
         //Get ReceiverSpecificSessionKey
-        std::array<uint8_t,32> specific_session_key = compute_sessionkey(receiver_specific_key,
-                master_salt, session_id);
+        std::array<uint8_t, 32> specific_session_key;
+        compute_sessionkey(specific_session_key, true, receiver_specific_key, master_salt, session_id);
 
         //Verify specific MAC
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-                transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+        if(transformation_kind == c_transfrom_kind_aes128_gcm ||
+                transformation_kind == c_transfrom_kind_aes128_gmac)
         {
             d_cipher = EVP_aes_128_gcm();
         }
-        else if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-                transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+        else if(transformation_kind == c_transfrom_kind_aes256_gcm ||
+                transformation_kind == c_transfrom_kind_aes256_gmac)
         {
             d_cipher = EVP_aes_256_gcm();
         }

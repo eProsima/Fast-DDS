@@ -104,9 +104,19 @@ class AESGCMGMAC_Transform : public CryptoTransform
             DatawriterCryptoHandle& sending_datawriter_crypto,
             SecurityException& exception) override;
 
-    //Aux function to compute session key from the master material
-    std::array<uint8_t, 32> compute_sessionkey(const std::array<uint8_t, 32>& master_sender_key,
-            const std::array<uint8_t, 32>& master_salt , const uint32_t session_id);
+    //Aux functions to compute session key from the master material
+    void compute_sessionkey(
+        std::array<uint8_t, 32>& session_key, 
+        bool receiver_specific,
+        const std::array<uint8_t, 32>& master_key, 
+        const std::array<uint8_t, 32>& master_salt, 
+        const uint32_t session_id, 
+        int key_len = 32);
+
+    void compute_sessionkey(
+        std::array<uint8_t, 32>& session_key, 
+        const KeyMaterial_AES_GCM_GMAC& key, 
+        const uint32_t session_id);
 
     //Serialization and deserialization of message components
     void serialize_SecureDataHeader(eprosima::fastcdr::Cdr& serializer,
