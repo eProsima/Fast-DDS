@@ -21,3 +21,8 @@ if(NOT ((MSVC OR MSVC_IDE)))
    endif()
 endif()
 add_subdirectory(unittest)
+
+###############################################################################
+# Performance tests
+###############################################################################
+add_subdirectory(performance)
