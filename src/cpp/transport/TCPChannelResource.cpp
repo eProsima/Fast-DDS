@@ -163,6 +163,7 @@ void TCPChannelResource::Disconnect()
         {
             mSocket.cancel();
             mSocket.shutdown(asio::ip::tcp::socket::shutdown_both);
+            mSocket.release();
         }
         catch (std::exception&)
         {

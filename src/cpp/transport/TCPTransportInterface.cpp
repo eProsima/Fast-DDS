@@ -185,25 +185,11 @@ void TCPTransportInterface::CleanDeletedSockets()
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
         deleteList = mDeletedSocketsPool;
-        //deleteList.insert(deleteList.end(), mDeletedSocketsPool.begin(), mDeletedSocketsPool.end());
         mDeletedSocketsPool.clear();
     }
 
     for (auto it = deleteList.begin(); it != deleteList.end(); ++it)
     {
-        std::thread* rtcpThread = (*it)->ReleaseRTCPThread();
-        std::thread* thread = (*it)->ReleaseThread();
-        if (rtcpThread != nullptr)
-        {
-            rtcpThread->join();
-            delete(rtcpThread);
-        }
-        if (thread != nullptr)
-        {
-            thread->join();
-            delete(thread);
-        }
-
         delete(*it);
     }
 }
@@ -863,25 +849,27 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     */
 
     TCPChannelResource* channelResource = nullptr;
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
     {
-        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator) \
-            << " @ IP: " << IPLocator::toIPv4string(remoteLocator));
-        return false;
-    }
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
+        {
+            logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator) \
+                << " @ IP: " << IPLocator::toIPv4string(remoteLocator));
+            return false;
+        }
 
-    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(remoteLocator));
-    if (it == mChannelResources.end())
-    {
-        EnqueueLogicalOutputPort(remoteLocator);
-        logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) \
-            << " @ IP: " << IPLocator::toIPv4string(remoteLocator) << " will be bound.");
-        return false;
-    }
-    else
-    {
-        channelResource = it->second;
+        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(remoteLocator));
+        if (it == mChannelResources.end())
+        {
+            EnqueueLogicalOutputPort(remoteLocator);
+            logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) \
+                << " @ IP: " << IPLocator::toIPv4string(remoteLocator) << " will be bound.");
+            return false;
+        }
+        else
+        {
+            channelResource = it->second;
+        }
     }
 
     bool result = true;
