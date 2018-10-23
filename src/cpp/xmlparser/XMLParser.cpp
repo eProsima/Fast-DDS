@@ -409,6 +409,7 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
     <xs:element name="logical_port_increment" type="uint16Type"/>
     <xs:element name="metadata_logical_port" type="uint16Type"/>
     <xs:element name="ListeningPorts" type="uint16ListType"/>
+    <xs:element name="wait_negotiation" type="boolean"/>
     <xs:sequence>
     <xs:element name="port" type="uint16Type"/>
     </xs:sequence>
@@ -479,6 +480,15 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
 
                 p_aux1 = p_aux1->NextSiblingElement(PORT);
             }
+        }
+
+        // wait_negotiation - boolean
+        if (nullptr != (p_aux0 = p_root->FirstChildElement(TCP_WAIT_NEGOTIATION)))
+        {
+            bool waitNeg(true);
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &waitNeg, 0))
+                return XMLP_ret::XML_ERROR;
+            pTCPDesc->wait_for_tcp_negotiation = waitNeg;
         }
     }
     else

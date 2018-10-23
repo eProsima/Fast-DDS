@@ -50,6 +50,7 @@ extern const char* TRANSPORT_DESCRIPTOR;
 extern const char* TRANSPORT_ID;
 extern const char* UDP_OUTPUT_PORT;
 extern const char* TCP_WAN_ADDR;
+extern const char* TCP_WAIT_NEGOTIATION;
 extern const char* RECEIVE_BUFFER_SIZE;
 extern const char* SEND_BUFFER_SIZE;
 extern const char* TTL;
