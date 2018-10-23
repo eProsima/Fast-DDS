@@ -71,9 +71,9 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
     ASSERT_GT(local_participant->Participant2ParticipantKeyMaterial.size(), 0ul);
     ASSERT_GT(local_participant->Participant2ParticipantKxKeyMaterial.size(), 0ul);
 
-    ASSERT_TRUE( (local_participant->ParticipantKeyMaterial.transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
-    ASSERT_TRUE( (local_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
-    ASSERT_TRUE( (local_participant->Participant2ParticipantKxKeyMaterial.at(0).transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
+    ASSERT_TRUE( (local_participant->ParticipantKeyMaterial.transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
+    ASSERT_TRUE( (local_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
+    ASSERT_TRUE( (local_participant->Participant2ParticipantKxKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
 
     ASSERT_FALSE( std::all_of(local_participant->ParticipantKeyMaterial.master_salt.begin(),local_participant->ParticipantKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.begin(),local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.end(), [](uint8_t i){return i==0;}) );
@@ -473,7 +473,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     ASSERT_TRUE(!local_writer.nil());
 
     ASSERT_TRUE(local_writer->Entity2RemoteKeyMaterial.empty());
-    ASSERT_TRUE( (local_writer->EntityKeyMaterial.at(0).transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
+    ASSERT_TRUE( (local_writer->EntityKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes128_gcm) );
 
     ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.at(0).master_salt.begin(),local_writer->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i){return i==0;}) );
 
@@ -522,7 +522,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     ASSERT_TRUE(!local_reader.nil());
 
     ASSERT_TRUE(local_reader->Entity2RemoteKeyMaterial.empty());
-    ASSERT_TRUE( (local_reader->EntityKeyMaterial.at(0).transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
+    ASSERT_TRUE( (local_reader->EntityKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes128_gcm) );
 
     ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.at(0).master_salt.begin(),local_reader->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i){return i==0;}) );
 

@@ -222,7 +222,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer; //Buffer = Participant2ParticipantKxKeyMaterial
 
-        buffer.transformation_kind = std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
+        buffer.transformation_kind = c_transfrom_kind_aes256_gcm;
         buffer.sender_key_id.fill(0);
         buffer.receiver_specific_key_id.fill(0);
         buffer.master_receiver_specific_key.fill(0);
@@ -745,11 +745,11 @@ void AESGCMGMAC_KeyFactory::create_key(KeyMaterial_AES_GCM_GMAC& key, bool encry
 {
     std::array<uint8_t, 4> transformationtype = encrypt_then_sign
         ? use_256_bits
-        ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM}
-    : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}
-    : use_256_bits
-        ? std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC}
-    : std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
+            ? c_transfrom_kind_aes256_gcm
+            : c_transfrom_kind_aes128_gcm
+        : use_256_bits
+            ? c_transfrom_kind_aes256_gmac
+            : c_transfrom_kind_aes128_gmac;
 
     int nBytes = use_256_bits ? 32 : 16;
 

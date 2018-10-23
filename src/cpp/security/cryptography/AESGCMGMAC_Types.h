@@ -54,6 +54,12 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+const CryptoTransformKind c_transfrom_kind_none = CRYPTO_TRANSFORMATION_KIND_NONE;
+const CryptoTransformKind c_transfrom_kind_aes128_gmac = CRYPTO_TRANSFORMATION_KIND_AES128_GMAC;
+const CryptoTransformKind c_transfrom_kind_aes128_gcm = CRYPTO_TRANSFORMATION_KIND_AES128_GCM;
+const CryptoTransformKind c_transfrom_kind_aes256_gmac = CRYPTO_TRANSFORMATION_KIND_AES256_GMAC;
+const CryptoTransformKind c_transfrom_kind_aes256_gcm = CRYPTO_TRANSFORMATION_KIND_AES256_GCM;
+
 /* Key Storage
  * -----------
  *  Contains common key and specific key
