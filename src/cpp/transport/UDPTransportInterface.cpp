@@ -42,7 +42,7 @@ struct MultiUniLocatorsLinkage
 };
 
 UDPTransportDescriptor::UDPTransportDescriptor()
-    : SocketTransportDescriptor(s_maximumMessageSize)
+    : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
     , m_output_udp_socket(0)
 {
 }
@@ -654,8 +654,7 @@ bool UDPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
 {
     if(locator.port == 0)
     {
-        // TODO(Ricardo) Make configurable.
-        for(int32_t i = 0; i < 4; ++i)
+        for(uint32_t i = 0; i < GetConfiguration()->maxInitialPeersRange; ++i)
         {
             Locator_t auxloc(locator);
             auxloc.port = port_params.getUnicastPort(domainId, i);

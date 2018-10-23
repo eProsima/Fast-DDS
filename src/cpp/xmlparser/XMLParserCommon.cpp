@@ -40,6 +40,7 @@ const char* SEND_BUFFER_SIZE = "sendBufferSize";
 const char* TTL = "TTL";
 const char* WHITE_LIST = "interfaceWhiteList";
 const char* MAX_MESSAGE_SIZE = "maxMessageSize";
+const char* MAX_INITIAL_PEERS_RANGE = "maxInitialPeersRange";
 const char* KEEP_ALIVE_FREQUENCY = "keep_alive_frequency_ms";
 const char* KEEP_ALIVE_TIMEOUT = "keep_alive_timeout_ms";
 const char* MAX_LOGICAL_PORT = "max_logical_port";

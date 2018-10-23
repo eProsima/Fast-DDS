@@ -119,7 +119,7 @@ class MockTransport: public TransportInterface
 class MockTransportDescriptor: public SocketTransportDescriptor
 {
 public:
-    MockTransportDescriptor() : SocketTransportDescriptor(0x8FFF) {}
+    MockTransportDescriptor() : SocketTransportDescriptor(0x8FFF, 4) {}
     int maximumChannels;
     int supportedKind;
     virtual TransportInterface* create_transport() const override { return new MockTransport(*this); }

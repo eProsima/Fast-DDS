@@ -58,7 +58,7 @@ void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_ser
 }
 
 TCPTransportDescriptor::TCPTransportDescriptor()
-    : SocketTransportDescriptor(s_maximumMessageSize)
+    : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
     , keep_alive_frequency_ms(s_default_keep_alive_frequency)
     , keep_alive_timeout_ms(s_default_keep_alive_timeout)
     , max_logical_port(100)
@@ -1173,8 +1173,7 @@ bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
 {
     if(IPLocator::getPhysicalPort(locator) == 0)
     {
-        // TODO(Ricardo) Make configurable.
-        for(int32_t i = 0; i < 4; ++i)
+        for(uint32_t i = 0; i < GetConfiguration()->maxInitialPeersRange; ++i)
         {
             Locator_t auxloc(locator);
             auxloc.port = static_cast<uint16_t>(port_params.getUnicastPort(domainId, i));

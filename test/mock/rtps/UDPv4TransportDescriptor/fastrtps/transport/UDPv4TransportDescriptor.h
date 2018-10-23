@@ -40,13 +40,13 @@ typedef struct UDPv4TransportDescriptor: public SocketTransportDescriptor
    virtual TransportInterface* create_transport() const override {	return nullptr;	}
 
    RTPS_DllAPI UDPv4TransportDescriptor()
-   : SocketTransportDescriptor(65550)
+   : SocketTransportDescriptor(65550, 4)
    {
 
    }
 
    RTPS_DllAPI UDPv4TransportDescriptor(const UDPv4TransportDescriptor& /*t*/)
-   : SocketTransportDescriptor(65550)
+   : SocketTransportDescriptor(65550, 4)
    {
 
    }

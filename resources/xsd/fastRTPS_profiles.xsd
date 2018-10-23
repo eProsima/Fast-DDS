@@ -537,6 +537,7 @@
         <xs:element name="receiveBufferSize" type="int32Type"/>
         <xs:element name="TTL" type="uint8Type"/>
         <xs:element name="maxMessageSize" type="uint32Type"/>
+        <xs:element name="maxInitialPeersRange" type="uint32Type"/>
         <xs:element name="interfaceWhiteList" type="stringListType"/>
         <xs:sequence>
           <xs:element name="id" type="stringType"/>

@@ -49,13 +49,13 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor {
     }
 
     RTPS_DllAPI TCPTransportDescriptor()
-    : SocketTransportDescriptor(65550)
+    : SocketTransportDescriptor(65550, 4)
     {
 
     }
 
     RTPS_DllAPI TCPTransportDescriptor(const TCPTransportDescriptor& /*t*/)
-    : SocketTransportDescriptor(65550)
+    : SocketTransportDescriptor(65550, 4)
     {
 
     }
