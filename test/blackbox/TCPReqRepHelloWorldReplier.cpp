@@ -58,7 +58,8 @@ TCPReqRepHelloWorldReplier::~TCPReqRepHelloWorldReplier()
         Domain::removeParticipant(participant_);
 }
 
-void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t listeningPort)
+void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t listeningPort,
+        uint32_t maxInitialPeer)
 {
     ParticipantAttributes pattr;
     pattr.rtps.builtin.domainId = domainId;
@@ -77,7 +78,10 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t 
     descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
-    // descriptor->set_WAN_address("127.0.0.1");
+    if (maxInitialPeer > 0)
+    {
+        descriptor->maxInitialPeersRange = maxInitialPeer;
+    }
     descriptor->add_listener_port(listeningPort);
     pattr.rtps.userTransports.push_back(descriptor);
 

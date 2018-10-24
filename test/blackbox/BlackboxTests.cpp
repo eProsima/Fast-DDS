@@ -5458,6 +5458,9 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D0)
     requester.waitDiscovery();
     replier.waitDiscovery();
 
+    ASSERT_TRUE(requester.isMatched());
+    ASSERT_TRUE(replier.isMatched());
+
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         requester.send(count);
@@ -5572,6 +5575,147 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D1_D0)
     ASSERT_FALSE(requester.isMatched());
     ASSERT_FALSE(replier.isMatched());
 }
+
+BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P3)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 0, global_port, 4);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(3, 0, global_port);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
+    ASSERT_TRUE(requester.isMatched());
+    ASSERT_TRUE(replier.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P4)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 0, global_port, 4);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(4, 0, global_port);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
+    ASSERT_FALSE(requester.isMatched());
+    ASSERT_FALSE(replier.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_5_P4)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 0, global_port, 5);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(4, 0, global_port);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.waitDiscovery();
+    replier.waitDiscovery();
+
+    ASSERT_TRUE(requester.isMatched());
+    ASSERT_TRUE(replier.isMatched());
+}
+
+// TODO - GASCO: UDPMaxInitialPeer tests should use static discovery through initial peers.
+/*
+BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Disallow multicast discovery
+    eprosima::fastrtps::rtps::LocatorList_t loc;
+    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+
+    reader.max_initial_peers_range(4).initial_peers(loc).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.partiticpan_id(3).initial_peers(loc).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    ASSERT_TRUE(writer.isMatched());
+    ASSERT_TRUE(reader.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Disallow multicast discovery
+    eprosima::fastrtps::rtps::LocatorList_t loc;
+    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+
+    reader.max_initial_peers_range(4).initial_peers(loc).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.partiticpan_id(4).initial_peers(loc).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    ASSERT_FALSE(writer.isMatched());
+    ASSERT_FALSE(reader.isMatched());
+}
+
+BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_5_P4)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Disallow multicast discovery
+    eprosima::fastrtps::rtps::LocatorList_t loc;
+    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+
+    reader.max_initial_peers_range(5).initial_peers(loc).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.partiticpan_id(4).initial_peers(loc).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.waitDiscovery();
+    reader.waitDiscovery();
+
+    ASSERT_TRUE(writer.isMatched());
+    ASSERT_TRUE(reader.isMatched());
+}
+*/
 
 int main(int argc, char **argv)
 {

@@ -32,6 +32,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 #include <string>
 #include <list>
@@ -40,6 +41,7 @@
 #include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastrtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubReader
@@ -514,6 +516,21 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& max_initial_peers_range(uint32_t maxInitialPeerRange)
+        {
+            participant_attr_.rtps.useBuiltinTransports = false;
+            std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+            descriptor->maxInitialPeersRange = maxInitialPeerRange;
+            participant_attr_.rtps.userTransports.push_back(descriptor);
+            return *this;
+        }
+
+        PubSubReader& partiticpan_id(int32_t participantId)
+        {
+            participant_attr_.rtps.participantID = participantId;
+            return *this;
+        }
+
         /*** Function for discovery callback ***/
 
         void wait_discovery_result()
@@ -534,6 +551,11 @@ class PubSubReader
         const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
         {
             return participant_guid_;
+        }
+
+        bool isMatched() const
+        {
+            return matched_ > 0;
         }
 
     private:

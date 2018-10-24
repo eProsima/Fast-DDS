@@ -34,6 +34,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <string>
 #include <list>
 #include <map>
@@ -42,6 +43,7 @@
 #include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastrtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubWriter
@@ -645,6 +647,21 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& max_initial_peers_range(uint32_t maxInitialPeerRange)
+    {
+        participant_attr_.rtps.useBuiltinTransports = false;
+        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        descriptor->maxInitialPeersRange = maxInitialPeerRange;
+        participant_attr_.rtps.userTransports.push_back(descriptor);
+        return *this;
+    }
+
+    PubSubWriter& partiticpan_id(int32_t participantId)
+    {
+        participant_attr_.rtps.participantID = participantId;
+        return *this;
+    }
+
     const std::string& topic_name() const { return topic_name_; }
 
     eprosima::fastrtps::rtps::GUID_t participant_guid()
@@ -655,6 +672,11 @@ class PubSubWriter
     bool remove_all_changes(size_t* number_of_changes_removed)
     {
         return publisher_->removeAllChange(number_of_changes_removed);
+    }
+
+    bool isMatched() const
+    {
+        return matched_ > 0;
     }
 
     private:

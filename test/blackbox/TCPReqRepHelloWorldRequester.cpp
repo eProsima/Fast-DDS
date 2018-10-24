@@ -60,7 +60,8 @@ TCPReqRepHelloWorldRequester::~TCPReqRepHelloWorldRequester()
         Domain::removeParticipant(participant_);
 }
 
-void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_t listeningPort)
+void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_t listeningPort,
+        uint32_t maxInitialPeer)
 {
     ParticipantAttributes pattr;
 
@@ -85,6 +86,10 @@ void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_
     pattr.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
     descriptor->wait_for_tcp_negotiation = false;
+    if (maxInitialPeer > 0)
+    {
+        descriptor->maxInitialPeersRange = maxInitialPeer;
+    }
     pattr.rtps.userTransports.push_back(descriptor);
 
     pattr.rtps.builtin.domainId = domainId;
