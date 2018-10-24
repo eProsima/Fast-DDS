@@ -163,7 +163,9 @@ void TCPChannelResource::Disconnect()
         {
             mSocket.cancel();
             mSocket.shutdown(asio::ip::tcp::socket::shutdown_both);
+#if !defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603
             mSocket.release();
+#endif
         }
         catch (std::exception&)
         {

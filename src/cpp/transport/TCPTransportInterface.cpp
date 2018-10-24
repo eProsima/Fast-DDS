@@ -184,8 +184,7 @@ void TCPTransportInterface::CleanDeletedSockets()
     std::vector<TCPChannelResource*> deleteList;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-        deleteList = mDeletedSocketsPool;
-        mDeletedSocketsPool.clear();
+        deleteList = std::move(mDeletedSocketsPool);
     }
 
     for (auto it = deleteList.begin(); it != deleteList.end(); ++it)

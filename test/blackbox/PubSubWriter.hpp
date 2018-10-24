@@ -160,8 +160,7 @@ class PubSubWriter
                     }
                     else
                     {
-                        std::cout << "Error getting remote reader info for topic " << readerInfo.topicName()
-                            << std::endl;
+                        std::cout << "Error getting remote reader info: " << readerGuid << std::endl;
                     }
                 }
             }
@@ -217,8 +216,7 @@ class PubSubWriter
                     }
                     else
                     {
-                        std::cout << "Error getting remote writer info for topic " << writerInfo.topicName()
-                            << std::endl;
+                        std::cout << "Error getting remote writer info for topic " << writerGuid << std::endl;
                     }
                 }
             }
