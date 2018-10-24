@@ -77,6 +77,9 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 return;
             }
 
+            // Add input_locator as mettatraffic unicast locator.
+            std::cout << "YEAH!!!" << std::endl;
+
             // At this point we can release reader lock.
             reader->getMutex()->unlock();
 

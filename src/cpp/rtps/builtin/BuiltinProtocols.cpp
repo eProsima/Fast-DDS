@@ -64,14 +64,90 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 {
     mp_participantImpl = p_part;
     m_att = attributes;
-    m_metatrafficUnicastLocatorList = m_att.metatrafficUnicastLocatorList;
-    m_metatrafficMulticastLocatorList = m_att.metatrafficMulticastLocatorList;
-    m_initialPeersList = m_att.initialPeersList;
+
+    /// Creation of metatraffic locator and receiver resources
+    uint32_t metatraffic_multicast_port = p_part->getAttributes().port.getMulticastPort(m_att.domainId);
+    uint32_t metatraffic_unicast_port = p_part->getAttributes().port.getUnicastPort(m_att.domainId, p_part->getAttributes().participantID);
+
+    /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
+       Else -> Take them */
+
+    /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
+
+    if(m_att.metatrafficMulticastLocatorList.empty() &&
+            m_att.metatrafficUnicastLocatorList.empty())
+    {
+        //UDPv4
+        Locator_t mandatoryMulticastLocator;
+        mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
+        mandatoryMulticastLocator.port = metatraffic_multicast_port;
+        mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
+        m_att.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
+
+        Locator_t default_metatraffic_unicast_locator;
+        default_metatraffic_unicast_locator.port = metatraffic_unicast_port;
+        m_att.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
+
+    }
+    else
+    {
+        std::for_each(m_att.metatrafficMulticastLocatorList.begin(), m_att.metatrafficMulticastLocatorList.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                        locator.port = metatraffic_multicast_port;
+                });
+
+        std::for_each(m_att.metatrafficUnicastLocatorList.begin(), m_att.metatrafficUnicastLocatorList.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                        locator.port = metatraffic_unicast_port;
+                });
+    }
+
+    // Initial peers
+    if(m_att.initialPeersList.empty())
+    {
+        m_att.initialPeersList = m_att.metatrafficMulticastLocatorList;
+        /*
+        Locator_t loopbackLocator;
+        loopbackLocator.set_IP4_address(127, 0, 0, 1);
+        loopbackLocator.port = metatraffic_unicast_port;
+        m_att.builtin.initialPeersList.push_back(loopbackLocator);
+        */
+    }
+    else
+    {
+        LocatorList_t initial_peers;
+        initial_peers.swap(m_att.initialPeersList);
+
+        std::for_each(initial_peers.begin(), initial_peers.end(),
+                [&](Locator_t& locator) {
+                    if(locator.port == 0)
+                    {
+                        // TODO(Ricardo) Make configurable.
+                        for(int32_t i = 0; i < 4; ++i)
+                        {
+                            Locator_t auxloc(locator);
+                            auxloc.port = p_part->getAttributes().port.getUnicastPort(m_att.domainId, i);
+
+                            m_att.initialPeersList.push_back(auxloc);
+                        }
+                    }
+                    else
+                    {
+                        m_att.initialPeersList.push_back(locator);
+                    }
+                });
+
+        p_part->network_factory().NormalizeLocators(m_att.initialPeersList);
+    }
+
 
     if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
     {
         mp_PDP = new PDPSimple(this);
-        if(!mp_PDP->initPDP(mp_participantImpl)){
+        if(!mp_PDP->initPDP(mp_participantImpl, m_att))
+        {
             logError(RTPS_PDP,"Participant discovery configuration failed");
             return false;
         }
@@ -84,12 +160,6 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
         mp_PDP->resetParticipantAnnouncement();
     }
 
-    return true;
-}
-
-bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
-{
-    m_metatrafficUnicastLocatorList = loclist;
     return true;
 }
 

@@ -58,13 +58,6 @@ class BuiltinProtocols
      */
     bool initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes);
 
-    /**
-     * Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
-     * @param loclist LocatorList to update
-     * @return True on success
-     */
-    bool updateMetatrafficLocators(LocatorList_t& loclist);
-
     //!BuiltinAttributes of the builtin protocols.
     BuiltinAttributes m_att;
     //!Pointer to the RTPSParticipantImpl.
@@ -73,12 +66,6 @@ class BuiltinProtocols
     PDPSimple* mp_PDP;
     //!Pointer to the WLP
     WLP* mp_WLP;
-    //!Locator list for metatraffic
-    LocatorList_t m_metatrafficMulticastLocatorList;
-    //!Locator List for metatraffic unicast
-    LocatorList_t m_metatrafficUnicastLocatorList;
-    //! Initial peers
-    LocatorList_t m_initialPeersList;
 
     /**
      * Add a local Writer to the BuiltinProtocols.

@@ -137,7 +137,8 @@ void MessageReceiver::removeEndpoint(Endpoint *to_remove){
 }
 
 
-void MessageReceiver::reset(){
+void MessageReceiver::reset()
+{
     destVersion = c_ProtocolVersion;
     sourceVersion = c_ProtocolVersion;
     set_VendorId_Unknown(sourceVendorId);
@@ -145,14 +146,6 @@ void MessageReceiver::reset(){
     destGuidPrefix = c_GuidPrefix_Unknown;
     haveTimestamp = false;
     timestamp = c_TimeInvalid;
-
-    unicastReplyLocatorList.clear();
-    unicastReplyLocatorList.reserve(1);
-    multicastReplyLocatorList.clear();
-    multicastReplyLocatorList.reserve(1);
-    Locator_t  loc;
-    unicastReplyLocatorList.push_back(loc);
-    multicastReplyLocatorList.push_back(defUniLoc);
 }
 
 void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefix,
@@ -167,7 +160,7 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
     this->reset();
 
     destGuidPrefix = RTPSParticipantguidprefix;
-    unicastReplyLocatorList.begin()->kind = loc->kind;
+    input_locator = *loc;
 
     uint8_t n_start = 0;
     if(loc->kind == 1)
@@ -180,11 +173,6 @@ void MessageReceiver::processCDRMsg(const GuidPrefix_t& RTPSParticipantguidprefi
         return;
     }
 
-    for(uint8_t i = n_start;i<16;i++)
-    {
-        unicastReplyLocatorList.begin()->address[i] = loc->address[i];
-    }
-    unicastReplyLocatorList.begin()->port = loc->port;
     msg->pos = 0; //Start reading at 0
 
     //Once everything is set, the reading begins:
@@ -676,6 +664,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     CacheChange_t ch;
     ch.serializedPayload.max_size = mMaxPayload_;
     ch.writerGUID.guidPrefix = sourceGuidPrefix;
+    ch.input_locator = input_locator;
     valid &= CDRMessage::readEntityId(msg, &ch.writerGUID.entityId);
 
     //Get sequence number

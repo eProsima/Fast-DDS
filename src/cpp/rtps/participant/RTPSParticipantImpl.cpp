@@ -133,86 +133,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_controllers.push_back(std::move(controller));
     }
 
-    /// Creation of metatraffic locator and receiver resources
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId, m_att.participantID);
-
-    /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
-       Else -> Take them */
-
-    /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
-
-    if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
-    {
-        //UDPv4
-        Locator_t mandatoryMulticastLocator;
-        mandatoryMulticastLocator.kind = LOCATOR_KIND_UDPv4;
-        mandatoryMulticastLocator.port = metatraffic_multicast_port;
-        mandatoryMulticastLocator.set_IP4_address(239,255,0,1);
-
-        m_att.builtin.metatrafficMulticastLocatorList.push_back(mandatoryMulticastLocator);
-
-        Locator_t default_metatraffic_unicast_locator;
-        default_metatraffic_unicast_locator.port = metatraffic_unicast_port;
-        m_att.builtin.metatrafficUnicastLocatorList.push_back(default_metatraffic_unicast_locator);
-
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-    }
-    else
-    {
-        std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(), m_att.builtin.metatrafficMulticastLocatorList.end(),
-                [&](Locator_t& locator) {
-                    if(locator.port == 0)
-                        locator.port = metatraffic_multicast_port;
-                });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
-
-        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(), m_att.builtin.metatrafficUnicastLocatorList.end(),
-                [&](Locator_t& locator) {
-                    if(locator.port == 0)
-                        locator.port = metatraffic_unicast_port;
-                });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-    }
-
-    //Create ReceiverResources now and update the list with the REAL used ones
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-
-    //Create ReceiverResources now and update the list with the REAL used ones
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-
-    // Initial peers
-    if(m_att.builtin.initialPeersList.empty())
-    {
-        m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
-    }
-    else
-    {
-        LocatorList_t initial_peers;
-        initial_peers.swap(m_att.builtin.initialPeersList);
-
-        std::for_each(initial_peers.begin(), initial_peers.end(),
-                [&](Locator_t& locator) {
-                    if(locator.port == 0)
-                    {
-                        // TODO(Ricardo) Make configurable.
-                        for(int32_t i = 0; i < 4; ++i)
-                        {
-                            Locator_t auxloc(locator);
-                            auxloc.port = m_att.port.getUnicastPort(m_att.builtin.domainId, i);
-
-                            m_att.builtin.initialPeersList.push_back(auxloc);
-                        }
-                    }
-                    else
-                    {
-                        m_att.builtin.initialPeersList.push_back(locator);
-                    }
-                });
-
-        m_network_Factory.NormalizeLocators(m_att.builtin.initialPeersList);
-    }
-
     /// Creation of user locator and receiver resources
 
     bool hasLocatorsDefined = true;
@@ -255,9 +175,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
                             m_att.port.participantIDGain*m_att.participantID;
                     }
                 });
-
-        // Normalize unicast locators.
-        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
 
     /*
@@ -267,6 +184,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         we create them on another Locator and then update de defaultList.
         */
     createReceiverResources(m_att.defaultUnicastLocatorList, true);
+
+    // Normalize unicast locators.
+    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 
     if(!hasLocatorsDefined){
         logInfo(RTPS_PARTICIPANT,m_att.getName()<<" Created with NO default Unicast Locator List, adding Locators: "<<m_att.defaultUnicastLocatorList);
@@ -683,7 +603,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
     if(enable)
     {
-        if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SReader))
+        if(!createAndAssociateReceiverswithEndpoint((Endpoint *)SReader))
         {
             delete(SReader);
             return false;
@@ -702,7 +622,7 @@ bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut,
 
 bool RTPSParticipantImpl::enableReader(RTPSReader *reader)
 {
-    if(!assignEndpointListenResources((Endpoint*)reader))
+    if(!createAndAssociateReceiverswithEndpoint((Endpoint *)reader))
     {
         return false;
     }
@@ -809,8 +729,8 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pen
         - Launches the listener thread
         */
     // 1 - Ask the network factory to generate the elements that do still not exist
-    std::vector<ReceiverResource> newItems;							//Store the newly created elements
-    std::vector<ReceiverResource> newItemsBuffer;					//Store intermediate results
+    std::vector<ReceiverResource> newItems; //Store the newly created elements
+    std::vector<ReceiverResource> newItemsBuffer; //Store intermediate results
     //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
     //In that case, just use the standard
     if (pend->getAttributes()->unicastLocatorList.empty() && pend->getAttributes()->multicastLocatorList.empty()){

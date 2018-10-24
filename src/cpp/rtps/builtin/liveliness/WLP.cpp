@@ -90,8 +90,8 @@ bool WLP::createEndpoints()
     hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
     mp_builtinWriterHistory = new WriterHistory(hatt);
     WriterAttributes watt;
-    watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
-    watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_att.metatrafficUnicastLocatorList;
+    watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_att.metatrafficMulticastLocatorList;
     //	Wparam.topic.topicName = "DCPSRTPSParticipantMessage";
     //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
     watt.endpoint.topicKind = WITH_KEY;
@@ -122,8 +122,8 @@ bool WLP::createEndpoints()
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.expectsInlineQos = true;
-    ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_att.metatrafficUnicastLocatorList;
+    ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_att.metatrafficMulticastLocatorList;
     //Rparam.topic.topicName = "DCPSRTPSParticipantMessage";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
     ratt.endpoint.topicKind = WITH_KEY;

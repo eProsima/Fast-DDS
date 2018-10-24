@@ -91,9 +91,7 @@ class MessageReceiver
         //!GuidPrefix of the entity that receives the message. GuidPrefix of the RTPSParticipant.
         GuidPrefix_t destGuidPrefix;
         //!Reply addresses (unicast).
-        LocatorList_t unicastReplyLocatorList;
-        //!Reply addresses (multicast).
-        LocatorList_t multicastReplyLocatorList;
+        Locator_t input_locator;
         //!Has the message timestamp?
         bool haveTimestamp;
         //!Timestamp associated with the message

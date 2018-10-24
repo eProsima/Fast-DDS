@@ -65,14 +65,14 @@ class PDPSimple
     PDPSimple(BuiltinProtocols* builtin);
     virtual ~PDPSimple();
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+    void initializeParticipantProxyData(BuiltinAttributes& discovery_attr, ParticipantProxyData* participant_data);
 
     /**
      * Initialize the PDP.
      * @param part Pointer to the RTPSParticipant.
      * @return True on success
      */
-    bool initPDP(RTPSParticipantImpl* part);
+    bool initPDP(RTPSParticipantImpl* part, BuiltinAttributes& discovery_attr);
 
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
@@ -224,8 +224,6 @@ class PDPSimple
     private:
     //!Pointer to the local RTPSParticipant.
     RTPSParticipantImpl* mp_RTPSParticipant;
-    //!Discovery attributes.
-    BuiltinAttributes m_discovery;
     //!Pointer to the SPDPWriter.
     StatelessWriter* mp_SPDPWriter;
     //!Pointer to the SPDPReader.
@@ -249,7 +247,7 @@ class PDPSimple
      * Create the SPDP Writer and Reader
      * @return True if correct.
      */
-    bool createSPDPEndpoints();
+    bool createSPDPEndpoints(BuiltinAttributes& discovery_attr);
     std::recursive_mutex* mp_mutex;
 
 

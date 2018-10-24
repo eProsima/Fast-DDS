@@ -24,6 +24,7 @@
 #include "SerializedPayload.h"
 #include "Time_t.h"
 #include "InstanceHandle.h"
+#include "Locator.h"
 #include <fastrtps/rtps/common/FragmentNumber.h>
 
 #include <vector>
@@ -78,6 +79,9 @@ namespace eprosima
 
                 WriteParams write_params;
                 bool is_untyped_;
+
+                //! Locator from this cachechange was sent.
+                Locator_t input_locator;
 
                 /*!
                  * @brief Default constructor.
