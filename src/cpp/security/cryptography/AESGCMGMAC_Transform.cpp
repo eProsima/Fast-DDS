@@ -829,6 +829,7 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
     }
 
     bool is_key_id_zero = (header.transform_identifier.transformation_key_id == c_transformKeyIdZero);
+    auto& key_id = header.transform_identifier.transformation_key_id;
 
     //TODO(Ricardo) Deserializing header two times, here preprocessing and decoding submessage.
     //KeyId is present in Header->transform_identifier->transformation_key_id and contains the sender_key_id
@@ -837,76 +838,86 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             it != remote_participant->Writers.end(); ++it)
     {
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**it);
+        auto& wKeyMats = writer->Entity2RemoteKeyMaterial;
 
-        if(writer->Entity2RemoteKeyMaterial.size() == 0)
+        if (wKeyMats.size() == 0)
         {
             logWarning(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
-        if(writer->Entity2RemoteKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
+        if (wKeyMats.at(0).sender_key_id == key_id)
         {
+            // Remote writer found
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
             *datawriter_crypto = *it;
 
-            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant = is_key_id_zero ? remote_participant : local_participant;
-
             //We have the remote writer, now lets look for the local datareader
-            for(std::vector<DatareaderCryptoHandle *>::iterator itt = lookup_participant->Readers.begin(); itt != lookup_participant->Readers.end(); ++itt)
+            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant = is_key_id_zero ? remote_participant : local_participant;
+            for (std::vector<DatareaderCryptoHandle *>::iterator itt = lookup_participant->Readers.begin(); itt != lookup_participant->Readers.end(); ++itt)
             {
                 AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
 
-                if(reader->Remote2EntityKeyMaterial.size() == 0)
+                if (reader->Remote2EntityKeyMaterial.size() == 0)
                 {
                     logWarning(SECURITY_CRYPTO, "No key material yet");
                     continue;
                 }
 
-                for(size_t i=0; i < reader->Remote2EntityKeyMaterial.size(); ++i)
+                for (size_t i = 0; i < reader->Remote2EntityKeyMaterial.size(); ++i)
                 {
-                    if(reader->Remote2EntityKeyMaterial.at(i).sender_key_id == 
-                        header.transform_identifier.transformation_key_id)
+                    if (reader->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
                     {
                         *datareader_crypto = *itt;
                         return true;
                     }
                 }   //For each Reader2WriterKeyMaterial in the local datareader
             } //For each datareader present in the local participant
-        }
-    }
+        } //Remote writer key found
+    } //For each datawriter present in the remote participant
 
     for(std::vector<DatareaderCryptoHandle *>::iterator it = remote_participant->Readers.begin();
             it != remote_participant->Readers.end(); ++it)
     {
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**it);
 
-        if(reader->Entity2RemoteKeyMaterial.size() == 0)
+        auto& rKeyMats = reader->Entity2RemoteKeyMaterial;
+
+        if (rKeyMats.size() == 0)
         {
             logWarning(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
-        if(reader->Entity2RemoteKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
+        if (rKeyMats.at(0).sender_key_id == key_id)
         {
+            // Remote reader found
             secure_submessage_category = DATAREADER_SUBMESSAGE;
             *datareader_crypto = *it;
 
             //We have the remote reader, now lets look for the local datawriter
-            for(std::vector<DatawriterCryptoHandle *>::iterator itt = local_participant->Writers.begin(); itt != local_participant->Writers.end(); ++itt)
+            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant = is_key_id_zero ? remote_participant : local_participant;
+            for (std::vector<DatawriterCryptoHandle *>::iterator itt = lookup_participant->Writers.begin(); itt != lookup_participant->Writers.end(); ++itt)
             {
-                AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**itt);
-                for(size_t i = 0; i < writer->Remote2EntityKeyMaterial.size(); ++i)
+                AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
+
+                if (writer->Remote2EntityKeyMaterial.size() == 0)
                 {
-                    if(writer->Remote2EntityKeyMaterial.at(i).sender_key_id ==
-                        header.transform_identifier.transformation_key_id)
+                    logWarning(SECURITY_CRYPTO, "No key material yet");
+                    continue;
+                }
+
+                for (size_t i = 0; i < writer->Remote2EntityKeyMaterial.size(); ++i)
+                {
+                    if (writer->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
                     {
                         *datawriter_crypto = *itt;
                         return true;
                     }
                 }   //For each Writer2ReaderKeyMaterial in the local datawriter
             } //For each datawriter present in the local participant
-        }
-    }
+        } //Remote reader key found
+    } //For each datareader present in the remote participant
 
     // logWarning(SECURITY_CRYPTO,"Unable to determine the nature of the message");
     return false;
@@ -1416,14 +1427,13 @@ void AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t, 32>& session_k
 #else
         (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
 #endif
-    int rc;
-    rc = EVP_MD_CTX_init(ctx);
-    rc = EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
-    rc = EVP_DigestSignUpdate(ctx, source, sourceLen);
+    EVP_MD_CTX_init(ctx);
+    EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
+    EVP_DigestSignUpdate(ctx, source, sourceLen);
 
     size_t finalLen;
-    rc = EVP_DigestSignFinal(ctx, NULL, &finalLen);
-    rc = EVP_DigestSignFinal(ctx, session_key.data(), &finalLen);
+    EVP_DigestSignFinal(ctx, NULL, &finalLen);
+    EVP_DigestSignFinal(ctx, session_key.data(), &finalLen);
 
     EVP_PKEY_free(key);
 #if IS_OPENSSL_1_1
