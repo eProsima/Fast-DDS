@@ -214,7 +214,7 @@ public:
 
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
 
-    void DeleteUnboundSocket(TCPChannelResource *channelResource);
+    void DeleteSocket(TCPChannelResource *channelResource);
 
 protected:
 

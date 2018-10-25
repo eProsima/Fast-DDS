@@ -21,7 +21,7 @@ void StdoutConsumer::PrintHeader(const Log::Entry& entry) const
     std::chrono::system_clock::duration tp = now.time_since_epoch();
     tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
     auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
-    std::cout << C_B_WHITE << std::put_time(std::localtime(&now_c), "%F %T")
+    std::cout << C_B_WHITE << std::put_time(localtime(&now_c), "%F %T")
        << "." << std::setw(3) << std::setfill('0') <<  ms << " ";
     switch (entry.kind)
     {

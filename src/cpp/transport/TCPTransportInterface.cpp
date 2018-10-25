@@ -131,20 +131,9 @@ void TCPTransportInterface::Clean()
         mUnboundChannelResources.clear();
     }
 
-    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [](auto it){
-        it->Disable(); // Disable all added TCPChannelResources
+    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](auto it){
+        DeleteSocket(it); // Disable all added TCPChannelResources
     });
-
-    {
-        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-        std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [&](auto socket){
-            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), socket);
-            if (it == mDeletedSocketsPool.end())
-            {
-                mDeletedSocketsPool.emplace_back(socket);
-            }
-        });
-    }
 
     CleanDeletedSockets();
 
@@ -192,35 +181,31 @@ TCPChannelResource* TCPTransportInterface::BindSocket(const Locator_t& locator, 
 
 void TCPTransportInterface::CleanDeletedSockets()
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-    for (auto it = mDeletedSocketsPool.begin(); it != mDeletedSocketsPool.end(); ++it)
+    std::vector<TCPChannelResource*> deleteList;
     {
-        std::thread* rtcpThread = (*it)->ReleaseRTCPThread();
-        std::thread* thread = (*it)->ReleaseThread();
-        if (rtcpThread != nullptr)
-        {
-            rtcpThread->join();
-            delete(rtcpThread);
-        }
-        if (thread != nullptr)
-        {
-            thread->join();
-            delete(thread);
-        }
+        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
+        deleteList = std::move(mDeletedSocketsPool);
+    }
 
+    for (auto it = deleteList.begin(); it != deleteList.end(); ++it)
+    {
         delete(*it);
     }
-    mDeletedSocketsPool.clear();
 }
 
-void TCPTransportInterface::DeleteUnboundSocket(TCPChannelResource *channelResource)
+void TCPTransportInterface::DeleteSocket(TCPChannelResource *channelResource)
 {
-    std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
-    auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), channelResource);
-    if (it == mDeletedSocketsPool.end())
+    if (channelResource != nullptr && channelResource->IsAlive())
     {
         channelResource->Disable();
-        mDeletedSocketsPool.emplace_back(channelResource);
+        {
+            std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
+            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), channelResource);
+            if (it == mDeletedSocketsPool.end())
+            {
+                mDeletedSocketsPool.emplace_back(channelResource);
+            }
+        }
     }
 }
 
@@ -500,12 +485,18 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
 void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (pChannelResource->IsAlive())
+
+    // This check has been added because ASIO sends callbacks sometimes when the channel resource has been deleted.
+    auto searchIt = std::find_if(mChannelResources.begin(), mChannelResources.end(), [pChannelResource](const std::pair<Locator_t, TCPChannelResource*>& p)
+    {
+        return p.second == pChannelResource;
+    });
+
+    if (searchIt != mChannelResources.end() && pChannelResource->IsAlive())
     {
         TCPChannelResource *newChannel = nullptr;
         auto physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
         {
-            pChannelResource->Disable();
             auto it = mChannelResources.find(physicalLocator);
             if (it != mChannelResources.end())
             {
@@ -519,14 +510,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
             }
         }
 
-        {
-            std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
-            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), pChannelResource);
-            if (it == mDeletedSocketsPool.end())
-            {
-                mDeletedSocketsPool.emplace_back(pChannelResource);
-            }
-        }
+        DeleteSocket(pChannelResource);
 
         if (newChannel != nullptr)
         {
@@ -864,25 +848,27 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     */
 
     TCPChannelResource* channelResource = nullptr;
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
     {
-        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator) \
-            << " @ IP: " << IPLocator::toIPv4string(remoteLocator));
-        return false;
-    }
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
+        {
+            logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator) \
+                << " @ IP: " << IPLocator::toIPv4string(remoteLocator));
+            return false;
+        }
 
-    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(remoteLocator));
-    if (it == mChannelResources.end())
-    {
-        EnqueueLogicalOutputPort(remoteLocator);
-        logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) \
-            << " @ IP: " << IPLocator::toIPv4string(remoteLocator) << " will be bound.");
-        return false;
-    }
-    else
-    {
-        channelResource = it->second;
+        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(remoteLocator));
+        if (it == mChannelResources.end())
+        {
+            EnqueueLogicalOutputPort(remoteLocator);
+            logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) \
+                << " @ IP: " << IPLocator::toIPv4string(remoteLocator) << " will be bound.");
+            return false;
+        }
+        else
+        {
+            channelResource = it->second;
+        }
     }
 
     bool result = true;
@@ -1073,7 +1059,6 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
 {
     TCPChannelResource* outputSocket = nullptr;
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-
     auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (it != mChannelResources.end())
     {

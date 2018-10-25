@@ -30,7 +30,7 @@ using namespace fastrtps;
 using namespace rtps;
 int main(int argc, char** argv)
 {
-    Log::SetVerbosity(Log::Kind::Info);
+    //Log::SetVerbosity(Log::Kind::Info);
     std::regex filter("RTCP(?!_SEQ)");
     Log::SetCategoryFilter(filter);
     std::cout << "Starting "<< std::endl;

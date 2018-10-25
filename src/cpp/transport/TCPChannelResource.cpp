@@ -113,8 +113,7 @@ ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
         if (oldChannel != nullptr)
         {
             CopyPendingPortsFrom(oldChannel);
-            oldChannel->Disable();
-            mParent->DeleteUnboundSocket(oldChannel);
+            mParent->DeleteSocket(oldChannel);
             //delete oldChannel;
         }
 
@@ -164,6 +163,9 @@ void TCPChannelResource::Disconnect()
         {
             mSocket.cancel();
             mSocket.shutdown(asio::ip::tcp::socket::shutdown_both);
+#if !defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603
+            mSocket.release();
+#endif
         }
         catch (std::exception&)
         {
