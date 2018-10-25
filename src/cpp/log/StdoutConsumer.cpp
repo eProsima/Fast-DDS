@@ -3,12 +3,6 @@
 #include <iostream>
 #include <iomanip>
 
-#ifdef __STDC_LIB_EXT1__
-#define __LOCALTIME__(x) localtime_s(x, &result_time)
-#else
-#define __LOCALTIME__(x) localtime(x)
-#endif
-
 namespace eprosima {
 namespace fastrtps {
 
@@ -24,13 +18,10 @@ void StdoutConsumer::PrintHeader(const Log::Entry& entry) const
 {
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-#ifdef __STDC_LIB_EXT1__
-    std::time_t result_time;
-#endif
     std::chrono::system_clock::duration tp = now.time_since_epoch();
     tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
     auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
-    std::cout << C_B_WHITE << std::put_time(__LOCALTIME__(&now_c), "%F %T")
+    std::cout << C_B_WHITE << std::put_time(localtime(&now_c), "%F %T")
        << "." << std::setw(3) << std::setfill('0') <<  ms << " ";
     switch (entry.kind)
     {

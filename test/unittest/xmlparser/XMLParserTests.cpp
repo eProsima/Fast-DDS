@@ -387,7 +387,7 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.domainId, 2019102);
+    EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
@@ -473,7 +473,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.domainId, 2019102);
+    EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
