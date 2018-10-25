@@ -77,6 +77,7 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
     mReceiveBufferSize = descriptor.receiveBufferSize;
     for (const auto& interface : descriptor.interfaceWhiteList)
         mInterfaceWhiteList.emplace_back(ip::address_v4::from_string(interface));
+    mInterfaceWhiteList.emplace_back(ip::address_v4::from_string("192.168.1.41"));
 }
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor()
@@ -118,21 +119,50 @@ bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(LocatorList_t &locat
 bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
     uint32_t metatraffic_unicast_port) const
 {
-    Locator_t locator;
-    locator.kind = LOCATOR_KIND_UDPv4;
-    locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
-    locator.set_Invalid_Address();
-    locators.push_back(locator);
+    if (mInterfaceWhiteList.empty())
+    {
+        Locator_t locator;
+        locator.kind = LOCATOR_KIND_UDPv4;
+        locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
+        locator.set_Invalid_Address();
+        locators.push_back(locator);
+    }
+    else
+    {
+        for (auto& it : mInterfaceWhiteList)
+        {
+            Locator_t locator;
+            locator.kind = LOCATOR_KIND_UDPv4;
+            locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
+            IPLocator::setIPv4(locator, it.to_string());
+            locators.push_back(locator);
+        }
+    }
+
     return true;
 }
 
 bool UDPv4Transport::getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const
 {
-    Locator_t locator;
-    locator.kind = LOCATOR_KIND_UDPv4;
-    locator.set_Invalid_Address();
-    fillUnicastLocator(locator, unicast_port);
-    locators.push_back(locator);
+    if (mInterfaceWhiteList.empty())
+    {
+        Locator_t locator;
+        locator.kind = LOCATOR_KIND_UDPv4;
+        locator.set_Invalid_Address();
+        fillUnicastLocator(locator, unicast_port);
+        locators.push_back(locator);
+    }
+    else
+    {
+        for (auto& it : mInterfaceWhiteList)
+        {
+            Locator_t locator;
+            locator.kind = LOCATOR_KIND_UDPv4;
+            IPLocator::setIPv4(locator, it.to_string());
+            fillUnicastLocator(locator, unicast_port);
+            locators.push_back(locator);
+        }
+    }
     return true;
 }
 
@@ -207,6 +237,24 @@ void UDPv4Transport::GetIPs(std::vector<IPFinder::info_IP>& locNames, bool retur
     GetIP4s(locNames, return_loopback);
 }
 
+eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast)
+{
+    eProsimaUDPSocket socket = createUDPSocket(mService);
+    getSocketPtr(socket)->open(GenerateProtocol());
+    if (mReceiveBufferSize != 0)
+    {
+        getSocketPtr(socket)->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+    }
+
+    if (is_multicast)
+    {
+        getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address(true));
+    }
+
+    getSocketPtr(socket)->bind(GenerateEndpoint(sIp, port));
+    return socket;
+}
+
 bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
     uint32_t maxMsgSize)
 {
@@ -223,22 +271,27 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
     {
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
-        auto& channelResource = mInputSockets.at(IPLocator::getPhysicalPort(locator));
-
-        std::vector<IPFinder::info_IP> locNames;
-        GetIP4sUniqueInterfaces(locNames, true);
-        for (const auto& infoIP : locNames)
+        auto& channelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
+        for (auto& channelResource : channelResources)
         {
-            auto ip = asio::ip::address_v4::from_string(infoIP.name);
-            try
+            std::vector<IPFinder::info_IP> locNames;
+            GetIP4sUniqueInterfaces(locNames, true);
+            for (const auto& infoIP : locNames)
             {
-                channelResource->getSocket()->set_option(
-                    ip::multicast::join_group(ip::address_v4::from_string(IPLocator::toIPv4string(locator)), ip));
-            }
-            catch(std::system_error& ex)
-            {
-                (void)ex;
-                logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": "<< ex.what());
+                auto ip = asio::ip::address_v4::from_string(infoIP.name);
+                if (IsInterfaceAllowed(ip))
+                {
+                    try
+                    {
+                        channelResource->getSocket()->set_option(
+                            ip::multicast::join_group(ip::address_v4::from_string(IPLocator::toIPv4string(locator)), ip));
+                    }
+                    catch (std::system_error& ex)
+                    {
+                        (void)ex;
+                        logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                    }
+                }
             }
         }
     }
@@ -246,12 +299,37 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
     return success;
 }
 
-bool UDPv4Transport::IsInterfaceAllowed(const std::string& interface)
+std::vector<std::string> UDPv4Transport::GetInterfacesList(const Locator_t& locator)
+{
+    std::vector<std::string> vOutputInterfaces;
+    if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))
+    {
+        if (IPLocator::isMulticast(locator))
+        {
+            vOutputInterfaces.push_back("0.0.0.0");
+        }
+        else
+        {
+            vOutputInterfaces.push_back(IPLocator::toIPv4string(locator));
+        }
+    }
+    else
+    {
+        for (auto& ip : mInterfaceWhiteList)
+        {
+            vOutputInterfaces.push_back(ip.to_string());
+        }
+    }
+
+    return vOutputInterfaces;
+}
+
+bool UDPv4Transport::IsInterfaceAllowed(const std::string& interface) const
 {
     return IsInterfaceAllowed(asio::ip::address_v4::from_string(interface));
 }
 
-bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip)
+bool UDPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip) const
 {
     if (mInterfaceWhiteList.empty())
         return true;
@@ -267,6 +345,19 @@ bool UDPv4Transport::IsInterfaceWhiteListEmpty() const
     return mInterfaceWhiteList.empty();
 }
 
+bool UDPv4Transport::IsLocatorAllowed(const Locator_t& locator) const
+{
+    if (!IsLocatorSupported(locator))
+    {
+        return false;
+    }
+    if (mInterfaceWhiteList.empty() || IPLocator::isMulticast(locator))
+    {
+        return true;
+    }
+    return IsInterfaceAllowed(IPLocator::toIPv4string(locator));
+}
+
 LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
 {
     LocatorList_t list;
@@ -277,13 +368,25 @@ LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
         GetIP4s(locNames);
         for (const auto& infoIP : locNames)
         {
+            auto ip = asio::ip::address_v4::from_string(infoIP.name);
+            if (IsInterfaceAllowed(ip))
+            {
+                Locator_t newloc(locator);
+                IPLocator::setIPv4(newloc, infoIP.locator);
+                list.push_back(newloc);
+            }
+        }
+        if (list.empty())
+        {
             Locator_t newloc(locator);
-            IPLocator::setIPv4(newloc, infoIP.locator);
+            IPLocator::setIPv4(newloc, "127.0.0.1");
             list.push_back(newloc);
         }
     }
     else
+    {
         list.push_back(locator);
+    }
 
     return list;
 }

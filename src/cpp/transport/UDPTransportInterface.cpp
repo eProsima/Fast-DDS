@@ -77,22 +77,23 @@ void UDPTransportInterface::Clean()
 
 bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
 {
-    UDPChannelResource* pChannelResource = nullptr;
+    std::vector<UDPChannelResource*> pChannelResources;
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
         if (!IsInputChannelOpen(locator))
             return false;
 
         ReleaseInputChannel(locator);
-        pChannelResource = mInputSockets.at(IPLocator::getPhysicalPort(locator));
-        pChannelResource->getSocket()->cancel();
-        pChannelResource->getSocket()->close();
+
+        pChannelResources = std::move(mInputSockets.at(IPLocator::getPhysicalPort(locator)));
         mInputSockets.erase(IPLocator::getPhysicalPort(locator));
     }
 
-    if (pChannelResource != nullptr)
+    for (auto& channelResource : pChannelResources)
     {
-        delete pChannelResource;
+        channelResource->getSocket()->cancel();
+        channelResource->getSocket()->close();
+        delete channelResource;
     }
 
     return true;
@@ -212,25 +213,6 @@ bool UDPTransportInterface::IsOutputChannelOpen(const Locator_t& locator) const
     return mOutputSockets.size() > 0;
 }
 
-eProsimaUDPSocket UDPTransportInterface::OpenAndBindInputSocket(uint16_t port, bool is_multicast)
-{
-    eProsimaUDPSocket socket = createUDPSocket(mService);
-    getSocketPtr(socket)->open(GenerateProtocol());
-    if (mReceiveBufferSize != 0)
-    {
-        getSocketPtr(socket)->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
-    }
-
-    if (is_multicast)
-    {
-        getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address(true));
-    }
-
-    getSocketPtr(socket)->bind(GenerateAnyAddressEndpoint(port));
-
-    return socket;
-}
-
 bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver,
     bool is_multicast, uint32_t maxMsgSize)
 {
@@ -238,13 +220,17 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
 
     try
     {
-        eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(IPLocator::getPhysicalPort(locator), is_multicast);
-        UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
-        pChannelResource->SetMessageReceiver(receiver);
-        std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
-            pChannelResource, locator);
-        pChannelResource->SetThread(newThread);
-        mInputSockets.emplace(IPLocator::getPhysicalPort(locator), pChannelResource);
+        std::vector<std::string> vSockets = GetInterfacesList(locator);
+        for (std::string sIP : vSockets)
+        {
+            eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sIP, IPLocator::getPhysicalPort(locator), is_multicast);
+            UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
+            pChannelResource->SetMessageReceiver(receiver);
+            std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
+                pChannelResource, locator);
+            pChannelResource->SetThread(newThread);
+            mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(pChannelResource);
+        }
     }
     catch (asio::system_error const& e)
     {
@@ -377,7 +363,7 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
     {
         // Blocking receive.
         auto msg = pChannelResource->GetMessageBuffer();
-        if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, input_locator, remoteLocator))
+        if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, remoteLocator))
             continue;
 
         // Processes the data through the CDR Message interface.
@@ -393,45 +379,21 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
     }
 }
 
-bool UDPTransportInterface::Receive(ChannelResource* pChannelResource, octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-    const Locator_t& inputLocator, Locator_t& remoteLocator)
+bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet* receiveBuffer,
+    uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& remoteLocator)
 {
-    if (!pChannelResource->IsAlive())
-    {
-        return false;
-    }
-
-    ip::udp::endpoint senderEndpoint;
-    UDPChannelResource* socket = nullptr;
-
-    { // lock scope
-        std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-        if (!pChannelResource->IsAlive())
-        {
-            return false;
-        }
-
-        auto socketIt = mInputSockets.find(IPLocator::getPhysicalPort(inputLocator));
-        if (socketIt != mInputSockets.end())
-        {
-            socket = socketIt->second;
-        }
-    }
-
     try
     {
-        if (socket != nullptr)
+        ip::udp::endpoint senderEndpoint;
+        size_t bytes = pChannelResource->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
+        receiveBufferSize = static_cast<uint32_t>(bytes);
+        if (receiveBufferSize > 0)
         {
-            size_t bytes = socket->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
-            receiveBufferSize = static_cast<uint32_t>(bytes);
-            if (receiveBufferSize > 0)
+            if (receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
             {
-                if (receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
-                {
-                    return false;
-                }
-                EndpointToLocator(senderEndpoint, remoteLocator);
+                return false;
             }
+            EndpointToLocator(senderEndpoint, remoteLocator);
         }
         return (receiveBufferSize > 0);
     }
@@ -588,17 +550,33 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
                     {
                         if (CompareLocatorIP(localInterface->locator, *it))
                         {
-                            // Loopback locator
+                            // Check 127.0.0.1 in the whitelist
                             Locator_t loopbackLocator;
                             FillLocalIp(loopbackLocator);
-                            IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
-                            pendingUnicast.push_back(loopbackLocator);
-                            break;
+                            if (IsLocatorAllowed(loopbackLocator))
+                            {
+                                // Loopback locator
+                                IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
+                                pendingUnicast.push_back(loopbackLocator);
+                                break;
+                            }
+                            else
+                            {
+                                // Check interface in whitelist
+                                if (IsLocatorAllowed(*it))
+                                {
+                                    // Custom Loopback locator
+                                    pendingUnicast.push_back(*it);
+                                    break;
+                                }
+                            }
                         }
                     }
 
                     if (localInterface == currentInterfaces.end())
+                    {
                         pendingUnicast.push_back(*it);
+                    }
                 }
             }
 

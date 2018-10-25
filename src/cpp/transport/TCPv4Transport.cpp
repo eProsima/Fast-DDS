@@ -139,6 +139,11 @@ uint16_t TCPv4Transport::GetMaxLogicalPort() const
     return mConfiguration_.max_logical_port;
 }
 
+bool TCPv4Transport::IsInterfaceAllowed(const std::string& interface) const
+{
+    return IsInterfaceAllowed(asio::ip::address_v4::from_string(interface));
+}
+
 bool TCPv4Transport::IsInterfaceAllowed(const ip::address_v4& ip) const
 {
     if (mInterfaceWhiteList.empty())
@@ -189,6 +194,19 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
     }
 
     return false;
+}
+
+bool TCPv4Transport::IsLocatorAllowed(const Locator_t& locator) const
+{
+    if (!IsLocatorSupported(locator))
+    {
+        return false;
+    }
+    if (mInterfaceWhiteList.empty())
+    {
+        return true;
+    }
+    return IsInterfaceAllowed(IPLocator::toIPv4string(locator));
 }
 
 bool TCPv4Transport::CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const

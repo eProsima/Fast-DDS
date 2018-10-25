@@ -129,13 +129,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
-        m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList, 
+        m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
             metatraffic_multicast_port);
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
         m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
             metatraffic_unicast_port);
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+        m_network_Factory.FilterLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
     else
     {
@@ -152,6 +153,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
             m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
         });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+        m_network_Factory.FilterLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
@@ -190,7 +192,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         hasLocatorsDefined = false;
 
         m_network_Factory.getDefaultUnicastLocators(m_att.defaultUnicastLocatorList, m_att);
-        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
     else
     {
@@ -201,9 +202,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
             m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
         });
 
-        // Normalize unicast locators.
-        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
     }
+
+    // Normalize unicast locators.
+    m_network_Factory.FilterLocators(m_att.defaultUnicastLocatorList);
+    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 
     createReceiverResources(m_att.defaultUnicastLocatorList, true);
 

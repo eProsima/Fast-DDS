@@ -90,9 +90,14 @@ protected:
     virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) override;
     virtual asio::ip::udp GenerateProtocol() const override;
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) override;
+    eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) override;
 
-    virtual bool IsInterfaceAllowed(const std::string& interface) override;
-    bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
+    //! Checks for whether locator is allowed.
+    virtual bool IsLocatorAllowed(const Locator_t&) const override;
+    virtual std::vector<std::string> GetInterfacesList(const Locator_t& locator) override;
+
+    virtual bool IsInterfaceAllowed(const std::string& interface) const override;
+    bool IsInterfaceAllowed(const asio::ip::address_v6& ip) const;
     virtual bool IsInterfaceWhiteListEmpty() const override;
     std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 
