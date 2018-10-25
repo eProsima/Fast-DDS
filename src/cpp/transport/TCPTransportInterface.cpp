@@ -64,8 +64,8 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , max_logical_port(100)
     , logical_port_range(20)
     , logical_port_increment(2)
-	, tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
-	, wait_for_tcp_negotiation(true)
+    , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
+    , wait_for_tcp_negotiation(false)
 {
 }
 
@@ -77,8 +77,8 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , max_logical_port(t.max_logical_port)
     , logical_port_range(t.logical_port_range)
     , logical_port_increment(t.logical_port_increment)
-	, tcp_negotiation_timeout(t.tcp_negotiation_timeout)
-	, wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
+    , tcp_negotiation_timeout(t.tcp_negotiation_timeout)
+    , wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
 {
 }
 
