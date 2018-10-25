@@ -641,6 +641,8 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
 
                         reader_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
                         writer_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
+                        reader_attributes.is_liveliness_protected = topic_rule.enable_liveliness_protection;
+                        writer_attributes.is_liveliness_protected = topic_rule.enable_liveliness_protection;
                         reader_attributes.is_read_protected = topic_rule.enable_read_access_control;
                         reader_attributes.is_write_protected = topic_rule.enable_write_access_control;
                         writer_attributes.is_read_protected = topic_rule.enable_read_access_control;
