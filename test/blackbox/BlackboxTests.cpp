@@ -5611,8 +5611,7 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P4)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.wait_discovery();
-    replier.wait_discovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
     ASSERT_FALSE(requester.is_matched());
     ASSERT_FALSE(replier.is_matched());
@@ -5723,7 +5722,8 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_6_P5)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(6).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+    reader.max_initial_peers_range(6).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc)\
+        .lease_duration({3, 0}, {1, 0}).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
