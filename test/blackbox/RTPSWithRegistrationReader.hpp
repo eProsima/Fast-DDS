@@ -223,7 +223,7 @@ class RTPSWithRegistrationReader
         }
 
 
-        void waitDiscovery()
+        void wait_discovery()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 

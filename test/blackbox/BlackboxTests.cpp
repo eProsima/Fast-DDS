@@ -325,8 +325,8 @@ public:
     void run_one_send_recv_test(RTPSWithRegistrationReader<HelloWorldType>& reader, RTPSWithRegistrationWriter<HelloWorldType>& writer, uint32_t seq_check = 0, bool reliable = false)
     {
         // Wait for discovery.
-        writer.waitDiscovery();
-        reader.waitDiscovery();
+        writer.wait_discovery();
+        reader.wait_discovery();
 
         auto data = default_helloworld_data_generator();
         not_received_data.insert(not_received_data.end(), data.begin(), data.end());
@@ -564,8 +564,8 @@ BLACKBOXTEST(BlackBox, RTPSAsNonReliableWithRegistration)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -595,8 +595,8 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -626,8 +626,8 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableWithRegistration)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -658,8 +658,8 @@ BLACKBOXTEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -688,8 +688,8 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableHelloworld)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -718,8 +718,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -748,8 +748,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworld)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -780,8 +780,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableHelloworld)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -807,8 +807,8 @@ BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
 
     replier.init();
 
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
     ASSERT_TRUE(replier.isInitialized());
 
@@ -834,8 +834,8 @@ BLACKBOXTEST(BlackBox, ParticipantRemoval)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     // Send some data.
     auto data = default_helloworld_data_generator();
@@ -866,8 +866,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data64kb_data_generator();
 
@@ -902,8 +902,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data64kb_data_generator(3);
 
@@ -942,8 +942,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data64kb_data_generator(3);
 
@@ -1016,8 +1016,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator();
 
@@ -1053,8 +1053,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -1085,8 +1085,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
         add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
     ASSERT_TRUE(slowWriter.isInitialized());
 
-    slowWriter.waitDiscovery();
-    reader.waitDiscovery();
+    slowWriter.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data64kb_data_generator(2);
 
@@ -1131,8 +1131,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -1179,8 +1179,8 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
 
         // Because its volatile the durability
         // Wait for discovery.
-        writer.waitDiscovery();
-        reader.waitDiscovery();
+        writer.wait_discovery();
+        reader.wait_discovery();
 
         auto data = default_data64kb_data_generator();
 
@@ -1226,8 +1226,8 @@ BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
 
         // Because its volatile the durability
         // Wait for discovery.
-        writer.waitDiscovery();
-        reader.waitDiscovery();
+        writer.wait_discovery();
+        reader.wait_discovery();
 
         auto data = default_data64kb_data_generator();
 
@@ -1444,8 +1444,8 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1494,8 +1494,8 @@ BLACKBOXTEST(BlackBox, CacheChangeReleaseTest)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1528,8 +1528,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1572,8 +1572,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1609,8 +1609,8 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1657,8 +1657,8 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1699,8 +1699,8 @@ BLACKBOXTEST(BlackBox, PubReliableKeepAllSubNonReliable)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1750,8 +1750,8 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1774,8 +1774,8 @@ BLACKBOXTEST(BlackBox, StatefulReaderCacheChangeRelease){
         reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(writer.isInitialized());
 
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(2);
     auto expected_data(data);
@@ -1914,8 +1914,8 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
     auto expected_data(data);
@@ -1945,8 +1945,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -1979,8 +1979,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -2021,8 +2021,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
     ASSERT_TRUE(reader.isInitialized());
 
 
-    reader.waitDiscovery();
-    writer.waitDiscovery();
+    reader.wait_discovery();
+    writer.wait_discovery();
 
     reader.wait_discovery_result();
 }
@@ -2061,8 +2061,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    reader.waitDiscovery();
-    writer.waitDiscovery();
+    reader.wait_discovery();
+    writer.wait_discovery();
 
     writer.destroy();
 
@@ -2130,8 +2130,8 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     // Wait heartbeat period of builtin endpoints
     std::this_thread::sleep_for(std::chrono::seconds(4));
@@ -2142,7 +2142,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
 
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
-    writer.waitDiscovery();
+    writer.wait_discovery();
 }
 
 // Used to detect Github issue #154
@@ -2182,8 +2182,8 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -2227,8 +2227,8 @@ BLACKBOXTEST(BlackBox, PubXmlLoadedPartition)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.waitDiscovery();
-    writer.waitDiscovery();
+    reader.wait_discovery();
+    writer.wait_discovery();
 }
 
 // Regression test of Refs #2786, github issue #194
@@ -2311,8 +2311,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -2347,7 +2347,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok_same_part
     ASSERT_TRUE(wreader.isInitialized());
 
     // Wait for discovery.
-    wreader.waitDiscovery();
+    wreader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -2471,8 +2471,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 }
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
@@ -2522,8 +2522,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -2584,8 +2584,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -2624,7 +2624,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_partici
     ASSERT_TRUE(wreader.isInitialized());
 
     // Wait for discovery.
-    wreader.waitDiscovery();
+    wreader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -2685,8 +2685,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_str
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -2747,8 +2747,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -2816,8 +2816,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -2885,8 +2885,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data30
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -2950,8 +2950,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessag
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3015,8 +3015,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3058,7 +3058,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_p
     ASSERT_TRUE(wreader.isInitialized());
 
     // Wait for discovery.
-    wreader.waitDiscovery();
+    wreader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3122,8 +3122,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessag
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -3187,8 +3187,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -3259,8 +3259,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessag
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -3331,8 +3331,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -3396,8 +3396,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_o
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3461,8 +3461,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3504,7 +3504,7 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_part
     ASSERT_TRUE(wreader.isInitialized());
 
     // Wait for discovery.
-    wreader.waitDiscovery();
+    wreader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3568,8 +3568,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_l
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -3633,8 +3633,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_lar
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -3705,8 +3705,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_d
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -3777,8 +3777,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_dat
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -3846,8 +3846,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_ok)
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3915,8 +3915,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -3984,8 +3984,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -4053,8 +4053,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_s
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_large_string_data_generator();
 
@@ -4129,8 +4129,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data3
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -4205,8 +4205,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(5);
 
@@ -4276,8 +4276,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_mix_data_generator(10);
 
@@ -4363,8 +4363,8 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
     reader.waitAuthorized();
     writer.waitAuthorized();
 
-    reader.waitDiscovery();
-    writer.waitDiscovery();
+    reader.wait_discovery();
+    writer.wait_discovery();
 
     reader.wait_discovery_result();
 }
@@ -4428,8 +4428,8 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
     writer.waitAuthorized();
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -5062,8 +5062,8 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
 
     // Because its volatile the durability
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(300);
 
@@ -5123,8 +5123,8 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
 
@@ -5203,8 +5203,8 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_data300kb_data_generator(10);
 
@@ -5239,8 +5239,8 @@ BLACKBOXTEST(BlackBox, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(10);
 
@@ -5276,8 +5276,8 @@ BLACKBOXTEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(10);
 
@@ -5318,11 +5318,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
-    ASSERT_TRUE(requester.isMatched());
-    ASSERT_TRUE(replier.isMatched());
+    ASSERT_TRUE(requester.is_matched());
+    ASSERT_TRUE(replier.is_matched());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -5346,10 +5346,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
@@ -5366,10 +5366,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 
 }
 
@@ -5388,8 +5388,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -5413,10 +5413,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D1_D0)
@@ -5433,10 +5433,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 
 }
 
@@ -5455,11 +5455,11 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
-    ASSERT_TRUE(requester.isMatched());
-    ASSERT_TRUE(replier.isMatched());
+    ASSERT_TRUE(requester.is_matched());
+    ASSERT_TRUE(replier.is_matched());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -5483,10 +5483,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D1_D0)
@@ -5503,10 +5503,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 
 }
 
@@ -5525,8 +5525,8 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -5550,10 +5550,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D1)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D1_D0)
@@ -5570,10 +5570,10 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D1_D0)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery. They must not discover each other.
-    requester.waitDiscovery();
+    requester.wait_discovery(std::chrono::seconds(10));
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P3)
@@ -5590,11 +5590,11 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P3)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
-    ASSERT_TRUE(requester.isMatched());
-    ASSERT_TRUE(replier.isMatched());
+    ASSERT_TRUE(requester.is_matched());
+    ASSERT_TRUE(replier.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P4)
@@ -5611,11 +5611,11 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P4)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
-    ASSERT_FALSE(requester.isMatched());
-    ASSERT_FALSE(replier.isMatched());
+    ASSERT_FALSE(requester.is_matched());
+    ASSERT_FALSE(replier.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_5_P4)
@@ -5632,15 +5632,14 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_5_P4)
     ASSERT_TRUE(replier.isInitialized());
 
     // Wait for discovery.
-    requester.waitDiscovery();
-    replier.waitDiscovery();
+    requester.wait_discovery();
+    replier.wait_discovery();
 
-    ASSERT_TRUE(requester.isMatched());
-    ASSERT_TRUE(replier.isMatched());
+    ASSERT_TRUE(requester.is_matched());
+    ASSERT_TRUE(replier.is_matched());
 }
 
 // TODO - GASCO: UDPMaxInitialPeer tests should use static discovery through initial peers.
-/*
 BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -5650,20 +5649,20 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(4).initial_peers(loc).init();
+    reader.max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.partiticpan_id(3).initial_peers(loc).init();
+    writer.participant_id(3).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
-    ASSERT_TRUE(writer.isMatched());
-    ASSERT_TRUE(reader.isMatched());
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_TRUE(reader.is_matched());
 }
 
 BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
@@ -5675,23 +5674,23 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(4).initial_peers(loc).init();
+    reader.max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.partiticpan_id(4).initial_peers(loc).init();
+    writer.participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery();
+    reader.wait_discovery();
 
-    ASSERT_FALSE(writer.isMatched());
-    ASSERT_FALSE(reader.isMatched());
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_TRUE(reader.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_5_P4)
+BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_4_P5)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -5700,22 +5699,45 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_5_P4)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(5).initial_peers(loc).init();
+    reader.max_initial_peers_range(4).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.partiticpan_id(4).initial_peers(loc).init();
+    writer.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
-    writer.waitDiscovery();
-    reader.waitDiscovery();
+    writer.wait_discovery(std::chrono::seconds(3));
 
-    ASSERT_TRUE(writer.isMatched());
-    ASSERT_TRUE(reader.isMatched());
+    ASSERT_FALSE(writer.is_matched());
+    ASSERT_FALSE(reader.is_matched());
 }
-*/
+
+BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_6_P5)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Disallow multicast discovery
+    eprosima::fastrtps::rtps::LocatorList_t loc;
+    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+
+    reader.max_initial_peers_range(6).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_TRUE(reader.is_matched());
+}
 
 int main(int argc, char **argv)
 {

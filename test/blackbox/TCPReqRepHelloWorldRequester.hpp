@@ -91,10 +91,10 @@ class TCPReqRepHelloWorldRequester
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
         void block();
-        void waitDiscovery();
+        void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero());
         void matched();
         void send(const uint16_t number);
-        bool isMatched() { return matched_ > 1; }
+        bool is_matched();
 
         virtual void configSubscriber(const std::string& suffix)
         {
@@ -135,9 +135,9 @@ class TCPReqRepHelloWorldRequester
         std::condition_variable cv_;
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
-        unsigned int matched_;
+        std::atomic<unsigned int> matched_;
         HelloWorldType type_;
-		eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
+        eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
 };
 
 #endif // _TEST_BLACKBOX_TCPReqRepHelloWorldRequester_HPP_

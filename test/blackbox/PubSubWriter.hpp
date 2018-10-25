@@ -345,13 +345,20 @@ class PubSubWriter
         return publisher_->write((void*)&msg);
     }
 
-    void waitDiscovery()
+    void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
         std::cout << "Writer is waiting discovery..." << std::endl;
 
-        cv_.wait(lock, [&](){return matched_ != 0;});
+        if(timeout == std::chrono::seconds::zero())
+        {
+            cv_.wait(lock, [&](){return matched_ != 0;});
+        }
+        else
+        {
+            cv_.wait_for(lock, timeout, [&](){return matched_ != 0;});
+        }
 
         std::cout << "Writer discovery finished..." << std::endl;
     }
@@ -656,7 +663,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& partiticpan_id(int32_t participantId)
+    PubSubWriter& participant_id(int32_t participantId)
     {
         participant_attr_.rtps.participantID = participantId;
         return *this;
@@ -674,7 +681,7 @@ class PubSubWriter
         return publisher_->removeAllChange(number_of_changes_removed);
     }
 
-    bool isMatched() const
+    bool is_matched() const
     {
         return matched_ > 0;
     }
@@ -834,7 +841,7 @@ class PubSubWriter
     bool initialized_;
     std::mutex mutexDiscovery_;
     std::condition_variable cv_;
-    unsigned int matched_;
+    std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;
     type_support type_;
     bool attachEDP_;

@@ -93,7 +93,7 @@ void ReqRepHelloWorldReplier::newNumber(SampleIdentity sample_identity, uint16_t
     ASSERT_EQ(reply_publisher_->write((void*)&hello, wparams), true);
 }
 
-void ReqRepHelloWorldReplier::waitDiscovery()
+void ReqRepHelloWorldReplier::wait_discovery()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 

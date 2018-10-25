@@ -36,6 +36,7 @@
 
 #include <string>
 #include <list>
+#include <atomic>
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
@@ -273,13 +274,20 @@ class PubSubReader
                     return current_received_count_;
                 }
 
-        void waitDiscovery()
+        void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             std::cout << "Reader is waiting discovery..." << std::endl;
 
-            cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
+            if(timeout == std::chrono::seconds::zero())
+            {
+                cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
+            }
+            else
+            {
+                cvDiscovery_.wait_for(lock, timeout, [&](){return matched_ != 0;});
+            }
 
             std::cout << "Reader discovery finished..." << std::endl;
         }
@@ -525,7 +533,7 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& partiticpan_id(int32_t participantId)
+        PubSubReader& participant_id(int32_t participantId)
         {
             participant_attr_.rtps.participantID = participantId;
             return *this;
@@ -553,7 +561,7 @@ class PubSubReader
             return participant_guid_;
         }
 
-        bool isMatched() const
+        bool is_matched() const
         {
             return matched_ > 0;
         }
@@ -648,7 +656,7 @@ class PubSubReader
         std::condition_variable cv_;
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
-        unsigned int matched_;
+        std::atomic<unsigned int> matched_;
         unsigned int participant_matched_;
         std::atomic<bool> receiving_;
         type_support type_;

@@ -435,3 +435,5 @@ target/
 .project
 
 .pydevproject
+
+compile_commands.json

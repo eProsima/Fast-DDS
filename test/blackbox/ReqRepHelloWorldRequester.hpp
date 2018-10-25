@@ -90,7 +90,7 @@ class ReqRepHelloWorldRequester
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
         void block(const std::chrono::seconds &seconds);
-        void waitDiscovery();
+        void wait_discovery();
         void matched();
         void send(const uint16_t number);
         virtual void configSubscriber(const std::string& suffix) = 0;
