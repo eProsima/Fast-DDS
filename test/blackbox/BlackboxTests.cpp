@@ -5689,7 +5689,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
     ASSERT_TRUE(reader.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_4_P5)
+BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P5_4_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -5698,11 +5698,11 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_4_P5)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(4).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+    reader.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+    writer.max_initial_peers_range(4).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -5713,7 +5713,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_4_P5)
     ASSERT_FALSE(reader.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_6_P5)
+BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P5_6_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -5722,12 +5722,11 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P4_6_P5)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(6).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc)\
-        .lease_duration({3, 0}, {1, 0}).init();
+    reader.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+    writer.max_initial_peers_range(6).participant_id(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
