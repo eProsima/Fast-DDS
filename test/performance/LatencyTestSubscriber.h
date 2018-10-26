@@ -23,6 +23,15 @@
 #include <asio.hpp>
 #include <condition_variable>
 #include "LatencyTestTypes.h"
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 class LatencyTestSubscriber
 {
@@ -35,7 +44,6 @@ class LatencyTestSubscriber
         eprosima::fastrtps::Publisher* mp_commandpub;
         eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
-        LatencyType* mp_latency;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
         std::mutex mutex_;
         int disc_count_;
@@ -50,7 +58,7 @@ class LatencyTestSubscriber
         bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile);
+                const std::string& sXMLConfigFile, bool dynamic_types);
 
         void run();
         bool test(uint32_t datasize);
@@ -98,9 +106,16 @@ class LatencyTestSubscriber
         } m_commandsublistener;
 
         bool m_echo;
-        LatencyDataType latency_t;
         TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
+        bool dynamic_data = false;
+        // Static Types
+        LatencyDataType latency_t;
+        LatencyType* mp_latency;
+	// Dynamic Types
+	eprosima::fastrtps::types::DynamicData* m_DynData;
+	eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */

@@ -37,7 +37,6 @@ class LatencyType
         ~LatencyType() {}
 };
 
-
 inline bool operator==(const LatencyType& lt1, const LatencyType& lt2)
 {
     if(lt1.seqnum!=lt2.seqnum)

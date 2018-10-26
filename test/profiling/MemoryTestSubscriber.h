@@ -23,6 +23,15 @@
 #include <asio.hpp>
 #include <condition_variable>
 #include "MemoryTestTypes.h"
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 class MemoryTestSubscriber
 {
@@ -34,7 +43,6 @@ class MemoryTestSubscriber
         eprosima::fastrtps::Publisher* mp_commandpub;
         eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
-        MemoryType* mp_memory;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
         std::mutex mutex_;
         int disc_count_;
@@ -49,7 +57,7 @@ class MemoryTestSubscriber
         bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-                const std::string& sXMLConfigFile, uint32_t data_size);
+                const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types);
 
         void run();
         bool test(uint32_t datasize);
@@ -87,10 +95,18 @@ class MemoryTestSubscriber
         } m_commandsublistener;
 
         bool m_echo;
-        MemoryDataType memory_t;
         TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
         uint32_t m_data_size;
+        bool dynamic_data = false;
+        // Static Data
+        MemoryType* mp_memory;
+        MemoryDataType memory_t;
+        // Dynamic Data
+        eprosima::fastrtps::types::DynamicData* m_DynData;
+        eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+        eprosima::fastrtps::SubscriberAttributes subAttr;
 };
 
 #endif /* MEMORYTESTSUBSCRIBER_H_ */

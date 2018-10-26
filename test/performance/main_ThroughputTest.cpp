@@ -118,7 +118,8 @@ enum  optionIndex {
     EXPORT_PREFIX,
     USE_SECURITY,
     CERTS_PATH,
-    XML_FILE
+    XML_FILE,
+    DYNAMIC_TYPES
 };
 
 const option::Descriptor usage[] = {
@@ -142,6 +143,7 @@ const option::Descriptor usage[] = {
     { CERTS_PATH, 0, "", "certs",           Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
 #endif
     { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
+    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -178,6 +180,7 @@ int main(int argc, char** argv)
     std::string export_prefix = "";
     std::string file_name = "";
     std::string sXMLConfigFile = "";
+    bool dynamic_types = false;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
@@ -301,6 +304,9 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
+            case DYNAMIC_TYPES:
+                dynamic_types = true;
+                break;
 
 #if HAVE_SECURITY
             case USE_SECURITY:
@@ -384,13 +390,13 @@ int main(int argc, char** argv)
     if (pub_sub)
     {
         ThroughputPublisher tpub(reliable, seed, hostname, export_csv, export_prefix, pub_part_property_policy,
-            pub_property_policy, sXMLConfigFile);
+            pub_property_policy, sXMLConfigFile, dynamic_types);
         tpub.m_file_name = file_name;
         tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
     }
     else
     {
-        ThroughputSubscriber tsub(reliable, seed, hostname, sub_part_property_policy, sub_property_policy, sXMLConfigFile);
+        ThroughputSubscriber tsub(reliable, seed, hostname, sub_part_property_policy, sub_property_policy, sXMLConfigFile, dynamic_types);
         tsub.run();
     }
 

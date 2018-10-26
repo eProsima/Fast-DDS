@@ -80,6 +80,11 @@ ResponseCode DynamicPubSubType::SetDynamicType(DynamicType_ptr pType)
     }
 }
 
+void DynamicPubSubType::CleanDynamicType()
+{
+    mDynamicType = nullptr;
+}
+
 void* DynamicPubSubType::createData()
 {
     return DynamicDataFactory::GetInstance()->CreateData(mDynamicType);
