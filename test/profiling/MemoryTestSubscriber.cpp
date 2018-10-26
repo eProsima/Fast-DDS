@@ -25,22 +25,23 @@ using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-MemoryTestSubscriber::MemoryTestSubscriber():
-    mp_participant(nullptr),
-    mp_commandpub(nullptr),
-    mp_datasub(nullptr),
-    mp_commandsub(nullptr),
-    mp_memory(nullptr),
-    disc_count_(0),
-    comm_count_(0),
-    data_count_(0),
-    m_status(0),
-    n_received(0),
-    n_samples(0),
-    m_datasublistener(nullptr),
-    m_commandpublistener(nullptr),
-    m_commandsublistener(nullptr),
-    m_echo(true)
+MemoryTestSubscriber::MemoryTestSubscriber()
+    : mp_participant(nullptr)
+    , mp_commandpub(nullptr)
+    , mp_datasub(nullptr)
+    , mp_commandsub(nullptr)
+    , disc_count_(0)
+    , comm_count_(0)
+    , data_count_(0)
+    , m_status(0)
+    , n_received(0)
+    , n_samples(0)
+    , m_datasublistener(nullptr)
+    , m_commandpublistener(nullptr)
+    , m_commandsublistener(nullptr)
+    , m_echo(true)
+    , dynamic_data(false)
+    , mp_memory(nullptr)
 {
     m_datasublistener.mp_up = this;
     m_commandpublistener.mp_up = this;
@@ -56,13 +57,30 @@ MemoryTestSubscriber::~MemoryTestSubscriber()
 
 bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, uint32_t data_size)
+        const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types)
 {
     m_sXMLConfigFile = sXMLConfigFile;
     m_echo = echo;
     n_samples = nsam;
     m_data_size = data_size;
+    dynamic_data = dynamic_types;
 
+    if (dynamic_data) // Dummy type registration
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+            ));
+        struct_type_builder->SetName("MemoryType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
+    }
 
     if (m_sXMLConfigFile.length() > 0)
     {
@@ -74,7 +92,14 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
             return false;
         }
 
-        Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
+        if (dynamic_data)
+        {
+            Domain::registerType(mp_participant, &m_DynType);
+        }
+        else
+        {
+            Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
+        }
         Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
         // Create Data Subscriber
@@ -105,13 +130,13 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
     else
     {
         ParticipantAttributes PParam;
-        PParam.rtps.defaultSendPort = 10042;
         PParam.rtps.builtin.domainId = pid % 230;
         PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
         PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
         PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
         PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
         PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+        PParam.rtps.builtin.leaseDuration_announcementperiod = { 3, 0};
         PParam.rtps.sendSocketBufferSize = 65536;
         PParam.rtps.listenSocketBufferSize = 2 * 65536;
         PParam.rtps.setName("Participant_sub");
@@ -122,7 +147,14 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
             return false;
         }
 
-        Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
+        if (dynamic_data)
+        {
+            Domain::registerType(mp_participant, &m_DynType);
+        }
+        else
+        {
+            Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
+        }
         Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
 
@@ -185,6 +217,15 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
         if (mp_commandsub == nullptr)
             return false;
     }
+
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        subAttr = mp_datasub->getAttributes();
+        Domain::removeSubscriber(mp_datasub);
+        Domain::unregisterType(mp_participant, "MemoryType"); // Unregister as we will register it later with correct size
+    }
+
     return true;
 }
 
@@ -194,11 +235,12 @@ void MemoryTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*
 
     if(info.status == MATCHED_MATCHING)
     {
-        logInfo(MemoryTest,"Data Sub Matched ");
+        cout << C_MAGENTA << "Data Sub Matched "<<C_DEF<<endl;
         ++mp_up->disc_count_;
     }
     else
     {
+        cout << C_MAGENTA << "Data Sub unmatched "<<C_DEF<<endl;
         --mp_up->disc_count_;
     }
 
@@ -212,11 +254,12 @@ void MemoryTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /
 
     if(info.status == MATCHED_MATCHING)
     {
-        logInfo(MemoryTest, "Command Pub Matched ");
+        cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
         ++mp_up->disc_count_;
     }
     else
     {
+        cout << C_MAGENTA << "Command Pub unmatched "<<C_DEF<<endl;
         --mp_up->disc_count_;
     }
 
@@ -230,11 +273,12 @@ void MemoryTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber*
 
     if(info.status == MATCHED_MATCHING)
     {
-        logInfo(MemoryTest, "Command Sub Matched ");
+        cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
         ++mp_up->disc_count_;
     }
     else
     {
+        cout << C_MAGENTA << "Command Sub unmatched "<<C_DEF<<endl;
         --mp_up->disc_count_;
     }
 
@@ -281,14 +325,27 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
 
 void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
-    subscriber->takeNextData((void*)mp_up->mp_memory,&mp_up->m_sampleinfo);
-    //	cout << "R: "<< mp_up->mp_memory->seqnum << "|"<<mp_up->m_echo<<std::flush;
-    //	//	eClock::my_sleep(50);
-    //		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;
-    ++mp_up->n_received;
-    if (mp_up->m_echo)
+    if (mp_up->dynamic_data)
     {
-        std::cout << "Receied data: " << mp_up->mp_memory->seqnum << "(" << mp_up->n_received << ")" << std::endl;
+        subscriber->takeNextData((void*)mp_up->m_DynData, &mp_up->m_sampleinfo);
+        ++mp_up->n_received;
+        if (mp_up->m_echo)
+        {
+            std::cout << "Received data: " << mp_up->m_DynData->GetUint32Value(0)
+                << "(" << mp_up->n_received << ")" << std::endl;
+        }
+    }
+    else
+    {
+        subscriber->takeNextData((void*)mp_up->mp_memory,&mp_up->m_sampleinfo);
+        //	cout << "R: "<< mp_up->mp_memory->seqnum << "|"<<mp_up->m_echo<<std::flush;
+        //	//	eClock::my_sleep(50);
+        //		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;
+        ++mp_up->n_received;
+        if (mp_up->m_echo)
+        {
+            std::cout << "Received data: " << mp_up->mp_memory->seqnum << "(" << mp_up->n_received << ")" << std::endl;
+        }
     }
 }
 
@@ -299,11 +356,9 @@ void MemoryTestSubscriber::run()
     //EACH SUBSCRIBER NEEDS 3 Matchings (Comd Pub+Sub and publisher or subscriber)
     std::unique_lock<std::mutex> disc_lock(mutex_);
     disc_cond_.wait(disc_lock, [&](){
-        return disc_count_ != 3;
+        return disc_count_ == 2;
     });
     disc_lock.unlock();
-
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
 
     test(m_data_size);
 }
@@ -311,7 +366,46 @@ void MemoryTestSubscriber::run()
 bool MemoryTestSubscriber::test(uint32_t datasize)
 {
     cout << "Preparing test with data size: " << datasize + 4 << endl;
-    mp_memory = new MemoryType(datasize);
+
+    //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
+    if (dynamic_data)
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(
+            DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum",
+            DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), datasize
+            ));
+        struct_type_builder->SetName("MemoryType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.CleanDynamicType();
+        m_DynType.SetDynamicType(m_pDynType);
+
+        Domain::registerType(mp_participant, &m_DynType);
+
+        mp_datasub = Domain::createSubscriber(mp_participant, subAttr, &m_datasublistener);
+
+        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+    }
+    else
+    {
+        mp_memory = new MemoryType(datasize);
+    }
+
+    // Finally data matching
+    std::unique_lock<std::mutex> disc_lock(mutex_);
+    disc_cond_.wait(disc_lock, [&](){
+        return disc_count_ == 3;
+    });
+    disc_lock.unlock();
+
+    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
 
     std::unique_lock<std::mutex> lock(mutex_);
     if (comm_count_ == 0) comm_cond_.wait(lock);
@@ -336,7 +430,16 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
     cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << endl;
     eClock::my_sleep(50);
     //cout << "REMOVED: "<< removed<<endl;
-    delete(mp_memory);
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+        subAttr = mp_datasub->getAttributes();
+    }
+    else
+    {
+        delete(mp_memory);
+    }
     if (m_status == -1)
     {
         return false;

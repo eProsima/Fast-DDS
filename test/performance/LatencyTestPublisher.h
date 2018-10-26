@@ -27,6 +27,16 @@
 #include <condition_variable>
 #include <chrono>
 
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+
 class TimeStats{
 public:
     TimeStats() :nbytes(0), received(0), m_min(0), m_max(0), p50(0), p90(0), p99(0), p9999(0), mean(0), stdev(0){}
@@ -47,8 +57,6 @@ class LatencyTestPublisher {
         eprosima::fastrtps::Publisher* mp_commandpub;
         eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
-        LatencyType* mp_latency_in;
-        LatencyType* mp_latency_out;
         std::chrono::steady_clock::time_point t_start_, t_end_;
         std::chrono::duration<double, std::micro> t_overhead_;
         int n_subscribers;
@@ -71,7 +79,7 @@ class LatencyTestPublisher {
                 const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile);
+                const std::string& sXMLConfigFile, bool dynamic_types);
         void run();
         void analyzeTimes(uint32_t datasize);
         bool test(uint32_t datasize);
@@ -123,7 +131,6 @@ class LatencyTestPublisher {
                 int n_matched;
         } m_commandsublistener;
 
-        LatencyDataType latency_t;
         TestCommandDataType command_t;
 
         std::stringstream output_file_minimum;
@@ -143,6 +150,16 @@ class LatencyTestPublisher {
         std::stringstream output_file_131072;
         std::string m_sXMLConfigFile;
         bool reliable_;
+        bool dynamic_data = false;
+        // Static Types
+        LatencyDataType latency_t;
+        LatencyType* mp_latency_in;
+        LatencyType* mp_latency_out;
+	// Dynamic Types
+	eprosima::fastrtps::types::DynamicData* m_DynData_in;
+	eprosima::fastrtps::types::DynamicData* m_DynData_out;
+	eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
 };
 
 

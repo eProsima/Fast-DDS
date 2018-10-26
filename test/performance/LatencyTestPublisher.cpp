@@ -43,8 +43,6 @@ LatencyTestPublisher::LatencyTestPublisher():
     mp_commandpub(nullptr),
     mp_datasub(nullptr),
     mp_commandsub(nullptr),
-    mp_latency_in(nullptr),
-    mp_latency_out(nullptr),
     t_overhead_(0.0),
     n_subscribers(0),
     n_samples(0),
@@ -56,7 +54,11 @@ LatencyTestPublisher::LatencyTestPublisher():
     m_datapublistener(nullptr),
     m_datasublistener(nullptr),
     m_commandpublistener(nullptr),
-    m_commandsublistener(nullptr)
+    m_commandsublistener(nullptr),
+    mp_latency_in(nullptr),
+    mp_latency_out(nullptr),
+    m_DynData_in(nullptr),
+    m_DynData_out(nullptr)
 {
     m_datapublistener.mp_up = this;
     m_datasublistener.mp_up = this;
@@ -73,7 +75,7 @@ LatencyTestPublisher::~LatencyTestPublisher()
 
 bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
         const std::string& export_prefix, const PropertyPolicy& part_property_policy,
-        const PropertyPolicy& property_policy, bool large_data, const std::string& sXMLConfigFile)
+        const PropertyPolicy& property_policy, bool large_data, const std::string& sXMLConfigFile, bool dynamic_types)
 {
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = n_sam;
@@ -81,6 +83,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     n_export_csv = export_csv;
     m_exportPrefix = export_prefix;
     reliable_ = reliable;
+    dynamic_data = dynamic_types;
 
     if(!large_data)
     {
@@ -89,6 +92,23 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     else
     {
         data_size_pub.assign(dataspub_large, dataspub_large + sizeof(dataspub_large) / sizeof(uint32_t) );
+    }
+
+    if (dynamic_data)
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), data_size_pub.back()
+            ));
+        struct_type_builder->SetName("LatencyType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
     }
 
     //////////////////////////////
@@ -189,7 +209,14 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
         }
 
         // Register the type
-        Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        if (dynamic_data)
+        {
+            Domain::registerType(mp_participant, &m_DynType);
+        }
+        else
+        {
+            Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        }
         Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
         // Create Sending Publisher
@@ -245,7 +272,14 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
             return false;
         }
 
-        Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        if (dynamic_data)
+        {
+            Domain::registerType(mp_participant, &m_DynType);
+        }
+        else
+        {
+            Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        }
         Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
         // DATA PUBLISHER
@@ -484,24 +518,49 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subs
 
 void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
-    subscriber->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
-
-    if(mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
+    if (mp_up->dynamic_data)
     {
-        mp_up->t_end_ = std::chrono::steady_clock::now();
-        mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
-        mp_up->n_received++;
+        subscriber->takeNextData((void*)mp_up->m_DynData_in,&mp_up->m_sampleinfo);
 
-        // Reset seqnum from out data
-        mp_up->mp_latency_out->seqnum = 0;
-
-        mp_up->mutex_.lock();
-        if(mp_up->data_count_ == 0)
+        if (mp_up->m_DynData_in->GetUint32Value(0) == mp_up->m_DynData_out->GetUint32Value(0))
         {
-            ++mp_up->data_count_;
-            mp_up->data_cond_.notify_one();
+            mp_up->t_end_ = std::chrono::steady_clock::now();
+            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
+            mp_up->n_received++;
+
+            // Reset seqnum from out data
+            mp_up->m_DynData_out->SetUint32Value(0, 0);
+
+            mp_up->mutex_.lock();
+            if(mp_up->data_count_ == 0)
+            {
+                ++mp_up->data_count_;
+                mp_up->data_cond_.notify_one();
+            }
+            mp_up->mutex_.unlock();
         }
-        mp_up->mutex_.unlock();
+    }
+    else
+    {
+        subscriber->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
+
+        if(mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
+        {
+            mp_up->t_end_ = std::chrono::steady_clock::now();
+            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
+            mp_up->n_received++;
+
+            // Reset seqnum from out data
+            mp_up->mp_latency_out->seqnum = 0;
+
+            mp_up->mutex_.lock();
+            if(mp_up->data_count_ == 0)
+            {
+                ++mp_up->data_count_;
+                mp_up->data_cond_.notify_one();
+            }
+            mp_up->mutex_.unlock();
+        }
     }
 }
 
@@ -595,8 +654,30 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     //cout << "Beginning test of size: "<<datasize+4 <<endl;
     m_status = 0;
     n_received = 0;
-    mp_latency_in = new LatencyType(datasize);
-    mp_latency_out = new LatencyType(datasize);
+    if (dynamic_data)
+    {
+        m_DynData_in = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+        m_DynData_out = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+
+        MemberId id_in, id_out;
+        DynamicData *my_data_in = m_DynData_in->LoanValue(m_DynData_in->GetMemberIdAtIndex(1));
+        DynamicData *my_data_out = m_DynData_out->LoanValue(m_DynData_out->GetMemberIdAtIndex(1));
+        for (uint32_t i = 0; i < datasize; ++i)
+        {
+            my_data_in->InsertSequenceData(id_in);
+            my_data_in->SetByteValue(0, id_in);
+            my_data_out->InsertSequenceData(id_out);
+            my_data_out->SetByteValue(0, id_out);
+        }
+        m_DynData_in->ReturnLoanedValue(my_data_in);
+        m_DynData_out->ReturnLoanedValue(my_data_out);
+    }
+    else
+    {
+        mp_latency_in = new LatencyType(datasize);
+        mp_latency_out = new LatencyType(datasize);
+    }
+
     times_.clear();
     TestCommandType command;
     command.m_command = READY;
@@ -612,11 +693,21 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 
     for(unsigned int count = 1; count <= n_samples; ++count)
     {
-        mp_latency_in->seqnum = 0;
-        mp_latency_out->seqnum = count;
+        if (dynamic_data)
+        {
+            m_DynData_in->SetUint32Value(0, 0);
+            m_DynData_out->SetUint32Value(count, 0);
+            t_start_ = std::chrono::steady_clock::now();
+            mp_datapub->write((void*)m_DynData_out);
+        }
+        else
+        {
+            mp_latency_in->seqnum = 0;
+            mp_latency_out->seqnum = count;
+            t_start_ = std::chrono::steady_clock::now();
+            mp_datapub->write((void*)mp_latency_out);
+        }
 
-        t_start_ = std::chrono::steady_clock::now();
-        mp_datapub->write((void*)mp_latency_out);
 
         lock.lock();
         data_cond_.wait_for(lock, std::chrono::seconds(1), [&]() { return data_count_ > 0; });
@@ -643,8 +734,16 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     analyzeTimes(datasize);
     printStat(m_stats.back());
 
-    delete(mp_latency_in);
-    delete(mp_latency_out);
+    if (dynamic_data)
+    {
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData_in);
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData_out);
+    }
+    else
+    {
+        delete(mp_latency_in);
+        delete(mp_latency_out);
+    }
 
     return true;
 }

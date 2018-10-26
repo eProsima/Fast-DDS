@@ -117,7 +117,8 @@ enum  optionIndex {
     USE_SECURITY,
     CERTS_PATH,
     LARGE_DATA,
-    XML_FILE
+    XML_FILE,
+    DYNAMIC_TYPES
 };
 
 const option::Descriptor usage[] = {
@@ -139,6 +140,7 @@ const option::Descriptor usage[] = {
 #endif
     { LARGE_DATA, 0, "l", "large",          Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
+    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -179,6 +181,7 @@ int main(int argc, char** argv)
     bool large_data = false;
     std::string export_prefix = "";
     std::string sXMLConfigFile = "";
+    bool dynamic_types = false;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -305,6 +308,9 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
+            case DYNAMIC_TYPES:
+                dynamic_types = true;
+                break;
 
 #if HAVE_SECURITY
             case USE_SECURITY:
@@ -388,14 +394,14 @@ int main(int argc, char** argv)
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         LatencyTestPublisher latencyPub;
         latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
-            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile);
+            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types);
         latencyPub.run();
     }
     else
     {
         LatencyTestSubscriber latencySub;
         latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile);
+            large_data, sXMLConfigFile, dynamic_types);
         latencySub.run();
     }
 

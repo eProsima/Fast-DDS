@@ -23,6 +23,15 @@
 #include <asio.hpp>
 
 #include "MemoryTestTypes.h"
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <condition_variable>
 #include <chrono>
@@ -36,7 +45,6 @@ class MemoryTestPublisher {
         eprosima::fastrtps::Publisher* mp_datapub;
         eprosima::fastrtps::Publisher* mp_commandpub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
-        MemoryType* mp_memory;
         int n_subscribers;
         unsigned int n_samples;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
@@ -55,7 +63,7 @@ class MemoryTestPublisher {
                 const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-                const std::string& sXMLConfigFile, uint32_t data_size);
+                const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types);
         void run();
         bool test(uint32_t datasize);
 
@@ -93,11 +101,20 @@ class MemoryTestPublisher {
                 int n_matched;
         } m_commandsublistener;
 
-        MemoryDataType memory_t;
         TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
         bool reliable_;
         uint32_t m_data_size;
+        bool dynamic_data = false;
+        // Static Data
+        MemoryType* mp_memory;
+        MemoryDataType memory_t;
+        // Dynamic Data
+        eprosima::fastrtps::types::DynamicData* m_DynData;
+        eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+        eprosima::fastrtps::PublisherAttributes pubAttr;
+
 };
 
 

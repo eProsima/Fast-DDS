@@ -117,7 +117,8 @@ enum  optionIndex {
     USE_SECURITY,
     CERTS_PATH,
     XML_FILE,
-    DATA_SIZE
+    DATA_SIZE,
+    DYNAMIC_TYPES
 };
 
 const option::Descriptor usage[] = {
@@ -139,6 +140,7 @@ const option::Descriptor usage[] = {
 #endif
     { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
     { DATA_SIZE, 0, "", "size",             Arg::Numeric,   "\t--size\tData size." },
+    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -176,6 +178,7 @@ int main(int argc, char** argv)
     uint32_t seed = 80;
     bool hostname = false;
     bool export_csv = false;
+    bool dynamic_types = false;
     uint32_t data_size = 16;
     std::string export_prefix = "";
     std::string sXMLConfigFile = "";
@@ -305,6 +308,9 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
+            case DYNAMIC_TYPES:
+                dynamic_types = true;
+                break;
 
 #if HAVE_SECURITY
             case USE_SECURITY:
@@ -388,14 +394,14 @@ int main(int argc, char** argv)
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         MemoryTestPublisher memoryPub;
         memoryPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
-            pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size);
+            pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size, dynamic_types);
         memoryPub.run();
     }
     else
     {
         MemoryTestSubscriber memorySub;
         memorySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            sXMLConfigFile, data_size);
+            sXMLConfigFile, data_size, dynamic_types);
         memorySub.run();
     }
 

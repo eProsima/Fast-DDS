@@ -22,7 +22,6 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
 #include <fastrtps/publisher/Publisher.h>
@@ -42,21 +41,21 @@ ThroughputPublisher::DataPubListener::~DataPubListener(){}
 
 void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
-    std::unique_lock<std::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(m_up.dataMutex_);
 
     if (info.status == MATCHED_MATCHING)
     {
-        std::cout << C_RED << "DATA Pub Matched" << C_DEF << std::endl;
-        ++m_up.disc_count_;
+        //std::cout << C_RED << "DATA Pub Matched" << C_DEF << std::endl;
+        ++m_up.data_disc_count_;
     }
     else
     {
-        std::cout << C_RED << "DATA PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
-        --m_up.disc_count_;
+        //std::cout << C_RED << "DATA PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
+        --m_up.data_disc_count_;
     }
 
     lock.unlock();
-    m_up.disc_cond_.notify_one();
+    m_up.data_disc_cond_.notify_one();
 }
 
 ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){}
@@ -107,7 +106,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         const std::string& export_prefix,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile)
+        const std::string& sXMLConfigFile, bool dynamic_types)
     : disc_count_(0),
 #pragma warning(disable:4355)
     m_DataPubListener(*this),
@@ -116,8 +115,26 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     ready(true),
     m_export_csv(export_csv),
     reliable_(reliable),
-    m_sXMLConfigFile(sXMLConfigFile)
+    m_sXMLConfigFile(sXMLConfigFile),
+    dynamic_data(dynamic_types)
 {
+    if (dynamic_data) // Dummy type registration
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+            ));
+        struct_type_builder->SetName("ThroughputType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
+    }
+
     m_sExportPrefix = export_prefix;
 
     if (m_sXMLConfigFile.length() > 0)
@@ -133,7 +150,14 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         }
 
         //REGISTER THE TYPES
-        Domain::registerType(mp_par, (TopicDataType*)&latency_t);
+        if (dynamic_data)
+        {
+            Domain::registerType(mp_par, &m_DynType);
+        }
+        else
+        {
+            Domain::registerType(mp_par, (TopicDataType*)&latency_t);
+        }
         Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
         // Create Sending Publisher
@@ -173,6 +197,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         ParticipantAttributes PParam;
         PParam.rtps.builtin.domainId = pid % 230;
         PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+        PParam.rtps.builtin.leaseDuration_announcementperiod = { 3, 0 };
         PParam.rtps.setName("Participant_publisher");
         PParam.rtps.properties = part_property_policy;
         // Buffer sizes
@@ -188,7 +213,14 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         }
 
         //REGISTER THE TYPES
-        Domain::registerType(mp_par, (TopicDataType*)&latency_t);
+        if (dynamic_data)
+        {
+            Domain::registerType(mp_par, &m_DynType);
+        }
+        else
+        {
+            Domain::registerType(mp_par, (TopicDataType*)&latency_t);
+        }
         Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
         //DATA PUBLISHER
@@ -278,6 +310,14 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     {
         ready = false;
     }
+
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        pubAttr = mp_datapub->getAttributes();
+        Domain::removePublisher(mp_datapub);
+        Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
+    }
 }
 
 ThroughputPublisher::~ThroughputPublisher()
@@ -303,14 +343,15 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
         payload = msg_size;
         m_demand_payload[msg_size - 8].push_back(demand);
     }
-    std::cout << "Waiting for discovery" << std::endl;
+
+    std::cout << "Waiting for command discovery" << std::endl;
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    while (disc_count_ != 3)
+    disc_cond_.wait(disc_lock, [&]()
     {
-        disc_cond_.wait(disc_lock);
-    }
+        return disc_count_ == 2;
+    });
     disc_lock.unlock();
-    std::cout << "Discovery complete" << std::endl;
+    std::cout << "Discovery command complete" << std::endl;
 
     ThroughputCommandType command;
     SampleInfo_t info;
@@ -384,7 +425,43 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 
 bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
 {
-    ThroughputType latency((uint16_t)size);
+    if (dynamic_data)
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), size
+            ));
+        struct_type_builder->SetName("ThroughputType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.CleanDynamicType();
+        m_DynType.SetDynamicType(m_pDynType);
+
+        Domain::registerType(mp_par, &m_DynType);
+
+        mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
+
+        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+
+        MemberId id;
+        DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            my_data->InsertSequenceData(id);
+            my_data->SetByteValue(0, id);
+        }
+        m_DynData->ReturnLoanedValue(my_data);
+    }
+    else
+    {
+        latency = new ThroughputType((uint16_t)size);
+    }
+
     t_end_ = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::micro> timewait_us(0);
     std::chrono::duration<double, std::micro> test_time_us = std::chrono::seconds(test_time);
@@ -396,14 +473,31 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     //cout << "SEND COMMAND "<< command.m_command << endl;
     mp_commandpub->write((void*)&command);
 
+    //std::cout << "Waiting for data discovery" << std::endl;
+    std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
+    data_disc_cond_.wait(data_disc_lock, [&]()
+    {
+        return data_disc_count_ > 0;
+    });
+    data_disc_lock.unlock();
+    //std::cout << "Discovery data complete" << std::endl;
+
     t_start_ = std::chrono::steady_clock::now();
     while (std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
     {
         for (uint32_t sample = 0; sample < demand; sample++)
         {
-            latency.seqnum++;
-            mp_datapub->write((void*)&latency);
             //cout << sample << "*"<<std::flush;
+            if (dynamic_data)
+            {
+                m_DynData->SetUint32Value(m_DynData->GetUint32Value(0) + 1, 0);
+                mp_datapub->write((void*)m_DynData);
+            }
+            else
+            {
+                latency->seqnum++;
+                mp_datapub->write((void*)latency);
+            }
         }
         t_end_ = std::chrono::steady_clock::now();
         samples += demand;
@@ -412,11 +506,26 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         timewait_us += t_overhead_;
     }
     command.m_command = TEST_ENDS;
+
     //cout << "SEND COMMAND "<< command.m_command << endl;
     eClock::my_sleep(100);
     mp_commandpub->write((void*)&command);
     eClock::my_sleep(100);
     mp_datapub->removeAllChange();
+
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+        pubAttr = mp_datapub->getAttributes();
+        Domain::removePublisher(mp_datapub);
+        Domain::unregisterType(mp_par, "ThroughputType");
+    }
+    else
+    {
+        delete(latency);
+    }
+
     mp_commandsub->waitForUnreadMessage();
     if (mp_commandsub->takeNextData((void*)&command, &info))
     {
