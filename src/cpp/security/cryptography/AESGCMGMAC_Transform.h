@@ -127,7 +127,7 @@ class AESGCMGMAC_Transform : public CryptoTransform
             const std::array<uint8_t, 4>& transformation_kind, const std::array<uint8_t,32>& session_key,
             const std::array<uint8_t, 12>& initialization_vector,
             eprosima::fastcdr::FastBuffer& output_buffer, octet* plain_buffer, uint32_t plain_buffer_len,
-            SecureDataTag& tag);
+            SecureDataTag& tag, bool submessage);
 
     bool serialize_SecureDataTag(eprosima::fastcdr::Cdr& serializer,
             const std::array<uint8_t, 4>& transformation_kind, const uint32_t session_id,

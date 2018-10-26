@@ -136,7 +136,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     try
     {
         if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, local_writer->SessionKey,
-                    initialization_vector, output_buffer, payload.data, payload.length, tag))
+                    initialization_vector, output_buffer, payload.data, payload.length, tag, false))
         {
             return false;
         }
@@ -261,7 +261,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     {
         if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, local_writer->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos],
-                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag))
+                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag, true))
         {
             return false;
         }
@@ -397,7 +397,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     {
         if(!serialize_SecureDataBody(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind, local_reader->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos],
-                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag))
+                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag, true))
         {
             return false;
         }
@@ -536,7 +536,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     {
         if(!serialize_SecureDataBody(serializer, local_participant->ParticipantKeyMaterial.transformation_kind, local_participant->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_message.buffer[plain_rtps_message.pos],
-                    plain_rtps_message.length - plain_rtps_message.pos, tag))
+                    plain_rtps_message.length - plain_rtps_message.pos, tag, true))
         {
             return false;
         }
@@ -1307,6 +1307,12 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         return false;
     }
 
+    if (encoded_payload.length == 0)
+    {
+        plain_payload.length = 0;
+        return true;
+    }
+
     eprosima::fastcdr::FastBuffer input_buffer((char*)encoded_payload.data, encoded_payload.max_size);
     eprosima::fastcdr::Cdr decoder(input_buffer);
 
@@ -1349,7 +1355,20 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     try
     {
-        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
+        is_encrypted = 
+            (header.transform_identifier.transformation_kind == c_transfrom_kind_aes128_gcm) ||
+            (header.transform_identifier.transformation_kind == c_transfrom_kind_aes256_gcm);
+        if (is_encrypted)
+        {
+            decoder.deserialize(body_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+        }
+        else
+        {
+            body_length = encoded_payload.length;
+            body_length -= sizeof(header);
+            // TODO: consider origin authentication case
+            body_length -= sizeof(uint32_t) + 16;
+        }
     }
     catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
@@ -1357,7 +1376,6 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         return false;
     }
 
-    eprosima::fastcdr::Cdr::state body_state = decoder.getState();
     decoder.jump(body_length + body_align);
 
     // Tag
@@ -1372,8 +1390,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     }
 
     uint32_t length = plain_payload.max_size;
-    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag,
-        is_encrypted ? body_length : body_length + 4,
+    if(!deserialize_SecureDataBody(decoder, protected_body_state, tag, body_length,
         sending_writer->Entity2RemoteKeyMaterial.at(0).transformation_kind, session_key, initialization_vector,
         plain_payload.data, length))
     {
@@ -1455,7 +1472,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         const std::array<uint8_t, 4>& transformation_kind, const std::array<uint8_t,32>& session_key,
         const std::array<uint8_t, 12>& initialization_vector,
         eprosima::fastcdr::FastBuffer& output_buffer, octet* plain_buffer, uint32_t plain_buffer_len,
-        SecureDataTag& tag)
+        SecureDataTag& tag, bool submessage)
 {
     bool do_encryption = (transformation_kind == c_transfrom_kind_aes128_gcm ||
         transformation_kind == c_transfrom_kind_aes256_gcm);
@@ -1527,14 +1544,17 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
 #endif
 
-        serializer << SecureBodySubmessage << flags;
+        if(submessage) serializer << SecureBodySubmessage << flags;
 
         // Store current state to serialize sequence length at the end of the function
         eprosima::fastcdr::Cdr::state sequence_length_state = serializer.getState();
 
-        // Serialize dummy length
-        uint16_t length = 0;
-        serializer << length;
+        if (submessage)
+        {
+            // Serialize dummy length
+            uint16_t length = 0;
+            serializer << length;
+        }
 
         // Serialize dummy content length
         uint32_t cnt_length = 0;
@@ -1576,9 +1596,12 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
 
         // Serialize body sequence length;
         cnt_length = static_cast<uint32_t>(actual_size + final_size);
-        length = static_cast<uint16_t>(actual_size + final_size + sizeof(uint32_t));
         serializer.setState(sequence_length_state);
-        serializer << length;
+        if (submessage)
+        {
+            uint16_t length = static_cast<uint16_t>(actual_size + final_size + sizeof(uint32_t));
+            serializer << length;
+        }
 
         serializer.serialize(cnt_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 

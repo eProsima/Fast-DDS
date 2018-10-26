@@ -346,7 +346,8 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     if (datawriter_security_properties.is_payload_protected)
     {
         // TODO: let user decide on key reuse
-        if (is_payload_encrypted != is_sub_encrypted)
+        if (!datawriter_security_properties.is_submessage_protected ||
+            (is_payload_encrypted != is_sub_encrypted) )
         {
             KeyMaterial_AES_GCM_GMAC buffer;
             create_key(buffer, is_payload_encrypted, use_256_bits);
