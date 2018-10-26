@@ -105,7 +105,7 @@ void ReqRepHelloWorldRequester::block(const std::chrono::seconds &seconds)
     ASSERT_EQ(current_number_, number_received_);
 }
 
-void ReqRepHelloWorldRequester::waitDiscovery()
+void ReqRepHelloWorldRequester::wait_discovery()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 

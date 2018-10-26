@@ -37,7 +37,8 @@ static const uint8_t s_defaultTTL = 1;
  * */
 struct SocketTransportDescriptor : public TransportDescriptorInterface
 {
-    SocketTransportDescriptor(uint32_t maximumMessageSize) : TransportDescriptorInterface(maximumMessageSize)
+    SocketTransportDescriptor(uint32_t maximumMessageSize, uint32_t maximumInitialPeersRange)
+        : TransportDescriptorInterface(maximumMessageSize, maximumInitialPeersRange)
         , sendBufferSize(0)
         , receiveBufferSize(0)
         , TTL(s_defaultTTL)
@@ -52,7 +53,7 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
     virtual ~SocketTransportDescriptor(){}
 
     virtual uint32_t min_send_buffer_size() const override { return sendBufferSize; }
-	
+
     //! Length of the send buffer.
     uint32_t sendBufferSize;
     //! Length of the receive buffer.

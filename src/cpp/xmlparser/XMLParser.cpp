@@ -209,6 +209,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
     <xs:element name="receiveBufferSize" type="int32Type"/>
     <xs:element name="TTL" type="int8Type"/>
     <xs:element name="maxMessageSize" type="uint32Type"/>
+    <xs:element name="maxInitialPeersRange" type="uint32Type"/>
     <xs:element name="interfaceWhiteList" type="stringListType"/>
     <xs:sequence>
     <xs:element name="id" type="stringType"/>
@@ -334,6 +335,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
     <xs:element name="receiveBufferSize" type="int32Type"/>
     <xs:element name="TTL" type="int8Type"/>
     <xs:element name="maxMessageSize" type="uint32Type"/>
+    <xs:element name="maxInitialPeersRange" type="uint32Type"/>
     <xs:element name="interfaceWhiteList" type="stringListType"/>
     <xs:sequence>
     <xs:element name="id" type="stringType"/>
@@ -379,6 +381,15 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
         if (XMLP_ret::XML_OK != getXMLUint(p_aux, &uSize, 0))
             return XMLP_ret::XML_ERROR;
         pDesc->maxMessageSize = uSize;
+    }
+
+    // maxInitialPeersRange - uint32Type
+    if (nullptr != (p_aux = p_root->FirstChildElement(MAX_INITIAL_PEERS_RANGE)))
+    {
+        uint32_t uRange = 0;
+        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &uRange, 0))
+            return XMLP_ret::XML_ERROR;
+        pDesc->maxInitialPeersRange = uRange;
     }
 
     // InterfaceWhiteList stringListType

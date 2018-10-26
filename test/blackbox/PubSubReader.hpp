@@ -32,14 +32,17 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 #include <string>
 #include <list>
+#include <atomic>
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastrtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubReader
@@ -271,13 +274,20 @@ class PubSubReader
                     return current_received_count_;
                 }
 
-        void waitDiscovery()
+        void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             std::cout << "Reader is waiting discovery..." << std::endl;
 
-            cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
+            if(timeout == std::chrono::seconds::zero())
+            {
+                cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
+            }
+            else
+            {
+                cvDiscovery_.wait_for(lock, timeout, [&](){return matched_ != 0;});
+            }
 
             std::cout << "Reader discovery finished..." << std::endl;
         }
@@ -514,6 +524,21 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& max_initial_peers_range(uint32_t maxInitialPeerRange)
+        {
+            participant_attr_.rtps.useBuiltinTransports = false;
+            std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+            descriptor->maxInitialPeersRange = maxInitialPeerRange;
+            participant_attr_.rtps.userTransports.push_back(descriptor);
+            return *this;
+        }
+
+        PubSubReader& participant_id(int32_t participantId)
+        {
+            participant_attr_.rtps.participantID = participantId;
+            return *this;
+        }
+
         /*** Function for discovery callback ***/
 
         void wait_discovery_result()
@@ -534,6 +559,11 @@ class PubSubReader
         const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
         {
             return participant_guid_;
+        }
+
+        bool is_matched() const
+        {
+            return matched_ > 0;
         }
 
     private:
@@ -626,7 +656,7 @@ class PubSubReader
         std::condition_variable cv_;
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
-        unsigned int matched_;
+        std::atomic<unsigned int> matched_;
         unsigned int participant_matched_;
         std::atomic<bool> receiving_;
         type_support type_;

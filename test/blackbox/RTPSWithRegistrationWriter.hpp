@@ -163,7 +163,7 @@ class RTPSWithRegistrationWriter
         cv_.notify_one();
     }
 
-    void waitDiscovery()
+    void wait_discovery()
     {
         std::unique_lock<std::mutex> lock(mutex_);
 

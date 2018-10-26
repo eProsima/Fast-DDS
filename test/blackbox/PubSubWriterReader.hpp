@@ -278,7 +278,7 @@ class PubSubWriterReader
         cv_.wait(lock, checker);
     }
 
-    void waitDiscovery()
+    void wait_discovery()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 

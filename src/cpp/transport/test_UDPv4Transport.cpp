@@ -46,7 +46,7 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
     }
 
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
-    SocketTransportDescriptor(s_maximumMessageSize),
+    SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange),
     dropDataMessagesPercentage(0),
     dropParticipantBuiltinTopicData(false),
     dropPublicationBuiltinTopicData(false),

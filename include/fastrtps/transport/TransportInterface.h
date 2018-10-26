@@ -27,6 +27,7 @@ namespace fastrtps{
 namespace rtps{
 
 static const uint32_t s_maximumMessageSize = 65500;
+static const uint32_t s_maximumInitialPeersRange = 4;
 static const uint32_t s_minimumSocketBuffer = 65536;
 
 class SenderResource;
@@ -132,14 +133,14 @@ public:
 
     virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
 
-    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators, 
+    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const = 0;
 
-    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators, 
+    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
         uint32_t metatraffic_unicast_port) const = 0;
 
     virtual bool getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const = 0;
-    
+
     virtual bool fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const = 0;
 
     virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const = 0;

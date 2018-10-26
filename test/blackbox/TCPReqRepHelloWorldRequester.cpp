@@ -60,7 +60,8 @@ TCPReqRepHelloWorldRequester::~TCPReqRepHelloWorldRequester()
         Domain::removeParticipant(participant_);
 }
 
-void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_t listeningPort)
+void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_t listeningPort,
+        uint32_t maxInitialPeer)
 {
     ParticipantAttributes pattr;
 
@@ -85,6 +86,10 @@ void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_
     pattr.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
     descriptor->wait_for_tcp_negotiation = false;
+    if (maxInitialPeer > 0)
+    {
+        descriptor->maxInitialPeersRange = maxInitialPeer;
+    }
     pattr.rtps.userTransports.push_back(descriptor);
 
     pattr.rtps.builtin.domainId = domainId;
@@ -134,13 +139,20 @@ void TCPReqRepHelloWorldRequester::block()
                     });
 }
 
-void TCPReqRepHelloWorldRequester::waitDiscovery()
+void TCPReqRepHelloWorldRequester::wait_discovery(std::chrono::seconds timeout)
 {
-    std::cout << "Requester waiting for discovery..." << std::endl;
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-    if(matched_ == 0)
-        cvDiscovery_.wait_for(lock, std::chrono::seconds(10));
+    std::cout << "Requester waiting for discovery..." << std::endl;
+
+    if(timeout == std::chrono::seconds::zero())
+    {
+        cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
+    }
+    else
+    {
+        cvDiscovery_.wait_for(lock, timeout, [&](){return matched_ != 0;});
+    }
 
     std::cout << "Requester discovery phase finished" << std::endl;
 }
@@ -151,6 +163,12 @@ void TCPReqRepHelloWorldRequester::matched()
     ++matched_;
     if(matched_ > 1)
         cvDiscovery_.notify_one();
+}
+
+
+bool TCPReqRepHelloWorldRequester::is_matched()
+{
+    return matched_ > 1;
 }
 
 void TCPReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(Subscriber *sub)

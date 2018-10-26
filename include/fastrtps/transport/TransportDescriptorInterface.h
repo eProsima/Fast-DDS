@@ -33,17 +33,21 @@ class TransportInterface;
  * */
 struct TransportDescriptorInterface
 {
-    TransportDescriptorInterface(uint32_t maximumMessageSize) : maxMessageSize(maximumMessageSize)
+    TransportDescriptorInterface(uint32_t maximumMessageSize, uint32_t maximumInitialPeersRange)
+        : maxMessageSize(maximumMessageSize)
+        , maxInitialPeersRange(maximumInitialPeersRange)
     {}
 
-    TransportDescriptorInterface(const TransportDescriptorInterface& t) : maxMessageSize(t.maxMessageSize)
+    TransportDescriptorInterface(const TransportDescriptorInterface& t)
+        : maxMessageSize(t.maxMessageSize)
+        , maxInitialPeersRange(t.maxInitialPeersRange)
     {}
 
     virtual ~TransportDescriptorInterface(){}
 
     /**
-     * Factory method pattern. It will create and return a TransportInterface 
-     * corresponding to this descriptor. This provides an interface to the NetworkFactory 
+     * Factory method pattern. It will create and return a TransportInterface
+     * corresponding to this descriptor. This provides an interface to the NetworkFactory
      * to create the transports without the need to know about their type
      */
     virtual TransportInterface* create_transport() const = 0;
@@ -54,7 +58,11 @@ struct TransportDescriptorInterface
     //! Returns the maximum size expected for received messages.
     virtual uint32_t max_message_size() const { return maxMessageSize; }
 
+    virtual uint32_t max_initial_peers_range() const { return maxInitialPeersRange; }
+
     uint32_t maxMessageSize;
+
+    uint32_t maxInitialPeersRange;
 };
 
 } // namespace rtps

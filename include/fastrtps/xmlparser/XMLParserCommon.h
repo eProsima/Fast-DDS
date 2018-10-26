@@ -55,6 +55,7 @@ extern const char* SEND_BUFFER_SIZE;
 extern const char* TTL;
 extern const char* WHITE_LIST;
 extern const char* MAX_MESSAGE_SIZE;
+extern const char* MAX_INITIAL_PEERS_RANGE;
 extern const char* KEEP_ALIVE_FREQUENCY;
 extern const char* KEEP_ALIVE_TIMEOUT;
 extern const char* MAX_LOGICAL_PORT;
