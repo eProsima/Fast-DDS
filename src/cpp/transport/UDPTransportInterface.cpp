@@ -291,6 +291,9 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
         }
         else
         {
+            locNames.clear();
+            GetIPs(locNames, true);
+
             bool firstInterface = false;
             for (const auto& infoIP : locNames)
             {
