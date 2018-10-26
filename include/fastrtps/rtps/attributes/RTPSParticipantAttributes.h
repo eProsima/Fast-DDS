@@ -134,8 +134,8 @@ class BuiltinAttributes{
             use_STATIC_EndpointDiscoveryProtocol = false;
             m_staticEndpointXMLFilename = "";
             domainId = 0;
-            leaseDuration.seconds = 500;
-            leaseDuration_announcementperiod.seconds = 250;
+            leaseDuration.seconds = 130;
+            leaseDuration_announcementperiod.seconds = 40;
             use_WriterLivelinessProtocol = true;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
