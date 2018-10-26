@@ -45,6 +45,16 @@ TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* pa
     mEndPoint = asio::ip::tcp::endpoint(parent->GenerateProtocol(), IPLocator::getPhysicalPort(locator));
 }
 
+TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const std::string sInterface,
+    const Locator_t& locator)
+    : mAcceptor(io_service, parent->GenerateEndpoint(IPLocator::getPhysicalPort(locator)))
+    , mLocator(locator)
+    , mSocket(createTCPSocket(io_service))
+{
+    mEndPoint = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(sInterface),
+        IPLocator::getPhysicalPort(locator));
+}
+
 void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_service)
 {
     mSocket = createTCPSocket(io_service);
@@ -108,7 +118,10 @@ void TCPTransportInterface::Clean()
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         for (auto it = mSocketAcceptors.begin(); it != mSocketAcceptors.end(); ++it)
         {
-            delete it->second;
+            for (auto acceptorIt : it->second)
+            {
+                delete acceptorIt;
+            }
         }
         mSocketAcceptors.clear();
 
@@ -235,10 +248,46 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
     std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        TCPAcceptor* newAcceptor = new TCPAcceptor(mService, this, locator);
-        mSocketAcceptors.insert(std::make_pair(IPLocator::getPhysicalPort(locator), newAcceptor));
-        logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
-        newAcceptor->Accept(this, mService);
+        TCPAcceptor* newAcceptor(nullptr);
+
+        if (IsInterfaceWhiteListEmpty())
+        {
+            newAcceptor = new TCPAcceptor(mService, this, locator);
+            uint16_t port = IPLocator::getPhysicalPort(locator);
+            if (mSocketAcceptors.find(port) != mSocketAcceptors.end())
+            {
+                std::vector<TCPAcceptor*> vAcceptors{ newAcceptor };
+                mSocketAcceptors.insert(std::make_pair(port, vAcceptors));
+            }
+            else if (std::find(mSocketAcceptors[port].begin(), mSocketAcceptors[port].end(), newAcceptor) == mSocketAcceptors[port].end())
+            {
+                mSocketAcceptors[port].push_back(newAcceptor);
+            }
+
+            logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
+            newAcceptor->Accept(this, mService);
+        }
+        else
+        {
+            std::vector<std::string> vInterfacesAllowed = GetInterfacesList(locator);
+            for (auto& sInterface : vInterfacesAllowed)
+            {
+                newAcceptor = new TCPAcceptor(mService, this, sInterface, locator);
+                uint16_t port = IPLocator::getPhysicalPort(locator);
+                if (mSocketAcceptors.find(port) != mSocketAcceptors.end())
+                {
+                    std::vector<TCPAcceptor*> vAcceptors{ newAcceptor };
+                    mSocketAcceptors.insert(std::make_pair(port, vAcceptors));
+                }
+                else if (std::find(mSocketAcceptors[port].begin(), mSocketAcceptors[port].end(), newAcceptor) == mSocketAcceptors[port].end())
+                {
+                    mSocketAcceptors[port].push_back(newAcceptor);
+                }
+
+                logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
+                newAcceptor->Accept(this, mService);
+            }
+        }
     }
     catch (asio::system_error const& e)
     {
@@ -1050,7 +1099,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
         std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
         if (mSocketAcceptors.find(IPLocator::getPhysicalPort(acceptor->mLocator)) != mSocketAcceptors.end())
         {
-            mSocketAcceptors.at(IPLocator::getPhysicalPort(acceptor->mLocator))->Accept(this, mService);
+            acceptor->Accept(this, mService);
         }
     }
 }

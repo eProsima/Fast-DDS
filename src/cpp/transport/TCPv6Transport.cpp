@@ -139,6 +139,31 @@ uint16_t TCPv6Transport::GetMaxLogicalPort() const
     return mConfiguration_.max_logical_port;
 }
 
+std::vector<std::string> TCPv6Transport::GetInterfacesList(const Locator_t& locator)
+{
+    std::vector<std::string> vOutputInterfaces;
+    if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))
+    {
+        if (IPLocator::isMulticast(locator))
+        {
+            vOutputInterfaces.push_back("::1");
+        }
+        else
+        {
+            vOutputInterfaces.push_back(IPLocator::toIPv6string(locator));
+        }
+    }
+    else
+    {
+        for (auto& ip : mInterfaceWhiteList)
+        {
+            vOutputInterfaces.push_back(ip.to_string());
+        }
+    }
+
+    return vOutputInterfaces;
+}
+
 bool TCPv6Transport::IsLocatorAllowed(const Locator_t& locator) const
 {
     if (!IsLocatorSupported(locator))
@@ -150,6 +175,11 @@ bool TCPv6Transport::IsLocatorAllowed(const Locator_t& locator) const
         return true;
     }
     return IsInterfaceAllowed(IPLocator::toIPv6string(locator));
+}
+
+bool TCPv6Transport::IsInterfaceWhiteListEmpty() const
+{
+    return mInterfaceWhiteList.empty();
 }
 
 bool TCPv6Transport::IsInterfaceAllowed(const std::string& interface) const

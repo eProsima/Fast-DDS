@@ -46,6 +46,8 @@ public:
     std::vector<Locator_t> mPendingOutLocators;
 
     TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
+    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const std::string sInterface,
+        const Locator_t& locator);
     ~TCPAcceptor()
     {
         try{ mSocket.cancel(); } catch (...) {}
@@ -111,6 +113,7 @@ public:
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
+    virtual bool IsInterfaceWhiteListEmpty() const = 0;
     virtual bool IsInterfaceAllowed(const Locator_t& loc) const = 0;
 
     //! Checks for TCP kinds.
@@ -197,6 +200,8 @@ public:
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);
 
+    virtual std::vector<std::string> GetInterfacesList(const Locator_t& locator) = 0;
+
     virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const override;
 
@@ -226,7 +231,7 @@ protected:
     RTCPMessageManager* mRTCPMessageManager;
     mutable std::recursive_mutex mSocketsMapMutex;
 
-    std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
+    std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
     std::vector<TCPChannelResource*> mUnboundChannelResources; // Needed to avoid memory leaks if client doesn't bound
     std::map<uint16_t, TransportReceiverInterface*> mReceiverResources; // The key is the logical port
