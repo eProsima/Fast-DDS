@@ -46,8 +46,7 @@ public:
     std::vector<Locator_t> mPendingOutLocators;
 
     TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
-    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const std::string sInterface,
-        const Locator_t& locator);
+    TCPAcceptor(asio::io_service& io_service, const std::string sInterface, const Locator_t& locator);
     ~TCPAcceptor()
     {
         try{ mSocket.cancel(); } catch (...) {}

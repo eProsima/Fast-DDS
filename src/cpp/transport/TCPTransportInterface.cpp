@@ -45,9 +45,9 @@ TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* pa
     mEndPoint = asio::ip::tcp::endpoint(parent->GenerateProtocol(), IPLocator::getPhysicalPort(locator));
 }
 
-TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const std::string sInterface,
-    const Locator_t& locator)
-    : mAcceptor(io_service, parent->GenerateEndpoint(IPLocator::getPhysicalPort(locator)))
+TCPAcceptor::TCPAcceptor(asio::io_service& io_service, const std::string sInterface, const Locator_t& locator)
+    : mAcceptor(io_service, asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(sInterface),
+        IPLocator::getPhysicalPort(locator)))
     , mLocator(locator)
     , mSocket(createTCPSocket(io_service))
 {
@@ -272,7 +272,7 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
             std::vector<std::string> vInterfacesAllowed = GetInterfacesList(locator);
             for (auto& sInterface : vInterfacesAllowed)
             {
-                newAcceptor = new TCPAcceptor(mService, this, sInterface, locator);
+                newAcceptor = new TCPAcceptor(mService, sInterface, locator);
                 uint16_t port = IPLocator::getPhysicalPort(locator);
                 if (mSocketAcceptors.find(port) != mSocketAcceptors.end())
                 {
