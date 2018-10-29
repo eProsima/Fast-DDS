@@ -298,7 +298,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
     return success;
 }
 
-std::vector<std::string> UDPv4Transport::GetInterfacesList(const Locator_t& locator)
+std::vector<std::string> UDPv4Transport::GetBindingInterfacesList(const Locator_t& locator)
 {
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))

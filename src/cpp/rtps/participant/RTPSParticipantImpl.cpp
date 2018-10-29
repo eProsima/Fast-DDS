@@ -136,7 +136,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
             metatraffic_unicast_port);
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-        m_network_Factory.FilterLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
     else
     {
@@ -153,7 +152,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
             m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
         });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-        m_network_Factory.FilterLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
@@ -173,7 +171,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
             [&](Locator_t& locator) {
                 m_network_Factory.configureInitialPeerLocator(locator, m_att);
             });
-        m_network_Factory.NormalizeLocators(m_att.builtin.initialPeersList);
     }
 
     // Creation of user locator and receiver resources
@@ -205,7 +202,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
 
     // Normalize unicast locators.
-    m_network_Factory.FilterLocators(m_att.defaultUnicastLocatorList);
     m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 
     createReceiverResources(m_att.defaultUnicastLocatorList, true);

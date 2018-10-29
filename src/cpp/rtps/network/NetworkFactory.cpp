@@ -105,7 +105,8 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
         bool normalized = false;
         for (auto& transport : mRegisteredTransports)
         {
-            if (transport->IsLocatorSupported(loc))
+            // Check if the locator is supported and filter unicast locators.
+            if (transport->IsLocatorSupported(loc) && (IPLocator::isMulticast(loc) || transport->IsLocatorAllowed(loc)))
             {
                 // First found transport that supports it, this will normalize the locator.
                 normalizedLocators.push_back(transport->NormalizeLocator(loc));
@@ -120,27 +121,6 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
     });
 
     locators.swap(normalizedLocators);
-}
-
-void NetworkFactory::FilterLocators(LocatorList_t& locators)
-{
-    LocatorList_t filteredLocators;
-    std::for_each(locators.begin(), locators.end(), [&](Locator_t& loc)
-    {
-        bool allowed = false;
-        for (auto& transport : mRegisteredTransports)
-        {
-            if (transport->IsLocatorAllowed(loc))
-            {
-                allowed = true;
-            }
-        }
-        if (allowed)
-        {
-            filteredLocators.push_back(loc);
-        }
-    });
-    locators.swap(filteredLocators);
 }
 
 LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)

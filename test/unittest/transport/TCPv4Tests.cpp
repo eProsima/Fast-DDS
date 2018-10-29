@@ -142,7 +142,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     recvDescriptor.maxMessageSize = 5;
     recvDescriptor.sendBufferSize = 5;
     recvDescriptor.receiveBufferSize = 5;
-    recvDescriptor.add_listener_port(5100);
+    recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
@@ -157,14 +157,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 
     Locator_t inputLocator;
     inputLocator.kind = LOCATOR_KIND_TCPv4;
-    inputLocator.port = 5100;
+    inputLocator.port = g_default_port;
     IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
     IPLocator::setLogicalPort(inputLocator, 7410);
 
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
-    outputLocator.port = 5100;
+    outputLocator.port = g_default_port;
     IPLocator::setLogicalPort(outputLocator, 7410);
 
     {
@@ -330,7 +330,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
             recvDescriptor.maxMessageSize = 5;
             recvDescriptor.sendBufferSize = 5;
             recvDescriptor.receiveBufferSize = 5;
-            recvDescriptor.add_listener_port(5100);
+            recvDescriptor.add_listener_port(g_default_port);
             recvDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport receiveTransportUnderTest(recvDescriptor);
             receiveTransportUnderTest.init();
@@ -346,14 +346,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 
             Locator_t inputLocator;
             inputLocator.kind = LOCATOR_KIND_TCPv4;
-            inputLocator.port = 5100;
+            inputLocator.port = g_default_port;
             inputLocator.set_address(locator);
             IPLocator::setLogicalPort(inputLocator, 7410);
 
             Locator_t outputLocator;
             outputLocator.kind = LOCATOR_KIND_TCPv4;
             outputLocator.set_address(locator);
-            outputLocator.port = 5100;
+            outputLocator.port = g_default_port;
             IPLocator::setLogicalPort(outputLocator, 7410);
 
             {
@@ -407,7 +407,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
     recvDescriptor.maxMessageSize = 5;
     recvDescriptor.sendBufferSize = 5;
     recvDescriptor.receiveBufferSize = 5;
-    recvDescriptor.add_listener_port(5100);
+    recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
@@ -423,14 +423,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 
     Locator_t inputLocator;
     inputLocator.kind = LOCATOR_KIND_TCPv4;
-    inputLocator.port = 5100;
+    inputLocator.port = g_default_port;
     IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
     IPLocator::setLogicalPort(inputLocator, 7410);
 
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
-    outputLocator.port = 5100;
+    outputLocator.port = g_default_port;
     IPLocator::setLogicalPort(outputLocator, 7410);
 
     {
@@ -496,7 +496,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
             recvDescriptor.maxMessageSize = 5;
             recvDescriptor.sendBufferSize = 5;
             recvDescriptor.receiveBufferSize = 5;
-            recvDescriptor.add_listener_port(5100);
+            recvDescriptor.add_listener_port(g_default_port);
             recvDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport receiveTransportUnderTest(recvDescriptor);
             receiveTransportUnderTest.init();
@@ -512,14 +512,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 
             Locator_t inputLocator;
             inputLocator.kind = LOCATOR_KIND_TCPv4;
-            inputLocator.port = 5100;
+            inputLocator.port = g_default_port;
             IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
             IPLocator::setLogicalPort(inputLocator, 7410);
 
             Locator_t outputLocator;
             outputLocator.kind = LOCATOR_KIND_TCPv4;
             IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
-            outputLocator.port = 5100;
+            outputLocator.port = g_default_port;
             IPLocator::setLogicalPort(outputLocator, 7410);
 
             {
@@ -547,7 +547,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                         sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
-                    EXPECT_TRUE(sent);
+                    EXPECT_FALSE(sent);
                     //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
                 };
 
@@ -600,7 +600,7 @@ void TCPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.maxMessageSize = 5;
     descriptor.sendBufferSize = 5;
     descriptor.receiveBufferSize = 5;
-    descriptor.add_listener_port(5100);
+    descriptor.add_listener_port(g_default_port);
 }
 
 int main(int argc, char **argv)

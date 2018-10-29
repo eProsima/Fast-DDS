@@ -220,7 +220,7 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
 
     try
     {
-        std::vector<std::string> vSockets = GetInterfacesList(locator);
+        std::vector<std::string> vSockets = GetBindingInterfacesList(locator);
         for (std::string sIP : vSockets)
         {
             eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sIP, IPLocator::getPhysicalPort(locator), is_multicast);

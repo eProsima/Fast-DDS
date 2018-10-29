@@ -94,10 +94,21 @@ protected:
 
     //! Checks for whether locator is allowed.
     virtual bool IsLocatorAllowed(const Locator_t&) const override;
-    virtual std::vector<std::string> GetInterfacesList(const Locator_t& locator) override;
 
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) override;
+
+    //! Checks if the given interface is allowed by the white list.
     virtual bool IsInterfaceAllowed(const std::string& interface) const override;
+
+    //! Checks if the given interface is allowed by the white list.
     bool IsInterfaceAllowed(const asio::ip::address_v6& ip) const;
+
+    //! Checks if the interfaces white list is empty.
     virtual bool IsInterfaceWhiteListEmpty() const override;
     std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 

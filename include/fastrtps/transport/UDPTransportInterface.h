@@ -148,9 +148,19 @@ protected:
     virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) = 0;
     virtual asio::ip::udp GenerateProtocol() const = 0;
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
+
+    //! Checks if the interfaces white list is empty.
     virtual bool IsInterfaceWhiteListEmpty() const = 0;
+
+    //! Checks if the given interface is allowed by the white list.
     virtual bool IsInterfaceAllowed(const std::string& interface) const = 0;
-    virtual std::vector<std::string> GetInterfacesList(const Locator_t& locator) = 0;
+
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) = 0;
 
     bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
         uint32_t maxMsgSize);

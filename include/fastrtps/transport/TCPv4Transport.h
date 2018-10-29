@@ -91,14 +91,25 @@ protected:
 
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) const override;
 
-    virtual std::vector<std::string> GetInterfacesList(const Locator_t& locator) override;
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) override;
 
     bool IsLocatorAllowed(const Locator_t& locator) const;
 
     //! Checks if the given ip has been included in the white list to use it.
     virtual bool IsInterfaceAllowed(const std::string& interface) const override;
+
+    //! Checks if the given interface is allowed by the white list.
     bool IsInterfaceAllowed(const asio::ip::address_v4& ip) const;
+
+    //! Checks if the interfaces white list is empty.
     virtual bool IsInterfaceWhiteListEmpty() const override;
+
+    //! Checks if the given interface is allowed by the white list.
     virtual bool IsInterfaceAllowed(const Locator_t& loc) const override;
 
     virtual void SetReceiveBufferSize(uint32_t size) override;

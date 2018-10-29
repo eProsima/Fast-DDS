@@ -45,8 +45,25 @@ public:
     asio::ip::tcp::endpoint mEndPoint;
     std::vector<Locator_t> mPendingOutLocators;
 
+    /**
+    * Constructor
+    * @param io_service Reference to the ASIO service.
+    * @param parent Pointer to the transport that is going to manage the acceptor.
+    * @param locator Locator with the information about where to accept connections.
+    */
     TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
-    TCPAcceptor(asio::io_service& io_service, const std::string sInterface, const Locator_t& locator);
+
+    /**
+    * Constructor
+    * @param io_service Reference to the ASIO service.
+    * @param sInterface Network interface to bind the socket
+    * @param locator Locator with the information about where to accept connections.
+    */
+    TCPAcceptor(asio::io_service& io_service, const std::string& sInterface, const Locator_t& locator);
+
+    /**
+    * Destructor
+    */
     ~TCPAcceptor()
     {
         try{ mSocket.cancel(); } catch (...) {}
@@ -112,7 +129,14 @@ public:
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
+    //! Checks if the interfaces white list is empty.
     virtual bool IsInterfaceWhiteListEmpty() const = 0;
+
+    /**
+    * Checks if the given locator is allowed by the white list.
+    * @param loc locator to check.
+    * @return True if the locator passes the white list.
+    */
     virtual bool IsInterfaceAllowed(const Locator_t& loc) const = 0;
 
     //! Checks for TCP kinds.
@@ -199,7 +223,12 @@ public:
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);
 
-    virtual std::vector<std::string> GetInterfacesList(const Locator_t& locator) = 0;
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) = 0;
 
     virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const override;

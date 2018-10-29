@@ -300,14 +300,14 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
     return success;
 }
 
-std::vector<std::string> UDPv6Transport::GetInterfacesList(const Locator_t& locator)
+std::vector<std::string> UDPv6Transport::GetBindingInterfacesList(const Locator_t& locator)
 {
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))
     {
         if (IPLocator::isMulticast(locator))
         {
-            vOutputInterfaces.push_back("::1");
+            vOutputInterfaces.push_back("::");
         }
         else
         {
@@ -361,14 +361,13 @@ bool UDPv6Transport::IsLocatorAllowed(const Locator_t& locator) const
 
 LocatorList_t UDPv6Transport::NormalizeLocator(const Locator_t& locator)
 {
-	LocatorList_t list;
-
-	if (IPLocator::isAny(locator))
-	{
-		std::vector<IPFinder::info_IP> locNames;
-		GetIP6s(locNames);
-		for (const auto& infoIP : locNames)
-		{
+    LocatorList_t list;
+    if (IPLocator::isAny(locator))
+    {
+        std::vector<IPFinder::info_IP> locNames;
+        GetIP6s(locNames);
+        for (const auto& infoIP : locNames)
+        {
             auto ip = asio::ip::address_v6::from_string(infoIP.name);
             if (IsInterfaceAllowed(ip))
             {
@@ -376,7 +375,7 @@ LocatorList_t UDPv6Transport::NormalizeLocator(const Locator_t& locator)
                 IPLocator::setIPv6(newloc, infoIP.locator);
                 list.push_back(newloc);
             }
-		}
+        }
 
         if (list.empty())
         {
@@ -384,13 +383,13 @@ LocatorList_t UDPv6Transport::NormalizeLocator(const Locator_t& locator)
             IPLocator::setIPv6(newloc, "::1");
             list.push_back(newloc);
         }
-	}
+    }
     else
     {
         list.push_back(locator);
     }
 
-	return list;
+    return list;
 }
 
 bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
