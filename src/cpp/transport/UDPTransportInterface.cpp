@@ -388,12 +388,14 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
     try
     {
         ip::udp::endpoint senderEndpoint;
+
         size_t bytes = pChannelResource->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
         receiveBufferSize = static_cast<uint32_t>(bytes);
         if (receiveBufferSize > 0)
         {
             if (receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
             {
+                pChannelResource->Disable();
                 return false;
             }
             EndpointToLocator(senderEndpoint, remoteLocator);
