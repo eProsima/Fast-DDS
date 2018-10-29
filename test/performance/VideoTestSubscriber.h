@@ -52,7 +52,6 @@ class VideoTestSubscriber
         virtual ~VideoTestSubscriber();
 
         eprosima::fastrtps::Participant* mp_participant;
-        eprosima::fastrtps::Publisher* mp_datapub;
         eprosima::fastrtps::Publisher* mp_commandpub;
         eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
@@ -74,16 +73,6 @@ class VideoTestSubscriber
 
         void run();
         bool test();
-
-        class DataPubListener : public eprosima::fastrtps::PublisherListener
-        {
-            public:
-                DataPubListener(VideoTestSubscriber* up):mp_up(up){}
-                ~DataPubListener(){}
-                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-                        eprosima::fastrtps::rtps::MatchingInfo& info);
-                VideoTestSubscriber* mp_up;
-        } m_datapublistener;
 
         class DataSubListener : public eprosima::fastrtps::SubscriberListener
         {
