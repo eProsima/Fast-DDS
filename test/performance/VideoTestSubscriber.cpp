@@ -30,7 +30,6 @@ using namespace eprosima::fastrtps::rtps;
 
 VideoTestSubscriber::VideoTestSubscriber()
     : mp_participant(nullptr)
-    , mp_datapub(nullptr)
     , mp_commandpub(nullptr)
     , mp_datasub(nullptr)
     , mp_commandsub(nullptr)
@@ -40,7 +39,6 @@ VideoTestSubscriber::VideoTestSubscriber()
     , m_status(0)
     , n_received(0)
     , n_samples(0)
-    , m_datapublistener(nullptr)
     , m_datasublistener(nullptr)
     , m_commandpublistener(nullptr)
     , m_commandsublistener(nullptr)
@@ -48,7 +46,6 @@ VideoTestSubscriber::VideoTestSubscriber()
     , g_clienttimestamp(0)
     , g_framesDropped(0)
 {
-    m_datapublistener.mp_up = this;
     m_datasublistener.mp_up = this;
     m_commandpublistener.mp_up = this;
     m_commandsublistener.mp_up = this;
@@ -93,193 +90,106 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
 
     InitGStreamer();
 
+    // Create RTPSParticipant
+    std::string participant_profile_name = "participant_profile";
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = pid % 230;
+    PParam.rtps.setName("Participant_sub");
+    PParam.rtps.properties = part_property_policy;
+
     if (m_sXMLConfigFile.length() > 0)
     {
-        // Create RTPSParticipant
-        std::string participant_profile_name = "participant_profile";
         mp_participant = Domain::createParticipant(participant_profile_name);
-        if (mp_participant == nullptr)
-        {
-            return false;
-        }
-
-        Domain::registerType(mp_participant, (TopicDataType*)&video_t);
-        Domain::registerType(mp_participant, (TopicDataType*)&command_t);
-
-        // Create Sending Publisher
-        std::string profile_name = "publisher_profile";
-        mp_datapub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
-        if (mp_datapub == nullptr)
-        {
-            return false;
-        }
-        std::cout << "Publisher created" << std::endl;
-
-        // Create Echo Subscriber
-        profile_name = "subscriber_profile";
-        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
-        if (mp_datasub == nullptr)
-        {
-            return false;
-        }
-        std::cout << "Echo Subscriber created" << std::endl;
-
-        // Create Command Publisher
-        profile_name = "publisher_cmd_profile";
-        mp_commandpub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_commandpublistener);
-        if (mp_commandpub == nullptr)
-        {
-            return false;
-        }
-        std::cout << "Publisher created" << std::endl;
-
-        profile_name = "subscriber_cmd_profile";
-        mp_commandsub = Domain::createSubscriber(mp_participant, profile_name, &this->m_commandsublistener);
-        if (mp_commandsub == nullptr)
-        {
-            return false;
-        }
     }
     else
     {
-        ParticipantAttributes PParam;
-        PParam.rtps.builtin.domainId = pid % 230;
-        PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-        PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-        PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-        PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-        PParam.rtps.sendSocketBufferSize = 65536;
-        PParam.rtps.listenSocketBufferSize = 2 * 65536;
-        PParam.rtps.setName("Participant_sub");
-        PParam.rtps.properties = part_property_policy;
         mp_participant = Domain::createParticipant(PParam);
-        if (mp_participant == nullptr)
-        {
-            return false;
-        }
-
-        Domain::registerType(mp_participant, (TopicDataType*)&video_t);
-        Domain::registerType(mp_participant, (TopicDataType*)&command_t);
-
-        // DATA PUBLISHER
-        PublisherAttributes PubDataparam;
-        PubDataparam.topic.topicDataType = "VideoType";
-        PubDataparam.topic.topicKind = NO_KEY;
-        std::ostringstream pt;
-        pt << "VideoTest_";
-        if (hostname)
-            pt << asio::ip::host_name() << "_";
-        pt << pid << "_SUB2PUB";
-        PubDataparam.topic.topicName = pt.str();
-        PubDataparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        PubDataparam.topic.historyQos.depth = n_samples;
-        PubDataparam.topic.resourceLimitsQos.max_samples = n_samples + 1;
-        PubDataparam.topic.resourceLimitsQos.allocated_samples = n_samples + 1;
-        PubDataparam.times.heartbeatPeriod.seconds = 0;
-        PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
-        if (!reliable)
-            PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-        //PubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-
-        Locator_t loc;
-        loc.port = 15002;
-        PubDataparam.unicastLocatorList.push_back(loc);
-        PubDataparam.properties = property_policy;
-        if (large_data)
-        {
-            PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-            PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
-        }
-        mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
-        if (mp_datapub == nullptr)
-            return false;
-
-        //DATA SUBSCRIBER
-        SubscriberAttributes SubDataparam;
-        SubDataparam.topic.topicDataType = "VideoType";
-        SubDataparam.topic.topicKind = NO_KEY;
-        std::ostringstream st;
-        st << "VideoTest_";
-        if (hostname)
-            st << asio::ip::host_name() << "_";
-        st << pid << "_PUB2SUB";
-        SubDataparam.topic.topicName = st.str();
-        SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-        SubDataparam.topic.historyQos.depth = 1;
-        if (reliable)
-            SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        loc.port = 15003;
-        SubDataparam.unicastLocatorList.push_back(loc);
-        SubDataparam.properties = property_policy;
-        //loc.set_IP4_address(239,255,0,2);
-        //SubDataparam.multicastLocatorList.push_back(loc);
-        if (large_data)
-        {
-            SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        }
-        mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
-        if (mp_datasub == nullptr)
-            return false;
-
-        //COMMAND PUBLISHER
-        PublisherAttributes PubCommandParam;
-        PubCommandParam.topic.topicDataType = "TestCommandType";
-        PubCommandParam.topic.topicKind = NO_KEY;
-        std::ostringstream pct;
-        pct << "VideoTest_Command_";
-        if (hostname)
-            pct << asio::ip::host_name() << "_";
-        pct << pid << "_SUB2PUB";
-        PubCommandParam.topic.topicName = pct.str();
-        PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        PubCommandParam.topic.historyQos.depth = 100;
-        PubCommandParam.topic.resourceLimitsQos.max_samples = 101;
-        PubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
-        PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-        if (mp_commandpub == nullptr)
-            return false;
-        SubscriberAttributes SubCommandParam;
-        SubCommandParam.topic.topicDataType = "TestCommandType";
-        SubCommandParam.topic.topicKind = NO_KEY;
-        std::ostringstream sct;
-        sct << "VideoTest_Command_";
-        if (hostname)
-            sct << asio::ip::host_name() << "_";
-        sct << pid << "_PUB2SUB";
-        SubCommandParam.topic.topicName = sct.str();
-        SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        SubCommandParam.topic.historyQos.depth = 100;
-        SubCommandParam.topic.resourceLimitsQos.max_samples = 101;
-        SubCommandParam.topic.resourceLimitsQos.allocated_samples = 101;
-        SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-        if (mp_commandsub == nullptr)
-            return false;
     }
-    return true;
-}
 
-void VideoTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
-{
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
-
-    if(info.status == MATCHED_MATCHING)
+    if (mp_participant == nullptr)
     {
-        logInfo(VideoTest,"Data Pub Matched ");
-        ++mp_up->disc_count_;
+        return false;
+    }
+
+    Domain::registerType(mp_participant, (TopicDataType*)&video_t);
+    Domain::registerType(mp_participant, (TopicDataType*)&command_t);
+
+    // Create Data subscriber
+    std::string profile_name = "subscriber_profile";
+    SubscriberAttributes SubDataparam;
+    SubDataparam.topic.topicDataType = "VideoType";
+    SubDataparam.topic.topicKind = NO_KEY;
+    std::ostringstream st;
+    st << "VideoTest_";
+    if (hostname)
+        st << asio::ip::host_name() << "_";
+    st << pid << "_PUB2SUB";
+    SubDataparam.topic.topicName = st.str();
+    if (reliable)
+    {
+        SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    }
+    SubDataparam.properties = property_policy;
+    if (large_data)
+    {
+        SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
+
+    if (m_sXMLConfigFile.length() > 0)
+    {
+        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
     }
     else
     {
-        --mp_up->disc_count_;
-        mp_up->m_status = 0;
-        mp_up->comm_cond_.notify_one();
+        mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
     }
 
-    lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    if (mp_datasub == nullptr)
+    {
+        return false;
+    }
+
+    // Create Command Publisher
+    PublisherAttributes PubCommandParam;
+    PubCommandParam.topic.topicDataType = "TestCommandType";
+    PubCommandParam.topic.topicKind = NO_KEY;
+    std::ostringstream pct;
+    pct << "VideoTest_Command_";
+    if (hostname)
+        pct << asio::ip::host_name() << "_";
+    pct << pid << "_SUB2PUB";
+    PubCommandParam.topic.topicName = pct.str();
+    PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+
+    mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
+
+    if (mp_commandpub == nullptr)
+    {
+        return false;
+    }
+
+    SubscriberAttributes SubCommandParam;
+    SubCommandParam.topic.topicDataType = "TestCommandType";
+    SubCommandParam.topic.topicKind = NO_KEY;
+    std::ostringstream sct;
+    sct << "VideoTest_Command_";
+    if (hostname)
+        sct << asio::ip::host_name() << "_";
+    sct << pid << "_PUB2SUB";
+    SubCommandParam.topic.topicName = sct.str();
+    SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+
+    mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
+
+    if (mp_commandsub == nullptr)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
@@ -396,10 +306,7 @@ void VideoTestSubscriber::run()
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    while (disc_count_ != 4)
-    {
-        disc_cond_.wait(disc_lock);
-    }
+    disc_cond_.wait(disc_lock, [&]() { return disc_count_ >= 3; });
     disc_lock.unlock();
 
     cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
@@ -451,8 +358,6 @@ bool VideoTestSubscriber::test()
 
     cout << "TEST FINISHED" << endl;
     eClock::my_sleep(50);
-    size_t removed;
-    this->mp_datapub->removeAllChange(&removed);
 
     analyzeTimes();
     if (m_stats.size() > 0)

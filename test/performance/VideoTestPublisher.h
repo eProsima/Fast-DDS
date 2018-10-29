@@ -39,7 +39,6 @@ class VideoTestPublisher
         eprosima::fastrtps::Participant* mp_participant;
         eprosima::fastrtps::Publisher* mp_datapub;
         eprosima::fastrtps::Publisher* mp_commandpub;
-        eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
         VideoType* mp_video_out;
         std::chrono::steady_clock::time_point t_start_;
@@ -73,18 +72,6 @@ class VideoTestPublisher
                 VideoTestPublisher* mp_up;
                 int n_matched;
         } m_datapublistener;
-
-        class DataSubListener : public eprosima::fastrtps::SubscriberListener
-        {
-            public:
-                DataSubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
-                ~DataSubListener(){}
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& into);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                VideoTestPublisher* mp_up;
-                int n_matched;
-        } m_datasublistener;
 
         class CommandPubListener : public eprosima::fastrtps::PublisherListener
         {
