@@ -40,7 +40,7 @@ VideoTestPublisher::VideoTestPublisher()
     , n_samples(0)
     , disc_count_(0)
     , comm_count_(0)
-    , data_count_(0)
+    , timer_on_(false)
     , m_status(0)
     , n_received(0)
     , m_datapublistener(nullptr)
@@ -422,27 +422,18 @@ bool VideoTestPublisher::test(uint32_t datasize)
     command.m_command = READY;
     mp_commandpub->write(&command);
 
-    //cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
     std::unique_lock<std::mutex> lock(mutex_);
-    while (comm_count_ != n_subscribers)
-    {
-        comm_cond_.wait(lock);
-    }
+    comm_cond_.wait(lock, [&]() { return comm_count_ >= n_subscribers; });
     --comm_count_;
-    lock.unlock();
-    //cout << endl;
+
     //BEGIN THE TEST:
 
     mp_video_out = new VideoType();
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
-    std::chrono::steady_clock::time_point send_start_ = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point send_end = send_start_;
-    do
-    {
-        send_end = std::chrono::steady_clock::now();
-    }
-    while (std::chrono::duration<double, std::deci>(send_end - send_start_).count() < m_testTime);
+    send_start_ = std::chrono::steady_clock::now();
+
+    timer_cond_.wait(lock, [&]() { return timer_on_; });
 
     gst_element_set_state(pipeline, GST_STATE_PAUSED);
 
@@ -511,6 +502,8 @@ void VideoTestPublisher::InitGStreamer()
 /* The appsink has received a buffer */
 GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublisher *sub)
 {
+    GstFlowReturn returned_value = GST_FLOW_ERROR;
+
     if (sub->mp_video_out != nullptr)
     {
         if (sub->m_sendSleepTime != 0)
@@ -549,10 +542,23 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
             {
                 std::cout << "VideoPublication::run -> Buffer is nullptr" << std::endl;
             }
+
             gst_sample_unref(sample);
-            return GST_FLOW_OK;
+            returned_value =  GST_FLOW_OK;
         }
-        return GST_FLOW_ERROR;
+
+        returned_value =  GST_FLOW_ERROR;
     }
-    return GST_FLOW_OK;
+
+    returned_value =  GST_FLOW_OK;
+
+    std::chrono::steady_clock::time_point send_end = std::chrono::steady_clock::now();
+    std::unique_lock<std::mutex> lock(sub->mutex_);
+    if(std::chrono::duration<double, std::deci>(send_end - sub->send_start_).count() >= sub->m_testTime)
+    {
+        sub->timer_on_ = true;
+        sub->timer_cond_.notify_one();
+    }
+
+    return returned_value;
 }

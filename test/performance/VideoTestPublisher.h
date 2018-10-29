@@ -51,8 +51,9 @@ class VideoTestPublisher
         std::condition_variable disc_cond_;
         int comm_count_;
         std::condition_variable comm_cond_;
-        int data_count_;
-        std::condition_variable data_cond_;
+        bool timer_on_;
+        std::chrono::steady_clock::time_point send_start_;
+        std::condition_variable timer_cond_;
         int m_status;
         unsigned int n_received;
         bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
