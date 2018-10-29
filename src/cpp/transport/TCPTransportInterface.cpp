@@ -131,8 +131,9 @@ void TCPTransportInterface::Clean()
         mUnboundChannelResources.clear();
     }
 
-    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](auto it){
-        DeleteSocket(it); // Disable all added TCPChannelResources
+    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](auto it)
+    {
+        this->DeleteSocket(it); // Disable all added TCPChannelResources
     });
 
     CleanDeletedSockets();
