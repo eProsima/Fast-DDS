@@ -329,7 +329,7 @@ void MemoryTestPublisher::run()
     //EACH SUBSCRIBER NEEDS 3 Matchings (Comm pub+sub and publisher or subscriber)
     std::unique_lock<std::mutex> disc_lock(mutex_);
     disc_cond_.wait(disc_lock, [&](){
-        return disc_count_ == (n_subscribers * 2);
+        return disc_count_ >= (n_subscribers * 3);
     });
     disc_lock.unlock();
 
@@ -388,7 +388,7 @@ bool MemoryTestPublisher::test(uint32_t datasize)
     // Finally Data matching
     std::unique_lock<std::mutex> disc_lock(mutex_);
     disc_cond_.wait(disc_lock, [&](){
-        return disc_count_ == (n_subscribers * 3);
+        return disc_count_ >= (n_subscribers * 3);
     });
     disc_lock.unlock();
     cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
