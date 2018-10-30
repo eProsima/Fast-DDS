@@ -161,8 +161,9 @@ void TCPChannelResource::Disconnect()
     {
         try
         {
+            asio::error_code ec;
+            mSocket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
             mSocket.cancel();
-            mSocket.shutdown(asio::ip::tcp::socket::shutdown_both);
 #if !defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603
             mSocket.release();
 #endif
