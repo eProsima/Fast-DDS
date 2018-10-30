@@ -367,8 +367,9 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets)
     IPLocator::setIPv4(multicastLocator, 239, 255, 0, 1);
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.port = g_default_port + 1;
+    outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(outputChannelLocator, 239, 255, 0, 1);
 
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
