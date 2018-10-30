@@ -108,6 +108,7 @@ struct SecureDataTag{
     CryptoTransformKeyId receiver_mac_key_id;
     std::array<uint8_t, 16> receiver_mac;
 };
+
 /* Key Management
  * --------------
  * Keys are stored and managed as Cryptohandles
@@ -125,11 +126,21 @@ struct SecureDataTag{
  * Note: the common key of the remote cryptohandle is stored along with the specific keys. KeyMaterial->master_sender_key
  */
 
+struct KeySessionData
+{
+    uint32_t session_id;
+    std::array<uint8_t, 32> SessionKey;
+    uint64_t session_block_counter;
+
+    KeySessionData() : session_id(std::numeric_limits<uint32_t>::max()), session_block_counter(0) {}
+};
+
 class  EntityKeyHandle
 {
     public:
-        EntityKeyHandle() : session_id(std::numeric_limits<uint32_t>::max()),
-                session_block_counter(0), max_blocks_per_session(0){}
+        EntityKeyHandle() : max_blocks_per_session(0)
+        {
+        }
 
         ~EntityKeyHandle(){
         }
@@ -152,9 +163,7 @@ class  EntityKeyHandle
         // KeyMaterial_AES_GCM_GMAC Participant2ParticipantKxKeyMaterial;
 
         //Data used to store the current session keys and to determine when it has to be updated
-        uint32_t session_id;
-        std::array<uint8_t,32> SessionKey;
-        uint64_t session_block_counter;
+        KeySessionData Sessions[2];
         uint64_t max_blocks_per_session;
         std::mutex mutex_;
 };

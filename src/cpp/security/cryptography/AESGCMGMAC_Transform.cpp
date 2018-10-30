@@ -95,28 +95,29 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     // Payload is always protected by the last key
     auto nKeys = local_writer->EntityKeyMaterial.size();
     auto& keyMat = local_writer->EntityKeyMaterial.at(nKeys - 1);
+    auto session = &local_writer->Sessions[nKeys - 1];
 
     //If the maximum number of blocks have been processed, generate a new SessionKey
-    if(local_writer->session_block_counter >= local_writer->max_blocks_per_session)
+    if(session->session_block_counter >= local_writer->max_blocks_per_session)
     {
-        local_writer->session_id += 1;
+        session->session_id += 1;
 
-        compute_sessionkey(local_writer->SessionKey, keyMat, local_writer->session_id);
+        compute_sessionkey(session->SessionKey, keyMat, session->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
-        local_writer->session_block_counter = 0;
+        session->session_block_counter = 0;
     }
     //In any case, increment session block counter
-    local_writer->session_block_counter += 1;
+    session->session_block_counter += 1;
 
     //Build NONCE elements (Build once, use once)
     std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t, 12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(local_writer->session_id),4);
+    memcpy(initialization_vector.data(),&(session->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
     std::array<uint8_t, 4> session_id;
-    memcpy(session_id.data(), &(local_writer->session_id), 4);
+    memcpy(session_id.data(), &(session->session_id), 4);
 
     //Header
     try
@@ -135,7 +136,7 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, local_writer->SessionKey,
+        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, session->SessionKey,
                     initialization_vector, output_buffer, payload.data, payload.length, tag, false))
         {
             return false;
@@ -150,8 +151,8 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     try
     {
         std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list;
-        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, local_writer->session_id,
-                    initialization_vector, receiving_datareader_crypto_list, false, tag))
+        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, session->session_id,
+                    initialization_vector, receiving_datareader_crypto_list, false, tag, nKeys - 1))
         {
             return false;
         }
@@ -196,29 +197,30 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
     // Submessage is always protected by the first key
     auto& keyMat = local_writer->EntityKeyMaterial.at(0);
+    auto session = &local_writer->Sessions[0];
 
     bool update_specific_keys = false;
     //If the maximum number of blocks have been processed, generate a new SessionKey
-    if(local_writer->session_block_counter >= local_writer->max_blocks_per_session)
+    if(session->session_block_counter >= local_writer->max_blocks_per_session)
     {
-        local_writer->session_id += 1;
+        session->session_id += 1;
         update_specific_keys = true;
-        compute_sessionkey(local_writer->SessionKey, keyMat, local_writer->session_id);
+        compute_sessionkey(session->SessionKey, keyMat, session->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
-        local_writer->session_block_counter = 0;
+        session->session_block_counter = 0;
     }
 
-    local_writer->session_block_counter += 1;
+    session->session_block_counter += 1;
 
     //Build remaining NONCE elements
     std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(local_writer->session_id),4);
+    memcpy(initialization_vector.data(),&(session->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
     std::array<uint8_t, 4> session_id;
-    memcpy(session_id.data(), &(local_writer->session_id), 4);
+    memcpy(session_id.data(), &(session->session_id), 4);
 
 #if __BIG_ENDIAN__
     octet flags = 0x0;
@@ -259,7 +261,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, local_writer->SessionKey,
+        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, session->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos],
                     plain_rtps_submessage.length - plain_rtps_submessage.pos, tag, true))
         {
@@ -282,8 +284,8 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, local_writer->session_id,
-                    initialization_vector, receiving_datareader_crypto_list, update_specific_keys, tag))
+        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, session->session_id,
+                    initialization_vector, receiving_datareader_crypto_list, update_specific_keys, tag, 0))
         {
             return false;
         }
@@ -334,27 +336,28 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     std::unique_lock<std::mutex> lock(local_reader->mutex_);
 
     //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
+    auto session = &local_reader->Sessions[0];
     bool update_specific_keys = false;
-    if(local_reader->session_block_counter >= local_reader->max_blocks_per_session){
-        local_reader->session_id += 1;
+    if(session->session_block_counter >= local_reader->max_blocks_per_session){
+        session->session_id += 1;
         update_specific_keys = true;
-        compute_sessionkey(local_reader->SessionKey, local_reader->EntityKeyMaterial.at(0),
-                local_reader->session_id);
+        compute_sessionkey(session->SessionKey, local_reader->EntityKeyMaterial.at(0),
+            session->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
-        local_reader->session_block_counter = 0;
+        session->session_block_counter = 0;
     }
 
-    local_reader->session_block_counter += 1;
+    session->session_block_counter += 1;
 
     //Build remaining NONCE elements
     std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(local_reader->session_id),4);
+    memcpy(initialization_vector.data(),&(session->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
     std::array<uint8_t, 4> session_id;
-    memcpy(session_id.data(), &(local_reader->session_id), 4);
+    memcpy(session_id.data(), &(session->session_id), 4);
 
 #if __BIG_ENDIAN__
     octet flags = 0x0;
@@ -395,7 +398,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind, local_reader->SessionKey,
+        if(!serialize_SecureDataBody(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind, session->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos],
                     plain_rtps_submessage.length - plain_rtps_submessage.pos, tag, true))
         {
@@ -418,8 +421,8 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        if(!serialize_SecureDataTag(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind, local_reader->session_id,
-                    initialization_vector, receiving_datawriter_crypto_list, update_specific_keys, tag))
+        if(!serialize_SecureDataTag(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind, session->session_id,
+                    initialization_vector, receiving_datawriter_crypto_list, update_specific_keys, tag, 0))
         {
             return false;
         }
@@ -1391,7 +1394,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     uint32_t length = plain_payload.max_size;
     if(!deserialize_SecureDataBody(decoder, protected_body_state, tag, body_length,
-        sending_writer->Entity2RemoteKeyMaterial.at(0).transformation_kind, session_key, initialization_vector,
+        keyMat->transformation_kind, session_key, initialization_vector,
         plain_payload.data, length))
     {
         logError(SECURITY_CRYPTO, "Error decoding content");
@@ -1628,7 +1631,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         const std::array<uint8_t, 4>& transformation_kind, const uint32_t session_id,
         const std::array<uint8_t, 12>& initialization_vector,
         std::vector<EntityCryptoHandle*>& receiving_crypto_list, bool update_specific_keys,
-        SecureDataTag& tag)
+        SecureDataTag& tag, size_t sessionIndex)
 {
     serializer << tag.common_mac;
 
@@ -1662,12 +1665,12 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         }
 
         //Update the key if needed
-        if(update_specific_keys || remote_entity->session_id != session_id)
+        if(update_specific_keys || remote_entity->Sessions[sessionIndex].session_id != session_id)
         {
             //Update triggered!
-            remote_entity->session_id = session_id;
-            compute_sessionkey(remote_entity->SessionKey, remote_entity->Remote2EntityKeyMaterial.at(0),
-                    remote_entity->session_id);
+            remote_entity->Sessions[sessionIndex].session_id = session_id;
+            compute_sessionkey(remote_entity->Sessions[sessionIndex].SessionKey, remote_entity->Remote2EntityKeyMaterial.at(0),
+                    remote_entity->Sessions[sessionIndex].session_id);
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
@@ -1676,7 +1679,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         if(transformation_kind == c_transfrom_kind_aes128_gcm ||
                 transformation_kind == c_transfrom_kind_aes128_gmac)
         {
-            if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_entity->SessionKey.data()),
+            if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_entity->Sessions[sessionIndex].SessionKey.data()),
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
@@ -1687,7 +1690,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         else if(transformation_kind == c_transfrom_kind_aes256_gcm ||
                 transformation_kind == c_transfrom_kind_aes256_gmac)
         {
-            if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_entity->SessionKey.data()),
+            if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_entity->Sessions[sessionIndex].SessionKey.data()),
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");

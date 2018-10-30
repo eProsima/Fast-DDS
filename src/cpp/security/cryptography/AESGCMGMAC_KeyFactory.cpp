@@ -261,9 +261,9 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         (*wHandle)->EntityKeyMaterial.push_back(buffer);
         (*wHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*wHandle)->Remote2EntityKeyMaterial.push_back(buffer);
-        (*wHandle)->session_id = (*RPCrypto)->session_id;
+        (*wHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
         (*wHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
-        (*wHandle)->session_block_counter = (*RPCrypto)->session_block_counter;
+        (*wHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
         (*RPCrypto)->Writers.push_back(wHandle);
 
         // Create builtin key exchange reader handle
@@ -274,9 +274,9 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         (*rHandle)->EntityKeyMaterial.push_back(buffer);
         (*rHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*rHandle)->Remote2EntityKeyMaterial.push_back(buffer);
-        (*rHandle)->session_id = (*RPCrypto)->session_id;
+        (*rHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
         (*rHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
-        (*rHandle)->session_block_counter = (*RPCrypto)->session_block_counter;
+        (*rHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
         (*RPCrypto)->Readers.push_back(rHandle);
     }
 
@@ -336,11 +336,16 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
     AESGCMGMAC_WriterCryptoHandle* WCrypto = new AESGCMGMAC_WriterCryptoHandle();
     (*WCrypto)->EndpointPluginAttributes = plugin_attrs;
 
+    auto session = &(*WCrypto)->Sessions[0];
+
     if (datawriter_security_properties.is_submessage_protected)
     {
         KeyMaterial_AES_GCM_GMAC buffer;
         create_key(buffer, is_sub_encrypted, use_256_bits);
         (*WCrypto)->EntityKeyMaterial.push_back(buffer);
+        session->session_block_counter = maxblockspersession + 1; //Set to update upon first usage
+        RAND_bytes((unsigned char *)(&(session->session_id)), sizeof(uint32_t));
+        session++;
     }
 
     if (datawriter_security_properties.is_payload_protected)
@@ -352,12 +357,12 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
             KeyMaterial_AES_GCM_GMAC buffer;
             create_key(buffer, is_payload_encrypted, use_256_bits);
             (*WCrypto)->EntityKeyMaterial.push_back(buffer);
+            session->session_block_counter = maxblockspersession + 1; //Set to update upon first usage
+            RAND_bytes((unsigned char *)(&(session->session_id)), sizeof(uint32_t));
         }
     }
         
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
-    (*WCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
-    RAND_bytes( (unsigned char *)( &( (*WCrypto)->session_id ) ), sizeof(uint32_t));
 
     std::unique_lock<std::mutex>(participant_handle->mutex_);
 
@@ -430,6 +435,12 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         }
     }
 
+    auto session = &(*RRCrypto)->Sessions[0];
+    session->session_block_counter = local_writer_handle->Sessions[0].session_block_counter;
+    session->session_id = std::numeric_limits<uint32_t>::max();
+    if (session->session_id == local_writer_handle->Sessions[0].session_id)
+        session->session_id -= 1;
+
     if (!relay_only && local_writer_handle->EntityKeyMaterial.size() > 1)
     {
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
@@ -443,13 +454,15 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 
         //Attach only to remote CryptoHandles
         (*RRCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
+
+        session++;
+        session->session_block_counter = local_writer_handle->Sessions[0].session_block_counter;
+        session->session_id = std::numeric_limits<uint32_t>::max();
+        if (session->session_id == local_writer_handle->Sessions[0].session_id)
+            session->session_id -= 1;
     }
 
     (*RRCrypto)->max_blocks_per_session = local_writer_handle->max_blocks_per_session;
-    (*RRCrypto)->session_block_counter = local_writer_handle->session_block_counter;
-    (*RRCrypto)->session_id = std::numeric_limits<uint32_t>::max();
-    if((*RRCrypto)->session_id == local_writer_handle->session_id)
-        (*RRCrypto)->session_id -= 1;
 
     writer_lock.unlock();
 
@@ -530,8 +543,8 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     }
 
     (*RCrypto)->max_blocks_per_session = maxblockspersession;
-    (*RCrypto)->session_block_counter = maxblockspersession+1;
-    RAND_bytes( (unsigned char *)( &( (*RCrypto)->session_id ) ), sizeof(uint32_t));
+    (*RCrypto)->Sessions[0].session_block_counter = maxblockspersession+1;
+    RAND_bytes( (unsigned char *)( &( (*RCrypto)->Sessions[0].session_id ) ), sizeof(uint32_t));
 
     std::unique_lock<std::mutex> lock(participant_handle->mutex_);
 
@@ -605,10 +618,11 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     }
 
     (*RWCrypto)->max_blocks_per_session = local_reader_handle->max_blocks_per_session;
-    (*RWCrypto)->session_block_counter = local_reader_handle->session_block_counter;
-    (*RWCrypto)->session_id = std::numeric_limits<uint32_t>::max();
-    if((*RWCrypto)->session_id == local_reader_handle->session_id)
-        (*RWCrypto)->session_id -= 1;
+    auto session = &(*RWCrypto)->Sessions[0];
+    session->session_block_counter = local_reader_handle->Sessions[0].session_block_counter;
+    session->session_id = std::numeric_limits<uint32_t>::max();
+    if(session->session_id == local_reader_handle->Sessions[0].session_id)
+        session->session_id -= 1;
 
     reader_lock.unlock();
 
