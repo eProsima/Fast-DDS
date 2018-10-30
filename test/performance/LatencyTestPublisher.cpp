@@ -650,8 +650,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 
     //cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
     std::unique_lock<std::mutex> lock(mutex_);
-    while(comm_count_ != n_subscribers) comm_cond_.wait(lock);
-    --comm_count_;
+    comm_cond_.wait(lock, [&]() { return comm_count_ >= n_subscribers; });
+    comm_count_ = 0;
     lock.unlock();
     //cout << endl;
     //BEGIN THE TEST:
@@ -676,11 +676,7 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 
         lock.lock();
         data_cond_.wait_for(lock, std::chrono::seconds(1), [&]() { return data_count_ > 0; });
-
-        if(data_count_ > 0)
-        {
-            --data_count_;
-        }
+        data_count_ = 0;
         lock.unlock();
     }
 
