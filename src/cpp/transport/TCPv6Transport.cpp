@@ -144,14 +144,7 @@ std::vector<std::string> TCPv6Transport::GetBindingInterfacesList(const Locator_
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))
     {
-        if (IPLocator::isMulticast(locator))
-        {
-            vOutputInterfaces.push_back("::1");
-        }
-        else
-        {
-            vOutputInterfaces.push_back(IPLocator::toIPv6string(locator));
-        }
+        vOutputInterfaces.push_back("::");
     }
     else
     {

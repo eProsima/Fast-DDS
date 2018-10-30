@@ -303,14 +303,7 @@ std::vector<std::string> UDPv4Transport::GetBindingInterfacesList(const Locator_
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))
     {
-        if (IPLocator::isMulticast(locator))
-        {
-            vOutputInterfaces.push_back("0.0.0.0");
-        }
-        else
-        {
-            vOutputInterfaces.push_back(IPLocator::toIPv4string(locator));
-        }
+        vOutputInterfaces.push_back("0.0.0.0");
     }
     else
     {

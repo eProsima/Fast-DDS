@@ -305,14 +305,7 @@ std::vector<std::string> UDPv6Transport::GetBindingInterfacesList(const Locator_
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))
     {
-        if (IPLocator::isMulticast(locator))
-        {
-            vOutputInterfaces.push_back("::");
-        }
-        else
-        {
-            vOutputInterfaces.push_back(IPLocator::toIPv6string(locator));
-        }
+        vOutputInterfaces.push_back("::");
     }
     else
     {
