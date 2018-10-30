@@ -35,7 +35,7 @@ public:
     RTPS_DllAPI void* createData();
     RTPS_DllAPI void deleteData(void * data);
     RTPS_DllAPI bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-    RTPS_DllAPI bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+    RTPS_DllAPI bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5=false);
     RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(void* data);
     RTPS_DllAPI bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 
