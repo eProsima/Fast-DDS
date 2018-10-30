@@ -82,140 +82,110 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
         m_DynType.SetDynamicType(m_pDynType);
     }
 
+    // Create RTPSParticipant
+    std::string participant_profile_name = "participant_profile";
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = pid % 230;
+    PParam.rtps.setName("Participant_sub");
+    PParam.rtps.properties = part_property_policy;
+
     if (m_sXMLConfigFile.length() > 0)
     {
-        // Create RTPSParticipant
-        std::string participant_profile_name = "participant_profile";
         mp_participant = Domain::createParticipant(participant_profile_name);
-        if (mp_participant == nullptr)
-        {
-            return false;
-        }
-
-        if (dynamic_data)
-        {
-            Domain::registerType(mp_participant, &m_DynType);
-        }
-        else
-        {
-            Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
-        }
-        Domain::registerType(mp_participant, (TopicDataType*)&command_t);
-
-        // Create Data Subscriber
-        std::string profile_name = "subscriber_profile";
-        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
-        if (mp_datasub == nullptr)
-        {
-            return false;
-        }
-        std::cout << "Echo Subscriber created" << std::endl;
-
-        // Create Command Publisher
-        profile_name = "publisher_cmd_profile";
-        mp_commandpub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_commandpublistener);
-        if (mp_commandpub == nullptr)
-        {
-            return false;
-        }
-        std::cout << "Publisher created" << std::endl;
-
-        profile_name = "subscriber_cmd_profile";
-        mp_commandsub = Domain::createSubscriber(mp_participant, profile_name, &this->m_commandsublistener);
-        if (mp_commandsub == nullptr)
-        {
-            return false;
-        }
     }
     else
     {
-        ParticipantAttributes PParam;
-        PParam.rtps.builtin.domainId = pid % 230;
-        PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-        PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-        PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-        PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-        PParam.rtps.builtin.leaseDuration_announcementperiod = { 3, 0};
-        PParam.rtps.sendSocketBufferSize = 65536;
-        PParam.rtps.listenSocketBufferSize = 2 * 65536;
-        PParam.rtps.setName("Participant_sub");
-        PParam.rtps.properties = part_property_policy;
         mp_participant = Domain::createParticipant(PParam);
-        if (mp_participant == nullptr)
-        {
-            return false;
-        }
+    }
 
-        if (dynamic_data)
-        {
-            Domain::registerType(mp_participant, &m_DynType);
-        }
-        else
-        {
-            Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
-        }
-        Domain::registerType(mp_participant, (TopicDataType*)&command_t);
+    if (mp_participant == nullptr)
+    {
+        return false;
+    }
 
+    if (dynamic_data)
+    {
+        Domain::registerType(mp_participant, &m_DynType);
+    }
+    else
+    {
+        Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
+    }
+    Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
-        Locator_t loc;
-        //DATA SUBSCRIBER
-        SubscriberAttributes SubDataparam;
-        SubDataparam.topic.topicDataType = "MemoryType";
-        SubDataparam.topic.topicKind = NO_KEY;
-        std::ostringstream st;
-        st << "MemoryTest_";
-        if (hostname)
-            st << asio::ip::host_name() << "_";
-        st << pid << "_PUB2SUB";
-        SubDataparam.topic.topicName = st.str();
-        SubDataparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-        SubDataparam.topic.historyQos.depth = 1;
-        if (reliable)
-            SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        loc.port = 15003;
-        SubDataparam.unicastLocatorList.push_back(loc);
-        SubDataparam.properties = property_policy;
-        //loc.set_IP4_address(239,255,0,2);
-        //SubDataparam.multicastLocatorList.push_back(loc);
-        if (m_data_size > 60000)
-        {
-            SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        }
+    // Create Data Subscriber
+    std::string profile_name = "subscriber_profile";
+    SubscriberAttributes SubDataparam;
+    SubDataparam.topic.topicDataType = "MemoryType";
+    SubDataparam.topic.topicKind = NO_KEY;
+    std::ostringstream st;
+    st << "MemoryTest_";
+    if (hostname)
+        st << asio::ip::host_name() << "_";
+    st << pid << "_PUB2SUB";
+    SubDataparam.topic.topicName = st.str();
+    if (reliable)
+    {
+        SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    }
+    SubDataparam.properties = property_policy;
+    if (m_data_size > 60000)
+    {
+        SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
+
+    if (m_sXMLConfigFile.length() > 0)
+    {
+        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
+    }
+    else
+    {
         mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
-        if (mp_datasub == nullptr)
-            return false;
+    }
 
-        //COMMAND PUBLISHER
-        PublisherAttributes PubCommandParam;
-        PubCommandParam.topic.topicDataType = "TestCommandType";
-        PubCommandParam.topic.topicKind = NO_KEY;
-        std::ostringstream pct;
-        pct << "MemoryTest_Command_";
-        if (hostname)
-            pct << asio::ip::host_name() << "_";
-        pct << pid << "_SUB2PUB";
-        PubCommandParam.topic.topicName = pct.str();
-        PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-        if (mp_commandpub == nullptr)
-            return false;
-        SubscriberAttributes SubCommandParam;
-        SubCommandParam.topic.topicDataType = "TestCommandType";
-        SubCommandParam.topic.topicKind = NO_KEY;
-        std::ostringstream sct;
-        sct << "MemoryTest_Command_";
-        if (hostname)
-            sct << asio::ip::host_name() << "_";
-        sct << pid << "_PUB2SUB";
-        SubCommandParam.topic.topicName = sct.str();
-        SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-        if (mp_commandsub == nullptr)
-            return false;
+    if (mp_datasub == nullptr)
+    {
+        return false;
+    }
+
+    //COMMAND PUBLISHER
+    PublisherAttributes PubCommandParam;
+    PubCommandParam.topic.topicDataType = "TestCommandType";
+    PubCommandParam.topic.topicKind = NO_KEY;
+    std::ostringstream pct;
+    pct << "MemoryTest_Command_";
+    if (hostname)
+        pct << asio::ip::host_name() << "_";
+    pct << pid << "_SUB2PUB";
+    PubCommandParam.topic.topicName = pct.str();
+    PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+
+    mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
+
+    if (mp_commandpub == nullptr)
+    {
+        return false;
+    }
+
+    SubscriberAttributes SubCommandParam;
+    SubCommandParam.topic.topicDataType = "TestCommandType";
+    SubCommandParam.topic.topicKind = NO_KEY;
+    std::ostringstream sct;
+    sct << "MemoryTest_Command_";
+    if (hostname)
+        sct << asio::ip::host_name() << "_";
+    sct << pid << "_PUB2SUB";
+    SubCommandParam.topic.topicName = sct.str();
+    SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+
+    mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
+
+    if (mp_commandsub == nullptr)
+    {
+        return false;
     }
 
     if (dynamic_data)
