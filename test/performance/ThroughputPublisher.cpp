@@ -137,165 +137,118 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
 
     m_sExportPrefix = export_prefix;
 
+    // Create RTPSParticipant
+    std::string participant_profile_name = "participant_profile";
+    ParticipantAttributes PParam;
+    PParam.rtps.builtin.domainId = pid % 230;
+    PParam.rtps.setName("Participant_publisher");
+    PParam.rtps.properties = part_property_policy;
+
     if (m_sXMLConfigFile.length() > 0)
     {
-        // Create RTPSParticipant
-        std::string participant_profile_name = "participant_profile";
         mp_par = Domain::createParticipant(participant_profile_name);
-        if (mp_par == nullptr)
-        {
-            std::cout << "ERROR creating participant" << std::endl;
-            ready = false;
-            return;
-        }
-
-        //REGISTER THE TYPES
-        if (dynamic_data)
-        {
-            Domain::registerType(mp_par, &m_DynType);
-        }
-        else
-        {
-            Domain::registerType(mp_par, (TopicDataType*)&latency_t);
-        }
-        Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
-
-        // Create Sending Publisher
-        std::string profile_name = "publisher_profile";
-        mp_datapub = Domain::createPublisher(mp_par, profile_name, (PublisherListener*)&this->m_DataPubListener);
-        if (mp_datapub == nullptr)
-        {
-            std::cout << "ERROR creating publisher" << std::endl;
-            ready = false;
-            return;
-        }
-        std::cout << "Publisher created" << std::endl;
-
-        // Create Command Publisher
-        profile_name = "publisher_cmd_profile";
-        mp_commandpub = Domain::createPublisher(mp_par, profile_name, (PublisherListener*)&this->m_CommandPubListener);
-        if (mp_commandpub == nullptr)
-        {
-            std::cout << "ERROR creating command publisher" << std::endl;
-            ready = false;
-            return;
-        }
-        std::cout << "Publisher created" << std::endl;
-
-        profile_name = "subscriber_cmd_profile";
-        mp_commandsub = Domain::createSubscriber(mp_par, profile_name, &this->m_CommandSubListener);
-        if (mp_commandsub == nullptr)
-        {
-            std::cout << "ERROR creating command subscriber" << std::endl;
-            ready = false;
-            return;
-        }
-        std::cout << "Command Subscriber created" << std::endl;
     }
     else
     {
-        ParticipantAttributes PParam;
-        PParam.rtps.builtin.domainId = pid % 230;
-        PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-        PParam.rtps.builtin.leaseDuration_announcementperiod = { 3, 0 };
-        PParam.rtps.setName("Participant_publisher");
-        PParam.rtps.properties = part_property_policy;
-        // Buffer sizes
-        PParam.rtps.sendSocketBufferSize = 1048576;
-        PParam.rtps.listenSocketBufferSize = 4194304;
-
         mp_par = Domain::createParticipant(PParam);
-        if (mp_par == nullptr)
-        {
-            std::cout << "ERROR creating participant" << std::endl;
-            ready = false;
-            return;
-        }
-
-        //REGISTER THE TYPES
-        if (dynamic_data)
-        {
-            Domain::registerType(mp_par, &m_DynType);
-        }
-        else
-        {
-            Domain::registerType(mp_par, (TopicDataType*)&latency_t);
-        }
-        Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
-
-        //DATA PUBLISHER
-        PublisherAttributes Wparam;
-        Wparam.topic.topicDataType = "ThroughputType";
-        Wparam.topic.topicKind = NO_KEY;
-        std::ostringstream pt;
-        pt << "ThroughputTest_";
-        if (hostname)
-        {
-            pt << asio::ip::host_name() << "_";
-        }
-        pt << pid << "_UP";
-        Wparam.topic.topicName = pt.str();
-
-        if (reliable)
-        {
-            //RELIABLE
-            Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100);
-            Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
-            Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
-            Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        }
-        else
-        {
-            //BEST EFFORT:
-            Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-        }
-
-
-        Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        Wparam.topic.resourceLimitsQos.max_samples = 0;
-        Wparam.topic.resourceLimitsQos.allocated_samples = 1000;
-        Wparam.properties = property_policy;
-
-        mp_datapub = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_DataPubListener);
-
-        // COMMAND SUBSCRIBER
-        SubscriberAttributes Rparam;
-        Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-        Rparam.topic.resourceLimitsQos.max_samples = 20;
-        Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-        Rparam.topic.topicDataType = "ThroughputCommand";
-        Rparam.topic.topicKind = NO_KEY;
-        std::ostringstream sct;
-        sct << "ThroughputTest_Command_";
-        if (hostname)
-        {
-            sct << asio::ip::host_name() << "_";
-        }
-        sct << pid << "_SUB2PUB";
-        Rparam.topic.topicName = sct.str();
-        Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_commandsub = Domain::createSubscriber(mp_par, Rparam, (SubscriberListener*)&this->m_CommandSubListener);
-
-        PublisherAttributes Wparam2;
-        Wparam2.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-        Wparam2.topic.historyQos.depth = 50;
-        Wparam2.topic.resourceLimitsQos.max_samples = 50;
-        Wparam2.topic.resourceLimitsQos.allocated_samples = 50;
-        Wparam2.topic.topicDataType = "ThroughputCommand";
-        Wparam2.topic.topicKind = NO_KEY;
-        std::ostringstream pct;
-        pct << "ThroughputTest_Command_";
-        if (hostname)
-        {
-            pct << asio::ip::host_name() << "_";
-        }
-        pct << pid << "_PUB2SUB";
-        Wparam2.topic.topicName = pct.str();
-        Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        Wparam2.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_commandpub = Domain::createPublisher(mp_par, Wparam2, (PublisherListener*)&this->m_CommandPubListener);
     }
+
+    if (mp_par == nullptr)
+    {
+        std::cout << "ERROR creating participant" << std::endl;
+        ready = false;
+        return;
+    }
+
+    //REGISTER THE TYPES
+    if (dynamic_data)
+    {
+        Domain::registerType(mp_par, &m_DynType);
+    }
+    else
+    {
+        Domain::registerType(mp_par, (TopicDataType*)&latency_t);
+    }
+    Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
+
+    // Create Sending Publisher
+    std::string profile_name = "publisher_profile";
+    PublisherAttributes Wparam;
+    Wparam.topic.topicDataType = "ThroughputType";
+    Wparam.topic.topicKind = NO_KEY;
+    std::ostringstream pt;
+    pt << "ThroughputTest_";
+    if (hostname)
+    {
+        pt << asio::ip::host_name() << "_";
+    }
+    pt << pid << "_UP";
+    Wparam.topic.topicName = pt.str();
+    if (reliable)
+    {
+        //RELIABLE
+        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100);
+        Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
+        Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+        Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    }
+    else
+    {
+        //BEST EFFORT:
+        Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    }
+    Wparam.properties = property_policy;
+
+    if (m_sXMLConfigFile.length() > 0)
+    {
+        mp_datapub = Domain::createPublisher(mp_par, profile_name, (PublisherListener*)&this->m_DataPubListener);
+    }
+    else
+    {
+        mp_datapub = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_DataPubListener);
+    }
+
+    if (mp_datapub == nullptr)
+    {
+        std::cout << "ERROR creating publisher" << std::endl;
+        ready = false;
+        return;
+    }
+
+    // COMMAND SUBSCRIBER
+    SubscriberAttributes Rparam;
+    Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    Rparam.topic.topicDataType = "ThroughputCommand";
+    Rparam.topic.topicKind = NO_KEY;
+    std::ostringstream sct;
+    sct << "ThroughputTest_Command_";
+    if (hostname)
+    {
+        sct << asio::ip::host_name() << "_";
+    }
+    sct << pid << "_SUB2PUB";
+    Rparam.topic.topicName = sct.str();
+    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+
+    mp_commandsub = Domain::createSubscriber(mp_par, Rparam, (SubscriberListener*)&this->m_CommandSubListener);
+
+    PublisherAttributes Wparam2;
+    Wparam2.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    Wparam2.topic.topicDataType = "ThroughputCommand";
+    Wparam2.topic.topicKind = NO_KEY;
+    std::ostringstream pct;
+    pct << "ThroughputTest_Command_";
+    if (hostname)
+    {
+        pct << asio::ip::host_name() << "_";
+    }
+    pct << pid << "_PUB2SUB";
+    Wparam2.topic.topicName = pct.str();
+    Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Wparam2.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+
+    mp_commandpub = Domain::createPublisher(mp_par, Wparam2, (PublisherListener*)&this->m_CommandPubListener);
 
     // Calculate overhead
     t_start_ = std::chrono::steady_clock::now();
