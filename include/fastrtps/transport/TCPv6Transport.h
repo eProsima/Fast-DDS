@@ -98,7 +98,7 @@ protected:
     */
     virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) override;
 
-    bool IsLocatorAllowed(const Locator_t& locator) const;
+    bool IsLocatorAllowed(const Locator_t& locator) const override;
 
     //! Checks if the interfaces white list is empty.
     virtual bool IsInterfaceWhiteListEmpty() const override;

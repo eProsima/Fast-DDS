@@ -98,7 +98,7 @@ protected:
     */
     virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) override;
 
-    bool IsLocatorAllowed(const Locator_t& locator) const;
+    bool IsLocatorAllowed(const Locator_t& locator) const override;
 
     //! Checks if the given ip has been included in the white list to use it.
     virtual bool IsInterfaceAllowed(const std::string& interface) const override;
