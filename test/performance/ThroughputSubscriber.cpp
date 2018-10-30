@@ -493,8 +493,11 @@ void ThroughputSubscriber::run()
             mp_commandpubli->write(&comm);
 
             stop_count_ = 0;
-            Domain::removeSubscriber(mp_datasub);
-            Domain::unregisterType(mp_par, "ThroughputType");
+            if(dynamic_data)
+            {
+                Domain::removeSubscriber(mp_datasub);
+                Domain::unregisterType(mp_par, "ThroughputType");
+            }
         }
     }
     return;
