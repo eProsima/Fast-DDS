@@ -14,10 +14,12 @@
 
 import shlex, subprocess, time, os, socket, sys, threading
 
-binaries = os.environ.get("PROFILING_BINS").split(';')
+if os.environ.get("PROFILING_BINS"):
+    binaries = os.environ.get("PROFILING_BINS").split(';')
+
 valgrind = os.environ.get("VALGRIND_BIN")
 certs_path = os.environ.get("CERTS_PATH")
-test_time = 10
+test_time = "10"
 
 if not valgrind:
     valgrind = "valgrind"
@@ -34,6 +36,9 @@ def start_test(command, pubsub, time):
         options.extend(["--security=true", "--certs=" + certs_path])
 
     # Best effort
+    print(valgrind_command_be +
+            [command, pubsub] +
+            options)
     proc = subprocess.Popen(valgrind_command_be +
             [command, pubsub] +
             options)
@@ -58,12 +63,12 @@ if len(sys.argv) >= 4:
     test_time = sys.argv[3]
 
 if len(sys.argv) >= 3:
-    binaries = sys.argv[2]
+    binaries = [sys.argv[2]]
 
 for command in binaries:
     if len(sys.argv) >= 2:
         pubsub = sys.argv[1]
-        start_test(command, pubsub)
+        start_test(command, pubsub, test_time)
     else:
         tpub = threading.Thread(target=start_test, args=(command, "publisher", test_time))
         tpub.start()
