@@ -323,7 +323,7 @@ void MemoryTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subsc
         cout<< "Problem reading"<<endl;
 }
 
-void MemoryTestPublisher::run()
+void MemoryTestPublisher::run(uint32_t test_time)
 {
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 3 Matchings (Comm pub+sub and publisher or subscriber)
@@ -333,7 +333,7 @@ void MemoryTestPublisher::run()
     });
     disc_lock.unlock();
 
-    test(m_data_size);
+    test(test_time, m_data_size);
     eClock::my_sleep(100);
 
     cout << "REMOVING PUBLISHER"<<endl;
@@ -342,7 +342,7 @@ void MemoryTestPublisher::run()
     Domain::removeSubscriber(mp_commandsub);
 }
 
-bool MemoryTestPublisher::test(uint32_t datasize)
+bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
 {
     //cout << "Beginning test of size: "<<datasize+4 <<endl;
     m_status = 0;
@@ -384,6 +384,8 @@ bool MemoryTestPublisher::test(uint32_t datasize)
     {
         mp_memory = new MemoryType(datasize);
     }
+    std::chrono::duration<double, std::micro> test_time_us = std::chrono::seconds(test_time);
+    auto t_end_ = std::chrono::steady_clock::now();
 
     // Finally Data matching
     std::unique_lock<std::mutex> disc_lock(mutex_);
@@ -407,18 +409,24 @@ bool MemoryTestPublisher::test(uint32_t datasize)
     //cout << endl;
     //BEGIN THE TEST:
 
-    for(unsigned int count = 1; count <= n_samples; ++count)
+    auto t_start_ = std::chrono::steady_clock::now();
+
+    while (std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
     {
-        if (dynamic_data)
+        for(unsigned int count = 1; count <= n_samples; ++count)
         {
-            m_DynData->SetUint32Value(count, 0);
-            mp_datapub->write((void*)m_DynData);
+            if (dynamic_data)
+            {
+                m_DynData->SetUint32Value(count, 0);
+                mp_datapub->write((void*)m_DynData);
+            }
+            else
+            {
+                mp_memory->seqnum = count;
+                mp_datapub->write((void*)mp_memory);
+            }
         }
-        else
-        {
-            mp_memory->seqnum = count;
-            mp_datapub->write((void*)mp_memory);
-        }
+        t_end_ = std::chrono::steady_clock::now();
     }
 
     command.m_command = STOP;
