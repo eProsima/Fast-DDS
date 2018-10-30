@@ -76,13 +76,13 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
     IPLocator::setIPv4(locator, 192, 168, 1 , 1);
     locator.port = 1979;
-    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32);
-    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000);
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, uint32_t(32));
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, uint32_t(1000));
     EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
-    EXPECT_EQ(builtin.domainId, 2019102);
+    EXPECT_EQ(builtin.domainId, uint32_t(2019102));
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333);
