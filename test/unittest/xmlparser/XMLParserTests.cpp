@@ -420,8 +420,8 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
-    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
+    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, uint32_t(2048));
+    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, uint32_t(45));
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }

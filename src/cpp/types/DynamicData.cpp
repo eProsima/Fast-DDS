@@ -1112,7 +1112,7 @@ void DynamicData::GetValue(std::string& sOutValue, MemberId id /*= MEMBER_ID_INV
     {
         wchar_t value(0);
         GetChar16Value(value, id);
-        std::wstring temp = L"" + value;
+        std::wstring temp(&value);
         sOutValue = std::string(temp.begin(), temp.end());
     }
     break;

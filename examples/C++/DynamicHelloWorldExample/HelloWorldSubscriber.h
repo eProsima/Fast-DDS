@@ -64,7 +64,6 @@ public:
 private:
 	// Dynamic Types
 	eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-	bool m_dynamic;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */
