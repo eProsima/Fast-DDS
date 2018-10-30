@@ -64,8 +64,8 @@ class MemoryTestPublisher {
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
                 const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types);
-        void run();
-        bool test(uint32_t datasize);
+        void run(uint32_t test_time);
+        bool test(uint32_t test_time, uint32_t datasize);
 
         class DataPubListener : public eprosima::fastrtps::PublisherListener
         {

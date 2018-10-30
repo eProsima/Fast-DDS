@@ -118,7 +118,8 @@ enum  optionIndex {
     CERTS_PATH,
     XML_FILE,
     DATA_SIZE,
-    DYNAMIC_TYPES
+    DYNAMIC_TYPES,
+    TIME
 };
 
 const option::Descriptor usage[] = {
@@ -127,6 +128,7 @@ const option::Descriptor usage[] = {
     { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
     { SAMPLES,0,"s","samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
     { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
+    { TIME, 0,"t","time",                   Arg::Numeric,   "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
     { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
@@ -180,6 +182,7 @@ int main(int argc, char** argv)
     bool export_csv = false;
     bool dynamic_types = false;
     uint32_t data_size = 16;
+    uint32_t test_time_sec = 5;
     std::string export_prefix = "";
     std::string sXMLConfigFile = "";
 
@@ -294,9 +297,11 @@ int main(int argc, char** argv)
                 }
                 break;
             }
+
             case DATA_SIZE:
                 data_size = strtol(opt.arg, nullptr, 10);
                 break;
+
             case XML_FILE:
                 if (opt.arg != nullptr)
                 {
@@ -308,8 +313,13 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
+
             case DYNAMIC_TYPES:
                 dynamic_types = true;
+                break;
+
+            case TIME:
+                test_time_sec = strtol(opt.arg, nullptr, 10);
                 break;
 
 #if HAVE_SECURITY
@@ -395,7 +405,7 @@ int main(int argc, char** argv)
         MemoryTestPublisher memoryPub;
         memoryPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
             pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size, dynamic_types);
-        memoryPub.run();
+        memoryPub.run(test_time_sec);
     }
     else
     {
