@@ -490,7 +490,6 @@ gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
             //std::cout << "TIMESTAMP : " << std::to_string(sub->g_servertimestamp) << " _ " << std::to_string(vpacket.timestamp) << std::endl;
             sub->g_servertimestamp += vpacket.duration;
             sub->g_clienttimestamp = vpacket.timestamp;
-            std::cout << "time " << vpacket.timestamp << std::endl;
 
             // Set its timestamp and duration
             //GST_BUFFER_TIMESTAMP(buffer) = gst_util_uint64_scale(sink->num_samples, GST_SECOND, SAMPLE_RATE);
