@@ -424,6 +424,7 @@ void VideoTestSubscriber::InitGStreamer()
                 ok = (sink != nullptr);
                 if (ok)
                 {
+                    g_object_set(sink, "sync", FALSE, NULL);
                     g_object_set(sink, "text-overlay", FALSE, NULL);
                     g_object_set(sink, "signal-fps-measurements", TRUE, NULL);
                     g_signal_connect(G_OBJECT(sink), "fps-measurements", (GCallback)fps_stats_cb, this);
@@ -469,56 +470,39 @@ gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
     std::unique_lock<std::mutex> lock(sub->gst_mutex_);
     if (sub->m_bRunning)
     {
-        static bool feeding = false;
-        int counter = 0;
-        while (!sub->hasData() && counter < WAIT_AFTER_LAST_FEED_MS)
-        {
-            eClock::my_sleep(1);
-            if (feeding) ++counter;
-        }
-        if (counter == WAIT_AFTER_LAST_FEED_MS)
-        {
-            sub->stop();
-            return FALSE;
-        }
-        feeding = true;
-
         GstBuffer *buffer;
         GstFlowReturn ret;
         GstMapInfo map;
         //gint16 *raw;
         gint num_samples = 0;
         //gint size = 0;
-        gsize chunk_size = sub->currentSize();
+
+        const VideoType& vpacket = sub->pop_video_packet();
 
         // Create a new empty buffer
-        buffer = gst_buffer_new_and_alloc(chunk_size);
+        gsize size = vpacket.data.size();
+        buffer = gst_buffer_new_and_alloc(size);
 
-        // Set its timestamp and duration
-        //GST_BUFFER_TIMESTAMP(buffer) = gst_util_uint64_scale(sink->num_samples, GST_SECOND, SAMPLE_RATE);
-        //GST_BUFFER_DURATION(buffer) = gst_util_uint64_scale(num_samples, GST_SECOND, SAMPLE_RATE);
-        gst_buffer_map(buffer, &map, GST_MAP_WRITE);
-        guint8* pos = map.data;
-        while (chunk_size && sub->hasData())
         {
-            const VideoType& vpacket = sub->pop_video_packet();
-            {
-                std::unique_lock<std::mutex> stats_lock(sub->stats_mutex_);
-                sub->g_framesDropped = static_cast<gint64>((vpacket.timestamp - sub->g_servertimestamp) / 33333333);
-            }
+            std::unique_lock<std::mutex> stats_lock(sub->stats_mutex_);
+            sub->g_framesDropped = static_cast<gint64>((vpacket.timestamp - sub->g_servertimestamp) / 33333333);
 
             //std::cout << "TIMESTAMP : " << std::to_string(sub->g_servertimestamp) << " _ " << std::to_string(vpacket.timestamp) << std::endl;
             sub->g_servertimestamp += vpacket.duration;
             sub->g_clienttimestamp = vpacket.timestamp;
-            GST_BUFFER_PTS(buffer) = sub->g_servertimestamp;
-            GST_BUFFER_DURATION(buffer) = vpacket.duration;
+            std::cout << "time " << vpacket.timestamp << std::endl;
 
-            gsize size = vpacket.data.size();
-            memmove(pos, vpacket.data.data(), size);
-            pos += size;
-            chunk_size -= size;
-            ++num_samples;
+            // Set its timestamp and duration
+            //GST_BUFFER_TIMESTAMP(buffer) = gst_util_uint64_scale(sink->num_samples, GST_SECOND, SAMPLE_RATE);
+            //GST_BUFFER_DURATION(buffer) = gst_util_uint64_scale(num_samples, GST_SECOND, SAMPLE_RATE);
+            //GST_BUFFER_PTS(buffer) = sub->g_servertimestamp;
+            //GST_BUFFER_DURATION(buffer) = vpacket.duration;
         }
+
+
+        gst_buffer_map(buffer, &map, GST_MAP_WRITE);
+        memmove(map.data, vpacket.data.data(), size);
+        ++num_samples;
 
         gst_buffer_unmap(buffer, &map);
         //sub->num_samples_ += num_samples;
@@ -541,6 +525,7 @@ gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
 void VideoTestSubscriber::stop()
 {
     m_bRunning = false;
+    deque_cond_.notify_one();
     gst_element_set_state(pipeline, GST_STATE_NULL);
 }
 

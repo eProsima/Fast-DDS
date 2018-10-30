@@ -127,6 +127,7 @@ class VideoTestSubscriber
         std::deque<VideoType> packet_deque_;
         std::mutex stats_mutex_;
         std::mutex deque_mutex_;
+        std::condition_variable deque_cond_;
         std::mutex gst_mutex_;
 
         std::chrono::steady_clock::time_point t_start_, t_end_;
@@ -150,36 +151,21 @@ protected:
     void push_video_packet(VideoType& packet)
     {
         std::unique_lock<std::mutex> lock(deque_mutex_);
-        packet_deque_.push_back(packet);
-    }
-
-    uint32_t currentSize()
-    {
-        uint32_t size = 0;
-        std::unique_lock<std::mutex> lock(deque_mutex_);
-        for (auto& vpacket : packet_deque_)
-        {
-            size += (uint32_t) vpacket.data.size();
-        }
-        return size;
+        packet_deque_.push_back(std::move(packet));
+        deque_cond_.notify_one();
     }
 
     VideoType pop_video_packet()
     {
         std::unique_lock<std::mutex> lock(deque_mutex_);
+        deque_cond_.wait(lock, [&]() { return !m_bRunning || !packet_deque_.empty(); });
         VideoType vpacket;
-        if (!packet_deque_.empty())
+        if(!packet_deque_.empty())
         {
-            vpacket = packet_deque_[0];
+            vpacket = std::move(packet_deque_[0]);
             packet_deque_.pop_front();
         }
         return vpacket;
-    }
-
-    bool hasData()
-    {
-        std::unique_lock<std::mutex> lock(deque_mutex_);
-        return !packet_deque_.empty();
     }
 
     static void gst_run(VideoTestSubscriber* sub);
