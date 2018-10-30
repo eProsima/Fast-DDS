@@ -729,21 +729,46 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                 }
                 case PID_TYPE_CONSISTENCY_ENFORCEMENT:
                 {
-                    uint32_t uKind(0);
+                    uint16_t uKind(0);
                     octet temp(0);
                     TypeConsistencyEnforcementQosPolicy * p = new TypeConsistencyEnforcementQosPolicy();
-                    valid &= CDRMessage::readUInt32(msg, &uKind);
-                    p->m_kind = static_cast<TypeConsistencyKind>(uKind);
-                    valid &= CDRMessage::readOctet(msg, &temp);
-                    p->m_ignore_sequence_bounds = temp == 0 ? false : true;
-                    valid &= CDRMessage::readOctet(msg, &temp);
-                    p->m_ignore_string_bounds = temp == 0 ? false : true;
-                    valid &= CDRMessage::readOctet(msg, &temp);
-                    p->m_ignore_member_names = temp == 0 ? false : true;
-                    valid &= CDRMessage::readOctet(msg, &temp);
-                    p->m_prevent_type_widening = temp == 0 ? false : true;
-                    valid &= CDRMessage::readOctet(msg, &temp);
-                    p->m_force_type_validation = temp == 0 ? false : true;
+                    p->m_ignore_sequence_bounds = false;
+                    p->m_ignore_string_bounds = false;
+                    p->m_ignore_member_names = false;
+                    p->m_prevent_type_widening = false;
+                    p->m_force_type_validation = false;
+
+                    valid &= plength >= 2;
+                    if (valid)
+                    {
+                        valid &= CDRMessage::readUInt16(msg, &uKind);
+                        p->m_kind = static_cast<TypeConsistencyKind>(uKind);
+                    }
+                    if (valid && plength >= 3)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_ignore_sequence_bounds = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 4)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_ignore_string_bounds = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 5)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_ignore_member_names = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 6)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_prevent_type_widening = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 7)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_force_type_validation = temp == 0 ? false : true;
+                    }
                     IF_VALID_ADD
                 }
                 case PID_TYPE_IDV1:

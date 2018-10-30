@@ -1062,7 +1062,7 @@ bool EDP::checkTypeIdentifier(const TypeIdentifier * wti, const TypeIdentifier *
 */
 bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
-    if (wdata->topicDiscoveryKind() == NO_CHECK && rdata->topicDiscoveryKind() == NO_CHECK)
+    if (wdata->topicDiscoveryKind() == NO_CHECK || rdata->topicDiscoveryKind() == NO_CHECK)
     {
         return true;
     }
