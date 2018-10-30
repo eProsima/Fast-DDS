@@ -17,25 +17,26 @@ import shlex, subprocess, time, os, socket, sys, threading
 binaries = os.environ.get("PROFILING_BINS").split(';')
 valgrind = os.environ.get("VALGRIND_BIN")
 certs_path = os.environ.get("CERTS_PATH")
+test_time = 10
 
 if not valgrind:
     valgrind = "valgrind"
 
-def start_test(command, pubsub):
+def start_test(command, pubsub, time):
     os.system("mkdir -p output")
 
     valgrind_command_rel = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_rel.out"]
     valgrind_command_be = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_be.out"]
 
-    security_options = []
+    options = ["--time=" + time]
 
     if certs_path:
-        security_options = ["--security=true", "--certs=" + certs_path]
+        options.extend(["--security=true", "--certs=" + certs_path])
 
     # Best effort
     proc = subprocess.Popen(valgrind_command_be +
             [command, pubsub] +
-            security_options)
+            options)
 
     proc.communicate()
 
@@ -45,7 +46,7 @@ def start_test(command, pubsub):
     # Reliable
     proc = subprocess.Popen(valgrind_command_rel +
             [command, pubsub, "-r", "reliable"] +
-            security_options)
+            options)
 
     proc.communicate()
 
@@ -53,17 +54,20 @@ def start_test(command, pubsub):
     # print("Command: " + py_command)
     p = subprocess.Popen(py_command, shell=True)
 
-if len(sys.argv) == 3:
+if len(sys.argv) >= 4:
+    test_time = sys.argv[3]
+
+if len(sys.argv) >= 3:
     binaries = sys.argv[2]
 
 for command in binaries:
-    if len(sys.argv) == 2:
+    if len(sys.argv) >= 2:
         pubsub = sys.argv[1]
         start_test(command, pubsub)
     else:
-        tpub = threading.Thread(target=start_test, args=(command, "publisher",))
+        tpub = threading.Thread(target=start_test, args=(command, "publisher", test_time))
         tpub.start()
-        tsub = threading.Thread(target=start_test, args=(command, "subscriber",))
+        tsub = threading.Thread(target=start_test, args=(command, "subscriber", test_time))
         tsub.start()
 
 quit()
