@@ -27,7 +27,17 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
+//#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+//#include <fastrtps/types/DynamicDataFactory.h>
+//#include <fastrtps/types/DynamicTypeBuilder.h>
+//#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+//#include <fastrtps/types/TypeDescriptor.h>
+//#include <fastrtps/types/MemberDescriptor.h>
+//#include <fastrtps/types/DynamicType.h>
+//#include <fastrtps/types/DynamicData.h>
+//#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <condition_variable>
 #include <chrono>
@@ -40,8 +50,10 @@ class ThroughputPublisher
     public:
 
         ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv,
+                const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+                const std::string& sXMLConfigFile, bool dynamic_types);
         virtual ~ThroughputPublisher();
         eprosima::fastrtps::Participant* mp_par;
         eprosima::fastrtps::Publisher* mp_datapub;
@@ -52,6 +64,9 @@ class ThroughputPublisher
         std::mutex mutex_;
         int disc_count_;
         std::condition_variable disc_cond_;
+        std::mutex dataMutex_;
+        int data_disc_count_;
+        std::condition_variable data_disc_cond_;
 
         class DataPubListener : public eprosima::fastrtps::PublisherListener
         {
@@ -101,7 +116,6 @@ class ThroughputPublisher
         void run(uint32_t test_time, uint32_t recovery_time_ms, int demand, int msg_size);
         bool test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size);
         std::vector<TroughputResults> m_timeStats;
-        ThroughputDataType latency_t;
         ThroughputCommandDataType throuputcommand_t;
 
         bool loadDemandsPayload();
@@ -112,6 +126,17 @@ class ThroughputPublisher
         std::stringstream output_file;
         uint32_t payload;
         bool reliable_;
+        std::string m_sXMLConfigFile;
+        std::string m_sExportPrefix;
+        //bool dynamic_data = false;
+        // Static Data
+        ThroughputDataType latency_t;
+        ThroughputType *latency;
+        // Dynamic Data
+        //eprosima::fastrtps::types::DynamicData* m_DynData;
+        //eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        //eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+        //eprosima::fastrtps::PublisherAttributes pubAttr;
 };
 
 

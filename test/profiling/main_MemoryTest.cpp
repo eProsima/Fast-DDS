@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "LatencyTestPublisher.h"
-#include "LatencyTestSubscriber.h"
+#include "MemoryTestPublisher.h"
+#include "MemoryTestSubscriber.h"
 
 #include "optionparser.h"
 
@@ -116,17 +116,19 @@ enum  optionIndex {
     EXPORT_PREFIX,
     USE_SECURITY,
     CERTS_PATH,
-    LARGE_DATA,
     XML_FILE,
-    DYNAMIC_TYPES
+    DATA_SIZE,
+    DYNAMIC_TYPES,
+    TIME
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: LatencyTest <publisher|subscriber>\n\nGeneral options:" },
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: MemoryTest <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
     { SAMPLES,0,"s","samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
     { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
+    { TIME, 0,"t","time",                   Arg::Numeric,   "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
     { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
@@ -138,8 +140,8 @@ const option::Descriptor usage[] = {
     { USE_SECURITY, 0, "", "security",      Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
     { CERTS_PATH, 0, "", "certs",           Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
 #endif
-    { LARGE_DATA, 0, "l", "large",          Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
+    { DATA_SIZE, 0, "", "size",             Arg::Numeric,   "\t--size\tData size." },
     { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
     { 0, 0, 0, 0, 0, 0 }
 };
@@ -173,15 +175,16 @@ int main(int argc, char** argv)
     bool use_security = false;
     std::string certs_path;
 #endif
-    bool echo = true;
+    bool echo = false;
     bool reliable = false;
     uint32_t seed = 80;
     bool hostname = false;
     bool export_csv = false;
-    bool large_data = false;
+    bool dynamic_types = false;
+    uint32_t data_size = 16;
+    uint32_t test_time_sec = 5;
     std::string export_prefix = "";
     std::string sXMLConfigFile = "";
-    bool dynamic_types = false;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -294,9 +297,11 @@ int main(int argc, char** argv)
                 }
                 break;
             }
-            case LARGE_DATA:
-                large_data = true;
+
+            case DATA_SIZE:
+                data_size = strtol(opt.arg, nullptr, 10);
                 break;
+
             case XML_FILE:
                 if (opt.arg != nullptr)
                 {
@@ -308,8 +313,13 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
+
             case DYNAMIC_TYPES:
                 dynamic_types = true;
+                break;
+
+            case TIME:
+                test_time_sec = strtol(opt.arg, nullptr, 10);
                 break;
 
 #if HAVE_SECURITY
@@ -392,17 +402,17 @@ int main(int argc, char** argv)
     if (pub_sub)
     {
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
-        LatencyTestPublisher latencyPub;
-        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
-            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types);
-        latencyPub.run();
+        MemoryTestPublisher memoryPub;
+        memoryPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
+            pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size, dynamic_types);
+        memoryPub.run(test_time_sec);
     }
     else
     {
-        LatencyTestSubscriber latencySub;
-        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile, dynamic_types);
-        latencySub.run();
+        MemoryTestSubscriber memorySub;
+        memorySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+            sXMLConfigFile, data_size, dynamic_types);
+        memorySub.run();
     }
 
     eClock::my_sleep(1000);

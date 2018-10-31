@@ -27,10 +27,18 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
-
-
+//#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+//#include <fastrtps/types/DynamicDataFactory.h>
+//#include <fastrtps/types/DynamicTypeBuilder.h>
+//#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+//#include <fastrtps/types/TypeDescriptor.h>
+//#include <fastrtps/types/MemberDescriptor.h>
+//#include <fastrtps/types/DynamicType.h>
+//#include <fastrtps/types/DynamicData.h>
+//#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <condition_variable>
 #include <chrono>
@@ -46,7 +54,8 @@ class ThroughputSubscriber
 
         ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy);
+                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+                const std::string& sXMLConfigFile, bool dynamic_types);
         virtual ~ThroughputSubscriber();
         eprosima::fastrtps::Participant* mp_par;
         eprosima::fastrtps::Subscriber* mp_datasub;
@@ -55,8 +64,11 @@ class ThroughputSubscriber
         std::chrono::steady_clock::time_point t_start_, t_end_;
         std::chrono::duration<double, std::micro> t_overhead_;
         std::mutex mutex_;
-        int disc_count_;
+        uint32_t disc_count_;
         std::condition_variable disc_cond_;
+        std::mutex dataMutex_;
+        uint32_t data_disc_count_;
+        std::condition_variable data_disc_cond_;
         //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
         int stop_count_;
         std::condition_variable stop_cond_;
@@ -71,7 +83,6 @@ class ThroughputSubscriber
                 uint32_t lastseqnum,saved_lastseqnum;
                 uint32_t lostsamples,saved_lostsamples;
                 bool first;
-                ThroughputType* throughputin;
                 eprosima::fastrtps::SampleInfo_t info;
                 void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
                         eprosima::fastrtps::rtps::MatchingInfo& info);
@@ -118,8 +129,17 @@ class ThroughputSubscriber
         uint32_t m_datasize;
         uint32_t m_demand;
         void run();
-        ThroughputDataType throughput_t;
         ThroughputCommandDataType throuputcommand_t;
+        std::string m_sXMLConfigFile;
+        //bool dynamic_data = false;
+        // Static Data
+        ThroughputDataType throughput_t;
+        ThroughputType* throughputin;
+        // Dynamic Data
+        //eprosima::fastrtps::types::DynamicData* m_DynData;
+        //eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        //eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+        //eprosima::fastrtps::SubscriberAttributes subAttr;
 };
 
 #endif /* THROUGHPUTSUBSCRIBER_H_ */

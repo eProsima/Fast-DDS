@@ -13,34 +13,45 @@
 // limitations under the License.
 
 /**
- * @file LatencyTestTypes.h
+ * @file VideoTestTypes.h
  *
  */
 
-#ifndef LATENCYTESTTYPES_H_
-#define LATENCYTESTTYPES_H_
+#ifndef VIDEOTESTTYPES_H_
+#define VIDEOTESTTYPES_H_
 
 #include "fastrtps/fastrtps_all.h"
 
-class LatencyType
+class VideoType
 {
     public:
 
         uint32_t seqnum;
+        uint64_t timestamp;
+        uint64_t duration;
         std::vector<uint8_t> data;
 
-        LatencyType(): seqnum(0) {}
+        VideoType(): seqnum(0), timestamp(0), duration(0)
+        {}
 
-        LatencyType(uint32_t number) :
-            seqnum(0), data(number,0) {}
+        VideoType(uint32_t number) :
+            seqnum(0), timestamp(0), duration(0), data(number, 0)
+        {
+        }
 
-        ~LatencyType() {}
+        ~VideoType() {}
 };
 
-inline bool operator==(const LatencyType& lt1, const LatencyType& lt2)
+
+inline bool operator==(const VideoType& lt1, const VideoType& lt2)
 {
-    if(lt1.seqnum!=lt2.seqnum)
+    if (lt1.seqnum != lt2.seqnum)
         return false;
+    if (lt1.timestamp != lt2.timestamp)
+        return false;
+    if (lt1.duration != lt2.duration)
+        return false;
+
     if(lt1.data.size()!=lt2.data.size())
         return false;
     for(size_t i = 0;i<lt1.data.size();++i)
@@ -51,16 +62,16 @@ inline bool operator==(const LatencyType& lt1, const LatencyType& lt2)
     return true;
 }
 
-class LatencyDataType : public eprosima::fastrtps::TopicDataType
+class VideoDataType : public eprosima::fastrtps::TopicDataType
 {
     public:
-        LatencyDataType()
+        VideoDataType()
         {
-            setName("LatencyType");
+            setName("VideoType");
             m_typeSize = 17000;
             m_isGetKeyDefined = false;
         };
-        ~LatencyDataType(){};
+        ~VideoDataType(){};
         bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
         bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
@@ -103,4 +114,4 @@ class TestCommandDataType : public eprosima::fastrtps::TopicDataType
 };
 
 
-#endif /* LATENCYTESTTYPES_H_ */
+#endif /* VIDEOTESTTYPES_H_ */

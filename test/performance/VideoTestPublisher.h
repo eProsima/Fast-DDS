@@ -13,109 +13,108 @@
 // limitations under the License.
 
 /**
- * @file LatencyTestSubscriber.h
+ * @file VideoPublisher.h
  *
  */
 
-#ifndef LATENCYTESTSUBSCRIBER_H_
-#define LATENCYTESTSUBSCRIBER_H_
+#ifndef VIDEOPUBLISHER_H_
+#define VIDEOPUBLISHER_H_
 
 #include <asio.hpp>
-#include <condition_variable>
-#include "LatencyTestTypes.h"
-//#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-//#include <fastrtps/types/DynamicDataFactory.h>
-//#include <fastrtps/types/DynamicTypeBuilder.h>
-//#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-//#include <fastrtps/types/TypeDescriptor.h>
-//#include <fastrtps/types/MemberDescriptor.h>
-//#include <fastrtps/types/DynamicType.h>
-//#include <fastrtps/types/DynamicData.h>
-//#include <fastrtps/types/DynamicPubSubType.h>
 
-class LatencyTestSubscriber
+#include "VideoTestTypes.h"
+#include <gstreamer-1.0/gst/app/gstappsrc.h>
+#include <gstreamer-1.0/gst/app/gstappsink.h>
+#include <gstreamer-1.0/gst/gst.h>
+
+#include <condition_variable>
+#include <chrono>
+
+class VideoTestPublisher
 {
     public:
-        LatencyTestSubscriber();
-        virtual ~LatencyTestSubscriber();
+        VideoTestPublisher();
+        virtual ~VideoTestPublisher();
 
         eprosima::fastrtps::Participant* mp_participant;
         eprosima::fastrtps::Publisher* mp_datapub;
         eprosima::fastrtps::Publisher* mp_commandpub;
-        eprosima::fastrtps::Subscriber* mp_datasub;
         eprosima::fastrtps::Subscriber* mp_commandsub;
+        VideoType* mp_video_out;
+        std::chrono::steady_clock::time_point t_start_;
+        int n_subscribers;
+        unsigned int n_samples;
         eprosima::fastrtps::SampleInfo_t m_sampleinfo;
         std::mutex mutex_;
         int disc_count_;
         std::condition_variable disc_cond_;
         int comm_count_;
         std::condition_variable comm_cond_;
-        int data_count_;
-        std::condition_variable data_cond_;
+        bool timer_on_;
+        std::chrono::steady_clock::time_point send_start_;
+        std::condition_variable timer_cond_;
         int m_status;
-        int n_received;
-        int n_samples;
-        bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
+        unsigned int n_received;
+        bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile, bool dynamic_types);
-
+                const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time);
         void run();
         bool test(uint32_t datasize);
 
         class DataPubListener : public eprosima::fastrtps::PublisherListener
         {
             public:
-                DataPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                DataPubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
                 ~DataPubListener(){}
                 void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
                         eprosima::fastrtps::rtps::MatchingInfo& info);
-                LatencyTestSubscriber* mp_up;
+                VideoTestPublisher* mp_up;
+                int n_matched;
         } m_datapublistener;
-
-        class DataSubListener : public eprosima::fastrtps::SubscriberListener
-        {
-            public:
-                DataSubListener(LatencyTestSubscriber* up):mp_up(up){}
-                ~DataSubListener(){}
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& into);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                LatencyTestSubscriber* mp_up;
-        } m_datasublistener;
 
         class CommandPubListener : public eprosima::fastrtps::PublisherListener
         {
             public:
-                CommandPubListener(LatencyTestSubscriber* up):mp_up(up){}
+                CommandPubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
                 ~CommandPubListener(){}
                 void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
                         eprosima::fastrtps::rtps::MatchingInfo& info);
-                LatencyTestSubscriber* mp_up;
+                VideoTestPublisher* mp_up;
+                int n_matched;
         } m_commandpublistener;
 
         class CommandSubListener : public eprosima::fastrtps::SubscriberListener
         {
             public:
-                CommandSubListener(LatencyTestSubscriber* up):mp_up(up){}
+                CommandSubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
                 ~CommandSubListener(){}
                 void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
                         eprosima::fastrtps::rtps::MatchingInfo& into);
                 void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                LatencyTestSubscriber* mp_up;
+                VideoTestPublisher* mp_up;
+                int n_matched;
         } m_commandsublistener;
 
-        bool m_echo;
+        VideoDataType video_t;
         TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
-        //bool dynamic_data = false;
-        // Static Types
-        LatencyDataType latency_t;
-        LatencyType* mp_latency;
-	// Dynamic Types
-	//eprosima::fastrtps::types::DynamicData* m_DynData;
-	//eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-        //eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+        bool reliable_;
+
+        GstElement* pipeline;
+        GstElement* filesrc;
+        GstElement* videorate;
+        GstElement* sink;
+        int m_testTime;
+        int m_dropRate;
+        int m_sendSleepTime;
+
+    protected:
+
+        void InitGStreamer();
+        static GstFlowReturn new_sample(GstElement *sink, VideoTestPublisher *sub);
+
 };
 
-#endif /* LATENCYTESTSUBSCRIBER_H_ */
+
+#endif /* VIDEOPUBLISHER_H_ */
