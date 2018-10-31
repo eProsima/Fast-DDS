@@ -139,7 +139,7 @@ uint16_t TCPv6Transport::GetMaxLogicalPort() const
     return mConfiguration_.max_logical_port;
 }
 
-std::vector<std::string> TCPv6Transport::GetBindingInterfacesList(const Locator_t& locator)
+std::vector<std::string> TCPv6Transport::GetBindingInterfacesList()
 {
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty())

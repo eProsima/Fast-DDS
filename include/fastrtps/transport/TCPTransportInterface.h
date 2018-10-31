@@ -229,7 +229,7 @@ public:
     * @param locator Input locator.
     * @return Vector of interfaces in string format.
     */
-    virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) = 0;
+    virtual std::vector<std::string> GetBindingInterfacesList() = 0;
 
     virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const override;

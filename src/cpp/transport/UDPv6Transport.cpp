@@ -292,7 +292,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
     return success;
 }
 
-std::vector<std::string> UDPv6Transport::GetBindingInterfacesList(const Locator_t& /*locator*/)
+std::vector<std::string> UDPv6Transport::GetBindingInterfacesList()
 {
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty())

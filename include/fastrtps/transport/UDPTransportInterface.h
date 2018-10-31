@@ -160,7 +160,7 @@ protected:
     * @param locator Input locator.
     * @return Vector of interfaces in string format.
     */
-    virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) = 0;
+    virtual std::vector<std::string> GetBindingInterfacesList() = 0;
 
     bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
         uint32_t maxMsgSize);

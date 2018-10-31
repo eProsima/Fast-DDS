@@ -100,7 +100,7 @@ protected:
     * @param locator Input locator.
     * @return Vector of interfaces in string format.
     */
-    virtual std::vector<std::string> GetBindingInterfacesList(const Locator_t& locator) override;
+    virtual std::vector<std::string> GetBindingInterfacesList() override;
 
     //! Checks for whether locator is allowed.
     virtual bool IsLocatorAllowed(const Locator_t&) const override;

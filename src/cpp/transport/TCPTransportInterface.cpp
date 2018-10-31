@@ -269,7 +269,7 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
         }
         else
         {
-            std::vector<std::string> vInterfaces = GetBindingInterfacesList(locator);
+            std::vector<std::string> vInterfaces = GetBindingInterfacesList();
             for (auto& sInterface : vInterfaces)
             {
                 newAcceptor = new TCPAcceptor(mService, sInterface, locator);
