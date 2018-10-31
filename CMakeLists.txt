@@ -378,7 +378,10 @@ set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
 
 set(CPACK_COMPONENTS_ALL headers licenses)
 
-option(INSTALL_EXAMPLES "Install example" ON)
+option(INSTALL_EXAMPLES "Install example" OFF)
+if(EPROSIMA_INSTALLER)
+    set(INSTALL_EXAMPLES ON)
+endif()
 
 if(INSTALL_EXAMPLES)
   # Install examples
