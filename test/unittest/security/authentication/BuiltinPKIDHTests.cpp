@@ -158,19 +158,7 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
     ASSERT_TRUE(dh != nullptr);
     const unsigned char* pointer = dh1->data();
-    uint32_t length = 0;
-#if __BIG_ENDIAN__
-        ((char*)&length)[0] = pointer[0];
-        ((char*)&length)[1] = pointer[1];
-        ((char*)&length)[2] = pointer[2];
-        ((char*)&length)[3] = pointer[3];
-#else
-        ((char*)&length)[0] = pointer[3];
-        ((char*)&length)[1] = pointer[2];
-        ((char*)&length)[2] = pointer[1];
-        ((char*)&length)[3] = pointer[0];
-#endif
-    pointer += 4;
+    uint32_t length = dh1->size();
     BIGNUM* bn = BN_new();
     ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
 
@@ -184,38 +172,6 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     const BIGNUM* g = dh->g;
 #endif
 
-    ASSERT_TRUE(BN_cmp(p, bn) == 0);
-    pointer += length;
-    pointer += alignment(pointer - dh1->data(), 4);
-#if __BIG_ENDIAN__
-        ((char*)&length)[0] = pointer[0];
-        ((char*)&length)[1] = pointer[1];
-        ((char*)&length)[2] = pointer[2];
-        ((char*)&length)[3] = pointer[3];
-#else
-        ((char*)&length)[0] = pointer[3];
-        ((char*)&length)[1] = pointer[2];
-        ((char*)&length)[2] = pointer[1];
-        ((char*)&length)[3] = pointer[0];
-#endif
-    pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
-    ASSERT_TRUE(BN_cmp(g, bn) == 0);
-    pointer += length;
-    pointer += alignment(pointer - dh1->data(), 4);
-#if __BIG_ENDIAN__
-        ((char*)&length)[0] = pointer[0];
-        ((char*)&length)[1] = pointer[1];
-        ((char*)&length)[2] = pointer[2];
-        ((char*)&length)[3] = pointer[3];
-#else
-        ((char*)&length)[0] = pointer[3];
-        ((char*)&length)[1] = pointer[2];
-        ((char*)&length)[2] = pointer[1];
-        ((char*)&length)[3] = pointer[0];
-#endif
-    pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
     int check_result;
     ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
     ASSERT_TRUE(!check_result);
@@ -271,19 +227,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
     ASSERT_TRUE(dh != nullptr);
     const unsigned char* pointer = dh2->data();
-    uint32_t length = 0;
-#if __BIG_ENDIAN__
-        ((char*)&length)[0] = pointer[0];
-        ((char*)&length)[1] = pointer[1];
-        ((char*)&length)[2] = pointer[2];
-        ((char*)&length)[3] = pointer[3];
-#else
-        ((char*)&length)[0] = pointer[3];
-        ((char*)&length)[1] = pointer[2];
-        ((char*)&length)[2] = pointer[1];
-        ((char*)&length)[3] = pointer[0];
-#endif
-    pointer += 4;
+    uint32_t length = dh2->size();
     BIGNUM* bn = BN_new();
     ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
 
@@ -297,38 +241,6 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     const BIGNUM* g = dh->g;
 #endif
 
-    ASSERT_TRUE(BN_cmp(p, bn) == 0);
-    pointer += length;
-    pointer += alignment(pointer - dh2->data(), 4);
-#if __BIG_ENDIAN__
-        ((char*)&length)[0] = pointer[0];
-        ((char*)&length)[1] = pointer[1];
-        ((char*)&length)[2] = pointer[2];
-        ((char*)&length)[3] = pointer[3];
-#else
-        ((char*)&length)[0] = pointer[3];
-        ((char*)&length)[1] = pointer[2];
-        ((char*)&length)[2] = pointer[1];
-        ((char*)&length)[3] = pointer[0];
-#endif
-    pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
-    ASSERT_TRUE(BN_cmp(g, bn) == 0);
-    pointer += length;
-    pointer += alignment(pointer - dh2->data(), 4);
-#if __BIG_ENDIAN__
-        ((char*)&length)[0] = pointer[0];
-        ((char*)&length)[1] = pointer[1];
-        ((char*)&length)[2] = pointer[2];
-        ((char*)&length)[3] = pointer[3];
-#else
-        ((char*)&length)[0] = pointer[3];
-        ((char*)&length)[1] = pointer[2];
-        ((char*)&length)[2] = pointer[1];
-        ((char*)&length)[3] = pointer[0];
-#endif
-    pointer += 4;
-    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
     int check_result;
     ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
     ASSERT_TRUE(!check_result);

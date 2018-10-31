@@ -734,63 +734,42 @@ static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, Securi
 {
     if (alg_kind == EVP_PKEY_DH)
     {
-        DH* dh = DH_new();
+        DH* dh = DH_get_2048_256();
 
         if (dh != nullptr)
         {
             const unsigned char* pointer = buffer.data();
 
 #if IS_OPENSSL_1_1
-            // BIGNUM* p_ptr;
-            // BIGNUM** p = &p_ptr;
-            // BIGNUM* g_ptr;
-            // BIGNUM** g = &g_ptr;
             BIGNUM* pub_key_ptr;
             BIGNUM** pub_key = &pub_key_ptr;
 #else
-            // BIGNUM** p = &dh->p;
-            // BIGNUM** g = &dh->g;
             BIGNUM** pub_key = &dh->pub_key;
 #endif
 
-            // if((pointer = BN_deserialize(p, buffer.data(), pointer, exception)) != nullptr)
+            if ((pointer = BN_deserialize_raw(pub_key, buffer.data(), buffer.size(), exception)) != nullptr)
             {
-                // if((pointer = BN_deserialize(g, buffer.data(), pointer, exception)) != nullptr)
+#if IS_OPENSSL_1_1
+                DH_set0_key(dh, *pub_key, NULL);
+#endif
+                EVP_PKEY* key = EVP_PKEY_new();
+
+                if (key != nullptr)
                 {
-#if IS_OPENSSL_1_1
-                    // DH_set0_pqg(dh, *p, NULL, *g);
-#endif
-                    if ((pointer = BN_deserialize_raw(pub_key, buffer.data(), buffer.size(), exception)) != nullptr)
+                    if (EVP_PKEY_assign_DH(key, dh) > 0)
                     {
-#if IS_OPENSSL_1_1
-                        DH_set0_key(dh, *pub_key, NULL);
-#endif
-                        EVP_PKEY* key = EVP_PKEY_new();
-
-                        if (key != nullptr)
-                        {
-                            if (EVP_PKEY_assign_DH(key, dh) > 0)
-                            {
-                                return key;
-                            }
-                            else
-                                exception = _SecurityException_("OpenSSL library cannot set dh in pkey");
-
-                            EVP_PKEY_free(key);
-                        }
-                        else
-                            exception = _SecurityException_("OpenSSL library cannot create pkey");
+                        return key;
                     }
                     else
-                        exception = _SecurityException_("Cannot deserialize public key");
-                }
-                // else
-                //     exception = _SecurityException_("Cannot deserialize g");
-            }
-            // else
-            //     exception = _SecurityException_("Cannot deserialize p");
+                        exception = _SecurityException_("OpenSSL library cannot set dh in pkey");
 
-            DH_free(dh);
+                    EVP_PKEY_free(key);
+                }
+                else
+                    exception = _SecurityException_("OpenSSL library cannot create pkey");
+            }
+            else
+                exception = _SecurityException_("Cannot deserialize public key");
         }
         else
             exception = _SecurityException_("OpenSSL library cannot create dh");
