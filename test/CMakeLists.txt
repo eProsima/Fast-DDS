@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+enable_testing()
+include(CTest)
 
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
@@ -25,8 +27,6 @@ endif()
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
     file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE)
-    enable_testing()
-    include(CTest)
 
 	add_subdirectory(blackbox)
 	add_subdirectory(communication)
