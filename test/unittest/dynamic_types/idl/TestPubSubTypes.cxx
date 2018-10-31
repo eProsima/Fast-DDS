@@ -111,14 +111,14 @@ void BasicStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<BasicStruct*>(data));
 }
 
-bool BasicStructPubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool BasicStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     if(!m_isGetKeyDefined)
         return false;
     BasicStruct* p_type = static_cast<BasicStruct*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),BasicStruct::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(BasicStruct::getKeyMaxCdrSerializedSize()>16)    {
+    if(force_md5 || BasicStruct::getKeyMaxCdrSerializedSize()>16)    {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
@@ -218,14 +218,14 @@ void ComplexStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<ComplexStruct*>(data));
 }
 
-bool ComplexStructPubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool ComplexStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     if(!m_isGetKeyDefined)
         return false;
     ComplexStruct* p_type = static_cast<ComplexStruct*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),ComplexStruct::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(ComplexStruct::getKeyMaxCdrSerializedSize()>16)    {
+    if(force_md5 || ComplexStruct::getKeyMaxCdrSerializedSize()>16)    {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
@@ -322,14 +322,14 @@ void CompleteStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<CompleteStruct*>(data));
 }
 
-bool CompleteStructPubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool CompleteStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     if(!m_isGetKeyDefined)
         return false;
     CompleteStruct* p_type = static_cast<CompleteStruct*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),CompleteStruct::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(CompleteStruct::getKeyMaxCdrSerializedSize()>16)    {
+    if(force_md5 || CompleteStruct::getKeyMaxCdrSerializedSize()>16)    {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
@@ -424,14 +424,14 @@ void KeyedStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<KeyedStruct*>(data));
 }
 
-bool KeyedStructPubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool KeyedStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     if(!m_isGetKeyDefined)
         return false;
     KeyedStruct* p_type = static_cast<KeyedStruct*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),KeyedStruct::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(KeyedStruct::getKeyMaxCdrSerializedSize()>16)    {
+    if(force_md5 || KeyedStruct::getKeyMaxCdrSerializedSize()>16)    {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
