@@ -112,7 +112,7 @@ public:
         interface_ = sInterface;
     }
 
-    inline std::string GetInterface() const
+    inline const std::string& GetInterface() const
     {
         return interface_;
     }

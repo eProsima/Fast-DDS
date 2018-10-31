@@ -40,15 +40,15 @@ static void GetIP6s(vector<IPFinder::info_IP>& locNames, bool return_loopback = 
     locNames.erase(new_end, locNames.end());
 }
 
-//static void GetIP6sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
-//{
-//    GetIP6s(locNames, return_loopback);
-//    std::sort(locNames.begin(), locNames.end(),
-//            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
-//    auto new_end = std::unique(locNames.begin(), locNames.end(),
-//            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev == b.dev;});
-//    locNames.erase(new_end, locNames.end());
-//}
+static void GetIP6sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+{
+    GetIP6s(locNames, return_loopback);
+    std::sort(locNames.begin(), locNames.end(),
+            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
+    auto new_end = std::unique(locNames.begin(), locNames.end(),
+            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev == b.dev;});
+    locNames.erase(new_end, locNames.end());
+}
 
 static asio::ip::address_v6::bytes_type locatorToNative(const Locator_t& locator)
 {
@@ -273,18 +273,40 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
         // The multicast group will be joined silently, because we do not
         // want to return another resource.
         auto pChannelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
-        for (auto& pChannelResource : pChannelResources)
+        for (auto& channelResource : pChannelResources)
         {
-            auto ip = asio::ip::address_v6::from_string(pChannelResource->GetInterface());
-            try
+            if (channelResource->GetInterface() == s_IPv4AddressAny)
             {
-                pChannelResource->getSocket()->set_option(ip::multicast::join_group(
-                    ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
+                std::vector<IPFinder::info_IP> locNames;
+                GetIP6sUniqueInterfaces(locNames, true);
+                for (const auto& infoIP : locNames)
+                {
+                    auto ip = asio::ip::address_v6::from_string(infoIP.name);
+                    try
+                    {
+                        channelResource->getSocket()->set_option(ip::multicast::join_group(
+                            ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
+                    }
+                    catch (std::system_error& ex)
+                    {
+                        (void)ex;
+                        logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                    }
+                }
             }
-            catch (std::system_error& ex)
+            else
             {
-                (void)ex;
-                logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                auto ip = asio::ip::address_v6::from_string(channelResource->GetInterface());
+                try
+                {
+                    channelResource->getSocket()->set_option(ip::multicast::join_group(
+                        ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
+                }
+                catch (std::system_error& ex)
+                {
+                    (void)ex;
+                    logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                }
             }
         }
     }
@@ -297,7 +319,7 @@ std::vector<std::string> UDPv6Transport::GetBindingInterfacesList()
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty())
     {
-        vOutputInterfaces.push_back("::");
+        vOutputInterfaces.push_back(s_IPv6AddressAny);
     }
     else
     {

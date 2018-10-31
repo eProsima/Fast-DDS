@@ -29,6 +29,8 @@ namespace rtps{
 static const uint32_t s_maximumMessageSize = 65500;
 static const uint32_t s_maximumInitialPeersRange = 4;
 static const uint32_t s_minimumSocketBuffer = 65536;
+static const std::string s_IPv4AddressAny = "0.0.0.0";
+static const std::string s_IPv6AddressAny = "::";
 
 class SenderResource;
 class ChannelResource;

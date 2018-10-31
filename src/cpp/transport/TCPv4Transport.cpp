@@ -144,7 +144,7 @@ std::vector<std::string> TCPv4Transport::GetBindingInterfacesList()
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty())
     {
-        vOutputInterfaces.push_back("0.0.0.0");
+        vOutputInterfaces.push_back(s_IPv4AddressAny);
     }
     else
     {

@@ -144,7 +144,7 @@ std::vector<std::string> TCPv6Transport::GetBindingInterfacesList()
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty())
     {
-        vOutputInterfaces.push_back("::");
+        vOutputInterfaces.push_back(s_IPv6AddressAny);
     }
     else
     {

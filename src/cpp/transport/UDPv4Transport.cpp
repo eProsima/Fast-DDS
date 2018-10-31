@@ -41,15 +41,15 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
     locNames.erase(new_end, locNames.end());
 }
 
-//static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
-//{
-//    GetIP4s(locNames, return_loopback);
-//    std::sort(locNames.begin(), locNames.end(),
-//            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
-//    auto new_end = std::unique(locNames.begin(), locNames.end(),
-//            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.type != IPFinder::IP4_LOCAL && b.type != IPFinder::IP4_LOCAL && a.dev == b.dev;});
-//    locNames.erase(new_end, locNames.end());
-//}
+static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+{
+    GetIP4s(locNames, return_loopback);
+    std::sort(locNames.begin(), locNames.end(),
+            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
+    auto new_end = std::unique(locNames.begin(), locNames.end(),
+            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.type != IPFinder::IP4_LOCAL && b.type != IPFinder::IP4_LOCAL && a.dev == b.dev;});
+    locNames.erase(new_end, locNames.end());
+}
 
 static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
 {
@@ -273,16 +273,38 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
         auto& channelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
         for (auto& channelResource : channelResources)
         {
-            auto ip = asio::ip::address_v4::from_string(channelResource->GetInterface());
-            try
+            if (channelResource->GetInterface() == s_IPv4AddressAny)
             {
-                channelResource->getSocket()->set_option(
-                    ip::multicast::join_group(ip::address_v4::from_string(IPLocator::toIPv4string(locator)), ip));
+                std::vector<IPFinder::info_IP> locNames;
+                GetIP4sUniqueInterfaces(locNames, true);
+                for (const auto& infoIP : locNames)
+                {
+                    auto ip = asio::ip::address_v4::from_string(infoIP.name);
+                    try
+                    {
+                        channelResource->getSocket()->set_option(
+                            ip::multicast::join_group(ip::address_v4::from_string(IPLocator::toIPv4string(locator)), ip));
+                    }
+                    catch (std::system_error& ex)
+                    {
+                        (void)ex;
+                        logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                    }
+                }
             }
-            catch (std::system_error& ex)
+            else
             {
-                (void)ex;
-                logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                auto ip = asio::ip::address_v4::from_string(channelResource->GetInterface());
+                try
+                {
+                    channelResource->getSocket()->set_option(
+                        ip::multicast::join_group(ip::address_v4::from_string(IPLocator::toIPv4string(locator)), ip));
+                }
+                catch (std::system_error& ex)
+                {
+                    (void)ex;
+                    logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                }
             }
         }
     }
@@ -295,7 +317,7 @@ std::vector<std::string> UDPv4Transport::GetBindingInterfacesList()
     std::vector<std::string> vOutputInterfaces;
     if (IsInterfaceWhiteListEmpty())
     {
-        vOutputInterfaces.push_back("0.0.0.0");
+        vOutputInterfaces.push_back(s_IPv4AddressAny);
     }
     else
     {

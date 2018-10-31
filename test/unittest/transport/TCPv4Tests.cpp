@@ -243,7 +243,7 @@ TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
 
     ASSERT_EQ(mainLocalLocator.port, remoteLocator.port);
     ASSERT_EQ(mainLocalLocator.kind, remoteLocator.kind);
-    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), "0.0.0.0");
+    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), s_IPv4AddressAny);
 }
 
 TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
