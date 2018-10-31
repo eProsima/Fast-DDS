@@ -115,8 +115,8 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
-    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
+    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
+    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -183,8 +183,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048);
-    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45);
+    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
+    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -250,8 +250,8 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     //locator.port = 2021;
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     //EXPECT_EQ(loc_list_it->get_port(), 2021);
-    EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236);
-    EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234);
+    EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
+    EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
@@ -317,8 +317,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     //locator.port = 2021;
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     //EXPECT_EQ(loc_list_it->get_port(), 2021);
-    EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236);
-    EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234);
+    EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
+    EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
