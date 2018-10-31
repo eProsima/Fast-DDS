@@ -142,7 +142,7 @@ uint16_t TCPv6Transport::GetMaxLogicalPort() const
 std::vector<std::string> TCPv6Transport::GetBindingInterfacesList(const Locator_t& locator)
 {
     std::vector<std::string> vOutputInterfaces;
-    if (IsInterfaceWhiteListEmpty() || (!IPLocator::isAny(locator) && !IPLocator::isMulticast(locator)))
+    if (IsInterfaceWhiteListEmpty())
     {
         vOutputInterfaces.push_back("::");
     }

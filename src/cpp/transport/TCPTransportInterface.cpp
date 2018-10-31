@@ -269,8 +269,8 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
         }
         else
         {
-            std::vector<std::string> vInterfacesAllowed = GetBindingInterfacesList(locator);
-            for (auto& sInterface : vInterfacesAllowed)
+            std::vector<std::string> vInterfaces = GetBindingInterfacesList(locator);
+            for (auto& sInterface : vInterfaces)
             {
                 newAcceptor = new TCPAcceptor(mService, sInterface, locator);
                 uint16_t port = IPLocator::getPhysicalPort(locator);
@@ -749,9 +749,10 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
                 // Read the header
                 //octet header[TCPHEADER_SIZE];
                 TCPHeader tcp_header;
+                asio::error_code ec;
                 size_t bytes_received = read(*pChannelResource->getSocket(),
                     asio::buffer(&tcp_header, TCPHeader::getSize()),
-                    transfer_exactly(TCPHeader::getSize()));
+                    transfer_exactly(TCPHeader::getSize()), ec);
 
                 remoteLocator = pChannelResource->GetLocator();
 
@@ -849,8 +850,9 @@ size_t TCPTransportInterface::Send(TCPChannelResource *pChannelResource, const o
     size_t bytesSent = 0;
     try
     {
+        asio::error_code ec;
         std::unique_lock<std::recursive_mutex> scopedLock(pChannelResource->GetWriteMutex());
-        bytesSent = pChannelResource->getSocket()->send(asio::buffer(data, size));
+        bytesSent = pChannelResource->getSocket()->send(asio::buffer(data, size), 0, ec);
         errorCode = eSocketErrorCodes::eNoError;
     }
     catch (const asio::error_code& error)

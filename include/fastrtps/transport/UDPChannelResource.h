@@ -107,6 +107,16 @@ public:
         return getSocketPtr(socket_);
     }
 
+    inline void SetInterface(const std::string& sInterface)
+    {
+        interface_ = sInterface;
+    }
+
+    inline std::string GetInterface() const
+    {
+        return interface_;
+    }
+
     inline void SetMessageReceiver(TransportReceiverInterface* receiver)
     {
         mMsgReceiver = receiver;
@@ -122,6 +132,7 @@ private:
     TransportReceiverInterface* mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
+    std::string interface_;
     UDPChannelResource(const UDPChannelResource&) = delete;
     UDPChannelResource& operator=(const UDPChannelResource&) = delete;
 };

@@ -220,12 +220,13 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
 
     try
     {
-        std::vector<std::string> vSockets = GetBindingInterfacesList(locator);
-        for (std::string sIP : vSockets)
+        std::vector<std::string> vInterfaces = GetBindingInterfacesList(locator);
+        for (std::string sInterface : vInterfaces)
         {
-            eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sIP, IPLocator::getPhysicalPort(locator), is_multicast);
+            eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface, IPLocator::getPhysicalPort(locator), is_multicast);
             UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
             pChannelResource->SetMessageReceiver(receiver);
+            pChannelResource->SetInterface(sInterface);
             std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
                 pChannelResource, locator);
             pChannelResource->SetThread(newThread);

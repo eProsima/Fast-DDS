@@ -66,7 +66,8 @@ public:
     */
     ~TCPAcceptor()
     {
-        try{ mSocket.cancel(); } catch (...) {}
+        try { asio::error_code ec; mSocket.cancel(ec); }
+        catch (...) {}
         mSocket.close();
     }
 
