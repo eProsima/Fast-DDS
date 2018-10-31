@@ -1067,7 +1067,7 @@ ValidationResult_t PKIDH::validate_remote_identity(IdentityHandle** remote_ident
 
     const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(local_identity_handle);
 
-    if(!lih.nil())
+    if(!lih.nil() && !remote_identity_token.is_nil())
     {
         // dds.ca.sn
         const std::string* ca_sn = DataHolderHelper::find_property_value(remote_identity_token, "dds.ca.sn");

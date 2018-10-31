@@ -68,6 +68,7 @@ IdentityToken AuthenticationPluginTest::generate_remote_identity_token_ok(const 
 {
     IdentityToken token;
     const PKIIdentityHandle& h = PKIIdentityHandle::narrow(local_identity_handle);
+    token.class_id("DDS:Auth:PKI-DH:1.0");
 
     Property property;
 

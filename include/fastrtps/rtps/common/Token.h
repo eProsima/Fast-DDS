@@ -60,6 +60,11 @@ class DataHolder
             return *this;
         }
 
+        bool is_nil() const
+        {
+            return class_id_.empty();
+        }
+
         void class_id(const std::string& class_id)
         {
             class_id_ = class_id;
