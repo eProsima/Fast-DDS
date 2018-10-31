@@ -116,15 +116,15 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     //Default to AES128 if the user does not specify otherwise (GCM / GMAC depending of RTPS protection kind)
     bool is_rtps_encrypted = (plugin_attrs &  PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0;
     bool is_origin_auth = (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
-    bool use_256_bits = false;
+    bool use_256_bits = true;
     int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if(!participant_properties.empty()){
         for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
             if( (it)->name().compare("dds.sec.crypto.keysize") == 0)
             {
-                if (it->value().compare("256") == 0) 
+                if (it->value().compare("128") == 0) 
                 {
-                    use_256_bits = true;
+                    use_256_bits = false;
                 }
             }
             if( (it)->name().compare("dds.sec.crypto.maxblockspersession") == 0)

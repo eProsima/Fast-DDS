@@ -1633,6 +1633,10 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         std::vector<EntityCryptoHandle*>& receiving_crypto_list, bool update_specific_keys,
         SecureDataTag& tag, size_t sessionIndex)
 {
+    bool use_256_bits = (transformation_kind == c_transfrom_kind_aes256_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gmac);
+    int key_len = use_256_bits ? 32 : 16;
+
     serializer << tag.common_mac;
 
     eprosima::fastcdr::Cdr::state length_state = serializer.getState();
@@ -1657,7 +1661,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
             continue;
         }
 
-        if (remote_entity->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id == std::array<uint8_t, 4>{0, 0, 0, 0})
+        auto& keyMat = remote_entity->Remote2EntityKeyMaterial.at(0);
+        if (keyMat.receiver_specific_key_id == c_transformKeyIdZero)
         {
             // This means origin authentication is disabled. As it is configured on the writer, we know all other
             // receiving entities will have its specific key to null value, and we can skip the whole loop
@@ -1669,8 +1674,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         {
             //Update triggered!
             remote_entity->Sessions[sessionIndex].session_id = session_id;
-            compute_sessionkey(remote_entity->Sessions[sessionIndex].SessionKey, remote_entity->Remote2EntityKeyMaterial.at(0),
-                    remote_entity->Sessions[sessionIndex].session_id);
+            compute_sessionkey(remote_entity->Sessions[sessionIndex].SessionKey, true, 
+                keyMat.master_receiver_specific_key, keyMat.master_salt, session_id, key_len);
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
@@ -1755,12 +1760,17 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
             continue;
         }
 
-        if (remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id == std::array<uint8_t, 4>{0, 0, 0, 0})
+        auto& keyMat = remote_participant->Participant2ParticipantKeyMaterial.at(0);
+        if (keyMat.receiver_specific_key_id == c_transformKeyIdZero)
         {
             // This means origin authentication is disabled. As it is configured on the writer, we know all other
             // receiving entities will have its specific key to null value, and we can skip the whole loop
             break;
         }
+
+        bool use_256_bits = (keyMat.transformation_kind == c_transfrom_kind_aes256_gcm ||
+            keyMat.transformation_kind == c_transfrom_kind_aes256_gmac);
+        int key_len = use_256_bits ? 32 : 16;
 
         //Update the key if needed
         if((update_specific_keys || remote_participant->session_id != local_participant->session_id) &&
@@ -1768,9 +1778,8 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         {
             //Update triggered!
             remote_participant->session_id = local_participant->session_id;
-            compute_sessionkey(remote_participant->SessionKey,
-                    remote_participant->Participant2ParticipantKeyMaterial.at(0),
-                    remote_participant->session_id);
+            compute_sessionkey(remote_participant->SessionKey, true,
+                keyMat.master_receiver_specific_key, keyMat.master_salt, remote_participant->session_id, key_len);
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
@@ -2037,16 +2046,16 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
             return false;
         }
 
-        if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.receiver_mac.data()))
+        if(!EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
-            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
+            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptUpdate function returns an error");
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
-        if(!EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
+        if (!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.receiver_mac.data()))
         {
-            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptUpdate function returns an error");
+            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }

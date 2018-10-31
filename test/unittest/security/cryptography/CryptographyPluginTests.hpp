@@ -120,8 +120,8 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -133,7 +133,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -223,8 +223,8 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -236,7 +236,7 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -308,8 +308,8 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -321,7 +321,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -572,8 +572,8 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -585,7 +585,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -658,8 +658,8 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -671,7 +671,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -777,8 +777,8 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -790,7 +790,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -948,8 +948,8 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -961,7 +961,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -1132,8 +1132,8 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -1145,7 +1145,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -1315,8 +1315,8 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -1328,7 +1328,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -1368,10 +1368,10 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle& P_B = eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantB_remote); //Owner of a Reader
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle& P_A = eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantA_remote); //Owner of a Writer
 
-    ASSERT_TRUE( P_A->Readers.size() == 1);
-    ASSERT_TRUE( P_A->Writers.size() == 0);
-    ASSERT_TRUE( P_B->Writers.size() == 1);
-    ASSERT_TRUE( P_B->Readers.size() == 0);
+    ASSERT_TRUE( P_A->Readers.size() == 2);
+    ASSERT_TRUE( P_A->Writers.size() == 1);
+    ASSERT_TRUE( P_B->Writers.size() == 2);
+    ASSERT_TRUE( P_B->Readers.size() == 1);
 
     //Perform sample message exchange
     eprosima::fastrtps::rtps::CDRMessage_t plain_payload;
