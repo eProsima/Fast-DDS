@@ -210,8 +210,7 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
                     attributes.is_rtps_protected = true;
                     attributes.plugin_participant_attributes |=
                         PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
-                        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+                        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED;
                 }
             }
 
@@ -1759,9 +1758,78 @@ void SecurityManager::unmatch_builtin_endpoints(const ParticipantProxyData& part
     }
 }
 
+void SecurityManager::exchange_participant_crypto(ParticipantCryptoHandle* remote_participant_crypto, const GUID_t& remote_participant_guid)
+{
+    SecurityException exception;
+
+    // Get participant crypto tokens.
+    ParticipantCryptoTokenSeq local_participant_crypto_tokens;
+    if (crypto_plugin_->cryptkeyexchange()->create_local_participant_crypto_tokens(local_participant_crypto_tokens,
+        *local_participant_crypto_handle_, *remote_participant_crypto, exception))
+    {
+
+        ParticipantGenericMessage message = generate_participant_crypto_token_message(remote_participant_guid,
+            local_participant_crypto_tokens);
+
+        CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
+        {
+            return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
+                + 4 /*encapsulation*/);
+        }
+        , ALIVE, c_InstanceHandle_Unknown);
+
+        if (change != nullptr)
+        {
+            // Serialize message
+            CDRMessage_t aux_msg(0);
+            aux_msg.wraps = true;
+            aux_msg.buffer = change->serializedPayload.data;
+            aux_msg.length = change->serializedPayload.length;
+            aux_msg.max_size = change->serializedPayload.max_size;
+
+            // Serialize encapsulation
+            CDRMessage::addOctet(&aux_msg, 0);
+#if __BIG_ENDIAN__
+            aux_msg.msg_endian = BIGEND;
+            change->serializedPayload.encapsulation = PL_CDR_BE;
+            CDRMessage::addOctet(&aux_msg, CDR_BE);
+#else
+            aux_msg.msg_endian = LITTLEEND;
+            change->serializedPayload.encapsulation = PL_CDR_LE;
+            CDRMessage::addOctet(&aux_msg, CDR_LE);
+#endif
+            CDRMessage::addUInt16(&aux_msg, 0);
+
+            if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
+            {
+                change->serializedPayload.length = aux_msg.length;
+
+                // Send
+                if (!participant_volatile_message_secure_writer_history_->add_change(change))
+                {
+                    participant_volatile_message_secure_writer_history_->release_Cache(change);
+                    logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
+                }
+            }
+            else
+            {
+                participant_volatile_message_secure_writer_history_->release_Cache(change);
+                logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
+            }
+        }
+        else
+        {
+            logError(SECURITY, "WriterHistory cannot retrieve a CacheChange_t");
+        }
+    }
+    else
+    {
+        logError(SECURITY, "Error generating crypto token. (" << exception.what() << ")");
+    }
+}
+
 // TODO (Ricardo) Change participant_data
-ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(const GUID_t& remote_participant_guid,
-        IdentityHandle& remote_participant_identity,
+ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(IdentityHandle& remote_participant_identity,
         SharedSecretHandle& shared_secret)
 {
     if(crypto_plugin_ == nullptr)
@@ -1777,70 +1845,6 @@ ParticipantCryptoHandle* SecurityManager::register_and_match_crypto_endpoint(con
 
     if(remote_participant_crypto != nullptr)
     {
-        // Get participant crypto tokens.
-        ParticipantCryptoTokenSeq local_participant_crypto_tokens;
-        if(crypto_plugin_->cryptkeyexchange()->create_local_participant_crypto_tokens(local_participant_crypto_tokens,
-                *local_participant_crypto_handle_, *remote_participant_crypto, exception))
-        {
-            ParticipantGenericMessage message = generate_participant_crypto_token_message(remote_participant_guid,
-                    local_participant_crypto_tokens);
-
-            CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
-                    {
-                        return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-                                + 4 /*encapsulation*/);
-                    }
-                    , ALIVE, c_InstanceHandle_Unknown);
-
-            if(change != nullptr)
-            {
-                // Serialize message
-                CDRMessage_t aux_msg(0);
-                aux_msg.wraps = true;
-                aux_msg.buffer = change->serializedPayload.data;
-                aux_msg.length = change->serializedPayload.length;
-                aux_msg.max_size = change->serializedPayload.max_size;
-
-                // Serialize encapsulation
-                CDRMessage::addOctet(&aux_msg, 0);
-#if __BIG_ENDIAN__
-                aux_msg.msg_endian = BIGEND;
-                change->serializedPayload.encapsulation = PL_CDR_BE;
-                CDRMessage::addOctet(&aux_msg, CDR_BE);
-#else
-                aux_msg.msg_endian = LITTLEEND;
-                change->serializedPayload.encapsulation = PL_CDR_LE;
-                CDRMessage::addOctet(&aux_msg, CDR_LE);
-#endif
-                CDRMessage::addUInt16(&aux_msg, 0);
-
-                if(CDRMessage::addParticipantGenericMessage(&aux_msg, message))
-                {
-                    change->serializedPayload.length = aux_msg.length;
-
-                    // Send
-                    if(!participant_volatile_message_secure_writer_history_->add_change(change))
-                    {
-                        participant_volatile_message_secure_writer_history_->release_Cache(change);
-                        logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
-                    }
-                }
-                else
-                {
-                    participant_volatile_message_secure_writer_history_->release_Cache(change);
-                    logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
-                }
-            }
-            else
-            {
-                logError(SECURITY, "WriterHistory cannot retrieve a CacheChange_t");
-            }
-        }
-        else
-        {
-            logError(SECURITY, "Error generating crypto token. (" << exception.what() << ")");
-        }
-
         return remote_participant_crypto;
     }
     else
@@ -3275,8 +3279,8 @@ bool SecurityManager::participant_authorized(const ParticipantProxyData& partici
             }
 
             // Starts cryptography mechanism
-            ParticipantCryptoHandle* participant_crypto_handle = register_and_match_crypto_endpoint(participant_data.m_guid,
-                    *remote_participant_info->identity_handle_,
+            ParticipantCryptoHandle* participant_crypto_handle = 
+                register_and_match_crypto_endpoint(*remote_participant_info->identity_handle_,
                     *shared_secret_handle);
 
             // Store cryptography info
@@ -3349,6 +3353,9 @@ bool SecurityManager::participant_authorized(const ParticipantProxyData& partici
                         << participant_data.m_guid << ")");
                 return false;
             }
+
+            match_builtin_key_exchange_endpoints(participant_data);
+            exchange_participant_crypto(participant_crypto_handle, participant_data.m_guid);
         }
         else
         {
@@ -3362,9 +3369,10 @@ bool SecurityManager::participant_authorized(const ParticipantProxyData& partici
                 dp_it->second.set_shared_secret(shared_secret_handle);
                 dp_it->second.set_permissions_handle(remote_permissions);
             }
+
+            match_builtin_key_exchange_endpoints(participant_data);
         }
 
-        match_builtin_key_exchange_endpoints(participant_data);
         participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
 
         logInfo(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
