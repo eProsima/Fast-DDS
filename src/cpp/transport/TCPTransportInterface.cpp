@@ -761,7 +761,11 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
 
                 if (bytes_received != TCPHeader::getSize())
                 {
-                    logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getSize() << ")");
+                    if (bytes_received > 0)
+                    {
+                        logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getSize() << ")" << ec);
+                    }
+                    CloseTCPSocket(pChannelResource);
                     success = false;
                 }
                 else
