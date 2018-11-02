@@ -42,6 +42,10 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
         locNames.end(),
         [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL; });
     locNames.erase(new_end, locNames.end());
+    std::for_each(locNames.begin(), locNames.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_TCPv4;
+    });
 }
 
 static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
@@ -244,6 +248,7 @@ bool TCPv4Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_
 void TCPv4Transport::FillLocalIp(Locator_t& loc) const
 {
     IPLocator::setIPv4(loc, "127.0.0.1");
+    loc.kind = LOCATOR_KIND_TCPv4;
 }
 
 ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port) const

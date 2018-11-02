@@ -97,9 +97,16 @@ void TCPChannelResource::Connect()
         mConnectionStatus = eConnectionStatus::eConnecting;
         auto type = mParent->GetProtocolType();
         auto endpoint = mParent->GenerateLocalEndpoint(mLocator, IPLocator::getPhysicalPort(mLocator));
-        mSocket.open(type);
-        mSocket.async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, mParent,
-            mLocator, std::placeholders::_1));
+        try
+        {
+            mSocket.open(type);
+            mSocket.async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, mParent,
+                mLocator, std::placeholders::_1));
+        }
+        catch(const std::system_error &error)
+        {
+            logError(RTCP, "Openning socket " << error.what());
+        }
     }
 }
 

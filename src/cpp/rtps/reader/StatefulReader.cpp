@@ -77,6 +77,9 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 
     getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
 
+
+    wdata.endpoint.unicastLocatorList =
+        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({wdata.endpoint.unicastLocatorList});
     WriterProxy* wp = new WriterProxy(wdata, this);
 
     wp->mp_initialAcknack->restart_timer();
