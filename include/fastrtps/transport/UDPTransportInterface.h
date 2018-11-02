@@ -69,13 +69,15 @@ public:
 
    /**
    * Blocking Receive from the specified channel.
+   * @param pChannelResource Pointer to the channer resource that stores the socket.
    * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
    * capacity must not be less than the receiveBufferSize supplied to this class during construction.
-   * @param localLocator Locator mapping to the local channel we're listening to.
+   * @param receiveBufferCapacity Maximum size of the receiveBuffer.
+   * @param[out] receiveBufferSize Size of the received buffer.
    * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
    */
-   bool Receive(ChannelResource* pChannelResource, octet* receiveBuffer, uint32_t receiveBufferCapacity,
-           uint32_t& receiveBufferSize, const Locator_t& inputLocator, Locator_t& remoteLocator);
+   bool Receive(UDPChannelResource* pChannelResource, octet* receiveBuffer,
+       uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& remoteLocator);
 
    //! Release the listening socket for the specified port.
    virtual bool ReleaseInputChannel(const Locator_t&) override;
@@ -125,7 +127,7 @@ protected:
 
     mutable std::recursive_mutex mOutputMapMutex;
     mutable std::recursive_mutex mInputMapMutex;
-    std::map<uint16_t, UDPChannelResource*> mInputSockets;
+    std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
     std::vector<UDPChannelResource*> mOutputSockets;
 
     uint32_t mSendBufferSize;
@@ -146,12 +148,23 @@ protected:
     virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) = 0;
     virtual asio::ip::udp GenerateProtocol() const = 0;
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
+
+    //! Checks if the interfaces white list is empty.
     virtual bool IsInterfaceWhiteListEmpty() const = 0;
-    virtual bool IsInterfaceAllowed(const std::string& interface) = 0;
+
+    //! Checks if the given interface is allowed by the white list.
+    virtual bool IsInterfaceAllowed(const std::string& interface) const = 0;
+
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> GetBindingInterfacesList() = 0;
 
     bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
         uint32_t maxMsgSize);
-    eProsimaUDPSocket OpenAndBindInputSocket(uint16_t port, bool is_multicast);
+    virtual eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) = 0;
     bool OpenAndBindOutputSockets(const Locator_t& locator);
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
     /** Function to be called from a new thread, which takes cares of performing a blocking receive

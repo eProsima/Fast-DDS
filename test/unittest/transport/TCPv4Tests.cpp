@@ -133,7 +133,6 @@ TEST_F(TCPv4Tests, opening_and_closing_input_channel)
 }
 
 #ifndef __APPLE__
-// TODO SKIP AT THIS MOMENT
 TEST_F(TCPv4Tests, send_and_receive_between_ports)
 {
     Log::SetVerbosity(Log::Kind::Info);
@@ -143,7 +142,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     recvDescriptor.maxMessageSize = 5;
     recvDescriptor.sendBufferSize = 5;
     recvDescriptor.receiveBufferSize = 5;
-    recvDescriptor.add_listener_port(5100);
+    recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
@@ -158,14 +157,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 
     Locator_t inputLocator;
     inputLocator.kind = LOCATOR_KIND_TCPv4;
-    inputLocator.port = 5100;
+    inputLocator.port = g_default_port;
     IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
     IPLocator::setLogicalPort(inputLocator, 7410);
 
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
-    outputLocator.port = 5100;
+    outputLocator.port = g_default_port;
     IPLocator::setLogicalPort(outputLocator, 7410);
 
     {
@@ -244,7 +243,7 @@ TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
 
     ASSERT_EQ(mainLocalLocator.port, remoteLocator.port);
     ASSERT_EQ(mainLocalLocator.kind, remoteLocator.kind);
-    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), "0.0.0.0");
+    ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), s_IPv4AddressAny);
 }
 
 TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
@@ -285,6 +284,286 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
 }
 
+TEST_F(TCPv4Tests, send_to_blocked_interface)
+{
+    descriptor.interfaceWhiteList.emplace_back("111.111.111.111");
+    TCPv4Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    Locator_t outputChannelLocator;
+    outputChannelLocator.port = g_output_port;
+    outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setLogicalPort(outputChannelLocator, 7400);
+    IPLocator::setIPv4(outputChannelLocator, 127, 0, 0, 1); // Loopback
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
+
+    //Sending through a different IP will NOT work, except 0.0.0.0
+    Locator_t wrongLocator(outputChannelLocator);
+    IPLocator::setIPv4(wrongLocator, 111, 111, 111, 111);
+    std::vector<octet> message = { 'H','e','l','l','o' };
+    ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
+}
+
+#ifndef __APPLE__
+TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
+{
+    LocatorList_t interfaces;
+    if (IPFinder::getAllIPAddress(&interfaces))
+    {
+        Locator_t locator;
+        for (auto& tmpLocator : interfaces)
+        {
+            if (tmpLocator.kind == LOCATOR_KIND_UDPv4 && IPLocator::toIPv4string(tmpLocator) != "127.0.0.1")
+            {
+                locator = tmpLocator;
+                break;
+            }
+        }
+
+        if (IsAddressDefined(locator))
+        {
+            Log::SetVerbosity(Log::Kind::Info);
+            std::regex filter("RTCP(?!_SEQ)");
+            Log::SetCategoryFilter(filter);
+            TCPv4TransportDescriptor recvDescriptor;
+            recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
+            recvDescriptor.maxMessageSize = 5;
+            recvDescriptor.sendBufferSize = 5;
+            recvDescriptor.receiveBufferSize = 5;
+            recvDescriptor.add_listener_port(g_default_port);
+            recvDescriptor.wait_for_tcp_negotiation = true;
+            TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+            receiveTransportUnderTest.init();
+
+            TCPv4TransportDescriptor sendDescriptor;
+            sendDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
+            sendDescriptor.maxMessageSize = 5;
+            sendDescriptor.sendBufferSize = 5;
+            sendDescriptor.receiveBufferSize = 5;
+            sendDescriptor.wait_for_tcp_negotiation = true;
+            TCPv4Transport sendTransportUnderTest(sendDescriptor);
+            sendTransportUnderTest.init();
+
+            Locator_t inputLocator;
+            inputLocator.kind = LOCATOR_KIND_TCPv4;
+            inputLocator.port = g_default_port;
+            inputLocator.set_address(locator);
+            IPLocator::setLogicalPort(inputLocator, 7410);
+
+            Locator_t outputLocator;
+            outputLocator.kind = LOCATOR_KIND_TCPv4;
+            outputLocator.set_address(locator);
+            outputLocator.port = g_default_port;
+            IPLocator::setLogicalPort(outputLocator, 7410);
+
+            {
+                MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+                MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+                ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+                ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+                octet message[5] = { 'H','e','l','l','o' };
+                bool bOk = false;
+                std::function<void()> recCallback = [&]()
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    bOk = true;
+                };
+
+                msg_recv->setCallback(recCallback);
+
+                bool bFinish(false);
+                auto sendThreadFunction = [&]()
+                {
+                    bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                    while (!bFinish && !sent)
+                    {
+                        sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_TRUE(sent);
+                    //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+                };
+
+                senderThread.reset(new std::thread(sendThreadFunction));
+                std::this_thread::sleep_for(std::chrono::seconds(10));
+                bFinish = true;
+                senderThread->join();
+                ASSERT_TRUE(bOk);
+            }
+            ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+        }
+    }
+}
+
+
+TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
+{
+    Log::SetVerbosity(Log::Kind::Info);
+    std::regex filter("RTCP(?!_SEQ)");
+    Log::SetCategoryFilter(filter);
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.interfaceWhiteList.emplace_back("127.0.0.1");
+    recvDescriptor.maxMessageSize = 5;
+    recvDescriptor.sendBufferSize = 5;
+    recvDescriptor.receiveBufferSize = 5;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.wait_for_tcp_negotiation = true;
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.interfaceWhiteList.emplace_back("127.0.0.1");
+    sendDescriptor.maxMessageSize = 5;
+    sendDescriptor.sendBufferSize = 5;
+    sendDescriptor.receiveBufferSize = 5;
+    sendDescriptor.wait_for_tcp_negotiation = true;
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+        bool bOk = false;
+        std::function<void()> recCallback = [&]()
+        {
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            bOk = true;
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        bool bFinish(false);
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+            while (!bFinish && !sent)
+            {
+                sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            EXPECT_TRUE(sent);
+            //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+        bFinish = true;
+        senderThread->join();
+        ASSERT_TRUE(bOk);
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+}
+
+TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
+{
+    LocatorList_t interfaces;
+    if (IPFinder::getAllIPAddress(&interfaces))
+    {
+        Locator_t locator;
+        for (auto& tmpLocator : interfaces)
+        {
+            if (tmpLocator.kind == LOCATOR_KIND_UDPv4 && IPLocator::toIPv4string(tmpLocator) != "127.0.0.1")
+            {
+                locator = tmpLocator;
+                break;
+            }
+        }
+
+        if (IsAddressDefined(locator))
+        {
+            Log::SetVerbosity(Log::Kind::Info);
+            std::regex filter("RTCP(?!_SEQ)");
+            Log::SetCategoryFilter(filter);
+            TCPv4TransportDescriptor recvDescriptor;
+            recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
+            recvDescriptor.maxMessageSize = 5;
+            recvDescriptor.sendBufferSize = 5;
+            recvDescriptor.receiveBufferSize = 5;
+            recvDescriptor.add_listener_port(g_default_port);
+            recvDescriptor.wait_for_tcp_negotiation = true;
+            TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+            receiveTransportUnderTest.init();
+
+            TCPv4TransportDescriptor sendDescriptor;
+            sendDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
+            sendDescriptor.maxMessageSize = 5;
+            sendDescriptor.sendBufferSize = 5;
+            sendDescriptor.receiveBufferSize = 5;
+            sendDescriptor.wait_for_tcp_negotiation = true;
+            TCPv4Transport sendTransportUnderTest(sendDescriptor);
+            sendTransportUnderTest.init();
+
+            Locator_t inputLocator;
+            inputLocator.kind = LOCATOR_KIND_TCPv4;
+            inputLocator.port = g_default_port;
+            IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+            IPLocator::setLogicalPort(inputLocator, 7410);
+
+            Locator_t outputLocator;
+            outputLocator.kind = LOCATOR_KIND_TCPv4;
+            IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+            outputLocator.port = g_default_port;
+            IPLocator::setLogicalPort(outputLocator, 7410);
+
+            {
+                MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+                MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+                ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+                ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+                octet message[5] = { 'H','e','l','l','o' };
+                bool bOk = false;
+                std::function<void()> recCallback = [&]()
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    bOk = true;
+                };
+
+                msg_recv->setCallback(recCallback);
+
+                bool bFinished(false);
+                auto sendThreadFunction = [&]()
+                {
+                    bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                    while (!bFinished && !sent)
+                    {
+                        sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_FALSE(sent);
+                    //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+                };
+
+                senderThread.reset(new std::thread(sendThreadFunction));
+                std::this_thread::sleep_for(std::chrono::seconds(10));
+                bFinished = true;
+                senderThread->join();
+                ASSERT_FALSE(bOk);
+            }
+            ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+        }
+    }
+}
+
+#endif
+
 TEST_F(TCPv4Tests, shrink_locator_lists)
 {
     TCPv4Transport transportUnderTest(descriptor);
@@ -321,7 +600,7 @@ void TCPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.maxMessageSize = 5;
     descriptor.sendBufferSize = 5;
     descriptor.receiveBufferSize = 5;
-    descriptor.add_listener_port(5100);
+    descriptor.add_listener_port(g_default_port);
 }
 
 int main(int argc, char **argv)

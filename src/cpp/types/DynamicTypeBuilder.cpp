@@ -402,7 +402,6 @@ ResponseCode DynamicTypeBuilder::SetName(const std::string& name)
     {
         mDescriptor->SetName(name);
     }
-//ARCE:     setName(name.c_str());
     mName = name;
     return ResponseCode::RETCODE_OK;
 }

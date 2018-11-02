@@ -47,7 +47,7 @@ vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
     return newSenderResources;
 }
 
-bool NetworkFactory::BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize, 
+bool NetworkFactory::BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize,
     std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list)
 {
     bool returnedValue = false;
@@ -105,7 +105,8 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
         bool normalized = false;
         for (auto& transport : mRegisteredTransports)
         {
-            if (transport->IsLocatorSupported(loc))
+            // Check if the locator is supported and filter unicast locators.
+            if (transport->IsLocatorSupported(loc) && (IPLocator::isMulticast(loc) || transport->IsLocatorAllowed(loc)))
             {
                 // First found transport that supports it, this will normalize the locator.
                 normalizedLocators.push_back(transport->NormalizeLocator(loc));

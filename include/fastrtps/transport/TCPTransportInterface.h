@@ -45,10 +45,29 @@ public:
     asio::ip::tcp::endpoint mEndPoint;
     std::vector<Locator_t> mPendingOutLocators;
 
+    /**
+    * Constructor
+    * @param io_service Reference to the ASIO service.
+    * @param parent Pointer to the transport that is going to manage the acceptor.
+    * @param locator Locator with the information about where to accept connections.
+    */
     TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
+
+    /**
+    * Constructor
+    * @param io_service Reference to the ASIO service.
+    * @param sInterface Network interface to bind the socket
+    * @param locator Locator with the information about where to accept connections.
+    */
+    TCPAcceptor(asio::io_service& io_service, const std::string& sInterface, const Locator_t& locator);
+
+    /**
+    * Destructor
+    */
     ~TCPAcceptor()
     {
-        try{ mSocket.cancel(); } catch (...) {}
+        try { asio::error_code ec; mSocket.cancel(ec); }
+        catch (...) {}
         mSocket.close();
     }
 
@@ -111,10 +130,19 @@ public:
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
+    //! Checks if the interfaces white list is empty.
+    virtual bool IsInterfaceWhiteListEmpty() const = 0;
+
+    /**
+    * Checks if the given locator is allowed by the white list.
+    * @param loc locator to check.
+    * @return True if the locator passes the white list.
+    */
     virtual bool IsInterfaceAllowed(const Locator_t& loc) const = 0;
 
     //! Checks for TCP kinds.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
+    virtual bool IsInterfaceAllowed(const std::string& interface) const = 0;
 
     //! Checks if the channel is bound to the given sender resource.
     bool IsOutputChannelBound(const Locator_t&) const;
@@ -196,6 +224,13 @@ public:
     //! Unbind the given socket from every registered locator.
     void UnbindSocket(TCPChannelResource*);
 
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> GetBindingInterfacesList() = 0;
+
     virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const override;
 
@@ -225,7 +260,7 @@ protected:
     RTCPMessageManager* mRTCPMessageManager;
     mutable std::recursive_mutex mSocketsMapMutex;
 
-    std::map<uint16_t, TCPAcceptor*> mSocketAcceptors; // The Key is the "Physical Port"
+    std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
     std::vector<TCPChannelResource*> mUnboundChannelResources; // Needed to avoid memory leaks if client doesn't bound
     std::map<uint16_t, TransportReceiverInterface*> mReceiverResources; // The key is the logical port

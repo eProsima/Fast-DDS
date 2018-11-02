@@ -91,7 +91,22 @@ protected:
 
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) const override;
 
-    //! Checks if the given ip has been included in the white list to use it.
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> GetBindingInterfacesList() override;
+
+    bool IsLocatorAllowed(const Locator_t& locator) const override;
+
+    //! Checks if the interfaces white list is empty.
+    virtual bool IsInterfaceWhiteListEmpty() const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    virtual bool IsInterfaceAllowed(const std::string& interface) const override;
+
+    //! Checks if the given interface is allowed by the white list.
     bool IsInterfaceAllowed(const asio::ip::address_v6& ip) const;
 
     virtual bool IsInterfaceAllowed(const Locator_t& loc) const override;

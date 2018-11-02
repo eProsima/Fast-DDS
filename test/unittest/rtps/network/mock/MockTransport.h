@@ -54,6 +54,7 @@ class MockTransport: public TransportInterface
         virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
         virtual bool IsLocatorSupported(const Locator_t&)  const override;
+        virtual bool IsLocatorAllowed(const Locator_t& locator) const override;
         virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
         virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
