@@ -245,23 +245,7 @@ add_subdirectory(src/cpp)
 ###############################################################################
 # Testing options
 ###############################################################################
-option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
-option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
-option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
-
-if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
-    set(EPROSIMA_BUILD_TESTS ON)
-endif()
-
-###############################################################################
-# Testing
-###############################################################################
-if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
-    file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE)
-    enable_testing()
-    include(CTest)
-    add_subdirectory(test)
-endif()
+add_subdirectory(test)
 
 ###############################################################################
 # Examples
