@@ -11,8 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-enable_testing()
-include(CTest)
 
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
