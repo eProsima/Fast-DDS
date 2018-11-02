@@ -1616,12 +1616,15 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, AES_BLOCK_SIZE, tag.common_mac.data());
     EVP_CIPHER_CTX_free(e_ctx);
 
-    // Align submessage to 4.
-    size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
-    for(size_t count = 0; count != alignment; ++count)
+    if (submessage)
     {
-        uint8_t c = 0;
-        serializer << c;
+        // Align submessage to 4.
+        size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
+        for (size_t count = 0; count != alignment; ++count)
+        {
+            uint8_t c = 0;
+            serializer << c;
+        }
     }
 
     return true;
