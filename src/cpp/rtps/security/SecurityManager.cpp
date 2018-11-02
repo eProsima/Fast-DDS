@@ -2031,8 +2031,7 @@ bool SecurityManager::register_local_writer(const GUID_t& writer_guid, const Pro
             security_attributes.is_submessage_protected = true;
             security_attributes.plugin_endpoint_attributes |=
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         }
 
         property_value = PropertyPolicyHelper::find_property(writer_properties,
@@ -2198,8 +2197,7 @@ bool SecurityManager::register_local_reader(const GUID_t& reader_guid, const Pro
             security_attributes.is_submessage_protected = true;
             security_attributes.plugin_endpoint_attributes |=
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
-                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         }
 
         property_value = PropertyPolicyHelper::find_property(reader_properties,
