@@ -13,13 +13,13 @@ namespace fastrtps {
 struct Log::Resources Log::mResources;
 
 Log::Resources::Resources():
-   mDefaultConsumer(new StdoutConsumer),
    mLogging(false),
    mWork(false),
    mFilenames(false),
    mFunctions(true),
    mVerbosity(Log::Error)
 {
+   mResources.mConsumers.emplace_back(new StdoutConsumer);
 }
 
 Log::Resources::~Resources()
@@ -33,6 +33,12 @@ void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer)
    mResources.mConsumers.emplace_back(std::move(consumer));
 }
 
+void Log::ClearConsumers()
+{
+   std::unique_lock<std::mutex> guard(mResources.mConfigMutex);
+   mResources.mConsumers.clear();
+}
+
 void Log::Reset()
 {
    std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
@@ -43,6 +49,7 @@ void Log::Reset()
    mResources.mFunctions = true;
    mResources.mVerbosity = Log::Error;
    mResources.mConsumers.clear();
+   mResources.mConsumers.emplace_back(new StdoutConsumer);
 }
 
 void Log::Run()
@@ -63,8 +70,6 @@ void Log::Run()
             {
                for (auto& consumer: mResources.mConsumers)
                   consumer->Consume(mResources.mLogs.Front());
-
-               mResources.mDefaultConsumer->Consume(mResources.mLogs.Front());
             }
 
             mResources.mLogs.Pop();

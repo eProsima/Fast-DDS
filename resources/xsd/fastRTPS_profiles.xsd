@@ -728,4 +728,20 @@
         </xs:complexType>
     </xs:element>
 
+    <!-- Log entry point -->
+    <xs:element name="log">
+      <xs:complexType>
+        <xs:boolean name="use_default"/>
+        <xs:sequence>
+          <xs:element maxOccurs="consumer">
+            <xs:complexType>
+              <xs:element name="class" type="string" minOccurs="1" maxOccurs="1"/>
+              <xs:sequence>
+                <xs:element name="propertyType"/>
+              </xs:sequence>
+            </xs:complexType>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+
 </xs:schema>

@@ -128,7 +128,7 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
-
+    RTPS_DllAPI static XMLP_ret parseLogConfig(tinyxml2::XMLElement* p_root);
 
     RTPS_DllAPI static XMLP_ret parseXMLTransportsProf(tinyxml2::XMLElement* p_root);
     RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
@@ -138,6 +138,8 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLTransportData(tinyxml2::XMLElement* p_root);
     RTPS_DllAPI static XMLP_ret parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
     RTPS_DllAPI static XMLP_ret parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
+
+    RTPS_DllAPI static XMLP_ret parseXMLConsumer(tinyxml2::XMLElement& consumer);
 
     RTPS_DllAPI static XMLP_ret parseXMLDynamicTypes(tinyxml2::XMLElement& types);
     RTPS_DllAPI static XMLP_ret parseDynamicTypes(tinyxml2::XMLElement* p_root);

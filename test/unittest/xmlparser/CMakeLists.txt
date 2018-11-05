@@ -47,6 +47,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
 
@@ -125,6 +126,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
 
@@ -173,7 +175,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )
-            
+
         if(MSVC OR MSVC_IDE)
             target_link_libraries(XMLParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
         endif()
@@ -191,4 +193,3 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
     endif()
 endif()
-

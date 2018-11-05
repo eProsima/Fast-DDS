@@ -24,8 +24,8 @@
 #include <regex>
 
 /**
- * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime. However, even on a category 
- * not covered by the current verbosity level, there is some overhead on calling a log macro. For maximum performance, you can 
+ * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime. However, even on a category
+ * not covered by the current verbosity level, there is some overhead on calling a log macro. For maximum performance, you can
  * opt out of logging any particular level by defining the following symbols:
  *
  * * #define LOG_NO_ERROR
@@ -52,7 +52,7 @@ class LogConsumer;
 /**
  * Logging utilities.
  * Logging is accessed through the three macros above, and configuration on the log output
- * can be achieved through static methods on the class. Logging at various levels can be 
+ * can be achieved through static methods on the class. Logging at various levels can be
  * disabled dynamically (through the Verbosity level) or statically (through the LOG_NO_[VERB]
  * macros) for maximum performance.
  * @ingroup COMMON_MODULE
@@ -74,9 +74,11 @@ public:
 
    /**
     * Registers an user defined consumer to route log output. There is a default
-    * stdout consumer active at all times.
+    * stdout consumer active as default.
     */
    RTPS_DllAPI static void RegisterConsumer(std::unique_ptr<LogConsumer>);
+   //! Removes all registered consumers, including the default stdout.
+   RTPS_DllAPI static void ClearConsumers();
    //! Enables the reporting of filenames in log entries. Disabled by default.
    RTPS_DllAPI static void ReportFilenames(bool);
    //! Enables the reporting of function names in log entries. Enabled by default when supported.
@@ -105,14 +107,14 @@ public:
       const char* category;
    };
 
-   struct Entry 
+   struct Entry
    {
       std::string message;
       Log::Context context;
       Log::Kind kind;
    };
 
-   /** 
+   /**
     * Not recommended to call this method directly! Use the following macros:
     *  * logInfo(cat, msg);
     *  * logWarning(cat, msg);
@@ -121,11 +123,10 @@ public:
    RTPS_DllAPI static void QueueLog(const std::string& message, const Log::Context&, Log::Kind);
 
 private:
-   struct Resources 
+   struct Resources
    {
       DBQueue<Entry> mLogs;
       std::vector<std::unique_ptr<LogConsumer> > mConsumers;
-      std::unique_ptr<LogConsumer> mDefaultConsumer;
 
       std::unique_ptr<std::thread> mLoggingThread;
 
@@ -152,7 +153,7 @@ private:
    static struct Resources mResources;
 
    // Applies transformations to the entries compliant with the options selected (such as
-   // erasure of certain context information, or filtering by category. Returns false 
+   // erasure of certain context information, or filtering by category. Returns false
    // if the log entry is blacklisted.
    static bool Preprocess(Entry&);
    static void LaunchThread();
@@ -175,13 +176,13 @@ public:
 #ifndef LOG_NO_ERROR
    #define logError_(cat, msg) {std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); }
 #else
-   #define logError_(cat, msg) 
+   #define logError_(cat, msg)
 #endif
 
 #ifndef LOG_NO_WARNING
-   #define logWarning_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Warning) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); } } 
-#else 
-   #define logWarning_(cat, msg) 
+   #define logWarning_(cat, msg) { if (Log::GetVerbosity() >= Log::Kind::Warning) { std::stringstream ss; ss << msg; Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); } }
+#else
+   #define logWarning_(cat, msg)
 #endif
 
 #if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))

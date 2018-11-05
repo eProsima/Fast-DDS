@@ -46,6 +46,7 @@ extern const char* PUBLISHER;
 extern const char* SUBSCRIBER;
 extern const char* RTPS;
 extern const char* TYPES;
+extern const char* LOG;
 
 extern const char* TRANSPORT_DESCRIPTOR;
 extern const char* TRANSPORT_ID;
@@ -299,6 +300,10 @@ extern const char* VALUE_TYPE;
 extern const char* LENGHT;
 extern const char* MAXLENGTH;
 
+// LOG
+extern const char* USE_DEFAULT;
+extern const char* CONSUMER;
+extern const char* CLASS;
 
 } /* xmlparser */
 } /* namespace */

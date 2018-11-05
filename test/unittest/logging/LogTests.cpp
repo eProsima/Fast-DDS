@@ -25,10 +25,10 @@
 using namespace eprosima::fastrtps;
 using namespace std;
 
-class LogTests: public ::testing::Test 
+class LogTests: public ::testing::Test
 {
    public:
-   LogTests() 
+   LogTests()
    {
       std::unique_ptr<MockConsumer> consumer(new MockConsumer);
       std::unique_ptr<StdoutConsumer> defaultConsumer(new StdoutConsumer);
