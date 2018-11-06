@@ -277,9 +277,6 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         allLocatorLists.push_back(locators);
     }
 
-    getRTPSParticipant()->createSenderResources(rdata.endpoint.unicastLocatorList, false);
-    getRTPSParticipant()->createSenderResources(rdata.endpoint.multicastLocatorList, false);
-
     // Add info of new datareader.
     if(addGuid)
         allRemoteReaders.push_back(rdata.guid);
@@ -292,6 +289,8 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     this->m_matched_readers.push_back(rdata);
 
     update_locators_nts_(rdata.endpoint.durabilityKind >= TRANSIENT_LOCAL ? rdata.guid : c_Guid_Unknown);
+
+    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList, false);
 
     logInfo(RTPS_READER,"Reader " << rdata.guid << " added to "<<m_guid.entityId);
     return true;

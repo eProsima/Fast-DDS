@@ -421,9 +421,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     std::vector<GUID_t> allRemoteReaders;
     std::vector<LocatorList_t> allLocatorLists;
 
-    getRTPSParticipant()->createSenderResources(rdata.endpoint.unicastLocatorList, false);
-    getRTPSParticipant()->createSenderResources(rdata.endpoint.multicastLocatorList, false);
-
     // Check if it is already matched.
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
     {
@@ -447,6 +444,11 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     allLocatorLists.push_back(locators);
 
     update_cached_info_nts(std::move(allRemoteReaders), allLocatorLists);
+
+    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList, false);
+
+    rdata.endpoint.unicastLocatorList =
+        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({rdata.endpoint.unicastLocatorList});
 
     ReaderProxy* rp = new ReaderProxy(rdata, m_times, this);
     std::set<SequenceNumber_t> not_relevant_changes;

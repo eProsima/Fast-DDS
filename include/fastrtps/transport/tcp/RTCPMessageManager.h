@@ -115,6 +115,34 @@ protected:
         return myTransId++;
     }
 
+    bool findTransactionId(const TCPTransactionId& transactionId)
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mutex);
+        auto it = mUnconfirmedTransactions.find(transactionId);
+        return it != mUnconfirmedTransactions.end();
+    }
+
+    void addTransactionId(const TCPTransactionId& transactionId)
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mutex);
+        mUnconfirmedTransactions.emplace(transactionId);
+    }
+
+    bool removeTransactionId(const TCPTransactionId& transactionId)
+    {
+        std::unique_lock<std::recursive_mutex> scopedLock(mutex);
+        auto it = mUnconfirmedTransactions.find(transactionId);
+        if (it != mUnconfirmedTransactions.end())
+        {
+            mUnconfirmedTransactions.erase(it);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     //void prepareAndSendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource);
 
     size_t sendMessage(TCPChannelResource *pChannelResource, const CDRMessage_t &msg) const;

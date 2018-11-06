@@ -42,6 +42,10 @@ static void GetIP6s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
         locNames.end(),
         [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL; });
     locNames.erase(new_end, locNames.end());
+    std::for_each(locNames.begin(), locNames.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_TCPv6;
+    });
 }
 
 static asio::ip::address_v6::bytes_type locatorToNative(Locator_t& locator)
@@ -245,6 +249,7 @@ bool TCPv6Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_
 void TCPv6Transport::FillLocalIp(Locator_t& loc) const
 {
     IPLocator::setIPv6(loc, "::1");
+    loc.kind = LOCATOR_KIND_TCPv6;
 }
 
 ip::tcp::endpoint TCPv6Transport::GenerateEndpoint(const Locator_t& loc, uint16_t port) const

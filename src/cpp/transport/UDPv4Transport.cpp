@@ -39,6 +39,10 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
             locNames.end(),
             [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;});
     locNames.erase(new_end, locNames.end());
+    std::for_each(locNames.begin(), locNames.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_UDPv4;
+    });
 }
 
 static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
@@ -192,6 +196,7 @@ void UDPv4Transport::EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& l
 void UDPv4Transport::FillLocalIp(Locator_t& loc)
 {
     IPLocator::setIPv4(loc, "127.0.0.1");
+    loc.kind = LOCATOR_KIND_UDPv4;
 }
 
 const UDPTransportDescriptor* UDPv4Transport::GetConfiguration() const

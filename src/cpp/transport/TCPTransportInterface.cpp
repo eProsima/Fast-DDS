@@ -1036,6 +1036,7 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
                     Locator_t loopbackLocator;
                     FillLocalIp(loopbackLocator);
                     IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
+                    IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
                     pendingUnicast.push_back(loopbackLocator);
                     break;
                 }
@@ -1091,13 +1092,15 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
         }
         else
         {
-            logError(RTPC, "Incomming connection from unknown Acceptor: " << IPLocator::getPhysicalPort(acceptor->mLocator));
+            logError(RTPC, "Incomming connection from unknown Acceptor: "
+                << IPLocator::getPhysicalPort(acceptor->mLocator));
             return;
         }
     }
     else
     {
         logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+        eClock::my_sleep(200); // Wait a little to accept again.
     }
 
     if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
@@ -1114,11 +1117,13 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error_code& error)
 {
     TCPChannelResource* outputSocket = nullptr;
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-    if (it != mChannelResources.end())
     {
-        outputSocket = it->second;
+        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
+        if (it != mChannelResources.end())
+        {
+            outputSocket = it->second;
+        }
     }
 
     if(outputSocket != nullptr)
@@ -1146,6 +1151,11 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
         }
         else
         {
+            if (error.value() == asio::error::basic_errors::connection_refused)
+            {
+                // Wait a little before try again to avoid exhaust file descriptors in some systems
+                eClock::my_sleep(200);
+            }
             CloseTCPSocket(outputSocket);
         }
     }

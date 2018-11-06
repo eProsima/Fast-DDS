@@ -38,6 +38,10 @@ static void GetIP6s(vector<IPFinder::info_IP>& locNames, bool return_loopback = 
             locNames.end(),
             [](IPFinder::info_IP ip){return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL;});
     locNames.erase(new_end, locNames.end());
+    std::for_each(locNames.begin(), locNames.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_UDPv6;
+    });
 }
 
 static void GetIP6sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
@@ -193,6 +197,7 @@ void UDPv6Transport::EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& l
 void UDPv6Transport::FillLocalIp(Locator_t& loc)
 {
     IPLocator::setIPv6(loc, "::1");
+    loc.kind = LOCATOR_KIND_UDPv6;
 }
 
 const UDPTransportDescriptor* UDPv6Transport::GetConfiguration() const
