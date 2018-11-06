@@ -12,12 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(blackbox)
-add_subdirectory(communication)
-if(NOT ((MSVC OR MSVC_IDE)))
+option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
+option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
+option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
+
+if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
+    set(EPROSIMA_BUILD_TESTS ON)
+endif()
+
+###############################################################################
+# Testing
+###############################################################################
+if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
+    file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE)
+
+	add_subdirectory(blackbox)
+	add_subdirectory(communication)
+
+	add_subdirectory(unittest)
+endif()
+
+###############################################################################
+# Profiling tests using valgrind
+###############################################################################
+if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
    find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
    if(CTEST_MEMORYCHECK_COMMAND)
       add_subdirectory(profiling)
    endif()
 endif()
-add_subdirectory(unittest)
+
+###############################################################################
+# Performance tests
+###############################################################################
+if(PERFORMANCE_TESTS)
+	add_subdirectory(performance)
+endif()
+

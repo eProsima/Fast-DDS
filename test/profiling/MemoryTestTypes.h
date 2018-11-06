@@ -13,31 +13,32 @@
 // limitations under the License.
 
 /**
- * @file LatencyTestTypes.h
+ * @file MemoryTestTypes.h
  *
  */
 
-#ifndef LATENCYTESTTYPES_H_
-#define LATENCYTESTTYPES_H_
+#ifndef MEMORYTESTTYPES_H_
+#define MEMORYTESTTYPES_H_
 
 #include "fastrtps/fastrtps_all.h"
 
-class LatencyType
+class MemoryType
 {
     public:
 
         uint32_t seqnum;
         std::vector<uint8_t> data;
 
-        LatencyType(): seqnum(0) {}
+        MemoryType(): seqnum(0) {}
 
-        LatencyType(uint32_t number) :
+        MemoryType(uint32_t number) :
             seqnum(0), data(number,0) {}
 
-        ~LatencyType() {}
+        ~MemoryType() {}
 };
 
-inline bool operator==(const LatencyType& lt1, const LatencyType& lt2)
+
+inline bool operator==(const MemoryType& lt1, const MemoryType& lt2)
 {
     if(lt1.seqnum!=lt2.seqnum)
         return false;
@@ -51,16 +52,16 @@ inline bool operator==(const LatencyType& lt1, const LatencyType& lt2)
     return true;
 }
 
-class LatencyDataType : public eprosima::fastrtps::TopicDataType
+class MemoryDataType : public eprosima::fastrtps::TopicDataType
 {
     public:
-        LatencyDataType()
+        MemoryDataType()
         {
-            setName("LatencyType");
+            setName("MemoryType");
             m_typeSize = 17000;
             m_isGetKeyDefined = false;
         };
-        ~LatencyDataType(){};
+        ~MemoryDataType(){};
         bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
         bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
@@ -103,4 +104,4 @@ class TestCommandDataType : public eprosima::fastrtps::TopicDataType
 };
 
 
-#endif /* LATENCYTESTTYPES_H_ */
+#endif /* MEMORYTESTTYPES_H_ */
