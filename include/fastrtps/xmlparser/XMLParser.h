@@ -128,6 +128,12 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLProfiles(tinyxml2::XMLElement& profiles, up_base_node_t& root);
     RTPS_DllAPI static XMLP_ret parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
+
+    /**
+     * Load a XML log node and parses it. It applies the configuration of the node directly.
+     * @param p_root Node to be loaded.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     RTPS_DllAPI static XMLP_ret parseLogConfig(tinyxml2::XMLElement* p_root);
 
     RTPS_DllAPI static XMLP_ret parseXMLTransportsProf(tinyxml2::XMLElement* p_root);
@@ -139,6 +145,11 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
     RTPS_DllAPI static XMLP_ret parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
 
+    /**
+     * Load a XML consumer node and parses it. Adds the parsed consumer to Log directly.
+     * @param consumer Node to be loaded.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
     RTPS_DllAPI static XMLP_ret parseXMLConsumer(tinyxml2::XMLElement& consumer);
 
     RTPS_DllAPI static XMLP_ret parseXMLDynamicTypes(tinyxml2::XMLElement& types);
