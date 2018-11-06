@@ -108,6 +108,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
         const std::string& sXMLConfigFile, bool dynamic_types)
     : disc_count_(0),
+    data_disc_count_(0),
 #pragma warning(disable:4355)
     m_DataPubListener(*this),
     m_CommandSubListener(*this),
@@ -115,7 +116,6 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     ready(true),
     m_export_csv(export_csv),
     reliable_(reliable),
-    data_disc_count_(0),
     m_sXMLConfigFile(sXMLConfigFile),
     dynamic_data(dynamic_types)
 {
