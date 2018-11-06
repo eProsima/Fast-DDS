@@ -45,6 +45,11 @@ DynamicPubSubType::~DynamicPubSubType()
     }
 }
 
+void DynamicPubSubType::CleanDynamicType()
+{
+    mDynamicType = nullptr;
+}
+
 DynamicType_ptr DynamicPubSubType::GetDynamicType() const
 {
     return mDynamicType;

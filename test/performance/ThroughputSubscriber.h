@@ -30,15 +30,15 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
-//#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-//#include <fastrtps/types/DynamicDataFactory.h>
-//#include <fastrtps/types/DynamicTypeBuilder.h>
-//#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-//#include <fastrtps/types/TypeDescriptor.h>
-//#include <fastrtps/types/MemberDescriptor.h>
-//#include <fastrtps/types/DynamicType.h>
-//#include <fastrtps/types/DynamicData.h>
-//#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <condition_variable>
 #include <chrono>
@@ -50,96 +50,96 @@
 
 class ThroughputSubscriber
 {
+public:
+
+    ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
+        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+        const std::string& sXMLConfigFile, bool dynamic_types);
+    virtual ~ThroughputSubscriber();
+    eprosima::fastrtps::Participant* mp_par;
+    eprosima::fastrtps::Subscriber* mp_datasub;
+    eprosima::fastrtps::Publisher* mp_commandpubli;
+    eprosima::fastrtps::Subscriber* mp_commandsub;
+    std::chrono::steady_clock::time_point t_start_, t_end_;
+    std::chrono::duration<double, std::micro> t_overhead_;
+    std::mutex mutex_;
+    uint32_t disc_count_;
+    std::condition_variable disc_cond_;
+    std::mutex dataMutex_;
+    uint32_t data_disc_count_;
+    std::condition_variable data_disc_cond_;
+    //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
+    int stop_count_;
+    std::condition_variable stop_cond_;
+    class DataSubListener : public eprosima::fastrtps::SubscriberListener
+    {
     public:
 
-        ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
-                const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-                const std::string& sXMLConfigFile, bool dynamic_types);
-        virtual ~ThroughputSubscriber();
-        eprosima::fastrtps::Participant* mp_par;
-        eprosima::fastrtps::Subscriber* mp_datasub;
-        eprosima::fastrtps::Publisher* mp_commandpubli;
-        eprosima::fastrtps::Subscriber* mp_commandsub;
-        std::chrono::steady_clock::time_point t_start_, t_end_;
-        std::chrono::duration<double, std::micro> t_overhead_;
-        std::mutex mutex_;
-        uint32_t disc_count_;
-        std::condition_variable disc_cond_;
-        std::mutex dataMutex_;
-        uint32_t data_disc_count_;
-        std::condition_variable data_disc_cond_;
-        //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
-        int stop_count_;
-        std::condition_variable stop_cond_;
-        class DataSubListener : public eprosima::fastrtps::SubscriberListener
-        {
-            public:
+        DataSubListener(ThroughputSubscriber& up);
+        virtual ~DataSubListener();
+        ThroughputSubscriber& m_up;
+        void reset();
+        uint32_t lastseqnum, saved_lastseqnum;
+        uint32_t lostsamples, saved_lostsamples;
+        bool first;
+        eprosima::fastrtps::SampleInfo_t info;
+        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
+            eprosima::fastrtps::rtps::MatchingInfo& info);
+        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void saveNumbers();
+        std::ofstream myfile;
+    }m_DataSubListener;
 
-                DataSubListener(ThroughputSubscriber& up);
-                virtual ~DataSubListener();
-                ThroughputSubscriber& m_up;
-                void reset();
-                uint32_t lastseqnum,saved_lastseqnum;
-                uint32_t lostsamples,saved_lostsamples;
-                bool first;
-                eprosima::fastrtps::SampleInfo_t info;
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& info);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                void saveNumbers();
-                std::ofstream myfile;
-        }m_DataSubListener;
+    class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+    {
+    public:
 
-        class CommandSubListener : public eprosima::fastrtps::SubscriberListener
-        {
-            public:
+        CommandSubListener(ThroughputSubscriber& up);
+        virtual ~CommandSubListener();
+        ThroughputSubscriber& m_up;
+        ThroughputCommandType m_commandin;
+        eprosima::fastrtps::SampleInfo_t info;
+        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
+            eprosima::fastrtps::rtps::MatchingInfo& info);
+        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void saveNumbers();
 
-                CommandSubListener(ThroughputSubscriber& up);
-                virtual ~CommandSubListener();
-                ThroughputSubscriber& m_up;
-                ThroughputCommandType m_commandin;
-                eprosima::fastrtps::SampleInfo_t info;
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& info);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                void saveNumbers();
+    private:
 
-            private:
+        CommandSubListener& operator=(const CommandSubListener&);
+    }m_CommandSubListener;
 
-                CommandSubListener& operator=(const CommandSubListener&);
-        }m_CommandSubListener;
+    class CommandPubListener : public eprosima::fastrtps::PublisherListener
+    {
+    public:
 
-        class CommandPubListener : public eprosima::fastrtps::PublisherListener
-        {
-            public:
+        CommandPubListener(ThroughputSubscriber& up);
+        virtual ~CommandPubListener();
+        ThroughputSubscriber& m_up;
+        void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
+            eprosima::fastrtps::rtps::MatchingInfo& info);
 
-                CommandPubListener(ThroughputSubscriber& up);
-                virtual ~CommandPubListener();
-                ThroughputSubscriber& m_up;
-                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-                        eprosima::fastrtps::rtps::MatchingInfo& info);
+    private:
 
-            private:
+        CommandPubListener& operator=(const CommandPubListener&);
+    }m_CommandPubListener;
 
-                CommandPubListener& operator=(const CommandPubListener&);
-        }m_CommandPubListener;
-
-        bool ready;
-        uint32_t m_datasize;
-        uint32_t m_demand;
-        void run();
-        ThroughputCommandDataType throuputcommand_t;
-        std::string m_sXMLConfigFile;
-        //bool dynamic_data = false;
-        // Static Data
-        ThroughputDataType throughput_t;
-        ThroughputType* throughputin;
-        // Dynamic Data
-        //eprosima::fastrtps::types::DynamicData* m_DynData;
-        //eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-        //eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
-        //eprosima::fastrtps::SubscriberAttributes subAttr;
+    bool ready;
+    uint32_t m_datasize;
+    uint32_t m_demand;
+    void run();
+    ThroughputCommandDataType throuputcommand_t;
+    std::string m_sXMLConfigFile;
+    bool dynamic_data = false;
+    // Static Data
+    ThroughputDataType throughput_t;
+    ThroughputType* throughputin;
+    // Dynamic Data
+    eprosima::fastrtps::types::DynamicData* m_DynData;
+    eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+    eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+    eprosima::fastrtps::SubscriberAttributes subAttr;
 };
 
 #endif /* THROUGHPUTSUBSCRIBER_H_ */
