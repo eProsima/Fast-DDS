@@ -300,6 +300,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     , m_datasize(0)
     , m_demand(0)
     , m_sXMLConfigFile(sXMLConfigFile)
+    , data_disc_count_(0)
     //, dynamic_data(dynamic_types)
     , throughputin(nullptr)
 {
@@ -448,7 +449,6 @@ void ThroughputSubscriber::run()
     disc_cond_.wait(lock, [&](){
         return disc_count_ >= 2;
     });
-    lock.unlock();
     std::cout << "Discovery command complete" << std::endl;
 
     while (stop_count_ != 2)
