@@ -291,6 +291,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
     const std::string& sXMLConfigFile, bool /*dynamic_types*/)
     : disc_count_(0)
+    , data_disc_count_(0)
     , stop_count_(0)
 #pragma warning(disable:4355)
     , m_DataSubListener(*this)
@@ -300,7 +301,6 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     , m_datasize(0)
     , m_demand(0)
     , m_sXMLConfigFile(sXMLConfigFile)
-    , data_disc_count_(0)
     //, dynamic_data(dynamic_types)
     , throughputin(nullptr)
 {
