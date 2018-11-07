@@ -29,6 +29,7 @@
 #include <fastrtps/transport/test_UDPv4Transport.h>
 
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -119,6 +120,13 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
         guidP.value[1] = c_VendorId_eProsima[1];
         guidP.value[2] = 127;
         guidP.value[3] = 1;
+
+        if (PParam.builtin.initialPeersList.empty())
+        {
+            Locator_t local;
+            IPLocator::setIPv4(local, 127, 0, 0, 1);
+            PParam.builtin.initialPeersList.push_back(local);
+        }
     }
     guidP.value[4] = ((octet*)&pid)[0];
     guidP.value[5] = ((octet*)&pid)[1];
