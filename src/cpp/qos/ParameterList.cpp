@@ -787,12 +787,12 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
 #if HAVE_SECURITY
                 case PID_IDENTITY_TOKEN:
                 case PID_PERMISSIONS_TOKEN:
-				{
-					ParameterToken_t* p = new ParameterToken_t(pid, plength);
-					valid &= CDRMessage::readDataHolder(msg, p->token);
-					msg->pos += (4 - msg->pos % 4) & 3; //align
-					IF_VALID_ADD
-				}
+                {
+                    ParameterToken_t* p = new ParameterToken_t(pid, plength);
+                    valid &= CDRMessage::readDataHolder(msg, p->token);
+                    msg->pos += (4 - msg->pos % 4) & 3; //align
+                    IF_VALID_ADD
+                }
 
                 case PID_PARTICIPANT_SECURITY_INFO:
                 {
