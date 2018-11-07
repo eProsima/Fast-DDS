@@ -39,6 +39,7 @@ public:
     RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(void* data);
     RTPS_DllAPI bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 
+    RTPS_DllAPI void CleanDynamicType();
     RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
     RTPS_DllAPI ResponseCode SetDynamicType(DynamicData_ptr pData);
     RTPS_DllAPI ResponseCode SetDynamicType(DynamicType_ptr pType);
