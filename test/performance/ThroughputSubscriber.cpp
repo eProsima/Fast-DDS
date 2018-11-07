@@ -102,23 +102,30 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
     else
     {
         //	cout << "NEW DATA MSG: "<< throughputin->seqnum << endl;
-        while (subscriber->takeNextData((void*)m_up.throughputin, &info))
+        if (m_up.throughputin != nullptr)
         {
-            //myfile << throughputin.seqnum << ",";
-            if (info.sampleKind == ALIVE)
+            while (subscriber->takeNextData((void*)m_up.throughputin, &info))
             {
-                //cout << "R:"<<throughputin->seqnum<<std::flush;
-                if ((lastseqnum + 1) < m_up.throughputin->seqnum)
+                //myfile << throughputin.seqnum << ",";
+                if (info.sampleKind == ALIVE)
                 {
-                    lostsamples += m_up.throughputin->seqnum - lastseqnum - 1;
-                    //	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+                    //cout << "R:"<<throughputin->seqnum<<std::flush;
+                    if ((lastseqnum + 1) < m_up.throughputin->seqnum)
+                    {
+                        lostsamples += m_up.throughputin->seqnum - lastseqnum - 1;
+                        //	myfile << "***** lostsamples: "<< lastseqnum << "|"<< lostsamples<< "*****";
+                    }
+                    lastseqnum = m_up.throughputin->seqnum;
                 }
-                lastseqnum = m_up.throughputin->seqnum;
+                else
+                {
+                    std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
+                }
             }
-            else
-            {
-                std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
-            }
+        }
+        else
+        {
+            std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
         }
     }
     //	cout << ";O|"<<std::flush;
@@ -198,6 +205,8 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                 }
                 else
                 {
+                    delete(m_up.throughputin);
+                    //m_up.throughputin = nullptr;
                     m_up.throughputin = new ThroughputType((uint16_t)m_up.m_datasize);
                 }
 
@@ -240,7 +249,8 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                 }
                 else
                 {
-                    delete(m_up.throughputin);
+                    //delete(m_up.throughputin);
+                    //m_up.throughputin = nullptr;
                 }
                 m_up.stop_cond_.notify_one();
                 break;
