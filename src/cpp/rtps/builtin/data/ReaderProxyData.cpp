@@ -49,6 +49,10 @@ ReaderProxyData::~ReaderProxyData()
 
 ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo)
     : m_expectsInlineQos(readerInfo.m_expectsInlineQos)
+#if HAVE_SECURITY
+    , security_attributes_(readerInfo.security_attributes_)
+    , plugin_security_attributes_(readerInfo.plugin_security_attributes_)
+#endif
     , m_guid(readerInfo.m_guid)
     , m_unicastLocatorList(readerInfo.m_unicastLocatorList)
     , m_multicastLocatorList(readerInfo.m_multicastLocatorList)
@@ -69,6 +73,10 @@ ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo)
 ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
 {
     m_expectsInlineQos = readerInfo.m_expectsInlineQos;
+#if HAVE_SECURITY
+    security_attributes_ = readerInfo.security_attributes_;
+    plugin_security_attributes_ = readerInfo.plugin_security_attributes_;
+#endif
     m_guid = readerInfo.m_guid;
     m_unicastLocatorList = readerInfo.m_unicastLocatorList;
     m_multicastLocatorList = readerInfo.m_multicastLocatorList;

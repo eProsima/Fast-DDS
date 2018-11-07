@@ -46,8 +46,8 @@ WriterProxyData::WriterProxyData()
 
 WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
 #if HAVE_SECURITY
-    : security_attributes_(0)
-    , plugin_security_attributes_(0)
+    : security_attributes_(writerInfo.security_attributes_)
+    , plugin_security_attributes_(writerInfo.plugin_security_attributes_)
     , m_guid(writerInfo.m_guid)
 #else
     : m_guid(writerInfo.m_guid)
@@ -77,6 +77,10 @@ WriterProxyData::~WriterProxyData() {
 
 WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
 {
+#if HAVE_SECURITY
+    security_attributes_ = writerInfo.security_attributes_;
+    plugin_security_attributes_ = writerInfo.plugin_security_attributes_;
+#endif
     m_guid = writerInfo.m_guid;
     m_unicastLocatorList = writerInfo.m_unicastLocatorList;
     m_multicastLocatorList = writerInfo.m_multicastLocatorList;
