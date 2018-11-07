@@ -119,7 +119,8 @@ enum  optionIndex {
     USE_SECURITY,
     CERTS_PATH,
     XML_FILE,
-    DYNAMIC_TYPES
+    DYNAMIC_TYPES,
+    FORCED_DOMAIN
 };
 
 const option::Descriptor usage[] = {
@@ -144,6 +145,7 @@ const option::Descriptor usage[] = {
 #endif
     { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
     { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
+    { FORCED_DOMAIN, 0, "", "domain",       Arg::Numeric,   "\t--domain \tSet the domain to connect." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -181,6 +183,7 @@ int main(int argc, char** argv)
     std::string file_name = "";
     std::string sXMLConfigFile = "";
     bool dynamic_types = false;
+    int forced_domain = -1;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
@@ -308,6 +311,10 @@ int main(int argc, char** argv)
                 dynamic_types = true;
                 break;
 
+            case FORCED_DOMAIN:
+                forced_domain = strtol(opt.arg, nullptr, 10);
+                break;
+
 #if HAVE_SECURITY
             case USE_SECURITY:
                 if (strcmp(opt.arg, "true") == 0)
@@ -390,13 +397,13 @@ int main(int argc, char** argv)
     if (pub_sub)
     {
         ThroughputPublisher tpub(reliable, seed, hostname, export_csv, export_prefix, pub_part_property_policy,
-            pub_property_policy, sXMLConfigFile, dynamic_types);
+            pub_property_policy, sXMLConfigFile, dynamic_types, forced_domain);
         tpub.m_file_name = file_name;
         tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
     }
     else
     {
-        ThroughputSubscriber tsub(reliable, seed, hostname, sub_part_property_policy, sub_property_policy, sXMLConfigFile, dynamic_types);
+        ThroughputSubscriber tsub(reliable, seed, hostname, sub_part_property_policy, sub_property_policy, sXMLConfigFile, dynamic_types, forced_domain);
         tsub.run();
     }
 

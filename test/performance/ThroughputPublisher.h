@@ -53,7 +53,7 @@ class ThroughputPublisher
                 const std::string& export_prefix,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-                const std::string& sXMLConfigFile, bool dynamic_types);
+                const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
         virtual ~ThroughputPublisher();
         eprosima::fastrtps::Participant* mp_par;
         eprosima::fastrtps::Publisher* mp_datapub;
@@ -129,6 +129,7 @@ class ThroughputPublisher
         std::string m_sXMLConfigFile;
         std::string m_sExportPrefix;
         //bool dynamic_data = false;
+        int m_forced_domain;
         // Static Data
         ThroughputDataType latency_t;
         ThroughputType *latency;
