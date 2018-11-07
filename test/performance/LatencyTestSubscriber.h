@@ -58,7 +58,7 @@ public:
     bool init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool dynamic_types);
+        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
 
     void run();
     bool test(uint32_t datasize);
@@ -109,6 +109,7 @@ public:
     TestCommandDataType command_t;
     std::string m_sXMLConfigFile;
     bool dynamic_data = false;
+    int m_forcedDomain;
     // Static Types
     LatencyDataType latency_t;
     LatencyType* mp_latency;

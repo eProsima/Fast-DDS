@@ -79,7 +79,7 @@ public:
         const std::string& export_prefix,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool dynamic_types);
+        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
     void run();
     void analyzeTimes(uint32_t datasize);
     bool test(uint32_t datasize);
@@ -151,6 +151,7 @@ public:
     std::string m_sXMLConfigFile;
     bool reliable_;
     bool dynamic_data = false;
+    int m_forcedDomain = -1;
     // Static Types
     LatencyDataType latency_t;
     LatencyType* mp_latency_in;
