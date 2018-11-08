@@ -20,6 +20,7 @@
 #include "VideoTestSubscriber.h"
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <numeric>
 #include <cmath>
 #include <fstream>
@@ -51,6 +52,7 @@ VideoTestSubscriber::VideoTestSubscriber()
     m_commandsublistener.mp_up = this;
 
     m_sExportPrefix = "";
+    m_forcedDomain = -1;
 
     m_bRunning = true;
     source_id_ = 0;
@@ -79,7 +81,7 @@ VideoTestSubscriber::~VideoTestSubscriber()
 
 bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix)
+        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix, int forced_domain)
 {
     large_data = true;
     m_sXMLConfigFile = sXMLConfigFile;
@@ -87,19 +89,42 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     m_bReliable = reliable;
     m_bExportCsv = export_csv;
     m_sExportPrefix = export_prefix;
+    m_forcedDomain = forced_domain;
 
     InitGStreamer();
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = pid % 230;
+
+    if (m_forcedDomain >= 0)
+    {
+        PParam.rtps.builtin.domainId = m_forcedDomain;
+    }
+    else
+    {
+        PParam.rtps.builtin.domainId = pid % 230;
+    }
     PParam.rtps.setName("Participant_sub");
     PParam.rtps.properties = part_property_policy;
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_participant = Domain::createParticipant(participant_profile_name);
+        if (m_forcedDomain >= 0)
+        {
+            ParticipantAttributes participant_att;
+            if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                    participant_att))
+            {
+                participant_att.rtps.builtin.domainId = m_forcedDomain;
+                mp_participant = Domain::createParticipant(participant_att);
+            }
+        }
+        else
+        {
+            mp_participant = Domain::createParticipant(participant_profile_name);
+        }
     }
     else
     {

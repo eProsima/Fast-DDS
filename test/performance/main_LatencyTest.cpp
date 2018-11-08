@@ -118,7 +118,8 @@ enum  optionIndex {
     CERTS_PATH,
     LARGE_DATA,
     XML_FILE,
-    DYNAMIC_TYPES
+    DYNAMIC_TYPES,
+    FORCED_DOMAIN
 };
 
 const option::Descriptor usage[] = {
@@ -140,7 +141,9 @@ const option::Descriptor usage[] = {
 #endif
     { LARGE_DATA, 0, "l", "large",          Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
+    { FORCED_DOMAIN, 0, "", "domain",       Arg::Numeric,   "\t--RTPS Domain." },
     { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
+
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -182,6 +185,7 @@ int main(int argc, char** argv)
     std::string export_prefix = "";
     std::string sXMLConfigFile = "";
     bool dynamic_types = false;
+    int forced_domain = -1;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -311,6 +315,9 @@ int main(int argc, char** argv)
             case DYNAMIC_TYPES:
                 dynamic_types = true;
                 break;
+            case FORCED_DOMAIN:
+                forced_domain = strtol(opt.arg, nullptr, 10);
+                break;
 
 #if HAVE_SECURITY
             case USE_SECURITY:
@@ -394,14 +401,14 @@ int main(int argc, char** argv)
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         LatencyTestPublisher latencyPub;
         latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
-            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types);
+            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types, forced_domain);
         latencyPub.run();
     }
     else
     {
         LatencyTestSubscriber latencySub;
         latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile, dynamic_types);
+            large_data, sXMLConfigFile, dynamic_types, forced_domain);
         latencySub.run();
     }
 
