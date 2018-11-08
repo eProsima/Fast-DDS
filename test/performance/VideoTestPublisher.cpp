@@ -20,6 +20,8 @@
 #include "VideoTestPublisher.h"
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 #include <fstream>
 #include <inttypes.h>
 
@@ -47,6 +49,7 @@ VideoTestPublisher::VideoTestPublisher()
     , m_commandsublistener(nullptr)
     , m_dropRate(0)
     , m_sendSleepTime(0)
+    , m_forcedDomain(-1)
 {
     m_datapublistener.mp_up = this;
     m_commandpublistener.mp_up = this;
@@ -66,7 +69,7 @@ VideoTestPublisher::~VideoTestPublisher()
 
 bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time)
+        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time, int forced_domain)
 {
     large_data = true;
     m_testTime = test_time;
@@ -76,6 +79,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     n_samples = n_sam;
     n_subscribers = n_sub;
     reliable_ = reliable;
+    m_forcedDomain = forced_domain;
 
     // GSTREAMER PIPELINE INITIALIZATION.
     InitGStreamer();
@@ -83,13 +87,34 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = pid % 230;
+    if (m_forcedDomain >= 0)
+    {
+        PParam.rtps.builtin.domainId = m_forcedDomain;
+    }
+    else
+    {
+        PParam.rtps.builtin.domainId = pid % 230;
+    }
     PParam.rtps.properties = part_property_policy;
     PParam.rtps.setName("Participant_pub");
 
     if(m_sXMLConfigFile.length() > 0)
     {
-        mp_participant = Domain::createParticipant(participant_profile_name);
+        if (m_forcedDomain >= 0)
+        {
+            ParticipantAttributes participant_att;
+            if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                    participant_att))
+            {
+                participant_att.rtps.builtin.domainId = m_forcedDomain;
+                mp_participant = Domain::createParticipant(participant_att);
+            }
+        }
+        else
+        {
+            mp_participant = Domain::createParticipant(participant_profile_name);
+        }
     }
     else
     {

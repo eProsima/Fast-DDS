@@ -23,6 +23,7 @@
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>
@@ -106,7 +107,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         const std::string& export_prefix,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, bool /*dynamic_types*/)
+        const std::string& sXMLConfigFile, bool /*dynamic_types*/, int forced_domain)
     : disc_count_(0),
     data_disc_count_(0),
 #pragma warning(disable:4355)
@@ -116,8 +117,9 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     ready(true),
     m_export_csv(export_csv),
     reliable_(reliable),
-    m_sXMLConfigFile(sXMLConfigFile)//,
-    //dynamic_data(dynamic_types)
+    m_sXMLConfigFile(sXMLConfigFile),
+    //dynamic_data(dynamic_types),
+    m_forced_domain(forced_domain)
 {
     //if (dynamic_data) // Dummy type registration
     //{
@@ -141,13 +143,35 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = pid % 230;
+
+    if (m_forced_domain >= 0)
+    {
+        PParam.rtps.builtin.domainId = m_forced_domain;
+    }
+    else
+    {
+        PParam.rtps.builtin.domainId = pid % 230;
+    }
     PParam.rtps.setName("Participant_publisher");
     PParam.rtps.properties = part_property_policy;
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_par = Domain::createParticipant(participant_profile_name);
+        if (m_forced_domain >= 0)
+        {
+            ParticipantAttributes participant_att;
+            if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                    participant_att))
+            {
+                participant_att.rtps.builtin.domainId = m_forced_domain;
+                mp_par = Domain::createParticipant(participant_att);
+            }
+        }
+        else
+        {
+            mp_par = Domain::createParticipant(participant_profile_name);
+        }
     }
     else
     {

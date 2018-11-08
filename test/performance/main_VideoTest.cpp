@@ -120,7 +120,8 @@ enum  optionIndex {
     XML_FILE,
     TEST_TIME,
     DROP_RATE,
-    SEND_SLEEP_TIME
+    SEND_SLEEP_TIME,
+    FORCED_DOMAIN
 };
 
 const option::Descriptor usage[] = {
@@ -144,6 +145,8 @@ const option::Descriptor usage[] = {
     { TEST_TIME, 0, "", "testtime",             Arg::Numeric,   "\t--testtime \tTest duration time." },
     { DROP_RATE, 0, "", "droprate",             Arg::Numeric,   "\t--droprate \tSending drop percentage ( 0 - 100 )." },
     { SEND_SLEEP_TIME, 0, "", "sleeptime",      Arg::Numeric,   "\t--sleeptime \tMaximum sleep time before shipments (milliseconds)." },
+    { FORCED_DOMAIN, 0, "", "domain",           Arg::Numeric,   "\t--domain \tRTPS Domain." },
+
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -174,6 +177,7 @@ int main(int argc, char** argv)
     int test_time = 100;
     int drop_rate = 0;
     int max_sleep_time = 0;
+    int forced_domain = -1;
     int n_samples = c_n_samples;
 #if HAVE_SECURITY
     bool use_security = false;
@@ -304,9 +308,9 @@ int main(int argc, char** argv)
             case SEND_SLEEP_TIME:
                 max_sleep_time = strtol(opt.arg, nullptr, 10);
                 break;
-
-
-
+            case FORCED_DOMAIN:
+                forced_domain = strtol(opt.arg, nullptr, 10);
+                break;
 
 #if HAVE_SECURITY
             case USE_SECURITY:
@@ -393,14 +397,14 @@ int main(int argc, char** argv)
         cout << "Performing video test" << endl;
         VideoTestPublisher pub;
         pub.init(sub_number, n_samples, reliable, seed, hostname, pub_part_property_policy,
-            pub_property_policy, large_data, sXMLConfigFile, test_time, drop_rate, max_sleep_time);
+            pub_property_policy, large_data, sXMLConfigFile, test_time, drop_rate, max_sleep_time, forced_domain);
         pub.run();
     }
     else
     {
         VideoTestSubscriber sub;
         sub.init(n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile, export_csv, export_prefix);
+            large_data, sXMLConfigFile, export_csv, export_prefix, forced_domain);
         sub.run();
     }
 
