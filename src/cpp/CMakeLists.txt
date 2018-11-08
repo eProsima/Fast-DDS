@@ -24,6 +24,7 @@ set(${PROJECT_NAME}_source_files
     utils/md5.cpp
     utils/StringMatching.cpp
     utils/IPLocator.cpp
+    utils/System.cpp
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
     rtps/resources/TimedEventImpl.cpp

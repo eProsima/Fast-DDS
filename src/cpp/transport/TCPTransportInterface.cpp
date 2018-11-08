@@ -23,6 +23,7 @@
 #include "asio.hpp"
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/System.h>
 #include <fastrtps/transport/TCPChannelResource.h>
 
 using namespace std;
@@ -796,9 +797,23 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
                         {
                             //logInfo(RTCP_MSG_IN, " Receive [RTCP Control]  (" << receiveBufferSize+bytes_received
                             // << " bytes): " << receiveBufferSize << " bytes.");
-                            if (!mRTCPMessageManager->processRTCPMessage(pChannelResource, receiveBuffer, body_size))
+                            ResponseCode responseCode =
+                                mRTCPMessageManager->processRTCPMessage(pChannelResource, receiveBuffer, body_size);
+                            if (responseCode != RETCODE_OK)
                             {
-                                CloseTCPSocket(pChannelResource);
+                                switch (responseCode)
+                                {
+                                    case RETCODE_INCOMPATIBLE_VERSION:
+                                        {
+                                            CloseOutputChannel(pChannelResource->mLocator);
+                                            break;
+                                        }
+                                    default: // Ignore
+                                        {
+                                            CloseTCPSocket(pChannelResource);
+                                            break;
+                                        }
+                                }
                             }
                             success = false;
                         }
@@ -1218,8 +1233,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
             }
             else
             {
-                // TODO Think about a "virtual physical port" to avoid send the real one
-                IPLocator::setPhysicalPort(locator, 0);
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
             }
         }
     }
@@ -1285,8 +1299,7 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
             }
             else
             {
-                // TODO Think about a "virtual physical port" to avoid send the real one
-                IPLocator::setPhysicalPort(locator, 0);
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
             }
         }
     }
