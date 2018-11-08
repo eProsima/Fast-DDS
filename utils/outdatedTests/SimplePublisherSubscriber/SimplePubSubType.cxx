@@ -25,7 +25,7 @@
 
 #include "SimplePubSubType.h"
 
-SimplePubSubType::SimplePubSubType() 
+SimplePubSubType::SimplePubSubType()
 {
 	m_topicDataTypeName = std::string("SimpleStructPubSubType");
 	m_typeSize = (uint32_t)SimpleStruct::getMaxCdrSerializedSize();
@@ -33,27 +33,27 @@ SimplePubSubType::SimplePubSubType()
 	m_keyBuffer = (unsigned char*)malloc(SimpleStruct::getKeyMaxCdrSerializedSize()>16 ? SimpleStruct::getKeyMaxCdrSerializedSize() : 16);
 }
 
-SimplePubSubType::~SimplePubSubType() 
+SimplePubSubType::~SimplePubSubType()
 {
 	if(m_keyBuffer!=NULL)
 		delete(m_keyBuffer);
 }
 
-bool SimplePubSubType::serialize(void *data, SerializedPayload_t *payload) 
+bool SimplePubSubType::serialize(void *data, SerializedPayload_t *payload)
 {
 	SimpleStruct *p_type = (SimpleStruct*) data;
-	
+
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size);
 	// Object that serializes the data.
 	eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
 	//Select the correct endianess
-	payload->encapsulation = CDR_LE; 
+	payload->encapsulation = CDR_LE;
 	// Serialize the object:
 	p_type->serialize(ser);
 	//Get the serialized length
     payload->length = (uint16_t)ser.getSerializedDataLength();
-    	
+
 	return true;
 }
 
@@ -73,7 +73,7 @@ bool SimplePubSubType::deserialize(SerializedPayload_t* payload, void* data)
 	return true;
 }
 
-bool SimplePubSubType::getKey(void *data, InstanceHandle_t* handle) 
+bool SimplePubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
 {
 	if(!m_isGetKeyDefined)
 		return false;
@@ -86,7 +86,7 @@ bool SimplePubSubType::getKey(void *data, InstanceHandle_t* handle)
 	eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
 
 	p_type->serializeKey(ser);
-	if(SimpleStruct::getKeyMaxCdrSerializedSize()>16)
+	if(force_md5 || SimpleStruct::getKeyMaxCdrSerializedSize()>16)
 	{
 		m_md5.init();
 		m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
@@ -103,6 +103,6 @@ bool SimplePubSubType::getKey(void *data, InstanceHandle_t* handle)
         	handle->value[i] = m_keyBuffer[i];
     	}
     }
-	
+
 	return true;
 }

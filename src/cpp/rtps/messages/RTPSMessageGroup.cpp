@@ -306,7 +306,7 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
     (void)remote_endpoints;
     bool added = false;
 
-#if HAVE_SECURITY
+#if FALSE // HAVE_SECURITY
     uint32_t from_buffer_position = buffer->pos;
 #endif
 
@@ -325,7 +325,7 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
 
     if(added)
     {
-#if HAVE_SECURITY
+#if FALSE // HAVE_SECURITY
         if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
         {
             buffer->pos = from_buffer_position;

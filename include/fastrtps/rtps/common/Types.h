@@ -140,7 +140,14 @@ struct RTPS_DllAPI ProtocolVersion_t
 const ProtocolVersion_t c_ProtocolVersion_2_0(2,0);
 const ProtocolVersion_t c_ProtocolVersion_2_1(2,1);
 const ProtocolVersion_t c_ProtocolVersion_2_2(2,2);
-const ProtocolVersion_t c_ProtocolVersion(2,1);
+const ProtocolVersion_t c_ProtocolVersion_2_3(2,3);
+
+#if HAVE_SECURITY
+// As imposed by DDSSEC11-93
+const ProtocolVersion_t c_ProtocolVersion(2,3);
+#else
+const ProtocolVersion_t c_ProtocolVersion(2,2);
+#endif
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
 class VendorId_t

@@ -113,10 +113,20 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
     participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
 
+#if HAVE_SECURITY
+    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER;
+    participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
+#endif
+
     if(mp_RTPSParticipant->getAttributes().builtin.use_WriterLivelinessProtocol)
     {
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+
+#if HAVE_SECURITY
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+#endif
     }
 
     if(mp_RTPSParticipant->getAttributes().builtin.use_SIMPLE_EndpointDiscoveryProtocol)
@@ -186,6 +196,10 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
         participant_data->permissions_token_ = std::move(*permissions_token);
         mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
     }
+
+    auto sec_attrs = mp_RTPSParticipant->security_attributes();
+    participant_data->security_attributes_ = sec_attrs.mask();
+    participant_data->plugin_security_attributes_ = sec_attrs.plugin_participant_attributes;
 #endif
 }
 
@@ -878,7 +892,7 @@ CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endia
     cdr_msg.msg_endian = endian;
 
     ParameterList_t parameter_list = getLocalParticipantProxyData()->AllQostoParameterList();
-    if(!ParameterList::writeParameterListToCDRMsg(&cdr_msg, &parameter_list, true))
+    if(!ParameterList::writeParameterListToCDRMsg(&cdr_msg, &parameter_list, false))
     {
         cdr_msg.pos = 0;
         cdr_msg.length = 0;

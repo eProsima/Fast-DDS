@@ -110,7 +110,7 @@ class AccessControl
 
         virtual bool check_remote_datareader(const PermissionsHandle& remote_handle,
                 const uint32_t domain_id, const ReaderProxyData& subscription_data,
-                SecurityException& exception) = 0;
+                bool& relay_only, SecurityException& exception) = 0;
 
         virtual bool get_participant_sec_attributes(const PermissionsHandle& local_handle,
                 ParticipantSecurityAttributes& attributes, SecurityException& exception) = 0;

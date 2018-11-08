@@ -37,7 +37,7 @@ StringType::~StringType() {
 
 bool StringType::serialize(void* data, SerializedPayload_t* payload)
 {
-    String* hw = (String*) data;	
+    String* hw = (String*) data;
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
     // Object that serializes the data.
@@ -84,7 +84,7 @@ void StringType::deleteData(void* data)
     delete((String*)data);
 }
 
-bool StringType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/)
+bool StringType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/, bool /*force_md5*/)
 {
     return false;
 }

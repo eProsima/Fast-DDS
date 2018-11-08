@@ -25,7 +25,7 @@
 
 #include "MetaTestTypesPubSubType.h"
 
-MetaTestTypesPubSubType::MetaTestTypesPubSubType() 
+MetaTestTypesPubSubType::MetaTestTypesPubSubType()
 {
 	setName("MetaTestType");
 	m_typeSize = (uint32_t)MetaTestType::getMaxCdrSerializedSize();
@@ -33,27 +33,27 @@ MetaTestTypesPubSubType::MetaTestTypesPubSubType()
 	m_keyBuffer = (unsigned char*)malloc(MetaTestType::getKeyMaxCdrSerializedSize()>16 ? MetaTestType::getKeyMaxCdrSerializedSize() : 16);
 }
 
-MetaTestTypesPubSubType::~MetaTestTypesPubSubType() 
+MetaTestTypesPubSubType::~MetaTestTypesPubSubType()
 {
 	if(m_keyBuffer!=nullptr)
 		delete(m_keyBuffer);
 }
 
-bool MetaTestTypesPubSubType::serialize(void *data, SerializedPayload_t *payload) 
+bool MetaTestTypesPubSubType::serialize(void *data, SerializedPayload_t *payload)
 {
 	MetaTestType *p_type = (MetaTestType*) data;
-	
+
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size);
 	// Object that serializes the data.
 	eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
 	//Select the correct endianess
-	payload->encapsulation = CDR_LE; 
+	payload->encapsulation = CDR_LE;
 	// Serialize the object:
 	p_type->serialize(ser);
 	//Get the serialized length
     payload->length = (uint16_t)ser.getSerializedDataLength();
-    	
+
 	return true;
 }
 
@@ -83,7 +83,7 @@ void MetaTestTypesPubSubType::deleteData(void* data)
 	delete((MetaTestType*)data);
 }
 
-bool MetaTestTypesPubSubType::getKey(void *data, InstanceHandle_t* handle) 
+bool MetaTestTypesPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
 {
 	if(!m_isGetKeyDefined)
 		return false;
@@ -96,7 +96,7 @@ bool MetaTestTypesPubSubType::getKey(void *data, InstanceHandle_t* handle)
 	eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
 
 	p_type->serializeKey(ser);
-	if(MetaTestType::getKeyMaxCdrSerializedSize()>16)
+	if(force_md5 || MetaTestType::getKeyMaxCdrSerializedSize()>16)
 	{
 		m_md5.init();
 		m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
@@ -113,6 +113,6 @@ bool MetaTestTypesPubSubType::getKey(void *data, InstanceHandle_t* handle)
         	handle->value[i] = m_keyBuffer[i];
     	}
     }
-	
+
 	return true;
 }

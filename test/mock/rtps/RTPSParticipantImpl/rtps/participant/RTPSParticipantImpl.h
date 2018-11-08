@@ -27,6 +27,10 @@
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
+#if HAVE_SECURITY
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif
+
 #include <gmock/gmock.h>
 
 namespace eprosima {
@@ -62,6 +66,10 @@ class RTPSParticipantImpl
         MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+
+#if HAVE_SECURITY
+        MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes&());
+#endif
 
         MOCK_METHOD1(setGuid, void(GUID_t&));
 

@@ -43,10 +43,11 @@ TEST_F(SecurityTest, initialization_register_local_participant_error)
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_,_)).Times(1).
         WillOnce(Return(nullptr));
 
     ASSERT_FALSE(manager_.init(security_attributes_, participant_properties_));
@@ -56,11 +57,12 @@ TEST_F(SecurityTest, initialization_fail_participant_stateless_message_writer)
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
     MockParticipantCryptoHandle local_participant_crypto_handle;
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -74,12 +76,13 @@ TEST_F(SecurityTest, initialization_fail_participant_stateless_message_reader)
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
     MockParticipantCryptoHandle local_participant_crypto_handle;
     NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -95,13 +98,14 @@ TEST_F(SecurityTest, initialization_fail_participant_volatile_message_writer)
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
     MockParticipantCryptoHandle local_participant_crypto_handle;
     NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
     NiceMock<StatelessReader>* stateless_reader = new NiceMock<StatelessReader>();
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -118,6 +122,7 @@ TEST_F(SecurityTest, initialization_fail_participant_volatile_message_reader)
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
     MockParticipantCryptoHandle local_participant_crypto_handle;
     NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
     NiceMock<StatelessReader>* stateless_reader = new NiceMock<StatelessReader>();
@@ -125,7 +130,7 @@ TEST_F(SecurityTest, initialization_fail_participant_volatile_message_reader)
 
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -143,6 +148,7 @@ TEST_F(SecurityTest, initialization_auth_retry)
 {
     DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
     DefaultValue<const GUID_t&>::Set(guid);
+    DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
     MockParticipantCryptoHandle local_participant_crypto_handle;
     NiceMock<StatelessWriter>* stateless_writer = new NiceMock<StatelessWriter>(&participant_);
     NiceMock<StatelessReader>* stateless_reader = new NiceMock<StatelessReader>();
@@ -152,7 +158,7 @@ TEST_F(SecurityTest, initialization_auth_retry)
     EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(2).
         WillOnce(Return(ValidationResult_t::VALIDATION_PENDING_RETRY)).
         WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_,_)).Times(1).
         WillOnce(Return(&local_participant_crypto_handle));
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
@@ -175,5 +181,6 @@ TEST_F(SecurityTest, initialization_ok)
         WillOnce(Return(true));
 
     initialization_ok();
+
 }
 

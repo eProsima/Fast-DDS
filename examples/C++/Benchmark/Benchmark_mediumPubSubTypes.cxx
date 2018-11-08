@@ -98,14 +98,14 @@ void BenchMarkMediumPubSubType::deleteData(void* data) {
     delete((BenchMarkMedium*)data);
 }
 
-bool BenchMarkMediumPubSubType::getKey(void *data, InstanceHandle_t* handle) {
+bool BenchMarkMediumPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     if(!m_isGetKeyDefined)
         return false;
     BenchMarkMedium* p_type = (BenchMarkMedium*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,BenchMarkMedium::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
     p_type->serializeKey(ser);
-    if(BenchMarkMedium::getKeyMaxCdrSerializedSize()>16)	{
+    if(force_md5 || BenchMarkMedium::getKeyMaxCdrSerializedSize()>16)	{
         m_md5.init();
         m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
         m_md5.finalize();

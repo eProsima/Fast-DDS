@@ -57,6 +57,8 @@ public:
 	bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
 	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
+	bool getKey(void*, eprosima::fastrtps::rtps::InstanceHandle_t*, bool) { return false; }
+
 	void* createData();
 	void deleteData(void* data);
 };
@@ -93,6 +95,7 @@ public:
 	bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
 	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
+	bool getKey(void*, eprosima::fastrtps::rtps::InstanceHandle_t*, bool) { return false; }
 	void* createData();
 	void deleteData(void* data);
 };

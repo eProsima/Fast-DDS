@@ -77,9 +77,6 @@ public:
 	*/
 	bool computeKey(CacheChange_t* change);
 	
-	//!Auxiliary message.
-	CDRMessage_t aux_msg;
-
 private:
 	WLP* mp_WLP;
 

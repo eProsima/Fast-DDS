@@ -124,15 +124,15 @@ namespace CDRMessage{
 	  inline bool addParameterSentinel(CDRMessage_t*msg);
 	  inline bool addParameterId(CDRMessage_t*msg,ParameterId_t pid);
 	  inline bool addString(CDRMessage_t*msg, const std::string& in_str);
-	  inline bool addOctetVector(CDRMessage_t*msg, const std::vector<octet>* ocvec);
+	  inline bool addOctetVector(CDRMessage_t*msg, const std::vector<octet>* ocvec, bool add_final_padding=true);
       inline bool addParameterSampleIdentity(CDRMessage_t *msg, const SampleIdentity &sample_id);
 	///@}
     
       inline bool addProperty(CDRMessage_t* msg, const Property& property);
-      inline bool addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property);
+      inline bool addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property, bool add_final_padding=true);
       inline bool addPropertySeq(CDRMessage_t* msg, const PropertySeq& properties);
-      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties);
-      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& property_limit);
+      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, bool add_final_padding);
+      inline bool addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& name_start, bool add_final_padding);
       inline bool addDataHolder(CDRMessage_t* msg, const DataHolder& data_holder);
       inline bool addDataHolderSeq(CDRMessage_t* msg, const DataHolderSeq& data_holders);
       inline bool addMessageIdentity(CDRMessage_t* msg, const security::MessageIdentity& message_identity);

@@ -29,7 +29,13 @@ namespace rtps {
 
 
 WriterProxyData::WriterProxyData()
+#if HAVE_SECURITY
+    : security_attributes_(0)
+    , plugin_security_attributes_(0)
+    , m_userDefinedId(0)
+#else
     : m_userDefinedId(0)
+#endif
     , m_typeMaxSerialized(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
@@ -39,7 +45,13 @@ WriterProxyData::WriterProxyData()
     }
 
 WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
+#if HAVE_SECURITY
+    : security_attributes_(writerInfo.security_attributes_)
+    , plugin_security_attributes_(writerInfo.plugin_security_attributes_)
+    , m_guid(writerInfo.m_guid)
+#else
     : m_guid(writerInfo.m_guid)
+#endif
     , m_unicastLocatorList(writerInfo.m_unicastLocatorList)
     , m_multicastLocatorList(writerInfo.m_multicastLocatorList)
     , m_key(writerInfo.m_key)
@@ -65,6 +77,10 @@ WriterProxyData::~WriterProxyData() {
 
 WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
 {
+#if HAVE_SECURITY
+    security_attributes_ = writerInfo.security_attributes_;
+    plugin_security_attributes_ = writerInfo.plugin_security_attributes_;
+#endif
     m_guid = writerInfo.m_guid;
     m_unicastLocatorList = writerInfo.m_unicastLocatorList;
     m_multicastLocatorList = writerInfo.m_multicastLocatorList;
@@ -251,6 +267,14 @@ ParameterList_t WriterProxyData::toParameterList()
             parameter_list.m_parameters.push_back((Parameter_t*)p);
         }
     }
+#if HAVE_SECURITY
+    {
+        ParameterEndpointSecurityInfo_t*p = new ParameterEndpointSecurityInfo_t();
+        p->security_attributes = security_attributes_;
+        p->plugin_security_attributes = plugin_security_attributes_;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+#endif
 
     logInfo(RTPS_PROXY_DATA," with " << parameter_list.m_parameters.size()<< " parameters");
     return parameter_list;
@@ -449,6 +473,14 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         }
                         break;
                     }
+#if HAVE_SECURITY
+                case PID_ENDPOINT_SECURITY_INFO:
+                    {
+                        ParameterEndpointSecurityInfo_t*p=(ParameterEndpointSecurityInfo_t*)(*it);
+                        security_attributes_ = p->security_attributes;
+                        plugin_security_attributes_ = p->plugin_security_attributes;
+                    }
+#endif
                 default:
                     {
                         //logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(*it)->Pid <<" NOT CONSIDERED");

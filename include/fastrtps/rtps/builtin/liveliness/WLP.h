@@ -119,6 +119,18 @@ public:
 	 * @return RTPS participant
 	 */
 	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
+
+    /**
+     * Get the livelines builtin writer
+     * @return stateful writer
+     */
+    StatefulWriter* getBuiltinWriter();
+
+    /**
+    * Get the livelines builtin writer's history
+    * @return writer history
+    */
+    WriterHistory* getBuiltinWriterHistory();
 	
 private:
 	//!Pointer to the local RTPSParticipant.
@@ -143,6 +155,23 @@ private:
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by RTPSParticipant liveliness.
 	std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
+
+#if HAVE_SECURITY
+    //!Pointer to the builtinRTPSParticipantMEssageWriter.
+    StatefulWriter* mp_builtinWriterSecure;
+    //!Pointer to the builtinRTPSParticipantMEssageReader.
+    StatefulReader* mp_builtinReaderSecure;
+    //!Writer History
+    WriterHistory* mp_builtinWriterSecureHistory;
+    //!Reader History
+    ReaderHistory* mp_builtinReaderSecureHistory;
+
+    /**
+     * Create the secure endpoitns used in the WLP.
+     * @return true if correct.
+     */
+    bool createSecureEndpoints();
+#endif
 };
 
 }

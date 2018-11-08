@@ -21,6 +21,10 @@
 
 #include <fastrtps/rtps/common/Guid.h>
 
+#if HAVE_SECURITY
+#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#endif
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -30,6 +34,11 @@ class ReaderProxyData
     public:
 
         GUID_t guid() { return m_guid; }
+
+#if HAVE_SECURITY
+        security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
+        security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
+#endif
 
     private:
 

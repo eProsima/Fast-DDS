@@ -48,6 +48,8 @@ static const char* DataProtectionKind_str = "data_protection_kind";
 static const char* ProtectionKindNone_str = "NONE";
 static const char* ProtectionKindSign_str = "SIGN";
 static const char* ProtectionKindEncrypt_str = "ENCRYPT";
+static const char* ProtectionKindSignAuth_str = "SIGN_WITH_ORIGIN_AUTHENTICATION";
+static const char* ProtectionKindEncryptAuth_str = "ENCRYPT_WITH_ORIGIN_AUTHENTICATION";
 
 using namespace eprosima::fastrtps::rtps::security;
 
@@ -268,6 +270,14 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
                 {
                     rule.discovery_protection_kind = ProtectionKind::ENCRYPT;
                 }
+                else if(strcmp(text, ProtectionKindSignAuth_str) == 0)
+                {
+                    rule.discovery_protection_kind = ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION;
+                }
+                else if(strcmp(text, ProtectionKindEncryptAuth_str) == 0)
+                {
+                    rule.discovery_protection_kind = ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION;
+                }
                 else
                 {
                     logError(XMLPARSER, "Invalid text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(node));
@@ -305,15 +315,23 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
             {
                 if(strcmp(text, ProtectionKindNone_str) == 0)
                 {
-                    rule.LivelinessProtectionKind_str = ProtectionKind::NONE;
+                    rule.liveliness_protection_kind = ProtectionKind::NONE;
                 }
                 else if(strcmp(text, ProtectionKindSign_str) == 0)
                 {
-                    rule.LivelinessProtectionKind_str = ProtectionKind::SIGN;
+                    rule.liveliness_protection_kind = ProtectionKind::SIGN;
                 }
                 else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
-                    rule.LivelinessProtectionKind_str = ProtectionKind::ENCRYPT;
+                    rule.liveliness_protection_kind = ProtectionKind::ENCRYPT;
+                }
+                else if(strcmp(text, ProtectionKindSignAuth_str) == 0)
+                {
+                    rule.liveliness_protection_kind = ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION;
+                }
+                else if(strcmp(text, ProtectionKindEncryptAuth_str) == 0)
+                {
+                    rule.liveliness_protection_kind = ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION;
                 }
                 else
                 {
@@ -361,6 +379,14 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
                 else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
                     rule.rtps_protection_kind = ProtectionKind::ENCRYPT;
+                }
+                else if(strcmp(text, ProtectionKindSignAuth_str) == 0)
+                {
+                    rule.rtps_protection_kind = ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION;
+                }
+                else if(strcmp(text, ProtectionKindEncryptAuth_str) == 0)
+                {
+                    rule.rtps_protection_kind = ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION;
                 }
                 else
                 {
@@ -608,6 +634,14 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
                 else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
                     rule.metadata_protection_kind = ProtectionKind::ENCRYPT;
+                }
+                else if (strcmp(text, ProtectionKindSignAuth_str) == 0)
+                {
+                    rule.metadata_protection_kind = ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION;
+                }
+                else if (strcmp(text, ProtectionKindEncryptAuth_str) == 0)
+                {
+                    rule.metadata_protection_kind = ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION;
                 }
                 else
                 {

@@ -99,7 +99,11 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
     InstanceHandle_t handle;
     if(m_att.topic.topicKind == WITH_KEY)
     {
-        mp_type->getKey(data,&handle);
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
+#endif
+        mp_type->getKey(data,&handle,is_key_protected);
     }
 
     // Block lowlevel writer

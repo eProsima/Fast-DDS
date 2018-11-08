@@ -36,10 +36,11 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
 
         virtual ~MockCryptoKeyFactory(){}
 
-        MOCK_METHOD4(register_local_participant, ParticipantCryptoHandle* (
+        MOCK_METHOD5(register_local_participant, ParticipantCryptoHandle* (
                 const IdentityHandle&,
                 const PermissionsHandle&,
                 const PropertySeq&,
+                const ParticipantSecurityAttributes&,
                 SecurityException&));
 
         MOCK_METHOD5(register_matched_remote_participant, ParticipantCryptoHandle* (
@@ -49,9 +50,10 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
                 const SharedSecretHandle&,
                 SecurityException&));
 
-        MOCK_METHOD3(register_local_datawriter, DatawriterCryptoHandle* (
+        MOCK_METHOD4(register_local_datawriter, DatawriterCryptoHandle* (
                 ParticipantCryptoHandle&,
                 const PropertySeq&,
+                const EndpointSecurityAttributes&,
                 SecurityException&));
 
         MOCK_METHOD5(register_matched_remote_datareader, DatareaderCryptoHandle* (
@@ -61,9 +63,10 @@ class MockCryptoKeyFactory : public CryptoKeyFactory
                 const bool,
                 SecurityException&));
 
-        MOCK_METHOD3(register_local_datareader, DatareaderCryptoHandle* (
+        MOCK_METHOD4(register_local_datareader, DatareaderCryptoHandle* (
                 ParticipantCryptoHandle&,
                 const PropertySeq&,
+                const EndpointSecurityAttributes&,
                 SecurityException&));
 
         MOCK_METHOD4(register_matched_remote_datawriter, DatawriterCryptoHandle* (

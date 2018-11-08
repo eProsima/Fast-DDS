@@ -187,6 +187,16 @@ static bool get_signature_algorithm(X509* certificate, std::string& signature_al
                         signature_algorithm = ECDSA_SHA256;
                         returnedValue = true;
                     }
+                    else if (strncmp(ptr->data, "sha256WithRSAEncryption", ptr->length) == 0)
+                    {
+                        signature_algorithm = RSA_SHA256;
+                        returnedValue = true;
+                    }
+                    else if (strncmp(ptr->data, "sha1WithRSAEncryption", ptr->length) == 0)
+                    {
+                        signature_algorithm = RSA_SHA256;
+                        returnedValue = true;
+                    }
                 }
                 else
                     exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
@@ -550,6 +560,14 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
     return returned_value;
 }
 
+static void process_protection_kind(const ProtectionKind kind, bool& protected_flag, bool& encrypted_flag, bool& orig_auth_flag)
+{
+    protected_flag = kind != ProtectionKind::NONE;
+    encrypted_flag = (kind == ProtectionKind::ENCRYPT) || (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
+    orig_auth_flag = (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
+        (kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
+}
+
 static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle& ah, const uint32_t domain_id,
         DomainAccessRules& governance, PermissionsData& permissions, SecurityException& exception)
 {
@@ -595,57 +613,64 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                 {
                     ah->governance_rule_.is_access_protected = rule.enable_join_access_control;
 
-                    if(rule.discovery_protection_kind == ProtectionKind::NONE)
-                    {
-                        ah->governance_rule_.is_discovered_protected = false;
-                    }
-                    else
-                    {
-                        ah->governance_rule_.is_discovered_protected = true;
-                    }
+                    PluginParticipantSecurityAttributes plug_part_attr;
 
-                    if(rule.rtps_protection_kind == ProtectionKind::NONE)
-                    {
-                        ah->governance_rule_.is_rtps_protected = false;
-                    }
-                    else
-                    {
-                        ah->governance_rule_.is_rtps_protected = true;
-                    }
+                    process_protection_kind(rule.discovery_protection_kind,
+                        ah->governance_rule_.is_discovery_protected,
+                        plug_part_attr.is_discovery_encrypted,
+                        plug_part_attr.is_discovery_origin_authenticated);
+
+                    process_protection_kind(rule.rtps_protection_kind,
+                        ah->governance_rule_.is_rtps_protected,
+                        plug_part_attr.is_rtps_encrypted,
+                        plug_part_attr.is_rtps_origin_authenticated);
+
+                    process_protection_kind(rule.liveliness_protection_kind,
+                        ah->governance_rule_.is_liveliness_protected,
+                        plug_part_attr.is_liveliness_encrypted,
+                        plug_part_attr.is_liveliness_origin_authenticated);
+
+                    ah->governance_rule_.plugin_participant_attributes = plug_part_attr.mask();
 
                     for(auto topic_rule : rule.topic_rules)
                     {
                         std::string topic_expression = topic_rule.topic_expression;
                         EndpointSecurityAttributes reader_attributes;
                         EndpointSecurityAttributes writer_attributes;
+                        PluginEndpointSecurityAttributes plugin_attributes;
 
-                        reader_attributes.is_discovered_protected = topic_rule.enable_discovery_protection;
-                        writer_attributes.is_discovered_protected = topic_rule.enable_discovery_protection;
-                        reader_attributes.is_access_protected = topic_rule.enable_read_access_control;
-                        writer_attributes.is_access_protected = topic_rule.enable_write_access_control;
+                        reader_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
+                        writer_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
+                        reader_attributes.is_liveliness_protected = topic_rule.enable_liveliness_protection;
+                        writer_attributes.is_liveliness_protected = topic_rule.enable_liveliness_protection;
+                        reader_attributes.is_read_protected = topic_rule.enable_read_access_control;
+                        reader_attributes.is_write_protected = topic_rule.enable_write_access_control;
+                        writer_attributes.is_read_protected = topic_rule.enable_read_access_control;
+                        writer_attributes.is_write_protected = topic_rule.enable_write_access_control;
 
-                        if(topic_rule.metadata_protection_kind == ProtectionKind::NONE)
-                        {
-                            reader_attributes.is_submessage_protected = false;
-                            writer_attributes.is_submessage_protected = false;
-                        }
-                        else
-                        {
-                            reader_attributes.is_submessage_protected = true;
-                            writer_attributes.is_submessage_protected = true;
-                        }
+                        bool hasEncryption =
+                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT) ||
+                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
+                        bool hasOriginAuth =
+                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
+                            (topic_rule.metadata_protection_kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
+                        plugin_attributes.is_submessage_encrypted = hasEncryption;
+                        plugin_attributes.is_submessage_origin_authenticated = hasOriginAuth;
 
-                        if(topic_rule.data_protection_kind == ProtectionKind::NONE)
-                        {
-                            reader_attributes.is_payload_protected = false;
-                            writer_attributes.is_payload_protected = false;
-                        }
-                        else
-                        {
-                            reader_attributes.is_payload_protected = true;
-                            writer_attributes.is_payload_protected = true;
-                        }
+                        reader_attributes.is_submessage_protected =
+                            writer_attributes.is_submessage_protected =
+                            (topic_rule.metadata_protection_kind != ProtectionKind::NONE);
 
+                        plugin_attributes.is_payload_encrypted =
+                            reader_attributes.is_key_protected =
+                            writer_attributes.is_key_protected =
+                            (topic_rule.data_protection_kind == ProtectionKind::ENCRYPT);
+                        reader_attributes.is_payload_protected =
+                            writer_attributes.is_payload_protected =
+                                (topic_rule.data_protection_kind != ProtectionKind::NONE);
+
+                        reader_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
+                        writer_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
 
                         ah->governance_reader_topic_rules_.insert(std::pair<std::string, EndpointSecurityAttributes>(
                                     topic_expression, std::move(reader_attributes)));
@@ -921,7 +946,8 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     {
         if(is_validation_in_time(grant.validity))
         {
-            if(rfc2253_string_compare(grant.subject_name, rih->cert_sn_rfc2253_))
+            if(rfc2253_string_compare(grant.subject_name, rih->cert_sn_rfc2253_) ||
+               strcmp(grant.subject_name.c_str(), rih->cert_sn_.c_str()) == 0)
             {
                 remote_grant = std::move(grant);
                 break;
@@ -1029,7 +1055,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     if((attributes = is_topic_in_sec_attributes(topic_name, lah->governance_writer_topic_rules_)) != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_write_protected)
         {
             return true;
         }
@@ -1105,7 +1131,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     if((attributes = is_topic_in_sec_attributes(topic_name, lah->governance_reader_topic_rules_)) != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_read_protected)
         {
             return true;
         }
@@ -1181,7 +1207,7 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
     if((attributes = is_topic_in_sec_attributes(publication_data.topicName(),rah->governance_writer_topic_rules_))
             != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_write_protected)
         {
             return true;
         }
@@ -1224,10 +1250,12 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
 
 bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle,
         const uint32_t domain_id, const ReaderProxyData& subscription_data,
-        SecurityException& exception)
+        bool& relay_only, SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
+
+    relay_only = false;
 
     if(rah.nil())
     {
@@ -1240,7 +1268,7 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
     if((attributes = is_topic_in_sec_attributes(subscription_data.topicName(),rah->governance_reader_topic_rules_))
             != nullptr)
     {
-        if(!attributes->is_access_protected)
+        if(!attributes->is_read_protected)
         {
             return true;
         }
@@ -1265,6 +1293,17 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
                 {
                     exception = _SecurityException_(subscription_data.topicName() +
                             std::string(" topic denied by deny rule."));
+                }
+
+                break;
+            }
+
+            if (is_topic_in_criterias(subscription_data.topicName(), rule.relays))
+            {
+                if (rule.allow)
+                {
+                    relay_only = true;
+                    returned_value = true;
                 }
 
                 break;

@@ -54,10 +54,15 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *target = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *target = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
     ASSERT_TRUE(target != nullptr);
 
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle& local_participant = eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle::narrow(*target);
@@ -66,9 +71,9 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
     ASSERT_GT(local_participant->Participant2ParticipantKeyMaterial.size(), 0ul);
     ASSERT_GT(local_participant->Participant2ParticipantKxKeyMaterial.size(), 0ul);
 
-    ASSERT_TRUE( (local_participant->ParticipantKeyMaterial.transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
-    ASSERT_TRUE( (local_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
-    ASSERT_TRUE( (local_participant->Participant2ParticipantKxKeyMaterial.at(0).transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
+    ASSERT_TRUE( (local_participant->ParticipantKeyMaterial.transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
+    ASSERT_TRUE( (local_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
+    ASSERT_TRUE( (local_participant->Participant2ParticipantKxKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes256_gcm) );
 
     ASSERT_FALSE( std::all_of(local_participant->ParticipantKeyMaterial.master_salt.begin(),local_participant->ParticipantKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
     ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.begin(),local_participant->Participant2ParticipantKeyMaterial.at(0).master_salt.end(), [](uint8_t i){return i==0;}) );
@@ -97,11 +102,16 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *local = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *local = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
 
     ASSERT_TRUE(local != nullptr);
 
@@ -110,8 +120,8 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -123,7 +133,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -144,7 +154,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     ASSERT_TRUE(remote_participant_A->Participant2ParticipantKxKeyMaterial.size() == 1);
     ASSERT_TRUE(remote_participant_B->Participant2ParticipantKxKeyMaterial.size() == 1);
     //Check that both remoteKeysMaterials have unique IDS (keys are the same since they use the same source material
-    ASSERT_TRUE(remote_participant_A->Participant2ParticipantKeyMaterial.at(0).sender_key_id != remote_participant_B->Participant2ParticipantKeyMaterial.at(0).sender_key_id);
+    ASSERT_TRUE(remote_participant_A->Participant2ParticipantKeyMaterial.at(0).sender_key_id == remote_participant_B->Participant2ParticipantKeyMaterial.at(0).sender_key_id);
     //KxKeys should be the same since they derive from the same Shared Secret although Keys should not
     ASSERT_TRUE(remote_participant_A->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key != remote_participant_B->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key);
     ASSERT_TRUE(remote_participant_A->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key == remote_participant_B->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
@@ -163,16 +173,22 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
 
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle& Participant_A = eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantA);
 
     eprosima::fastrtps::rtps::security::KeyMaterial_AES_GCM_GMAC base = Participant_A->ParticipantKeyMaterial;
 
     std::vector<uint8_t> serialized = CryptoPlugin->keyexchange()->KeyMaterialCDRSerialize(base);
-    eprosima::fastrtps::rtps::security::KeyMaterial_AES_GCM_GMAC result = CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(&serialized);
+    eprosima::fastrtps::rtps::security::KeyMaterial_AES_GCM_GMAC result;
+    CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized);
     ASSERT_TRUE(
             (base.transformation_kind == result.transformation_kind) &
             (base.master_salt == result.master_salt) &
@@ -195,15 +211,20 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -215,15 +236,15 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
     (*shared_secret)->data_.push_back(binary_data);
 
     //Create ParticipantA and ParticipantB
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantB = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantB = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
 
     ASSERT_TRUE( (ParticipantA != nullptr) & (ParticipantB != nullptr) );
 
@@ -275,15 +296,20 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -295,15 +321,15 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
     (*shared_secret)->data_.push_back(binary_data);
 
     //Create ParticipantA and ParticipantB
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantB = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *ParticipantB = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
 
     ASSERT_TRUE( (ParticipantA != nullptr) & (ParticipantB != nullptr) );
 
@@ -368,16 +394,16 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     //Now lets do the same with 256GCM
     //Fill prop_handle with info about the new mode we want
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GMAC");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
     //Create ParticipantA and ParticipantB
-    ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
-    ParticipantB = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,exception);
+    ParticipantA = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
+    ParticipantB = CryptoPlugin->keyfactory()->register_local_participant(*i_handle,*perm_handle,prop_handle,part_sec_attr,exception);
 
     //Register a remote for both Participants
     ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*ParticipantA,*i_handle,*perm_handle,*shared_secret, exception);
@@ -423,27 +449,39 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatawriterCryptoHandle *target = CryptoPlugin->keyfactory()->register_local_datawriter(*participant, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = false;
+    sec_attrs.is_key_protected = false;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::DatawriterCryptoHandle *target = CryptoPlugin->keyfactory()->register_local_datawriter(*participant, prop_handle, sec_attrs, exception);
     ASSERT_TRUE(target != nullptr);
 
     eprosima::fastrtps::rtps::security::AESGCMGMAC_WriterCryptoHandle& local_writer = eprosima::fastrtps::rtps::security::AESGCMGMAC_WriterCryptoHandle::narrow(*target);
     ASSERT_TRUE(!local_writer.nil());
 
     ASSERT_TRUE(local_writer->Entity2RemoteKeyMaterial.empty());
-    ASSERT_TRUE( (local_writer->EntityKeyMaterial.transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
+    ASSERT_TRUE( (local_writer->EntityKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes128_gcm) );
 
-    ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.master_salt.begin(),local_writer->EntityKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.at(0).master_salt.begin(),local_writer->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.master_sender_key.begin(),local_writer->EntityKeyMaterial.master_sender_key.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_writer->EntityKeyMaterial.at(0).master_sender_key.begin(),local_writer->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.receiver_specific_key_id.begin(),local_writer->EntityKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.at(0).receiver_specific_key_id.begin(),local_writer->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
 
-    ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.master_receiver_specific_key.begin(),local_writer->EntityKeyMaterial.master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_writer->EntityKeyMaterial.at(0).master_receiver_specific_key.begin(),local_writer->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
 
     delete i_handle;
     delete perm_handle;
@@ -460,27 +498,39 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *target = CryptoPlugin->keyfactory()->register_local_datareader(*participant, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = false;
+    sec_attrs.is_key_protected = false;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *target = CryptoPlugin->keyfactory()->register_local_datareader(*participant, prop_handle, sec_attrs, exception);
     ASSERT_TRUE(target != nullptr);
 
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ReaderCryptoHandle& local_reader = eprosima::fastrtps::rtps::security::AESGCMGMAC_ReaderCryptoHandle::narrow(*target);
     ASSERT_TRUE(!local_reader.nil());
 
     ASSERT_TRUE(local_reader->Entity2RemoteKeyMaterial.empty());
-    ASSERT_TRUE( (local_reader->EntityKeyMaterial.transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}) );
+    ASSERT_TRUE( (local_reader->EntityKeyMaterial.at(0).transformation_kind == eprosima::fastrtps::rtps::security::c_transfrom_kind_aes128_gcm) );
 
-    ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.master_salt.begin(),local_reader->EntityKeyMaterial.master_salt.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.at(0).master_salt.begin(),local_reader->EntityKeyMaterial.at(0).master_salt.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.master_sender_key.begin(),local_reader->EntityKeyMaterial.master_sender_key.end(), [](uint8_t i){return i==0;}) );
+    ASSERT_FALSE( std::all_of(local_reader->EntityKeyMaterial.at(0).master_sender_key.begin(),local_reader->EntityKeyMaterial.at(0).master_sender_key.end(), [](uint8_t i){return i==0;}) );
 
-    ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.receiver_specific_key_id.begin(),local_reader->EntityKeyMaterial.receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.at(0).receiver_specific_key_id.begin(),local_reader->EntityKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i){return i!=0;}) );
 
-    ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.master_receiver_specific_key.begin(),local_reader->EntityKeyMaterial.master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
+    ASSERT_FALSE( std::any_of(local_reader->EntityKeyMaterial.at(0).master_receiver_specific_key.begin(),local_reader->EntityKeyMaterial.at(0).master_receiver_specific_key.end(), [](uint8_t i){return i!=0;}) );
 
     delete i_handle;
     delete perm_handle;
@@ -497,21 +547,33 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = false;
+    sec_attrs.is_key_protected = false;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -523,7 +585,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -571,21 +633,33 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = false;
+    sec_attrs.is_key_protected = false;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -597,7 +671,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -677,21 +751,34 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = true;
+    sec_attrs.is_key_protected = true;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -703,7 +790,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -767,19 +854,19 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
 
     //Lets do it with the 256 version
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GCM");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
 
-    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
 
-    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Register a remote for both Participants
     ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
@@ -836,21 +923,33 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = false;
+    sec_attrs.is_key_protected = false;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -862,7 +961,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -932,19 +1031,19 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
 
     //Test the GCM256 version
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GCM");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
 
-    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
 
-    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Register a remote for both Participants
     ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
@@ -1008,21 +1107,33 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = false;
+    sec_attrs.is_key_protected = false;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -1034,7 +1145,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -1103,19 +1214,19 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
 
     //Test the GCM256 version    
     eprosima::fastrtps::rtps::Property prop1;
-    prop1.name("dds.sec.crypto.cryptotransformkind");
-    prop1.value("AES256_GCM");
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("256");
     prop_handle.push_back(prop1);
     eprosima::fastrtps::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
 
-    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
 
-    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, exception);
-    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, exception);
+    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
 
     //Register a remote for both Participants
     ParticipantA_remote =CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A,*i_handle,*perm_handle,*shared_secret, exception);
@@ -1179,21 +1290,33 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     eprosima::fastrtps::rtps::security::PKIIdentityHandle* i_handle = new eprosima::fastrtps::rtps::security::PKIIdentityHandle();
     eprosima::fastrtps::rtps::security::AccessPermissionsHandle* perm_handle = new eprosima::fastrtps::rtps::security::AccessPermissionsHandle();
     eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastrtps::rtps::security::ParticipantSecurityAttributes part_sec_attr;
+    eprosima::fastrtps::rtps::security::EndpointSecurityAttributes sec_attrs;
     eprosima::fastrtps::rtps::security::SharedSecretHandle* shared_secret = new eprosima::fastrtps::rtps::security::SharedSecretHandle();
 
     eprosima::fastrtps::rtps::security::SecurityException exception;
 
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, exception);
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+        PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
 
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_B, prop_handle, exception);
-    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_A, prop_handle, exception);
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = false;
+    sec_attrs.is_key_protected = false;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+        PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_A = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+    eprosima::fastrtps::rtps::security::ParticipantCryptoHandle *participant_B = CryptoPlugin->keyfactory()->register_local_participant(*i_handle, *perm_handle, prop_handle, part_sec_attr, exception);
+
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_B, prop_handle, sec_attrs, exception);
+    eprosima::fastrtps::rtps::security::DatareaderCryptoHandle *writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_A, prop_handle, sec_attrs, exception);
 
     //Fill shared secret with dummy values
     std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
     eprosima::fastrtps::rtps::security::SharedSecret::BinaryData binary_data;
-    challenge_1.reserve(8);
-    challenge_2.reserve(8);
+    challenge_1.resize(8);
+    challenge_2.resize(8);
 
     RAND_bytes(challenge_1.data(),8);
     binary_data.name("Challenge1");
@@ -1205,7 +1328,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     binary_data.value(challenge_2);
     (*shared_secret)->data_.push_back(binary_data);
 
-    dummy_data.reserve(32);
+    dummy_data.resize(32);
     RAND_bytes(dummy_data.data(),32);
     binary_data.name("SharedSecret");
     binary_data.value(dummy_data);
@@ -1245,10 +1368,10 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle& P_B = eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantB_remote); //Owner of a Reader
     eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle& P_A = eprosima::fastrtps::rtps::security::AESGCMGMAC_ParticipantCryptoHandle::narrow(*ParticipantA_remote); //Owner of a Writer
 
-    ASSERT_TRUE( P_A->Readers.size() == 1);
-    ASSERT_TRUE( P_A->Writers.size() == 0);
-    ASSERT_TRUE( P_B->Writers.size() == 1);
-    ASSERT_TRUE( P_B->Readers.size() == 0);
+    ASSERT_TRUE( P_A->Readers.size() == 2);
+    ASSERT_TRUE( P_A->Writers.size() == 1);
+    ASSERT_TRUE( P_B->Writers.size() == 2);
+    ASSERT_TRUE( P_B->Readers.size() == 1);
 
     //Perform sample message exchange
     eprosima::fastrtps::rtps::CDRMessage_t plain_payload;

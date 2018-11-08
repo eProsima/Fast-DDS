@@ -115,7 +115,7 @@ bool DynamicPubSubType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_
     return true;
 }
 
-bool DynamicPubSubType::getKey(void* data, eprosima::fastrtps::rtps::InstanceHandle_t* handle)
+bool DynamicPubSubType::getKey(void* data, eprosima::fastrtps::rtps::InstanceHandle_t* handle, bool force_md5)
 {
     if (mDynamicType == nullptr || !m_isGetKeyDefined)
     {
@@ -133,7 +133,7 @@ bool DynamicPubSubType::getKey(void* data, eprosima::fastrtps::rtps::InstanceHan
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     pDynamicData->serializeKey(ser);
-    if (keyBufferSize > 16)
+    if (force_md5 || keyBufferSize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, (unsigned int)ser.getSerializedDataLength());

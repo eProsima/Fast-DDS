@@ -38,15 +38,12 @@ namespace fastrtps{
 namespace rtps {
 
 
-WLPListener::WLPListener(WLP* plwp):
-																		mp_WLP(plwp)
+WLPListener::WLPListener(WLP* plwp) : mp_WLP(plwp)
 {
-	free(aux_msg.buffer);
 }
 
 WLPListener::~WLPListener()
 {
-	aux_msg.buffer = nullptr;
 }
 
 
@@ -65,13 +62,13 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 		return;
 	}
 	//Check the serializedPayload:
-	for(auto ch = this->mp_WLP->mp_builtinReaderHistory->changesBegin();
-			ch!=mp_WLP->mp_builtinReaderHistory->changesEnd();++ch)
+    auto history = reader->getHistory();
+	for(auto ch = history->changesBegin(); ch!=history->changesEnd();++ch)
 	{
 		if((*ch)->instanceHandle == change->instanceHandle &&
 				(*ch)->sequenceNumber < change->sequenceNumber)
 		{
-			mp_WLP->mp_builtinReaderHistory->remove_change(*ch);
+			history->remove_change(*ch);
 			break;
 		}
 	}
@@ -95,7 +92,7 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 	if(guidP == reader->getGuid().guidPrefix)
 	{
 		logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
-		this->mp_WLP->mp_builtinReaderHistory->remove_change(change);
+        history->remove_change(change);
 		return;
 	}
 	this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
@@ -141,18 +138,9 @@ bool WLPListener::computeKey(CacheChange_t* change)
 	if(change->instanceHandle == c_InstanceHandle_Unknown)
 	{
 		SerializedPayload_t* pl = &change->serializedPayload;
-		if(pl->length > 16)
+		if(pl->length >= 16)
 		{
-			CDRMessage::initCDRMsg(&aux_msg);
-			aux_msg.buffer = pl->data;
-			aux_msg.length = pl->length;
-			aux_msg.max_size = pl->max_size;
-			aux_msg.msg_endian = pl->encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
-			for(uint8_t i =0;i<16;++i)
-			{
-				change->instanceHandle.value[i] = aux_msg.buffer[i];
-			}
-			aux_msg.buffer = nullptr;
+			memcpy(change->instanceHandle.value, pl->data, 16);
 			return true;
 		}
 		return false;

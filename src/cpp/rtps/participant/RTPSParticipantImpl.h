@@ -43,9 +43,9 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #if HAVE_SECURITY
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include "../security/SecurityManager.h"
 #endif
 

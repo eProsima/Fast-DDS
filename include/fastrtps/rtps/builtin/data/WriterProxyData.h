@@ -27,7 +27,9 @@
 
 #include "../../attributes/ReaderAttributes.h"
 
-
+#if HAVE_SECURITY
+#include "../../security/accesscontrol/EndpointSecurityAttributes.h"
+#endif
 
 namespace eprosima {
 namespace fastrtps{
@@ -317,6 +319,15 @@ class WriterProxyData
 
         //!WriterQOS
         WriterQos m_qos;
+
+#if HAVE_SECURITY
+        //!EndpointSecurityInfo.endpoint_security_attributes
+        security::EndpointSecurityAttributesMask security_attributes_;
+
+        //!EndpointSecurityInfo.plugin_endpoint_security_attributes
+        security::PluginEndpointSecurityAttributesMask plugin_security_attributes_;
+#endif
+
         //!Clear the information and return the object to the default state.
         void clear();
         //!Update certain parameters from another object.
