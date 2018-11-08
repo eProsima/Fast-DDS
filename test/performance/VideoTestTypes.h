@@ -77,6 +77,10 @@ class VideoDataType : public eprosima::fastrtps::TopicDataType
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
         void* createData();
         void deleteData(void* data);
+        bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
+            (void)force_md5;
+            return false;
+        }
 };
 
 enum TESTCOMMAND:uint32_t{
@@ -111,6 +115,10 @@ class TestCommandDataType : public eprosima::fastrtps::TopicDataType
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
         void* createData();
         void deleteData(void* data);
+        bool getKey(void* /*data*/, eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/, bool force_md5 = false) override {
+            (void)force_md5;
+            return false;
+        }
 };
 
 
