@@ -113,8 +113,12 @@ struct RTPS_DllAPI ProtocolVersion_t
     octet m_major;
     octet m_minor;
     ProtocolVersion_t():
-        m_major(2),
-        m_minor(1)
+#if HAVE_SECURITY
+        // As imposed by DDSSEC11-93
+        ProtocolVersion_t(2,3)
+#else
+        ProtocolVersion_t(2,2)
+#endif
     {
 
     };
@@ -137,17 +141,22 @@ struct RTPS_DllAPI ProtocolVersion_t
     }
 };
 
+/**
+ * Prints a ProtocolVersion
+ * @param output Output Stream
+ * @param pv ProtocolVersion
+ * @return OStream.
+ */
+inline std::ostream& operator<<(std::ostream& output, const ProtocolVersion_t& pv){
+    return output << static_cast<int>(pv.m_major) << "." << static_cast<int>(pv.m_minor);
+}
+
 const ProtocolVersion_t c_ProtocolVersion_2_0(2,0);
 const ProtocolVersion_t c_ProtocolVersion_2_1(2,1);
 const ProtocolVersion_t c_ProtocolVersion_2_2(2,2);
 const ProtocolVersion_t c_ProtocolVersion_2_3(2,3);
 
-#if HAVE_SECURITY
-// As imposed by DDSSEC11-93
-const ProtocolVersion_t c_ProtocolVersion(2,3);
-#else
-const ProtocolVersion_t c_ProtocolVersion(2,2);
-#endif
+const ProtocolVersion_t c_ProtocolVersion;
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
 class VendorId_t

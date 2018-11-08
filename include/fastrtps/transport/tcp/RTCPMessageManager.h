@@ -32,6 +32,8 @@ namespace rtps {
 class TCPChannelResource;
 class TCPTransportInterface;
 
+const ProtocolVersion_t c_rtcpProtocolVersion = {1, 0};
+
 /**
  * Class RTCPMessageManager, process the received TCP messages.
  * @ingroup MANAGEMENT_MODULE
@@ -72,34 +74,34 @@ public:
     /** @name Process RTCP Message Methods.
     * These methods create RTPS messages for different types
     */
-    bool processBindConnectionRequest(TCPChannelResource *pChannelResource, const ConnectionRequest_t &request,
+    ResponseCode processBindConnectionRequest(TCPChannelResource *pChannelResource, const ConnectionRequest_t &request,
         const TCPTransactionId &transactionId, Locator_t &localLocator);
 
-    virtual bool processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+    virtual ResponseCode processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
         const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId);
 
     void processCheckLogicalPortsRequest(TCPChannelResource *pChannelResource,
         const CheckLogicalPortsRequest_t &request, const TCPTransactionId &transactionId);
 
-    bool processKeepAliveRequest(TCPChannelResource *pChannelResource, const KeepAliveRequest_t &request,
+    ResponseCode processKeepAliveRequest(TCPChannelResource *pChannelResource, const KeepAliveRequest_t &request,
         const TCPTransactionId &transactionId);
 
     void processLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource,
         const LogicalPortIsClosedRequest_t &request, const TCPTransactionId &transactionId);
 
-    bool processBindConnectionResponse(TCPChannelResource *pChannelResource, const BindConnectionResponse_t &response,
-        const TCPTransactionId &transactionId);
+    ResponseCode processBindConnectionResponse(TCPChannelResource *pChannelResource,
+        const BindConnectionResponse_t &response, const TCPTransactionId &transactionId);
 
-    bool processCheckLogicalPortsResponse(TCPChannelResource *pChannelResource,
+    ResponseCode processCheckLogicalPortsResponse(TCPChannelResource *pChannelResource,
         const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
 
-    bool processOpenLogicalPortResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
+    ResponseCode processOpenLogicalPortResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
         const TCPTransactionId &transactionId, Locator_t &remoteLocator);
 
-    bool processKeepAliveResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
+    ResponseCode processKeepAliveResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
         const TCPTransactionId &transactionId);
 
-    bool processRTCPMessage(TCPChannelResource *ChannelResource, octet* receiveBuffer, size_t receivedSize);
+    ResponseCode processRTCPMessage(TCPChannelResource *ChannelResource, octet* receiveBuffer, size_t receivedSize);
 
     static uint32_t& addToCRC(uint32_t &crc, octet data);
 
@@ -152,6 +154,8 @@ protected:
 
     void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, TCPControlMsgHeader &retCtrlHeader,
         TCPHeader &header, const SerializedPayload_t *payload = nullptr, const ResponseCode *respCode = nullptr);
+
+    bool isCompatibleProtocol(const ProtocolVersion_t &protocol) const;
 };
 } /* namespace rtps */
 } /* namespace fastrtps */

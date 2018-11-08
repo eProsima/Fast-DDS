@@ -44,7 +44,7 @@ public:
     void SetInvalidTransactionPercentage(uint8_t value) { mInvalidTransactionPercentage = value; }
     void SetLogicalPortsBlocked(std::vector<uint16_t> list) { mLogicalPortsBlocked = list; }
 
-    virtual bool processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+    virtual ResponseCode processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
         const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId) override;
 
 protected:

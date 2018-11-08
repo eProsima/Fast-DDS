@@ -48,7 +48,7 @@ TCPTransactionId test_RTCPMessageManager::getTransactionId()
     return TCPTransactionId();
 }
 
-bool test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+ResponseCode test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
     const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
     if (std::find(mLogicalPortsBlocked.begin(), mLogicalPortsBlocked.end(), request.logicalPort()) !=
@@ -72,7 +72,7 @@ bool test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *
             sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
         }
     }
-    return true;
+    return RETCODE_OK;
 }
 
 } /* namespace rtps */

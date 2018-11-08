@@ -31,6 +31,7 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/utils/System.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
@@ -96,14 +97,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
     }
 
     PParam.participantID = ID;
-    int pid;
-#if defined(__cplusplus_winrt)
-    pid = (int)GetCurrentProcessId();
-#elif defined(_WIN32)
-    pid = (int)_getpid();
-#else
-    pid = (int)getpid();
-#endif
+    int pid = System::GetPID();
     GuidPrefix_t guidP;
     LocatorList_t loc;
     IPFinder::getIP4Address(&loc);
@@ -260,6 +254,3 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
 } /* namespace  rtps */
 } /* namespace  fastrtps */
 } /* namespace eprosima */
-
-
-
