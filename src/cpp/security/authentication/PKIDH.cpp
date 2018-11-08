@@ -55,7 +55,7 @@ static const unsigned char* BN_deserialize_raw(BIGNUM** bn, const unsigned char*
 
     if (bnn != nullptr)
     {
-        if (BN_bin2bn(raw_pointer, length, bnn) != nullptr)
+        if (BN_bin2bn(raw_pointer, static_cast<int>(length), bnn) != nullptr)
         {
             *bn = bnn;
             return raw_pointer + length;

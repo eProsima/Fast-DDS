@@ -34,8 +34,6 @@ using namespace eprosima::fastrtps::rtps::security;
 
 static const char* certs_path = nullptr;
 
-static size_t alignment(size_t current_alignment, size_t dataSize) { return (dataSize - (current_alignment % dataSize)) & (dataSize-1);}
-
 PropertyPolicy AuthenticationPluginTest::get_valid_policy()
 {
     PropertyPolicy property_policy;
@@ -159,9 +157,9 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
     ASSERT_TRUE(dh != nullptr);
     const unsigned char* pointer = dh1->data();
-    uint32_t length = dh1->size();
+    size_t length = dh1->size();
     BIGNUM* bn = BN_new();
-    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
+    ASSERT_TRUE(BN_bin2bn(pointer, static_cast<int>(length), bn) !=  nullptr);
 
 #if IS_OPENSSL_1_1
     const BIGNUM* p = nullptr;
@@ -228,9 +226,9 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     DH* dh = EVP_PKEY_get1_DH(handshake_handle->dhkeys_);
     ASSERT_TRUE(dh != nullptr);
     const unsigned char* pointer = dh2->data();
-    uint32_t length = dh2->size();
+    size_t length = dh2->size();
     BIGNUM* bn = BN_new();
-    ASSERT_TRUE(BN_bin2bn(pointer, length, bn) !=  nullptr);
+    ASSERT_TRUE(BN_bin2bn(pointer, static_cast<int>(length), bn) !=  nullptr);
 
 #if IS_OPENSSL_1_1
     const BIGNUM* p = nullptr;
