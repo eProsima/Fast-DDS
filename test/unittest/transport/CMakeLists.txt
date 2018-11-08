@@ -85,6 +85,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
         )
 
         set(TCPV6TESTS_SOURCE
@@ -111,6 +112,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
         )
 
         set(TEST_UDPV4TESTS_SOURCE
@@ -139,7 +141,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
         target_compile_definitions(UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(UDPv4Tests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}            
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
