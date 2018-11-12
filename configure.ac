@@ -20,7 +20,7 @@
 # Define variables for the FastRTPS version number.
 #
 m4_define([version_major],[1])
-m4_define([version_minor],[6])
+m4_define([version_minor],[7])
 m4_define([version_micro],[0])
 
 AC_INIT([fastrtps], [version_major.version_minor.version_micro], [support@eprosima.com], [eProsima FastRTPS], [http://eprosima.com/])
