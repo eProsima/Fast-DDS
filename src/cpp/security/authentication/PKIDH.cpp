@@ -684,7 +684,12 @@ static bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
         SecurityException& exception)
 {
     bool returnedValue = false;
-    DH* dh = EVP_PKEY_get0_DH(dhkey);
+    DH* dh =
+#if IS_OPENSSL_1_1
+        EVP_PKEY_get0_DH(dhkey);
+#else
+        dhkey->pkey.dh;
+#endif
 
     if(dh != nullptr)
     {
@@ -705,11 +710,18 @@ static bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
             returnedValue =  true;
         }
         else
+        {
             exception = _SecurityException_("Cannot serialize public key");
+        }
     }
     else
     {
-        EC_KEY* ec = EVP_PKEY_get0_EC_KEY(dhkey);
+        EC_KEY* ec =
+#if IS_OPENSSL_1_1
+            EVP_PKEY_get0_EC_KEY(dhkey);
+#else
+            dhkey->pkey.ec;
+#endif
         if (ec != nullptr)
         {
             auto grp = EC_KEY_get0_group(ec);
@@ -761,18 +773,26 @@ static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, Securi
                         return key;
                     }
                     else
+                    {
                         exception = _SecurityException_("OpenSSL library cannot set dh in pkey");
+                    }
 
                     EVP_PKEY_free(key);
                 }
                 else
+                {
                     exception = _SecurityException_("OpenSSL library cannot create pkey");
+                }
             }
             else
+            {
                 exception = _SecurityException_("Cannot deserialize public key");
+            }
         }
         else
+        {
             exception = _SecurityException_("OpenSSL library cannot create dh");
+        }
     }
     else
     {
@@ -782,7 +802,11 @@ static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, Securi
         {
             const unsigned char* pointer = buffer.data();
 
+#if IS_OPENSSL_1_1
             if(EC_KEY_oct2key(ec, pointer, buffer.size(), NULL) > 0)
+#else
+            if(o2i_ECPublicKey(&ec, &pointer, buffer.size()) != nullptr)
+#endif
             {
                 EVP_PKEY* key = EVP_PKEY_new();
 
@@ -793,20 +817,28 @@ static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, Securi
                         return key;
                     }
                     else
+                    {
                         exception = _SecurityException_("OpenSSL library cannot set ec in pkey");
+                    }
 
                     EVP_PKEY_free(key);
                 }
                 else
+                {
                     exception = _SecurityException_("OpenSSL library cannot create pkey");
+                }
             }
             else
+            {
                 exception = _SecurityException_("Cannot deserialize public key");
+            }
 
             EC_KEY_free(ec);
         }
         else
+        {
             exception = _SecurityException_("OpenSSL library cannot create ec");
+        }
     }
 
     return nullptr;
