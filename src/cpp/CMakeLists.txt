@@ -194,7 +194,7 @@ else()
     set(HAVE_SECURITY 0)
 endif()
 
-if(WIN32)
+if(WIN32 AND (MSVC OR MSVC_IDE))
     list(APPEND ${PROJECT_NAME}_source_files
         ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
         )
