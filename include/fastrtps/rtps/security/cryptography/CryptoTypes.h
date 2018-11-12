@@ -49,7 +49,7 @@ namespace security {
     typedef std::array<uint8_t,4> CryptoTransformKind;
     typedef std::array<uint8_t,4> CryptoTransformKeyId;
 
-    const CryptoTransformKeyId c_transformKeyIdZero = { 0,0,0,0 };
+    const CryptoTransformKeyId c_transformKeyIdZero = { {0,0,0,0} };
 
     typedef Token MessageToken;
     typedef MessageToken AuthRequestMessageToken;

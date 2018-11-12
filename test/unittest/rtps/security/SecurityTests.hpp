@@ -84,6 +84,7 @@ class SecurityTest : public ::testing::Test
             ::testing::DefaultValue<const RTPSParticipantAttributes&>::Clear();
             ::testing::DefaultValue<const GUID_t&>::Clear();
             ::testing::DefaultValue<CDRMessage_t>::Clear();
+            ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Clear();
         }
 
         void fill_participant_key(GUID_t& participant_key)
@@ -140,6 +141,7 @@ class SecurityTest : public ::testing::Test
             ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
             ::testing::DefaultValue<const GUID_t&>::Set(guid);
             ::testing::DefaultValue<CDRMessage_t>::Set(default_cdr_message);
+            ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
             stateless_writer_ = new ::testing::NiceMock<StatelessWriter>(&participant_);
             stateless_reader_ = new ::testing::NiceMock<StatelessReader>();
 
