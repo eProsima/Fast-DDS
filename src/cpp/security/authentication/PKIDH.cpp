@@ -688,7 +688,7 @@ static bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
 #if IS_OPENSSL_1_1
         EVP_PKEY_get0_DH(dhkey);
 #else
-        EVP_PKEY_get1_DH(dhkey);
+        dhkey->pkey.dh;
 #endif
 
     if(dh != nullptr)
