@@ -55,7 +55,7 @@ public:
     ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, bool dynamic_types);
+        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
     virtual ~ThroughputSubscriber();
     eprosima::fastrtps::Participant* mp_par;
     eprosima::fastrtps::Subscriber* mp_datasub;
@@ -132,6 +132,8 @@ public:
     ThroughputCommandDataType throuputcommand_t;
     std::string m_sXMLConfigFile;
     bool dynamic_data = false;
+    int m_forced_domain;
+
     // Static Data
     ThroughputDataType throughput_t;
     ThroughputType* throughputin;
