@@ -299,7 +299,14 @@ bool RTPSMessageGroup::insert_submessage(const std::vector<GUID_t>& remote_endpo
 
 bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::vector<GUID_t>& remote_endpoints)
 {
-    (void)remote_endpoints;
+#if HAVE_SECURITY
+    // Add INFO_SRC when we are at the beginning of the message and RTPS protection is enabled
+    if ( (full_msg_->length == RTPSMESSAGE_HEADER_SIZE) &&
+        participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
+    {
+        RTPSMessageCreator::addSubmessageInfoSRC(buffer, c_ProtocolVersion, c_VendorId_eProsima, participant_->getGuid().guidPrefix);
+    }
+#endif
 
     if(remote_endpoints.size() == 1 && current_dst_ != remote_endpoints.at(0).guidPrefix)
     {
