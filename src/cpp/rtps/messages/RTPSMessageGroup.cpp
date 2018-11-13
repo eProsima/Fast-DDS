@@ -208,6 +208,8 @@ void RTPSMessageGroup::flush()
 
 void RTPSMessageGroup::send()
 {
+    CDRMessage_t* msgToSend = full_msg_;
+
     if(full_msg_->length > RTPSMESSAGE_HEADER_SIZE)
     {
 #if HAVE_SECURITY
@@ -216,6 +218,9 @@ void RTPSMessageGroup::send()
         {
             CDRMessage::initCDRMsg(encrypt_msg_);
             full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+            encrypt_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+            encrypt_msg_->length = RTPSMESSAGE_HEADER_SIZE;
+            memcpy(encrypt_msg_->buffer, full_msg_->buffer, RTPSMESSAGE_HEADER_SIZE);
 
             if(!participant_->security_manager().encode_rtps_message(*full_msg_, *encrypt_msg_, current_remote_participants_))
             {
@@ -223,26 +228,17 @@ void RTPSMessageGroup::send()
                 return;
             }
 
-            if((full_msg_->max_size) >= (RTPSMESSAGE_HEADER_SIZE + encrypt_msg_->length))
-            {
-                memcpy(&full_msg_->buffer[RTPSMESSAGE_HEADER_SIZE], encrypt_msg_->buffer, encrypt_msg_->length);
-                full_msg_->length = RTPSMESSAGE_HEADER_SIZE + encrypt_msg_->length;
-            }
-            else
-            {
-                logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
-                return ;
-            }
+            msgToSend = encrypt_msg_;
         }
 #endif
         const LocatorList_t & destinations =
             fixed_destination_ ? *fixed_destination_locators_ : current_locators_;
         for(const auto& lit : destinations)
         {
-            participant_->sendSync(full_msg_, endpoint_, lit);
+            participant_->sendSync(msgToSend, endpoint_, lit);
         }
 
-        currentBytesSent_ += full_msg_->length;
+        currentBytesSent_ += msgToSend->length;
     }
 }
 
