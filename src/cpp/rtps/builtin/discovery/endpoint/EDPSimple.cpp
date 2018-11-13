@@ -163,9 +163,6 @@ bool EDPSimple::createSEDPEndpoints()
         created &=this->mp_RTPSParticipant->createWriter(&waux,watt,mp_PubWriter.second,nullptr,c_EntityId_SEDPPubWriter,true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
-#endif
             mp_PubWriter.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Publication Writer created");
         }
@@ -195,9 +192,6 @@ bool EDPSimple::createSEDPEndpoints()
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_SubReader.second,mp_subListen,c_EntityId_SEDPSubReader,true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
-#endif
             mp_SubReader.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Subscription Reader created");
         }
@@ -232,9 +226,6 @@ bool EDPSimple::createSEDPEndpoints()
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_PubReader.second,mp_pubListen,c_EntityId_SEDPPubReader,true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
-#endif
             mp_PubReader.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Publication Reader created");
 
@@ -269,9 +260,6 @@ bool EDPSimple::createSEDPEndpoints()
                 c_EntityId_SEDPSubWriter, true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
-#endif
             mp_SubWriter.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Subscription Writer created");
 
@@ -334,7 +322,6 @@ bool EDPSimple::create_sedp_secure_endpoints()
                 nullptr, sedp_builtin_publications_secure_writer, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
             sedp_builtin_publications_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Publication Writer created");
         }
@@ -373,7 +360,6 @@ bool EDPSimple::create_sedp_secure_endpoints()
                 mp_subListen, sedp_builtin_subscriptions_secure_reader, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
             sedp_builtin_subscriptions_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Subscription Reader created");
         }
@@ -416,7 +402,6 @@ bool EDPSimple::create_sedp_secure_endpoints()
                 mp_pubListen, sedp_builtin_publications_secure_reader, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
             sedp_builtin_publications_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Publication Reader created");
 
@@ -458,7 +443,6 @@ bool EDPSimple::create_sedp_secure_endpoints()
                 nullptr, sedp_builtin_subscriptions_secure_writer, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
             sedp_builtin_subscriptions_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Subscription Writer created");
 
