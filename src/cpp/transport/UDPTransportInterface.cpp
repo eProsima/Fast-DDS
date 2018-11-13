@@ -77,14 +77,14 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
         if (!IsInputChannelOpen(locator))
             return false;
 
-        ReleaseInputChannel(locator);
-
         pChannelResources = std::move(mInputSockets.at(IPLocator::getPhysicalPort(locator)));
         mInputSockets.erase(IPLocator::getPhysicalPort(locator));
+
     }
 
-    for (auto& channelResource : pChannelResources)
+    for (auto* channelResource : pChannelResources)
     {
+        ReleaseInputChannel(locator, channelResource);
         channelResource->getSocket()->cancel();
         channelResource->getSocket()->close();
         delete channelResource;
@@ -383,7 +383,6 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
         {
             if (receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
             {
-                pChannelResource->Disable();
                 return false;
             }
             EndpointToLocator(senderEndpoint, remoteLocator);
@@ -398,19 +397,33 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
     }
 }
 
-bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator)
+bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPChannelResource* channel)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (!IsInputChannelOpen(locator))
+    if (!channel->IsAlive())
     {
         return false;
     }
 
     try
     {
+        Locator_t localLocator;
+        FillLocalIp(localLocator);
+
+        channel->Disable();
+
         ip::udp::socket socket(mService);
         socket.open(GenerateProtocol());
-        auto destinationEndpoint = GenerateLocalEndpoint(locator, IPLocator::getPhysicalPort(locator));
+        socket.bind(GenerateLocalEndpoint(localLocator, 0));
+
+        uint16_t port = IPLocator::getPhysicalPort(locator);
+
+        // We first send directly to localhost, in case all network interfaces are disabled
+        // (which would mean that multicast traffic may not be sent)
+        auto localEndpoint = GenerateLocalEndpoint(localLocator, port);
+        socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
+
+        // We then send to the address of the input locator
+        auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
         socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
     catch (const std::exception& error)

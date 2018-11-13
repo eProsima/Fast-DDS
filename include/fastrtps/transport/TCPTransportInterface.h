@@ -184,13 +184,6 @@ public:
         uint32_t& receiveBufferSize, Locator_t& remoteLocator);
 
     /**
-    * Must release the channel that maps to/from the given locator.
-    * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
-    * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
-    */
-    virtual bool ReleaseInputChannel(const Locator_t&) override { return true; }
-
-    /**
     * Blocking Send through the specified channel.
     * @param sendBuffer Slice into the raw data to send.
     * @param sendBufferSize Size of the raw data. It will be used as a bounds check for the previous argument.

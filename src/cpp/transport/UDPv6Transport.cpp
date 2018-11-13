@@ -54,6 +54,26 @@ static void GetIP6sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bo
     locNames.erase(new_end, locNames.end());
 }
 
+static asio::ip::address_v6::bytes_type locatorToNative(const Locator_t& locator)
+{
+    return { { IPLocator::getIPv6(locator)[0],
+        IPLocator::getIPv6(locator)[1],
+        IPLocator::getIPv6(locator)[2],
+        IPLocator::getIPv6(locator)[3],
+        IPLocator::getIPv6(locator)[4],
+        IPLocator::getIPv6(locator)[5],
+        IPLocator::getIPv6(locator)[6],
+        IPLocator::getIPv6(locator)[7],
+        IPLocator::getIPv6(locator)[8],
+        IPLocator::getIPv6(locator)[9],
+        IPLocator::getIPv6(locator)[10],
+        IPLocator::getIPv6(locator)[11],
+        IPLocator::getIPv6(locator)[12],
+        IPLocator::getIPv6(locator)[13],
+        IPLocator::getIPv6(locator)[14],
+        IPLocator::getIPv6(locator)[15] } };
+}
+
 UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor)
     : mConfiguration_(descriptor)
 {
@@ -209,8 +229,7 @@ ip::udp::endpoint UDPv6Transport::GenerateEndpoint(uint16_t port)
 
 ip::udp::endpoint UDPv6Transport::GenerateLocalEndpoint(const Locator_t& loc, uint16_t port)
 {
-    (void)loc;
-    return ip::udp::endpoint(asio::ip::address::from_string("::1"), port);
+    return ip::udp::endpoint(asio::ip::address_v6(locatorToNative(loc)), port);
 }
 
 asio::ip::udp UDPv6Transport::GenerateProtocol() const

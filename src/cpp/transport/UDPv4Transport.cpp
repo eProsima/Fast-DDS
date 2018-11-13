@@ -55,6 +55,24 @@ static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bo
     locNames.erase(new_end, locNames.end());
 }
 
+static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
+{
+    if (IPLocator::hasWan(locator))
+    {
+        return{ { IPLocator::getWan(locator)[0],
+            IPLocator::getWan(locator)[1],
+            IPLocator::getWan(locator)[2],
+            IPLocator::getWan(locator)[3] } };
+    }
+    else
+    {
+        return{ { IPLocator::getIPv4(locator)[0],
+            IPLocator::getIPv4(locator)[1],
+            IPLocator::getIPv4(locator)[2],
+            IPLocator::getIPv4(locator)[3] } };
+    }
+}
+
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
     : mConfiguration_(descriptor)
 {
@@ -210,8 +228,7 @@ ip::udp::endpoint UDPv4Transport::GenerateEndpoint(uint16_t port)
 
 ip::udp::endpoint UDPv4Transport::GenerateLocalEndpoint(const Locator_t& loc, uint16_t port)
 {
-    (void)loc;
-    return ip::udp::endpoint(asio::ip::address::from_string("127.0.0.1"), port);
+    return ip::udp::endpoint(asio::ip::address_v4(locatorToNative(loc)), port);
 }
 
 asio::ip::udp UDPv4Transport::GenerateProtocol() const

@@ -72,8 +72,6 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessag
 
 TCPChannelResource::~TCPChannelResource()
 {
-    Clear();
-
     if (mRTCPThread != nullptr)
     {
         mRTCPThread->join();
