@@ -197,7 +197,7 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
         mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
     }
 
-    auto sec_attrs = mp_RTPSParticipant->security_attributes();
+    auto& sec_attrs = mp_RTPSParticipant->security_attributes();
     participant_data->security_attributes_ = sec_attrs.mask();
     participant_data->plugin_security_attributes_ = sec_attrs.plugin_participant_attributes;
 #endif

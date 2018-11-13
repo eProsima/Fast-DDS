@@ -594,7 +594,7 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
     result.push_back(multicastResult);
 
     // Store pending unicast locators
-    for (auto link : pendingLocators)
+    for (auto& link : pendingLocators)
         result.push_back(link.unicast);
 
     return result;

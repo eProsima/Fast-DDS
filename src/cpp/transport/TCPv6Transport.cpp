@@ -225,7 +225,7 @@ bool TCPv6Transport::is_local_locator(const Locator_t& locator) const
         return true;
     }
 
-    for (auto localInterface : mCurrentInterfaces)
+    for (auto& localInterface : mCurrentInterfaces)
     {
         if (IPLocator::compareAddress(locator, localInterface.locator))
         {
@@ -294,7 +294,7 @@ void TCPv6Transport::EndpointToLocator(const ip::tcp::endpoint& endpoint, Locato
 {
     locator.kind = LOCATOR_KIND_TCPv6;
     IPLocator::setPhysicalPort(locator, endpoint.port());
-    auto ipBytes = endpoint.address().to_v6().to_bytes();
+    const auto& ipBytes = endpoint.address().to_v6().to_bytes();
     IPLocator::setIPv6(locator, ipBytes.data());
 }
 

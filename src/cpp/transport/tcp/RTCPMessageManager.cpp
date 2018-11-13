@@ -40,13 +40,13 @@ static void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t
     if (endpoint.protocol() == asio::ip::tcp::v4())
     {
         locator.kind = LOCATOR_KIND_TCPv4;
-        auto ipBytes = endpoint.address().to_v4().to_bytes();
+        const auto& ipBytes = endpoint.address().to_v4().to_bytes();
         IPLocator::setIPv4(locator, ipBytes.data());
     }
     else if (endpoint.protocol() == asio::ip::tcp::v6())
     {
         locator.kind = LOCATOR_KIND_TCPv6;
-        auto ipBytes = endpoint.address().to_v6().to_bytes();
+        const auto& ipBytes = endpoint.address().to_v6().to_bytes();
         IPLocator::setIPv6(locator, ipBytes.data());
     }
     IPLocator::setPhysicalPort(locator, endpoint.port());

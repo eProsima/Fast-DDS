@@ -39,7 +39,7 @@
 #undef max
 #endif
 
-static bool create_kx_key(std::array<uint8_t, 32>& out_data, const std::vector<uint8_t>* first_data, 
+static bool create_kx_key(std::array<uint8_t, 32>& out_data, const std::vector<uint8_t>* first_data,
     const char* cookie, const std::vector<uint8_t>* second_data, const std::vector<uint8_t>* shared_secret)
 {
     uint8_t tmp_data[32 + 16 + 32];
@@ -109,7 +109,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
-    auto plugin_attrs = participant_security_attributes.plugin_participant_attributes;
+    auto& plugin_attrs = participant_security_attributes.plugin_participant_attributes;
     (*PCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
@@ -122,7 +122,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
         for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
             if( (it)->name().compare("dds.sec.crypto.keysize") == 0)
             {
-                if (it->value().compare("128") == 0) 
+                if (it->value().compare("128") == 0)
                 {
                     use_256_bits = false;
                 }
@@ -191,7 +191,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     //Put both elements in the local and remote ParticipantCryptoHandle
 
     const AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
-    auto plugin_attrs = local_participant_handle->ParticipantPluginAttributes;
+    auto& plugin_attrs = local_participant_handle->ParticipantPluginAttributes;
     bool is_origin_auth = (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
     AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function
 
@@ -295,7 +295,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
         return nullptr;
     }
 
-    auto plugin_attrs = datawriter_security_properties.plugin_endpoint_attributes;
+    auto& plugin_attrs = datawriter_security_properties.plugin_endpoint_attributes;
     bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
     bool is_payload_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED) != 0;
     bool use_256_bits = false;
@@ -361,7 +361,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
             RAND_bytes((unsigned char *)(&(session->session_id)), sizeof(uint32_t));
         }
     }
-        
+
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
 
     std::unique_lock<std::mutex>(participant_handle->mutex_);
@@ -394,7 +394,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
     std::unique_lock<std::mutex> writer_lock(local_writer_handle->mutex_);
-    auto plugin_attrs = local_writer_handle->EndpointPluginAttributes;
+    auto& plugin_attrs = local_writer_handle->EndpointPluginAttributes;
     bool is_origin_auth = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0;
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
 
@@ -408,7 +408,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         (*RRCrypto)->Entity2RemoteKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
     }
     else
-    { 
+    {
         /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 
@@ -493,7 +493,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
     AESGCMGMAC_ReaderCryptoHandle* RCrypto = nullptr;
 
-    auto plugin_attrs = datareder_security_attributes.plugin_endpoint_attributes;
+    auto& plugin_attrs = datareder_security_attributes.plugin_endpoint_attributes;
     bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
     bool use_256_bits = false;
     bool use_kx_keys = false;
@@ -576,7 +576,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
 
     std::unique_lock<std::mutex> reader_lock(local_reader_handle->mutex_);
-    auto plugin_attrs = local_reader_handle->EndpointPluginAttributes;
+    auto& plugin_attrs = local_reader_handle->EndpointPluginAttributes;
     bool is_origin_auth = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0;
 
     AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
@@ -591,7 +591,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         (*RWCrypto)->Entity2RemoteKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
     }
     else
-    { 
+    {
         /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 

@@ -77,7 +77,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
             sns.base = mp_WP->available_changes_max();
             sns.base++;
 
-            for(auto ch : missing_changes)
+            for(auto& ch : missing_changes)
             {
                 // Check if the CacheChange_t is uncompleted.
                 CacheChange_t* uncomplete_change = mp_WP->mp_SFR->findCacheInFragmentedCachePitStop(ch.getSequenceNumber(), mp_WP->m_att.guid);

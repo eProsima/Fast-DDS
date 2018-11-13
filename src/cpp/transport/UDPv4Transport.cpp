@@ -171,7 +171,7 @@ bool UDPv4Transport::CompareLocatorIPAndPort(const Locator_t& lh, const Locator_
 void UDPv4Transport::EndpointToLocator(ip::udp::endpoint& endpoint, Locator_t& locator)
 {
     IPLocator::setPhysicalPort(locator, endpoint.port());
-    auto ipBytes = endpoint.address().to_v4().to_bytes();
+    const auto& ipBytes = endpoint.address().to_v4().to_bytes();
     IPLocator::setIPv4(locator, ipBytes.data());
 }
 
@@ -267,7 +267,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
                 GetIP4sUniqueInterfaces(locNames, true);
                 for (const auto& infoIP : locNames)
                 {
-                    auto ip = asio::ip::address_v4::from_string(infoIP.name);
+                    const auto& ip = asio::ip::address_v4::from_string(infoIP.name);
                     try
                     {
                         channelResource->getSocket()->set_option(
@@ -282,7 +282,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
             }
             else
             {
-                auto ip = asio::ip::address_v4::from_string(channelResource->GetInterface());
+                const auto& ip = asio::ip::address_v4::from_string(channelResource->GetInterface());
                 try
                 {
                     channelResource->getSocket()->set_option(
@@ -362,7 +362,7 @@ LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
         GetIP4s(locNames);
         for (const auto& infoIP : locNames)
         {
-            auto ip = asio::ip::address_v4::from_string(infoIP.name);
+            const auto& ip = asio::ip::address_v4::from_string(infoIP.name);
             if (IsInterfaceAllowed(ip))
             {
                 Locator_t newloc(locator);
@@ -392,7 +392,7 @@ bool UDPv4Transport::is_local_locator(const Locator_t& locator) const
     if(IPLocator::isLocal(locator))
         return true;
 
-    for(auto localInterface : currentInterfaces)
+    for(auto& localInterface : currentInterfaces)
         if(IPLocator::compareAddress(locator, localInterface.locator))
         {
             return true;

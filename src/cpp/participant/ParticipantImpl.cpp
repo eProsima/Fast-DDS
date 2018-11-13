@@ -192,7 +192,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     {
         property.name("partitions");
         std::string partitions;
-        for(auto partition : att.qos.m_partition.getNames())
+        for(auto& partition : att.qos.m_partition.getNames())
         {
             partitions += partition + ";";
         }
@@ -308,7 +308,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     {
         property.name("partitions");
         std::string partitions;
-        for(auto partition : att.qos.m_partition.getNames())
+        for(auto& partition : att.qos.m_partition.getNames())
         {
             partitions += partition + ";";
         }

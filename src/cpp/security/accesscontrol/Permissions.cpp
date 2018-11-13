@@ -59,7 +59,7 @@ static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
 {
     bool returned_value = false;
 
-    for(auto range : domains.ranges)
+    for(auto& range : domains.ranges)
     {
         if(range.second == 0)
         {
@@ -107,7 +107,7 @@ static bool is_topic_in_criterias(const std::string& topic_name, const std::vect
     for(auto criteria_it = criterias.begin(); !returned_value &&
             criteria_it != criterias.end(); ++criteria_it)
     {
-        for(auto topic : (*criteria_it).topics)
+        for(auto& topic : (*criteria_it).topics)
         {
             if(StringMatching::matchString(topic.c_str(), topic_name.c_str()))
             {
@@ -127,7 +127,7 @@ static bool is_partition_in_criterias(const std::string& partition, const std::v
     for(auto criteria_it = criterias.begin(); !returned_value &&
             criteria_it != criterias.end(); ++criteria_it)
     {
-        for(auto part : (*criteria_it).partitions)
+        for(auto& part : (*criteria_it).partitions)
         {
             if(StringMatching::matchString(partition.c_str(), part.c_str()))
             {
@@ -607,7 +607,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
         if(returned_value)
         {
             // Retry governance info.
-            for(auto rule : governance.rules)
+            for(auto& rule : governance.rules)
             {
                 if(is_domain_in_set(domain_id, rule.domains))
                 {
@@ -632,7 +632,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
 
                     ah->governance_rule_.plugin_participant_attributes = plug_part_attr.mask();
 
-                    for(auto topic_rule : rule.topic_rules)
+                    for(auto& topic_rule : rule.topic_rules)
                     {
                         std::string topic_expression = topic_rule.topic_expression;
                         EndpointSecurityAttributes reader_attributes;
@@ -983,7 +983,7 @@ bool Permissions::check_create_participant(const PermissionsHandle& local_handle
     }
 
     //Search an allow rule with my domain
-    for(auto rule : lah->grant.rules)
+    for(auto& rule : lah->grant.rules)
     {
         if(rule.allow)
         {
@@ -1018,7 +1018,7 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
     }
 
     //Search an allow rule with my domain
-    for(auto rule : rah->grant.rules)
+    for(auto& rule : rah->grant.rules)
     {
         if(rule.allow)
         {
@@ -1067,7 +1067,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
     }
 
     // Search topic
-    for(auto rule : lah->grant.rules)
+    for(auto& rule : lah->grant.rules)
     {
         if(is_topic_in_criterias(topic_name, rule.publishes))
         {
@@ -1142,7 +1142,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
         return false;
     }
 
-    for(auto rule : lah->grant.rules)
+    for(auto& rule : lah->grant.rules)
     {
         if(is_topic_in_criterias(topic_name, rule.subscribes))
         {
@@ -1218,7 +1218,7 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
         return false;
     }
 
-    for(auto rule : rah->grant.rules)
+    for(auto& rule : rah->grant.rules)
     {
         if(is_domain_in_set(domain_id, rule.domains))
         {
@@ -1279,7 +1279,7 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
         return false;
     }
 
-    for(auto rule : rah->grant.rules)
+    for(auto& rule : rah->grant.rules)
     {
         if(is_domain_in_set(domain_id, rule.domains))
         {

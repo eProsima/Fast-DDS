@@ -267,7 +267,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
                 GetIP6sUniqueInterfaces(locNames, true);
                 for (const auto& infoIP : locNames)
                 {
-                    auto ip = asio::ip::address_v6::from_string(infoIP.name);
+                    const auto& ip = asio::ip::address_v6::from_string(infoIP.name);
                     try
                     {
                         channelResource->getSocket()->set_option(ip::multicast::join_group(
@@ -282,7 +282,7 @@ bool UDPv6Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
             }
             else
             {
-                auto ip = asio::ip::address_v6::from_string(channelResource->GetInterface());
+                const auto& ip = asio::ip::address_v6::from_string(channelResource->GetInterface());
                 try
                 {
                     channelResource->getSocket()->set_option(ip::multicast::join_group(
@@ -361,7 +361,7 @@ LocatorList_t UDPv6Transport::NormalizeLocator(const Locator_t& locator)
         GetIP6s(locNames);
         for (const auto& infoIP : locNames)
         {
-            auto ip = asio::ip::address_v6::from_string(infoIP.name);
+            const auto& ip = asio::ip::address_v6::from_string(infoIP.name);
             if (IsInterfaceAllowed(ip))
             {
                 Locator_t newloc(locator);
@@ -392,7 +392,7 @@ bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
     if(IPLocator::isLocal(locator))
         return true;
 
-    for(auto localInterface : currentInterfaces)
+    for(auto& localInterface : currentInterfaces)
         if(IPLocator::compareAddress(localInterface.locator, locator))
             return true;
 

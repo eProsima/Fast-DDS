@@ -312,7 +312,7 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes()
     std::vector<ChangeFromWriter_t> returnedValue;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    for(auto ch : m_changesFromW)
+    for(auto& ch : m_changesFromW)
     {
         if(ch.getStatus() == MISSING)
         {
@@ -420,7 +420,7 @@ bool WriterProxy::areThereMissing()
     bool returnedValue = false;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    for(auto ch : m_changesFromW)
+    for(auto& ch : m_changesFromW)
     {
         if(ch.getStatus() == ChangeFromWriterStatus_t::MISSING)
         {

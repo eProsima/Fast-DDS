@@ -142,7 +142,7 @@ void MessageReceiver::reset(){
     timestamp = c_TimeInvalid;
 }
 
-void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
+void MessageReceiver::processCDRMsg(const Locator_t &loc, CDRMessage_t *msg)
 {
     (void)loc;
 
@@ -353,23 +353,21 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
     }
 }
 
-bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header
+bool MessageReceiver::checkRTPSHeader(CDRMessage_t *msg) //check and proccess the RTPS Header
 {
-
-    if(msg->buffer[0] != 'R' ||  msg->buffer[1] != 'T' ||
-            msg->buffer[2] != 'P' ||  msg->buffer[3] != 'S')
+    if (strncmp((char*)msg->buffer, "RTPS", 4) != 0)
     {
         logInfo(RTPS_MSG_IN,IDSTRING"Msg received with no RTPS in header, ignoring...");
         return false;
     }
 
-    msg->pos+=4;
+    msg->pos += 4;
 
     //CHECK AND SET protocol version
     if(msg->buffer[msg->pos] <= destVersion.m_major)
     {
-        sourceVersion.m_major = msg->buffer[msg->pos];msg->pos++;
-        sourceVersion.m_minor = msg->buffer[msg->pos];msg->pos++;
+        sourceVersion.m_major = msg->buffer[msg->pos++];
+        sourceVersion.m_minor = msg->buffer[msg->pos++];
     }
     else
     {
@@ -378,11 +376,11 @@ bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the
     }
 
     //Set source vendor id
-    sourceVendorId[0] = msg->buffer[msg->pos];msg->pos++;
-    sourceVendorId[1] = msg->buffer[msg->pos];msg->pos++;
+    sourceVendorId[0] = msg->buffer[msg->pos++];
+    sourceVendorId[1] = msg->buffer[msg->pos++];
     //set source guid prefix
-    memcpy(sourceGuidPrefix.value,&msg->buffer[msg->pos],12);
-    msg->pos+=12;
+    memcpy(sourceGuidPrefix.value, &msg->buffer[msg->pos], 12);
+    msg->pos += 12;
     haveTimestamp = false;
     return true;
 }

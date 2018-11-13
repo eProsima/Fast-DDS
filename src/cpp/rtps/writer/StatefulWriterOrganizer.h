@@ -30,7 +30,7 @@ namespace rtps {
 class StatefulWriterOrganizer
 {
     public:
-        
+
         StatefulWriterOrganizer() : mLastReader_(nullptr) {}
 
         void add_sequence_number(const SequenceNumber_t& seqNum, ReaderProxy* remoteReader)
@@ -51,7 +51,7 @@ class StatefulWriterOrganizer
 
                 bool inserted = false;
 
-                for(auto pair : mElements_)
+                for(auto& pair : mElements_)
                 {
                     if(pair.second == mLastSeqList_)
                     {

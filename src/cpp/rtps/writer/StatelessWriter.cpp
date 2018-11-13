@@ -188,7 +188,7 @@ void StatelessWriter::send_any_unsent_changes()
 
     for(auto& reader_locator : reader_locators)
     {
-        for(auto unsentChange : reader_locator.unsent_changes)
+        for(auto& unsentChange : reader_locator.unsent_changes)
         {
             changesToSend.add_change(unsentChange.getChange(), &reader_locator, unsentChange.getUnsentFragments());
         }
@@ -305,7 +305,7 @@ bool StatelessWriter::add_locator(Locator_t& loc)
     {
         std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-        for(auto readerLocator : fixed_locators)
+        for(auto& readerLocator : fixed_locators)
             if(readerLocator.locator == loc)
             {
                 logInfo(RTPS_WRITER, "Already registered locator");
@@ -318,7 +318,7 @@ bool StatelessWriter::add_locator(Locator_t& loc)
 
         mAllShrinkedLocatorList.push_back(loc);
 
-        for(auto readerLocator : reader_locators)
+        for(auto& readerLocator : reader_locators)
             if(readerLocator.locator == newLoc.locator)
                 return true;
 
@@ -340,7 +340,7 @@ void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
 
     // Update mAllShrinkedLocatorList because at this point it was only updated
     // with locators of reader_locators, and not the fixed locators.
-    for(auto fixedLocator : fixed_locators)
+    for(auto& fixedLocator : fixed_locators)
             mAllShrinkedLocatorList.push_back(fixedLocator.locator);
 
     for(auto it = mAllShrinkedLocatorList.begin(); it != mAllShrinkedLocatorList.end(); ++it)

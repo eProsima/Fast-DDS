@@ -211,7 +211,7 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
         return true;
     }
 
-    for (auto localInterface : mCurrentInterfaces)
+    for (auto& localInterface : mCurrentInterfaces)
     {
         if (IPLocator::compareAddress(locator, localInterface.locator))
         {

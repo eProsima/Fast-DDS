@@ -117,7 +117,7 @@ void AsyncWriterThread::run()
           run_scheduled_ = false;
           cond_guard.unlock();
           interestTree.Swap();
-          auto interestedWriters = interestTree.GetInterestedWriters();
+          const auto& interestedWriters = interestTree.GetInterestedWriters();
 
           std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
           for(auto writer : async_writers)
