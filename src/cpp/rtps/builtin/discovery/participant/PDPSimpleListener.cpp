@@ -126,6 +126,10 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 info.m_propertyList = participant_data.m_properties.properties;
                 info.m_userData = participant_data.m_userData;
                 info.m_status = status;
+                info.m_metatrafficUnicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
+                info.m_metatrafficMulticastLocatorList = participant_data.m_metatrafficMulticastLocatorList;
+                info.m_defaultUnicastLocatorList = participant_data.m_defaultUnicastLocatorList;
+                info.m_defaultMulticastLocatorList = participant_data.m_defaultMulticastLocatorList;
 
                 listener->onRTPSParticipantDiscovery(
                     this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(),

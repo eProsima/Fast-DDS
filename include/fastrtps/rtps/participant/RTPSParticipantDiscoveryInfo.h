@@ -23,6 +23,7 @@
 #include "../../fastrtps_dll.h"
 #include "../common/Types.h"
 #include "../common/Guid.h"
+#include "../common/Locator.h"
 
 #include <vector>
 
@@ -65,6 +66,14 @@ class RTPSParticipantDiscoveryInfo
         PropertyList m_propertyList;
         //!User data
         UserData m_userData;
+        //!Metatraffic unicast locator list
+        LocatorList_t m_metatrafficUnicastLocatorList;
+        //!Metatraffic multicast locator list
+        LocatorList_t m_metatrafficMulticastLocatorList;
+        //!Default unicast locator list
+        LocatorList_t m_defaultUnicastLocatorList;
+        //!Default multicast locator list
+        LocatorList_t m_defaultMulticastLocatorList;
         //!Participant name
         const char* m_RTPSParticipantName = nullptr;
 };
