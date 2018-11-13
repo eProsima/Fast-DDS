@@ -406,11 +406,14 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPCha
 
     try
     {
+        Locator_t loc;
+        FillLocalIp(loc);
+
         channel->Disable();
 
         ip::udp::socket socket(mService);
         socket.open(GenerateProtocol());
-        socket.bind(GenerateEndpoint("127.0.0.1", 0));
+        socket.bind(GenerateLocalEndpoint(loc, 0));
         auto destinationEndpoint = GenerateLocalEndpoint(locator, IPLocator::getPhysicalPort(locator));
         socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
