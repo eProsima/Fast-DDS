@@ -25,9 +25,10 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ReceiverResource::ReceiverResource(TransportInterface& transport,
-    const Locator_t& locator, uint32_t max_size)
-    : mValid(false), receiver(nullptr)
+ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator, uint32_t max_size)
+        : mValid(false)
+        , receiver(nullptr)
+        , msg(0)
 {
     // Internal channel is opened and assigned to this resource.
     mValid = transport.OpenInputChannel(locator, this, max_size);
@@ -50,6 +51,7 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
     rValueResource.receiver = nullptr;
     mValid = rValueResource.mValid;
     rValueResource.mValid = false;
+    msg = std::move(rValueResource.msg);
 }
 
 bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
@@ -75,7 +77,7 @@ void ReceiverResource::UnregisterReceiver(MessageReceiver* rcv)
         receiver = nullptr;
 }
 
-void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size, 
+void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
     const Locator_t & localLocator, const Locator_t & remoteLocator)
 {
     (void)localLocator;
@@ -85,7 +87,6 @@ void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
 
     if (rcv != nullptr)
     {
-        CDRMessage_t msg(0);
         msg.wraps = true;
         msg.buffer = const_cast<octet*>(data);
         msg.length = size;
