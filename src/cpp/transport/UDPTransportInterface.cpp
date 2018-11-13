@@ -406,15 +406,24 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPCha
 
     try
     {
-        Locator_t loc;
-        FillLocalIp(loc);
+        Locator_t localLocator;
+        FillLocalIp(localLocator);
 
         channel->Disable();
 
         ip::udp::socket socket(mService);
         socket.open(GenerateProtocol());
-        socket.bind(GenerateLocalEndpoint(loc, 0));
-        auto destinationEndpoint = GenerateLocalEndpoint(locator, IPLocator::getPhysicalPort(locator));
+        socket.bind(GenerateLocalEndpoint(localLocator, 0));
+
+        uint16_t port = IPLocator::getPhysicalPort(locator);
+
+        // We first send directly to localhost, in case all network interfaces are disabled
+        // (which would mean that multicast traffic may not be sent)
+        auto localEndpoint = GenerateLocalEndpoint(localLocator, port);
+        socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
+
+        // We then send to the address of the input locator
+        auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
         socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }
     catch (const std::exception& error)
