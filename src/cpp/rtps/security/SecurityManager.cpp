@@ -2917,10 +2917,10 @@ bool SecurityManager::encode_writer_submessage(const CDRMessage_t& input_message
                 auxProps.emplace_back(Property("dds.sec.builtin_endpoint_name", "BuiltinParticipantVolatileMessageSecureWriter"));
                 auto wHandle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(*pCrypto, auxProps, attr, exception);
                 std::vector<DatareaderCryptoHandle*> receiving_crypto_list;
-                if (crypto_plugin_->cryptotransform()->encode_datawriter_submessage(output_message,
-                    input_message, *wHandle, receiving_crypto_list, exception))
+                if (wHandle != nullptr)
                 {
-                    ret_val = true;
+                    ret_val = crypto_plugin_->cryptotransform()->encode_datawriter_submessage(output_message,
+                        input_message, *wHandle, receiving_crypto_list, exception);
                 }
             }
 
@@ -2996,10 +2996,10 @@ bool SecurityManager::encode_reader_submessage(const CDRMessage_t& input_message
                 auxProps.emplace_back(Property("dds.sec.builtin_endpoint_name", "BuiltinParticipantVolatileMessageSecureReader"));
                 auto rHandle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(*pCrypto, auxProps, attr, exception);
                 std::vector<DatawriterCryptoHandle*> receiving_crypto_list;
-                if (crypto_plugin_->cryptotransform()->encode_datareader_submessage(output_message,
-                    input_message, *rHandle, receiving_crypto_list, exception))
+                if (rHandle != nullptr)
                 {
-                    ret_val = true;
+                    ret_val = crypto_plugin_->cryptotransform()->encode_datareader_submessage(output_message,
+                        input_message, *rHandle, receiving_crypto_list, exception);
                 }
             }
             if (acquired) mutex_.unlock();
