@@ -80,7 +80,7 @@ public:
        uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& remoteLocator);
 
    //! Release the listening socket for the specified port.
-   virtual bool ReleaseInputChannel(const Locator_t&) override;
+   bool ReleaseInputChannel(const Locator_t& locator, UDPChannelResource* channel);
 
    /**
    * Converts a given remote locator (that is, a locator referring to a remote

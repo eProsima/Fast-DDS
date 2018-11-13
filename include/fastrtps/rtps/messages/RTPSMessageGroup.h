@@ -224,8 +224,6 @@ class RTPSMessageGroup
         const LocatorList_t * fixed_destination_locators_;
 
 #if HAVE_SECURITY
-        ENDPOINT_TYPE type_;
-
         CDRMessage_t* encrypt_msg_;
 
         std::vector<GuidPrefix_t> current_remote_participants_;

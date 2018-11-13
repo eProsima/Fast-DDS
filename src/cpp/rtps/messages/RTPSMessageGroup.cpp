@@ -139,7 +139,7 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
     submessage_msg_(&msg_group.rtpsmsg_submessage_), currentBytesSent_(0),
     fixed_destination_(false), fixed_destination_locators_(nullptr)
 #if HAVE_SECURITY
-    , type_(type), encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
+    , encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
 #endif
 {
     assert(participant);
@@ -304,64 +304,16 @@ bool RTPSMessageGroup::insert_submessage(const std::vector<GUID_t>& remote_endpo
 bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::vector<GUID_t>& remote_endpoints)
 {
     (void)remote_endpoints;
-    bool added = false;
-
-#if FALSE // HAVE_SECURITY
-    uint32_t from_buffer_position = buffer->pos;
-#endif
 
     if(remote_endpoints.size() == 1 && current_dst_ != remote_endpoints.at(0).guidPrefix)
     {
         current_dst_ = remote_endpoints.at(0).guidPrefix;
         RTPSMessageCreator::addSubmessageInfoDST(buffer, current_dst_);
-        added = true;
     }
     else if(remote_endpoints.size() != 1 && current_dst_ != c_GuidPrefix_Unknown)
     {
         current_dst_ = c_GuidPrefix_Unknown;
         RTPSMessageCreator::addSubmessageInfoDST(buffer, current_dst_);
-        added = true;
-    }
-
-    if(added)
-    {
-#if FALSE // HAVE_SECURITY
-        if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
-        {
-            buffer->pos = from_buffer_position;
-            CDRMessage::initCDRMsg(encrypt_msg_);
-            if(type_ == WRITER)
-            {
-                if(!participant_->security_manager().encode_writer_submessage(*buffer, *encrypt_msg_,
-                            endpoint_->getGuid(), remote_endpoints))
-                {
-                    logError(RTPS_WRITER, "Cannot encrypt INFO_DST submessage for writer " << endpoint_->getGuid());
-                    return false;
-                }
-            }
-            else
-            {
-                if(!participant_->security_manager().encode_reader_submessage(*buffer, *encrypt_msg_,
-                            endpoint_->getGuid(), remote_endpoints))
-                {
-                    logError(RTPS_READER, "Cannot encrypt INFO_DST submessage for reader " << endpoint_->getGuid());
-                    return false;
-                }
-            }
-
-            if((buffer->max_size - from_buffer_position) >= encrypt_msg_->length)
-            {
-                memcpy(&buffer->buffer[from_buffer_position], encrypt_msg_->buffer, encrypt_msg_->length);
-                buffer->length = from_buffer_position + encrypt_msg_->length;
-                buffer->pos = buffer->length;
-            }
-            else
-            {
-                logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
-                return false;
-            }
-        }
-#endif
     }
 
     return true;

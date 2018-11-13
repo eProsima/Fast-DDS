@@ -49,7 +49,6 @@ class MockTransport: public TransportInterface
 
         virtual bool CloseOutputChannel(const Locator_t&) override;
         virtual bool CloseInputChannel(const Locator_t&) override;
-        virtual bool ReleaseInputChannel(const Locator_t&) override;
 
         virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 

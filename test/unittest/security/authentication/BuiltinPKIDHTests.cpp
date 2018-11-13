@@ -161,16 +161,6 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     BIGNUM* bn = BN_new();
     ASSERT_TRUE(BN_bin2bn(pointer, static_cast<int>(length), bn) !=  nullptr);
 
-#if IS_OPENSSL_1_1
-    const BIGNUM* p = nullptr;
-    const BIGNUM* q = nullptr;
-    const BIGNUM* g = nullptr;
-    DH_get0_pqg(dh, &p, &q, &g);
-#else
-    const BIGNUM* p = dh->p;
-    const BIGNUM* g = dh->g;
-#endif
-
     int check_result;
     ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));
     ASSERT_TRUE(!check_result);
@@ -229,16 +219,6 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     size_t length = dh2->size();
     BIGNUM* bn = BN_new();
     ASSERT_TRUE(BN_bin2bn(pointer, static_cast<int>(length), bn) !=  nullptr);
-
-#if IS_OPENSSL_1_1
-    const BIGNUM* p = nullptr;
-    const BIGNUM* q = nullptr;
-    const BIGNUM* g = nullptr;
-    DH_get0_pqg(dh, &p, &q, &g);
-#else
-    const BIGNUM* p = dh->p;
-    const BIGNUM* g = dh->g;
-#endif
 
     int check_result;
     ASSERT_TRUE(DH_check_pub_key(dh, bn, &check_result));

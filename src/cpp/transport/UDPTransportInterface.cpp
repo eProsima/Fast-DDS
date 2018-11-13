@@ -77,14 +77,14 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
         if (!IsInputChannelOpen(locator))
             return false;
 
-        ReleaseInputChannel(locator);
-
         pChannelResources = std::move(mInputSockets.at(IPLocator::getPhysicalPort(locator)));
         mInputSockets.erase(IPLocator::getPhysicalPort(locator));
+
     }
 
-    for (auto& channelResource : pChannelResources)
+    for (auto* channelResource : pChannelResources)
     {
+        ReleaseInputChannel(locator, channelResource);
         channelResource->getSocket()->cancel();
         channelResource->getSocket()->close();
         delete channelResource;
@@ -383,7 +383,6 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
         {
             if (receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
             {
-                pChannelResource->Disable();
                 return false;
             }
             EndpointToLocator(senderEndpoint, remoteLocator);
@@ -398,18 +397,20 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
     }
 }
 
-bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator)
+bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPChannelResource* channel)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (!IsInputChannelOpen(locator))
+    if (!channel->IsAlive())
     {
         return false;
     }
 
     try
     {
+        channel->Disable();
+
         ip::udp::socket socket(mService);
         socket.open(GenerateProtocol());
+        socket.bind(GenerateEndpoint("127.0.0.1", 0));
         auto destinationEndpoint = GenerateLocalEndpoint(locator, IPLocator::getPhysicalPort(locator));
         socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
     }

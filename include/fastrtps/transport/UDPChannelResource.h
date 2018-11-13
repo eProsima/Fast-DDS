@@ -25,11 +25,11 @@ class TransportReceiverInterface;
 
 #if defined(ASIO_HAS_MOVE)
     // Typedefs
-	typedef asio::ip::udp::socket eProsimaUDPSocket;
+    typedef asio::ip::udp::socket eProsimaUDPSocket;
     typedef eProsimaUDPSocket& eProsimaUDPSocketRef;
 
     // UDP
-	inline eProsimaUDPSocket* getSocketPtr(eProsimaUDPSocket &socket)
+    inline eProsimaUDPSocket* getSocketPtr(eProsimaUDPSocket &socket)
     {
         return &socket;
     }
@@ -47,7 +47,7 @@ class TransportReceiverInterface;
     }
 #else
     // Typedefs
-	typedef std::shared_ptr<asio::ip::udp::socket> eProsimaUDPSocket;
+    typedef std::shared_ptr<asio::ip::udp::socket> eProsimaUDPSocket;
     typedef eProsimaUDPSocket eProsimaUDPSocketRef;
 
     // UDP
