@@ -122,7 +122,6 @@ protected:
 
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
     asio::io_service mService;
-    std::unique_ptr<std::thread> ioServiceThread;
     std::vector<IPFinder::info_IP> currentInterfaces;
 
     mutable std::recursive_mutex mOutputMapMutex;

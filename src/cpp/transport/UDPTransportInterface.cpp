@@ -65,12 +65,6 @@ UDPTransportInterface::~UDPTransportInterface()
 
 void UDPTransportInterface::Clean()
 {
-    if (ioServiceThread)
-    {
-        mService.stop();
-        ioServiceThread->join();
-    }
-
     assert(mInputSockets.size() == 0);
     assert(mOutputSockets.size() == 0);
 }
@@ -182,13 +176,6 @@ bool UDPTransportInterface::init()
 
     // TODO(Ricardo) Create an event that update this list.
     GetIPs(currentInterfaces);
-
-    auto ioServiceFunction = [&]()
-    {
-        io_service::work work(mService);
-        mService.run();
-    };
-    ioServiceThread.reset(new std::thread(ioServiceFunction));
 
     return true;
 }
@@ -366,7 +353,7 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.
-        auto msg = pChannelResource->GetMessageBuffer();
+        auto& msg = pChannelResource->GetMessageBuffer();
         if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, remoteLocator))
             continue;
 
