@@ -142,7 +142,8 @@ class RTPSMessageCreator
         static bool addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag);
         static bool addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag);
 
-        static bool addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP);
+        static bool addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version, const VendorId_t& vendorId, const GuidPrefix_t& guidP);
+        static bool addSubmessageInfoDST(CDRMessage_t* msg, const GuidPrefix_t& guidP);
 };
 }
 } /* namespace rtps */

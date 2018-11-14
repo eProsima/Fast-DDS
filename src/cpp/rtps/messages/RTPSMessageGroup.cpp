@@ -208,6 +208,8 @@ void RTPSMessageGroup::flush()
 
 void RTPSMessageGroup::send()
 {
+    CDRMessage_t* msgToSend = full_msg_;
+
     if(full_msg_->length > RTPSMESSAGE_HEADER_SIZE)
     {
 #if HAVE_SECURITY
@@ -216,6 +218,9 @@ void RTPSMessageGroup::send()
         {
             CDRMessage::initCDRMsg(encrypt_msg_);
             full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+            encrypt_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+            encrypt_msg_->length = RTPSMESSAGE_HEADER_SIZE;
+            memcpy(encrypt_msg_->buffer, full_msg_->buffer, RTPSMESSAGE_HEADER_SIZE);
 
             if(!participant_->security_manager().encode_rtps_message(*full_msg_, *encrypt_msg_, current_remote_participants_))
             {
@@ -223,26 +228,17 @@ void RTPSMessageGroup::send()
                 return;
             }
 
-            if((full_msg_->max_size) >= (RTPSMESSAGE_HEADER_SIZE + encrypt_msg_->length))
-            {
-                memcpy(&full_msg_->buffer[RTPSMESSAGE_HEADER_SIZE], encrypt_msg_->buffer, encrypt_msg_->length);
-                full_msg_->length = RTPSMESSAGE_HEADER_SIZE + encrypt_msg_->length;
-            }
-            else
-            {
-                logError(RTPS_OUT, "Not enough memory to copy encrypted data for " << endpoint_->getGuid());
-                return ;
-            }
+            msgToSend = encrypt_msg_;
         }
 #endif
         const LocatorList_t & destinations =
             fixed_destination_ ? *fixed_destination_locators_ : current_locators_;
         for(const auto& lit : destinations)
         {
-            participant_->sendSync(full_msg_, endpoint_, lit);
+            participant_->sendSync(msgToSend, endpoint_, lit);
         }
 
-        currentBytesSent_ += full_msg_->length;
+        currentBytesSent_ += msgToSend->length;
     }
 }
 
@@ -303,7 +299,14 @@ bool RTPSMessageGroup::insert_submessage(const std::vector<GUID_t>& remote_endpo
 
 bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::vector<GUID_t>& remote_endpoints)
 {
-    (void)remote_endpoints;
+#if HAVE_SECURITY
+    // Add INFO_SRC when we are at the beginning of the message and RTPS protection is enabled
+    if ( (full_msg_->length == RTPSMESSAGE_HEADER_SIZE) &&
+        participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
+    {
+        RTPSMessageCreator::addSubmessageInfoSRC(buffer, c_ProtocolVersion, c_VendorId_eProsima, participant_->getGuid().guidPrefix);
+    }
+#endif
 
     if(remote_endpoints.size() == 1 && current_dst_ != remote_endpoints.at(0).guidPrefix)
     {

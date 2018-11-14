@@ -703,6 +703,34 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
         decoder >> id;
 
+        // If encryption is disabled, jump over several submessages until we find the SecureDataTag
+        while (!is_encrypted && (id != SRTPS_POSTFIX))
+        {
+            decoder >> flags;
+
+            if (flags & BIT(0))
+            {
+                decoder.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
+            }
+            else
+            {
+                decoder.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+            }
+
+            decoder >> length;
+
+            body_length += body_align + 4;
+
+            // Align submessage to 4.
+            body_align = static_cast<uint32_t>(decoder.alignment((decoder.getCurrentPosition() + length) -
+                decoder.getBufferPointer(), sizeof(int32_t)));
+
+            body_length += length;
+            decoder.jump(length + body_align);
+
+            decoder >> id;
+        }
+
         if(id != SRTPS_POSTFIX)
         {
             logError(SECURITY_CRYPTO, "Not valid SecureDataTag submessage id");
@@ -1641,6 +1669,14 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
     int key_len = use_256_bits ? 32 : 16;
 
     serializer << tag.common_mac;
+
+    // Align to 4.
+    size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
+    for (size_t count = 0; count != alignment; ++count)
+    {
+        uint8_t c = 0;
+        serializer << c;
+    }
 
     eprosima::fastcdr::Cdr::state length_state = serializer.getState();
     uint32_t length = 0;
