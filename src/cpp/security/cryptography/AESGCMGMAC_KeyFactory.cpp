@@ -129,9 +129,13 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
             }
             if( (it)->name().compare("dds.sec.crypto.maxblockspersession") == 0)
             {
-                try{
+                try
+                {
                     maxblockspersession = std::stoi( (it)->value() );
-                }catch(std::invalid_argument){}
+                }
+                catch(std::invalid_argument&)
+                {
+                }
             }
         }//endfor
     }//endif
@@ -313,9 +317,12 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
             }
             else if(it->name().compare("dds.sec.crypto.maxblockspersession") == 0)
             {
-                try{
+                try
+                {
                     maxblockspersession = std::stoi( (it)->value() );
-                }catch(std::invalid_argument){}
+                }catch(std::invalid_argument&)
+                {
+                }
             }
             else if (it->name().compare("dds.sec.builtin_endpoint_name") == 0)
             {
@@ -513,7 +520,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
                 {
                     maxblockspersession = std::stoi((it)->value());
                 }
-                catch (std::invalid_argument)
+                catch (std::invalid_argument&)
                 {
                 }
             }
