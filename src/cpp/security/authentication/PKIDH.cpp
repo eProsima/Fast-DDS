@@ -1213,8 +1213,7 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // hash_c1
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t message(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties())) + 3);
+    CDRMessage_t message(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties())));
     message.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&message, (*handshake_handle_aux)->handshake_message_.binary_properties(),false);
     if(!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
@@ -1449,8 +1448,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     }
     rih->kagree_alg_ = std::move(s_kagree_algo);
 
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())) + 3);
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties())));
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, handshake_message_in.binary_properties(), "c.", false);
 
@@ -1558,8 +1556,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // hash_c2
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t message(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties())) + 3);
+    CDRMessage_t message(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size((*handshake_handle_aux)->handshake_message_.binary_properties())));
     message.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&message, (*handshake_handle_aux)->handshake_message_.binary_properties(), false);
     if(!EVP_Digest(message.buffer, message.length, md, NULL, EVP_sha256(), NULL))
@@ -1859,7 +1856,6 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
     uint32_t digestInLen = static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(handshake_message_in.binary_properties()));
     CDRMessage_t cdrmessage(digestInLen + 3);
     cdrmessage.msg_endian = BIGEND;

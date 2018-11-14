@@ -144,8 +144,7 @@ void AuthenticationPluginTest::check_handshake_request_message(const HandshakeHa
     const std::vector<uint8_t>* hash_c1 = DataHolderHelper::find_binary_property_value(message, "hash_c1");
     ASSERT_TRUE(hash_c1 != nullptr);
     ASSERT_TRUE(hash_c1->size() == SHA256_DIGEST_LENGTH);
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3));
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())));
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "c.",false);
     unsigned char md[SHA256_DIGEST_LENGTH];
@@ -203,8 +202,7 @@ void AuthenticationPluginTest::check_handshake_reply_message(const HandshakeHand
     const std::vector<uint8_t>* hash_c2 = DataHolderHelper::find_binary_property_value(message, "hash_c2");
     ASSERT_TRUE(hash_c2 != nullptr);
     ASSERT_TRUE(hash_c2->size() == SHA256_DIGEST_LENGTH);
-    // TODO(Ricardo) Have to add +3 because current serialization add alignment bytes at the end.
-    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())+ 3));
+    CDRMessage_t cdrmessage(static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(message.binary_properties())));
     cdrmessage.msg_endian = BIGEND;
     CDRMessage::addBinaryPropertySeq(&cdrmessage, message.binary_properties(), "c.",false);
     unsigned char md[SHA256_DIGEST_LENGTH];

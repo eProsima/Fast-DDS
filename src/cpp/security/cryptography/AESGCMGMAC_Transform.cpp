@@ -1670,6 +1670,14 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
 
     serializer << tag.common_mac;
 
+    // Align to 4.
+    size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
+    for (size_t count = 0; count != alignment; ++count)
+    {
+        uint8_t c = 0;
+        serializer << c;
+    }
+
     eprosima::fastcdr::Cdr::state length_state = serializer.getState();
     uint32_t length = 0;
     serializer << length;
