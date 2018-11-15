@@ -817,15 +817,33 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
     {
         if(mp_EDP!=nullptr)
         {
+            RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+
             for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
                     rit != pdata->m_readers.end();++rit)
             {
                 mp_EDP->unpairReaderProxy(partGUID, (*rit)->guid());
+
+                if(listener)
+                {
+                    ReaderDiscoveryInfo info;
+                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
+                    info.info = std::move(**rit);
+                    listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                }
             }
             for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
                     wit !=pdata->m_writers.end();++wit)
             {
                 mp_EDP->unpairWriterProxy(partGUID, (*wit)->guid());
+
+                if(listener)
+                {
+                    WriterDiscoveryInfo info;
+                    info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                    info.info = std::move(**wit);
+                    listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                }
             }
         }
 
