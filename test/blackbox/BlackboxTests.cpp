@@ -5648,7 +5648,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+    reader.participant_id(0).max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -5673,7 +5673,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
     eprosima::fastrtps::rtps::LocatorList_t loc;
     eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
-    reader.max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
+    reader.participant_id(0).max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
