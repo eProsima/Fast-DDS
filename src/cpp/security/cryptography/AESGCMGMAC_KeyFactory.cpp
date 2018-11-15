@@ -320,7 +320,8 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
                 try
                 {
                     maxblockspersession = std::stoi( (it)->value() );
-                }catch(std::invalid_argument&)
+                }
+                catch(std::invalid_argument&)
                 {
                 }
             }
