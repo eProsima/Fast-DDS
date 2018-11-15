@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef WRITERPROXYDATA_H_
-#define WRITERPROXYDATA_H_
+#ifndef _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
+#define _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/TopicAttributes.h"
@@ -398,4 +398,4 @@ class WriterProxyData
 } /* namespace eprosima */
 
 #endif
-#endif /* WRITERPROXYDATA_H_ */
+#endif // _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_

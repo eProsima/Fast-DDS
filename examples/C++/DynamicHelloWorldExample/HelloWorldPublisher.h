@@ -29,39 +29,52 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 
 
-class HelloWorldPublisher {
-public:
-	HelloWorldPublisher();
-	virtual ~HelloWorldPublisher();
-	//!Initialize
-	bool init();
-	//!Publish a sample
-	bool publish(bool waitForListener = true);
-	//!Run for number samples
-	void run(uint32_t number, uint32_t sleep);
-private:
-	eprosima::fastrtps::Participant* mp_participant;
-	eprosima::fastrtps::Publisher* mp_publisher;
-	bool stop;
-	class PubListener:public eprosima::fastrtps::PublisherListener
-	{
-	public:
-		PubListener():n_matched(0),firstConnected(false){};
-		~PubListener(){};
-		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
-		int n_matched;
-        bool firstConnected;
-	}m_listener;
-	class PartListener : public eprosima::fastrtps::ParticipantListener
-	{
-		void onParticipantDiscovery(eprosima::fastrtps::Participant* p,
-			eprosima::fastrtps::ParticipantDiscoveryInfo info) override;
-	}m_part_list;
-	void runThread(uint32_t number, uint32_t sleep);
+class HelloWorldPublisher
+{
+    public:
 
-	// Dynamic Types
-	eprosima::fastrtps::types::DynamicData* m_DynHello;
-	eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        HelloWorldPublisher();
+
+        virtual ~HelloWorldPublisher();
+
+        //!Initialize
+        bool init();
+
+        //!Publish a sample
+        bool publish(bool waitForListener = true);
+
+        //!Run for number samples
+        void run(uint32_t number, uint32_t sleep);
+
+    private:
+
+        eprosima::fastrtps::Participant* mp_participant;
+
+        eprosima::fastrtps::Publisher* mp_publisher;
+
+        bool stop;
+
+        class PubListener:public eprosima::fastrtps::PublisherListener
+        {
+            public:
+                PubListener():n_matched(0),firstConnected(false){};
+                ~PubListener(){};
+                void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+                int n_matched;
+                bool firstConnected;
+        }m_listener;
+
+        class PartListener : public eprosima::fastrtps::ParticipantListener
+        {
+            void onParticipantDiscovery(eprosima::fastrtps::Participant* participant,
+                    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+        } m_part_list;
+
+        void runThread(uint32_t number, uint32_t sleep);
+
+        // Dynamic Types
+        eprosima::fastrtps::types::DynamicData* m_DynHello;
+        eprosima::fastrtps::types::DynamicPubSubType m_DynType;
 };
 
 

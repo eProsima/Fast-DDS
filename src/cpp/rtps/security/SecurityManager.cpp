@@ -508,10 +508,10 @@ bool SecurityManager::discovered_participant(const ParticipantProxyData& partici
                 // Inform user about authenticated remote participant.
                 if(participant_->getListener() != nullptr)
                 {
-                    RTPSParticipantAuthenticationInfo info;
-                    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
-                    info.guid(participant_data.m_guid);
-                    participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+                    ParticipantAuthenticationInfo info;
+                    info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+                    info.guid = participant_data.m_guid;
+                    participant_->getListener()->onParticipantAuthentication(participant_->getUserRTPSParticipant(), std::move(info));
                 }
                 //TODO(Ricardo) cryptograhy registration in AUTHENTICAITON_OK
 
@@ -649,10 +649,10 @@ bool SecurityManager::on_process_handshake(const ParticipantProxyData& participa
         // Inform user about authenticated remote participant.
         if(participant_->getListener() != nullptr)
         {
-            RTPSParticipantAuthenticationInfo info;
-            info.status(UNAUTHORIZED_RTPSPARTICIPANT);
-            info.guid(participant_data.m_guid);
-            participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+            ParticipantAuthenticationInfo info;
+            info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+            info.guid = participant_data.m_guid;
+            participant_->getListener()->onParticipantAuthentication(participant_->getUserRTPSParticipant(), std::move(info));
         }
 
         if(strlen(exception.what()) > 0)
@@ -3397,10 +3397,10 @@ bool SecurityManager::participant_authorized(const ParticipantProxyData& partici
         // Inform user about authenticated remote participant.
         if(participant_->getListener() != nullptr)
         {
-            RTPSParticipantAuthenticationInfo info;
-            info.status(AUTHORIZED_RTPSPARTICIPANT);
-            info.guid(participant_data.m_guid);
-            participant_->getListener()->onRTPSParticipantAuthentication(participant_->getUserRTPSParticipant(), info);
+            ParticipantAuthenticationInfo info;
+            info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+            info.guid = participant_data.m_guid;
+            participant_->getListener()->onParticipantAuthentication(participant_->getUserRTPSParticipant(), std::move(info));
         }
 
         for(auto& remote_reader : temp_readers)

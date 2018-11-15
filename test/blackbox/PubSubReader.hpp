@@ -62,7 +62,7 @@ class PubSubReader
 
                 ~ParticipantListener() {}
 
-                void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo info)
+                void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo&& info) override
                 {
                     if(reader_.onDiscovery_!= nullptr)
                     {
@@ -71,24 +71,28 @@ class PubSubReader
                         reader_.cvDiscovery_.notify_one();
                     }
 
-                    if(info.rtps.m_status == eprosima::fastrtps::rtps::DISCOVERED_RTPSPARTICIPANT)
+                    if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
                     {
                         reader_.participant_matched();
                     }
-                    else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT ||
-                            info.rtps.m_status == eprosima::fastrtps::rtps::DROPPED_RTPSPARTICIPANT)
+                    else if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
                     {
                         reader_.participant_unmatched();
                     }
                 }
 
 #if HAVE_SECURITY
-                void onParticipantAuthentication(eprosima::fastrtps::Participant*, const eprosima::fastrtps::ParticipantAuthenticationInfo& info)
+                void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantAuthenticationInfo&& info) override
                 {
-                    if(info.rtps.status() == eprosima::fastrtps::rtps::AUTHORIZED_RTPSPARTICIPANT)
+                    if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
+                    {
                         reader_.authorized();
-                    else if(info.rtps.status() == eprosima::fastrtps::rtps::UNAUTHORIZED_RTPSPARTICIPANT)
+                    }
+                    else if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT)
+                    {
                         reader_.unauthorized();
+                    }
                 }
 #endif
 

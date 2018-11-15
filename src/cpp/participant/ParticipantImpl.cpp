@@ -19,7 +19,9 @@
 
 #include "ParticipantImpl.h"
 #include <fastrtps/participant/Participant.h>
-#include <fastrtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastrtps/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastrtps/participant/ParticipantListener.h>
 
 #include <fastrtps/TopicDataType.h>
@@ -70,7 +72,9 @@ ParticipantImpl::~ParticipantImpl()
     delete(mp_participant);
 
     if(this->mp_rtpsParticipant != nullptr)
+    {
         RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
+    }
 }
 
 
@@ -424,29 +428,43 @@ bool ParticipantImpl::unregisterType(const char* typeName)
 
 
 
-void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPSParticipant* part,RTPSParticipantDiscoveryInfo rtpsinfo)
+void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(RTPSParticipant*,
+        rtps::ParticipantDiscoveryInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener!=nullptr)
     {
-        ParticipantDiscoveryInfo info;
-        info.rtps = rtpsinfo;
-        this->mp_participantimpl->mp_rtpsParticipant = part;
-        this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant,info);
+        this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant, std::move(info));
     }
 }
 
 #if HAVE_SECURITY
-void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& rtps_info)
+void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(RTPSParticipant*,
+        ParticipantAuthenticationInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener != nullptr)
     {
-        ParticipantAuthenticationInfo info;
-        info.rtps = rtps_info;
-        this->mp_participantimpl->mp_rtpsParticipant = part;
-        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, info);
+        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, std::move(info));
     }
 }
 #endif
+
+void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(RTPSParticipant*,
+        rtps::ReaderDiscoveryInfo&& info)
+{
+    if(this->mp_participantimpl->mp_listener!=nullptr)
+    {
+        this->mp_participantimpl->mp_listener->onSubscriberDiscovery(mp_participantimpl->mp_participant, std::move(info));
+    }
+}
+
+void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(RTPSParticipant*,
+        rtps::WriterDiscoveryInfo&& info)
+{
+    if(this->mp_participantimpl->mp_listener!=nullptr)
+    {
+        this->mp_participantimpl->mp_listener->onPublisherDiscovery(mp_participantimpl->mp_participant, std::move(info));
+    }
+}
 
 bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
         EndpointKind_t kind)

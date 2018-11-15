@@ -103,19 +103,19 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*
     }
 }
 
-void HelloWorldSubscriber::PartListener::onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo info)
+void HelloWorldSubscriber::PartListener::onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo&& info)
 {
-    if (info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+    if(info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Participant " << info.rtps.m_RTPSParticipantName << " discovered" << std::endl;
+        std::cout << "Participant " << info.info.m_participantName << " discovered" << std::endl;
     }
-    else if (info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+    else if(info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
-        std::cout << "Participant removed" << std::endl;
+        std::cout << "Participant " << info.info.m_participantName << " removed" << std::endl;
     }
-    else if (info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
+    else if(info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
     {
-        std::cout << "Participant " << info.rtps.m_RTPSParticipantName << " dropped" << std::endl;
+        std::cout << "Participant " << info.info.m_participantName << " dropped" << std::endl;
     }
 }
 

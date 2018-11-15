@@ -48,15 +48,15 @@ class ParListener : public ParticipantListener
          * @param p Pointer to the Participant
          * @param info DiscoveryInfo.
          */
-        void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo info) override
+        void onParticipantDiscovery(Participant*, rtps::ParticipantDiscoveryInfo&& info) override
         {
-            if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+            if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
                 std::cout << "Published discovered a participant" << std::endl;
-            else if(info.rtps.m_status == CHANGED_QOS_RTPSPARTICIPANT)
+            else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
                 std::cout << "Published detected changes on a participant" << std::endl;
-            else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT)
+            else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
                 std::cout << "Published removed a participant" << std::endl;
-            else if(info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
+            else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
                 std::cout << "Published dropped a participant" << std::endl;
                 if(exit_on_lost_liveliness_)
