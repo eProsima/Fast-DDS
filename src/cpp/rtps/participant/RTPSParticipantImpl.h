@@ -182,12 +182,6 @@ public:
         */
     inline RTPSParticipantListener* getListener() { return mp_participantListener; }
 
-    /**
-        * Get a a pair of pointer to the RTPSReaders used by SimpleEDP for discovery of Publisher and Subscribers
-        * @return std::pair of pointers to StatefulReaders where the first on points to the SubReader and the second to PubReader.
-        */
-    std::pair<StatefulReader*, StatefulReader*> getEDPReaders();
-
     std::vector<std::string> getParticipantNames() const;
 
     /**

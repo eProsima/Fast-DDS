@@ -227,12 +227,6 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     return pub;
 }
 
-
-std::pair<StatefulReader*,StatefulReader*> ParticipantImpl::getEDPReaders(){
-
-    return mp_rtpsParticipant->getEDPReaders();
-}
-
 std::vector<std::string> ParticipantImpl::getParticipantNames() const {
     return mp_rtpsParticipant->getParticipantNames();
 }

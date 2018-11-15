@@ -2077,7 +2077,7 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
     PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType>* writer = new PubSubWriter<HelloWorldType>(TEST_TOPIC_NAME);
 
-    checker.attach_edp_listeners().init();
+    checker.init();
 
     ASSERT_TRUE(checker.isInitialized());
 

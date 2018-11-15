@@ -89,6 +89,30 @@ class PubSubWriter
             }
 #endif
 
+            void onSubscriberDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
+            {
+                if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
+                {
+                    writer_.add_reader_info(info.info);
+                }
+                else if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER)
+                {
+                    writer_.remove_reader_info(info.info);
+                }
+            }
+
+            void onPublisherDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+            {
+                if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
+                {
+                    writer_.add_writer_info(info.info);
+                }
+                else if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER)
+                {
+                    writer_.remove_writer_info(info.info);
+                }
+            }
+
         private:
 
             ParticipantListener& operator=(const ParticipantListener&) = delete;
@@ -126,114 +150,6 @@ class PubSubWriter
 
     } listener_;
 
-    class EDPTakeReaderInfo: public eprosima::fastrtps::rtps::ReaderListener
-    {
-        public:
-
-            EDPTakeReaderInfo(PubSubWriter &writer) : writer_(writer){};
-
-            ~EDPTakeReaderInfo(){};
-
-            void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
-            {
-                eprosima::fastrtps::rtps::ReaderProxyData readerInfo;
-
-                if(change_in->kind == eprosima::fastrtps::rtps::ALIVE)
-                {
-                    eprosima::fastrtps::rtps::CDRMessage_t tempMsg(0);
-                    tempMsg.wraps = true;
-                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? eprosima::fastrtps::rtps::BIGEND : eprosima::fastrtps::rtps::LITTLEEND;
-                    tempMsg.length = change_in->serializedPayload.length;
-                    tempMsg.max_size = change_in->serializedPayload.max_size;
-                    tempMsg.buffer = change_in->serializedPayload.data;
-
-                    if(readerInfo.readFromCDRMessage(&tempMsg))
-                    {
-                        std::cout << "Discovered reader of topic " << readerInfo.topicName() << std::endl;
-                        writer_.add_reader_info(readerInfo);
-                    }
-                }
-                else
-                {
-                    // Search info of entity
-                    eprosima::fastrtps::rtps::GUID_t readerGuid;
-                    iHandle2GUID(readerGuid, change_in->instanceHandle);
-
-                    if(writer_.participant_->get_remote_reader_info(readerGuid, readerInfo))
-                    {
-                        std::cout << "Undiscovered reader of topic " << readerInfo.topicName() << std::endl;
-                        writer_.remove_reader_info(readerInfo);
-                    }
-                    else
-                    {
-                        std::cout << "Error getting remote reader info: " << readerGuid << std::endl;
-                    }
-                }
-            }
-
-        private:
-
-            EDPTakeReaderInfo& operator=(const EDPTakeReaderInfo&) = delete;
-
-            PubSubWriter &writer_;
-    };
-
-    class EDPTakeWriterInfo: public eprosima::fastrtps::rtps::ReaderListener
-    {
-        public:
-
-            EDPTakeWriterInfo(PubSubWriter &writer) : writer_(writer){};
-
-            ~EDPTakeWriterInfo(){};
-
-            void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
-            {
-                eprosima::fastrtps::rtps::WriterProxyData writerInfo;
-
-                if(change_in->kind == eprosima::fastrtps::rtps::ALIVE)
-                {
-                    eprosima::fastrtps::rtps::CDRMessage_t tempMsg(0);
-                    tempMsg.wraps = true;
-                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? eprosima::fastrtps::rtps::BIGEND : eprosima::fastrtps::rtps::LITTLEEND;
-                    tempMsg.length = change_in->serializedPayload.length;
-                    tempMsg.max_size = change_in->serializedPayload.max_size;
-                    tempMsg.buffer = change_in->serializedPayload.data;
-
-                    if(writerInfo.readFromCDRMessage(&tempMsg))
-                    {
-                        std::cout << "Discovered writer of topic " << writerInfo.topicName() << std::endl;
-                        writer_.add_writer_info(writerInfo);
-                    }
-                    else
-                    {
-                        std::cout << "Error reading cdr message for topic " << writerInfo.topicName() << std::endl;
-                    }
-                }
-                else
-                {
-                    // Search info of entity
-                    eprosima::fastrtps::rtps::GUID_t writerGuid;
-                    iHandle2GUID(writerGuid, change_in->instanceHandle);
-
-                    if(writer_.participant_->get_remote_writer_info(writerGuid, writerInfo))
-                    {
-                        std::cout << "Undiscovered writer of topic " << writerInfo.topicName() << std::endl;
-                        writer_.remove_writer_info(writerInfo);
-                    }
-                    else
-                    {
-                        std::cout << "Error getting remote writer info for topic " << writerGuid << std::endl;
-                    }
-                }
-            }
-
-        private:
-
-            EDPTakeWriterInfo& operator=(const EDPTakeWriterInfo&) = delete;
-
-            PubSubWriter &writer_;
-    };
-
     public:
 
     typedef TypeSupport type_support;
@@ -241,8 +157,7 @@ class PubSubWriter
 
     PubSubWriter(const std::string &topic_name) : participant_listener_(*this), listener_(*this),
     participant_(nullptr), publisher_(nullptr), initialized_(false), matched_(0),
-    participant_matched_(0), attachEDP_(false), edpReaderListener_(*this), edpWriterListener_(*this),
-    discovery_result_(false), onDiscovery_(nullptr)
+    participant_matched_(0), discovery_result_(false), onDiscovery_(nullptr)
 #if HAVE_SECURITY
     , authorized_(0), unauthorized_(0)
 #endif
@@ -284,13 +199,6 @@ class PubSubWriter
         if(participant_ != nullptr)
         {
             participant_guid_ = participant_->getGuid();
-
-            if(attachEDP_)
-            {
-                std::pair<eprosima::fastrtps::rtps::StatefulReader*, eprosima::fastrtps::rtps::StatefulReader*> edpReaders = participant_->getEDPReaders();
-                edpReaders.first->setListener(&edpReaderListener_);
-                edpReaders.second->setListener(&edpWriterListener_);
-            }
 
             // Register type
             eprosima::fastrtps::Domain::registerType(participant_, &type_);
@@ -613,12 +521,6 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& attach_edp_listeners()
-    {
-        attachEDP_ = true;
-        return *this;
-    }
-
     PubSubWriter& lease_duration(eprosima::fastrtps::rtps::Duration_t lease_duration, eprosima::fastrtps::rtps::Duration_t announce_period)
     {
         participant_attr_.rtps.builtin.leaseDuration = lease_duration;
@@ -848,9 +750,6 @@ class PubSubWriter
     std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;
     type_support type_;
-    bool attachEDP_;
-    EDPTakeReaderInfo edpReaderListener_;
-    EDPTakeWriterInfo edpWriterListener_;
     std::mutex mutexEntitiesInfoList_;
     std::condition_variable cvEntitiesInfoList_;
     std::map<eprosima::fastrtps::rtps::GUID_t, eprosima::fastrtps::rtps::WriterProxyData> mapWriterInfoList_;
