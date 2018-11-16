@@ -477,7 +477,7 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& partition(std::string partition)
+        PubSubReader& partition(const std::string& partition)
         {
             subscriber_attr_.qos.m_partition.push_back(partition.c_str());
             return *this;
@@ -541,6 +541,13 @@ class PubSubReader
         {
             participant_attr_.rtps.participantID = participantId;
             return *this;
+        }
+
+        bool update_partition(const std::string& partition)
+        {
+            subscriber_attr_.qos.m_partition.clear();
+            subscriber_attr_.qos.m_partition.push_back(partition.c_str());
+            return subscriber_->updateAttributes(subscriber_attr_);
         }
 
         /*** Function for discovery callback ***/

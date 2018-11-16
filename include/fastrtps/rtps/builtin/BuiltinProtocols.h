@@ -87,7 +87,7 @@ class BuiltinProtocols
      * @param wqos QoS policies dictated by the publisher
      * @return True if correct.
      */
-    bool addLocalWriter(RTPSWriter* w,TopicAttributes& topicAtt,WriterQos& wqos);
+    bool addLocalWriter(RTPSWriter* w, const TopicAttributes& topicAtt, const WriterQos& wqos);
     /**
      * Add a local Reader to the BuiltinProtocols.
      * @param R Pointer to the RTPSReader.
@@ -95,21 +95,23 @@ class BuiltinProtocols
      * @param rqos QoS policies dictated by the subscriber
      * @return True if correct.
      */
-    bool addLocalReader(RTPSReader* R,TopicAttributes& topicAtt, ReaderQos& rqos);
+    bool addLocalReader(RTPSReader* R, const TopicAttributes& topicAtt, const ReaderQos& rqos);
     /**
      * Update a local Writer QOS
      * @param W Writer to update
+     * @param topicAtt Attributes of the associated topic
      * @param wqos New Writer QoS
      * @return
      */
-    bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
+    bool updateLocalWriter(RTPSWriter* W, const TopicAttributes& topicAtt, const WriterQos& wqos);
     /**
      * Update a local Reader QOS
      * @param R Reader to update
+     * @param topicAtt Attributes of the associated topic
      * @param qos New Reader QoS
      * @return
      */
-    bool updateLocalReader(RTPSReader* R,ReaderQos& qos);
+    bool updateLocalReader(RTPSReader* R, const TopicAttributes& topicAtt, const ReaderQos& qos);
     /**
      * Remove a local Writer from the builtinProtocols.
      * @param W Pointer to the writer.

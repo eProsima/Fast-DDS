@@ -152,7 +152,7 @@ class StatefulReader:public RTPSReader
          * @param times ReaderTimes reference.
          * @return True if correctly updated.
          */
-        bool updateTimes(ReaderTimes& times);
+        bool updateTimes(const ReaderTimes& times);
         /**
          *
          * @return Reference to the ReaderTimes.

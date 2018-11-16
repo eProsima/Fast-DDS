@@ -385,7 +385,6 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                 pWP->assertLiveliness();
             }
 
-            GUID_t proxGUID = pWP->m_att.guid;
             wpLock.unlock();
 
             // Maybe now we have to notify user from new CacheChanges.
@@ -645,7 +644,7 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
     return readok;
 }
 
-bool StatefulReader::updateTimes(ReaderTimes& ti)
+bool StatefulReader::updateTimes(const ReaderTimes& ti)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)

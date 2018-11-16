@@ -58,7 +58,7 @@ EDP::~EDP()
     // TODO Auto-generated destructor stub
 }
 
-bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, ReaderQos& rqos)
+bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att, const ReaderQos& rqos)
 {
     logInfo(RTPS_EDP,"Adding " << reader->getGuid().entityId << " in topic "<<att.topicName);
     ReaderProxyData rpd;
@@ -139,7 +139,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, TopicAttributes& att, Read
     return true;
 }
 
-bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, WriterQos& wqos)
+bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att, const WriterQos& wqos)
 {
     logInfo(RTPS_EDP,"Adding " << writer->getGuid().entityId << " in topic "<<att.topicName);
     WriterProxyData wpd;
@@ -218,12 +218,27 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer,TopicAttributes& att, Write
     return true;
 }
 
-bool EDP::updatedLocalReader(RTPSReader* reader, ReaderQos& rqos)
+bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, const ReaderQos& rqos)
 {
     ParticipantProxyData pdata;
     ReaderProxyData rdata;
-    rdata.m_qos.setQos(rqos, true);
+    rdata.isAlive(true);
     rdata.m_expectsInlineQos = reader->expectsInlineQos();
+    rdata.guid(reader->getGuid());
+    rdata.key() = rdata.guid();
+    rdata.multicastLocatorList(reader->getAttributes().multicastLocatorList);
+    rdata.unicastLocatorList(reader->getAttributes().unicastLocatorList);
+    rdata.RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
+    rdata.topicName(att.getTopicName());
+    rdata.typeName(att.getTopicDataType());
+    rdata.topicKind(att.getTopicKind());
+    rdata.topicDiscoveryKind(att.getTopicDiscoveryKind());
+    rdata.m_qos.setQos(rqos, true);
+    rdata.userDefinedId(reader->getAttributes().getUserDefinedID());
+#if HAVE_SECURITY
+    rdata.security_attributes_ = reader->getAttributes().security_attributes().mask();
+    rdata.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+#endif
 
     if(this->mp_PDP->addReaderProxyData(&rdata, pdata))
     {
@@ -236,11 +251,28 @@ bool EDP::updatedLocalReader(RTPSReader* reader, ReaderQos& rqos)
     return false;
 }
 
-bool EDP::updatedLocalWriter(RTPSWriter* writer, WriterQos& wqos)
+bool EDP::updatedLocalWriter(RTPSWriter* writer, const TopicAttributes& att, const WriterQos& wqos)
 {
     ParticipantProxyData pdata;
     WriterProxyData wdata;
+    wdata.isAlive(true);
+    wdata.guid(writer->getGuid());
+    wdata.key() = wdata.guid();
+    wdata.multicastLocatorList(writer->getAttributes().multicastLocatorList);
+    wdata.unicastLocatorList(writer->getAttributes().unicastLocatorList);
+    wdata.RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
+    wdata.topicName(att.getTopicName());
+    wdata.typeName(att.getTopicDataType());
+    wdata.topicKind(att.getTopicKind());
+    wdata.topicDiscoveryKind(att.getTopicDiscoveryKind());
+    wdata.typeMaxSerialized(writer->getTypeMaxSerialized());
     wdata.m_qos.setQos(wqos,true);
+    wdata.userDefinedId(writer->getAttributes().getUserDefinedID());
+    wdata.persistence_guid(writer->getAttributes().persistence_guid);
+#if HAVE_SECURITY
+    wdata.security_attributes_ = writer->getAttributes().security_attributes().mask();
+    wdata.plugin_security_attributes_ = writer->getAttributes().security_attributes().plugin_endpoint_attributes;
+#endif
 
     if(this->mp_PDP->addWriterProxyData(&wdata, pdata))
     {
@@ -680,8 +712,8 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
                     logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                 }
 #else
-				RemoteReaderAttributes rratt = rdata->toRemoteReaderAttributes();
-				if((*wit)->matched_reader_add(rratt))
+                RemoteReaderAttributes rratt = rdata->toRemoteReaderAttributes();
+                if((*wit)->matched_reader_add(rratt))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
                     //MATCHED AND ADDED CORRECTLY:

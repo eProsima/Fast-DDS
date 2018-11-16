@@ -222,7 +222,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     m_publishers.push_back(pubpair);
 
     //REGISTER THE WRITER
-    this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
+    this->mp_rtpsParticipant->registerWriter(writer, att.topic, att.qos);
 
     return pub;
 }

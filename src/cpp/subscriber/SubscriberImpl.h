@@ -82,7 +82,7 @@ public:
 	 * @param att Reference to a SubscriberAttributes object to update the parameters;
 	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
 	 */
-	bool updateAttributes(SubscriberAttributes& att);
+	bool updateAttributes(const SubscriberAttributes& att);
 
 	/**
 	* Get associated GUID

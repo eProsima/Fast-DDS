@@ -105,7 +105,7 @@ class PublisherImpl
      * @param att Reference to a PublisherAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
      */
-    bool updateAttributes(PublisherAttributes& att);
+    bool updateAttributes(const PublisherAttributes& att);
 
     /**
      * Get the Attributes of the Subscriber.

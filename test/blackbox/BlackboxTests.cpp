@@ -1966,13 +1966,13 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    reader.history_depth(100).
+    reader.history_depth(10).
         partition("PartitionTests").
         reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.history_depth(100).
+    writer.history_depth(10).
         partition("PartitionTe*").init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -1983,6 +1983,27 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
     reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+
+    ASSERT_TRUE(reader.update_partition("OtherPartition"));
+
+    reader.wait_writer_undiscovery();
+    writer.wait_reader_undiscovery();
+
+    ASSERT_TRUE(writer.update_partition("OtherPart*"));
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    data = default_helloworld_data_generator();
 
     reader.startReception(data);
 

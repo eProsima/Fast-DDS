@@ -95,6 +95,10 @@ class PubSubWriter
                 {
                     writer_.add_reader_info(info.info);
                 }
+                else if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::CHANGED_QOS_READER)
+                {
+                    writer_.change_reader_info(info.info);
+                }
                 else if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER)
                 {
                     writer_.remove_reader_info(info.info);
@@ -106,6 +110,10 @@ class PubSubWriter
                 if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
                 {
                     writer_.add_writer_info(info.info);
+                }
+                else if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::CHANGED_QOS_WRITER)
+                {
+                    writer_.change_writer_info(info.info);
                 }
                 else if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER)
                 {
@@ -333,26 +341,22 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
-        int times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
-
-        while(times != repeatedTimes)
-        {
-            cvEntitiesInfoList_.wait(lock);
-            times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
-        }
+        cvEntitiesInfoList_.wait(lock, [&]()
+                {
+                    int times = mapTopicCountList_.count(topicName) == 0 ? 0 : mapTopicCountList_[topicName];
+                    return times == repeatedTimes;
+                });
     }
 
     void block_until_discover_partition(const std::string& partition, int repeatedTimes)
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
-        int times = mapPartitionCountList_.count(partition) == 0 ? -1 : mapPartitionCountList_[partition];
-
-        while(times != repeatedTimes)
-        {
-            cvEntitiesInfoList_.wait(lock);
-            times = mapPartitionCountList_.count(partition) == 0 ? -1 : mapPartitionCountList_[partition];
-        }
+        cvEntitiesInfoList_.wait(lock, [&]()
+                {
+                    int times = mapPartitionCountList_.count(partition) == 0 ? 0 : mapPartitionCountList_[partition];
+                    return times == repeatedTimes;
+                });
     }
 
     /*** Function to change QoS ***/
@@ -509,7 +513,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& partition(std::string partition)
+    PubSubWriter& partition(const std::string& partition)
     {
         publisher_attr_.qos.m_partition.push_back(partition.c_str());
         return *this;
@@ -582,6 +586,13 @@ class PubSubWriter
         return participant_guid_;
     }
 
+    bool update_partition(const std::string& partition)
+    {
+        publisher_attr_.qos.m_partition.clear();
+        publisher_attr_.qos.m_partition.push_back(partition.c_str());
+        return publisher_->updateAttributes(publisher_attr_);
+    }
+
     bool remove_all_changes(size_t* number_of_changes_removed)
     {
         return publisher_->removeAllChange(number_of_changes_removed);
@@ -646,19 +657,63 @@ class PubSubWriter
         auto ret = mapWriterInfoList_.insert(std::make_pair(writer_data.guid(), writer_data));
 
         if(!ret.second)
+        {
             ret.first->second = writer_data;
+        }
 
         auto ret_topic = mapTopicCountList_.insert(std::make_pair(writer_data.topicName(), 1));
 
         if(!ret_topic.second)
+        {
             ++ret_topic.first->second;
+        }
 
         for(auto partition : writer_data.m_qos.m_partition.getNames())
         {
             auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
 
             if(!ret_partition.second)
+            {
                 ++ret_partition.first->second;
+            }
+        }
+
+        mutexEntitiesInfoList_.unlock();
+        cvEntitiesInfoList_.notify_all();
+    }
+
+    void change_writer_info(const eprosima::fastrtps::rtps::WriterProxyData& writer_data)
+    {
+        mutexEntitiesInfoList_.lock();
+        auto ret = mapWriterInfoList_.insert(std::make_pair(writer_data.guid(), writer_data));
+
+        ASSERT_FALSE(ret.second);
+        eprosima::fastrtps::rtps::WriterProxyData old_writer_data = ret.first->second;
+        ret.first->second = writer_data;
+
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0ul);
+
+        // Remove previous partitions
+        for(auto partition : old_writer_data.m_qos.m_partition.getNames())
+        {
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
+        }
+
+        // Add new partitions
+        for(auto partition : writer_data.m_qos.m_partition.getNames())
+        {
+            auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
+
+            if(!ret_partition.second)
+            {
+                ++ret_partition.first->second;
+            }
         }
 
         mutexEntitiesInfoList_.unlock();
@@ -671,19 +726,62 @@ class PubSubWriter
         auto ret = mapReaderInfoList_.insert(std::make_pair(reader_data.guid(), reader_data));
 
         if(!ret.second)
+        {
             ret.first->second = reader_data;
+        }
 
         auto ret_topic = mapTopicCountList_.insert(std::make_pair(reader_data.topicName(), 1));
 
         if(!ret_topic.second)
+        {
             ++ret_topic.first->second;
+        }
 
         for(auto partition : reader_data.m_qos.m_partition.getNames())
         {
             auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
 
             if(!ret_partition.second)
+            {
                 ++ret_partition.first->second;
+            }
+        }
+
+        mutexEntitiesInfoList_.unlock();
+        cvEntitiesInfoList_.notify_all();
+    }
+
+void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_data)
+    {
+        mutexEntitiesInfoList_.lock();
+        auto ret = mapReaderInfoList_.insert(std::make_pair(reader_data.guid(), reader_data));
+
+        ASSERT_FALSE(ret.second);
+        eprosima::fastrtps::rtps::ReaderProxyData old_reader_data = ret.first->second;
+        ret.first->second = reader_data;
+
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0ul);
+
+        // Remove previous partitions
+        for(auto partition : old_reader_data.m_qos.m_partition.getNames())
+        {
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
+        }
+
+        for(auto partition : reader_data.m_qos.m_partition.getNames())
+        {
+            auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
+
+            if(!ret_partition.second)
+            {
+                ++ret_partition.first->second;
+            }
         }
 
         mutexEntitiesInfoList_.unlock();
@@ -704,9 +802,13 @@ class PubSubWriter
 
         for(auto partition : writer_data.m_qos.m_partition.getNames())
         {
-            ASSERT_GT(mapPartitionCountList_.count(partition), 0ul);
-
-            --mapPartitionCountList_[partition];
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
         }
 
         lock.unlock();
@@ -727,9 +829,13 @@ class PubSubWriter
 
         for(auto partition : reader_data.m_qos.m_partition.getNames())
         {
-            ASSERT_GT(mapPartitionCountList_.count(partition), 0ul);
-
-            --mapPartitionCountList_[partition];
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
         }
 
         lock.unlock();
