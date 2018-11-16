@@ -100,6 +100,7 @@ void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
 
 ReceiverResource::~ReceiverResource()
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if (Cleanup)
     {
         Cleanup();
