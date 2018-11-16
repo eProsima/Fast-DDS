@@ -385,7 +385,6 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                 pWP->assertLiveliness();
             }
 
-            GUID_t proxGUID = pWP->m_att.guid;
             wpLock.unlock();
 
             // Maybe now we have to notify user from new CacheChanges.
