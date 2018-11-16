@@ -1998,7 +1998,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
     reader.wait_writer_undiscovery();
     writer.wait_reader_undiscovery();
 
-    ASSERT_TRUE(writer.update_partition("OtherPartition"));
+    ASSERT_TRUE(writer.update_partition("OtherPart*"));
 
     writer.wait_discovery();
     reader.wait_discovery();
