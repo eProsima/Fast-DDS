@@ -773,12 +773,12 @@ bool StatefulWriter::try_remove_change(std::chrono::microseconds& microseconds,
 /*
  * PARAMETER_RELATED METHODS
  */
-void StatefulWriter::updateAttributes(WriterAttributes& att)
+void StatefulWriter::updateAttributes(const WriterAttributes& att)
 {
     this->updateTimes(att.times);
 }
 
-void StatefulWriter::updateTimes(WriterTimes& times)
+void StatefulWriter::updateTimes(const WriterTimes& times)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(m_times.heartbeatPeriod != times.heartbeatPeriod)

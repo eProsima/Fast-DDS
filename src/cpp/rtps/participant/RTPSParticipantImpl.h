@@ -380,7 +380,7 @@ private:
          * @param wqos WriterQos.
          * @return True if correctly registered.
          */
-        bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
+        bool registerWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos);
 
         /**
          * Register a Reader in the BuiltinProtocols.
@@ -389,7 +389,7 @@ private:
          * @param rqos ReaderQos.
          * @return  True if correctly registered.
          */
-        bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos);
+        bool registerReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos);
 
         /**
          * Update local writer QoS
@@ -397,7 +397,7 @@ private:
          * @param wqos New QoS for the writer
          * @return True on success
          */
-        bool updateLocalWriter(RTPSWriter* Writer,WriterQos& wqos);
+        bool updateLocalWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos);
 
         /**
          * Update local reader QoS
@@ -405,7 +405,7 @@ private:
          * @param rqos New QoS for the reader
          * @return True on success
          */
-        bool updateLocalReader(RTPSReader* Reader, ReaderQos& rqos);
+        bool updateLocalReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos);
 
 
 

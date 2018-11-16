@@ -126,7 +126,7 @@ namespace eprosima
                  * Update the Attributes of the Writer.
                  * @param att New attributes
                  */
-                void updateAttributes(WriterAttributes& att) override;
+                void updateAttributes(const WriterAttributes& att) override;
 
                 /**
                  * Find a Reader Proxy in this writer.
@@ -174,7 +174,7 @@ namespace eprosima
                  * Update the WriterTimes attributes of all associated ReaderProxy.
                  * @param times WriterTimes parameter.
                  */
-                void updateTimes(WriterTimes& times);
+                void updateTimes(const WriterTimes& times);
 
                 void add_flow_controller(std::unique_ptr<FlowController> controller) override;
 

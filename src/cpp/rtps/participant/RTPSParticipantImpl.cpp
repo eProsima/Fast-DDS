@@ -605,24 +605,24 @@ void RTPSParticipantImpl::disableReader(RTPSReader *reader)
     m_receiverResourcelistMutex.unlock();
 }
 
-bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer, TopicAttributes& topicAtt, WriterQos& wqos)
+bool RTPSParticipantImpl::registerWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos)
 {
     return this->mp_builtinProtocols->addLocalWriter(Writer, topicAtt, wqos);
 }
 
-bool RTPSParticipantImpl::registerReader(RTPSReader* reader, TopicAttributes& topicAtt, ReaderQos& rqos)
+bool RTPSParticipantImpl::registerReader(RTPSReader* reader, const TopicAttributes& topicAtt, const ReaderQos& rqos)
 {
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
 }
 
-bool RTPSParticipantImpl::updateLocalWriter(RTPSWriter* Writer, WriterQos& wqos)
+bool RTPSParticipantImpl::updateLocalWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos)
 {
-    return this->mp_builtinProtocols->updateLocalWriter(Writer, wqos);
+    return this->mp_builtinProtocols->updateLocalWriter(Writer, topicAtt, wqos);
 }
 
-bool RTPSParticipantImpl::updateLocalReader(RTPSReader* reader, ReaderQos& rqos)
+bool RTPSParticipantImpl::updateLocalReader(RTPSReader* reader, const TopicAttributes& topicAtt, const ReaderQos& rqos)
 {
-    return this->mp_builtinProtocols->updateLocalReader(reader, rqos);
+    return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos);
 }
 
 

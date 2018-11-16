@@ -87,7 +87,7 @@ public:
 	 * @param wqos Quality of service policies for the writer.
     * @return True if correct.
 	 */
-	bool addLocalWriter(RTPSWriter* W,WriterQos& wqos);
+	bool addLocalWriter(RTPSWriter* W, const WriterQos& wqos);
 	/**
 	 * Remove a local writer from the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
@@ -112,7 +112,7 @@ public:
 	 * @param wqos New writer QoS
 	 * @return True on success
 	 */
-	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
+	bool updateLocalWriter(RTPSWriter* W, const WriterQos& wqos);
 	
 	/**
 	 * Get the RTPS participant

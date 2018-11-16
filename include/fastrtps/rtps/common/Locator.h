@@ -264,7 +264,7 @@ public:
         return m_locators.end();
     }
 
-    RTPS_DllAPI size_t size() {
+    RTPS_DllAPI size_t size() const {
         return m_locators.size();
     }
 

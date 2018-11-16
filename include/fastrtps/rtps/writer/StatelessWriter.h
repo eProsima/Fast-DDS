@@ -83,7 +83,7 @@ class StatelessWriter : public RTPSWriter
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    void updateAttributes(WriterAttributes& att) override {
+    void updateAttributes(const WriterAttributes& att) override {
         (void)att;
         //FOR NOW THERE IS NOTHING TO UPDATE.
     }

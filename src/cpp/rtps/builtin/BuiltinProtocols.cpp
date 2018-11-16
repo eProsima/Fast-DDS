@@ -93,7 +93,7 @@ bool BuiltinProtocols::updateMetatrafficLocators(LocatorList_t& loclist)
     return true;
 }
 
-bool BuiltinProtocols::addLocalWriter(RTPSWriter* w,fastrtps::TopicAttributes& topicAtt,fastrtps::WriterQos& wqos)
+bool BuiltinProtocols::addLocalWriter(RTPSWriter* w, const fastrtps::TopicAttributes& topicAtt, const fastrtps::WriterQos& wqos)
 {
     bool ok = false;
     if(mp_PDP!=nullptr)
@@ -115,12 +115,12 @@ bool BuiltinProtocols::addLocalWriter(RTPSWriter* w,fastrtps::TopicAttributes& t
     return ok;
 }
 
-bool BuiltinProtocols::addLocalReader(RTPSReader* R,fastrtps::TopicAttributes& topicAtt, fastrtps::ReaderQos& rqos)
+bool BuiltinProtocols::addLocalReader(RTPSReader* R, const fastrtps::TopicAttributes& topicAtt, const fastrtps::ReaderQos& rqos)
 {
     bool ok = false;
     if(mp_PDP!=nullptr)
     {
-        ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R,topicAtt, rqos);
+        ok |= mp_PDP->getEDP()->newLocalReaderProxyData(R, topicAtt, rqos);
     }
     else
     {
@@ -129,26 +129,26 @@ bool BuiltinProtocols::addLocalReader(RTPSReader* R,fastrtps::TopicAttributes& t
     return ok;
 }
 
-bool BuiltinProtocols::updateLocalWriter(RTPSWriter* W,WriterQos& wqos)
+bool BuiltinProtocols::updateLocalWriter(RTPSWriter* W, const TopicAttributes& topicAtt, const WriterQos& wqos)
 {
     bool ok = false;
     if(mp_PDP!=nullptr && mp_PDP->getEDP()!=nullptr)
     {
-        ok |= mp_PDP->getEDP()->updatedLocalWriter(W,wqos);
+        ok |= mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
     }
     if(mp_WLP!=nullptr)
     {
-        ok |= mp_WLP->updateLocalWriter(W,wqos);
+        ok |= mp_WLP->updateLocalWriter(W, wqos);
     }
     return ok;
 }
 
-bool BuiltinProtocols::updateLocalReader(RTPSReader* R,ReaderQos& rqos)
+bool BuiltinProtocols::updateLocalReader(RTPSReader* R, const TopicAttributes& topicAtt, const ReaderQos& rqos)
 {
     bool ok = false;
     if(mp_PDP!=nullptr && mp_PDP->getEDP()!=nullptr)
     {
-        ok |= mp_PDP->getEDP()->updatedLocalReader(R,rqos);
+        ok |= mp_PDP->getEDP()->updatedLocalReader(R, topicAtt, rqos);
     }
     return ok;
 }

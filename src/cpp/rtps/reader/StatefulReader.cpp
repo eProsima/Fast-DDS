@@ -645,7 +645,7 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
     return readok;
 }
 
-bool StatefulReader::updateTimes(ReaderTimes& ti)
+bool StatefulReader::updateTimes(const ReaderTimes& ti)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)

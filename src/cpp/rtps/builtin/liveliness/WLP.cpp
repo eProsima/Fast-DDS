@@ -413,7 +413,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
 
 
-bool WLP::addLocalWriter(RTPSWriter* W,WriterQos& wqos)
+bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId	<<" to Liveliness Protocol")
@@ -564,7 +564,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
     return false;
 }
 
-bool WLP::updateLocalWriter(RTPSWriter* W, WriterQos& wqos)
+bool WLP::updateLocalWriter(RTPSWriter* W, const WriterQos& wqos)
 {
 
     // Unused in release mode.

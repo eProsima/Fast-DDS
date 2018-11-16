@@ -509,7 +509,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& partition(std::string partition)
+    PubSubWriter& partition(const std::string& partition)
     {
         publisher_attr_.qos.m_partition.push_back(partition.c_str());
         return *this;
@@ -580,6 +580,13 @@ class PubSubWriter
     eprosima::fastrtps::rtps::GUID_t participant_guid()
     {
         return participant_guid_;
+    }
+
+    bool update_partition(const std::string& partition)
+    {
+        publisher_attr_.qos.m_partition.clear();
+        publisher_attr_.qos.m_partition.push_back(partition.c_str());
+        return publisher_->updateAttributes(publisher_attr_);
     }
 
     bool remove_all_changes(size_t* number_of_changes_removed)

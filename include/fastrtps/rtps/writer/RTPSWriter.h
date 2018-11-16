@@ -99,7 +99,7 @@ class RTPSWriter : public Endpoint
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    RTPS_DllAPI virtual void updateAttributes(WriterAttributes& att) = 0;
+    RTPS_DllAPI virtual void updateAttributes(const WriterAttributes& att) = 0;
     /**
      * This method triggers the send operation for unsent changes.
      * @return number of messages sent

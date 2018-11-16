@@ -99,7 +99,7 @@ class RTPS_DllAPI RTPSParticipant
      * @param wqos WriterQos.
      * @return True if correctly registered.
      */
-    bool registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos);
+    bool registerWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos);
     /**
      * Register a RTPSReader in the builtin Protocols.
      * @param Reader Pointer to the RTPSReader.
@@ -107,21 +107,23 @@ class RTPS_DllAPI RTPSParticipant
      * @param rqos ReaderQos.
      * @return True if correctly registered.
      */
-    bool registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos);
+    bool registerReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos);
     /**
      * Update writer QOS
      * @param Writer to update
+     * @param topicAtt Topic Attributes where you want to register it.
      * @param wqos New writer QoS
      * @return true on success
      */
-    bool updateWriter(RTPSWriter* Writer,WriterQos& wqos);
+    bool updateWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos);
     /**
      * Update reader QOS
      * @param Reader to update
+     * @param topicAtt Topic Attributes where you want to register it.
      * @param rqos New reader QoS
      * @return true on success
      */
-    bool updateReader(RTPSReader* Reader,ReaderQos& rqos);
+    bool updateReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos);
 
     std::vector<std::string> getParticipantNames() const;
 

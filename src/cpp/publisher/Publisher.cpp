@@ -84,3 +84,8 @@ const PublisherAttributes& Publisher::getAttributes() const
 {
     return mp_impl->getAttributes();
 }
+
+bool Publisher::updateAttributes(const PublisherAttributes& att)
+{
+    return mp_impl->updateAttributes(att);
+}
