@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef READERPROXYDATA_H_
-#define READERPROXYDATA_H_
+#ifndef _RTPS_BUILTIN_DATA_READERPROXYDATA_H_
+#define _RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/TopicAttributes.h"
@@ -365,4 +365,4 @@ class ReaderProxyData
 } /* namespace eprosima */
 
 #endif
-#endif /* READERPROXYDATA_H_ */
+#endif // _RTPS_BUILTIN_DATA_READERPROXYDATA_H_

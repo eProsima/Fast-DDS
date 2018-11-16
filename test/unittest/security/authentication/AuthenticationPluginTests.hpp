@@ -16,7 +16,11 @@
 #define _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
 
 #include "../../../../src/cpp/security/authentication/PKIDH.h"
+
+// Include first necessary mocks
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 
 #include <gtest/gtest.h>
 

@@ -167,15 +167,19 @@ class ParticipantImpl
     {
         public:
 
-            MyRTPSParticipantListener(ParticipantImpl* impl): mp_participantimpl(impl){};
+            MyRTPSParticipantListener(ParticipantImpl* impl): mp_participantimpl(impl) {}
 
-            virtual ~MyRTPSParticipantListener(){};
+            virtual ~MyRTPSParticipantListener() {}
 
-            void onRTPSParticipantDiscovery(rtps::RTPSParticipant* part, rtps::RTPSParticipantDiscoveryInfo info);
+            void onParticipantDiscovery(rtps::RTPSParticipant* participant, rtps::ParticipantDiscoveryInfo&& info) override;
 
 #if HAVE_SECURITY
-            void onRTPSParticipantAuthentication(rtps::RTPSParticipant* part, const rtps::RTPSParticipantAuthenticationInfo& info);
+            void onParticipantAuthentication(rtps::RTPSParticipant* participant, rtps::ParticipantAuthenticationInfo&& info) override;
 #endif
+
+            void onReaderDiscovery(rtps::RTPSParticipant* participant, rtps::ReaderDiscoveryInfo&& info) override;
+
+            void onWriterDiscovery(rtps::RTPSParticipant* participant, rtps::WriterDiscoveryInfo&& info) override;
 
             ParticipantImpl* mp_participantimpl;
 

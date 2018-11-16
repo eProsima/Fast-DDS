@@ -50,12 +50,6 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         logWarning(RTPS_EDP,"Received change with no Key");
     }
 
-    //Call the slave, if it exists
-    attached_listener_mutex.lock();
-    if(attached_listener != nullptr)
-        attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
-    attached_listener_mutex.unlock();
-
     if(change->kind == ALIVE)
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
@@ -124,12 +118,6 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     {
         logWarning(RTPS_EDP,"Received change with no Key");
     }
-
-    //Call the slave, if it exists
-    attached_listener_mutex.lock();
-    if(attached_listener != nullptr)
-        attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
-    attached_listener_mutex.unlock();
 
     if(change->kind == ALIVE)
     {

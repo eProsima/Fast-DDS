@@ -464,13 +464,11 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     (void)local_reader;
 
     auto* writer = &mp_SubWriter;
-    auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
     if(local_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
-        reader = &sedp_builtin_subscriptions_secure_reader_;
     }
 #endif
 
@@ -510,17 +508,14 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
                 }
             }
 
-            if(this->mp_subListen->getAttachedListener() != nullptr)
-            {
-                this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
-            }
-
             writer->second->add_change(change);
 
             return true;
         }
+
         return false;
     }
+
     return true;
 }
 bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProxyData* wdata)
@@ -529,13 +524,11 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
     (void)local_writer;
 
     auto* writer = &mp_PubWriter;
-    auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
     if(local_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
-        reader = &sedp_builtin_publications_secure_reader_;
     }
 #endif
 
@@ -573,9 +566,6 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
                 }
             }
 
-            if(this->mp_pubListen->getAttachedListener() != nullptr)
-                this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
-
             writer->second->add_change(change);
 
             return true;
@@ -590,13 +580,11 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_EDP,W->getGuid().entityId);
 
     auto* writer = &mp_PubWriter;
-    auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
     if(W->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
-        reader = &sedp_builtin_publications_secure_reader_;
     }
 #endif
 
@@ -621,9 +609,6 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 
             }
 
-            if(this->mp_pubListen->getAttachedListener() != nullptr)
-                this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
-
             writer->second->add_change(change);
         }
     }
@@ -635,13 +620,11 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
     logInfo(RTPS_EDP,R->getGuid().entityId);
 
     auto* writer = &mp_SubWriter;
-    auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
     if(R->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
-        reader = &sedp_builtin_subscriptions_secure_reader_;
     }
 #endif
 
@@ -664,9 +647,6 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
                     }
                 }
             }
-
-            if(this->mp_subListen->getAttachedListener() != nullptr)
-                this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
 
             writer->second->add_change(change);
         }

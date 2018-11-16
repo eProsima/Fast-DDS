@@ -20,16 +20,11 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
-
 #include <fastrtps/log/Log.h>
-
 #include <fastrtps/qos/QosPolicies.h>
 
 #include <mutex>
@@ -304,33 +299,6 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
                         ParameterPropertyList_t*p = (ParameterPropertyList_t*)(*it);
                         this->m_properties = *p;
                         break;
-                        //FIXME: STATIC EDP. IN ASSIGN REMOTE ENDPOINTS
-                        //				if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
-                        //				{
-                        //					ParameterPropertyList_t* p = (ParameterPropertyList_t*)(*it);
-                        //					uint16_t userId;
-                        //					EntityId_t entityId;
-                        //					for(std::vector<std::pair<std::string,std::string>>::iterator it = p->properties.begin();
-                        //							it != p->properties.end();++it)
-                        //					{
-                        //						std::stringstream ss;
-                        //						std::string first_str = it->first.substr(0, it->first.find("_"));
-                        //						if(first_str == "staticedp")
-                        //						{
-                        //							std::string type = it->first.substr(10, it->first.find("_"));
-                        //							first_str = it->first.substr(17, it->first.find("_"));
-                        //							ss.clear();	ss.str(std::string());
-                        //							ss << first_str;ss >> userId;
-                        //							ss.clear();ss.str(std::string());
-                        //							ss << it->second;
-                        //							int a,b,c,d;
-                        //							char ch;
-                        //							ss >> a >> ch >> b >> ch >> c >>ch >> d;
-                        //							entityId.value[0] = (octet)a;entityId.value[1] = (octet)b;
-                        //							entityId.value[2] = (octet)c;entityId.value[3] = (octet)d;
-                        //							assignUserId(type,userId,entityId,Pdata);
-                        //						}
-                        //					}
                     }
                 case PID_USER_DATA:
                     {

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef PARTICIPANTPROXYDATA_H_
-#define PARTICIPANTPROXYDATA_H_
+#ifndef _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
+#define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <mutex>
 #include "../../../qos/ParameterList.h"
@@ -163,4 +163,4 @@ class ParticipantProxyData
 } /* namespace eprosima */
 
 #endif
-#endif /* RTPSParticipantPROXYDATA_H_ */
+#endif // _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_

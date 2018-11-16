@@ -25,10 +25,10 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_fail)
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
-    RTPSParticipantAuthenticationInfo info;
-    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
-    info.guid(participant_data.m_guid);
-    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+    ParticipantAuthenticationInfo info;
+    info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+    info.guid = participant_data.m_guid;
+    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_FALSE(manager_.discovered_participant(participant_data));
 }
@@ -49,10 +49,10 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_ok)
         WillOnce(Return(true));
     EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
 
-    RTPSParticipantAuthenticationInfo info;
-    info.status(AUTHORIZED_RTPSPARTICIPANT);
-    info.guid(participant_data.m_guid);
-    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+    ParticipantAuthenticationInfo info;
+    info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+    info.guid = participant_data.m_guid;
+    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 }
@@ -94,10 +94,10 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
-    RTPSParticipantAuthenticationInfo info;
-    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
-    info.guid(participant_data.m_guid);
-    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+    ParticipantAuthenticationInfo info;
+    info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+    info.guid = participant_data.m_guid;
+    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_FALSE(manager_.discovered_participant(participant_data));
 }
@@ -140,10 +140,10 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
 
-    RTPSParticipantAuthenticationInfo info;
-    info.status(AUTHORIZED_RTPSPARTICIPANT);
-    info.guid(participant_data.m_guid);
-    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+    ParticipantAuthenticationInfo info;
+    info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+    info.guid = participant_data.m_guid;
+    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 }
@@ -288,10 +288,10 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
         WillOnce(Return(true));
 
-    RTPSParticipantAuthenticationInfo info;
-    info.status(AUTHORIZED_RTPSPARTICIPANT);
-    info.guid(participant_data.m_guid);
-    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+    ParticipantAuthenticationInfo info;
+    info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+    info.guid = participant_data.m_guid;
+    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
@@ -346,10 +346,10 @@ TEST_F(SecurityTest, discovered_participant_validate_remote_fail_and_then_ok)
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
-    RTPSParticipantAuthenticationInfo info;
-    info.status(UNAUTHORIZED_RTPSPARTICIPANT);
-    info.guid(participant_data.m_guid);
-    EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+    ParticipantAuthenticationInfo info;
+    info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+    info.guid = participant_data.m_guid;
+    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
     ASSERT_FALSE(manager_.discovered_participant(participant_data));
 

@@ -951,24 +951,6 @@ ResourceEvent& RTPSParticipantImpl::getEventResource()
     return *this->mp_event_thr;
 }
 
-std::pair<StatefulReader*,StatefulReader*> RTPSParticipantImpl::getEDPReaders()
-{
-    std::pair<StatefulReader*,StatefulReader*> buffer;
-    EDPSimple *EDPPointer = dynamic_cast<EDPSimple*>(mp_builtinProtocols->mp_PDP->getEDP());
-    if (EDPPointer != nullptr)
-    {
-        //Means the EDP attached is actually non static and therefore it has Readers
-        buffer.first = EDPPointer->mp_SubReader.first;
-        buffer.second = EDPPointer->mp_PubReader.first;
-    }
-    else
-    {
-        buffer.first = nullptr;
-        buffer.second = nullptr;
-    }
-    return buffer;
-}
-
 std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
 {
     std::vector<std::string> participant_names;

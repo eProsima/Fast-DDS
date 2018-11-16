@@ -19,6 +19,11 @@
 #ifndef RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #define RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 
+// Include first possible mocks (depending on include on CMakeLists.txt)
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -49,9 +54,19 @@ class MockParticipantListener : public RTPSParticipantListener
 {
     public:
 
-        MOCK_METHOD2(onRTPSParticipantDiscovery, void (RTPSParticipant*, RTPSParticipantDiscoveryInfo));
+        void onParticipantDiscovery(RTPSParticipant* participant, ParticipantDiscoveryInfo&& info) override
+        {
+            onParticipantDiscovery(participant, info);
+        }
 
-        MOCK_METHOD2(onRTPSParticipantAuthentication, void (RTPSParticipant*, const RTPSParticipantAuthenticationInfo&));
+        MOCK_METHOD2(onParticipantDiscovery, void (RTPSParticipant*, const ParticipantDiscoveryInfo&));
+
+        void onParticipantAuthentication(RTPSParticipant* participant, ParticipantAuthenticationInfo&& info) override
+        {
+            onParticipantAuthentication(participant, info);
+        }
+
+        MOCK_METHOD2(onParticipantAuthentication, void (RTPSParticipant*, const ParticipantAuthenticationInfo&));
 };
 
 class RTPSParticipantImpl
@@ -84,7 +99,9 @@ class RTPSParticipantImpl
         {
             bool ret = createWriter_mock(writer, param , hist, listen, entityId, isBuiltin);
             if(*writer != nullptr)
+            {
                 (*writer)->history_ = hist;
+            }
             return ret;
         }
 

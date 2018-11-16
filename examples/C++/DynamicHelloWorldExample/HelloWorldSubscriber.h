@@ -29,39 +29,53 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 
-class HelloWorldSubscriber {
+class HelloWorldSubscriber
+{
     public:
+
         HelloWorldSubscriber();
+
         virtual ~HelloWorldSubscriber();
+
         //!Initialize the subscriber
         bool init();
+
         //!RUN the subscriber
         void run();
+
         //!Run the subscriber until number samples have been recevied.
         void run(uint32_t number);
+
     private:
+
         eprosima::fastrtps::Participant* mp_participant;
+
         eprosima::fastrtps::Subscriber* mp_subscriber;
+
     public:
+
         class SubListener:public eprosima::fastrtps::SubscriberListener
-    {
-        public:
-            SubListener():n_matched(0),n_samples(0){ };
-            ~SubListener(){ };
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
-            void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-            // Dynamic Types
-            eprosima::fastrtps::types::DynamicData* m_DynHello;
-            eprosima::fastrtps::SampleInfo_t m_info;
-            int n_matched;
-            uint32_t n_samples;
-    }m_listener;
+        {
+            public:
+                SubListener():n_matched(0),n_samples(0){ };
+                ~SubListener(){ };
+                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+                // Dynamic Types
+                eprosima::fastrtps::types::DynamicData* m_DynHello;
+                eprosima::fastrtps::SampleInfo_t m_info;
+                int n_matched;
+                uint32_t n_samples;
+        }m_listener;
+
         class PartListener : public eprosima::fastrtps::ParticipantListener
-    {
-        void onParticipantDiscovery(eprosima::fastrtps::Participant* p,
-                eprosima::fastrtps::ParticipantDiscoveryInfo info) override;
-    }m_part_list;
+        {
+            void onParticipantDiscovery(eprosima::fastrtps::Participant* p,
+                    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+        }m_part_list;
+
     private:
+
         // Dynamic Types
         eprosima::fastrtps::types::DynamicPubSubType m_DynType;
 };

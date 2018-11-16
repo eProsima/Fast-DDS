@@ -2005,11 +2005,11 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
     ASSERT_TRUE(writer.isInitialized());
 
     reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool{
-            if(info.rtps.m_guid == writer.participant_guid())
+            if(info.info.m_guid == writer.participant_guid())
             {
                 std::cout << "Received USER_DATA from the writer: ";
-                for (auto i: info.rtps.m_userData) std::cout << i << ' ';
-                return info.rtps.m_userData == std::vector<octet>({'a','b','c','d'});
+                for (auto i: info.info.m_userData) std::cout << i << ' ';
+                return info.info.m_userData == std::vector<octet>({'a','b','c','d'});
             }
 
             return false;
@@ -2038,17 +2038,17 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 
     int count = 0;
     reader.setOnDiscoveryFunction([&writer, &count](const ParticipantDiscoveryInfo& info) -> bool{
-            if(info.rtps.m_guid == writer.participant_guid())
+            if(info.info.m_guid == writer.participant_guid())
             {
-                if(info.rtps.m_status == DISCOVERED_RTPSPARTICIPANT)
+                if(info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
                 {
-                    std::cout << "Discovered participant " << info.rtps.m_guid << std::endl;
+                    std::cout << "Discovered participant " << info.info.m_guid << std::endl;
                     ++count;
                 }
-                else if(info.rtps.m_status == REMOVED_RTPSPARTICIPANT ||
-                        info.rtps.m_status == DROPPED_RTPSPARTICIPANT)
+                else if(info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                        info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
                 {
-                    std::cout << "Removed participant " << info.rtps.m_guid << std::endl;
+                    std::cout << "Removed participant " << info.info.m_guid << std::endl;
                     return ++count == 2;
                 }
             }
@@ -2077,7 +2077,7 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
     PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType>* writer = new PubSubWriter<HelloWorldType>(TEST_TOPIC_NAME);
 
-    checker.attach_edp_listeners().init();
+    checker.init();
 
     ASSERT_TRUE(checker.isInitialized());
 
@@ -4342,11 +4342,11 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
     reader.setOnDiscoveryFunction([&writer](const ParticipantDiscoveryInfo& info) -> bool{
-            if(info.rtps.m_guid == writer.participant_guid())
+            if(info.info.m_guid == writer.participant_guid())
             {
                 std::cout << "Received USER_DATA from the writer: ";
-                for (auto i: info.rtps.m_userData) std::cout << i << ' ';
-                return info.rtps.m_userData == std::vector<octet>({'a','b','c','d','e'});
+                for (auto i: info.info.m_userData) std::cout << i << ' ';
+                return info.info.m_userData == std::vector<octet>({'a','b','c','d','e'});
             }
 
             return false;

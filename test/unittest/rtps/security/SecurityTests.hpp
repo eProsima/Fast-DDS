@@ -315,10 +315,10 @@ class SecurityTest : public ::testing::Test
             EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
                 WillOnce(Return(true));
 
-            RTPSParticipantAuthenticationInfo info;
-            info.status(AUTHORIZED_RTPSPARTICIPANT);
-            info.guid(remote_participant_key);
-            EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+            ParticipantAuthenticationInfo info;
+            info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+            info.guid = remote_participant_key;
+            EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
             stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
