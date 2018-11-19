@@ -41,8 +41,8 @@ static uint16_t GetBaseAutoPort(uint16_t currentPort)
 }
 
 TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, const Locator_t& locator)
-    : ChannelResource()
+        asio::io_service& service, const Locator_t& locator, uint32_t maxMsgSize)
+    : ChannelResource(maxMsgSize)
     , mParent (parent)
     , mRTCPManager(rtcpManager)
     , mLocator(locator)
@@ -56,8 +56,8 @@ TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessag
 }
 
 TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, eProsimaTCPSocketRef socket)
-    : ChannelResource()
+        asio::io_service& service, eProsimaTCPSocketRef socket, uint32_t maxMsgSize)
+    : ChannelResource(maxMsgSize)
     , mParent(parent)
     , mRTCPManager(rtcpManager)
     , mLocator()

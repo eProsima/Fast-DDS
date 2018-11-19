@@ -555,7 +555,8 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
             {
                 if (!pChannelResource->GetIsInputSocket())
                 {
-                    newChannel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator);
+                    newChannel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator,
+                        GetConfiguration()->receiveBufferSize);
                     pChannelResource->SetAllPortsAsPending();
                     newChannel->CopyPendingPortsFrom(pChannelResource);
                 }
@@ -595,7 +596,8 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
         {
             // Create output channel
             auto socket = createTCPSocket(mService);
-            channel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator);
+            channel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator,
+                GetConfiguration()->sendBufferSize);
             mChannelResources[physicalLocator] = channel;
             channel->Connect();
         }
@@ -1094,7 +1096,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 #endif
             // Store the new connection.
             TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, mService,
-                unicastSocket);
+                unicastSocket, GetConfiguration()->receiveBufferSize);
 
             mUnboundChannelResources.push_back(pChannelResource);
             pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this,
