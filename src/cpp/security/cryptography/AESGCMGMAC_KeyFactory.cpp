@@ -249,7 +249,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 
 
         (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
-        (*RPCrypto)->session_block_counter = local_participant_handle->session_block_counter;
+        (*RPCrypto)->session_block_counter = local_participant_handle->max_blocks_per_session+1;
         (*RPCrypto)->session_id = std::numeric_limits<uint32_t>::max();
         if((*RPCrypto)->session_id == local_participant_handle->session_id)
             (*RPCrypto)->session_id -= 1;
