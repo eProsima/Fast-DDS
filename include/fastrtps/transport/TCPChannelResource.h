@@ -100,11 +100,11 @@ enum eConnectionStatus
 public:
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, const Locator_t& locator);
+        asio::io_service& service, const Locator_t& locator, uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
     TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, eProsimaTCPSocketRef socket);
+        asio::io_service& service, eProsimaTCPSocketRef socket, uint32_t maxMsgSize);
 
     virtual ~TCPChannelResource();
 

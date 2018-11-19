@@ -435,7 +435,7 @@ void VideoTestSubscriber::InitGStreamer()
             g_signal_connect(appsrc, "need-data", G_CALLBACK(start_feed_cb), this);
             g_signal_connect(appsrc, "enough-data", G_CALLBACK(stop_feed_cb), this);
             GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320, NULL);
+                "width", G_TYPE_INT, 1024, "height", G_TYPE_INT, 720, NULL);
             gst_app_src_set_caps(GST_APP_SRC(appsrc), caps);
             gst_caps_unref(caps);
 
