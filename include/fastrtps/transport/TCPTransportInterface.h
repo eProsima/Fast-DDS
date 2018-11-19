@@ -244,6 +244,17 @@ public:
 
     void DeleteSocket(TCPChannelResource *channelResource);
 
+private:
+
+    class ReceiverInUseCV
+    {
+        public:
+
+            bool in_use;
+
+            std::condition_variable cv;
+    };
+
 protected:
 
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
@@ -251,12 +262,12 @@ protected:
     asio::io_service mService;
     std::shared_ptr<std::thread> ioServiceThread;
     RTCPMessageManager* mRTCPMessageManager;
-    mutable std::recursive_mutex mSocketsMapMutex;
+    mutable std::mutex mSocketsMapMutex;
 
     std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
     std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
     std::vector<TCPChannelResource*> mUnboundChannelResources; // Needed to avoid memory leaks if client doesn't bound
-    std::map<uint16_t, TransportReceiverInterface*> mReceiverResources; // The key is the logical port
+    std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> mReceiverResources; // The key is the logical port
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
     std::recursive_mutex mDeletedSocketsPoolMutex;

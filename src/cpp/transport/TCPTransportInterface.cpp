@@ -116,7 +116,7 @@ void TCPTransportInterface::Clean()
 
     // Collect all the existing sockets to delete them outside of the mutex.
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         for (auto it = mSocketAcceptors.begin(); it != mSocketAcceptors.end(); ++it)
         {
             for (auto acceptorIt : it->second)
@@ -163,7 +163,7 @@ void TCPTransportInterface::Clean()
 
 TCPChannelResource* TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResource *pChannelResource)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
     if (IsLocatorSupported(locator))
     {
         auto it_remove = std::find(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), pChannelResource);
@@ -247,7 +247,7 @@ void TCPTransportInterface::CalculateCRC(TCPHeader &header, const octet *data, u
 
 bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
     try
     {
         TCPAcceptor* newAcceptor(nullptr);
@@ -303,7 +303,7 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
 
 bool TCPTransportInterface::EnqueueLogicalOutputPort(const Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
     auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (socketIt != mChannelResources.end())
     {
@@ -324,7 +324,6 @@ void TCPTransportInterface::FillTCPHeader(TCPHeader& header, const octet* sendBu
 
 bool TCPTransportInterface::IsOutputChannelBound(const Locator_t& locator) const
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (!IsLocatorSupported(locator))
         return false;
 
@@ -339,7 +338,6 @@ bool TCPTransportInterface::IsOutputChannelBound(const Locator_t& locator) const
 
 bool TCPTransportInterface::IsOutputChannelConnected(const Locator_t& locator) const
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
     if (!IsLocatorSupported(locator))
         return false;
 
@@ -453,7 +451,7 @@ bool TCPTransportInterface::init()
 
 bool TCPTransportInterface::IsInputPortOpen(uint16_t port) const
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
     return mReceiverResources.find(port) != mReceiverResources.end();
 }
 
@@ -474,7 +472,7 @@ bool TCPTransportInterface::IsOutputChannelOpen(const Locator_t& locator) const
         return false;
     }
 
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
 
     // Check if there is any socket opened with the given locator.
     auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
@@ -500,7 +498,7 @@ Locator_t TCPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
 
 bool TCPTransportInterface::CloseOutputChannel(const Locator_t& locator)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
     auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
     if (socketIt != mChannelResources.end())
     {
@@ -513,13 +511,14 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
 {
     bool bClosed = false;
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
 
         auto logicalPort = IPLocator::getLogicalPort(locator);
         auto receiverIt = mReceiverResources.find(logicalPort);
         if (receiverIt != mReceiverResources.end())
         {
             bClosed = true;
+            ReceiverInUseCV* receiver_in_use = receiverIt->second.second;
             mReceiverResources.erase(receiverIt);
 
             // Inform all channel resources that logical port has been closed
@@ -527,6 +526,9 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
             {
                 channelIt.second->InputPortClosed(logicalPort);
             }
+
+            receiver_in_use->cv.wait(scopedLock, [&]() { return receiver_in_use->in_use == false; });
+            delete receiver_in_use;
         }
     }
 
@@ -535,7 +537,7 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
 void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
 
     // This check has been added because ASIO sends callbacks sometimes when the channel resource has been deleted.
     auto searchIt = std::find_if(mChannelResources.begin(), mChannelResources.end(), [pChannelResource](const std::pair<Locator_t, TCPChannelResource*>& p)
@@ -578,7 +580,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
     auto logicalPort = IPLocator::getLogicalPort(locator);
     if (IsLocatorSupported(locator) && (logicalPort != 0))
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         logInfo(RTCP, "OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " \
             << IPLocator::getLogicalPort(locator) << ") @ IP: " << IPLocator::toIPv4string(locator));
 
@@ -621,8 +623,9 @@ bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, Transport
         {
             success = true;
             {
-                std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
-                mReceiverResources[logicalPort] = receiver;
+                std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
+                mReceiverResources[logicalPort] = std::pair<TransportReceiverInterface*, ReceiverInUseCV*>
+                    (receiver, new ReceiverInUseCV());
             }
 
             logInfo(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << \
@@ -694,13 +697,19 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
 
         // Processes the data through the CDR Message interface.
         logicalPort = IPLocator::getLogicalPort(remoteLocator);
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         auto it = mReceiverResources.find(logicalPort);
         //TransportReceiverInterface* receiver = pChannelResource->GetMessageReceiver(logicalPort);
         if (it != mReceiverResources.end())
         {
+            auto* receiver = it->second.first;
+            auto* receiver_in_use = it->second.second;
+            receiver_in_use->in_use = true;
             scopedLock.unlock();
-            it->second->OnDataReceived(msg.buffer, msg.length, pChannelResource->GetLocator(), remoteLocator);
+            receiver->OnDataReceived(msg.buffer, msg.length, pChannelResource->GetLocator(), remoteLocator);
+            scopedLock.lock();
+            receiver_in_use->in_use = false;
+            receiver_in_use->cv.notify_one();
         }
         else
         {
@@ -920,7 +929,7 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
 
     TCPChannelResource* channelResource = nullptr;
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
         {
             logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator) \
@@ -1074,7 +1083,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 {
     if (!error.value())
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         if (mSocketAcceptors.find(IPLocator::getPhysicalPort(acceptor->mLocator)) != mSocketAcceptors.end())
         {
 #if defined(ASIO_HAS_MOVE)
@@ -1121,7 +1130,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
     if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
     {
         // Accept new connections for the same port. Could be not found when exiting.
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         if (mSocketAcceptors.find(IPLocator::getPhysicalPort(acceptor->mLocator)) != mSocketAcceptors.end())
         {
             acceptor->Accept(this, mService);
@@ -1133,7 +1142,7 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
 {
     TCPChannelResource* outputSocket = nullptr;
     {
-        std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
         if (it != mChannelResources.end())
         {
@@ -1178,7 +1187,7 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
 
 void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
     auto it = mChannelResources.find(IPLocator::toPhysicalLocator(pSocket->mLocator));
     if (it != mChannelResources.end())
     {
