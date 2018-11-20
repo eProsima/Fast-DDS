@@ -250,7 +250,7 @@ private:
     {
         public:
 
-            bool in_use;
+            bool in_use = false;
 
             std::condition_variable cv;
     };

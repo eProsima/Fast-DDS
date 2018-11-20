@@ -259,9 +259,6 @@ TEST_F(TCPv6Tests, send_to_loopback)
 
 void TCPv6Tests::HELPER_SetDescriptorDefaults()
 {
-    //descriptor.maxMessageSize = 5;
-    //descriptor.sendBufferSize = 5;
-    //descriptor.receiveBufferSize = 5;
 }
 
 int main(int argc, char **argv)

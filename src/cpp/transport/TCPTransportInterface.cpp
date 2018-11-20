@@ -119,7 +119,7 @@ void TCPTransportInterface::Clean()
         std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         for (auto it = mSocketAcceptors.begin(); it != mSocketAcceptors.end(); ++it)
         {
-            for (auto acceptorIt : it->second)
+            for (TCPAcceptor* acceptorIt : it->second)
             {
                 delete acceptorIt;
             }
@@ -145,7 +145,7 @@ void TCPTransportInterface::Clean()
         mUnboundChannelResources.clear();
     }
 
-    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](auto it)
+    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](TCPChannelResource* it)
     {
         this->DeleteSocket(it); // Disable all added TCPChannelResources
     });
@@ -272,7 +272,7 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
         else
         {
             std::vector<std::string> vInterfaces = GetBindingInterfacesList();
-            for (auto& sInterface : vInterfaces)
+            for (std::string& sInterface : vInterfaces)
             {
                 newAcceptor = new TCPAcceptor(mService, sInterface, locator);
                 uint16_t port = IPLocator::getPhysicalPort(locator);
@@ -354,7 +354,8 @@ bool TCPTransportInterface::IsTCPInputSocket(const Locator_t& locator) const
 {
     if (is_local_locator(locator))
     {
-        for (auto it = GetConfiguration()->listening_ports.begin(); it != GetConfiguration()->listening_ports.end(); ++it)
+        for (auto it = GetConfiguration()->listening_ports.begin();
+                it != GetConfiguration()->listening_ports.end(); ++it)
         {
             if (IPLocator::getPhysicalPort(locator) == *it)
             {
@@ -513,7 +514,7 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
     {
         std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
 
-        auto logicalPort = IPLocator::getLogicalPort(locator);
+        uint16_t logicalPort = IPLocator::getLogicalPort(locator);
         auto receiverIt = mReceiverResources.find(logicalPort);
         if (receiverIt != mReceiverResources.end())
         {
@@ -548,7 +549,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
     if (searchIt != mChannelResources.end() && pChannelResource->IsAlive())
     {
         TCPChannelResource *newChannel = nullptr;
-        auto physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
+        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
         {
             auto it = mChannelResources.find(physicalLocator);
             if (it != mChannelResources.end())
@@ -578,14 +579,14 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
 bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
 {
     bool success = false;
-    auto logicalPort = IPLocator::getLogicalPort(locator);
+    uint16_t logicalPort = IPLocator::getLogicalPort(locator);
     if (IsLocatorSupported(locator) && (logicalPort != 0))
     {
         std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
         logInfo(RTCP, "OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " \
             << IPLocator::getLogicalPort(locator) << ") @ IP: " << IPLocator::toIPv4string(locator));
 
-        auto physicalLocator = IPLocator::toPhysicalLocator(locator);
+        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
         auto socketIt = mChannelResources.find(physicalLocator);
         TCPChannelResource* channel = nullptr;
         if (socketIt != mChannelResources.end())
@@ -595,7 +596,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
         else
         {
             // Create output channel
-            auto socket = createTCPSocket(mService);
+            eProsimaTCPSocket socket = createTCPSocket(mService);
             channel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator,
                 GetConfiguration()->maxMessageSize);
             mChannelResources[physicalLocator] = channel;
@@ -620,7 +621,7 @@ bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, Transport
     bool success = false;
     if (IsLocatorSupported(locator))
     {
-        auto logicalPort = IPLocator::getLogicalPort(locator);
+        uint16_t logicalPort = IPLocator::getLogicalPort(locator);
         if (!IsInputPortOpen(logicalPort))
         {
             success = true;
@@ -690,7 +691,7 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
     while (pChannelResource->IsAlive())
     {
         // Blocking receive.
-        auto& msg = pChannelResource->GetMessageBuffer();
+        CDRMessage_t& msg = pChannelResource->GetMessageBuffer();
         CDRMessage::initCDRMsg(&msg);
         if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, remoteLocator))
         {
@@ -704,8 +705,8 @@ void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelR
         //TransportReceiverInterface* receiver = pChannelResource->GetMessageReceiver(logicalPort);
         if (it != mReceiverResources.end())
         {
-            auto* receiver = it->second.first;
-            auto* receiver_in_use = it->second.second;
+            TransportReceiverInterface* receiver = it->second.first;
+            ReceiverInUseCV* receiver_in_use = it->second.second;
             receiver_in_use->in_use = true;
             scopedLock.unlock();
             receiver->OnDataReceived(msg.buffer, msg.length, pChannelResource->GetLocator(), remoteLocator);
@@ -786,7 +787,7 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
                     {
                         logError(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
                             << static_cast<uint32_t>(body_size) << " vs. " << receiveBufferCapacity << ". " <<
-                            "The full message will be drop.");
+                            "The full message will be dropped.");
                         success = false;
                         // Drop the message
                         size_t to_read = body_size;
@@ -1050,7 +1051,7 @@ bool TCPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t 
 LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
 {
     LocatorList_t unicastResult;
-    for (auto& locatorList : locatorLists)
+    for (const LocatorList_t& locatorList : locatorLists)
     {
         LocatorListConstIterator it = locatorList.begin();
         LocatorList_t pendingUnicast;
@@ -1242,7 +1243,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        auto config = GetConfiguration();
+        const TCPTransportDescriptor* config = GetConfiguration();
         if (config != nullptr)
         {
             if (!config->listening_ports.empty())
@@ -1308,7 +1309,7 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        auto config = GetConfiguration();
+        const TCPTransportDescriptor* config = GetConfiguration();
         if (config != nullptr)
         {
             if (!config->listening_ports.empty())
