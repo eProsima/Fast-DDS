@@ -556,7 +556,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
                 if (!pChannelResource->GetIsInputSocket())
                 {
                     newChannel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator,
-                        GetConfiguration()->receiveBufferSize);
+                        GetConfiguration()->maxMessageSize);
                     pChannelResource->SetAllPortsAsPending();
                     newChannel->CopyPendingPortsFrom(pChannelResource);
                 }
@@ -597,7 +597,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
             // Create output channel
             auto socket = createTCPSocket(mService);
             channel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator,
-                GetConfiguration()->sendBufferSize);
+                GetConfiguration()->maxMessageSize);
             mChannelResources[physicalLocator] = channel;
             channel->Connect();
         }
@@ -769,8 +769,6 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
 
                 remoteLocator = pChannelResource->GetLocator();
 
-                // EndpointToLocator(pChannelResource->getSocket()->remote_endpoint(), remoteLocator);
-
                 if (bytes_received != TCPHeader::getSize())
                 {
                     if (bytes_received > 0)
@@ -782,21 +780,30 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
                 }
                 else
                 {
-                    //TCPHeader tcp_header;
-                    //memcpy(&tcp_header, header, TCPHeader::getSize());
                     size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getSize());
-                    //logInfo(RTCP_MSG_IN, " Received [TCPHeader] (CRC=" << tcp_header.crc << ")");
 
                     if (body_size > receiveBufferCapacity)
                     {
                         logError(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                            << static_cast<uint32_t>(body_size) << " vs. " << receiveBufferCapacity << ".");
+                            << static_cast<uint32_t>(body_size) << " vs. " << receiveBufferCapacity << ". " <<
+                            "The full message will be drop.");
                         success = false;
+                        // Drop the message
+                        size_t to_read = body_size;
+                        size_t read_block = receiveBufferCapacity;
+                        uint32_t readed;
+                        while (read_block > 0)
+                        {
+                            ReadBody(receiveBuffer, receiveBufferCapacity, &readed, pChannelResource, read_block);
+                            to_read -= readed;
+                            read_block = (to_read >= receiveBufferCapacity) ? receiveBufferCapacity : to_read;
+                        }
                     }
                     else
                     {
                         logInfo(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logicalPort);
-                        success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, pChannelResource, body_size);
+                        success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, pChannelResource,
+                            body_size);
                         //logInfo(RTCP_MSG_IN, " Received [ReadBody]");
 
                         if (!CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
@@ -1096,7 +1103,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 #endif
             // Store the new connection.
             TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, mService,
-                unicastSocket, GetConfiguration()->receiveBufferSize);
+                unicastSocket, GetConfiguration()->maxMessageSize);
 
             mUnboundChannelResources.push_back(pChannelResource);
             pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this,
