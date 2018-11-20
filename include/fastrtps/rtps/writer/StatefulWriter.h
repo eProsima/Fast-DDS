@@ -184,8 +184,7 @@ namespace eprosima
                  * @brief Sends a heartbeat to a remote reader.
                  * @remarks This function is non thread-safe.
                  */
-                void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false,
-                        bool send_empty_history_info = false);
+                void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false);
 
                 void process_acknack(const GUID_t reader_guid, uint32_t ack_count,
                         const SequenceNumberSet_t& sn_set, bool final_flag);
@@ -193,7 +192,7 @@ namespace eprosima
                 private:
 
                 void send_heartbeat_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators,
-                        RTPSMessageGroup& message_group, bool final = false, bool send_empty_history_info = false);
+                        RTPSMessageGroup& message_group, bool final = false);
 
                 void check_acked_status();
 
