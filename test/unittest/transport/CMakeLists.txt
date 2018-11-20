@@ -168,7 +168,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
 
             add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
-            add_gtest(TCPv6Tests ${TCPV6TESTS_SOURCE})
             target_compile_definitions(TCPv6Tests PRIVATE FASTRTPS_NO_LIB)
             target_include_directories(TCPv6Tests PRIVATE
                 ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
@@ -183,6 +182,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             else()
                 target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr)
             endif()
+            add_gtest(TCPv6Tests SOURCES ${TCPV6TESTS_SOURCE})
         endif()
 
         add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
@@ -200,9 +200,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         else()
             target_link_libraries(test_UDPv4Tests ${PRIVACY})
         endif()
+        add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
 
         add_executable(TCPv4Tests ${TCPV4TESTS_SOURCE})
-        add_gtest(TCPv4Tests ${TCPV4TESTS_SOURCE})
         target_compile_definitions(TCPv4Tests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(TCPv4Tests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
@@ -217,7 +217,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         else()
             target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr)
         endif()
-
-        add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
+        add_gtest(TCPv4Tests SOURCES ${TCPV4TESTS_SOURCE})
     endif()
 endif()
