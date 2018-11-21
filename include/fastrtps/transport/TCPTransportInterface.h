@@ -250,7 +250,7 @@ private:
     {
         public:
 
-            bool in_use;
+            bool in_use = false;
 
             std::condition_variable cv;
     };
@@ -265,9 +265,11 @@ protected:
     mutable std::mutex mSocketsMapMutex;
 
     std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
+    std::vector<TCPAcceptor*> mDeletedAcceptors;
     std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
     std::vector<TCPChannelResource*> mUnboundChannelResources; // Needed to avoid memory leaks if client doesn't bound
-    std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> mReceiverResources; // The key is the logical port
+    // The key is the logical port
+    std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> mReceiverResources;
 
     std::vector<TCPChannelResource*> mDeletedSocketsPool;
     std::recursive_mutex mDeletedSocketsPoolMutex;

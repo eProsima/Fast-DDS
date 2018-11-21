@@ -69,6 +69,7 @@ class TCPv4Tests: public ::testing::Test
         void HELPER_SetDescriptorDefaults();
 
         TCPv4TransportDescriptor descriptor;
+        TCPv4TransportDescriptor descriptorOnlyOutput;
         std::unique_ptr<std::thread> senderThread;
         std::unique_ptr<std::thread> receiverThread;
 };
@@ -93,6 +94,29 @@ TEST_F(TCPv4Tests, locators_with_kind_1_supported)
 }
 
 TEST_F(TCPv4Tests, opening_and_closing_output_channel)
+{
+    // Given
+    TCPv4Transport transportUnderTest(descriptorOnlyOutput);
+    transportUnderTest.init();
+
+    Locator_t genericOutputChannelLocator;
+    genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
+    genericOutputChannelLocator.port = g_output_port; // arbitrary
+    IPLocator::setLogicalPort(genericOutputChannelLocator, g_output_port);
+
+    // Then
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+}
+
+// This test checks that opening a listening port, never bound by an input channel,
+// is correctly closed without valgrind errors. It should show a warning message
+// in the log about called on deleted.
+TEST_F(TCPv4Tests, opening_and_closing_output_channel_with_listener)
 {
     // Given
     TCPv4Transport transportUnderTest(descriptor);
@@ -139,18 +163,12 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     std::regex filter("RTCP(?!_SEQ)");
     Log::SetCategoryFilter(filter);
     TCPv4TransportDescriptor recvDescriptor;
-    recvDescriptor.maxMessageSize = 5;
-    recvDescriptor.sendBufferSize = 5;
-    recvDescriptor.receiveBufferSize = 5;
     recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
     TCPv4TransportDescriptor sendDescriptor;
-    sendDescriptor.maxMessageSize = 5;
-    sendDescriptor.sendBufferSize = 5;
-    sendDescriptor.receiveBufferSize = 5;
     sendDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport sendTransportUnderTest(sendDescriptor);
     sendTransportUnderTest.init();
@@ -208,7 +226,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
 {
     // Given
-    TCPv4Transport transportUnderTest(descriptor);
+    TCPv4Transport transportUnderTest(descriptorOnlyOutput);
     transportUnderTest.init();
 
     Locator_t genericOutputChannelLocator;
@@ -267,7 +285,7 @@ TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
 
 TEST_F(TCPv4Tests, send_to_wrong_interface)
 {
-    TCPv4Transport transportUnderTest(descriptor);
+    TCPv4Transport transportUnderTest(descriptorOnlyOutput);
     transportUnderTest.init();
 
     Locator_t outputChannelLocator;
@@ -327,9 +345,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
             Log::SetCategoryFilter(filter);
             TCPv4TransportDescriptor recvDescriptor;
             recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
-            recvDescriptor.maxMessageSize = 5;
-            recvDescriptor.sendBufferSize = 5;
-            recvDescriptor.receiveBufferSize = 5;
             recvDescriptor.add_listener_port(g_default_port);
             recvDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport receiveTransportUnderTest(recvDescriptor);
@@ -337,9 +352,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 
             TCPv4TransportDescriptor sendDescriptor;
             sendDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
-            sendDescriptor.maxMessageSize = 5;
-            sendDescriptor.sendBufferSize = 5;
-            sendDescriptor.receiveBufferSize = 5;
             sendDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport sendTransportUnderTest(sendDescriptor);
             sendTransportUnderTest.init();
@@ -404,9 +416,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
     Log::SetCategoryFilter(filter);
     TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.interfaceWhiteList.emplace_back("127.0.0.1");
-    recvDescriptor.maxMessageSize = 5;
-    recvDescriptor.sendBufferSize = 5;
-    recvDescriptor.receiveBufferSize = 5;
     recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
@@ -414,9 +423,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 
     TCPv4TransportDescriptor sendDescriptor;
     sendDescriptor.interfaceWhiteList.emplace_back("127.0.0.1");
-    sendDescriptor.maxMessageSize = 5;
-    sendDescriptor.sendBufferSize = 5;
-    sendDescriptor.receiveBufferSize = 5;
     sendDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport sendTransportUnderTest(sendDescriptor);
     sendTransportUnderTest.init();
@@ -493,9 +499,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
             Log::SetCategoryFilter(filter);
             TCPv4TransportDescriptor recvDescriptor;
             recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
-            recvDescriptor.maxMessageSize = 5;
-            recvDescriptor.sendBufferSize = 5;
-            recvDescriptor.receiveBufferSize = 5;
             recvDescriptor.add_listener_port(g_default_port);
             recvDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport receiveTransportUnderTest(recvDescriptor);
@@ -503,9 +506,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 
             TCPv4TransportDescriptor sendDescriptor;
             sendDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
-            sendDescriptor.maxMessageSize = 5;
-            sendDescriptor.sendBufferSize = 5;
-            sendDescriptor.receiveBufferSize = 5;
             sendDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport sendTransportUnderTest(sendDescriptor);
             sendTransportUnderTest.init();
@@ -597,9 +597,6 @@ TEST_F(TCPv4Tests, shrink_locator_lists)
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
-    descriptor.maxMessageSize = 5;
-    descriptor.sendBufferSize = 5;
-    descriptor.receiveBufferSize = 5;
     descriptor.add_listener_port(g_default_port);
 }
 
