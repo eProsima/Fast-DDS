@@ -69,6 +69,7 @@ class TCPv4Tests: public ::testing::Test
         void HELPER_SetDescriptorDefaults();
 
         TCPv4TransportDescriptor descriptor;
+        TCPv4TransportDescriptor descriptorOnlyOutput;
         std::unique_ptr<std::thread> senderThread;
         std::unique_ptr<std::thread> receiverThread;
 };
@@ -93,6 +94,29 @@ TEST_F(TCPv4Tests, locators_with_kind_1_supported)
 }
 
 TEST_F(TCPv4Tests, opening_and_closing_output_channel)
+{
+    // Given
+    TCPv4Transport transportUnderTest(descriptorOnlyOutput);
+    transportUnderTest.init();
+
+    Locator_t genericOutputChannelLocator;
+    genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
+    genericOutputChannelLocator.port = g_output_port; // arbitrary
+    IPLocator::setLogicalPort(genericOutputChannelLocator, g_output_port);
+
+    // Then
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+}
+
+// This test checks that opening a listening port, never bound by an input channel,
+// is correctly closed without valgrind errors. It should show a warning message
+// in the log about called on deleted.
+TEST_F(TCPv4Tests, opening_and_closing_output_channel_with_listener)
 {
     // Given
     TCPv4Transport transportUnderTest(descriptor);
@@ -202,7 +226,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
 {
     // Given
-    TCPv4Transport transportUnderTest(descriptor);
+    TCPv4Transport transportUnderTest(descriptorOnlyOutput);
     transportUnderTest.init();
 
     Locator_t genericOutputChannelLocator;
@@ -261,7 +285,7 @@ TEST_F(TCPv4Tests, match_if_port_AND_address_matches)
 
 TEST_F(TCPv4Tests, send_to_wrong_interface)
 {
-    TCPv4Transport transportUnderTest(descriptor);
+    TCPv4Transport transportUnderTest(descriptorOnlyOutput);
     transportUnderTest.init();
 
     Locator_t outputChannelLocator;

@@ -121,6 +121,7 @@ void TCPTransportInterface::Clean()
         {
             for (TCPAcceptor* acceptorIt : it->second)
             {
+                mDeletedAcceptors.push_back(acceptorIt);
                 delete acceptorIt;
             }
         }
@@ -1091,6 +1092,17 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 
 void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error)
 {
+    {
+        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
+        if (std::find(mDeletedAcceptors.begin(), mDeletedAcceptors.end(), acceptor) != mDeletedAcceptors.end())
+        {
+            //std::cout << "Acceptor called on delete" << std::endl;
+            // SocketAccepted was called by asio after the acceptor was deleted. By must abort any operation.
+            logWarning(RTCP, "Acceptor called on delete");
+            return;
+        }
+    }
+
     if (!error.value())
     {
         std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
