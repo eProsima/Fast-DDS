@@ -15,6 +15,7 @@
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <cstdlib>
 
 namespace eprosima {
 namespace fastrtps {
@@ -104,6 +105,21 @@ void XMLProfileManager::getDefaultTopicAttributes(TopicAttributes& topic_attribu
 
 XMLP_ret XMLProfileManager::loadDefaultXMLFile()
 {
+#ifdef _WIN32
+	char* file_path = nullptr;
+	size_t size = 0;
+	if (_dupenv_s(&file_path, &size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && file_path != nullptr)
+	{
+		XMLP_ret result = loadXMLFile(file_path);
+		free(file_path);
+		return result;
+	}
+#else
+	if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
+	{
+		return loadXMLFile(file_path);
+	}
+#endif
     return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
 }
 
