@@ -45,6 +45,7 @@
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/eClock.h>
@@ -1070,6 +1071,41 @@ bool RTPSParticipantImpl::networkFactoryHasRegisteredTransports() const
 {
     return m_network_Factory.numberOfRegisteredTransports() > 0;
 }
+
+#if HAVE_SECURITY
+bool RTPSParticipantImpl::pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
+    const ReaderProxyData& remote_reader_data)
+{
+    bool return_value;
+
+    return_value = mp_builtinProtocols->mp_PDP->getEDP()->pairing_remote_reader_with_local_writer_after_security(
+        local_writer, remote_reader_data);
+    if (!return_value && mp_builtinProtocols->mp_WLP != nullptr)
+    {
+        return_value = mp_builtinProtocols->mp_WLP->pairing_remote_reader_with_local_writer_after_security(
+            local_writer, remote_reader_data);
+    }
+
+    return return_value;
+}
+
+bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
+    const WriterProxyData& remote_writer_data)
+{
+    bool return_value;
+
+    return_value = mp_builtinProtocols->mp_PDP->getEDP()->pairing_remote_writer_with_local_reader_after_security(
+        local_reader, remote_writer_data);
+    if (!return_value && mp_builtinProtocols->mp_WLP != nullptr)
+    {
+        return_value = mp_builtinProtocols->mp_WLP->pairing_remote_writer_with_local_reader_after_security(
+            local_reader, remote_writer_data);
+    }
+
+    return return_value;
+}
+
+#endif
 
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {
