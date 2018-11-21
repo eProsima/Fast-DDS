@@ -24,6 +24,7 @@
 
 #include "../../common/Time_t.h"
 #include "../../common/Locator.h"
+#include "../../common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -43,6 +44,8 @@ class WLivelinessPeriodicAssertion;
 class WLPListener;
 class WriterHistory;
 class ReaderHistory;
+class ReaderProxyData;
+class WriterProxyData;
 
 /**
  * Class WLP that implements the Writer Liveliness Protocol described in the RTPS specification.
@@ -132,6 +135,14 @@ public:
     */
     WriterHistory* getBuiltinWriterHistory();
 	
+#if HAVE_SECURITY
+    bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
+        const ReaderProxyData& remote_reader_data);
+
+    bool pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
+        const WriterProxyData& remote_writer_data);
+#endif
+
 private:
 	//!Pointer to the local RTPSParticipant.
 	RTPSParticipantImpl* mp_participant;

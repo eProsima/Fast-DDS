@@ -84,6 +84,10 @@ class RTPSParticipantImpl
 
 #if HAVE_SECURITY
         MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes&());
+		
+        MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_security, bool(const GUID_t&, const ReaderProxyData&));
+
+        MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security,bool(const GUID_t&, const WriterProxyData& remote_writer_data));
 #endif
 
         MOCK_METHOD1(setGuid, void(GUID_t&));

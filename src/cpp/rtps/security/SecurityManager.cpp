@@ -1463,7 +1463,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         }
         else
         {
-            logInfo(SECURITY, "Received Reader Cryptography message but not found local writer " <<
+            logError(SECURITY, "Received Reader Cryptography message but not found local writer " <<
                     message.destination_endpoint_key());
         }
         mutex_.unlock();
@@ -1471,7 +1471,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // If writer was found and setting of crypto tokens works, then tell core to match writer and reader.
         if(writer_guid != GUID_t::unknown())
         {
-            participant_->pdpsimple()->getEDP()->pairing_remote_reader_with_local_writer_after_security(writer_guid,
+            participant_->pairing_remote_reader_with_local_writer_after_security(writer_guid,
                     reader_data);
         }
     }
@@ -1531,7 +1531,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         }
         else
         {
-            logInfo(SECURITY, "Received Writer Cryptography message but not found local reader " <<
+            logError(SECURITY, "Received Writer Cryptography message but not found local reader " <<
                     message.destination_endpoint_key());
         }
         mutex_.unlock();
@@ -1539,7 +1539,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
         if(reader_guid != GUID_t::unknown())
         {
-            participant_->pdpsimple()->getEDP()->pairing_remote_writer_with_local_reader_after_security(reader_guid,
+            participant_->pairing_remote_writer_with_local_reader_after_security(reader_guid,
                     writer_data);
         }
     }
@@ -2398,7 +2398,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                         local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
                             std::make_tuple(remote_reader_data, remote_reader_handle));
                         lock.unlock();
-                        participant_->pdpsimple()->getEDP()->pairing_remote_reader_with_local_writer_after_security(
+                        participant_->pairing_remote_reader_with_local_writer_after_security(
                             writer_guid, remote_reader_data);
                     }
                     else
@@ -2557,14 +2557,14 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
                         if (local_reader_guid != GUID_t::unknown())
                         {
-                            participant_->pdpsimple()->getEDP()->pairing_remote_writer_with_local_reader_after_security(
+                            participant_->pairing_remote_writer_with_local_reader_after_security(
                                     local_reader_guid, writer_data);
                         }
 
                         // If writer was found and setting of crypto tokens works, then tell core to match writer and reader.
                         if (pairing_cause_pending_message)
                         {
-                            participant_->pdpsimple()->getEDP()->pairing_remote_reader_with_local_writer_after_security(
+                            participant_->pairing_remote_reader_with_local_writer_after_security(
                                     writer_guid, remote_reader_data);
                         }
                     }
@@ -2592,7 +2592,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
     else if(returned_value)
     {
         lock.unlock();
-        participant_->pdpsimple()->getEDP()->pairing_remote_reader_with_local_writer_after_security(
+        participant_->pairing_remote_reader_with_local_writer_after_security(
                 writer_guid, remote_reader_data);
     }
 
@@ -2706,7 +2706,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                         local_reader->second.associated_writers.emplace(remote_writer_data.guid(),
                             std::make_tuple(remote_writer_data, remote_writer_handle));
                         lock.unlock();
-                        participant_->pdpsimple()->getEDP()->pairing_remote_writer_with_local_reader_after_security(
+                        participant_->pairing_remote_writer_with_local_reader_after_security(
                             reader_guid, remote_writer_data);
                     }
                     else
@@ -2866,14 +2866,14 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                         // If writer was found and setting of crypto tokens works, then tell core to match writer and reader.
                         if (local_writer_guid != GUID_t::unknown())
                         {
-                            participant_->pdpsimple()->getEDP()->pairing_remote_reader_with_local_writer_after_security(
+                            participant_->pairing_remote_reader_with_local_writer_after_security(
                                     local_writer_guid, reader_data);
                         }
 
                         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
                         if (pairing_cause_pending_message)
                         {
-                            participant_->pdpsimple()->getEDP()->pairing_remote_writer_with_local_reader_after_security(
+                            participant_->pairing_remote_writer_with_local_reader_after_security(
                                     reader_guid, remote_writer_data);
                         }
                     }
@@ -2901,7 +2901,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
     else if(returned_value)
     {
         lock.unlock();
-        participant_->pdpsimple()->getEDP()->pairing_remote_writer_with_local_reader_after_security(
+        participant_->pairing_remote_writer_with_local_reader_after_security(
                 reader_guid, remote_writer_data);
     }
 

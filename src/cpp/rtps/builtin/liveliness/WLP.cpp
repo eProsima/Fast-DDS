@@ -188,15 +188,15 @@ bool WLP::createSecureEndpoints()
 
     const security::ParticipantSecurityAttributes& part_attrs = mp_participant->security_attributes();
     security::PluginParticipantSecurityAttributes plugin_attrs(part_attrs.plugin_participant_attributes);
-    security::EndpointSecurityAttributes& sec_attrs = watt.endpoint.security_attributes();
-    sec_attrs.is_submessage_protected = part_attrs.is_liveliness_protected;
+    security::EndpointSecurityAttributes* sec_attrs = &watt.endpoint.security_attributes();
+    sec_attrs->is_submessage_protected = part_attrs.is_liveliness_protected;
     if (part_attrs.is_liveliness_protected)
     {
-        sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (plugin_attrs.is_liveliness_encrypted)
-            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         if (plugin_attrs.is_liveliness_origin_authenticated)
-            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+            sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
     }
 
     RTPSWriter* wout;
@@ -226,15 +226,15 @@ bool WLP::createSecureEndpoints()
     //Rparam.topic.topicName = "DCPSParticipantMessageSecure";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
     ratt.endpoint.topicKind = WITH_KEY;
-    sec_attrs = ratt.endpoint.security_attributes();
-    sec_attrs.is_submessage_protected = part_attrs.is_liveliness_protected;
+    sec_attrs = &ratt.endpoint.security_attributes();
+    sec_attrs->is_submessage_protected = part_attrs.is_liveliness_protected;
     if (part_attrs.is_liveliness_protected)
     {
-        sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (plugin_attrs.is_liveliness_encrypted)
-            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         if (plugin_attrs.is_liveliness_origin_authenticated)
-            sec_attrs.plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+            sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
     }
     RTPSReader* rout;
     if (mp_participant->createReader(&rout, ratt, mp_builtinReaderSecureHistory, (ReaderListener*)mp_listener, c_EntityId_ReaderLivelinessSecure, true))
@@ -252,6 +252,33 @@ bool WLP::createSecureEndpoints()
 
     return true;
 }
+
+bool WLP::pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
+    const ReaderProxyData& remote_reader_data)
+{
+    if (local_writer.entityId == c_EntityId_WriterLivelinessSecure)
+    {
+        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
+        mp_builtinWriterSecure->matched_reader_add(attrs);
+        return true;
+    }
+
+    return false;
+}
+
+bool WLP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
+    const WriterProxyData& remote_writer_data)
+{
+    if (local_reader.entityId == c_EntityId_ReaderLivelinessSecure)
+    {
+        RemoteWriterAttributes attrs = remote_writer_data.toRemoteWriterAttributes();
+        mp_builtinReaderSecure->matched_writer_add(attrs);
+        return true;
+    }
+
+    return false;
+}
+
 #endif
 
 bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)

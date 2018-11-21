@@ -209,11 +209,18 @@ public:
     uint32_t calculateMaxDataSize(uint32_t length);
 
 #if HAVE_SECURITY
-        security::SecurityManager& security_manager() { return m_security_manager; }
+    security::SecurityManager& security_manager() { return m_security_manager; }
 
-        const security::ParticipantSecurityAttributes& security_attributes() { return security_attributes_; }
+    const security::ParticipantSecurityAttributes& security_attributes() { return security_attributes_; }
 
-        bool is_security_initialized() const { return m_security_manager_initialized; }
+    bool is_security_initialized() const { return m_security_manager_initialized; }
+
+    bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
+        const ReaderProxyData& remote_reader_data);
+
+    bool pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
+        const WriterProxyData& remote_writer_data);
+
 #endif
 
     PDPSimple* pdpsimple();
