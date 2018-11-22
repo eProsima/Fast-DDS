@@ -16,7 +16,9 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <cstdlib>
-
+#ifdef _WIN32
+#include <windows.h>
+#endif
 namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
@@ -106,13 +108,11 @@ void XMLProfileManager::getDefaultTopicAttributes(TopicAttributes& topic_attribu
 XMLP_ret XMLProfileManager::loadDefaultXMLFile()
 {
 #ifdef _WIN32
-	char* file_path = nullptr;
-	size_t size = 0;
-	if (_dupenv_s(&file_path, &size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && file_path != nullptr)
+	char file_path[MAX_PATH];
+	size_t size = MAX_PATH;
+	if (getenv_s(&size, file_path, size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && size > 0)
 	{
-		XMLP_ret result = loadXMLFile(file_path);
-		free(file_path);
-		return result;
+		return loadXMLFile(file_path);
 	}
 #else
 	if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
