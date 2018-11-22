@@ -235,8 +235,6 @@ endif()
 
 # Create libraries
 if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
-    generate_msvc_libraries(i86Win32VS2013)
-    generate_msvc_libraries(x64Win64VS2013)
     generate_msvc_libraries(i86Win32VS2015)
     generate_msvc_libraries(x64Win64VS2015)
     generate_msvc_libraries(i86Win32VS2017)
