@@ -76,8 +76,16 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
     rpd.m_qos = rqos;
     rpd.userDefinedId(reader->getAttributes().getUserDefinedID());
 #if HAVE_SECURITY
-    rpd.security_attributes_ = reader->getAttributes().security_attributes().mask();
-    rpd.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+    if (mp_RTPSParticipant->is_secure())
+    {
+        rpd.security_attributes_ = reader->getAttributes().security_attributes().mask();
+        rpd.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+    }
+    else
+    {
+        rpd.security_attributes_ = 0UL;
+        rpd.plugin_security_attributes_ = 0UL;
+    }
 #endif
     reader->m_acceptMessagesFromUnkownWriters = false;
 
@@ -158,8 +166,16 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
     wpd.userDefinedId(writer->getAttributes().getUserDefinedID());
     wpd.persistence_guid(writer->getAttributes().persistence_guid);
 #if HAVE_SECURITY
-    wpd.security_attributes_ = writer->getAttributes().security_attributes().mask();
-    wpd.plugin_security_attributes_ = writer->getAttributes().security_attributes().plugin_endpoint_attributes;
+    if (mp_RTPSParticipant->is_secure())
+    {
+        wpd.security_attributes_ = writer->getAttributes().security_attributes().mask();
+        wpd.plugin_security_attributes_ = writer->getAttributes().security_attributes().plugin_endpoint_attributes;
+    }
+    else
+    {
+        wpd.security_attributes_ = 0UL;
+        wpd.plugin_security_attributes_ = 0UL;
+    }
 #endif
 
     if (att.getTopicDiscoveryKind() != NO_CHECK)
@@ -236,8 +252,16 @@ bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, con
     rdata.m_qos.setQos(rqos, true);
     rdata.userDefinedId(reader->getAttributes().getUserDefinedID());
 #if HAVE_SECURITY
-    rdata.security_attributes_ = reader->getAttributes().security_attributes().mask();
-    rdata.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+    if (mp_RTPSParticipant->is_secure())
+    {
+        rdata.security_attributes_ = reader->getAttributes().security_attributes().mask();
+        rdata.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+    }
+    else
+    {
+        rdata.security_attributes_ = 0UL;
+        rdata.plugin_security_attributes_ = 0UL;
+    }
 #endif
 
     if(this->mp_PDP->addReaderProxyData(&rdata, pdata))
@@ -270,8 +294,16 @@ bool EDP::updatedLocalWriter(RTPSWriter* writer, const TopicAttributes& att, con
     wdata.userDefinedId(writer->getAttributes().getUserDefinedID());
     wdata.persistence_guid(writer->getAttributes().persistence_guid);
 #if HAVE_SECURITY
-    wdata.security_attributes_ = writer->getAttributes().security_attributes().mask();
-    wdata.plugin_security_attributes_ = writer->getAttributes().security_attributes().plugin_endpoint_attributes;
+    if (mp_RTPSParticipant->is_secure())
+    {
+        wdata.security_attributes_ = writer->getAttributes().security_attributes().mask();
+        wdata.plugin_security_attributes_ = writer->getAttributes().security_attributes().plugin_endpoint_attributes;
+    }
+    else
+    {
+        wdata.security_attributes_ = 0UL;
+        wdata.plugin_security_attributes_ = 0UL;
+    }
 #endif
 
     if(this->mp_PDP->addWriterProxyData(&wdata, pdata))

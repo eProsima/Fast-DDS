@@ -66,7 +66,8 @@ class SecurityManager
 
         ~SecurityManager();
 
-        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties);
+        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties, 
+            bool& security_activated);
 
         void destroy();
 
