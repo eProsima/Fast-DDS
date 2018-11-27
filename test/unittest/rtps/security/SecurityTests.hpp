@@ -131,7 +131,7 @@ class SecurityTest : public ::testing::Test
                 WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true))).
                 WillOnce(DoAll(SetArgPointee<0>(volatile_reader_), Return(true)));
 
-            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
+            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
         }
 
         void initialization_auth_ok()
@@ -152,7 +152,7 @@ class SecurityTest : public ::testing::Test
             EXPECT_CALL(participant_, createReader_mock(_,_,_,_,_,_,_)).Times(1).
                 WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true)));
 
-            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
+            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
         }
 
         void request_process_ok(CacheChange_t** request_message_change = nullptr)
@@ -356,6 +356,7 @@ class SecurityTest : public ::testing::Test
         ParticipantProxyData participant_data_;
         ParticipantSecurityAttributes security_attributes_;
         PropertyPolicy participant_properties_;
+        bool security_activated_;
 
 
         // Default Values
