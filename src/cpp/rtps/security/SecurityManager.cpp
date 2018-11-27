@@ -98,8 +98,10 @@ SecurityManager::~SecurityManager()
     destroy();
 }
 
-bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties)
+bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties, bool& security_activated)
 {
+    security_activated = false;
+
     SecurityException exception;
     domain_id_ = participant_->getRTPSParticipantAttributes().builtin.domainId;
 
@@ -248,6 +250,7 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
                 if(create_entities())
                 {
                     logInfo(SECURITY, "Initialized security manager for participant " << participant_->getGuid());
+                    security_activated = true;
                     return true;
                 }
             }

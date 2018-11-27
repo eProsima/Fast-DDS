@@ -215,6 +215,8 @@ public:
 
     bool is_security_initialized() const { return m_security_manager_initialized; }
 
+    bool is_secure() const { return m_is_security_active; }
+
     bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
         const ReaderProxyData& remote_reader_data);
 
@@ -265,6 +267,8 @@ private:
         security::SecurityManager m_security_manager;
         // Security manager initialization result
         bool m_security_manager_initialized;
+        // Security activation flag
+        bool m_is_security_active;
 #endif
 
     //! Encapsulates all associated resources on a Receiving element.

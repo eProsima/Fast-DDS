@@ -268,6 +268,7 @@ ParameterList_t WriterProxyData::toParameterList()
         }
     }
 #if HAVE_SECURITY
+    if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
         ParameterEndpointSecurityInfo_t*p = new ParameterEndpointSecurityInfo_t();
         p->security_attributes = security_attributes_;
