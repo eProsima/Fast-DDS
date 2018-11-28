@@ -433,19 +433,10 @@ class SequenceNumberSet_t
         }
 
         /**
-         * Get the set of SequenceNumbers 
-         * @return Set of SequenceNumbers
-         */
-        std::vector<SequenceNumber_t> get_set() const
-        {
-            return set;
-        }
-
-        /**
          * Get a string representation of the set
          * @return string representation of the set
          */
-        std::string print()
+        std::string print() const
         {
             std::stringstream ss;
 
@@ -454,7 +445,7 @@ class SequenceNumberSet_t
 #else
             ss << "{high: " << base.high << ", low: " << base.low << "} :";
 #endif
-            for(std::vector<SequenceNumber_t>::iterator it = set.begin(); it != set.end(); ++it)
+            for(std::vector<SequenceNumber_t>::const_iterator it = set.begin(); it != set.end(); ++it)
             {
 #ifdef LLONG_MAX
                 ss << it->to64long() << "-";
@@ -477,9 +468,23 @@ class SequenceNumberSet_t
  * @param sns SequenceNumber set
  * @return OStream.
  */
-inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns)
+inline std::ostream& operator<<(std::ostream& output, const SequenceNumberSet_t& sns)
 {
-    return output << sns.print();
+#ifdef LLONG_MAX
+    output << sns.base.to64long() << ":";
+#else
+    output << "{high: " << sns.base.high << ", low: " << sns.base.low << "} :";
+#endif
+    for (std::vector<SequenceNumber_t>::const_iterator it = sns.get_begin(); it != sns.get_end(); ++it)
+    {
+#ifdef LLONG_MAX
+        output << it->to64long() << "-";
+#else
+        output << "{high: " << it->high << ", low: " << it->low << "} -";
+#endif
+    }
+
+    return output;
 }
 
 #endif

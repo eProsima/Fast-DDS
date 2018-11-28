@@ -978,8 +978,7 @@ void StatefulWriter::process_acknack(const GUID_t reader_guid, uint32_t ack_coun
                 {
                     // Sequence numbers before Base are set as Acknowledged.
                     remote_reader->acked_changes_set(sn_set.base);
-                    std::vector<SequenceNumber_t> set_vec = sn_set.get_set();
-                    if (remote_reader->requested_changes_set(set_vec) && remote_reader->mp_nackResponse != nullptr)
+                    if (remote_reader->requested_changes_set(sn_set) && remote_reader->mp_nackResponse != nullptr)
                     {
                         remote_reader->mp_nackResponse->restart_timer();
                     }

@@ -80,7 +80,7 @@ namespace eprosima
                  * @param seqNumSet Vector of sequenceNumbers
                  * @return False if any change was set REQUESTED.
                  */
-                bool requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet);
+                bool requested_changes_set(const SequenceNumberSet_t& seqNumSet);
 
                 /*!
                  * @brief Lists all unsent changes. These changes are also relevants and valid.
@@ -147,7 +147,7 @@ namespace eprosima
                  * @param[in] sequence_number Sequence number to be paired with the requested fragments.
                  * @return True if there is at least one requested fragment. False in other case.
                  */
-                bool requested_fragment_set(SequenceNumber_t sequence_number, const FragmentNumberSet_t& frag_set);
+                bool requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set);
 
                 /*!
                  * @brief Returns the last NACKFRAG count.
