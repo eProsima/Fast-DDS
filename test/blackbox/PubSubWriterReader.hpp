@@ -51,7 +51,8 @@ class PubSubWriterReader
             ~ParticipantListener() {}
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(eprosima::fastrtps::Participant*, const eprosima::fastrtps::ParticipantAuthenticationInfo& info)
+            void onParticipantAuthentication(eprosima::fastrtps::Participant* participant, 
+                eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
                 {
