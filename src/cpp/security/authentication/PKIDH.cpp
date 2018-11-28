@@ -805,7 +805,7 @@ static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, Securi
 #if IS_OPENSSL_1_1
             if(EC_KEY_oct2key(ec, pointer, buffer.size(), NULL) > 0)
 #else
-            if(o2i_ECPublicKey(&ec, &pointer, buffer.size()) != nullptr)
+            if(o2i_ECPublicKey(&ec, &pointer, (long) buffer.size()) != nullptr)
 #endif
             {
                 EVP_PKEY* key = EVP_PKEY_new();
