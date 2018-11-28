@@ -53,7 +53,7 @@ Function InstallRedistributables
     StrCmp $X64VS2017Needed "1" notinstall2017x64 install2017x64
 
     install2017x64:
-    messageBox MB_YESNO|MB_ICONQUESTION "$(^Name) needs Visual Studio 2017 x64 Redistributable packages.$\nDo you want to download and install them?" IDNO notinstall2017
+    messageBox MB_YESNO|MB_ICONQUESTION "$(^Name) needs Visual Studio 2017 x64 Redistributable packages.$\nDo you want to download and install them?" IDNO notinstall2017x64
 
     NSISdl::download https://aka.ms/vs/15/release/VC_redist.x64.exe $TEMP\VC_redist.x64.exe
     Pop $R0 ; Get the return value
@@ -67,7 +67,7 @@ Function InstallRedistributables
     StrCmp $I86VS2017Needed "1" notinstall2017i86 install2017i86
 
     install2017i86:
-    messageBox MB_YESNO|MB_ICONQUESTION "$(^Name) needs Visual Studio 2017 Win32 Redistributable packages.$\nDo you want to download and install them?" IDNO notinstall2017
+    messageBox MB_YESNO|MB_ICONQUESTION "$(^Name) needs Visual Studio 2017 Win32 Redistributable packages.$\nDo you want to download and install them?" IDNO notinstall2017i86
 
     NSISdl::download https://aka.ms/vs/15/release/VC_redist.x86.exe $TEMP\VC_redist.x86.exe
     Pop $R0 ; Get the return value
