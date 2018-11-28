@@ -12,13 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(MSVC_VERSION EQUAL 1800)
-    if(CMAKE_CL_64)
-        include("${CMAKE_CURRENT_LIST_DIR}/x64Win64VS2013/fastrtps-config.cmake")
-    else()
-        include("${CMAKE_CURRENT_LIST_DIR}/i86Win32VS2013/fastrtps-config.cmake")
-    endif()
-elseif(MSVC_VERSION EQUAL 1900)
+if(MSVC_VERSION EQUAL 1900)
     if(CMAKE_CL_64)
         include("${CMAKE_CURRENT_LIST_DIR}/x64Win64VS2015/fastrtps-config.cmake")
     else()

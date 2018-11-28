@@ -377,8 +377,6 @@ endif()
 
 # Install libraries
 if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
-    install_msvc_libraries(i86Win32VS2013)
-    install_msvc_libraries(x64Win64VS2013)
     install_msvc_libraries(i86Win32VS2015)
     install_msvc_libraries(x64Win64VS2015)
     install_msvc_libraries(i86Win32VS2017)
@@ -413,7 +411,7 @@ elseif(NOT EPROSIMA_INSTALLER)
                 FILES_MATCHING
                 PATTERN "*.pdb"
                 )
-        elseif(NOT (("${MSVC_ARCH}" STREQUAL "i86Win32VS2013") OR ("${MSVC_ARCH}" STREQUAL "x64Win64VS2013")))
+        else()
             install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.dir/Debug/${PROJECT_NAME}.pdb
                 DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
                 COMPONENT libraries${MSVCARCH_EXTENSION}
@@ -422,13 +420,15 @@ elseif(NOT EPROSIMA_INSTALLER)
         endif()
 
         if(EPROSIMA_INSTALLER_MINION AND SECURITY)
-            install(FILES ${OPENSSL_ROOT_DIR}/lib/libeay32.dll
+            # Libraries from https://www.npcglib.org/~stathis/blog/precompiled-openssl/
+            install(FILES ${OPENSSL_ROOT_DIR}/bin/libeay32MD.dll
+                ${OPENSSL_ROOT_DIR}/bin/libeay32MDd.dll
                 DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
                 COMPONENT libraries${MSVCARCH_EXTENSION}
                 )
 
-            install(FILES ${OPENSSL_ROOT_DIR}/lib/VC/static/libeay32MD.lib
-                ${OPENSSL_ROOT_DIR}/lib/VC/static/libeay32MDd.lib
+            install(FILES ${OPENSSL_ROOT_DIR}/lib/libeay32MD.lib
+                ${OPENSSL_ROOT_DIR}/lib/libeay32MDd.lib
                 DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
                 COMPONENT libraries${MSVCARCH_EXTENSION}
                 )
