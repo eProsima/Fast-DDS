@@ -171,6 +171,18 @@ class RTPSWriter : public Endpoint
      */
     inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
+    /**
+     * Enable or disable sending data to readers separately
+     * @param enable If separate sending should be enabled
+     */
+    void set_separate_sending (bool enable) { m_separateSendingEnabled = enable; }
+
+    /**
+     * Inform if data is sent to readers separatedly
+     * @return true if separate sending is enabled
+     */
+    bool get_separate_sending () const { return m_separateSendingEnabled; }
+
     protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -183,8 +195,10 @@ class RTPSWriter : public Endpoint
     WriterHistory* mp_history;
     //!Listener
     WriterListener* mp_listener;
-    //Asynchronout publication activated
+    //!Asynchronous publication activated
     bool is_async_;
+    //!Separate sending activated
+    bool m_separateSendingEnabled;
 
     LocatorList_t mAllShrinkedLocatorList;
 

@@ -49,7 +49,7 @@ InitialAckNack::InitialAckNack(WriterProxy* wp, double interval):
     m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
             wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix), wp_(wp),
     m_destination_locators(wp->m_att.endpoint.unicastLocatorList),
-    m_remote_endpoints({ wp->m_att.guid })
+    m_remote_endpoints(1, wp->m_att.guid)
 {
     m_destination_locators.push_back(wp->m_att.endpoint.multicastLocatorList);
 }

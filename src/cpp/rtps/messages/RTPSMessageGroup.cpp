@@ -108,13 +108,19 @@ bool compare_remote_participants(const std::vector<GUID_t>& remote_participants1
     return false;
 }
 
+void get_participant_from_endpoint(const GUID_t& endpoint, std::vector<GuidPrefix_t>& participants)
+{
+    if (std::find(participants.begin(), participants.end(), endpoint.guidPrefix) == participants.end())
+        participants.push_back(endpoint.guidPrefix);
+}
+
 void get_participants_from_endpoints(const std::vector<GUID_t>& endpoints, std::vector<GuidPrefix_t>& participants)
 {
     participants.clear();
 
-    for(auto& endpoint : endpoints)
+    for (auto& endpoint : endpoints)
     {
-        if(std::find(participants.begin(), participants.end(), endpoint.guidPrefix) == participants.end())
+        if (std::find(participants.begin(), participants.end(), endpoint.guidPrefix) == participants.end())
             participants.push_back(endpoint.guidPrefix);
     }
 }
@@ -137,7 +143,8 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
         RTPSMessageGroup_t& msg_group) :
     participant_(participant), endpoint_(endpoint), full_msg_(&msg_group.rtpsmsg_fullmsg_),
     submessage_msg_(&msg_group.rtpsmsg_submessage_), currentBytesSent_(0),
-    fixed_destination_(false), fixed_destination_locators_(nullptr)
+    fixed_destination_(false), fixed_destination_locators_(nullptr), 
+    fixed_destination_guids_(nullptr), fixed_destination_prefix_()
 #if HAVE_SECURITY
     , encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
 #endif
@@ -160,8 +167,6 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
     RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
     const std::vector<GUID_t>& remote_endpoints) : RTPSMessageGroup(participant, endpoint, type, msg_group)
 {
-    (void)remote_endpoints;
-
 #if HAVE_SECURITY
     if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
     {
@@ -169,9 +174,42 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
     }
 #endif
 
+    size_t nEndpoints = remote_endpoints.size();
+    if (nEndpoints > 0)
+    {
+        fixed_destination_prefix_ = remote_endpoints.at(0).guidPrefix;
+        for (size_t i = 1; i < nEndpoints; ++i)
+        {
+            if (fixed_destination_prefix_ != remote_endpoints.at(i).guidPrefix)
+            {
+                fixed_destination_prefix_ = c_GuidPrefix_Unknown;
+                break;
+            }
+        }
+    }
     fixed_destination_locators_ = &locator_list;
+    fixed_destination_guids_ = &remote_endpoints;
     fixed_destination_ = true;
 }
+
+/*
+RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
+    RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
+    const GUID_t& remote_endpoint) : RTPSMessageGroup(participant, endpoint, type, msg_group)
+{
+#if HAVE_SECURITY
+    if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
+    {
+        get_participant_from_endpoint(remote_endpoint, current_remote_participants_);
+    }
+#endif
+
+    fixed_destination_prefix_ = remote_endpoint.guidPrefix;
+    fixed_destination_locators_ = &locator_list;
+    fixed_destination_vector_.push_back(remote_endpoint);
+    fixed_destination_ = true;
+}
+*/
 
 RTPSMessageGroup::~RTPSMessageGroup()
 {
@@ -251,13 +289,17 @@ void RTPSMessageGroup::flush_and_reset(const LocatorList_t& locator_list,
     flush();
 
     // Reset
-    current_locators_.assign(locator_list);
-#if HAVE_SECURITY
-    if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
+    if (!fixed_destination_)
     {
-        get_participants_from_endpoints(remote_endpoints, current_remote_participants_);
-    }
+        current_locators_.assign(locator_list);
+#if HAVE_SECURITY
+        if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
+        {
+            get_participants_from_endpoints(remote_endpoints, current_remote_participants_);
+        }
 #endif
+    }
+
     current_dst_ = c_GuidPrefix_Unknown;
 }
 
@@ -308,7 +350,15 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
     }
 #endif
 
-    if(remote_endpoints.size() == 1 && current_dst_ != remote_endpoints.at(0).guidPrefix)
+    if (fixed_destination_)
+    {
+        if (current_dst_ != fixed_destination_prefix_)
+        {
+            current_dst_ = fixed_destination_prefix_;
+            RTPSMessageCreator::addSubmessageInfoDST(buffer, current_dst_);
+        }
+    }
+    else if(remote_endpoints.size() == 1 && current_dst_ != remote_endpoints.at(0).guidPrefix)
     {
         current_dst_ = remote_endpoints.at(0).guidPrefix;
         RTPSMessageCreator::addSubmessageInfoDST(buffer, current_dst_);
@@ -345,7 +395,7 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
         if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
-                    endpoint_->getGuid(), remote_readers))
+                    endpoint_->getGuid(), fixed_destination_ ? *fixed_destination_guids_ : remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
             return false;
@@ -406,7 +456,7 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
         if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
-                    endpoint_->getGuid(), remote_readers))
+                    endpoint_->getGuid(), fixed_destination_ ? *fixed_destination_guids_ : remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
             return false;
@@ -503,7 +553,7 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
         if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
-                    endpoint_->getGuid(), remote_readers))
+                    endpoint_->getGuid(), fixed_destination_ ? *fixed_destination_guids_ : remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
             return false;
@@ -551,7 +601,7 @@ bool RTPSMessageGroup::add_heartbeat(const std::vector<GUID_t>& remote_readers, 
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
         if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
-                    endpoint_->getGuid(), remote_readers))
+                    endpoint_->getGuid(), fixed_destination_ ? *fixed_destination_guids_ : remote_readers))
         {
             logError(RTPS_WRITER, "Cannot encrypt HEARTBEAT submessage for writer " << endpoint_->getGuid());
             return false;
@@ -608,7 +658,7 @@ bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
             submessage_msg_->pos = from_buffer_position;
             CDRMessage::initCDRMsg(encrypt_msg_);
             if(!participant_->security_manager().encode_writer_submessage(*submessage_msg_, *encrypt_msg_,
-                        endpoint_->getGuid(), remote_readers))
+                        endpoint_->getGuid(), fixed_destination_ ? *fixed_destination_guids_ : remote_readers))
             {
                 logError(RTPS_WRITER, "Cannot encrypt DATA submessage for writer " << endpoint_->getGuid());
                 return false;

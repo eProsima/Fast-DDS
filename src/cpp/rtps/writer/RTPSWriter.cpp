@@ -42,7 +42,8 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
     m_livelinessAsserted(false),
     mp_history(hist),
     mp_listener(listen),
-    is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
+    is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true),
+    m_separateSendingEnabled(false)
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif

@@ -223,6 +223,10 @@ class RTPSMessageGroup
 
         const LocatorList_t * fixed_destination_locators_;
 
+        const std::vector<GUID_t> * fixed_destination_guids_;
+
+        GuidPrefix_t fixed_destination_prefix_;
+
 #if HAVE_SECURITY
         CDRMessage_t* encrypt_msg_;
 

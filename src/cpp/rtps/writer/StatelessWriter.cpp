@@ -81,12 +81,30 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
         {
             this->setLivelinessAsserted(true);
 
-            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                mAllShrinkedLocatorList, mAllRemoteReaders);
-
-            if (!group.add_data(*cptr, mAllRemoteReaders, mAllShrinkedLocatorList, false))
+            if(m_separateSendingEnabled)
             {
-                logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                std::vector<GUID_t> guids(1);
+                for (auto it = m_matched_readers.begin(); it != m_matched_readers.end(); ++it)
+                {
+                    guids.at(0) = it->guid;
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+                        it->endpoint.unicastLocatorList, guids);
+                    
+                    if (!group.add_data(*cptr, guids, it->endpoint.unicastLocatorList, false))
+                    {
+                        logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                    }
+                }
+            }
+            else
+            {
+                RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+                    mAllShrinkedLocatorList, mAllRemoteReaders);
+
+                if (!group.add_data(*cptr, mAllRemoteReaders, mAllShrinkedLocatorList, false))
+                {
+                    logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                }
             }
 
             if (mp_listener != nullptr)
@@ -182,6 +200,7 @@ void StatelessWriter::update_unsent_changes(ReaderLocator& reader_locator,
 
 void StatelessWriter::send_any_unsent_changes()
 {
+    //TODO: Separate sending
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     RTPSWriterCollector<ReaderLocator*> changesToSend;

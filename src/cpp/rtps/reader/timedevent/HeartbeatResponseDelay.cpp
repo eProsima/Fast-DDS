@@ -46,7 +46,7 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval
     mp_WP(p_WP), m_cdrmessages(p_WP->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
             p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix),
     m_destination_locators(p_WP->m_att.endpoint.unicastLocatorList),
-    m_remote_endpoints({p_WP->m_att.guid})
+    m_remote_endpoints(1, p_WP->m_att.guid)
 {
     m_destination_locators.push_back(p_WP->m_att.endpoint.multicastLocatorList);
 }
