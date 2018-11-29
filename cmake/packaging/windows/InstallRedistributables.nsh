@@ -23,7 +23,7 @@ Function InstallRedistributables
     StrCpy $I86VS2017Needed "1"
 
     ${If} ${RunningX64}
-    SetRegView 64
+        SetRegView 64
     ${EndIf}
 
     # Check if it is necessary to install to x64VS2017
