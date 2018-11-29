@@ -44,6 +44,8 @@ class RTPSWriter : public Endpoint
 
         MOCK_METHOD3(new_change, CacheChange_t*(const std::function<uint32_t()>&,
             ChangeKind_t, InstanceHandle_t));
+			
+		MOCK_METHOD1(set_separate_sending, void(bool));
 
         WriterHistory* history_;
 };
