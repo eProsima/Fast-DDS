@@ -72,8 +72,8 @@ macro(install_msvc_libraries platform)
         COMPONENT libraries_${platform}
         )
 
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
-        DESTINATION ${DATA_INSTALL_DIR}/${PROJECT_NAME}
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${DATA_INSTALL_DIR}/
+        DESTINATION ${DATA_INSTALL_DIR}
         COMPONENT cmake
         )
 
