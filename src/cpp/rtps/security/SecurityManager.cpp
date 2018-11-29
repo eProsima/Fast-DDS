@@ -3118,7 +3118,7 @@ int SecurityManager::decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t&
                 }
                 else
                 {
-                    logError(SECURITY, "Cannot decode writer RTPS submessage (" << exception.what() << ")");
+                    logWarning(SECURITY, "Cannot decode writer RTPS submessage (" << exception.what() << ")");
                 }
             }
             else if(category == DATAREADER_SUBMESSAGE)
@@ -3130,7 +3130,7 @@ int SecurityManager::decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t&
                 }
                 else
                 {
-                    logError(SECURITY, "Cannot decode reader RTPS submessage (" << exception.what() << ")");
+                    logWarning(SECURITY, "Cannot decode reader RTPS submessage (" << exception.what() << ")");
                 }
             }
         }

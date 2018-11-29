@@ -781,7 +781,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         session_key, initialization_vector,
         &plain_buffer.buffer[plain_buffer.pos], length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1122,7 +1122,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         keyMat->transformation_kind, session_key, initialization_vector,
         &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1300,7 +1300,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
         keyMat->transformation_kind, session_key, initialization_vector,
         &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1425,7 +1425,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         keyMat->transformation_kind, session_key, initialization_vector,
         plain_payload.data, length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1933,7 +1933,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
         // - EVP_DecryptUpdate needs at maximum: body_length + cipher_block_size.
         if (plain_buffer_len < (protected_len + cipher_block_size))
         {
-            logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
+            logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
@@ -1943,7 +1943,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     unsigned char* input_buffer = (unsigned char*)decoder.getCurrentPosition();
     if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, protected_len))
     {
-        logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
+        logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
@@ -1952,7 +1952,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
 
     if(!EVP_DecryptFinal(d_ctx, output_buffer, &final_size))
     {
-        logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
+        logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
         EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
@@ -1961,7 +1961,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     uint32_t cnt_len = do_encryption ? static_cast<uint32_t>(actual_size + final_size) : body_length;
     if (plain_buffer_len < cnt_len)
     {
-        logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
+        logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
         return false;
     }
 
