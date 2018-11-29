@@ -443,7 +443,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     include(CMakePackageConfigHelpers)
 
     # Add fastrtps dependencies in its CMake config file.
-    if(SECURITY)
+    if(SECURITY AND NOT EPROSIMA_INSTALLER_MINION)
         set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     endif()
 
