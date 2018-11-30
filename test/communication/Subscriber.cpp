@@ -119,8 +119,6 @@ int main(int argc, char** argv)
     ParticipantAttributes participant_attributes;
     Domain::getDefaultParticipantAttributes(participant_attributes);
     participant_attributes.rtps.builtin.domainId = seed % 230;
-    participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
-    participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
     Participant* participant = Domain::createParticipant(participant_attributes);
     if(participant==nullptr)
         return 1;
