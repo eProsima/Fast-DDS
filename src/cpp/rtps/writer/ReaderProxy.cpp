@@ -45,6 +45,10 @@ ReaderProxy::ReaderProxy(const RemoteReaderAttributes& rdata,const WriterTimes& 
         mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
     }
 
+    // Use remoteLocatorList as joint unicast + multicast locators
+    m_att.endpoint.remoteLocatorList.assign(m_att.endpoint.unicastLocatorList);
+    m_att.endpoint.remoteLocatorList.push_back(m_att.endpoint.multicastLocatorList);
+
     logInfo(RTPS_WRITER,"Reader Proxy created");
 }
 
