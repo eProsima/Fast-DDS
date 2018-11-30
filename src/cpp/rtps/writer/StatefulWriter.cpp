@@ -143,12 +143,12 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 {
                     guids.at(0) = (*it)->m_att.guid;
                     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages, 
-                        (*it)->m_att.endpoint.unicastLocatorList, guids);
-                    if (!group.add_data(*change, guids, (*it)->m_att.endpoint.unicastLocatorList, (*it)->m_att.expectsInlineQos))
+                        (*it)->m_att.endpoint.remoteLocatorList, guids);
+                    if (!group.add_data(*change, guids, (*it)->m_att.endpoint.remoteLocatorList, (*it)->m_att.expectsInlineQos))
                     {
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                     }
-                    send_heartbeat_piggyback_nts_(guids, (*it)->m_att.endpoint.unicastLocatorList, group);
+                    send_heartbeat_piggyback_nts_(guids, (*it)->m_att.endpoint.remoteLocatorList, group);
                 }
             }
 
@@ -280,9 +280,7 @@ void StatefulWriter::send_any_unsent_changes()
             for(auto remoteReader : changeToSend.remoteReaders)
             {
                 remote_readers.push_back(remoteReader->m_att.guid);
-                LocatorList_t locators(remoteReader->m_att.endpoint.unicastLocatorList);
-                locators.push_back(remoteReader->m_att.endpoint.multicastLocatorList);
-                locatorLists.push_back(locators);
+                locatorLists.push_back(remoteReader->m_att.endpoint.remoteLocatorList);
                 expectsInlineQos |= remoteReader->m_att.expectsInlineQos;
             }
 
@@ -382,9 +380,7 @@ void StatefulWriter::send_any_unsent_changes()
             for(auto remoteReader : pair.first)
             {
                 remote_readers.push_back(remoteReader->m_att.guid);
-                LocatorList_t locators(remoteReader->m_att.endpoint.unicastLocatorList);
-                locators.push_back(remoteReader->m_att.endpoint.multicastLocatorList);
-                locatorLists.push_back(locators);
+                locatorLists.push_back(remoteReader->m_att.endpoint.remoteLocatorList);
             }
             group.add_gap(pair.second, remote_readers,
                     mp_RTPSParticipant->network_factory().ShrinkLocatorLists(locatorLists));
@@ -443,9 +439,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         }
 
         allRemoteReaders.push_back((*it)->m_att.guid);
-        LocatorList_t locators((*it)->m_att.endpoint.unicastLocatorList);
-        locators.push_back((*it)->m_att.endpoint.multicastLocatorList);
-        allLocatorLists.push_back(locators);
+        allLocatorLists.push_back((*it)->m_att.endpoint.remoteLocatorList);
     }
 
     // Add info of new datareader.
@@ -508,8 +502,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         assert(last_seq + 1 == current_seq);
 
         std::vector<GUID_t> guids(1, rp->m_att.guid);
-        LocatorList_t locatorsList(rp->m_att.endpoint.unicastLocatorList);
-        locatorsList.push_back(rp->m_att.endpoint.multicastLocatorList);
+        const LocatorList_t& locatorsList = rp->m_att.endpoint.remoteLocatorList;
         RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages, locatorsList, guids);
 
         // Send initial heartbeat
@@ -562,9 +555,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
         }
 
         allRemoteReaders.push_back((*it)->m_att.guid);
-        LocatorList_t locators((*it)->m_att.endpoint.unicastLocatorList);
-        locators.push_back((*it)->m_att.endpoint.multicastLocatorList);
-        allLocatorLists.push_back(locators);
+        allLocatorLists.push_back((*it)->m_att.endpoint.remoteLocatorList);
         ++it;
     }
 
@@ -843,8 +834,7 @@ SequenceNumber_t StatefulWriter::next_sequence_number() const
 void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final)
 {
     std::vector<GUID_t> tmp_guids(1, remoteReaderProxy.m_att.guid);
-    LocatorList_t locators(remoteReaderProxy.m_att.endpoint.unicastLocatorList);
-    locators.push_back(remoteReaderProxy.m_att.endpoint.multicastLocatorList);
+    const LocatorList_t& locators = remoteReaderProxy.m_att.endpoint.remoteLocatorList;
     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
         locators, tmp_guids);
 
