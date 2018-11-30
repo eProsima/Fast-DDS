@@ -173,6 +173,7 @@ class RTPSWriter : public Endpoint
 
     /**
      * Enable or disable sending data to readers separately
+     * NOTE: This will only work for synchronous writers
      * @param enable If separate sending should be enabled
      */
     void set_separate_sending (bool enable) { m_separateSendingEnabled = enable; }

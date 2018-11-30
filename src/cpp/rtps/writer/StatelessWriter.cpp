@@ -200,7 +200,7 @@ void StatelessWriter::update_unsent_changes(ReaderLocator& reader_locator,
 
 void StatelessWriter::send_any_unsent_changes()
 {
-    //TODO: Separate sending
+    //TODO(Mcc) Separate sending for asynchronous writers
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     RTPSWriterCollector<ReaderLocator*> changesToSend;
