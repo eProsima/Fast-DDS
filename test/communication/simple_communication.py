@@ -14,16 +14,15 @@
 
 import sys, os, subprocess
 
-publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
-assert publisher_command
-subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
-assert subscriber_command
+subscriber1_proc = subprocess.Popen(["./SimpleCommunicationSubscriber", "--seed", str(os.getpid())])
+publisher_proc = subprocess.Popen(["./SimpleCommunicationPublisher", "--seed", str(os.getpid())])
+subscriber2_proc = subprocess.Popen(["./SimpleCommunicationSubscriber", "--seed", str(os.getpid())])
 
-subscriber_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())])
-publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())])
-
-subscriber_proc.communicate()
-retvalue = subscriber_proc.returncode
+subscriber1_proc.communicate()
+retvalue = subscriber1_proc.returncode
+subscriber2_proc.communicate()
+if retvalue == 0:
+    retvalue = subscriber2_proc.returncode
 
 publisher_proc.kill()
 

@@ -79,7 +79,6 @@ class PubListener : public PublisherListener
 
         void onPublicationMatched(Publisher* /*publisher*/, MatchingInfo& info) override
         {
-            std::unique_lock<std::mutex> lock(mutex_);
             if(info.status == MATCHED_MATCHING)
             {
                 std::cout << "Subscriber matched" << std::endl;
@@ -90,11 +89,8 @@ class PubListener : public PublisherListener
                 std::cout << "Subscriber unmatched" << std::endl;
                 --matched_;
             }
-            cv_.notify_all();
         }
 
-        std::mutex mutex_;
-        std::condition_variable cv_;
         unsigned int matched_;
 };
 
@@ -103,6 +99,7 @@ int main(int argc, char** argv)
     int arg_count = 1;
     bool exit_on_lost_liveliness = false;
     uint32_t seed = 7800;
+    char* xml_file = nullptr;
 
     while(arg_count < argc)
     {
@@ -120,11 +117,27 @@ int main(int argc, char** argv)
 
             seed = strtol(argv[arg_count], nullptr, 10);
         }
+        else if(strcmp(argv[arg_count], "--xmlfile") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--xmlfile expects a parameter" << std::endl;
+                return -1;
+            }
+
+            xml_file = argv[arg_count];
+        }
 
         ++arg_count;
     }
 
+    if(xml_file)
+    {
+        Domain::loadXMLProfilesFile(xml_file);
+    }
+
     ParticipantAttributes participant_attributes;
+    Domain::getDefaultParticipantAttributes(participant_attributes);
     participant_attributes.rtps.builtin.domainId = seed % 230;
     participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
     participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
@@ -145,20 +158,15 @@ int main(int argc, char** argv)
 
     //CREATE THE PUBLISHER
     PublisherAttributes publisher_attributes;
+    Domain::getDefaultPublisherAttributes(publisher_attributes);
     publisher_attributes.topic.topicKind = NO_KEY;
     publisher_attributes.topic.topicDataType = type.getName();
     publisher_attributes.topic.topicName = topic.str();
-    publisher_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
     if(publisher == nullptr)
     {
         Domain::removeParticipant(participant);
         return 1;
-    }
-
-    {
-        std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&]{return listener.matched_ > 0;});
     }
 
     HelloWorld data;

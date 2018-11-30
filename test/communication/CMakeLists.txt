@@ -43,20 +43,29 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     target_include_directories(SimpleCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
     target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr ${CMAKE_DL_LIBS})
 
+    ###############################################################################
+    # Necessary files
+    ###############################################################################
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py
+        ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable_besteffort.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable_besteffort.xml COPYONLY)
+
+
     if(PYTHONINTERP_FOUND)
-        add_test(NAME SimpleCommunication
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py)
+        add_test(NAME SimpleCommunicationBestEffort
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
         # Set test with label NoMemoryCheck
-        set_property(TEST SimpleCommunication PROPERTY LABELS "NoMemoryCheck")
+        set_property(TEST SimpleCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
 
-        set_property(TEST SimpleCommunication PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        set_property(TEST SimpleCommunication APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-            set_property(TEST SimpleCommunication APPEND PROPERTY ENVIRONMENT
+            set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
 
