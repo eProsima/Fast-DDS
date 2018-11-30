@@ -18,12 +18,12 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
 if not publisher_command:
-    publisher_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationPublisher"), recursive=True)
+    publisher_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationPublisher*"), recursive=True)
     publisher_command = next(iter(publisher_files), None)
 assert publisher_command
 subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
 if not subscriber_command:
-    subscriber_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationSubscriber"), recursive=True)
+    subscriber_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationSubscriber*"), recursive=True)
     subscriber_command = next(iter(subscriber_files), None)
 assert subscriber_command
 xml_file = os.environ.get("XML_FILE")
