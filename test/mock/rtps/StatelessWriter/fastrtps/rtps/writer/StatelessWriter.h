@@ -43,6 +43,8 @@ class StatelessWriter : public RTPSWriter
 
         MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
 
+		MOCK_METHOD1(set_instance_handle_is_custom_destination, void(bool));
+
         RTPSParticipantImpl* getRTPSParticipant() { return participant_; }
 
     private:

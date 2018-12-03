@@ -727,7 +727,9 @@ bool SecurityManager::on_process_handshake(const ParticipantProxyData& participa
 
             if(CDRMessage::addParticipantGenericMessage(&aux_msg, message))
             {
+                GUID_t destination(participant_data.m_guid.guidPrefix, participant_stateless_message_reader_entity_id);
                 change->serializedPayload.length = aux_msg.length;
+                change->instanceHandle = destination;
 
                 // Send
                 logInfo(SECURITY, "Authentication handshake sent to participant " <<
@@ -872,6 +874,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
         participant_->set_endpoint_rtps_protection_supports(wout, false);
         participant_stateless_message_writer_ = dynamic_cast<StatelessWriter*>(wout);
         participant_stateless_message_writer_->set_separate_sending(true);
+        participant_stateless_message_writer_->set_instance_handle_is_custom_destination(true);
         auth_source_guid = participant_stateless_message_writer_->getGuid();
 
         return true;
@@ -1234,6 +1237,8 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
 
                         if(p_change != nullptr)
                         {
+                            GUID_t destination(remote_participant_key.guidPrefix, participant_stateless_message_reader_entity_id);
+                            p_change->instanceHandle = destination;
                             if(participant_stateless_message_writer_history_->add_change(p_change))
                             {
                                 remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
@@ -1298,6 +1303,8 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
 
                     if(p_change != nullptr)
                     {
+                        GUID_t destination(remote_participant_key.guidPrefix, participant_stateless_message_reader_entity_id);
+                        p_change->instanceHandle = destination;
                         if(participant_stateless_message_writer_history_->add_change(p_change))
                         {
                             remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;

@@ -110,6 +110,8 @@ class StatelessWriter : public RTPSWriter
 
     void add_flow_controller(std::unique_ptr<FlowController> controller) override;
 
+    inline void set_instance_handle_is_custom_destination (bool value) { m_useCustomDestination = value; }
+
     private:
 
     std::vector<GUID_t> get_builtin_guid();
@@ -119,6 +121,7 @@ class StatelessWriter : public RTPSWriter
     std::vector<ReaderLocator> reader_locators, fixed_locators;
     std::vector<RemoteReaderAttributes> m_matched_readers;
     std::vector<std::unique_ptr<FlowController> > m_controllers;
+    bool m_useCustomDestination;
 };
 }
 } /* namespace rtps */

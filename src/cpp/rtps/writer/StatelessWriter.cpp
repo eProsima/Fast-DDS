@@ -38,7 +38,8 @@ namespace rtps {
 
 StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
         WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
-    RTPSWriter(pimpl,guid,att,hist,listen)
+    RTPSWriter(pimpl,guid,att,hist,listen),
+    m_useCustomDestination(false)
 {
     mAllRemoteReaders = get_builtin_guid();
 }
@@ -81,18 +82,24 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
         {
             this->setLivelinessAsserted(true);
 
-            if(m_separateSendingEnabled)
+            if(m_separateSendingEnabled || m_useCustomDestination)
             {
+                GUID_t iHandleGuid;
+                iHandle2GUID(iHandleGuid, cptr->instanceHandle);
+
                 std::vector<GUID_t> guids(1);
                 for (auto it = m_matched_readers.begin(); it != m_matched_readers.end(); ++it)
                 {
-                    guids.at(0) = it->guid;
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                        it->endpoint.unicastLocatorList, guids);
-                    
-                    if (!group.add_data(*cptr, guids, it->endpoint.unicastLocatorList, false))
+                    if (!m_useCustomDestination || iHandleGuid == it->guid)
                     {
-                        logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                        guids.at(0) = it->guid;
+                        RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+                            it->endpoint.unicastLocatorList, guids);
+
+                        if (!group.add_data(*cptr, guids, it->endpoint.unicastLocatorList, false))
+                        {
+                            logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                        }
                     }
                 }
             }
