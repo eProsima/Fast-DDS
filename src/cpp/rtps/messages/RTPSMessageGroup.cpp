@@ -118,7 +118,7 @@ void get_participants_from_endpoints(const std::vector<GUID_t>& endpoints, std::
 {
     participants.clear();
 
-    for (auto& endpoint : endpoints)
+    for (const GUID_t& endpoint : endpoints)
     {
         if (std::find(participants.begin(), participants.end(), endpoint.guidPrefix) == participants.end())
             participants.push_back(endpoint.guidPrefix);
