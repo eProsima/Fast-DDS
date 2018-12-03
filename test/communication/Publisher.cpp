@@ -102,7 +102,8 @@ int main(int argc, char** argv)
 {
     int arg_count = 1;
     bool exit_on_lost_liveliness = false;
-    uint32_t seed = 7800;
+    uint32_t seed = 7800, wait = 0;
+    char* xml_file = nullptr;
 
     while(arg_count < argc)
     {
@@ -120,14 +121,38 @@ int main(int argc, char** argv)
 
             seed = strtol(argv[arg_count], nullptr, 10);
         }
+        else if(strcmp(argv[arg_count], "--wait") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--wait expects a parameter" << std::endl;
+                return -1;
+            }
+
+            wait = strtol(argv[arg_count], nullptr, 10);
+        }
+        else if(strcmp(argv[arg_count], "--xmlfile") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--xmlfile expects a parameter" << std::endl;
+                return -1;
+            }
+
+            xml_file = argv[arg_count];
+        }
 
         ++arg_count;
     }
 
+    if(xml_file)
+    {
+        Domain::loadXMLProfilesFile(xml_file);
+    }
+
     ParticipantAttributes participant_attributes;
+    Domain::getDefaultParticipantAttributes(participant_attributes);
     participant_attributes.rtps.builtin.domainId = seed % 230;
-    participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
-    participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
     ParListener participant_listener(exit_on_lost_liveliness);
     Participant* participant = Domain::createParticipant(participant_attributes, &participant_listener);
 
@@ -145,10 +170,10 @@ int main(int argc, char** argv)
 
     //CREATE THE PUBLISHER
     PublisherAttributes publisher_attributes;
+    Domain::getDefaultPublisherAttributes(publisher_attributes);
     publisher_attributes.topic.topicKind = NO_KEY;
     publisher_attributes.topic.topicDataType = type.getName();
     publisher_attributes.topic.topicName = topic.str();
-    publisher_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
     if(publisher == nullptr)
     {
@@ -156,9 +181,10 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    if(wait > 0)
     {
         std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&]{return listener.matched_ > 0;});
+        listener.cv_.wait(lock, [&]{return listener.matched_ >= wait;});
     }
 
     HelloWorld data;

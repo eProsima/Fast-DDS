@@ -12,15 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys, os, subprocess
+import sys, os, subprocess, glob
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
 publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
+if not publisher_command:
+    publisher_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationPublisher*"), recursive=True)
+    publisher_command = next(iter(publisher_files), None)
 assert publisher_command
 subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
+if not subscriber_command:
+    subscriber_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationSubscriber*"), recursive=True)
+    subscriber_command = next(iter(subscriber_files), None)
 assert subscriber_command
+xml_file = os.environ.get("XML_FILE")
+if xml_file:
+    real_xml_file = os.path.join(script_dir, xml_file)
+else:
+    real_xml_file = os.path.join(script_dir, "liveliness_assertion.xml")
 
-subscriber_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid()), "--notexit"])
-publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid()), "--exit_on_lost_liveliness"], stdout=subprocess.PIPE)
+subscriber_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid()), "--notexit",
+    "--xmlfile", real_xml_file])
+publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid()), "--exit_on_lost_liveliness",
+    "--xmlfile", real_xml_file], stdout=subprocess.PIPE)
 
 while True:
     line = publisher_proc.stdout.readline()

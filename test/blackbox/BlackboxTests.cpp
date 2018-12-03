@@ -1094,7 +1094,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
     slowWriter.send(data);
     // In 1 second only one of the messages has time to arrive
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    ASSERT_EQ(reader.getReceivedCount(), 1);
+    ASSERT_EQ(reader.getReceivedCount(), 1u);
 }
 
 BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
