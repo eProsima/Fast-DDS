@@ -2,518 +2,730 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:simpleType name="stringType">
-      <xs:restriction base="xs:string"/>
+        <xs:restriction base="xs:string"/>
     </xs:simpleType>
-    
+
     <xs:simpleType name="idType">
-      <xs:restriction base="xs:unsignedShort"/>
+        <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
-    
+
     <xs:simpleType name="int32Type">
-      <xs:restriction base="xs:int"/>
+        <xs:restriction base="xs:int"/>
     </xs:simpleType>
-    
+
     <xs:simpleType name="uint32Type">
-      <xs:restriction base="xs:unsignedInt"/>
+        <xs:restriction base="xs:unsignedInt"/>
     </xs:simpleType>
-    
+
     <xs:simpleType name="int16Type">
-      <xs:restriction base="xs:short"/>
+        <xs:restriction base="xs:short"/>
     </xs:simpleType>
-    
+
     <xs:simpleType name="uint16Type">
-      <xs:restriction base="xs:unsignedShort"/>
+        <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
-    
+
     <xs:simpleType name="octetType">
-      <xs:restriction base="xs:unsignedByte"/>
+        <xs:restriction base="xs:unsignedByte"/>
     </xs:simpleType>
-    
+
     <xs:simpleType name="boolType">
-      <xs:restriction base="xs:boolean"/> <!-- {true, false} -->
+        <xs:restriction base="xs:boolean"/> <!-- {true, false} -->
     </xs:simpleType>
-    
+
     <xs:simpleType name="locatorKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="RESERVED"/>
-        <xs:enumeration value="UDPv4"/>
-        <xs:enumeration value="UDPv6"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RESERVED"/>
+            <xs:enumeration value="UDPv4"/>
+            <xs:enumeration value="UDPv6"/>
+            <xs:enumeration value="TCPv4"/>
+            <xs:enumeration value="TCPv6"/>
+        </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="historyMemoryPolicyType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="PREALLOCATED"/>
-        <xs:enumeration value="PREALLOCATED_WITH_REALLOC"/>
-        <xs:enumeration value="DYNAMIC"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PREALLOCATED"/>
+            <xs:enumeration value="PREALLOCATED_WITH_REALLOC"/>
+            <xs:enumeration value="DYNAMIC"/>
+        </xs:restriction>
     </xs:simpleType>
-        
+
     <xs:simpleType name="octetVectorType">
-      <xs:restriction base="xs:string"/> <!-- std::vector<octet> -->
+        <xs:restriction base="xs:string"/><!-- std::vector<octet> -->
     </xs:simpleType>
-    
+
     <xs:complexType name="propertyType">
-      <xs:all>
-        <xs:element name="name" type="stringType"/>
-        <xs:element name="value" type="stringType"/>
-        <xs:element name="propagate" type="boolType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="name" type="stringType"/>
+            <xs:element name="value" type="stringType"/>
+            <xs:element name="propagate" type="boolType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="binaryPropertyType">
-      <xs:all>
-        <xs:element name="name" type="stringType"/>
-        <xs:element name="value" type="stringType"/> <!-- std::vector<uint8_t> -->
-        <xs:element name="propagate" type="boolType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="name" type="stringType"/>
+            <xs:element name="value" type="stringType"/><!-- std::vector<uint8_t> -->
+            <xs:element name="propagate" type="boolType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="propertyVectorType">
-      <xs:sequence>
-        <xs:element name="property" type="propertyType" minOccurs="0" maxOccurs="unbounded"/>
-      </xs:sequence>
+        <xs:sequence>
+            <xs:element name="property" type="propertyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="binaryPropertyVectorType">
-      <xs:sequence>
-        <xs:element name="property" type="binaryPropertyType" minOccurs="0" maxOccurs="unbounded"/>
-      </xs:sequence>
+        <xs:sequence>
+            <xs:element name="property" type="binaryPropertyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
-    
+
     <xs:simpleType name="durationTypeEnum">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="INFINITE"/>
-        <xs:enumeration value="ZERO"/>
-        <xs:enumeration value="INVALID"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="INFINITE"/>
+            <xs:enumeration value="ZERO"/>
+            <xs:enumeration value="INVALID"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="durationTypeValue">
-      <xs:sequence>
-        <xs:element name="seconds" type="int32Type"/>
-        <xs:element name="fraction" type="uint32Type"/>
-      </xs:sequence>
+        <xs:sequence>
+            <xs:element name="seconds" type="int32Type"/>
+            <xs:element name="fraction" type="uint32Type"/>
+        </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="durationType">
         <xs:choice>
             <xs:element name="durationbyname" type="durationTypeEnum"/>
             <xs:element name="durationbyval" type="durationTypeValue"/>
         </xs:choice>
     </xs:complexType>
-    
+
     <xs:complexType name="writerTimesType">
-      <xs:all minOccurs="0">
-        <xs:element name="initialHeartbeatDelay" type="durationType"/>
-        <xs:element name="heartbeatPeriod" type="durationType"/>
-        <xs:element name="nackResponseDelay" type="durationType"/>
-        <xs:element name="nackSupressionDuration" type="durationType"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="initialHeartbeatDelay" type="durationType"/>
+            <xs:element name="heartbeatPeriod" type="durationType"/>
+            <xs:element name="nackResponseDelay" type="durationType"/>
+            <xs:element name="nackSupressionDuration" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="readerTimesType">
-      <xs:all minOccurs="0">
-        <xs:element name="initialAcknackDelay" type="durationType"/>
-        <xs:element name="heartbeatResponseDelay" type="durationType"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="initialAcknackDelay" type="durationType"/>
+            <xs:element name="heartbeatResponseDelay" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-   
+
     <xs:complexType name="portType">
-      <xs:all minOccurs="0">
-        <xs:element name="portBase" type="uint16Type"/>
-        <xs:element name="domainIDGain" type="uint16Type"/>
-        <xs:element name="participantIDGain" type="uint16Type"/>
-        <xs:element name="offsetd0" type="uint16Type"/>
-        <xs:element name="offsetd1" type="uint16Type"/>
-        <xs:element name="offsetd2" type="uint16Type"/>
-        <xs:element name="offsetd3" type="uint16Type"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="portBase" type="uint16Type"/>
+            <xs:element name="domainIDGain" type="uint16Type"/>
+            <xs:element name="participantIDGain" type="uint16Type"/>
+            <xs:element name="offsetd0" type="uint16Type"/>
+            <xs:element name="offsetd1" type="uint16Type"/>
+            <xs:element name="offsetd2" type="uint16Type"/>
+            <xs:element name="offsetd3" type="uint16Type"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="locatorType">
-      <xs:all minOccurs="0">
-        <xs:element name="kind" type="locatorKindType"/>
-        <xs:element name="port" type="uint32Type"/>
-        <xs:element name="address" type="stringType"/> <!-- octet address[16] -->
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="kind" type="locatorKindType"/>
+                    <xs:choice>
+                        <xs:element name="port" type="uint32Type"/>
+                        <xs:element name="ports_" type="uint32Type">
+                            <xs:complexType>
+                                <xs:all minOccurs="0">
+                                    <xs:element name="physical_port" type="uint16Type"/>
+                                    <xs:element name="logical_port" type="uint16Type"/>
+                                </xs:all>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:choice>
+            <xs:choice>
+                <xs:element name="address" type="stringType"/> <!-- octet address[4] -->
+                <xs:element name="ipv6_address" type="stringType"/> <!-- octet address[16] -->
+                <xs:element name="addresses_" type="stringType">
+                    <xs:complexType>
+                        <xs:all minOccurs="0">
+                            <xs:element name="unique_lan_id" type="stringType"/><!-- octet address[8] -->
+                            <xs:element name="wan_address" type="stringType"/><!-- octet address[4] -->
+                            <xs:element name="ip_address" type="stringType"/><!-- octet address[4] -->
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="locatorListType">
-      <xs:sequence>
-        <xs:element name="locator" type="locatorType" minOccurs="0" maxOccurs="unbounded"/>
-      </xs:sequence>
+        <xs:sequence>
+            <xs:element name="locator" type="locatorType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="simpleEDPType">
-      <xs:all minOccurs="0">
-        <xs:element name="PUBWRITER_SUBREADER" type="boolType"/>
-        <xs:element name="PUBREADER_SUBWRITER" type="boolType"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="PUBWRITER_SUBREADER" type="boolType"/>
+            <xs:element name="PUBREADER_SUBWRITER" type="boolType"/>
+        </xs:all>
     </xs:complexType>
 
     <xs:simpleType name="EDPType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="SIMPLE"/>
-        <xs:enumeration value="STATIC"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SIMPLE"/>
+            <xs:enumeration value="STATIC"/>
+        </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="builtinAttributesType">
-      <xs:all minOccurs="0">
-        <xs:element name="use_SIMPLE_RTPS_PDP" type="boolType"/>
-        <xs:element name="use_WriterLivelinessProtocol" type="boolType"/>
-        <xs:element name="EDP" type="EDPType"/>
-        <xs:element name="domainId" type="uint32Type"/>
-        <xs:element name="leaseDuration" type="durationType"/>
-        <xs:element name="leaseAnnouncement" type="durationType"/>
-        <xs:element name="simpleEDP" type="simpleEDPType"/>
-        <xs:element name="metatrafficUnicastLocatorList" type="locatorListType"/>
-        <xs:element name="metatrafficMulticastLocatorList" type="locatorListType"/>
-        <xs:element name="initialPeersList" type="locatorListType"/>
-        <xs:element name="staticEndpointXMLFilename" type="stringType"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="use_SIMPLE_RTPS_PDP" type="boolType"/>
+            <xs:element name="use_WriterLivelinessProtocol" type="boolType"/>
+            <xs:element name="EDP" type="EDPType"/>
+            <xs:element name="domainId" type="uint32Type"/>
+            <xs:element name="leaseDuration" type="durationType"/>
+            <xs:element name="leaseAnnouncement" type="durationType"/>
+            <xs:element name="simpleEDP" type="simpleEDPType"/>
+            <xs:element name="metatrafficUnicastLocatorList" type="locatorListType"/>
+            <xs:element name="metatrafficMulticastLocatorList" type="locatorListType"/>
+            <xs:element name="initialPeersList" type="locatorListType"/>
+            <xs:element name="staticEndpointXMLFilename" type="stringType"/>
+            <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType"/>
+            <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="throughputControllerType">
-      <xs:all minOccurs="0">
-        <xs:element name="bytesPerPeriod" type="uint32Type"/>
-        <xs:element name="periodMillisecs" type="uint32Type"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="bytesPerPeriod" type="uint32Type"/>
+            <xs:element name="periodMillisecs" type="uint32Type"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="resourceLimitsQosPolicyType">
-      <xs:all minOccurs="0">
-        <xs:element name="max_samples" type="int32Type"/>
-        <xs:element name="max_instances" type="int32Type"/>
-        <xs:element name="max_samples_per_instance" type="int32Type"/>
-        <xs:element name="allocated_samples" type="int32Type"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="max_samples" type="int32Type"/>
+            <xs:element name="max_instances" type="int32Type"/>
+            <xs:element name="max_samples_per_instance" type="int32Type"/>
+            <xs:element name="allocated_samples" type="int32Type"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:simpleType name="historyQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="KEEP_LAST"/>
-        <xs:enumeration value="KEEP_ALL"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="KEEP_LAST"/>
+            <xs:enumeration value="KEEP_ALL"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="historyQosPolicyType">
-      <xs:all minOccurs="0">
-        <xs:element name="kind" type="historyQosKindType"/>
-        <xs:element name="depth" type="int32Type"/>
-      </xs:all>
-    </xs:complexType>    
-    
+        <xs:all minOccurs="0">
+            <xs:element name="kind" type="historyQosKindType"/>
+            <xs:element name="depth" type="int32Type"/>
+        </xs:all>
+    </xs:complexType>
+
     <xs:simpleType name="topicKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="NO_KEY"/>
-        <xs:enumeration value="WITH_KEY"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NO_KEY"/>
+            <xs:enumeration value="WITH_KEY"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="topicAttributesType">
-      <xs:all minOccurs="0">
-        <xs:element name="kind" type="topicKindType"/>
-        <xs:element name="name" type="stringType"/>
-        <xs:element name="dataType" type="stringType"/>
-        <xs:element name="historyQos" type="historyQosPolicyType"/>
-        <xs:element name="resourceLimitsQos" type="resourceLimitsQosPolicyType"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="kind" type="topicKindType"/>
+            <xs:element name="name" type="stringType"/>
+            <xs:element name="dataType" type="stringType"/>
+            <xs:element name="historyQos" type="historyQosPolicyType"/>
+            <xs:element name="resourceLimitsQos" type="resourceLimitsQosPolicyType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:simpleType name="durabilityQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="VOLATILE"/>
-        <xs:enumeration value="TRANSIENT_LOCAL"/>
-        <xs:enumeration value="TRANSIENT"/>
-        <xs:enumeration value="PERSISTENT"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VOLATILE"/>
+            <xs:enumeration value="TRANSIENT_LOCAL"/>
+            <xs:enumeration value="TRANSIENT"/>
+            <xs:enumeration value="PERSISTENT"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="durabilityQosPolicyType">
-      <xs:all>
-        <xs:element name="kind" type="durabilityQosKindType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="kind" type="durabilityQosKindType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="durabilityServiceQosPolicyType">
-      <xs:all minOccurs="0">
-        <xs:element name="service_cleanup_delay" type="durationType"/>
-        <xs:element name="history_kind" type="historyQosKindType"/>
-        <xs:element name="history_depth" type="uint32Type"/>
-        <xs:element name="max_samples" type="uint32Type"/>
-        <xs:element name="max_instances" type="uint32Type"/>
-        <xs:element name="max_samples_per_instance" type="uint32Type"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="service_cleanup_delay" type="durationType"/>
+            <xs:element name="history_kind" type="historyQosKindType"/>
+            <xs:element name="history_depth" type="uint32Type"/>
+            <xs:element name="max_samples" type="uint32Type"/>
+            <xs:element name="max_instances" type="uint32Type"/>
+            <xs:element name="max_samples_per_instance" type="uint32Type"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="deadlineQosPolicyType">
-      <xs:all>
-        <xs:element name="period" type="durationType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="period" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="latencyBudgetQosPolicyType">
-      <xs:all>
-        <xs:element name="duration" type="durationType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="duration" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:simpleType name="livelinessQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="AUTOMATIC"/>
-        <xs:enumeration value="MANUAL_BY_PARTICIPANT"/>
-        <xs:enumeration value="MANUAL_BY_TOPIC"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTOMATIC"/>
+            <xs:enumeration value="MANUAL_BY_PARTICIPANT"/>
+            <xs:enumeration value="MANUAL_BY_TOPIC"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="livelinessQosPolicyType">
-      <xs:all minOccurs="0">
-        <xs:element name="kind" type="livelinessQosKindType"/>
-        <xs:element name="lease_duration" type="durationType"/>
-        <xs:element name="announcement_period" type="durationType"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="kind" type="livelinessQosKindType"/>
+            <xs:element name="lease_duration" type="durationType"/>
+            <xs:element name="announcement_period" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:simpleType name="reliabilityQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="BEST_EFFORT"/>
-        <xs:enumeration value="RELIABLE"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BEST_EFFORT"/>
+            <xs:enumeration value="RELIABLE"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="reliabilityQosPolicyType">
-      <xs:all>
-        <xs:element name="kind" type="reliabilityQosKindType"/>
-        <xs:element name="max_blocking_time" type="durationType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="kind" type="reliabilityQosKindType"/>
+            <xs:element name="max_blocking_time" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="lifespanQosPolicyType">
-      <xs:all>
-        <xs:element name="duration" type="durationType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="duration" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="userDataQosPolicyType">
-      <xs:all>
-        <xs:element name="dataVec" type="octetVectorType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="dataVec" type="octetVectorType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="timeBasedFilterQosPolicyType">
-      <xs:all>
-        <xs:element name="minimum_separation" type="durationType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="minimum_separation" type="durationType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:simpleType name="ownershipQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="SHARED"/>
-        <xs:enumeration value="EXCLUSIVE"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SHARED"/>
+            <xs:enumeration value="EXCLUSIVE"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="ownershipQosPolicyType">
-      <xs:all>
-        <xs:element name="kind" type="ownershipQosKindType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="kind" type="ownershipQosKindType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="ownershipStrengthQosPolicyType">
-      <xs:all>
-        <xs:element name="value" type="uint32Type"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="value" type="uint32Type"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:simpleType name="destinationOrderQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="BY_RECEPTION_TIMESTAMP"/>
-        <xs:enumeration value="BY_SOURCE_TIMESTAMP"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BY_RECEPTION_TIMESTAMP"/>
+            <xs:enumeration value="BY_SOURCE_TIMESTAMP"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="destinationOrderQosPolicyType">
-      <xs:all>
-        <xs:element name="kind" type="destinationOrderQosKindType"/>
-      </xs:all>
+        <xs:all>
+            <xs:element name="kind" type="destinationOrderQosKindType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:simpleType name="presentationQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="INSTANCE"/>
-        <xs:enumeration value="TOPIC"/>
-        <xs:enumeration value="GROUP"/>
-      </xs:restriction>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="INSTANCE"/>
+            <xs:enumeration value="TOPIC"/>
+            <xs:enumeration value="GROUP"/>
+        </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="presentationQosPolicyType">
-      <xs:all minOccurs="0">
-        <xs:element name="access_scope" type="presentationQosKindType"/>
-        <xs:element name="coherent_access" type="boolType"/>
-        <xs:element name="ordered_access" type="boolType"/>
-      </xs:all>
+        <xs:all minOccurs="0">
+            <xs:element name="access_scope" type="presentationQosKindType"/>
+            <xs:element name="coherent_access" type="boolType"/>
+            <xs:element name="ordered_access" type="boolType"/>
+        </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="nameVectorType">
-      <xs:sequence>
-        <xs:element name="name" type="stringType" maxOccurs="unbounded"/>
-      </xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="partitionQosPolicyType">
-      <xs:all>
-        <xs:element name="names" type="nameVectorType"/>
-      </xs:all>
-    </xs:complexType>
-    
-    <xs:complexType name="topicDataQosPolicyType">
-      <xs:all>
-        <xs:element name="value" type="octetVectorType"/>
-      </xs:all>
-    </xs:complexType>
-    
-    <xs:complexType name="groupDataQosPolicyType">
-      <xs:all>
-        <xs:element name="value" type="octetVectorType"/>
-      </xs:all>
-    </xs:complexType>   
-    
-    <xs:simpleType name="publishModeQosKindType">
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="SYNCHRONOUS"/>
-        <xs:enumeration value="ASYNCHRONOUS"/>
-      </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:complexType name="publishModeQosPolicyType">
-      <xs:all>
-        <xs:element name="kind" type="publishModeQosKindType"/>
-      </xs:all>
-    </xs:complexType>
-    
-    <xs:complexType name="propertyPolicyType">
-      <xs:all minOccurs="0">
-        <xs:element name="properties" type="propertyVectorType"/>
-        <xs:element name="binary_properties" type="binaryPropertyVectorType"/>
-      </xs:all>
-    </xs:complexType>
-    
-	<xs:complexType name="writerQosPoliciesType">
-	  <xs:all minOccurs="0">
-		<xs:element name="durability" type="durabilityQosPolicyType"/>
-		<xs:element name="durabilityService" type="durabilityServiceQosPolicyType"/>
-		<xs:element name="deadline" type="deadlineQosPolicyType"/>
-		<xs:element name="latencyBudget" type="latencyBudgetQosPolicyType"/>
-		<xs:element name="liveliness" type="livelinessQosPolicyType"/>
-		<xs:element name="reliability" type="reliabilityQosPolicyType"/>
-		<xs:element name="lifespan" type="lifespanQosPolicyType"/>
-		<xs:element name="userData" type="userDataQosPolicyType"/>
-		<xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType"/>
-		<xs:element name="ownership" type="ownershipQosPolicyType"/>
-		<xs:element name="ownershipStrength" type="ownershipStrengthQosPolicyType"/>
-		<xs:element name="destinationOrder" type="destinationOrderQosPolicyType"/>
-		<xs:element name="presentation" type="presentationQosPolicyType"/>
-		<xs:element name="partition" type="partitionQosPolicyType"/>
-		<xs:element name="topicData" type="topicDataQosPolicyType"/>
-		<xs:element name="groupData" type="groupDataQosPolicyType"/>
-		<xs:element name="publishMode" type="publishModeQosPolicyType"/>
-	  </xs:all>
-	</xs:complexType>
-    
-    <xs:complexType name="readerQosPoliciesType">
-      <xs:all minOccurs="0">
-        <xs:element name="durability" type="durabilityQosPolicyType"/>
-        <xs:element name="durabilityService" type="durabilityServiceQosPolicyType"/>
-        <xs:element name="deadline" type="deadlineQosPolicyType"/>
-        <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType"/>
-        <xs:element name="liveliness" type="livelinessQosPolicyType"/>
-        <xs:element name="reliability" type="reliabilityQosPolicyType"/>
-        <xs:element name="lifespan" type="lifespanQosPolicyType"/>
-        <xs:element name="userData" type="userDataQosPolicyType"/>
-        <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType"/>
-        <xs:element name="ownership" type="ownershipQosPolicyType"/>
-        <xs:element name="destinationOrder" type="destinationOrderQosPolicyType"/>
-        <xs:element name="presentation" type="presentationQosPolicyType"/>
-        <xs:element name="partition" type="partitionQosPolicyType"/>
-        <xs:element name="topicData" type="topicDataQosPolicyType"/>
-        <xs:element name="groupData" type="groupDataQosPolicyType"/>
-      </xs:all>
-    </xs:complexType>
-    
-    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
-    
-    <xs:complexType name="rtpsParticipantAttributesType">
-      <xs:all minOccurs="0">
-        <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
-        <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
-        <xs:element name="defaultOutLocatorList" type="locatorListType"/>
-        <xs:element name="defaultSendPort" type="uint32Type"/>
-        <xs:element name="sendSocketBufferSize" type="uint32Type"/>
-        <xs:element name="listenSocketBufferSize" type="uint32Type"/>
-        <xs:element name="builtin" type="builtinAttributesType"/>
-        <xs:element name="port" type="portType"/>
-        <xs:element name="userData" type="octetVectorType"/>
-        <xs:element name="participantID" type="int32Type"/>
-        <xs:element name="use_IP4_to_send" type="boolType"/>
-        <xs:element name="use_IP6_to_send" type="boolType"/>
-        <xs:element name="throughputController" type="throughputControllerType"/>
-        <!-- <xs:element name="userTransports" type="XXX"/> -->
-        <xs:element name="useBuiltinTransports" type="boolType"/>
-        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-        <xs:element name="name" type="stringType"/>
-      </xs:all>
-    </xs:complexType>
-    
-    <xs:complexType name="participantProfileType">
-      <xs:sequence>
-        <xs:element name="rtps" type="rtpsParticipantAttributesType"/>
-      </xs:sequence>
-      <xs:attribute name="profile_name" type="stringType" use="required"/>
-    </xs:complexType>
-    
-    <xs:complexType name="publisherProfileType">
-      <xs:all minOccurs="0">
-        <xs:element name="topic" type="topicAttributesType"/>
-        <xs:element name="qos" type="writerQosPoliciesType"/>
-        <xs:element name="times" type="writerTimesType"/>
-        <xs:element name="unicastLocatorList" type="locatorListType"/>
-        <xs:element name="multicastLocatorList" type="locatorListType"/>
-        <xs:element name="outLocatorList" type="locatorListType"/>
-        <xs:element name="throughputController" type="throughputControllerType"/>
-        <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
-        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-        <xs:element name="userDefinedID" type="int16Type"/>
-        <xs:element name="entityID" type="int16Type"/>
-      </xs:all>
-      <xs:attribute name="profile_name" type="stringType" use="required"/>
-    </xs:complexType>
-    
-    <xs:complexType name="subscriberProfileType">
-      <xs:all minOccurs="0">
-        <xs:element name="topic" type="topicAttributesType"/>
-        <xs:element name="qos" type="readerQosPoliciesType"/>
-        <xs:element name="times" type="readerTimesType"/>
-        <xs:element name="unicastLocatorList" type="locatorListType"/>
-        <xs:element name="multicastLocatorList" type="locatorListType"/>
-        <xs:element name="outLocatorList" type="locatorListType"/>
-        <xs:element name="expectsInlineQos" type="boolType"/>
-        <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
-        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-        <xs:element name="userDefinedID" type="int16Type"/>
-        <xs:element name="entityID" type="int16Type"/>
-      </xs:all>
-      <xs:attribute name="profile_name" type="stringType" use="required"/>
-    </xs:complexType>
-    
-    <xs:element name="profiles">
-      <xs:complexType>
         <xs:sequence>
-          <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="name" type="stringType" maxOccurs="unbounded"/>
         </xs:sequence>
-      </xs:complexType>
+    </xs:complexType>
+
+    <xs:complexType name="partitionQosPolicyType">
+        <xs:all>
+            <xs:element name="names" type="nameVectorType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="topicDataQosPolicyType">
+        <xs:all>
+            <xs:element name="value" type="octetVectorType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="groupDataQosPolicyType">
+        <xs:all>
+            <xs:element name="value" type="octetVectorType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:simpleType name="publishModeQosKindType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SYNCHRONOUS"/>
+            <xs:enumeration value="ASYNCHRONOUS"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="publishModeQosPolicyType">
+        <xs:all>
+            <xs:element name="kind" type="publishModeQosKindType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="propertyPolicyType">
+        <xs:all minOccurs="0">
+            <xs:element name="properties" type="propertyVectorType"/>
+            <xs:element name="binary_properties" type="binaryPropertyVectorType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="writerQosPoliciesType">
+        <xs:all minOccurs="0">
+            <xs:element name="durability" type="durabilityQosPolicyType"/>
+            <xs:element name="durabilityService" type="durabilityServiceQosPolicyType"/>
+            <xs:element name="deadline" type="deadlineQosPolicyType"/>
+            <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType"/>
+            <xs:element name="liveliness" type="livelinessQosPolicyType"/>
+            <xs:element name="reliability" type="reliabilityQosPolicyType"/>
+            <xs:element name="lifespan" type="lifespanQosPolicyType"/>
+            <xs:element name="userData" type="userDataQosPolicyType"/>
+            <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType"/>
+            <xs:element name="ownership" type="ownershipQosPolicyType"/>
+            <xs:element name="ownershipStrength" type="ownershipStrengthQosPolicyType"/>
+            <xs:element name="destinationOrder" type="destinationOrderQosPolicyType"/>
+            <xs:element name="presentation" type="presentationQosPolicyType"/>
+            <xs:element name="partition" type="partitionQosPolicyType"/>
+            <xs:element name="topicData" type="topicDataQosPolicyType"/>
+            <xs:element name="groupData" type="groupDataQosPolicyType"/>
+            <xs:element name="publishMode" type="publishModeQosPolicyType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="readerQosPoliciesType">
+        <xs:all minOccurs="0">
+            <xs:element name="durability" type="durabilityQosPolicyType"/>
+            <xs:element name="durabilityService" type="durabilityServiceQosPolicyType"/>
+            <xs:element name="deadline" type="deadlineQosPolicyType"/>
+            <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType"/>
+            <xs:element name="liveliness" type="livelinessQosPolicyType"/>
+            <xs:element name="reliability" type="reliabilityQosPolicyType"/>
+            <xs:element name="lifespan" type="lifespanQosPolicyType"/>
+            <xs:element name="userData" type="userDataQosPolicyType"/>
+            <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType"/>
+            <xs:element name="ownership" type="ownershipQosPolicyType"/>
+            <xs:element name="destinationOrder" type="destinationOrderQosPolicyType"/>
+            <xs:element name="presentation" type="presentationQosPolicyType"/>
+            <xs:element name="partition" type="partitionQosPolicyType"/>
+            <xs:element name="topicData" type="topicDataQosPolicyType"/>
+            <xs:element name="groupData" type="groupDataQosPolicyType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| -->
+
+    <xs:complexType name="rtpsParticipantAttributesType">
+        <xs:all minOccurs="0">
+            <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
+            <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
+            <xs:element name="sendSocketBufferSize" type="uint32Type"/>
+            <xs:element name="listenSocketBufferSize" type="uint32Type"/>
+            <xs:element name="builtin" type="builtinAttributesType"/>
+            <xs:element name="port" type="portType"/>
+            <xs:element name="userData" type="octetVectorType"/>
+            <xs:element name="participantID" type="int32Type"/>
+            <xs:element name="throughputController" type="throughputControllerType"/>
+            <xs:element name="userTransports" type="stringListType"/>
+            <xs:element name="useBuiltinTransports" type="boolType"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
+            <xs:element name="name" type="stringType"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="participantProfileType">
+        <xs:sequence>
+            <xs:element name="rtps" type="rtpsParticipantAttributesType"/>
+        </xs:sequence>
+        <xs:attribute name="profile_name" type="stringType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="publisherProfileType">
+        <xs:all minOccurs="0">
+            <xs:element name="topic" type="topicAttributesType"/>
+            <xs:element name="qos" type="writerQosPoliciesType"/>
+            <xs:element name="times" type="writerTimesType"/>
+            <xs:element name="unicastLocatorList" type="locatorListType"/>
+            <xs:element name="multicastLocatorList" type="locatorListType"/>
+            <xs:element name="outLocatorList" type="locatorListType"/>
+            <xs:element name="throughputController" type="throughputControllerType"/>
+            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
+            <xs:element name="userDefinedID" type="int16Type"/>
+            <xs:element name="entityID" type="int16Type"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="stringType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="subscriberProfileType">
+        <xs:all minOccurs="0">
+            <xs:element name="topic" type="topicAttributesType"/>
+            <xs:element name="qos" type="readerQosPoliciesType"/>
+            <xs:element name="times" type="readerTimesType"/>
+            <xs:element name="unicastLocatorList" type="locatorListType"/>
+            <xs:element name="multicastLocatorList" type="locatorListType"/>
+            <xs:element name="outLocatorList" type="locatorListType"/>
+            <xs:element name="expectsInlineQos" type="boolType"/>
+            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
+            <xs:element name="userDefinedID" type="int16Type"/>
+            <xs:element name="entityID" type="int16Type"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="stringType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="rtpsTransportDescriptorType">
+        <xs:all minOccurs="0">
+            <xs:element name="transport_id" type="stringType"/>
+            <xs:element name="type" type="stringType"/>
+            <xs:element name="sendBufferSize" type="int32Type"/>
+            <xs:element name="receiveBufferSize" type="int32Type"/>
+            <xs:element name="TTL" type="uint8Type"/>
+            <xs:element name="maxMessageSize" type="uint32Type"/>
+            <xs:element name="maxInitialPeersRange" type="uint32Type"/>
+            <xs:element name="interfaceWhiteList" type="stringListType"/>
+            <xs:sequence>
+                <xs:element name="id" type="stringType"/>
+            </xs:sequence>
+            <xs:element name="wan_addr" type="stringType"/>
+            <xs:element name="output_port" type="uint16Type"/>
+            <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
+            <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
+            <xs:element name="max_logical_port" type="uint16Type"/>
+            <xs:element name="logical_port_range" type="uint16Type"/>
+            <xs:element name="logical_port_increment" type="uint16Type"/>
+            <xs:element name="metadata_logical_port" type="uint16Type"/>
+            <xs:element name="ListeningPorts" type="uint16ListType"/>
+            <xs:sequence>
+                <xs:element name="port" type="uint16Type"/>
+            </xs:sequence>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="stringListType">
+        <xs:sequence>
+            <xs:element name="id" type="stringType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="profiles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
     </xs:element>
-</xs:schema> 
+
+    <!-- DDS XML TYPES (FULL) -->
+    <!-- Primitive types -->
+    <xs:sympleType name="boolean">
+        <xs:restriction base="xs:boolean"/>
+    </xs:sympleType>
+
+    <xs:simpleType name="char">
+        <xs:restriction base="xs:string">
+            <xs:length value="1" fixed="true"/>
+        </xsd:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="wchar">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="double">
+        <xs:restriction base="xs:double"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="float">
+        <xs:restriction base="xs:float"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="octet">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="long">
+        <xs:restriction base="xs:int"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="long long">
+        <xs:restriction base="xs:long"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="short">
+        <xs:restriction base="xs:short"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="string">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="boundedString">
+        <xs:restriction base="xs:string">
+            <xs:maxLength
+                value="10"
+                fixed="true"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="unsigned short">
+        <xs:restriction base="xs:unsignedShort"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="unsigned long">
+        <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="unsigned long long">
+        <xs:restriction base="xs:unsignedLong"/>
+    </xs:simpleType>
+
+    <!-- Used to declare structs, unions, etc. -->
+    <xs:simpleType name="complexTypeName">
+        <xs:attribute name="type" type="string" use="required"/>
+    </xs:simpleType>
+
+    <!-- Complex Types -->
+
+    <xs:complexType name="arrayDcl">
+        <xs:attribute name="name" type="string" use="optional"/>
+        <xs:attribute name="type" type="allTypes" use="required"/>
+        <xs:attribute name="dimensions" type="string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="sequenceDcl">
+        <xs:attribute name="name" type="string" use="optional"/>
+        <xs:attribute name="type" type="allTypes" use="required"/>
+        <xs:attribute name="length" type="xs:unsignedInt" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="memberDcl">
+        <xs:attribute name="name" type="string" use="optional"/>
+        <xs:attribute name="type" type="allTypes" use="required"/>
+        <xs:attribute name="key" type="trueFalseKind" use="optional" default="false"/>
+    </xs:complexType>
+
+    <xs:complexType name="structDcl">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="member" type="memberDcl" minOccurs="1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="caseDcl">
+        <xs:sequence>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="caseValue" type="string" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:choice>
+            <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="unionDcl">
+        <xs:sequence>
+            <xs:element name="discriminator" type="string" minOccurs="1"/>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="case" type="caseDcl" minOccurs="1"/>
+            </xs:sequence>
+        </xs:sequence>
+        <xs:attribute name="name" type="string" use="required"/>
+    </xs:complexType>
+
+    <!-- Aux declarations -->
+    <xs:simpleType name="allTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="char"/>
+            <xs:enumeration value="wchar"/>
+            <xs:enumeration value="octet"/>
+            <xs:enumeration value="short"/>
+            <xs:enumeration value="long"/>
+            <xs:enumeration value="unsigned short"/>
+            <xs:enumeration value="unsigned long"/>
+            <xs:enumeration value="long long"/>
+            <xs:enumeration value="unsigned long long"/>
+            <xs:enumeration value="float"/>
+            <xs:enumeration value="double"/>
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="boundedString"/>
+            <xs:enumeration value="complexTypeName"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Types entry point -->
+    <xs:group name="moduleElems">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="struct" type="structDcl" minOccurs="0"/>
+                <xs:element name="union" type="unionDcl" minOccurs="0"/>
+                <!-- TODO add more -->
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:element name="types">
+        <xs:complexType>
+            <xs:group ref="moduleElems"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

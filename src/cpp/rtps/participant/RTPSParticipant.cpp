@@ -67,35 +67,31 @@ uint32_t RTPSParticipant::getRTPSParticipantID() const
     return mp_impl->getRTPSParticipantID();
 }
 
-bool RTPSParticipant::registerWriter(RTPSWriter* Writer,TopicAttributes& topicAtt,WriterQos& wqos)
+bool RTPSParticipant::registerWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos)
 {
     return mp_impl->registerWriter(Writer,topicAtt, wqos);
 }
 
-bool RTPSParticipant::registerReader(RTPSReader* Reader,TopicAttributes& topicAtt,ReaderQos& rqos)
+bool RTPSParticipant::registerReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos)
 {
     return mp_impl->registerReader(Reader,topicAtt, rqos);
 }
 
-bool RTPSParticipant::updateWriter(RTPSWriter* Writer,WriterQos& wqos)
+bool RTPSParticipant::updateWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos)
 {
-    return mp_impl->updateLocalWriter(Writer, wqos);
+    return mp_impl->updateLocalWriter(Writer, topicAtt, wqos);
 }
 
-bool RTPSParticipant::updateReader(RTPSReader* Reader,ReaderQos& rqos)
+bool RTPSParticipant::updateReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos)
 {
-    return mp_impl->updateLocalReader(Reader, rqos);
-}
-
-std::pair<StatefulReader*,StatefulReader*> RTPSParticipant::getEDPReaders(){	
-    return mp_impl->getEDPReaders();
+    return mp_impl->updateLocalReader(Reader, topicAtt, rqos);
 }
 
 std::vector<std::string> RTPSParticipant::getParticipantNames() const {
     return mp_impl->getParticipantNames();
 }
 
-RTPSParticipantAttributes RTPSParticipant::getRTPSParticipantAttributes() const {
+const RTPSParticipantAttributes & RTPSParticipant::getRTPSParticipantAttributes() const {
     return mp_impl->getRTPSParticipantAttributes();
 }
 

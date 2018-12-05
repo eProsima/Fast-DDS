@@ -51,12 +51,17 @@ class PubSubWriterReader
             ~ParticipantListener() {}
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(eprosima::fastrtps::Participant*, const eprosima::fastrtps::ParticipantAuthenticationInfo& info)
+            void onParticipantAuthentication(eprosima::fastrtps::Participant*, 
+                eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
             {
-                if(info.rtps.status() == eprosima::fastrtps::rtps::AUTHORIZED_RTPSPARTICIPANT)
+                if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
+                {
                     wreader_.authorized();
-                else if(info.rtps.status() == eprosima::fastrtps::rtps::UNAUTHORIZED_RTPSPARTICIPANT)
+                }
+                else if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT)
+                {
                     wreader_.unauthorized();
+                }
             }
 #endif
 
@@ -278,7 +283,7 @@ class PubSubWriterReader
         cv_.wait(lock, checker);
     }
 
-    void waitDiscovery()
+    void wait_discovery()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 

@@ -29,7 +29,9 @@
 #include <fastrtps/transport/test_UDPv4Transport.h>
 
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/utils/System.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
@@ -67,11 +69,6 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
         logError(RTPS_PARTICIPANT,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
     }
-    if(PParam.use_IP4_to_send == false && PParam.use_IP6_to_send == false)
-    {
-        logError(RTPS_PARTICIPANT,"Use IP4 OR User IP6 to send must be set to true");
-        return nullptr;
-    }
     uint32_t ID;
     if(PParam.participantID < 0)
     {
@@ -100,14 +97,7 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
     }
 
     PParam.participantID = ID;
-    int pid;
-#if defined(__cplusplus_winrt)
-    pid = (int)GetCurrentProcessId();
-#elif defined(_WIN32)
-    pid = (int)_getpid();
-#else
-    pid = (int)getpid();
-#endif
+    int pid = System::GetPID();
     GuidPrefix_t guidP;
     LocatorList_t loc;
     IPFinder::getIP4Address(&loc);
@@ -124,6 +114,13 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
         guidP.value[1] = c_VendorId_eProsima[1];
         guidP.value[2] = 127;
         guidP.value[3] = 1;
+
+        if (PParam.builtin.initialPeersList.empty())
+        {
+            Locator_t local;
+            IPLocator::setIPv4(local, 127, 0, 0, 1);
+            PParam.builtin.initialPeersList.push_back(local);
+        }
     }
     guidP.value[4] = ((octet*)&pid)[0];
     guidP.value[5] = ((octet*)&pid)[1];
@@ -257,6 +254,3 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
 } /* namespace  rtps */
 } /* namespace  fastrtps */
 } /* namespace eprosima */
-
-
-

@@ -138,7 +138,7 @@ bool EDPStatic::removeLocalReader(RTPSReader* R)
         {
             if(staticproperty.m_entityId == R->getGuid().entityId)
             {
-                *pit = EDPStaticProperty::toProperty("Reader","ENDED",R->getAttributes()->getUserDefinedID(),
+                *pit = EDPStaticProperty::toProperty("Reader","ENDED",R->getAttributes().getUserDefinedID(),
                         R->getGuid().entityId);
             }
         }
@@ -158,7 +158,7 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
         {
             if(staticproperty.m_entityId == W->getGuid().entityId)
             {
-                *pit = EDPStaticProperty::toProperty("Writer","ENDED",W->getAttributes()->getUserDefinedID(),
+                *pit = EDPStaticProperty::toProperty("Writer","ENDED",W->getAttributes().getUserDefinedID(),
                         W->getGuid().entityId);
             }
         }

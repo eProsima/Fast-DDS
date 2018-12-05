@@ -29,6 +29,7 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
@@ -38,6 +39,7 @@
 #include <asio.hpp>
 #include <gtest/gtest.h>
 
+using eprosima::fastrtps::rtps::IPLocator;
 
 template<class TypeSupport>
 class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
@@ -84,7 +86,7 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
                 history_->remove_change_g(change);
             }
         }
-        
+
         void init()
         {
             //Create participant
@@ -137,11 +139,11 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
             }
         }
 
-        bool is_history_empty () 
+        bool is_history_empty ()
         {
             return history_->getHistorySize() == 0;
         }
-        
+
         RTPSAsSocketWriter& auto_remove_on_volatile()
         {
             auto_remove_ = true;
@@ -171,8 +173,8 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
             port_ = port;
 
             eprosima::fastrtps::rtps::Locator_t loc;
-            loc.set_IP4_address(ip);
-            loc.port = port;
+            IPLocator::setIPv4(loc, ip);
+            loc.port = static_cast<uint16_t>(port);
             writer_attr_.endpoint.multicastLocatorList.push_back(loc);
 
             return *this;
@@ -188,8 +190,8 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
 
             eprosima::fastrtps::rtps::RemoteReaderAttributes rattr;
             eprosima::fastrtps::rtps::Locator_t loc;
-            loc.set_IP4_address(ip_);
-            loc.port = port_;
+            IPLocator::setIPv4(loc, ip_);
+            loc.port = static_cast<uint16_t>(port_);
             rattr.endpoint.multicastLocatorList.push_back(loc);
 
             if(writer_attr_.endpoint.reliabilityKind == eprosima::fastrtps::rtps::RELIABLE)

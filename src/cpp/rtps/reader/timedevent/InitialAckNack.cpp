@@ -47,8 +47,11 @@ InitialAckNack::InitialAckNack(WriterProxy* wp, double interval):
     TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
             wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
     m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix), wp_(wp)
+            wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix), wp_(wp),
+    m_destination_locators(wp->m_att.endpoint.unicastLocatorList),
+    m_remote_endpoints(1, wp->m_att.guid)
 {
+    m_destination_locators.push_back(wp->m_att.endpoint.multicastLocatorList);
 }
 
 void InitialAckNack::event(EventCode code, const char* msg)
@@ -73,12 +76,10 @@ void InitialAckNack::event(EventCode code, const char* msg)
 
         logInfo(RTPS_READER,"Sending ACKNACK: "<< sns);
 
-        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages);
+        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
+            m_destination_locators, m_remote_endpoints);
 
-        LocatorList_t locators(wp_->m_att.endpoint.unicastLocatorList);
-        locators.push_back(wp_->m_att.endpoint.multicastLocatorList);
-
-        group.add_acknack(wp_->m_att.guid, sns, acknackCount, false, locators);
+        group.add_acknack(m_remote_endpoints, sns, acknackCount, false, m_destination_locators);
     }
     else if(code == EVENT_ABORT)
     {

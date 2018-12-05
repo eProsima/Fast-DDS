@@ -61,6 +61,10 @@ class InitialAckNack: public TimedEvent
         RTPSMessageGroup_t m_cdrmessages;
         //!
         WriterProxy* wp_;
+        //!List of destination locators
+        LocatorList_t m_destination_locators;
+        //!List of destination endpoints
+        std::vector<GUID_t> m_remote_endpoints;
 };
 
 }

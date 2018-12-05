@@ -18,7 +18,8 @@ macro(eprosima_find_package package)
 
         # Parse arguments.
         set(options REQUIRED)
-        cmake_parse_arguments(FIND "${options}" "" "" ${ARGN})
+        set(multiValueArgs OPTIONS)
+        cmake_parse_arguments(FIND "${options}" "" "${multiValueArgs}" ${ARGN})
 
         option(THIRDPARTY "Activate the use of internal thirdparties" OFF)
         option(THIRDPARTY_UPDATE "Activate the auto update of internal thirdparties" ON)
@@ -51,6 +52,9 @@ macro(eprosima_find_package package)
             endif()
 
             if(SUBDIRECTORY_EXIST)
+                foreach(opt_ ${FIND_OPTIONS})
+                    set(${opt_} ON)
+                endforeach()
                 add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/${package})
                 set(${package}_FOUND TRUE)
                 if(NOT IS_TOP_LEVEL)

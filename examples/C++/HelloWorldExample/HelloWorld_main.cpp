@@ -32,10 +32,22 @@ int main(int argc, char** argv)
 {
     std::cout << "Starting "<< std::endl;
     int type = 1;
+    int count = 10;
+    long sleep = 100;
     if(argc > 1)
     {
         if(strcmp(argv[1],"publisher")==0)
+        {
             type = 1;
+            if (argc >= 3)
+            {
+                count = atoi(argv[2]);
+                if (argc == 4)
+                {
+                    sleep = atoi(argv[3]);
+                }
+            }
+        }
         else if(strcmp(argv[1],"subscriber")==0)
             type = 2;
     }
@@ -46,7 +58,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-
     switch(type)
     {
         case 1:
@@ -54,7 +65,7 @@ int main(int argc, char** argv)
                 HelloWorldPublisher mypub;
                 if(mypub.init())
                 {
-                    mypub.run(10);
+                    mypub.run(count, sleep);
                 }
                 break;
             }

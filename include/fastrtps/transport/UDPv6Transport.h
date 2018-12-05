@@ -15,17 +15,8 @@
 #ifndef UDPV6_TRANSPORT_H
 #define UDPV6_TRANSPORT_H
 
-#include <asio.hpp>
-#include <thread>
-
-#include "TransportInterface.h"
+#include "UDPTransportInterface.h"
 #include "UDPv6TransportDescriptor.h"
-#include "../utils/IPFinder.h"
-
-#include <vector>
-#include <memory>
-#include <map>
-#include <mutex>
 
 namespace eprosima{
 namespace fastrtps{
@@ -37,182 +28,93 @@ namespace rtps{
  *       This collection of sockets constitute the "outbound channel". In other words, a channel corresponds
  *       to a port + a direction.
  *
- *    - It is possible to provide a white list at construction, which limits the interfaces the transport 
+ *    - It is possible to provide a white list at construction, which limits the interfaces the transport
  *       will ever be able to interact with. If left empty, all interfaces are allowed.
  *
  *    - Opening an input channel by passing a locator will open a socket listening on the given port on every
- *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator 
+ *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator
  *       that does not correspond to the multicast range will simply open the port without a subsequent join. Joining
- *       multicast groups late is supported by attempting to open the channel again with the same port + a 
+ *       multicast groups late is supported by attempting to open the channel again with the same port + a
  *       multicast address (the OpenInputChannel function will fail, however, because no new channel has been
  *       opened in a strict sense).
  * @ingroup TRANSPORT_MODULE
  */
-
-class UDPv6Transport : public TransportInterface
+class UDPv6Transport : public UDPTransportInterface
 {
-    class SocketInfo
-    {
-        public:
-
-            SocketInfo(asio::ip::udp::socket& socket) :
-                socket_(std::move(socket)), only_multicast_purpose_(false)
-            {
-            }
-
-            SocketInfo(SocketInfo&& socketInfo) :
-                socket_(std::move(socketInfo.socket_)),
-                only_multicast_purpose_(socketInfo.only_multicast_purpose_)
-            {
-            }
-
-            SocketInfo& operator=(SocketInfo&& socketInfo)
-            {
-                socket_ = std::move(socketInfo.socket_);
-                only_multicast_purpose_ = socketInfo.only_multicast_purpose_;
-                return *this;
-            }
-
-            void only_multicast_purpose(const bool value)
-            {
-                only_multicast_purpose_ = value;
-            };
-
-            bool& only_multicast_purpose()
-            {
-                return only_multicast_purpose_;
-            }
-
-            bool only_multicast_purpose() const
-            {
-                return only_multicast_purpose_;
-            }
-
-            asio::ip::udp::socket socket_;
-            bool only_multicast_purpose_;
-
-        private:
-
-            SocketInfo(const SocketInfo&) = delete;
-            SocketInfo& operator=(const SocketInfo&) = delete;
-    };
-
 public:
 
-   RTPS_DllAPI UDPv6Transport(const UDPv6TransportDescriptor&);
+    RTPS_DllAPI UDPv6Transport(const UDPv6TransportDescriptor&);
 
-   ~UDPv6Transport();
+    virtual ~UDPv6Transport() override;
 
-   bool init() override;
+    virtual const UDPTransportDescriptor* GetConfiguration() const override;
 
-   //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsInputChannelOpen(const Locator_t&) const override;
+    /**
+        * Starts listening on the specified port, and if the specified address is in the
+        * multicast range, it joins the specified multicast group,
+        */
+    virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) override;
 
-   /**
-    * Checks whether there are open and bound sockets for the given port.
+    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
+
+    virtual bool is_local_locator(const Locator_t& locator) const override;
+
+    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
+
+    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+        uint32_t metatraffic_multicast_port) const override;
+
+    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+        uint32_t metatraffic_unicast_port) const override;
+
+    bool getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const override;
+
+    virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) override;
+
+protected:
+
+    //! Constructor with no descriptor is necessary for implementations derived from this class.
+	UDPv6Transport();
+    UDPv6TransportDescriptor mConfiguration_;
+
+    virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const override;
+    virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const override;
+
+    virtual void EndpointToLocator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) override;
+    virtual void FillLocalIp(Locator_t& loc) override;
+
+    virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) override;
+    virtual asio::ip::udp::endpoint GenerateEndpoint(uint16_t port) override;
+    virtual asio::ip::udp::endpoint GenerateEndpoint(const std::string& sIp, uint16_t port) override;
+    virtual asio::ip::udp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) override;
+    virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) override;
+    virtual asio::ip::udp GenerateProtocol() const override;
+    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) override;
+    eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) override;
+
+    //! Checks for whether locator is allowed.
+    virtual bool IsLocatorAllowed(const Locator_t&) const override;
+
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @param locator Input locator.
+    * @return Vector of interfaces in string format.
     */
-   virtual bool IsOutputChannelOpen(const Locator_t&) const override;
+    virtual std::vector<std::string> GetBindingInterfacesList() override;
 
-   //! Checks for UDPv6 kind.
-   virtual bool IsLocatorSupported(const Locator_t&) const override;
+    //! Checks if the given interface is allowed by the white list.
+    virtual bool IsInterfaceAllowed(const std::string& interface) const override;
 
-   //! Reports whether Locators correspond to the same port.
-   virtual bool DoLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    //! Checks if the given interface is allowed by the white list.
+    bool IsInterfaceAllowed(const asio::ip::address_v6& ip) const;
 
-   /**
-    * Converts a given remote locator (that is, a locator referring to a remote
-    * destination) to the main local locator whose channel can write to that
-    * destination. In this case it will return a IP_ANY address on that port.
-    */
-   virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
+    //! Checks if the interfaces white list is empty.
+    virtual bool IsInterfaceWhiteListEmpty() const override;
+    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
 
-   /**
-    * Starts listening on the specified port, and if the specified address is in the
-    * multicast range, it joins the specified multicast group,
-    */
-   virtual bool OpenInputChannel(const Locator_t&) override;
-
-   /**
-    * Opens a socket on the given address and port (as long as they are white listed).
-    */
-   virtual bool OpenOutputChannel(Locator_t&) override;
-
-   //! Removes the listening socket for the specified port.
-   virtual bool CloseInputChannel(const Locator_t&) override;
-
-   //! Release the listening socket for the specified port.
-   virtual bool ReleaseInputChannel(const Locator_t&) override;
-
-   //! Removes all outbound sockets on the given port.
-   virtual bool CloseOutputChannel(const Locator_t&) override;
-
-   /**
-    * Blocking Send through the specified channel. In both modes, using a localLocator of ANY will
-    * send through all whitelisted interfaces provided the channel is open.
-    * @param sendBuffer Slice into the raw data to send.
-    * @param sendBufferSize Size of the raw data. It will be used as a bounds check for the previous argument.
-    * It must not exceed the sendBufferSize fed to this class during construction.
-    * @param localLocator Locator mapping to the channel we're sending from.
-    * @param remoteLocator Locator describing the remote destination we're sending to.
-    */
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-                     const Locator_t& remoteLocator) override;
-   /**
-    * Blocking Receive from the specified channel.
-    * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
-    * capacity must not be less than the receiveBufferSize supplied to this class during construction.
-    * @param localLocator Locator mapping to the local channel we're listening to.
-    * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
-    */
-   virtual bool Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-                        const Locator_t& localLocator, Locator_t& remoteLocator) override;
-
-   virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
-
-   virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
-
-   virtual bool is_local_locator(const Locator_t& locator) const override;
-
-   UDPv6TransportDescriptor get_configuration() { return mConfiguration_; }
-
-private:
-
-   UDPv6TransportDescriptor mConfiguration_;
-   uint32_t mSendBufferSize;
-   uint32_t mReceiveBufferSize;
-
-   // For UDPv6, the notion of channel corresponds to a port + direction tuple.
-	asio::io_service mService;
-   std::unique_ptr<std::thread> ioServiceThread;
-
-   mutable std::recursive_mutex mOutputMapMutex;
-   mutable std::recursive_mutex mInputMapMutex;
-
-   //! The notion of output channel corresponds to a port.
-   std::map<uint32_t, std::vector<SocketInfo> > mOutputSockets;
-
-   std::vector<IPFinder::info_IP> currentInterfaces;
-
-   //! The notion of output channel corresponds to an address.
-   struct LocatorCompare{ bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
-                        {return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0); } };
-   //! For both modes, an input channel corresponds to a port.
-   std::map<uint32_t, asio::ip::udp::socket> mInputSockets;
-
-   bool IsInterfaceAllowed(const asio::ip::address_v6& ip);
-   std::vector<asio::ip::address_v6> mInterfaceWhiteList;
-
-
-   bool OpenAndBindOutputSockets(Locator_t& locator);
-   bool OpenAndBindInputSockets(uint32_t port, bool is_multicast);
-
-   asio::ip::udp::socket OpenAndBindUnicastOutputSocket(const asio::ip::address_v6&, uint32_t& port);
-   asio::ip::udp::socket OpenAndBindInputSocket(uint32_t port, bool is_multicast);
-
-   bool SendThroughSocket(const octet* sendBuffer,
-                          uint32_t sendBufferSize,
-                          const Locator_t& remoteLocator,
-                          asio::ip::udp::socket& socket);
+    virtual void SetReceiveBufferSize(uint32_t size) override;
+    virtual void SetSendBufferSize(uint32_t size) override;
+    virtual void SetSocketOutbountInterface(eProsimaUDPSocket&, const std::string&) override;
 };
 
 } // namespace rtps

@@ -15,17 +15,17 @@
 #ifndef __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 #define __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 
+#include <fastrtps/rtps/security/common/Handle.h>
 #include <rtps/security/MockAuthenticationPlugin.h>
 #include <rtps/security/MockCryptographyPlugin.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/reader/StatelessReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/security/common/Handle.h>
 #include <rtps/security/SecurityPluginFactory.h>
 #include <rtps/security/SecurityManager.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -33,7 +33,7 @@
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps::rtps;
-using namespace security;
+using namespace eprosima::fastrtps::rtps::security;
 using namespace ::testing;
 
 class MockIdentity
@@ -84,6 +84,7 @@ class SecurityTest : public ::testing::Test
             ::testing::DefaultValue<const RTPSParticipantAttributes&>::Clear();
             ::testing::DefaultValue<const GUID_t&>::Clear();
             ::testing::DefaultValue<CDRMessage_t>::Clear();
+            ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Clear();
         }
 
         void fill_participant_key(GUID_t& participant_key)
@@ -111,6 +112,7 @@ class SecurityTest : public ::testing::Test
             ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
             ::testing::DefaultValue<const GUID_t&>::Set(guid);
             ::testing::DefaultValue<CDRMessage_t>::Set(default_cdr_message);
+            ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
             stateless_writer_ = new ::testing::NiceMock<StatelessWriter>(&participant_);
             stateless_reader_ = new ::testing::NiceMock<StatelessReader>();
             volatile_writer_ = new ::testing::NiceMock<StatefulWriter>(&participant_);
@@ -118,7 +120,7 @@ class SecurityTest : public ::testing::Test
 
             EXPECT_CALL(*auth_plugin_, validate_local_identity(_,_,_,_,_,_)).Times(1).
                 WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_)).Times(1).
+            EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_local_participant(Ref(local_identity_handle_),_,_,_,_)).Times(1).
                 WillOnce(Return(&local_participant_crypto_handle_));
             EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&local_participant_crypto_handle_,_)).Times(1).
                 WillOnce(Return(true));
@@ -129,7 +131,7 @@ class SecurityTest : public ::testing::Test
                 WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true))).
                 WillOnce(DoAll(SetArgPointee<0>(volatile_reader_), Return(true)));
 
-            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
+            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
         }
 
         void initialization_auth_ok()
@@ -139,6 +141,7 @@ class SecurityTest : public ::testing::Test
             ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
             ::testing::DefaultValue<const GUID_t&>::Set(guid);
             ::testing::DefaultValue<CDRMessage_t>::Set(default_cdr_message);
+            ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
             stateless_writer_ = new ::testing::NiceMock<StatelessWriter>(&participant_);
             stateless_reader_ = new ::testing::NiceMock<StatelessReader>();
 
@@ -149,7 +152,7 @@ class SecurityTest : public ::testing::Test
             EXPECT_CALL(participant_, createReader_mock(_,_,_,_,_,_,_)).Times(1).
                 WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true)));
 
-            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_));
+            ASSERT_TRUE(manager_.init(security_attributes_, participant_properties_, security_activated_));
         }
 
         void request_process_ok(CacheChange_t** request_message_change = nullptr)
@@ -209,11 +212,11 @@ class SecurityTest : public ::testing::Test
 #if __BIG_ENDIAN__
             aux_msg.msg_endian = BIGEND;
             change->serializedPayload.encapsulation = PL_CDR_BE;
-            CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+            CDRMessage::addOctet(&aux_msg, CDR_BE);
 #else
             aux_msg.msg_endian = LITTLEEND;
             change->serializedPayload.encapsulation = PL_CDR_LE;
-            CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+            CDRMessage::addOctet(&aux_msg, CDR_LE);
 #endif
             CDRMessage::addUInt16(&aux_msg, 0);
 
@@ -273,11 +276,11 @@ class SecurityTest : public ::testing::Test
 #if __BIG_ENDIAN__
             aux_msg.msg_endian = BIGEND;
             change->serializedPayload.encapsulation = PL_CDR_BE;
-            CDRMessage::addOctet(&aux_msg, PL_CDR_BE);
+            CDRMessage::addOctet(&aux_msg, CDR_BE);
 #else
             aux_msg.msg_endian = LITTLEEND;
             change->serializedPayload.encapsulation = PL_CDR_LE;
-            CDRMessage::addOctet(&aux_msg, PL_CDR_LE);
+            CDRMessage::addOctet(&aux_msg, CDR_LE);
 #endif
             CDRMessage::addUInt16(&aux_msg, 0);
 
@@ -312,10 +315,10 @@ class SecurityTest : public ::testing::Test
             EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, unregister_participant(&participant_crypto_handle,_)).Times(1).
                 WillOnce(Return(true));
 
-            RTPSParticipantAuthenticationInfo info;
-            info.status(AUTHORIZED_RTPSPARTICIPANT);
-            info.guid(remote_participant_key);
-            EXPECT_CALL(*participant_.getListener(), onRTPSParticipantAuthentication(_, info)).Times(1);
+            ParticipantAuthenticationInfo info;
+            info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+            info.guid = remote_participant_key;
+            EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
             stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
@@ -353,6 +356,7 @@ class SecurityTest : public ::testing::Test
         ParticipantProxyData participant_data_;
         ParticipantSecurityAttributes security_attributes_;
         PropertyPolicy participant_properties_;
+        bool security_activated_;
 
 
         // Default Values

@@ -304,9 +304,11 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                         if(plength != length_diff)
                         {
                             delete(p);
-                            return -1;
                         }
-                        plist->m_parameters.push_back((Parameter_t*)p);
+                        else
+                        {
+                            plist->m_parameters.push_back((Parameter_t*)p);
+                        }
                         paramlist_byte_size += plength;
                         break;
                     }
@@ -710,13 +712,113 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                             break;
                         }
                     }
-                case PID_IDENTITY_TOKEN:
+
+                case PID_DATA_REPRESENTATION:
+                {
+                    DataRepresentationQosPolicy * p = new DataRepresentationQosPolicy();
+                    int16_t temp(0);
+                    uint32_t size(0);
+                    valid &= CDRMessage::readUInt32(msg, &size);
+                    for (uint32_t i = 0; i < size; ++i)
                     {
-                        ParameterToken_t* p = new ParameterToken_t(pid, plength);
-                        valid &= CDRMessage::readDataHolder(msg, p->token);
-                        msg->pos += (4 - msg->pos % 4) & 3; //align
-                        IF_VALID_ADD
+                        valid &= CDRMessage::readInt16(msg, &temp);
+                        p->m_value.push_back(static_cast<DataRepresentationId_t>(temp));
+
                     }
+                    IF_VALID_ADD
+                }
+                case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+                {
+                    uint16_t uKind(0);
+                    octet temp(0);
+                    TypeConsistencyEnforcementQosPolicy * p = new TypeConsistencyEnforcementQosPolicy();
+                    p->m_ignore_sequence_bounds = false;
+                    p->m_ignore_string_bounds = false;
+                    p->m_ignore_member_names = false;
+                    p->m_prevent_type_widening = false;
+                    p->m_force_type_validation = false;
+
+                    valid &= plength >= 2;
+                    if (valid)
+                    {
+                        valid &= CDRMessage::readUInt16(msg, &uKind);
+                        p->m_kind = static_cast<TypeConsistencyKind>(uKind);
+                    }
+                    if (valid && plength >= 3)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_ignore_sequence_bounds = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 4)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_ignore_string_bounds = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 5)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_ignore_member_names = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 6)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_prevent_type_widening = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 7)
+                    {
+                        valid &= CDRMessage::readOctet(msg, &temp);
+                        p->m_force_type_validation = temp == 0 ? false : true;
+                    }
+                    IF_VALID_ADD
+                }
+                case PID_TYPE_IDV1:
+                {
+                    TypeIdV1 * p = new TypeIdV1();
+                    valid &= p->readFromCDRMessage(msg, plength);
+                    IF_VALID_ADD
+                }
+                case PID_TYPE_OBJECTV1:
+                {
+                    TypeObjectV1 * p = new TypeObjectV1();
+                    valid &= p->readFromCDRMessage(msg, plength);
+                    IF_VALID_ADD
+                }
+
+#if HAVE_SECURITY
+                case PID_IDENTITY_TOKEN:
+                case PID_PERMISSIONS_TOKEN:
+                {
+                    ParameterToken_t* p = new ParameterToken_t(pid, plength);
+                    valid &= CDRMessage::readDataHolder(msg, p->token);
+                    msg->pos += (4 - msg->pos % 4) & 3; //align
+                    IF_VALID_ADD
+                }
+
+                case PID_PARTICIPANT_SECURITY_INFO:
+                {
+                    if (plength != PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
+                    {
+                        return -1;
+                    }
+                    ParameterParticipantSecurityInfo_t* p = new ParameterParticipantSecurityInfo_t(pid, plength);
+                    valid &= CDRMessage::readUInt32(msg, &p->security_attributes);
+                    valid &= CDRMessage::readUInt32(msg, &p->plugin_security_attributes);
+                    IF_VALID_ADD
+                }
+
+                case PID_ENDPOINT_SECURITY_INFO:
+                {
+                    if (plength != PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
+                    {
+                        return -1;
+                    }
+                    ParameterEndpointSecurityInfo_t* p = new ParameterEndpointSecurityInfo_t(pid, plength);
+                    valid &= CDRMessage::readUInt32(msg, &p->security_attributes);
+                    valid &= CDRMessage::readUInt32(msg, &p->plugin_security_attributes);
+                    IF_VALID_ADD
+                }
+#endif
+
                 case PID_PAD:
                 default:
                     {
@@ -748,10 +850,7 @@ bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const ui
     }
 
     // Use a temporary wraping message
-    CDRMessage_t msg(0);
-    msg.wraps = true;
-    msg.buffer = change->serializedPayload.data;
-    msg.length = change->serializedPayload.length;
+    CDRMessage_t msg(change->serializedPayload);
 
     // Read encapsulation
     msg.pos += 1;

@@ -44,9 +44,11 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval
     TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
             p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
     mp_WP(p_WP), m_cdrmessages(p_WP->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix)
+            p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix),
+    m_destination_locators(p_WP->m_att.endpoint.unicastLocatorList),
+    m_remote_endpoints(1, p_WP->m_att.guid)
 {
-
+    m_destination_locators.push_back(p_WP->m_att.endpoint.multicastLocatorList);
 }
 
 void HeartbeatResponseDelay::event(EventCode code, const char* msg)
@@ -66,9 +68,8 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
         // Stores missing changes but there is some fragments received.
         std::vector<CacheChange_t*> uncompleted_changes;
 
-        RTPSMessageGroup group(mp_WP->mp_SFR->getRTPSParticipant(), mp_WP->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages);
-        LocatorList_t locators(mp_WP->m_att.endpoint.unicastLocatorList);
-        locators.push_back(mp_WP->m_att.endpoint.multicastLocatorList);
+        RTPSMessageGroup group(mp_WP->mp_SFR->getRTPSParticipant(), mp_WP->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
+            m_destination_locators, m_remote_endpoints);
 
         if(!missing_changes.empty() || !mp_WP->m_heartbeatFinalFlag)
         {
@@ -103,7 +104,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
             if(sns.isSetEmpty())
                 final = true;
 
-            group.add_acknack(mp_WP->m_att.guid, sns, mp_WP->mp_SFR->m_acknackCount, final, locators);
+            group.add_acknack(m_remote_endpoints, sns, mp_WP->mp_SFR->m_acknackCount, final, m_destination_locators);
         }
 
         // Now generage NACK_FRAGS
@@ -142,7 +143,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                 ++mp_WP->mp_SFR->m_nackfragCount;
                 logInfo(RTPS_READER,"Sending NACKFRAG for sample" << cit->sequenceNumber << ": "<< frag_sns;);
 
-                group.add_nackfrag(mp_WP->m_att.guid, cit->sequenceNumber, frag_sns, mp_WP->mp_SFR->m_nackfragCount, locators);
+                group.add_nackfrag(m_remote_endpoints, cit->sequenceNumber, frag_sns, mp_WP->mp_SFR->m_nackfragCount, m_destination_locators);
             }
         }
     }

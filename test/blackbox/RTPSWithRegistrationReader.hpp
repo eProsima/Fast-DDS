@@ -29,6 +29,7 @@
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
@@ -40,6 +41,8 @@
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+
+using eprosima::fastrtps::rtps::IPLocator;
 
 template<class TypeSupport>
 class RTPSWithRegistrationReader
@@ -220,7 +223,7 @@ class RTPSWithRegistrationReader
         }
 
 
-        void waitDiscovery()
+        void wait_discovery()
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
@@ -279,8 +282,8 @@ class RTPSWithRegistrationReader
         RTPSWithRegistrationReader& add_to_multicast_locator_list(const std::string& ip, uint32_t port)
         {
             eprosima::fastrtps::rtps::Locator_t loc;
-            loc.set_IP4_address(ip);
-            loc.port = port;
+            IPLocator::setIPv4(loc, ip);
+            loc.port = static_cast<uint16_t>(port);
             reader_attr_.endpoint.multicastLocatorList.push_back(loc);
 
             return *this;

@@ -20,16 +20,11 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
-
 #include <fastrtps/log/Log.h>
-
 #include <fastrtps/qos/QosPolicies.h>
 
 #include <mutex>
@@ -42,18 +37,24 @@ namespace fastrtps{
 namespace rtps {
 
 ParticipantProxyData::ParticipantProxyData():
+    m_protocolVersion(c_ProtocolVersion),
+    m_VendorId(c_VendorId_Unknown),
     m_expectsInlineQos(false),
     m_availableBuiltinEndpoints(0),
     m_manualLivelinessCount(0),
+#if HAVE_SECURITY
+    security_attributes_(0UL),
+    plugin_security_attributes_(0UL),
+#endif
     isAlive(false),
     mp_leaseDurationTimer(nullptr)
     {
-        set_VendorId_Unknown(m_VendorId);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     m_protocolVersion(pdata.m_protocolVersion),
     m_guid(pdata.m_guid),
+    m_VendorId(pdata.m_VendorId),
     m_expectsInlineQos(pdata.m_expectsInlineQos),
     m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints),
     m_metatrafficUnicastLocatorList(pdata.m_metatrafficUnicastLocatorList),
@@ -64,15 +65,17 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
     m_participantName(pdata.m_participantName),
     m_key(pdata.m_key),
     m_leaseDuration(pdata.m_leaseDuration),
+#if HAVE_SECURITY
     identity_token_(pdata.identity_token_),
     permissions_token_(pdata.permissions_token_),
+    security_attributes_(pdata.security_attributes_),
+    plugin_security_attributes_(pdata.plugin_security_attributes_),
+#endif
     isAlive(pdata.isAlive),
     m_properties(pdata.m_properties),
     m_userData(pdata.m_userData),
     mp_leaseDurationTimer(nullptr)
     {
-        m_VendorId[0] = pdata.m_VendorId[0];
-        m_VendorId[1] = pdata.m_VendorId[1];
     }
 
 ParticipantProxyData::~ParticipantProxyData()
@@ -170,13 +173,13 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
 
+#if HAVE_SECURITY
     if(!this->identity_token_.class_id().empty())
     {
         ParameterToken_t* p = new ParameterToken_t(PID_IDENTITY_TOKEN, 0);
         p->token = identity_token_;
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
-
 
     if(!this->permissions_token_.class_id().empty())
     {
@@ -185,14 +188,23 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
         parameter_list.m_parameters.push_back((Parameter_t*)p);
     }
 
+    if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
+    {
+        ParameterParticipantSecurityInfo_t* p = new ParameterParticipantSecurityInfo_t();
+        p->security_attributes = this->security_attributes_;
+        p->plugin_security_attributes = this->plugin_security_attributes_;
+        parameter_list.m_parameters.push_back((Parameter_t*)p);
+    }
+#endif
+
     return parameter_list;
 }
 
-bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
+bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation)
 {
     ParameterList_t parameter_list;
 
-    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, true) > 0)
+    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, use_encapsulation) > 0)
     {
         for(std::vector<Parameter_t*>::iterator it = parameter_list.m_parameters.begin();
                 it!=parameter_list.m_parameters.end();++it)
@@ -287,50 +299,42 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
                         ParameterPropertyList_t*p = (ParameterPropertyList_t*)(*it);
                         this->m_properties = *p;
                         break;
-                        //FIXME: STATIC EDP. IN ASSIGN REMOTE ENDPOINTS
-                        //				if(mp_SPDP->m_discovery.use_STATIC_EndpointDiscoveryProtocol)
-                        //				{
-                        //					ParameterPropertyList_t* p = (ParameterPropertyList_t*)(*it);
-                        //					uint16_t userId;
-                        //					EntityId_t entityId;
-                        //					for(std::vector<std::pair<std::string,std::string>>::iterator it = p->properties.begin();
-                        //							it != p->properties.end();++it)
-                        //					{
-                        //						std::stringstream ss;
-                        //						std::string first_str = it->first.substr(0, it->first.find("_"));
-                        //						if(first_str == "staticedp")
-                        //						{
-                        //							std::string type = it->first.substr(10, it->first.find("_"));
-                        //							first_str = it->first.substr(17, it->first.find("_"));
-                        //							ss.clear();	ss.str(std::string());
-                        //							ss << first_str;ss >> userId;
-                        //							ss.clear();ss.str(std::string());
-                        //							ss << it->second;
-                        //							int a,b,c,d;
-                        //							char ch;
-                        //							ss >> a >> ch >> b >> ch >> c >>ch >> d;
-                        //							entityId.value[0] = (octet)a;entityId.value[1] = (octet)b;
-                        //							entityId.value[2] = (octet)c;entityId.value[3] = (octet)d;
-                        //							assignUserId(type,userId,entityId,Pdata);
-                        //						}
-                        //					}
                     }
-                        case PID_USER_DATA:
+                case PID_USER_DATA:
                     {
                         UserDataQosPolicy*p = (UserDataQosPolicy*)(*it);
                         this->m_userData = p->getDataVec();
                         break;
                     }
-                        case PID_IDENTITY_TOKEN:
+                case PID_IDENTITY_TOKEN:
                     {
+#if HAVE_SECURITY
                         ParameterToken_t* p = (ParameterToken_t*)(*it);
                         this->identity_token_ = std::move(p->token);
+#else
+                        logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+#endif
                         break;
                     }
-                        case PID_PERMISSIONS_TOKEN:
+                case PID_PERMISSIONS_TOKEN:
                     {
+#if HAVE_SECURITY
                         ParameterToken_t* p = (ParameterToken_t*)(*it);
                         this->permissions_token_ = std::move(p->token);
+#else
+                        logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+#endif
+                        break;
+                    }
+                case PID_PARTICIPANT_SECURITY_INFO:
+                    {
+#if HAVE_SECURITY
+                        ParameterParticipantSecurityInfo_t* p = (ParameterParticipantSecurityInfo_t*)(*it);
+                        this->security_attributes_ = p->security_attributes;
+                        this->plugin_security_attributes_ = p->plugin_security_attributes;
+#else
+                        logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+#endif
                         break;
                     }
 
@@ -348,7 +352,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
     {
         m_protocolVersion = ProtocolVersion_t();
         m_guid = GUID_t();
-        set_VendorId_Unknown(m_VendorId);
+        //set_VendorId_Unknown(m_VendorId);
+        m_VendorId = c_VendorId_Unknown;
         m_expectsInlineQos = false;
         m_availableBuiltinEndpoints = 0;
         m_metatrafficUnicastLocatorList.clear();
@@ -360,8 +365,12 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
         m_key = InstanceHandle_t();
         m_leaseDuration = Duration_t();
         isAlive = true;
+#if HAVE_SECURITY
         identity_token_ = IdentityToken();
         permissions_token_ = PermissionsToken();
+        security_attributes_ = 0UL;
+        plugin_security_attributes_ = 0UL;
+#endif
         m_properties.properties.clear();
         m_properties.length = 0;
         m_userData.clear();
@@ -385,8 +394,12 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
         isAlive = pdata.isAlive;
         m_properties = pdata.m_properties;
         m_userData = pdata.m_userData;
+#if HAVE_SECURITY
         identity_token_ = pdata.identity_token_;
         permissions_token_ = pdata.permissions_token_;
+        security_attributes_ = pdata.security_attributes_;
+        plugin_security_attributes_ = pdata.plugin_security_attributes_;
+#endif
     }
 
     bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
@@ -400,8 +413,12 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg)
         m_leaseDuration = pdata.m_leaseDuration;
         m_userData = pdata.m_userData;
         isAlive = true;
+#if HAVE_SECURITY
         identity_token_ = pdata.identity_token_;
         permissions_token_ = pdata.permissions_token_;
+        security_attributes_ = pdata.security_attributes_;
+        plugin_security_attributes_ = pdata.plugin_security_attributes_;
+#endif
         if(this->mp_leaseDurationTimer != nullptr)
         {
             mp_leaseDurationTimer->cancel_timer();

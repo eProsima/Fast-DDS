@@ -45,6 +45,10 @@ ReaderProxy::ReaderProxy(const RemoteReaderAttributes& rdata,const WriterTimes& 
         mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
     }
 
+    // Use remoteLocatorList as joint unicast + multicast locators
+    m_att.endpoint.remoteLocatorList.assign(m_att.endpoint.unicastLocatorList);
+    m_att.endpoint.remoteLocatorList.push_back(m_att.endpoint.multicastLocatorList);
+
     logInfo(RTPS_WRITER,"Reader Proxy created");
 }
 
@@ -297,13 +301,10 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
             }
             else
             {
-                ChangeForReader_t newch(*it);
-                newch.setStatus(next);
+                // Note: we can perform this cast as we are not touching the sorting field (seq_num)
+                const_cast<ChangeForReader_t&>(*it).setStatus(next);
                 if (next == UNSENT && previous != UNSENT)
                     mustWakeUpAsyncThread = true;
-                auto hint = m_changesForReader.erase(it);
-
-                it = m_changesForReader.insert(hint, newch);
             }
         }
 
@@ -329,33 +330,26 @@ void ReaderProxy::setNotValid(CacheChange_t* change)
     // Element must be in the container. In other case, bug.
     assert(chit != m_changesForReader.end());
 
+    // Note: we can perform this cast as we are not touching the sorting field (seq_num)
+    auto & newch = const_cast<ChangeForReader_t&>(*chit);
+
     if(chit == m_changesForReader.begin())
     {
         assert(chit->getStatus() != ACKNOWLEDGED);
 
         // if it is the first element, set state to unacknowledge because from now reader has to confirm
         // it will not be expecting it.
-        ChangeForReader_t newch(*chit);
+        // Note: we can perform this cast as we are not touching the sorting field (seq_num)
         newch.setStatus(UNACKNOWLEDGED);
-        newch.notValid();
-
-        auto hint = m_changesForReader.erase(chit);
-
-        m_changesForReader.insert(hint, newch);
     }
     else
     {
         // In case its state is not ACKNOWLEDGED, set it to UNACKNOWLEDGE because from now reader has to confirm
         // it will not be expecting it.
-        ChangeForReader_t newch(*chit);
-        if (chit->getStatus() != ACKNOWLEDGED)
+        if (newch.getStatus() != ACKNOWLEDGED)
             newch.setStatus(UNACKNOWLEDGED);
-        newch.notValid();
-
-        auto hint = m_changesForReader.erase(chit);
-
-        m_changesForReader.insert(hint, newch);
     }
+    newch.notValid();
 }
 
 bool ReaderProxy::thereIsUnacknowledged() const
@@ -378,11 +372,6 @@ bool ReaderProxy::thereIsUnacknowledged() const
 bool change_min(const ChangeForReader_t* ch1, const ChangeForReader_t* ch2)
 {
     return ch1->getSequenceNumber() < ch2->getSequenceNumber();
-}
-
-bool change_min2(const ChangeForReader_t ch1, const ChangeForReader_t ch2)
-{
-    return ch1.getSequenceNumber() < ch2.getSequenceNumber();
 }
 
 bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,

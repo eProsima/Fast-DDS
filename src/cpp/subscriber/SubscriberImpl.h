@@ -36,8 +36,6 @@ class RTPSReader;
 class RTPSParticipant;
 }
 
-
-
 class TopicDataType;
 class SubscriberListener;
 class ParticipantImpl;
@@ -84,7 +82,7 @@ public:
 	 * @param att Reference to a SubscriberAttributes object to update the parameters;
 	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
 	 */
-	bool updateAttributes(SubscriberAttributes& att);
+	bool updateAttributes(const SubscriberAttributes& att);
 
 	/**
 	* Get associated GUID
@@ -96,13 +94,13 @@ public:
 	 * Get the Attributes of the Subscriber.
 	 * @return Attributes of the Subscriber.
 	 */
-	const SubscriberAttributes& getAttributes() const {return m_att;}
+    const SubscriberAttributes& getAttributes() const {return m_att;}
 
 	/**
 	* Get topic data type
 	* @return Topic data type
 	*/
-	TopicDataType* getType() {return mp_type;};
+    TopicDataType* getType() {return mp_type;}
 
     /*!
     * @brief Returns there is a clean state with all Publishers.
@@ -135,12 +133,12 @@ private:
 	class SubscriberReaderListener : public rtps::ReaderListener
 	{
 	public:
-		SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s){};
-		virtual ~SubscriberReaderListener(){};
+        SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
+        virtual ~SubscriberReaderListener() {}
 		void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
 		void onNewCacheChangeAdded(rtps::RTPSReader * reader,const rtps::CacheChange_t* const change);
 		SubscriberImpl* mp_subscriberImpl;
-	}m_readerListener;
+    } m_readerListener;
 
 	Subscriber* mp_userSubscriber;
 	//!RTPSParticipant

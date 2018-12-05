@@ -96,7 +96,7 @@ const GUID_t& SubscriberImpl::getGuid(){
 
 
 
-bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
+bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
 {
     bool updated = true;
     bool missing = false;
@@ -108,11 +108,11 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
     }
     else
     {
-        for(LocatorListIterator lit1 = this->m_att.unicastLocatorList.begin();
+        for(LocatorListConstIterator lit1 = this->m_att.unicastLocatorList.begin();
                 lit1!=this->m_att.unicastLocatorList.end();++lit1)
         {
             missing = true;
-            for(LocatorListIterator lit2 = att.unicastLocatorList.begin();
+            for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
                     lit2!= att.unicastLocatorList.end();++lit2)
             {
                 if(*lit1 == *lit2)
@@ -127,11 +127,11 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
                 logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
             }
         }
-        for(LocatorListIterator lit1 = this->m_att.multicastLocatorList.begin();
+        for(LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
                 lit1!=this->m_att.multicastLocatorList.end();++lit1)
         {
             missing = true;
-            for(LocatorListIterator lit2 = att.multicastLocatorList.begin();
+            for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
                     lit2!= att.multicastLocatorList.end();++lit2)
             {
                 if(*lit1 == *lit2)
@@ -171,7 +171,7 @@ bool SubscriberImpl::updateAttributes(SubscriberAttributes& att)
         }
         this->m_att.qos.setQos(att.qos,false);
         //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-        mp_rtpsParticipant->updateReader(this->mp_reader,m_att.qos);
+        mp_rtpsParticipant->updateReader(this->mp_reader, m_att.topic, m_att.qos);
     }
     return updated;
 }

@@ -46,19 +46,16 @@ class Endpoint
 {
     friend class RTPSParticipantImpl;
 
-    protected:
-
+protected:
     Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
-
     virtual ~Endpoint();
 
-    public:
-
+public:
     /**
      * Get associated GUID
      * @return Associated GUID
      */
-    RTPS_DllAPI inline const GUID_t& getGuid() const { return m_guid; };
+    RTPS_DllAPI inline const GUID_t& getGuid() const { return m_guid; }
 
     /**
      * Get mutex
@@ -70,12 +67,13 @@ class Endpoint
      * Get associated attributes
      * @return Endpoint attributes
      */
-    RTPS_DllAPI inline EndpointAttributes* getAttributes() { return &m_att; }
+    RTPS_DllAPI inline EndpointAttributes& getAttributes() { return m_att; }
 
 #if HAVE_SECURITY
     bool supports_rtps_protection() { return supports_rtps_protection_; }
 #endif
-    protected:
+
+protected:
     //!Pointer to the RTPSParticipant containing this endpoint.
     RTPSParticipantImpl* mp_RTPSParticipant;
     //!Endpoint GUID
@@ -85,8 +83,7 @@ class Endpoint
     //!Endpoint Mutex
     std::recursive_mutex* mp_mutex;
 
-    private:
-
+private:
     Endpoint& operator=(const Endpoint&) = delete;
 
 #if HAVE_SECURITY

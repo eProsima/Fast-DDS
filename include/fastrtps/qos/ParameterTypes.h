@@ -22,6 +22,10 @@
 #include "../rtps/common/all_common.h"
 #include "../rtps/common/Token.h"
 
+#if HAVE_SECURITY
+#include "../rtps/security/accesscontrol/ParticipantSecurityAttributes.h"
+#include "../rtps/security/accesscontrol/EndpointSecurityAttributes.h"
+#endif
 
 #include <string>
 #include <vector>
@@ -93,14 +97,22 @@ enum ParameterId_t	: uint16_t
     PID_PROPERTY_LIST = 0x0059,
     PID_TYPE_MAX_SIZE_SERIALIZED =0x0060,
     PID_ENTITY_NAME = 0x0062,
+    PID_TYPE_IDV1 = 0x0069,
     PID_KEY_HASH = 0x0070,
     PID_STATUS_INFO = 0x0071,
+    PID_TYPE_OBJECTV1 = 0x0072,
     PID_ENDPOINT_GUID = 0x005a,
     //PID_RELATED_SAMPLE_IDENTITY = 0x0083
     PID_IDENTITY_TOKEN = 0x1001,
     PID_PERMISSIONS_TOKEN = 0x1002,
+    PID_DATA_TAGS = 0x1003,
+    PID_ENDPOINT_SECURITY_INFO = 0x1004,
+    PID_PARTICIPANT_SECURITY_INFO = 0x1005,
+    PID_IDENTITY_STATUS_TOKEN = 0x1006,
     PID_PERSISTENCE_GUID = 0x8002,
-    PID_RELATED_SAMPLE_IDENTITY = 0x800f
+    PID_RELATED_SAMPLE_IDENTITY = 0x800f,
+    PID_DATA_REPRESENTATION = 0x0073,
+    PID_TYPE_CONSISTENCY_ENFORCEMENT = 0x0074,
 };
 
 
@@ -113,26 +125,37 @@ enum ParameterId_t	: uint16_t
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
 //!@ingroup PARAMETER_MODULE
-class Parameter_t {
-    public:
-        //!Parameter ID
-        ParameterId_t Pid;
-        //!Parameter length
-        uint16_t length;
-        RTPS_DllAPI Parameter_t();
-        virtual RTPS_DllAPI ~Parameter_t();
-        /**
-         * Constructor using a parameter PID and the parameter length
-         * @param pid Pid of the parameter
-         * @param length Its associated length
-         */
-        RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length);
-        /**
-         * Virtual method used to add the parameter to a CDRMessage_t message.
-         * @param[in,out] msg Pointer to the message where the parameter should be added.
-         * @return True if the parameter was correctly added.
-         */
-        virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
+class Parameter_t
+{
+public:
+    RTPS_DllAPI Parameter_t();
+    /**
+     * Constructor using a parameter PID and the parameter length
+     * @param pid Pid of the parameter
+     * @param length Its associated length
+     */
+    RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length);
+
+    virtual RTPS_DllAPI ~Parameter_t();
+
+    bool operator==(const Parameter_t& b) const
+    {
+        return (this->Pid == b.Pid) &&
+               (this->length == b.length);
+    }
+
+    /**
+     * Virtual method used to add the parameter to a CDRMessage_t message.
+     * @param[in,out] msg Pointer to the message where the parameter should be added.
+     * @return True if the parameter was correctly added.
+     */
+    virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
+
+public:
+    //!Parameter ID
+    ParameterId_t Pid;
+    //!Parameter length
+    uint16_t length;
 };
 
 /**
@@ -293,13 +316,15 @@ class ParameterProtocolVersion_t: public Parameter_t {
 class ParameterVendorId_t:public Parameter_t{
     public:
         rtps::VendorId_t vendorId;
-        ParameterVendorId_t(){rtps::set_VendorId_eProsima(vendorId);};
+        ParameterVendorId_t() : vendorId(rtps::c_VendorId_eProsima) {}
         /**
          * Constructor using a parameter PID and the parameter length
          * @param pid Pid of the parameter
          * @param in_length Its associated length
          */
-        ParameterVendorId_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){ rtps::set_VendorId_eProsima(vendorId);};
+        ParameterVendorId_t(ParameterId_t pid,uint16_t in_length) :
+              Parameter_t(pid,in_length)
+            , vendorId(rtps::c_VendorId_eProsima) {}
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -504,6 +529,8 @@ class ParameterSampleIdentity_t : public Parameter_t
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 };
 
+#if HAVE_SECURITY
+
 /**
  *
  */
@@ -529,7 +556,65 @@ class ParameterToken_t : public Parameter_t
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 };
 
+class ParameterParticipantSecurityInfo_t : public Parameter_t
+{
+    public:
+        rtps::security::ParticipantSecurityAttributesMask security_attributes;
+        rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
 
+        ParameterParticipantSecurityInfo_t() : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, 0)
+        {
+        }
+
+        /**
+        * Constructor using a parameter PID and the parameter length
+        * @param pid Pid of the parameter
+        * @param in_length Its associated length
+        */
+        ParameterParticipantSecurityInfo_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid, in_length)
+        {
+        }
+
+        /**
+        * Add the parameter to a CDRMessage_t message.
+        * @param[in,out] msg Pointer to the message where the parameter should be added.
+        * @return True if the parameter was correctly added.
+        */
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+#define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
+
+class ParameterEndpointSecurityInfo_t : public Parameter_t
+{
+    public:
+        rtps::security::EndpointSecurityAttributesMask security_attributes;
+        rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
+
+        ParameterEndpointSecurityInfo_t() : Parameter_t(PID_ENDPOINT_SECURITY_INFO, 0)
+        {
+        }
+
+        /**
+        * Constructor using a parameter PID and the parameter length
+        * @param pid Pid of the parameter
+        * @param in_length Its associated length
+        */
+        ParameterEndpointSecurityInfo_t(ParameterId_t pid, uint16_t in_length) : Parameter_t(pid, in_length)
+        {
+        }
+
+        /**
+        * Add the parameter to a CDRMessage_t message.
+        * @param[in,out] msg Pointer to the message where the parameter should be added.
+        * @return True if the parameter was correctly added.
+        */
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+#define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
+
+#endif
 
 ///@}
 

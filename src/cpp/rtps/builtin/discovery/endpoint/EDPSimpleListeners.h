@@ -22,7 +22,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
-#include "../../../reader/CompoundReaderListener.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -36,7 +35,8 @@ struct CacheChange_t;
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPSimplePUBListener : public CompoundReaderListener{
+class EDPSimplePUBListener : public ReaderListener
+{
     public:
         /**
           Constructor
@@ -62,7 +62,8 @@ class EDPSimplePUBListener : public CompoundReaderListener{
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPSimpleSUBListener:public CompoundReaderListener{
+class EDPSimpleSUBListener : public ReaderListener
+{
     public:
         /**
          * @param p

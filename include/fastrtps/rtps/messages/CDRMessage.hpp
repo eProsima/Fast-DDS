@@ -157,7 +157,7 @@ inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSe
 {
     bool valid = true;
     valid &=CDRMessage::readSequenceNumber(msg,&sns->base);
-    uint32_t numBits;
+    uint32_t numBits = 0;
     valid &=CDRMessage::readUInt32(msg,&numBits);
     int32_t bitmap;
     SequenceNumber_t seqNum;
@@ -183,7 +183,7 @@ inline bool CDRMessage::readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberS
 {
     bool valid = true;
     valid &= CDRMessage::readUInt32(msg, &fns->base);
-    uint32_t numBits;
+    uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
     int32_t bitmap;
     FragmentNumber_t fragNum;
@@ -214,14 +214,16 @@ inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, Time_t* ts)
 }
 
 
-inline bool CDRMessage::readLocator(CDRMessage_t* msg,Locator_t* loc)
+inline bool CDRMessage::readLocator(CDRMessage_t* msg, Locator_t* loc)
 {
-    if(msg->pos+24>msg->length)
+    if(msg->pos + 24 > msg->length)
+    {
         return false;
-    bool valid = readInt32(msg,&loc->kind);
-    valid&=readUInt32(msg,&loc->port);
+    }
 
-    valid&=readData(msg,loc->address,16);
+    bool valid = readInt32(msg, &loc->kind);
+    valid &= readUInt32(msg, &loc->port);
+    valid &= readData(msg, loc->address, 16);
 
     return valid;
 }
@@ -294,19 +296,17 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
     if(msg->pos+str_size > msg->length){
         return false;
     }
+
+    stri->clear();
     if(str_size>1)
     {
-        *stri = std::string();stri->resize(str_size-1);
-        octet* oc1 = (octet*)malloc(str_size);
-        valid &= CDRMessage::readData(msg,oc1,str_size);
-        for(uint32_t i =0;i<str_size-1;i++)
-            stri->at(i) = oc1[i];
-        free((void*)oc1);
+        stri->resize(str_size-1);
+        for (uint32_t i = 0; i < str_size - 1; i++)
+        {
+            stri->at(i) = msg->buffer[msg->pos + i];
+        }
     }
-    else
-    {
-        msg->pos+=str_size;
-    }
+    msg->pos += str_size;
     int rest = (str_size) % 4;
     rest = rest==0 ? 0 : 4-rest;
     msg->pos+=rest;
@@ -463,24 +463,30 @@ inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
     return true;
 }
 
-inline bool CDRMessage::addOctetVector(CDRMessage_t*msg, const std::vector<octet>* ocvec)
+inline bool CDRMessage::addOctetVector(CDRMessage_t*msg, const std::vector<octet>* ocvec, bool add_final_padding)
 {
     // TODO Calculate without padding
-    if(msg->pos+4+ocvec->size()>=msg->max_size)
+    auto final_size = msg->pos + ocvec->size();
+    if (add_final_padding) final_size += 4;
+    if(final_size>=msg->max_size)
     {
         return false;
     }
     bool valid = CDRMessage::addUInt32(msg,(uint32_t)ocvec->size());
     valid &= CDRMessage::addData(msg,(octet*)ocvec->data(),(uint32_t)ocvec->size());
 
-    int rest = ocvec->size()% 4;
-    if (rest != 0)
+    if (add_final_padding)
     {
-        rest = 4 - rest; //how many you have to add
+        int rest = ocvec->size() % 4;
+        if (rest != 0)
+        {
+            rest = 4 - rest; //how many you have to add
 
-        octet oc = '\0';
-        for (int i = 0; i < rest; i++) {
-            valid &= CDRMessage::addOctet(msg, oc);
+            octet oc = '\0';
+            for (int i = 0; i < rest; i++)
+            {
+                valid &= CDRMessage::addOctet(msg, oc);
+            }
         }
     }
 
@@ -538,7 +544,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 
     addUInt32(msg, numBits);
     uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
-    int32_t* bitmap = new int32_t[n_longs];
+    uint32_t bitmap[8];
 
     for(uint32_t i = 0; i < n_longs; i++)
         bitmap[i] = 0;
@@ -558,7 +564,6 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
     for(uint32_t i= 0;i<n_longs;i++)
         addInt32(msg,bitmap[i]);
 
-    delete[] bitmap;
     return true;
 }
 
@@ -609,11 +614,9 @@ inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
 }
 
 inline bool CDRMessage::addLocator(CDRMessage_t* msg, Locator_t* loc) {
-    addInt32(msg,loc->kind);
-    addUInt32(msg,loc->port);
-
-    addData(msg,loc->address,16);
-
+    addInt32(msg, loc->kind);
+    addUInt32(msg, loc->port);
+    addData(msg, loc->address, 16);
     return true;
 }
 
@@ -662,14 +665,14 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 
 inline bool CDRMessage::addString(CDRMessage_t*msg, const std::string& in_str)
 {
-    uint32_t str_siz = (uint32_t)in_str.size();
+    auto data = in_str.c_str();
+    uint32_t str_siz = (uint32_t)strlen(data);
     int rest = (str_siz+1) % 4;
     if (rest != 0)
         rest = 4 - rest; //how many you have to add
 
     bool valid = CDRMessage::addUInt32(msg, str_siz+1);
-    valid &= CDRMessage::addData(msg,
-            (unsigned char*) in_str.c_str(), str_siz+1);
+    valid &= CDRMessage::addData(msg, (unsigned char*) data, str_siz+1);
     if (rest != 0) {
         octet oc = '\0';
         for (int i = 0; i < rest; i++) {
@@ -722,7 +725,7 @@ inline bool CDRMessage::readProperty(CDRMessage_t* msg, Property& property)
     return true;
 }
 
-inline bool CDRMessage::addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property)
+inline bool CDRMessage::addBinaryProperty(CDRMessage_t* msg, const BinaryProperty& binary_property, bool add_final_padding)
 {
     assert(msg);
 
@@ -730,7 +733,7 @@ inline bool CDRMessage::addBinaryProperty(CDRMessage_t* msg, const BinaryPropert
     {
         if(!CDRMessage::addString(msg, binary_property.name()))
             return false;
-        if(!CDRMessage::addOctetVector(msg, &binary_property.value()))
+        if (!CDRMessage::addOctetVector(msg, &binary_property.value(), add_final_padding))
             return false;
     }
 
@@ -792,7 +795,7 @@ inline bool CDRMessage::readPropertySeq(CDRMessage_t* msg, PropertySeq& properti
 
 }
 
-inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties)
+inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, bool add_final_padding)
 {
     assert(msg);
 
@@ -809,15 +812,18 @@ inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryProp
         {
             returnedValue = true;
             for(auto it = binary_properties.begin(); returnedValue && it != binary_properties.end(); ++it)
-                if(it->propagate())
-                    returnedValue = CDRMessage::addBinaryProperty(msg, *it);
+                if (it->propagate())
+                {
+                    --number_to_serialize;
+                    returnedValue = CDRMessage::addBinaryProperty(msg, *it, add_final_padding || (number_to_serialize != 0) );
+                }
         }
     }
 
     return returnedValue;
 }
 
-inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& property_limit)
+inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryPropertySeq& binary_properties, const std::string& name_start, bool add_final_padding)
 {
     assert(msg);
 
@@ -825,22 +831,24 @@ inline bool CDRMessage::addBinaryPropertySeq(CDRMessage_t* msg, const BinaryProp
 
     if(msg->pos + 4 <=  msg->max_size)
     {
-        uint32_t position = 0;
         uint32_t number_to_serialize = 0;
-        for(auto it = binary_properties.begin(); it != binary_properties.end() &&
-                it->name().compare(property_limit) != 0; ++it)
+        for(auto it = binary_properties.begin(); it != binary_properties.end(); ++it)
         {
-            if(it->propagate())
+            if(it->name().find(name_start) == 0)
                 ++number_to_serialize;
-            ++position;
         }
 
         if(CDRMessage::addUInt32(msg, number_to_serialize))
         {
             returnedValue = true;
-            for(uint32_t i = 0; returnedValue && i < position; ++i)
-                if(binary_properties.at(i).propagate())
-                    returnedValue = CDRMessage::addBinaryProperty(msg, binary_properties.at(i));
+            for (auto it = binary_properties.begin(); returnedValue && it != binary_properties.end(); ++it)
+            {
+                if (it->name().find(name_start) == 0)
+                {
+                    --number_to_serialize;
+                    returnedValue = CDRMessage::addBinaryProperty(msg, *it, add_final_padding || (number_to_serialize != 0) );
+                }
+            }
         }
     }
 
@@ -871,7 +879,7 @@ inline bool CDRMessage::addDataHolder(CDRMessage_t* msg, const DataHolder& data_
         return false;
     if(!CDRMessage::addPropertySeq(msg, data_holder.properties()))
         return false;
-    if(!CDRMessage::addBinaryPropertySeq(msg, data_holder.binary_properties()))
+    if(!CDRMessage::addBinaryPropertySeq(msg, data_holder.binary_properties(),true))
         return false;
 
     return true;

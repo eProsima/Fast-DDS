@@ -104,9 +104,19 @@ class AESGCMGMAC_Transform : public CryptoTransform
             DatawriterCryptoHandle& sending_datawriter_crypto,
             SecurityException& exception) override;
 
-    //Aux function to compute session key from the master material
-    std::array<uint8_t, 32> compute_sessionkey(const std::array<uint8_t, 32>& master_sender_key,
-            const std::array<uint8_t, 32>& master_salt , const uint32_t session_id);
+    //Aux functions to compute session key from the master material
+    void compute_sessionkey(
+        std::array<uint8_t, 32>& session_key, 
+        bool receiver_specific,
+        const std::array<uint8_t, 32>& master_key, 
+        const std::array<uint8_t, 32>& master_salt, 
+        const uint32_t session_id, 
+        int key_len = 32);
+
+    void compute_sessionkey(
+        std::array<uint8_t, 32>& session_key, 
+        const KeyMaterial_AES_GCM_GMAC& key, 
+        const uint32_t session_id);
 
     //Serialization and deserialization of message components
     void serialize_SecureDataHeader(eprosima::fastcdr::Cdr& serializer,
@@ -117,13 +127,13 @@ class AESGCMGMAC_Transform : public CryptoTransform
             const std::array<uint8_t, 4>& transformation_kind, const std::array<uint8_t,32>& session_key,
             const std::array<uint8_t, 12>& initialization_vector,
             eprosima::fastcdr::FastBuffer& output_buffer, octet* plain_buffer, uint32_t plain_buffer_len,
-            SecureDataTag& tag);
+            SecureDataTag& tag, bool submessage);
 
     bool serialize_SecureDataTag(eprosima::fastcdr::Cdr& serializer,
             const std::array<uint8_t, 4>& transformation_kind, const uint32_t session_id,
             const std::array<uint8_t, 12>& initialization_vector,
             std::vector<EntityCryptoHandle*>& receiving_datareader_crypto_list, bool update_specific_keys,
-            SecureDataTag& tag);
+            SecureDataTag& tag, size_t sessionIndex);
 
     bool serialize_SecureDataTag(eprosima::fastcdr::Cdr& serializer,
             const AESGCMGMAC_ParticipantCryptoHandle& local_participant,
@@ -133,7 +143,15 @@ class AESGCMGMAC_Transform : public CryptoTransform
 
     SecureDataHeader deserialize_SecureDataHeader(eprosima::fastcdr::Cdr& decoder);
 
+    /**
+     * Get information on the data between a Header and a Tag submessage.
+     * @param decoder Cdr decoding stream pointing to the first byte after the Header submessage
+     * @param body_length Outputs length of protected data
+     * @param body_align Outputs number of alignment bytes after protected data
+     * @return true when protected data is encrypted (i.e. it is a SEC_BODY submessage)
+     */
     bool predeserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder, uint32_t& body_length, uint32_t& body_align);
+
     bool deserialize_SecureDataBody(eprosima::fastcdr::Cdr& decoder,
             eprosima::fastcdr::Cdr::state& body_state, SecureDataTag& tag, uint32_t body_length,
             const std::array<uint8_t, 4> transformation_kind,

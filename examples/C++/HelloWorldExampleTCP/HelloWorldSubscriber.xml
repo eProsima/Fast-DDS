@@ -1,0 +1,13 @@
+<staticdiscovery>
+	<participant>
+		<name>HelloWorldSubscriber</name>
+		<reader>
+			<userId>3</userId>
+			<entityID>4</entityID>
+            <topicName>HelloWorldTopic1</topicName>
+			<topicDataType>HelloWorld</topicDataType>
+			<topicKind>NO_KEY</topicKind>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+		</reader>
+	</participant>
+</staticdiscovery>

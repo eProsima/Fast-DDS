@@ -113,8 +113,7 @@ void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
 size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
 
 
 
@@ -126,7 +125,6 @@ bool HelloWorld::isKeyDefined()
     return false;
 }
 
-void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void HelloWorld::serializeKey(eprosima::fastcdr::Cdr&) const
 {
-    (void) scdr;
 }

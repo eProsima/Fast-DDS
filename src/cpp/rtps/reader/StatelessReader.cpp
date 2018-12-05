@@ -14,7 +14,7 @@
 
 /*
  * @file StatelessReader.cpp
- *             	
+ *
  */
 
 #include <fastrtps/rtps/reader/StatelessReader.h>
@@ -48,7 +48,7 @@ StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 
 
-bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
+bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
@@ -56,6 +56,9 @@ bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
         if((*it).guid == wdata.guid)
             return false;
     }
+
+    getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
+
     logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
     m_matched_writers.push_back(wdata);
     add_persistence_guid(wdata);
@@ -166,7 +169,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
         {
 #if HAVE_SECURITY
-            if(getAttributes()->security_attributes().is_payload_protected)
+            if(getAttributes().security_attributes().is_payload_protected)
             {
                 change_to_add->copy_not_memcpy(change);
                 if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
@@ -229,7 +232,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             CacheChange_t* change_to_add = incomingChange;
 
 #if HAVE_SECURITY
-            if(getAttributes()->security_attributes().is_payload_protected)
+            if(getAttributes().security_attributes().is_payload_protected)
             {
                 if(reserveCache(&change_to_add, incomingChange->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
                 {
@@ -250,7 +253,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
 
 #if HAVE_SECURITY
-            if(getAttributes()->security_attributes().is_payload_protected)
+            if(getAttributes().security_attributes().is_payload_protected)
                 releaseCache(change_to_add);
 #endif
 

@@ -28,7 +28,9 @@ enum class ProtectionKind
 {
     NONE,
     SIGN,
-    ENCRYPT
+    ENCRYPT,
+    SIGN_WITH_ORIGIN_AUTHENTICATION,
+    ENCRYPT_WITH_ORIGIN_AUTHENTICATION
 };
 
 struct TopicRule
@@ -48,7 +50,7 @@ struct DomainRule
     bool allow_unauthenticated_participants;
     bool enable_join_access_control;
     ProtectionKind discovery_protection_kind;
-    ProtectionKind LivelinessProtectionKind_str;
+    ProtectionKind liveliness_protection_kind;
     ProtectionKind rtps_protection_kind;
     std::vector<TopicRule> topic_rules;
 };

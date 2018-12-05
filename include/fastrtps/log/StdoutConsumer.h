@@ -22,11 +22,11 @@ namespace fastrtps {
 
 class StdoutConsumer: public LogConsumer {
 public:
-   RTPS_DllAPI virtual void Consume(const Log::Entry&);
+    RTPS_DllAPI virtual void Consume(const Log::Entry&);
 
 private:
-   void PrintHeader(const Log::Entry&) const;
-   void PrintContext(const Log::Entry&) const;
+    void PrintHeader(const Log::Entry&) const;
+    void PrintContext(const Log::Entry&) const;
 };
 
 } // namespace fastrtps

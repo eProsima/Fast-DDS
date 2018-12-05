@@ -1,0 +1,228 @@
+
+<types>
+    <type>
+        <enum name="MyEnum">
+            <literal name="A" value="0"/>
+            <literal name="B" value="1"/>
+            <literal name="C" value="2"/>
+        </enum>
+    </type>
+    <type>
+        <typedef name="MyAliasEnum" value="MyEnum"/>
+    </type>
+    <type>
+        <typedef name="MyAliasAliasEnum" value="MyAliasEnum"/>
+    </type>
+    <type>
+        <struct name="EnumStruct">
+            <MyEnum name="my_enum"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="AliasStruct">
+            <MyAliasEnum name="my_alias"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="AliasAliasStruct">
+            <MyAliasAliasEnum name="my_alias_alias"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="BoolStruct">
+            <boolean name="my_bool"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="OctetStruct">
+            <octet name="my_octet"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ShortStruct">
+            <short name="my_int16"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LongStruct">
+            <long name="my_int32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LongLongStruct">
+            <longlong name="my_int64"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="UShortStruct">
+            <unsignedshort name="my_uint16"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ULongStruct">
+            <unsignedlong name="my_uint32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ULongLongStruct">
+            <unsignedlonglong name="my_uint64"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="FloatStruct">
+            <float name="my_float32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="DoubleStruct">
+            <double name="my_float64"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LongDoubleStruct">
+            <longdouble name="my_float128"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="CharStruct">
+            <char name="my_char"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="WCharStruct">
+            <wchar name="my_wchar"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="StringStruct">
+            <string name="my_string"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="WStringStruct">
+            <wstring name="my_wstring"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LargeStringStruct">
+            <boundedString name="my_large_string">
+                <maxLength value="41925"/>
+            </boundedString>
+        </struct>
+    </type>
+    <type>
+        <struct name="LargeWStringStruct">
+            <boundedWString name="my_large_wstring">
+                <maxLength value="41925"/>
+            </boundedWString>
+        </struct>
+    </type>
+    <type>
+        <struct name="ArraytStruct">
+            <long name="my_array" dimensions="2,2,2"/>
+        </struct>
+    </type>
+
+    <type>
+        <typedef name="MyArray">
+            <long dimensions="2,2"/>
+        </typedef>
+    </type>
+    <type>
+        <struct name="ArrayArrayStruct">
+            <MyArray name="my_array_array" dimensions="2,2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="SequenceStruct">
+            <sequence name="my_sequence" type="long" length="2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="SequenceSequenceStruct">
+            <sequence name="my_sequence_sequence" length="3">
+                <sequence type="long" length="2"/>
+            </sequence>
+        </struct>
+    </type>
+    <type>
+        <struct name="MapStruct">
+            <map name="my_map" key_type="long" value_type="long" length="2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="MapMapStruct">
+            <map name="my_map_map" key_type="long" length="2">
+                <value_type>
+                    <map key_type="long" value_type="long" length="2"/>
+                </value_type>
+            </map>
+        </struct>
+    </type>
+    <type>
+        <struct name="StructStruct">
+            <long name="a"/>
+            <longlong name="b"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="StructStructStruct">
+            <StructStruct name="child_struct"/>
+            <longlong name="child_int64"/>
+        </struct>
+    </type>
+    <type>
+        <union name="SimpleUnion">
+            <discriminator type="long"/>
+            <case>
+                <caseValue value="0"/> <!-- Direct enum not supported -->
+                <long name="first"/>
+            </case>
+            <case>
+                <caseValue value="1"/>
+                <longlong name="second"/>
+            </case>
+        </union>
+    </type>
+    <type>
+        <union name="UnionUnion">
+            <discriminator type="long"/>
+            <case>
+                <caseValue value="0"/> <!-- Direct enum not supported -->
+                <long name="first"/>
+            </case>
+            <case>
+                <caseValue value="1"/>
+                <SimpleUnion name="second"/>
+            </case>
+        </union>
+    </type>
+    <type>
+        <union name="WCharUnion">
+            <discriminator type="wchar"/>
+            <case>
+                <caseValue value="0"/> <!-- Direct enum not supported -->
+                <long name="first"/>
+            </case>
+            <case>
+                <caseValue value="1"/>
+                <longlong name="second"/>
+            </case>
+        </union>
+    </type>
+    <type>
+        <struct name="SimpleUnionStruct">
+            <SimpleUnion name="my_union"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="UnionUnionUnionStruct">
+            <UnionUnion name="my_union"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="WCharUnionStruct">
+            <WCharUnion name="my_union"/>
+        </struct>
+    </type>
+</types>

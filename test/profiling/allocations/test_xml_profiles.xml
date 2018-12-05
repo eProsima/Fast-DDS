@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds>
+    <profiles>
+
+        <!-- NOTATION ON PROFILE NAMES:
+               tl means transient local, vo means volatile
+               be means best effort, re means reliable
+        -->
+
+        <!-- Participant profile. Just sets name and domain -->
+        <participant profile_name="test_participant_profile" is_default_profile="true">
+            <rtps>
+                <name>test_alloc_participant</name>
+                <builtin>
+                    <domainId>231</domainId>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <!-------------------------------- [PUBLISHERS] -------------------------------->
+
+        <publisher profile_name="test_publisher_profile_tl_be" is_default_profile="true">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+        </publisher>
+
+        <publisher profile_name="test_publisher_profile_tl_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </publisher>
+
+        <publisher profile_name="test_publisher_profile_vo_be">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+        </publisher>
+
+        <publisher profile_name="test_publisher_profile_vo_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </publisher>
+
+        <!-------------------------------- [SUBSCRIBERS] --------------------------------->
+
+        <subscriber profile_name="test_subscriber_profile_tl_be" is_default_profile="true">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <subscriber profile_name="test_subscriber_profile_tl_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <subscriber profile_name="test_subscriber_profile_vo_be">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <subscriber profile_name="test_subscriber_profile_vo_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <kind>NO_KEY</kind>
+                <name>AllocTestData</name>
+                <dataType>AllocTestType</dataType>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+    </profiles>
+</dds>

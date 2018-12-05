@@ -42,24 +42,32 @@ typedef enum RTPSWriterPublishMode : octet
  */
 class  WriterTimes
 {
-    public:
+public:
+    WriterTimes()
+    {
+        initialHeartbeatDelay.fraction = 200*1000*1000;
+        heartbeatPeriod.seconds = 3;
+        nackResponseDelay.fraction = 20*1000*1000;
+    }
 
-        WriterTimes()
-        {
-            initialHeartbeatDelay.fraction = 200*1000*1000;
-            heartbeatPeriod.seconds = 3;
-            nackResponseDelay.fraction = 20*1000*1000;
-        };
-        virtual ~WriterTimes(){};
+    virtual ~WriterTimes() {}
 
-        //! Initial heartbeat delay. Default value ~45ms.
-        Duration_t initialHeartbeatDelay;
-        //! Periodic HB period, default value 3s.
-        Duration_t heartbeatPeriod;
-        //!Delay to apply to the response of a ACKNACK message, default value ~45ms.
-        Duration_t nackResponseDelay;
-        //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
-        Duration_t nackSupressionDuration;
+    bool operator==(const WriterTimes& b) const
+    {
+        return (this->initialHeartbeatDelay == b.initialHeartbeatDelay) &&
+               (this->heartbeatPeriod == b.heartbeatPeriod) &&
+               (this->nackResponseDelay == b.nackResponseDelay) &&
+               (this->nackSupressionDuration == b.nackSupressionDuration);
+    }
+
+    //! Initial heartbeat delay. Default value ~45ms.
+    Duration_t initialHeartbeatDelay;
+    //! Periodic HB period, default value 3s.
+    Duration_t heartbeatPeriod;
+    //!Delay to apply to the response of a ACKNACK message, default value ~45ms.
+    Duration_t nackResponseDelay;
+    //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
+    Duration_t nackSupressionDuration;
 };
 
 /**
@@ -76,9 +84,9 @@ class  WriterAttributes
             endpoint.endpointKind = WRITER;
             endpoint.durabilityKind = TRANSIENT_LOCAL;
             endpoint.reliabilityKind = RELIABLE;
-        };
+        }
 
-        virtual ~WriterAttributes(){};
+        virtual ~WriterAttributes(){}
 
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
@@ -89,7 +97,7 @@ class  WriterAttributes
         //!Indicates if the Writer is synchronous or asynchronous
         RTPSWriterPublishMode mode;
 
-        // Throughput controller, always the last one to apply 
+        // Throughput controller, always the last one to apply
         ThroughputControllerDescriptor throughputController;
 
         //! Disable the sending of heartbeat piggybacks.

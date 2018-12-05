@@ -22,7 +22,8 @@ enum class NodeType
     TOPIC,
     DATA_WRITER,
     DATA_READER,
-    ROOT
+    ROOT,
+    TYPES
 };
 
 class BaseNode

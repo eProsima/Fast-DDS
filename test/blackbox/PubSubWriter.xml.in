@@ -3,7 +3,7 @@
 		<name>RTPSParticipant</name>
 		<reader>
 			<userId>3</userId>
-			<entityId>4</entityId>
+			<entityID>4</entityID>
 			<expectsInlineQos>false</expectsInlineQos>
 			<topicName>BlackBox_StaticDiscovery_@TOPIC_RANDOM_NUMBER@</topicName>
 			<topicDataType>HelloWorldType</topicDataType>

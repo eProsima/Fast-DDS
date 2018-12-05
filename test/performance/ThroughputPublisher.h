@@ -29,15 +29,15 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
-//#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-//#include <fastrtps/types/DynamicDataFactory.h>
-//#include <fastrtps/types/DynamicTypeBuilder.h>
-//#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-//#include <fastrtps/types/TypeDescriptor.h>
-//#include <fastrtps/types/MemberDescriptor.h>
-//#include <fastrtps/types/DynamicType.h>
-//#include <fastrtps/types/DynamicData.h>
-//#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <condition_variable>
 #include <chrono>
@@ -128,16 +128,16 @@ class ThroughputPublisher
         bool reliable_;
         std::string m_sXMLConfigFile;
         std::string m_sExportPrefix;
-        //bool dynamic_data = false;
+        bool dynamic_data = false;
         int m_forced_domain;
         // Static Data
         ThroughputDataType latency_t;
         ThroughputType *latency;
         // Dynamic Data
-        //eprosima::fastrtps::types::DynamicData* m_DynData;
-        //eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-        //eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
-        //eprosima::fastrtps::PublisherAttributes pubAttr;
+        eprosima::fastrtps::types::DynamicData* m_DynData;
+        eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+        eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+        eprosima::fastrtps::PublisherAttributes pubAttr;
 };
 
 

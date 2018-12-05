@@ -31,12 +31,18 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 #include <string>
 #include <list>
+#include <atomic>
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+
+using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastrtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubReader
@@ -56,7 +62,7 @@ class PubSubReader
 
                 ~ParticipantListener() {}
 
-                void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo info)
+                void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo&& info) override
                 {
                     if(reader_.onDiscovery_!= nullptr)
                     {
@@ -65,24 +71,28 @@ class PubSubReader
                         reader_.cvDiscovery_.notify_one();
                     }
 
-                    if(info.rtps.m_status == eprosima::fastrtps::rtps::DISCOVERED_RTPSPARTICIPANT)
+                    if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
                     {
                         reader_.participant_matched();
                     }
-                    else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT ||
-                            info.rtps.m_status == eprosima::fastrtps::rtps::DROPPED_RTPSPARTICIPANT)
+                    else if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
                     {
                         reader_.participant_unmatched();
                     }
                 }
 
 #if HAVE_SECURITY
-                void onParticipantAuthentication(eprosima::fastrtps::Participant*, const eprosima::fastrtps::ParticipantAuthenticationInfo& info)
+                void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantAuthenticationInfo&& info) override
                 {
-                    if(info.rtps.status() == eprosima::fastrtps::rtps::AUTHORIZED_RTPSPARTICIPANT)
+                    if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
+                    {
                         reader_.authorized();
-                    else if(info.rtps.status() == eprosima::fastrtps::rtps::UNAUTHORIZED_RTPSPARTICIPANT)
+                    }
+                    else if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT)
+                    {
                         reader_.unauthorized();
+                    }
                 }
 #endif
 
@@ -268,13 +278,20 @@ class PubSubReader
                     return current_received_count_;
                 }
 
-        void waitDiscovery()
+        void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
         {
             std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
             std::cout << "Reader is waiting discovery..." << std::endl;
 
-            cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
+            if(timeout == std::chrono::seconds::zero())
+            {
+                cvDiscovery_.wait(lock, [&](){return matched_ != 0;});
+            }
+            else
+            {
+                cvDiscovery_.wait_for(lock, timeout, [&](){return matched_ != 0;});
+            }
 
             std::cout << "Reader discovery finished..." << std::endl;
         }
@@ -404,12 +421,6 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& outLocatorList(eprosima::fastrtps::rtps::LocatorList_t outLocators)
-        {
-            subscriber_attr_.outLocatorList = outLocators;
-            return *this;
-        }
-
         PubSubReader& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
         {
             subscriber_attr_.qos.m_durability.kind = kind;
@@ -449,7 +460,7 @@ class PubSubReader
             participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
             eprosima::fastrtps::rtps::Locator_t loopback_locator;
-            loopback_locator.set_IP4_address(127, 0, 0, 1);
+            IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1);
             participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
             return *this;
         }
@@ -466,7 +477,7 @@ class PubSubReader
             return *this;
         }
 
-        PubSubReader& partition(std::string partition)
+        PubSubReader& partition(const std::string& partition)
         {
             subscriber_attr_.qos.m_partition.push_back(partition.c_str());
             return *this;
@@ -517,6 +528,28 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& max_initial_peers_range(uint32_t maxInitialPeerRange)
+        {
+            participant_attr_.rtps.useBuiltinTransports = false;
+            std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+            descriptor->maxInitialPeersRange = maxInitialPeerRange;
+            participant_attr_.rtps.userTransports.push_back(descriptor);
+            return *this;
+        }
+
+        PubSubReader& participant_id(int32_t participantId)
+        {
+            participant_attr_.rtps.participantID = participantId;
+            return *this;
+        }
+
+        bool update_partition(const std::string& partition)
+        {
+            subscriber_attr_.qos.m_partition.clear();
+            subscriber_attr_.qos.m_partition.push_back(partition.c_str());
+            return subscriber_->updateAttributes(subscriber_attr_);
+        }
+
         /*** Function for discovery callback ***/
 
         void wait_discovery_result()
@@ -537,6 +570,11 @@ class PubSubReader
         const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
         {
             return participant_guid_;
+        }
+
+        bool is_matched() const
+        {
+            return matched_ > 0;
         }
 
     private:
@@ -629,7 +667,7 @@ class PubSubReader
         std::condition_variable cv_;
         std::mutex mutexDiscovery_;
         std::condition_variable cvDiscovery_;
-        unsigned int matched_;
+        std::atomic<unsigned int> matched_;
         unsigned int participant_matched_;
         std::atomic<bool> receiving_;
         type_support type_;

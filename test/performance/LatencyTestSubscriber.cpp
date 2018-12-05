@@ -49,8 +49,8 @@ LatencyTestSubscriber::LatencyTestSubscriber():
     m_commandpublistener(nullptr),
     m_commandsublistener(nullptr),
     m_echo(true),
-    mp_latency(nullptr)//,
-    //m_DynData(nullptr)
+    mp_latency(nullptr),
+    m_DynData(nullptr)
 {
     m_forcedDomain = -1;
     m_datapublistener.mp_up = this;
@@ -66,7 +66,7 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
 
 bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool /*dynamic_types*/, int forced_domain)
+        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain)
 {
     if(!large_data)
     {
@@ -79,26 +79,25 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     m_sXMLConfigFile = sXMLConfigFile;
     m_echo = echo;
     n_samples = nsam;
-    //dynamic_data = dynamic_types;
+    dynamic_data = dynamic_types;
     m_forcedDomain = forced_domain;
 
+    if (dynamic_data)
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
 
-    //if (dynamic_data)
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), data_size_sub.back()
-    //        ));
-    //    struct_type_builder->SetName("LatencyType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //}
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), data_size_sub.back()
+            ));
+        struct_type_builder->SetName("LatencyType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
+    }
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
@@ -143,11 +142,11 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
         return false;
     }
 
-    //if (dynamic_data)
-    //{
-    //    Domain::registerType(mp_participant, &m_DynType);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        Domain::registerType(mp_participant, &m_DynType);
+    }
+    else
     {
         Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
     }
@@ -383,15 +382,15 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub
 
 void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
-    //if (mp_up->dynamic_data)
-    //{
-    //    subscriber->takeNextData((void*)mp_up->m_DynData,&mp_up->m_sampleinfo);
-    //    if (mp_up->m_echo)
-    //    {
-    //        mp_up->mp_datapub->write((void*)mp_up->m_DynData);
-    //    }
-    //}
-    //else
+    if (mp_up->dynamic_data)
+    {
+        subscriber->takeNextData((void*)mp_up->m_DynData,&mp_up->m_sampleinfo);
+        if (mp_up->m_echo)
+        {
+            mp_up->mp_datapub->write((void*)mp_up->m_DynData);
+        }
+    }
+    else
     {
         subscriber->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
         //	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
@@ -425,20 +424,20 @@ void LatencyTestSubscriber::run()
 bool LatencyTestSubscriber::test(uint32_t datasize)
 {
     cout << "Preparing test with data size: " << datasize + 4 << endl;
-    //if (dynamic_data)
-    //{
-    //    m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
-    //
-    //    MemberId id;
-    //    DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
-    //    for (uint32_t i = 0; i < datasize; ++i)
-    //    {
-    //        my_data->InsertSequenceData(id);
-    //        my_data->SetByteValue(0, id);
-    //    }
-    //    m_DynData->ReturnLoanedValue(my_data);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+
+        MemberId id;
+        DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
+        for (uint32_t i = 0; i < datasize; ++i)
+        {
+            my_data->InsertSequenceData(id);
+            my_data->SetByteValue(0, id);
+        }
+        m_DynData->ReturnLoanedValue(my_data);
+    }
+    else
     {
         mp_latency = new LatencyType(datasize);
     }
@@ -468,11 +467,11 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
     size_t removed;
     this->mp_datapub->removeAllChange(&removed);
     //cout << "REMOVED: "<< removed<<endl;
-    //if (dynamic_data)
-    //{
-    //    DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+    }
+    else
     {
         delete(mp_latency);
     }

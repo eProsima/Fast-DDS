@@ -28,17 +28,92 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(UDPV4TESTS_SOURCE
             UDPv4Tests.cpp
+            mock/MockReceiverResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
+        )
 
         set(UDPV6TESTS_SOURCE
             UDPv6Tests.cpp
+            mock/MockReceiverResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
+        )
+
+        set(TCPV4TESTS_SOURCE
+            TCPv4Tests.cpp
+            mock/MockReceiverResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessagePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_TCPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/test_RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/CleanTCPSocketsEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
+        )
+
+        set(TCPV6TESTS_SOURCE
+            TCPv6Tests.cpp
+            mock/MockReceiverResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessagePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/CleanTCPSocketsEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
+        )
 
         set(TEST_UDPV4TESTS_SOURCE
             test_UDPv4Tests.cpp
@@ -47,24 +122,32 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
+			${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+        )
 
         include_directories(mock/)
 
         add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
         target_compile_definitions(UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(UDPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(UDPv4Tests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS} )
+        target_link_libraries(UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
-            target_link_libraries(UDPv4Tests ${PRIVACY}
-                iphlpapi Shlwapi
-                )
+            target_link_libraries(UDPv4Tests ${PRIVACY} iphlpapi Shlwapi )
         endif()
         add_gtest(UDPv4Tests SOURCES ${UDPV4TESTS_SOURCE})
 
@@ -73,27 +156,67 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         if(NOT DISABLE_UDPV6_TESTS)
             add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
             target_compile_definitions(UDPv6Tests PRIVATE FASTRTPS_NO_LIB)
-            target_include_directories(UDPv6Tests PRIVATE ${GTEST_INCLUDE_DIRS}
+            target_include_directories(UDPv6Tests PRIVATE
+                ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
                 ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-            target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS} )
+            target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
             if(MSVC OR MSVC_IDE)
-                target_link_libraries(UDPv6Tests ${PRIVACY}
-                    iphlpapi Shlwapi
-                    )
+                target_link_libraries(UDPv6Tests ${PRIVACY} iphlpapi Shlwapi )
             endif()
             add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
+
+            add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
+            target_compile_definitions(TCPv6Tests PRIVATE FASTRTPS_NO_LIB)
+            target_include_directories(TCPv6Tests PRIVATE
+                ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
+            if(MSVC OR MSVC_IDE)
+                target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr iphlpapi Shlwapi)
+            else()
+                target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr)
+            endif()
+            add_gtest(TCPv6Tests SOURCES ${TCPV6TESTS_SOURCE})
         endif()
 
         add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
         target_compile_definitions(test_UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(test_UDPv4Tests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(test_UDPv4Tests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(test_UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS} )
+        target_link_libraries(test_UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
-            target_link_libraries(test_UDPv4Tests ${PRIVACY}
-                iphlpapi Shlwapi
-                )
+            target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
+        else()
+            target_link_libraries(test_UDPv4Tests ${PRIVACY})
         endif()
         add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
+
+        add_executable(TCPv4Tests ${TCPV4TESTS_SOURCE})
+        target_compile_definitions(TCPv4Tests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(TCPv4Tests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr iphlpapi Shlwapi)
+        else()
+            target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr)
+        endif()
+        add_gtest(TCPv4Tests SOURCES ${TCPV4TESTS_SOURCE})
     endif()
 endif()

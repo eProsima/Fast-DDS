@@ -1,0 +1,4 @@
+struct AllocTestType
+{
+	unsigned long index;
+};

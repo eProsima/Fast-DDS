@@ -26,6 +26,12 @@
 #include <openssl/rand.h>
 #include <cstring>
 
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#define IS_OPENSSL_1_1 1
+#else
+#define IS_OPENSSL_1_1 0
+#endif
+
  // Solve error with Win32 macro
 #ifdef WIN32
 #undef max
@@ -35,6 +41,23 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
 CONSTEXPR int initialization_vector_suffix_length = 8;
+
+static KeyMaterial_AES_GCM_GMAC* find_key(KeyMaterial_AES_GCM_GMAC_Seq& keys, const CryptoTransformIdentifier& id)
+{
+    for (auto& it : keys)
+    {
+        if (it.transformation_kind == id.transformation_kind)
+        {
+            if ((it.sender_key_id == id.transformation_key_id) ||
+                (it.receiver_specific_key_id == id.transformation_key_id))
+            {
+                return &it;
+            }
+        }
+    }
+
+    return nullptr;
+}
 
 AESGCMGMAC_Transform::AESGCMGMAC_Transform()
 {
@@ -69,35 +92,38 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
 
     std::unique_lock<std::mutex> lock(local_writer->mutex_);
 
-    //If the maximum number of blocks have been processed, generate a new SessionKey
-    if(local_writer->session_block_counter >= local_writer->max_blocks_per_session)
-    {
-        local_writer->session_id += 1;
+    // Payload is always protected by the last key
+    auto nKeys = local_writer->EntityKeyMaterial.size();
+    auto& keyMat = local_writer->EntityKeyMaterial.at(nKeys - 1);
+    auto session = &local_writer->Sessions[nKeys - 1];
 
-        local_writer->SessionKey = compute_sessionkey(local_writer->EntityKeyMaterial.master_sender_key,
-                local_writer->EntityKeyMaterial.master_salt,
-                local_writer->session_id);
+    //If the maximum number of blocks have been processed, generate a new SessionKey
+    if(session->session_block_counter >= local_writer->max_blocks_per_session)
+    {
+        session->session_id += 1;
+
+        compute_sessionkey(session->SessionKey, keyMat, session->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
-        local_writer->session_block_counter = 0;
+        session->session_block_counter = 0;
     }
     //In any case, increment session block counter
-    local_writer->session_block_counter += 1;
+    session->session_block_counter += 1;
 
     //Build NONCE elements (Build once, use once)
     std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t, 12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(local_writer->session_id),4);
+    memcpy(initialization_vector.data(),&(session->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
     std::array<uint8_t, 4> session_id;
-    memcpy(session_id.data(), &(local_writer->session_id), 4);
+    memcpy(session_id.data(), &(session->session_id), 4);
 
     //Header
     try
     {
-        serialize_SecureDataHeader(serializer, local_writer->EntityKeyMaterial.transformation_kind,
-                local_writer->EntityKeyMaterial.sender_key_id, session_id, initialization_vector_suffix);
+        serialize_SecureDataHeader(serializer, keyMat.transformation_kind,
+                keyMat.sender_key_id, session_id, initialization_vector_suffix);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
@@ -110,8 +136,8 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_writer->transformation_kind, local_writer->SessionKey,
-                    initialization_vector, output_buffer, payload.data, payload.length, tag))
+        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, session->SessionKey,
+                    initialization_vector, output_buffer, payload.data, payload.length, tag, false))
         {
             return false;
         }
@@ -125,8 +151,8 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
     try
     {
         std::vector<DatareaderCryptoHandle*> receiving_datareader_crypto_list;
-        if(!serialize_SecureDataTag(serializer, local_writer->transformation_kind, local_writer->session_id,
-                    initialization_vector, receiving_datareader_crypto_list, false, tag))
+        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, session->session_id,
+                    initialization_vector, receiving_datareader_crypto_list, false, tag, nKeys - 1))
         {
             return false;
         }
@@ -169,30 +195,32 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
     std::unique_lock<std::mutex> lock(local_writer->mutex_);
 
+    // Submessage is always protected by the first key
+    auto& keyMat = local_writer->EntityKeyMaterial.at(0);
+    auto session = &local_writer->Sessions[0];
+
     bool update_specific_keys = false;
     //If the maximum number of blocks have been processed, generate a new SessionKey
-    if(local_writer->session_block_counter >= local_writer->max_blocks_per_session)
+    if(session->session_block_counter >= local_writer->max_blocks_per_session)
     {
-        local_writer->session_id += 1;
+        session->session_id += 1;
         update_specific_keys = true;
-        local_writer->SessionKey = compute_sessionkey(local_writer->EntityKeyMaterial.master_sender_key,
-                local_writer->EntityKeyMaterial.master_salt,
-                local_writer->session_id);
+        compute_sessionkey(session->SessionKey, keyMat, session->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
-        local_writer->session_block_counter = 0;
+        session->session_block_counter = 0;
     }
 
-    local_writer->session_block_counter += 1;
+    session->session_block_counter += 1;
 
     //Build remaining NONCE elements
     std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(local_writer->session_id),4);
+    memcpy(initialization_vector.data(),&(session->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
     std::array<uint8_t, 4> session_id;
-    memcpy(session_id.data(), &(local_writer->session_id), 4);
+    memcpy(session_id.data(), &(session->session_id), 4);
 
 #if __BIG_ENDIAN__
     octet flags = 0x0;
@@ -212,8 +240,8 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        serialize_SecureDataHeader(serializer, local_writer->EntityKeyMaterial.transformation_kind,
-                local_writer->EntityKeyMaterial.sender_key_id, session_id, initialization_vector_suffix);
+        serialize_SecureDataHeader(serializer, keyMat.transformation_kind,
+            keyMat.sender_key_id, session_id, initialization_vector_suffix);
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
@@ -233,9 +261,9 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_writer->transformation_kind, local_writer->SessionKey,
+        if(!serialize_SecureDataBody(serializer, keyMat.transformation_kind, session->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos],
-                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag))
+                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag, true))
         {
             return false;
         }
@@ -256,8 +284,8 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        if(!serialize_SecureDataTag(serializer, local_writer->transformation_kind, local_writer->session_id,
-                    initialization_vector, receiving_datareader_crypto_list, update_specific_keys, tag))
+        if(!serialize_SecureDataTag(serializer, keyMat.transformation_kind, session->session_id,
+                    initialization_vector, receiving_datareader_crypto_list, update_specific_keys, tag, 0))
         {
             return false;
         }
@@ -308,28 +336,28 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     std::unique_lock<std::mutex> lock(local_reader->mutex_);
 
     //Step 2 - If the maximum number of blocks have been processed, generate a new SessionKey
+    auto session = &local_reader->Sessions[0];
     bool update_specific_keys = false;
-    if(local_reader->session_block_counter >= local_reader->max_blocks_per_session){
-        local_reader->session_id += 1;
+    if(session->session_block_counter >= local_reader->max_blocks_per_session){
+        session->session_id += 1;
         update_specific_keys = true;
-        local_reader->SessionKey = compute_sessionkey(local_reader->EntityKeyMaterial.master_sender_key,
-                local_reader->EntityKeyMaterial.master_salt,
-                local_reader->session_id);
+        compute_sessionkey(session->SessionKey, local_reader->EntityKeyMaterial.at(0),
+            session->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
-        local_reader->session_block_counter = 0;
+        session->session_block_counter = 0;
     }
 
-    local_reader->session_block_counter += 1;
+    session->session_block_counter += 1;
 
     //Build remaining NONCE elements
     std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t,12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(),&(local_reader->session_id),4);
+    memcpy(initialization_vector.data(),&(session->session_id),4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
     std::array<uint8_t, 4> session_id;
-    memcpy(session_id.data(), &(local_reader->session_id), 4);
+    memcpy(session_id.data(), &(session->session_id), 4);
 
 #if __BIG_ENDIAN__
     octet flags = 0x0;
@@ -349,8 +377,8 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        serialize_SecureDataHeader(serializer, local_reader->EntityKeyMaterial.transformation_kind,
-                local_reader->EntityKeyMaterial.sender_key_id, session_id, initialization_vector_suffix);
+        serialize_SecureDataHeader(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind,
+                local_reader->EntityKeyMaterial.at(0).sender_key_id, session_id, initialization_vector_suffix);
 
         eprosima::fastcdr::Cdr::state current_state = serializer.getState();
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
@@ -370,9 +398,9 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_reader->transformation_kind, local_reader->SessionKey,
+        if(!serialize_SecureDataBody(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind, session->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_submessage.buffer[plain_rtps_submessage.pos],
-                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag))
+                    plain_rtps_submessage.length - plain_rtps_submessage.pos, tag, true))
         {
             return false;
         }
@@ -393,8 +421,8 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
 
         const char* length_position = serializer.getCurrentPosition();
 
-        if(!serialize_SecureDataTag(serializer, local_reader->transformation_kind, local_reader->session_id,
-                    initialization_vector, receiving_datawriter_crypto_list, update_specific_keys, tag))
+        if(!serialize_SecureDataTag(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind, session->session_id,
+                    initialization_vector, receiving_datawriter_crypto_list, update_specific_keys, tag, 0))
         {
             return false;
         }
@@ -451,8 +479,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     {
         local_participant->session_id += 1;
         update_specific_keys = true;
-        local_participant->SessionKey = compute_sessionkey(local_participant->ParticipantKeyMaterial.master_sender_key,
-                local_participant->ParticipantKeyMaterial.master_salt,
+        compute_sessionkey(local_participant->SessionKey, local_participant->ParticipantKeyMaterial,
                 local_participant->session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
@@ -510,9 +537,9 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     // Body
     try
     {
-        if(!serialize_SecureDataBody(serializer, local_participant->transformation_kind, local_participant->SessionKey,
+        if(!serialize_SecureDataBody(serializer, local_participant->ParticipantKeyMaterial.transformation_kind, local_participant->SessionKey,
                     initialization_vector, output_buffer, &plain_rtps_message.buffer[plain_rtps_message.pos],
-                    plain_rtps_message.length - plain_rtps_message.pos, tag))
+                    plain_rtps_message.length - plain_rtps_message.pos, tag, true))
         {
             return false;
         }
@@ -641,9 +668,9 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_sender_key,
-            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_salt,
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key,
+            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0),
             session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
@@ -652,13 +679,12 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
-        {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
-        }
+    {
+        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
@@ -676,6 +702,34 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         uint16_t length = 0;
 
         decoder >> id;
+
+        // If encryption is disabled, jump over several submessages until we find the SecureDataTag
+        while (!is_encrypted && (id != SRTPS_POSTFIX))
+        {
+            decoder >> flags;
+
+            if (flags & BIT(0))
+            {
+                decoder.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
+            }
+            else
+            {
+                decoder.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+            }
+
+            decoder >> length;
+
+            body_length += body_align + 4;
+
+            // Align submessage to 4.
+            body_align = static_cast<uint32_t>(decoder.alignment((decoder.getCurrentPosition() + length) -
+                decoder.getBufferPointer(), sizeof(int32_t)));
+
+            body_length += length;
+            decoder.jump(length + body_align);
+
+            decoder >> id;
+        }
 
         if(id != SRTPS_POSTFIX)
         {
@@ -699,7 +753,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
         SecurityException exception;
 
-        if(!deserialize_SecureDataTag(decoder, tag, sending_participant->transformation_kind,
+        if(!deserialize_SecureDataTag(decoder, tag, sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind,
                 sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).receiver_specific_key_id,
                 sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
                 sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_salt,
@@ -721,11 +775,13 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     }
 
     uint32_t length = plain_buffer.max_size - plain_buffer.pos;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_participant->transformation_kind, session_key, initialization_vector,
-            &plain_buffer.buffer[plain_buffer.pos], length))
+    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag, 
+        is_encrypted ? body_length : body_length + 4,
+        sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind, 
+        session_key, initialization_vector,
+        &plain_buffer.buffer[plain_buffer.pos], length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -803,6 +859,9 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
         return false;
     }
 
+    bool is_key_id_zero = (header.transform_identifier.transformation_key_id == c_transformKeyIdZero);
+    auto& key_id = header.transform_identifier.transformation_key_id;
+
     //TODO(Ricardo) Deserializing header two times, here preprocessing and decoding submessage.
     //KeyId is present in Header->transform_identifier->transformation_key_id and contains the sender_key_id
 
@@ -810,75 +869,88 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             it != remote_participant->Writers.end(); ++it)
     {
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**it);
+        auto& wKeyMats = writer->Entity2RemoteKeyMaterial;
 
-        if(writer->Entity2RemoteKeyMaterial.size() == 0)
+        if (wKeyMats.size() == 0)
         {
             logWarning(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
-        if(writer->Entity2RemoteKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
+        if (wKeyMats.at(0).sender_key_id == key_id)
         {
+            // Remote writer found
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
             *datawriter_crypto = *it;
+
             //We have the remote writer, now lets look for the local datareader
-            for(std::vector<DatareaderCryptoHandle *>::iterator itt = local_participant->Readers.begin(); itt != local_participant->Readers.end(); ++itt)
+            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant = is_key_id_zero ? remote_participant : local_participant;
+            for (std::vector<DatareaderCryptoHandle *>::iterator itt = lookup_participant->Readers.begin(); itt != lookup_participant->Readers.end(); ++itt)
             {
                 AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
 
-                if(reader->Entity2RemoteKeyMaterial.size() == 0)
+                if (reader->Remote2EntityKeyMaterial.size() == 0)
                 {
                     logWarning(SECURITY_CRYPTO, "No key material yet");
                     continue;
                 }
 
-                for(size_t i=0; i < reader->Entity2RemoteKeyMaterial.size(); ++i)
+                for (size_t i = 0; i < reader->Remote2EntityKeyMaterial.size(); ++i)
                 {
-                    if(reader->Entity2RemoteKeyMaterial.at(i).receiver_specific_key_id ==
-                            writer->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id)
+                    if (reader->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
                     {
                         *datareader_crypto = *itt;
                         return true;
                     }
                 }   //For each Reader2WriterKeyMaterial in the local datareader
             } //For each datareader present in the local participant
-        }
-    }
+        } //Remote writer key found
+    } //For each datawriter present in the remote participant
 
     for(std::vector<DatareaderCryptoHandle *>::iterator it = remote_participant->Readers.begin();
             it != remote_participant->Readers.end(); ++it)
     {
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(**it);
 
-        if(reader->Entity2RemoteKeyMaterial.size() == 0)
+        auto& rKeyMats = reader->Entity2RemoteKeyMaterial;
+
+        if (rKeyMats.size() == 0)
         {
             logWarning(SECURITY_CRYPTO, "No key material yet");
             continue;
         }
 
-        if(reader->Entity2RemoteKeyMaterial.at(0).sender_key_id == header.transform_identifier.transformation_key_id)
+        if (rKeyMats.at(0).sender_key_id == key_id)
         {
+            // Remote reader found
             secure_submessage_category = DATAREADER_SUBMESSAGE;
             *datareader_crypto = *it;
 
             //We have the remote reader, now lets look for the local datawriter
-            for(std::vector<DatawriterCryptoHandle *>::iterator itt = local_participant->Writers.begin(); itt != local_participant->Writers.end(); ++itt)
+            AESGCMGMAC_ParticipantCryptoHandle& lookup_participant = is_key_id_zero ? remote_participant : local_participant;
+            for (std::vector<DatawriterCryptoHandle *>::iterator itt = lookup_participant->Writers.begin(); itt != lookup_participant->Writers.end(); ++itt)
             {
-                AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(**itt);
-                for(size_t i = 0; i < writer->Entity2RemoteKeyMaterial.size(); ++i)
+                AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_ReaderCryptoHandle::narrow(**itt);
+
+                if (writer->Remote2EntityKeyMaterial.size() == 0)
                 {
-                    if(writer->Entity2RemoteKeyMaterial.at(i).receiver_specific_key_id ==
-                            reader->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id)
+                    logWarning(SECURITY_CRYPTO, "No key material yet");
+                    continue;
+                }
+
+                for (size_t i = 0; i < writer->Remote2EntityKeyMaterial.size(); ++i)
+                {
+                    if (writer->Remote2EntityKeyMaterial.at(i).sender_key_id == key_id)
                     {
                         *datawriter_crypto = *itt;
                         return true;
                     }
                 }   //For each Writer2ReaderKeyMaterial in the local datawriter
             } //For each datawriter present in the local participant
-        }
-    }
-    logWarning(SECURITY_CRYPTO,"Unable to determine the nature of the message");
+        } //Remote reader key found
+    } //For each datareader present in the remote participant
 
+    // logWarning(SECURITY_CRYPTO,"Unable to determine the nature of the message");
     return false;
 }
 
@@ -958,13 +1030,18 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         return false;
     }
 
+    auto keyMat = find_key(sending_writer->Entity2RemoteKeyMaterial, header.transform_identifier);
+    if (keyMat == nullptr)
+    {
+        logWarning(SECURITY_CRYPTO, "Key material not found");
+        return false;
+    }
+
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_sender_key,
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_salt,
-            session_id);
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key, *keyMat, session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -972,15 +1049,14 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
-        {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
-        }
+    {
+        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1019,10 +1095,10 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
         SecurityException exception;
 
-        if(!deserialize_SecureDataTag(decoder, tag, sending_writer->transformation_kind,
-                sending_writer->Entity2RemoteKeyMaterial.at(0).receiver_specific_key_id,
-                sending_writer->Entity2RemoteKeyMaterial.at(0).master_receiver_specific_key,
-                sending_writer->Entity2RemoteKeyMaterial.at(0).master_salt,
+        if(!deserialize_SecureDataTag(decoder, tag, keyMat->transformation_kind,
+                keyMat->receiver_specific_key_id,
+                keyMat->master_receiver_specific_key,
+                keyMat->master_salt,
                 initialization_vector, session_id, exception))
         {
             return false;
@@ -1041,11 +1117,12 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     }
 
     uint32_t length = plain_rtps_submessage.max_size - plain_rtps_submessage.pos;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_writer->transformation_kind, session_key, initialization_vector,
-            &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
+    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag,
+        is_encrypted ? body_length : body_length + 4,
+        keyMat->transformation_kind, session_key, initialization_vector,
+        &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1131,13 +1208,18 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
         return false;
     }
 
+    auto keyMat = find_key(sending_reader->Entity2RemoteKeyMaterial, header.transform_identifier);
+    if (keyMat == nullptr)
+    {
+        logWarning(SECURITY_CRYPTO, "Could not find key material");
+        return false;
+    }
+
     uint32_t session_id;
     memcpy(&session_id,header.session_id.data(),4);
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_reader->Entity2RemoteKeyMaterial.at(0).master_sender_key,
-            sending_reader->Entity2RemoteKeyMaterial.at(0).master_salt,
-            session_id);
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key, *keyMat, session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -1145,15 +1227,14 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
-        {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
-        }
+    {
+        is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
@@ -1192,10 +1273,10 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
         SecurityException exception;
 
-        if(!deserialize_SecureDataTag(decoder, tag, sending_reader->transformation_kind,
-                sending_reader->Entity2RemoteKeyMaterial.at(0).receiver_specific_key_id,
-                sending_reader->Entity2RemoteKeyMaterial.at(0).master_receiver_specific_key,
-                sending_reader->Entity2RemoteKeyMaterial.at(0).master_salt,
+        if(!deserialize_SecureDataTag(decoder, tag, keyMat->transformation_kind,
+                keyMat->receiver_specific_key_id,
+                keyMat->master_receiver_specific_key,
+                keyMat->master_salt,
                 initialization_vector, session_id, exception))
         {
             return false;
@@ -1214,11 +1295,12 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     }
 
     uint32_t length = plain_rtps_submessage.max_size - plain_rtps_submessage.pos;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_reader->transformation_kind, session_key, initialization_vector,
-            &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
+    if(!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag,
+        is_encrypted ? body_length : body_length + 4,
+        keyMat->transformation_kind, session_key, initialization_vector,
+        &plain_rtps_submessage.buffer[plain_rtps_submessage.pos], length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1256,6 +1338,12 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         return false;
     }
 
+    if (encoded_payload.length == 0)
+    {
+        plain_payload.length = 0;
+        return true;
+    }
+
     eprosima::fastcdr::FastBuffer input_buffer((char*)encoded_payload.data, encoded_payload.max_size);
     eprosima::fastcdr::Cdr decoder(input_buffer);
 
@@ -1273,14 +1361,19 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
         return false;
     }
 
+    auto keyMat = find_key(sending_writer->Entity2RemoteKeyMaterial, header.transform_identifier);
+    if (keyMat == nullptr)
+    {
+        logWarning(SECURITY_CRYPTO, "Key material not found");
+        return false;
+    }
+
     uint32_t session_id;
     memcpy(&session_id, header.session_id.data(), 4);
 
     //Sessionkey
-    std::array<uint8_t,32> session_key = compute_sessionkey(
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_sender_key,
-            sending_writer->Entity2RemoteKeyMaterial.at(0).master_salt,
-            session_id);
+    std::array<uint8_t, 32> session_key;
+    compute_sessionkey(session_key, *keyMat, session_id);
     //IV
     std::array<uint8_t,12> initialization_vector;
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -1288,21 +1381,32 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
+    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    bool is_encrypted = false;
 
     try
-    {   if(!predeserialize_SecureDataBody(decoder, body_length, body_align))
+    {
+        is_encrypted = 
+            (header.transform_identifier.transformation_kind == c_transfrom_kind_aes128_gcm) ||
+            (header.transform_identifier.transformation_kind == c_transfrom_kind_aes256_gcm);
+        if (is_encrypted)
         {
-            logError(SECURITY_CRYPTO, "Error deserializing SecureDataBody header");
-            return false;
+            decoder.deserialize(body_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+        }
+        else
+        {
+            body_length = encoded_payload.length;
+            body_length -= sizeof(header);
+            // TODO: consider origin authentication case
+            body_length -= sizeof(uint32_t) + 16;
         }
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
     {
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
         return false;
     }
 
-    eprosima::fastcdr::Cdr::state body_state = decoder.getState();
     decoder.jump(body_length + body_align);
 
     // Tag
@@ -1317,11 +1421,11 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     }
 
     uint32_t length = plain_payload.max_size;
-    if(!deserialize_SecureDataBody(decoder, body_state, tag, body_length,
-            sending_writer->transformation_kind, session_key, initialization_vector,
-            plain_payload.data, length))
+    if(!deserialize_SecureDataBody(decoder, protected_body_state, tag, body_length,
+        keyMat->transformation_kind, session_key, initialization_vector,
+        plain_payload.data, length))
     {
-        logError(SECURITY_CRYPTO, "Error decoding content");
+        logWarning(SECURITY_CRYPTO, "Error decoding content");
         return false;
     }
 
@@ -1331,22 +1435,61 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     return true;
 }
 
-std::array<uint8_t, 32> AESGCMGMAC_Transform::compute_sessionkey(const std::array<uint8_t,32>& master_sender_key,
-        const std::array<uint8_t,32>& master_salt , const uint32_t session_id)
+void AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t, 32>& session_key, 
+    const KeyMaterial_AES_GCM_GMAC& key_mat, const uint32_t session_id)
 {
+    bool use_256_bits = (key_mat.transformation_kind == c_transfrom_kind_aes256_gcm ||
+        key_mat.transformation_kind == c_transfrom_kind_aes256_gmac);
+    int key_len = use_256_bits ? 32 : 16;
 
-    std::array<uint8_t,32> session_key;
-    unsigned char *source = (unsigned char*)malloc(32 + 10 + 32 + 4);
-    memcpy(source, master_sender_key.data(), 32);
-    char seq[] = "SessionKey";
-    memcpy(source+32, seq, 10);
-    memcpy(source+32+10, master_salt.data(),32);
-    memcpy(source+32+10+32, &(session_id),4);
+    compute_sessionkey(session_key, false, key_mat.master_sender_key, key_mat.master_salt, session_id, key_len);
+}
 
-    EVP_Digest(source, 32+10+32+4, session_key.data(), NULL, EVP_sha256(), NULL);
+void AESGCMGMAC_Transform::compute_sessionkey(std::array<uint8_t, 32>& session_key, bool receiver_specific,
+    const std::array<uint8_t, 32>& master_key, const std::array<uint8_t, 32>& master_salt,
+    const uint32_t session_id, int key_len)
+{
+    int sourceLen = 0;
+    unsigned char source[18 + 32 + 4];
+    const char seq[] = "SessionKey";
+    const char receiver_seq[] = "SessionReceiverKey";
+    if (receiver_specific)
+    {
+        memcpy(source, receiver_seq, 18);
+        sourceLen = 18;
+    }
+    else
+    {
+        memcpy(source, seq, 10);
+        sourceLen = 10;
+    }
+    memcpy(source + sourceLen, master_salt.data(), key_len);
+    sourceLen += key_len;
+    memcpy(source + sourceLen, &session_id, 4);
+    sourceLen += 4;
 
-    free(source);
-    return session_key;
+    EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, master_key.data(), key_len);
+    EVP_MD_CTX* ctx =
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    EVP_MD_CTX_init(ctx);
+    EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
+    EVP_DigestSignUpdate(ctx, source, sourceLen);
+
+    size_t finalLen;
+    EVP_DigestSignFinal(ctx, NULL, &finalLen);
+    EVP_DigestSignFinal(ctx, session_key.data(), &finalLen);
+
+    EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    EVP_MD_CTX_cleanup(ctx);
+    free(ctx);
+#endif
 }
 
 void AESGCMGMAC_Transform::serialize_SecureDataHeader(eprosima::fastcdr::Cdr& serializer,
@@ -1360,119 +1503,156 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(eprosima::fastcdr::Cdr& seri
         const std::array<uint8_t, 4>& transformation_kind, const std::array<uint8_t,32>& session_key,
         const std::array<uint8_t, 12>& initialization_vector,
         eprosima::fastcdr::FastBuffer& output_buffer, octet* plain_buffer, uint32_t plain_buffer_len,
-        SecureDataTag& tag)
+        SecureDataTag& tag, bool submessage)
 {
-#if __BIG_ENDIAN__
-    octet flags = 0x0;
-    serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
-#else
-    octet flags = BIT(0);
-    serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
-#endif
-
-    serializer << SecureBodySubmessage << flags;
-
-    // Store current state to serialize sequence length at the end of the function
-    eprosima::fastcdr::Cdr::state sequence_length_state = serializer.getState();
-
-    // Serialize dummy length
-    uint16_t length = 0;
-    serializer << length;
-
-    //Cypher the plain rtps message -> SecureDataBody
+    bool do_encryption = (transformation_kind == c_transfrom_kind_aes128_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gcm);
+    bool use_256_bits = (transformation_kind == c_transfrom_kind_aes256_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gmac);
 
     // AES_BLOCK_SIZE = 16
     int cipher_block_size = 0, actual_size = 0, final_size = 0;
-    char* output_buffer_raw = nullptr;
     EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-    if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-            transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+    if (!use_256_bits)
     {
-        if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(session_key.data()),
-                    initialization_vector.data()))
+        if (!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(session_key.data()),
+            initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_128_gcm());
-
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM})
-        {
-            output_buffer_raw = serializer.getCurrentPosition();
-        }
     }
-    else if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-            transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+    else
     {
-        if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(session_key.data()),
-                    initialization_vector.data()))
+        if (!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(session_key.data()),
+            initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
-
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM})
-        {
-            output_buffer_raw = serializer.getCurrentPosition();
-        }
     }
 
-    if(output_buffer_raw != nullptr)
+    if (!do_encryption)
     {
-        // Check output_buffer contains enough memory to cypher.
-        // - EVP_EncryptUpdate needs at maximum: plain_buffer_len + cipher_block_size - 1.
-        // - EVP_EncryptFinal needs ad maximun cipher_block_size.
-        if((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
-                (plain_buffer_len + (2* cipher_block_size) - 1))
+        // Auth only. SEC_BODY should not be created. Plain buffer should be copied instead.
+        if ((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
+            plain_buffer_len)
         {
-            logError(SECURITY_CRYPTO, "Not enough memory to cipher payload");
+            logError(SECURITY_CRYPTO, "Not enough memory to copy payload");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+        memcpy(serializer.getCurrentPosition(), plain_buffer, plain_buffer_len);
+        serializer.jump(plain_buffer_len);
+
+        if (!EVP_EncryptUpdate(e_ctx, nullptr, &actual_size, plain_buffer, static_cast<int>(plain_buffer_len)))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+
+        if (!EVP_EncryptFinal(e_ctx, nullptr, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
     }
-
-    if(!EVP_EncryptUpdate(e_ctx, (unsigned char*)output_buffer_raw, &actual_size, plain_buffer,
-                static_cast<int>(plain_buffer_len)))
-    {
-        logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
-        return false;
-    }
-
-    if(!EVP_EncryptFinal(e_ctx, (unsigned char*)output_buffer_raw, &final_size))
-    {
-        logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
-        return false;
-    }
-
-    if(output_buffer_raw != nullptr)
-    {
-        serializer.jump(actual_size + final_size);
-    }
     else
     {
-        memcpy(serializer.getCurrentPosition(), plain_buffer, plain_buffer_len);
-        serializer.jump(plain_buffer_len);
+#if __BIG_ENDIAN__
+        octet flags = 0x0;
+        serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+#else
+        octet flags = BIT(0);
+        serializer.changeEndianness(eprosima::fastcdr::Cdr::Endianness::LITTLE_ENDIANNESS);
+#endif
+
+        if(submessage) serializer << SecureBodySubmessage << flags;
+
+        // Store current state to serialize sequence length at the end of the function
+        eprosima::fastcdr::Cdr::state sequence_length_state = serializer.getState();
+
+        if (submessage)
+        {
+            // Serialize dummy length
+            uint16_t length = 0;
+            serializer << length;
+        }
+
+        // Serialize dummy content length
+        uint32_t cnt_length = 0;
+        serializer << cnt_length;
+
+        //Cypher the plain rtps message -> SecureDataBody
+
+        unsigned char* output_buffer_raw = (unsigned char*)serializer.getCurrentPosition();
+
+        // Check output_buffer contains enough memory to cypher.
+        // - EVP_EncryptUpdate needs at maximum: plain_buffer_len + cipher_block_size - 1.
+        // - EVP_EncryptFinal needs ad maximun cipher_block_size.
+        if ((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
+            (plain_buffer_len + (2 * cipher_block_size) - 1))
+        {
+            logError(SECURITY_CRYPTO, "Not enough memory to cipher payload");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+
+        if (!EVP_EncryptUpdate(e_ctx, output_buffer_raw, &actual_size, plain_buffer,
+            static_cast<int>(plain_buffer_len)))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+
+        if (!EVP_EncryptFinal(e_ctx, output_buffer_raw, &final_size))
+        {
+            logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
+            return false;
+        }
+
+        serializer.jump(actual_size + final_size);
+
+        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+
+        // Serialize body sequence length;
+        cnt_length = static_cast<uint32_t>(actual_size + final_size);
+        serializer.setState(sequence_length_state);
+        if (submessage)
+        {
+            uint16_t length = static_cast<uint16_t>(actual_size + final_size + sizeof(uint32_t));
+            serializer << length;
+        }
+
+        serializer.serialize(cnt_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+
+        serializer.setState(current_state);
+
     }
 
+    // Get commmon_mac
     EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, AES_BLOCK_SIZE, tag.common_mac.data());
     EVP_CIPHER_CTX_free(e_ctx);
 
-    eprosima::fastcdr::Cdr::state current_state = serializer.getState();
-
-    // Serialize body sequence length;
-    serializer.setState(sequence_length_state);
-    serializer << static_cast<uint16_t>(actual_size + final_size);
-
-    serializer.setState(current_state);
-
-    // Align submessage to 4.
-    size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
-    for(size_t count = 0; count != alignment; ++count)
+    if (submessage)
     {
-        uint8_t c = 0;
-        serializer << c;
+        // Align submessage to 4.
+        size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
+        for (size_t count = 0; count != alignment; ++count)
+        {
+            uint8_t c = 0;
+            serializer << c;
+        }
     }
 
     return true;
@@ -1482,9 +1662,21 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
         const std::array<uint8_t, 4>& transformation_kind, const uint32_t session_id,
         const std::array<uint8_t, 12>& initialization_vector,
         std::vector<EntityCryptoHandle*>& receiving_crypto_list, bool update_specific_keys,
-        SecureDataTag& tag)
+        SecureDataTag& tag, size_t sessionIndex)
 {
+    bool use_256_bits = (transformation_kind == c_transfrom_kind_aes256_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gmac);
+    int key_len = use_256_bits ? 32 : 16;
+
     serializer << tag.common_mac;
+
+    // Align to 4.
+    size_t alignment = serializer.alignment(serializer.getCurrentPosition() - serializer.getBufferPointer(), sizeof(int32_t));
+    for (size_t count = 0; count != alignment; ++count)
+    {
+        uint8_t c = 0;
+        serializer << c;
+    }
 
     eprosima::fastcdr::Cdr::state length_state = serializer.getState();
     uint32_t length = 0;
@@ -1508,47 +1700,58 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
             continue;
         }
 
+        auto& keyMat = remote_entity->Remote2EntityKeyMaterial.at(0);
+        if (keyMat.receiver_specific_key_id == c_transformKeyIdZero)
+        {
+            // This means origin authentication is disabled. As it is configured on the writer, we know all other
+            // receiving entities will have its specific key to null value, and we can skip the whole loop
+            break;
+        }
+
         //Update the key if needed
-        if(update_specific_keys || remote_entity->session_id != session_id)
+        if(update_specific_keys || remote_entity->Sessions[sessionIndex].session_id != session_id)
         {
             //Update triggered!
-            remote_entity->session_id = session_id;
-            remote_entity->SessionKey = compute_sessionkey(remote_entity->Remote2EntityKeyMaterial.at(0).master_receiver_specific_key,
-                    remote_entity->Remote2EntityKeyMaterial.at(0).master_salt,
-                    remote_entity->session_id);
+            remote_entity->Sessions[sessionIndex].session_id = session_id;
+            compute_sessionkey(remote_entity->Sessions[sessionIndex].SessionKey, true, 
+                keyMat.master_receiver_specific_key, keyMat.master_salt, session_id, key_len);
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-                transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+        if(transformation_kind == c_transfrom_kind_aes128_gcm ||
+                transformation_kind == c_transfrom_kind_aes128_gmac)
         {
-            if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_entity->SessionKey.data()),
+            if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_entity->Sessions[sessionIndex].SessionKey.data()),
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
-        else if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-                transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+        else if(transformation_kind == c_transfrom_kind_aes256_gcm ||
+                transformation_kind == c_transfrom_kind_aes256_gmac)
         {
-            if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_entity->SessionKey.data()),
+            if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_entity->Sessions[sessionIndex].SessionKey.data()),
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
         if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         if(!EVP_EncryptFinal(e_ctx, NULL, &final_size))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         serializer << remote_entity->Remote2EntityKeyMaterial.at(0).receiver_specific_key_id;
@@ -1561,7 +1764,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
 
     eprosima::fastcdr::Cdr::state current_state = serializer.getState();
     serializer.setState(length_state);
-    serializer << length;
+    serializer.serialize(length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
     serializer.setState(current_state);
     return true;
 }
@@ -1596,50 +1799,64 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
             continue;
         }
 
+        auto& keyMat = remote_participant->Participant2ParticipantKeyMaterial.at(0);
+        if (keyMat.receiver_specific_key_id == c_transformKeyIdZero)
+        {
+            // This means origin authentication is disabled. As it is configured on the writer, we know all other
+            // receiving entities will have its specific key to null value, and we can skip the whole loop
+            break;
+        }
+
+        bool use_256_bits = (keyMat.transformation_kind == c_transfrom_kind_aes256_gcm ||
+            keyMat.transformation_kind == c_transfrom_kind_aes256_gmac);
+        int key_len = use_256_bits ? 32 : 16;
+
         //Update the key if needed
         if((update_specific_keys || remote_participant->session_id != local_participant->session_id) &&
                 (*remote_participant != *local_participant))
         {
             //Update triggered!
             remote_participant->session_id = local_participant->session_id;
-            remote_participant->SessionKey = compute_sessionkey(
-                    remote_participant->Participant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
-                    remote_participant->Participant2ParticipantKeyMaterial.at(0).master_salt,
-                    remote_participant->session_id);
+            compute_sessionkey(remote_participant->SessionKey, true,
+                keyMat.master_receiver_specific_key, keyMat.master_salt, remote_participant->session_id, key_len);
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        if(local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-                local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+        auto& trans_kind = remote_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind;
+        if(trans_kind == c_transfrom_kind_aes128_gcm ||
+            trans_kind == c_transfrom_kind_aes128_gmac)
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()),
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
-                //TODO(Ricardo) Free context;
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
-        else if(local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-                local_participant->transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+        else if(trans_kind == c_transfrom_kind_aes256_gcm ||
+            trans_kind == c_transfrom_kind_aes256_gmac)
         {
             if(!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(), (const unsigned char*)(remote_participant->SessionKey.data()),
                         initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
+                EVP_CIPHER_CTX_free(e_ctx);
                 continue;
             }
         }
         if(!EVP_EncryptUpdate(e_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         if(!EVP_EncryptFinal(e_ctx, NULL, &final_size))
         {
             logError(SECURITY_CRYPTO, "Unable to create authentication for the datawriter submessage. EVP_EncryptFinal function returns an error");
+            EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
         serializer << remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id;
@@ -1652,7 +1869,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(eprosima::fastcdr::Cdr& seria
 
     eprosima::fastcdr::Cdr::state current_state = serializer.getState();
     serializer.setState(length_state);
-    serializer << length;
+    serializer.serialize(length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
     serializer.setState(current_state);
     return true;
 }
@@ -1676,55 +1893,58 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
     eprosima::fastcdr::Cdr::state current_state = decoder.getState();
     decoder.setState(body_state);
 
+    bool do_encryption = (transformation_kind == c_transfrom_kind_aes128_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gcm);
+    bool use_256_bits = (transformation_kind == c_transfrom_kind_aes256_gcm ||
+        transformation_kind == c_transfrom_kind_aes256_gmac);
+
     EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
     int cipher_block_size = 0, actual_size = 0, final_size = 0;
-    octet* output_buffer = nullptr;
 
-    if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-            transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+    if(!use_256_bits)
     {
         if(!EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_128_gcm());
-
-        if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM})
-        {
-            output_buffer = plain_buffer;
-        }
     }
-    if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-            transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+    else
     {
         if(!EVP_DecryptInit(d_ctx, EVP_aes_256_gcm(), (const unsigned char *)session_key.data(), initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptInit function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
         cipher_block_size = EVP_CIPHER_block_size(EVP_aes_256_gcm());
+    }
 
-        if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM})
+    uint32_t protected_len = body_length;
+    if (do_encryption)
+    {
+        decoder.deserialize(protected_len, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
+
+        // Check plain_payload contains enough memory to cypher.
+        // - EVP_DecryptUpdate needs at maximum: body_length + cipher_block_size.
+        if (plain_buffer_len < (protected_len + cipher_block_size))
         {
-            output_buffer = plain_buffer;
+            logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
+            EVP_CIPHER_CTX_free(d_ctx);
+            return false;
         }
     }
 
-    // Check plain_payload contains enough memory to cypher.
-    // - EVP_DecryptUpdate needs at maximum: body_length + cipher_block_size.
-    if(output_buffer != nullptr && (plain_buffer_len < (body_length + cipher_block_size)))
+    octet* output_buffer = do_encryption ? plain_buffer : nullptr;
+    unsigned char* input_buffer = (unsigned char*)decoder.getCurrentPosition();
+    if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size, input_buffer, protected_len))
     {
-        logError(SECURITY_CRYPTO, "Not enough memory to decode payload");
-        return false;
-    }
-
-    if(!EVP_DecryptUpdate(d_ctx, output_buffer, &actual_size,
-                (unsigned char*)decoder.getCurrentPosition(), body_length))
-    {
-        logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
+        logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptUpdate function returns an error");
+        EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
 
@@ -1732,12 +1952,24 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(eprosima::fastcdr::Cdr& de
 
     if(!EVP_DecryptFinal(d_ctx, output_buffer, &final_size))
     {
-        logError(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
+        logWarning(SECURITY_CRYPTO, "Unable to decode the payload. EVP_DecryptFinal function returns an error");
+        EVP_CIPHER_CTX_free(d_ctx);
         return false;
     }
     EVP_CIPHER_CTX_free(d_ctx);
 
-    plain_buffer_len = actual_size + final_size;
+    uint32_t cnt_len = do_encryption ? static_cast<uint32_t>(actual_size + final_size) : body_length;
+    if (plain_buffer_len < cnt_len)
+    {
+        logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
+        return false;
+    }
+
+    plain_buffer_len = cnt_len;
+    if (output_buffer == nullptr)
+    {
+        memcpy(plain_buffer, input_buffer, plain_buffer_len);
+    }
 
     decoder.setState(current_state);
 
@@ -1760,12 +1992,6 @@ bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr&
 
     decoder >> secure_submsg_id;
 
-    if(secure_submsg_id != SecureBodySubmessage)
-    {
-        logError(SECURITY_CRYPTO, "Expected SecureDataBody submsg id");
-        return false;
-    }
-
     decoder >> flags;
 
     if(flags & BIT(0))
@@ -1784,7 +2010,7 @@ bool AESGCMGMAC_Transform::predeserialize_SecureDataBody(eprosima::fastcdr::Cdr&
     body_align = static_cast<uint32_t>(decoder.alignment((decoder.getCurrentPosition() + body_length) -
                 decoder.getBufferPointer(), sizeof(int32_t)));
 
-    return true;
+    return (secure_submsg_id == SecureBodySubmessage);
 }
 
 bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& decoder, SecureDataTag& tag,
@@ -1796,7 +2022,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
     decoder >> tag.common_mac;
 
     uint32_t sequence_length = 0;
-    decoder >> sequence_length;
+    decoder.deserialize(sequence_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 
     if(sequence_length > 0)
     {
@@ -1830,23 +2056,24 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
         int actual_size = 0, final_size = 0;
 
         //Get ReceiverSpecificSessionKey
-        std::array<uint8_t,32> specific_session_key = compute_sessionkey(receiver_specific_key,
-                master_salt, session_id);
+        std::array<uint8_t, 32> specific_session_key;
+        compute_sessionkey(specific_session_key, true, receiver_specific_key, master_salt, session_id);
 
         //Verify specific MAC
-        if(transformation_kind == std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM} ||
-                transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC})
+        if(transformation_kind == c_transfrom_kind_aes128_gcm ||
+                transformation_kind == c_transfrom_kind_aes128_gmac)
         {
             d_cipher = EVP_aes_128_gcm();
         }
-        else if(transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM} ||
-                transformation_kind == std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC})
+        else if(transformation_kind == c_transfrom_kind_aes256_gcm ||
+                transformation_kind == c_transfrom_kind_aes256_gmac)
         {
             d_cipher = EVP_aes_256_gcm();
         }
         else
         {
             logError(SECURITY_CRYPTO, "Invalid transformation kind)");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
@@ -1854,28 +2081,31 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
                     initialization_vector.data()))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptInit function returns an error");
-            return false;
-        }
-
-        if(!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.receiver_mac.data()))
-        {
-            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
         if(!EVP_DecryptUpdate(d_ctx, NULL, &actual_size, tag.common_mac.data(), 16))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptUpdate function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
+            return false;
+        }
+
+        if (!EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, 16, tag.receiver_mac.data()))
+        {
+            logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_CIPHER_CTX_ctrl function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
         if(!EVP_DecryptFinal_ex(d_ctx, NULL, &final_size))
         {
             logError(SECURITY_CRYPTO, "Unable to authenticate the message. EVP_DecryptFinal_ex function returns an error");
+            EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
 
-        // TODO(Ricardo) No freed in errors.
         EVP_CIPHER_CTX_free(d_ctx);
     }
 

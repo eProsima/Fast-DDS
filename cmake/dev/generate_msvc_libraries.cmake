@@ -13,22 +13,25 @@
 # limitations under the License.
 
 macro(generate_msvc_libraries platform)
-    string(COMPARE EQUAL "${platform}" "i86Win32VS2013" IS_I86WIN32VS2013)
-    string(COMPARE EQUAL "${platform}" "x64Win64VS2013" IS_X64WIN64VS2013)
-    string(COMPARE EQUAL "${platform}" "i86Win32VS2015" IS_I86WIN32VS2015)
-    string(COMPARE EQUAL "${platform}" "x64Win64VS2015" IS_X64WIN64VS2015)
-
-    set(GENERATOR_ "")
+    string(SUBSTRING "${platform}" 0 8 arch_)
+    string(SUBSTRING "${platform}" 8 -1 vstool_)
+    string(COMPARE EQUAL "${arch_}" "x64Win64" IS_X64)
+    string(COMPARE EQUAL "${vstool_}" "VS2013" IS_VS2013)
+    string(COMPARE EQUAL "${vstool_}" "VS2015" IS_VS2015)
+    string(COMPARE EQUAL "${vstool_}" "VS2017" IS_VS2017)
+    string(SUBSTRING "${CMAKE_GENERATOR}" 0 21 generator_)
     file(TO_CMAKE_PATH $ENV{EPROSIMA_OPENSSL_ROOT}/${platform} OPENSSL_ROOT_)
 
-    if(IS_I86WIN32VS2013)
-        set(GENERATOR_ "Visual Studio 12 2013")
-    elseif(IS_X64WIN64VS2013)
-        set(GENERATOR_ "Visual Studio 12 2013 Win64")
-    elseif(IS_I86WIN32VS2015)
-        set(GENERATOR_ "Visual Studio 14 2015")
-    elseif(IS_X64WIN64VS2015)
-        set(GENERATOR_ "Visual Studio 14 2015 Win64")
+    if(IS_X64)
+        set(generator_ "${generator_} Win64")
+    endif()
+
+    if(IS_VS2013)
+        set(toolset_ "v120")
+    elseif(IS_VS2015)
+        set(toolset_ "v140")
+    elseif(IS_VS2017)
+        set(toolset_ "v141")
     else()
         message(FATAL_ERROR "Lexical error defining platform. Trying to use platform \"${platform}\"")
     endif()
@@ -37,14 +40,25 @@ macro(generate_msvc_libraries platform)
         COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/eprosima_installer/${platform}"
         )
 
+    add_custom_target(${PROJECT_NAME}_${platform}_dir_static
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/eprosima_installer/${platform}_static")
+
     add_custom_target(${PROJECT_NAME}_${platform} ALL
-        COMMAND ${CMAKE_COMMAND} -G "${GENERATOR_}" -DEPROSIMA_BUILD=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
+        COMMAND ${CMAKE_COMMAND} -G "${generator_}" -T "${toolset_}" -DEPROSIMA_BUILD=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}
         )
 
+    add_custom_target(${PROJECT_NAME}_${platform}_static ALL
+        COMMAND ${CMAKE_COMMAND} -G "${generator_}" -T "${toolset_}" -DBUILD_SHARED_LIBS=OFF -DEPROSIMA_BUILD=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
+        COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
+        COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}_static
+        )
+
     add_dependencies(${PROJECT_NAME}_${platform} ${PROJECT_NAME}_${platform}_dir)
+    add_dependencies(${PROJECT_NAME}_${platform}_static ${PROJECT_NAME}_${platform}_dir_static)
 endmacro()
 
 macro(install_msvc_libraries platform)
@@ -56,6 +70,11 @@ macro(install_msvc_libraries platform)
     install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${LIB_INSTALL_DIR}/
         DESTINATION ${LIB_INSTALL_DIR}
         COMPONENT libraries_${platform}
+        )
+
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install/${DATA_INSTALL_DIR}/
+        DESTINATION ${DATA_INSTALL_DIR}
+        COMPONENT cmake
         )
 
     string(TOUPPER "${platform}" ${platform}_UPPER)

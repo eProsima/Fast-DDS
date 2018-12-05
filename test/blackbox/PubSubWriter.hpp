@@ -33,12 +33,17 @@
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <string>
 #include <list>
 #include <map>
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+
+using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastrtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubWriter
@@ -51,7 +56,7 @@ class PubSubWriter
 
             ~ParticipantListener() {}
 
-            void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo info)
+            void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo&& info) override
             {
                 if(writer_.onDiscovery_!=nullptr)
                 {
@@ -59,26 +64,62 @@ class PubSubWriter
 
                 }
 
-                if(info.rtps.m_status == eprosima::fastrtps::rtps::DISCOVERED_RTPSPARTICIPANT)
+                if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
                 {
                     writer_.participant_matched();
                 }
-                else if(info.rtps.m_status == eprosima::fastrtps::rtps::REMOVED_RTPSPARTICIPANT ||
-                        info.rtps.m_status == eprosima::fastrtps::rtps::DROPPED_RTPSPARTICIPANT)
+                else if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                        info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
                 {
                     writer_.participant_unmatched();
                 }
             }
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(eprosima::fastrtps::Participant*, const eprosima::fastrtps::ParticipantAuthenticationInfo& info)
+            void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantAuthenticationInfo&& info) override
             {
-                if(info.rtps.status() == eprosima::fastrtps::rtps::AUTHORIZED_RTPSPARTICIPANT)
+                if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
+                {
                     writer_.authorized();
-                else if(info.rtps.status() == eprosima::fastrtps::rtps::UNAUTHORIZED_RTPSPARTICIPANT)
+                }
+                else if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT)
+                {
                     writer_.unauthorized();
+                }
             }
 #endif
+
+            void onSubscriberDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
+            {
+                if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
+                {
+                    writer_.add_reader_info(info.info);
+                }
+                else if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::CHANGED_QOS_READER)
+                {
+                    writer_.change_reader_info(info.info);
+                }
+                else if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER)
+                {
+                    writer_.remove_reader_info(info.info);
+                }
+            }
+
+            void onPublisherDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+            {
+                if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
+                {
+                    writer_.add_writer_info(info.info);
+                }
+                else if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::CHANGED_QOS_WRITER)
+                {
+                    writer_.change_writer_info(info.info);
+                }
+                else if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER)
+                {
+                    writer_.remove_writer_info(info.info);
+                }
+            }
 
         private:
 
@@ -117,116 +158,6 @@ class PubSubWriter
 
     } listener_;
 
-    class EDPTakeReaderInfo: public eprosima::fastrtps::rtps::ReaderListener
-    {
-        public:
-
-            EDPTakeReaderInfo(PubSubWriter &writer) : writer_(writer){};
-
-            ~EDPTakeReaderInfo(){};
-
-            void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
-            {
-                eprosima::fastrtps::rtps::ReaderProxyData readerInfo;
-
-                if(change_in->kind == eprosima::fastrtps::rtps::ALIVE)
-                {
-                    eprosima::fastrtps::rtps::CDRMessage_t tempMsg(0);
-                    tempMsg.wraps = true;
-                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? eprosima::fastrtps::rtps::BIGEND : eprosima::fastrtps::rtps::LITTLEEND;
-                    tempMsg.length = change_in->serializedPayload.length;
-                    tempMsg.max_size = change_in->serializedPayload.max_size;
-                    tempMsg.buffer = change_in->serializedPayload.data;
-
-                    if(readerInfo.readFromCDRMessage(&tempMsg))
-                    {
-                        std::cout << "Discovered reader of topic " << readerInfo.topicName() << std::endl;
-                        writer_.add_reader_info(readerInfo);
-                    }
-                }
-                else
-                {
-                    // Search info of entity
-                    eprosima::fastrtps::rtps::GUID_t readerGuid;
-                    iHandle2GUID(readerGuid, change_in->instanceHandle);
-
-                    if(writer_.participant_->get_remote_reader_info(readerGuid, readerInfo))
-                    {
-                        std::cout << "Undiscovered reader of topic " << readerInfo.topicName() << std::endl;
-                        writer_.remove_reader_info(readerInfo);
-                    }
-                    else
-                    {
-                        std::cout << "Error getting remote reader info for topic " << readerInfo.topicName()
-                            << std::endl;
-                    }
-                }
-            }
-
-        private:
-
-            EDPTakeReaderInfo& operator=(const EDPTakeReaderInfo&) = delete;
-
-            PubSubWriter &writer_;
-    };
-
-    class EDPTakeWriterInfo: public eprosima::fastrtps::rtps::ReaderListener
-    {
-        public:
-
-            EDPTakeWriterInfo(PubSubWriter &writer) : writer_(writer){};
-
-            ~EDPTakeWriterInfo(){};
-
-            void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, const eprosima::fastrtps::rtps::CacheChange_t* const change_in)
-            {
-                eprosima::fastrtps::rtps::WriterProxyData writerInfo;
-
-                if(change_in->kind == eprosima::fastrtps::rtps::ALIVE)
-                {
-                    eprosima::fastrtps::rtps::CDRMessage_t tempMsg(0);
-                    tempMsg.wraps = true;
-                    tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? eprosima::fastrtps::rtps::BIGEND : eprosima::fastrtps::rtps::LITTLEEND;
-                    tempMsg.length = change_in->serializedPayload.length;
-                    tempMsg.max_size = change_in->serializedPayload.max_size;
-                    tempMsg.buffer = change_in->serializedPayload.data;
-
-                    if(writerInfo.readFromCDRMessage(&tempMsg))
-                    {
-                        std::cout << "Discovered writer of topic " << writerInfo.topicName() << std::endl;
-                        writer_.add_writer_info(writerInfo);
-                    }
-                    else
-                    {
-                        std::cout << "Error reading cdr message for topic " << writerInfo.topicName() << std::endl;
-                    }
-                }
-                else
-                {
-                    // Search info of entity
-                    eprosima::fastrtps::rtps::GUID_t writerGuid;
-                    iHandle2GUID(writerGuid, change_in->instanceHandle);
-
-                    if(writer_.participant_->get_remote_writer_info(writerGuid, writerInfo))
-                    {
-                        std::cout << "Undiscovered writer of topic " << writerInfo.topicName() << std::endl;
-                        writer_.remove_writer_info(writerInfo);
-                    }
-                    else
-                    {
-                        std::cout << "Error getting remote writer info for topic " << writerInfo.topicName()
-                            << std::endl;
-                    }
-                }
-            }
-
-        private:
-
-            EDPTakeWriterInfo& operator=(const EDPTakeWriterInfo&) = delete;
-
-            PubSubWriter &writer_;
-    };
-
     public:
 
     typedef TypeSupport type_support;
@@ -234,8 +165,7 @@ class PubSubWriter
 
     PubSubWriter(const std::string &topic_name) : participant_listener_(*this), listener_(*this),
     participant_(nullptr), publisher_(nullptr), initialized_(false), matched_(0),
-    participant_matched_(0), attachEDP_(false), edpReaderListener_(*this), edpWriterListener_(*this),
-    discovery_result_(false), onDiscovery_(nullptr)
+    participant_matched_(0), discovery_result_(false), onDiscovery_(nullptr)
 #if HAVE_SECURITY
     , authorized_(0), unauthorized_(0)
 #endif
@@ -277,13 +207,6 @@ class PubSubWriter
         if(participant_ != nullptr)
         {
             participant_guid_ = participant_->getGuid();
-
-            if(attachEDP_)
-            {
-                std::pair<eprosima::fastrtps::rtps::StatefulReader*, eprosima::fastrtps::rtps::StatefulReader*> edpReaders = participant_->getEDPReaders();
-                edpReaders.first->setListener(&edpReaderListener_);
-                edpReaders.second->setListener(&edpWriterListener_);
-            }
 
             // Register type
             eprosima::fastrtps::Domain::registerType(participant_, &type_);
@@ -342,13 +265,20 @@ class PubSubWriter
         return publisher_->write((void*)&msg);
     }
 
-    void waitDiscovery()
+    void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
         std::cout << "Writer is waiting discovery..." << std::endl;
 
-        cv_.wait(lock, [&](){return matched_ != 0;});
+        if(timeout == std::chrono::seconds::zero())
+        {
+            cv_.wait(lock, [&](){return matched_ != 0;});
+        }
+        else
+        {
+            cv_.wait_for(lock, timeout, [&](){return matched_ != 0;});
+        }
 
         std::cout << "Writer discovery finished..." << std::endl;
     }
@@ -411,26 +341,22 @@ class PubSubWriter
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
-        int times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
-
-        while(times != repeatedTimes)
-        {
-            cvEntitiesInfoList_.wait(lock);
-            times = mapTopicCountList_.count(topicName) == 0 ? -1 : mapTopicCountList_[topicName];
-        }
+        cvEntitiesInfoList_.wait(lock, [&]()
+                {
+                    int times = mapTopicCountList_.count(topicName) == 0 ? 0 : mapTopicCountList_[topicName];
+                    return times == repeatedTimes;
+                });
     }
 
     void block_until_discover_partition(const std::string& partition, int repeatedTimes)
     {
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
-        int times = mapPartitionCountList_.count(partition) == 0 ? -1 : mapPartitionCountList_[partition];
-
-        while(times != repeatedTimes)
-        {
-            cvEntitiesInfoList_.wait(lock);
-            times = mapPartitionCountList_.count(partition) == 0 ? -1 : mapPartitionCountList_[partition];
-        }
+        cvEntitiesInfoList_.wait(lock, [&]()
+                {
+                    int times = mapPartitionCountList_.count(partition) == 0 ? 0 : mapPartitionCountList_[partition];
+                    return times == repeatedTimes;
+                });
     }
 
     /*** Function to change QoS ***/
@@ -538,12 +464,6 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& outLocatorList(eprosima::fastrtps::rtps::LocatorList_t outLocators)
-    {
-        publisher_attr_.outLocatorList = outLocators;
-        return *this;
-    }
-
     PubSubWriter& static_discovery(const char* filename)
     {
         participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
@@ -588,12 +508,12 @@ class PubSubWriter
         participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
         eprosima::fastrtps::rtps::Locator_t loopback_locator;
-        loopback_locator.set_IP4_address(127, 0, 0, 1);
+        IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1);
         participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
         return *this;
     }
 
-    PubSubWriter& partition(std::string partition)
+    PubSubWriter& partition(const std::string& partition)
     {
         publisher_attr_.qos.m_partition.push_back(partition.c_str());
         return *this;
@@ -602,12 +522,6 @@ class PubSubWriter
     PubSubWriter& userData(std::vector<eprosima::fastrtps::rtps::octet> user_data)
     {
         participant_attr_.rtps.userData = user_data;
-        return *this;
-    }
-
-    PubSubWriter& attach_edp_listeners()
-    {
-        attachEDP_ = true;
         return *this;
     }
 
@@ -650,6 +564,21 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& max_initial_peers_range(uint32_t maxInitialPeerRange)
+    {
+        participant_attr_.rtps.useBuiltinTransports = false;
+        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        descriptor->maxInitialPeersRange = maxInitialPeerRange;
+        participant_attr_.rtps.userTransports.push_back(descriptor);
+        return *this;
+    }
+
+    PubSubWriter& participant_id(int32_t participantId)
+    {
+        participant_attr_.rtps.participantID = participantId;
+        return *this;
+    }
+
     const std::string& topic_name() const { return topic_name_; }
 
     eprosima::fastrtps::rtps::GUID_t participant_guid()
@@ -657,9 +586,21 @@ class PubSubWriter
         return participant_guid_;
     }
 
+    bool update_partition(const std::string& partition)
+    {
+        publisher_attr_.qos.m_partition.clear();
+        publisher_attr_.qos.m_partition.push_back(partition.c_str());
+        return publisher_->updateAttributes(publisher_attr_);
+    }
+
     bool remove_all_changes(size_t* number_of_changes_removed)
     {
         return publisher_->removeAllChange(number_of_changes_removed);
+    }
+
+    bool is_matched() const
+    {
+        return matched_ > 0;
     }
 
     private:
@@ -716,19 +657,63 @@ class PubSubWriter
         auto ret = mapWriterInfoList_.insert(std::make_pair(writer_data.guid(), writer_data));
 
         if(!ret.second)
+        {
             ret.first->second = writer_data;
+        }
 
         auto ret_topic = mapTopicCountList_.insert(std::make_pair(writer_data.topicName(), 1));
 
         if(!ret_topic.second)
+        {
             ++ret_topic.first->second;
+        }
 
         for(auto partition : writer_data.m_qos.m_partition.getNames())
         {
             auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
 
             if(!ret_partition.second)
+            {
                 ++ret_partition.first->second;
+            }
+        }
+
+        mutexEntitiesInfoList_.unlock();
+        cvEntitiesInfoList_.notify_all();
+    }
+
+    void change_writer_info(const eprosima::fastrtps::rtps::WriterProxyData& writer_data)
+    {
+        mutexEntitiesInfoList_.lock();
+        auto ret = mapWriterInfoList_.insert(std::make_pair(writer_data.guid(), writer_data));
+
+        ASSERT_FALSE(ret.second);
+        eprosima::fastrtps::rtps::WriterProxyData old_writer_data = ret.first->second;
+        ret.first->second = writer_data;
+
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0ul);
+
+        // Remove previous partitions
+        for(auto partition : old_writer_data.m_qos.m_partition.getNames())
+        {
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
+        }
+
+        // Add new partitions
+        for(auto partition : writer_data.m_qos.m_partition.getNames())
+        {
+            auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
+
+            if(!ret_partition.second)
+            {
+                ++ret_partition.first->second;
+            }
         }
 
         mutexEntitiesInfoList_.unlock();
@@ -741,19 +726,62 @@ class PubSubWriter
         auto ret = mapReaderInfoList_.insert(std::make_pair(reader_data.guid(), reader_data));
 
         if(!ret.second)
+        {
             ret.first->second = reader_data;
+        }
 
         auto ret_topic = mapTopicCountList_.insert(std::make_pair(reader_data.topicName(), 1));
 
         if(!ret_topic.second)
+        {
             ++ret_topic.first->second;
+        }
 
         for(auto partition : reader_data.m_qos.m_partition.getNames())
         {
             auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
 
             if(!ret_partition.second)
+            {
                 ++ret_partition.first->second;
+            }
+        }
+
+        mutexEntitiesInfoList_.unlock();
+        cvEntitiesInfoList_.notify_all();
+    }
+
+void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_data)
+    {
+        mutexEntitiesInfoList_.lock();
+        auto ret = mapReaderInfoList_.insert(std::make_pair(reader_data.guid(), reader_data));
+
+        ASSERT_FALSE(ret.second);
+        eprosima::fastrtps::rtps::ReaderProxyData old_reader_data = ret.first->second;
+        ret.first->second = reader_data;
+
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0ul);
+
+        // Remove previous partitions
+        for(auto partition : old_reader_data.m_qos.m_partition.getNames())
+        {
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
+        }
+
+        for(auto partition : reader_data.m_qos.m_partition.getNames())
+        {
+            auto ret_partition = mapPartitionCountList_.insert(std::make_pair(partition, 1));
+
+            if(!ret_partition.second)
+            {
+                ++ret_partition.first->second;
+            }
         }
 
         mutexEntitiesInfoList_.unlock();
@@ -774,9 +802,13 @@ class PubSubWriter
 
         for(auto partition : writer_data.m_qos.m_partition.getNames())
         {
-            ASSERT_GT(mapPartitionCountList_.count(partition), 0ul);
-
-            --mapPartitionCountList_[partition];
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
         }
 
         lock.unlock();
@@ -797,9 +829,13 @@ class PubSubWriter
 
         for(auto partition : reader_data.m_qos.m_partition.getNames())
         {
-            ASSERT_GT(mapPartitionCountList_.count(partition), 0ul);
-
-            --mapPartitionCountList_[partition];
+            auto partition_it = mapPartitionCountList_.find(partition);
+            ASSERT_TRUE(partition_it != mapPartitionCountList_.end());
+            --(*partition_it).second;
+            if((*partition_it).second == 0)
+            {
+                mapPartitionCountList_.erase(partition);
+            }
         }
 
         lock.unlock();
@@ -817,12 +853,9 @@ class PubSubWriter
     bool initialized_;
     std::mutex mutexDiscovery_;
     std::condition_variable cv_;
-    unsigned int matched_;
+    std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;
     type_support type_;
-    bool attachEDP_;
-    EDPTakeReaderInfo edpReaderListener_;
-    EDPTakeWriterInfo edpWriterListener_;
     std::mutex mutexEntitiesInfoList_;
     std::condition_variable cvEntitiesInfoList_;
     std::map<eprosima::fastrtps::rtps::GUID_t, eprosima::fastrtps::rtps::WriterProxyData> mapWriterInfoList_;

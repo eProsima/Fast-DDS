@@ -151,6 +151,7 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
@@ -162,9 +163,6 @@ bool EDPSimple::createSEDPEndpoints()
         created &=this->mp_RTPSParticipant->createWriter(&waux,watt,mp_PubWriter.second,nullptr,c_EntityId_SEDPPubWriter,true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
-#endif
             mp_PubWriter.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Publication Writer created");
         }
@@ -184,6 +182,7 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
@@ -193,9 +192,6 @@ bool EDPSimple::createSEDPEndpoints()
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_SubReader.second,mp_subListen,c_EntityId_SEDPSubReader,true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
-#endif
             mp_SubReader.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Subscription Reader created");
         }
@@ -220,6 +216,7 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
@@ -229,9 +226,6 @@ bool EDPSimple::createSEDPEndpoints()
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_PubReader.second,mp_pubListen,c_EntityId_SEDPPubReader,true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
-#endif
             mp_PubReader.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Publication Reader created");
 
@@ -253,6 +247,7 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
@@ -265,9 +260,6 @@ bool EDPSimple::createSEDPEndpoints()
                 c_EntityId_SEDPSubWriter, true);
         if(created)
         {
-#if HAVE_SECURITY
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
-#endif
             mp_SubWriter.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Subscription Writer created");
 
@@ -291,6 +283,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
     bool created = true;
     RTPSReader* raux = nullptr;
     RTPSWriter* waux = nullptr;
+
+    auto& part_attr = mp_RTPSParticipant->security_attributes();
+    security::PluginParticipantSecurityAttributes plugin_part_attr(part_attr.plugin_participant_attributes);
+
     if(m_discovery.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
         hatt.initialReservedCaches = 100;
@@ -303,13 +299,22 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
         watt.times.initialHeartbeatDelay.seconds = 0;
         watt.times.initialHeartbeatDelay.fraction = 0;
-        watt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+        watt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
+
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
@@ -317,7 +322,6 @@ bool EDPSimple::create_sedp_secure_endpoints()
                 nullptr, sedp_builtin_publications_secure_writer, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
             sedp_builtin_publications_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Publication Writer created");
         }
@@ -337,18 +341,25 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
         ratt.times.initialAcknackDelay.seconds = 0;
         ratt.times.initialAcknackDelay.fraction = 0;
-        ratt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+        ratt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, sedp_builtin_subscriptions_secure_reader_.second,
                 mp_subListen, sedp_builtin_subscriptions_secure_reader, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
             sedp_builtin_subscriptions_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Subscription Reader created");
         }
@@ -372,18 +383,25 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay.seconds = 0;
         ratt.times.heartbeatResponseDelay.fraction = 0;
         ratt.times.initialAcknackDelay.seconds = 0;
         ratt.times.initialAcknackDelay.fraction = 0;
-        ratt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+        ratt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                ratt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, sedp_builtin_publications_secure_reader_.second,
                 mp_pubListen, sedp_builtin_publications_secure_reader, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(raux, false);
             sedp_builtin_publications_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP,"SEDP Publication Reader created");
 
@@ -403,13 +421,21 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.nackResponseDelay.seconds = 0;
         watt.times.nackResponseDelay.fraction = 0;
         watt.times.initialHeartbeatDelay.seconds = 0;
         watt.times.initialHeartbeatDelay.fraction = 0;
-        watt.endpoint.security_attributes().is_submessage_protected =
-            mp_RTPSParticipant->security_attributes().is_discovered_protected;
+        watt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
+        watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
+        if (part_attr.is_discovery_protected)
+        {
+            if (plugin_part_attr.is_discovery_encrypted)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+            if (plugin_part_attr.is_discovery_origin_authenticated)
+                watt.endpoint.security_attributes().plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
@@ -417,7 +443,6 @@ bool EDPSimple::create_sedp_secure_endpoints()
                 nullptr, sedp_builtin_subscriptions_secure_writer, true);
         if(created)
         {
-            this->mp_RTPSParticipant->set_endpoint_rtps_protection_supports(waux, false);
             sedp_builtin_subscriptions_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
             logInfo(RTPS_EDP,"SEDP Subscription Writer created");
 
@@ -439,13 +464,11 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     (void)local_reader;
 
     auto* writer = &mp_SubWriter;
-    auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
-    if(local_reader->getAttributes()->security_attributes().is_discovered_protected)
+    if(local_reader->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
-        reader = &sedp_builtin_subscriptions_secure_reader_;
     }
 #endif
 
@@ -459,10 +482,7 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
         {
             rdata->toParameterList();
 
-            CDRMessage_t aux_msg(0);
-            aux_msg.wraps = true;
-            aux_msg.buffer = change->serializedPayload.data;
-            aux_msg.max_size = change->serializedPayload.max_size;
+            CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
@@ -488,17 +508,14 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
                 }
             }
 
-            if(this->mp_subListen->getAttachedListener() != nullptr)
-            {
-                this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
-            }
-
             writer->second->add_change(change);
 
             return true;
         }
+
         return false;
     }
+
     return true;
 }
 bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProxyData* wdata)
@@ -507,13 +524,11 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
     (void)local_writer;
 
     auto* writer = &mp_PubWriter;
-    auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
-    if(local_writer->getAttributes()->security_attributes().is_discovered_protected)
+    if(local_writer->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
-        reader = &sedp_builtin_publications_secure_reader_;
     }
 #endif
 
@@ -523,12 +538,9 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
                 ALIVE, wdata->key());
         if(change != nullptr)
         {
-            wdata->toParameterList();
+            //wdata->toParameterList();
 
-            CDRMessage_t aux_msg(0);
-            aux_msg.wraps = true;
-            aux_msg.buffer = change->serializedPayload.data;
-            aux_msg.max_size = change->serializedPayload.max_size;
+            CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
@@ -554,9 +566,6 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
                 }
             }
 
-            if(this->mp_pubListen->getAttachedListener() != nullptr)
-                this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
-
             writer->second->add_change(change);
 
             return true;
@@ -571,13 +580,11 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_EDP,W->getGuid().entityId);
 
     auto* writer = &mp_PubWriter;
-    auto* reader = &mp_PubReader;
 
 #if HAVE_SECURITY
-    if(W->getAttributes()->security_attributes().is_discovered_protected)
+    if(W->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
-        reader = &sedp_builtin_publications_secure_reader_;
     }
 #endif
 
@@ -602,9 +609,6 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 
             }
 
-            if(this->mp_pubListen->getAttachedListener() != nullptr)
-                this->mp_pubListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
-
             writer->second->add_change(change);
         }
     }
@@ -616,13 +620,11 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
     logInfo(RTPS_EDP,R->getGuid().entityId);
 
     auto* writer = &mp_SubWriter;
-    auto* reader = &mp_SubReader;
 
 #if HAVE_SECURITY
-    if(R->getAttributes()->security_attributes().is_discovered_protected)
+    if(R->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
-        reader = &sedp_builtin_subscriptions_secure_reader_;
     }
 #endif
 
@@ -645,9 +647,6 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
                     }
                 }
             }
-
-            if(this->mp_subListen->getAttachedListener() != nullptr)
-                this->mp_subListen->getAttachedListener()->onNewCacheChangeAdded(reader->first, change);
 
             writer->second->add_change(change);
         }
@@ -674,6 +673,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_PubReader.first->matched_writer_add(watt);
@@ -691,6 +691,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.guid.entityId = c_EntityId_SEDPPubReader;
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_PubWriter.first->matched_reader_add(ratt);
@@ -708,6 +709,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_SubReader.first->matched_writer_add(watt);
@@ -725,6 +727,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.guid.entityId = c_EntityId_SEDPSubReader;
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_SubWriter.first->matched_reader_add(ratt);
@@ -747,7 +750,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     sedp_builtin_publications_secure_reader_.first->getGuid(), pdata.m_guid, watt,
-                    sedp_builtin_publications_secure_reader_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_publications_secure_reader_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_publications_secure_reader_.first->getGuid());
@@ -755,7 +758,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     }
 
     auxendp = endp;
-    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
     if(auxendp != 0 && sedp_builtin_publications_secure_writer_.first!=nullptr)
@@ -770,7 +773,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     sedp_builtin_publications_secure_writer_.first->getGuid(), pdata.m_guid, ratt,
-                    sedp_builtin_publications_secure_writer_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_publications_secure_writer_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_publications_secure_writer_.first->getGuid());
@@ -793,7 +796,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     sedp_builtin_subscriptions_secure_reader_.first->getGuid(), pdata.m_guid, watt,
-                    sedp_builtin_subscriptions_secure_reader_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_subscriptions_secure_reader_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_subscriptions_secure_reader_.first->getGuid());
@@ -801,7 +804,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     }
 
     auxendp = endp;
-    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
     //FIXME: FIX TO NOT FAIL WITH BAD BUILTIN ENDPOINT SET
     //auxendp = 1;
     if(auxendp != 0 && sedp_builtin_subscriptions_secure_writer_.first!=nullptr)
@@ -817,7 +820,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
                     sedp_builtin_subscriptions_secure_writer_.first->getGuid(), pdata.m_guid, ratt,
-                    sedp_builtin_subscriptions_secure_writer_.first->getAttributes()->security_attributes()))
+                    sedp_builtin_subscriptions_secure_writer_.first->getAttributes().security_attributes()))
         {
             logError(RTPS_EDP, "Security manager returns an error for writer " <<
                     sedp_builtin_subscriptions_secure_writer_.first->getGuid());
@@ -844,6 +847,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_PubReader.first->matched_writer_remove(watt);
@@ -860,6 +864,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = c_EntityId_SEDPPubReader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_PubWriter.first->matched_reader_remove(ratt);
@@ -877,6 +882,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_SubReader.first->matched_writer_remove(watt);
@@ -894,6 +900,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = c_EntityId_SEDPSubReader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         mp_SubWriter.first->matched_reader_remove(ratt);
@@ -912,6 +919,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         if(sedp_builtin_publications_secure_reader_.first->matched_writer_remove(watt))
@@ -932,6 +940,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = sedp_builtin_publications_secure_reader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         if(sedp_builtin_publications_secure_writer_.first->matched_reader_remove(ratt))
@@ -954,6 +963,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.persistence_guid = watt.guid;
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         if(sedp_builtin_subscriptions_secure_reader_.first->matched_writer_remove(watt))
@@ -974,6 +984,7 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.guid.entityId = sedp_builtin_subscriptions_secure_reader;
         ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         if(sedp_builtin_subscriptions_secure_writer_.first->matched_reader_remove(ratt))
@@ -993,12 +1004,14 @@ bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(c
 
     if(local_reader.entityId == sedp_builtin_publications_secure_reader)
     {
-        sedp_builtin_publications_secure_reader_.first->matched_writer_add(remote_writer_data.toRemoteWriterAttributes());
+        RemoteWriterAttributes attrs = remote_writer_data.toRemoteWriterAttributes();
+        sedp_builtin_publications_secure_reader_.first->matched_writer_add(attrs);
         returned_value = true;
     }
     else if(local_reader.entityId == sedp_builtin_subscriptions_secure_reader)
     {
-        sedp_builtin_subscriptions_secure_reader_.first->matched_writer_add(remote_writer_data.toRemoteWriterAttributes());
+        RemoteWriterAttributes attrs = remote_writer_data.toRemoteWriterAttributes();
+        sedp_builtin_subscriptions_secure_reader_.first->matched_writer_add(attrs);
         returned_value = true;
     }
 
@@ -1012,12 +1025,14 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(c
 
     if(local_writer.entityId == sedp_builtin_publications_secure_writer)
     {
-        sedp_builtin_publications_secure_writer_.first->matched_reader_add(remote_reader_data.toRemoteReaderAttributes());
+        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
+        sedp_builtin_publications_secure_writer_.first->matched_reader_add(attrs);
         returned_value = true;
     }
     else if(local_writer.entityId == sedp_builtin_subscriptions_secure_writer)
     {
-        sedp_builtin_subscriptions_secure_writer_.first->matched_reader_add(remote_reader_data.toRemoteReaderAttributes());
+        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
+        sedp_builtin_subscriptions_secure_writer_.first->matched_reader_add(attrs);
         returned_value = true;
     }
 

@@ -17,16 +17,19 @@
  *
  */
 
-#ifndef PARTICIPANTPROXYDATA_H_
-#define PARTICIPANTPROXYDATA_H_
+#ifndef _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
+#define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <mutex>
-#include "../../../qos/QosList.h"
 #include "../../../qos/ParameterList.h"
 
 #include "../../attributes/WriterAttributes.h"
 #include "../../attributes/ReaderAttributes.h"
 #include "../../common/Token.h"
+
+#if HAVE_SECURITY
+#include "../../security/accesscontrol/ParticipantSecurityAttributes.h"
+#endif
 
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
@@ -34,22 +37,26 @@
 #define DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE 5000
 #define BUILTIN_PARTICIPANT_DATA_MAX_SIZE 100
 
-#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER 0x00000001 << 0;
-#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR 0x00000001 << 1;
-#define DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER 0x00000001 << 2;
-#define DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR 0x00000001 << 3;
-#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER 0x00000001 << 4;
-#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR 0x00000001 << 5;
-#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_PROXY_ANNOUNCER 0x00000001 << 6;
-#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_PROXY_DETECTOR 0x00000001 << 7;
-#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_ANNOUNCER 0x00000001 << 8;
-#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_DETECTOR 0x00000001 << 9;
-#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER 0x00000001 << 10;
-#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER 0x00000001 << 11;
-#define DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER 0x00000001 << 16;
-#define DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR 0x00000001 << 17;
-#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER 0x00000001 << 18;
-#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR 0x00000001 << 19;
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER              (0x00000001 << 0)
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR               (0x00000001 << 1)
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER              (0x00000001 << 2)
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR               (0x00000001 << 3)
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER             (0x00000001 << 4)
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR              (0x00000001 << 5)
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_PROXY_ANNOUNCER        (0x00000001 << 6)
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_PROXY_DETECTOR         (0x00000001 << 7)
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_ANNOUNCER        (0x00000001 << 8)
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_STATE_DETECTOR         (0x00000001 << 9)
+#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER         (0x00000001 << 10)
+#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER         (0x00000001 << 11)
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER       (0x00000001 << 16)
+#define DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR        (0x00000001 << 17)
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER      (0x00000001 << 18)
+#define DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR       (0x00000001 << 19)
+#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER  (0x00000001 << 20)
+#define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER  (0x00000001 << 21)
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER       (0x00000001 << 26)
+#define DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR        (0x00000001 << 27)
 
 namespace eprosima {
 namespace fastrtps{
@@ -102,10 +109,16 @@ class ParticipantProxyData
         InstanceHandle_t m_key;
         //!
         Duration_t m_leaseDuration;
+#if HAVE_SECURITY
         //!
         IdentityToken identity_token_;
         //!
         PermissionsToken permissions_token_;
+        //!
+        security::ParticipantSecurityAttributesMask security_attributes_;
+        //!
+        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
+#endif
         //!
         bool isAlive;
         //!
@@ -135,7 +148,7 @@ class ParticipantProxyData
          * Read the parameter list from a recevied CDRMessage_t
          * @return True on success
          */
-        bool readFromCDRMessage(CDRMessage_t* msg);
+        bool readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation=true);
         //!Clear the data (restore to default state.)
         void clear();
         /**
@@ -150,4 +163,4 @@ class ParticipantProxyData
 } /* namespace eprosima */
 
 #endif
-#endif /* RTPSParticipantPROXYDATA_H_ */
+#endif // _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_

@@ -32,7 +32,7 @@
 #define _SEC_PREFIX_              0x31
 #define _SEC_POSTFIX_             0x32
 #define _SRTPS_PREFIX_            0x33
-#define _SRTPS_POSTFIX_           0x32
+#define _SRTPS_POSTFIX_           0x34
 #define _SecureBodySubmessage_    0x30
 
 const uint8_t SEC_PREFIX = _SEC_PREFIX_;
@@ -49,11 +49,18 @@ namespace security {
     typedef std::array<uint8_t,4> CryptoTransformKind;
     typedef std::array<uint8_t,4> CryptoTransformKeyId;
 
+    const CryptoTransformKeyId c_transformKeyIdZero = { {0,0,0,0} };
+
+    typedef Token MessageToken;
+    typedef MessageToken AuthRequestMessageToken;
+    typedef MessageToken HandshakeMessageToken;
+
     typedef Token CryptoToken;
     typedef Token ParticipantCryptoToken;
     typedef Token DatawriterCryptoToken;
     typedef Token DatareaderCryptoToken;
 
+    typedef std::vector<HandshakeMessageToken> HandshakeMessageTokenSeq;
     typedef std::vector<CryptoToken> CryptoTokenSeq;
     typedef CryptoTokenSeq ParticipantCryptoTokenSeq;
     typedef CryptoTokenSeq DatawriterCryptoTokenSeq;

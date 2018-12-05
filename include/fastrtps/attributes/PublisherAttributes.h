@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PublisherAttributes.h	
+ * @file PublisherAttributes.h
  */
 
 #ifndef PUBLISHERATTRIBUTES_H_
@@ -34,68 +34,81 @@
 namespace eprosima {
 namespace fastrtps{
 
-
 /**
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
 class PublisherAttributes
 {
-    public:
+public:
+    PublisherAttributes() :
+        historyMemoryPolicy(rtps::PREALLOCATED_MEMORY_MODE),
+        m_userDefinedID(-1),
+        m_entityID(-1)
+    {}
 
-        PublisherAttributes()
-        {
-            m_userDefinedID = -1;
-            m_entityID = -1;
-            historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
-        };
-        virtual ~PublisherAttributes(){};
-        //!Topic Attributes for the Publisher
-        TopicAttributes topic;
-        //!QOS for the Publisher
-        WriterQos qos;
-        //!Writer Attributes
-        rtps::WriterTimes times;
-        //!Unicast locator list
-        rtps::LocatorList_t unicastLocatorList;
-        //!Multicast locator list
-        rtps::LocatorList_t multicastLocatorList;
-        //!Output locator list
-        rtps::LocatorList_t outLocatorList;
-        //!Throughput controller
-        rtps::ThroughputControllerDescriptor throughputController;
-        //!Underlying History memory policy
-        rtps::MemoryManagementPolicy_t historyMemoryPolicy;
-        rtps::PropertyPolicy properties;
+    virtual ~PublisherAttributes(){}
 
-        /**
-         * Get the user defined ID
-         * @return User defined ID
-         */
-        inline int16_t getUserDefinedID() const {return m_userDefinedID;}
+    bool operator==(const PublisherAttributes& b) const
+    {
+        return (this->m_userDefinedID == b.m_userDefinedID) &&
+               (this->m_entityID == b.m_entityID) &&
+               (this->topic == b.topic) &&
+               (this->qos == b.qos) &&
+               (this->times == b.times) &&
+               (this->unicastLocatorList == b.unicastLocatorList) &&
+               (this->multicastLocatorList == b.multicastLocatorList) &&
+               (this->remoteLocatorList == b.remoteLocatorList) &&
+               (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
+               (this->properties == b.properties);
+    }
 
-        /**
-         * Get the entity defined ID
-         * @return Entity ID
-         */
-        inline int16_t getEntityID() const {return m_entityID;}
+    //!Topic Attributes for the Publisher
+    TopicAttributes topic;
+    //!QOS for the Publisher
+    WriterQos qos;
+    //!Writer Attributes
+    rtps::WriterTimes times;
+    //!Unicast locator list
+    rtps::LocatorList_t unicastLocatorList;
+    //!Multicast locator list
+    rtps::LocatorList_t multicastLocatorList;
+    //!Remote locator list
+    rtps::LocatorList_t remoteLocatorList;
+    //!Throughput controller
+    rtps::ThroughputControllerDescriptor throughputController;
+    //!Underlying History memory policy
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy;
+    rtps::PropertyPolicy properties;
 
-        /**
-         * Set the user defined ID
-         * @param id User defined ID to be set
-         */
-        inline void setUserDefinedID(uint8_t id){m_userDefinedID = id;	};
+    /**
+     * Get the user defined ID
+     * @return User defined ID
+     */
+    inline int16_t getUserDefinedID() const {return m_userDefinedID;}
 
-        /**
-         * Set the entity ID
-         * @param id Entity ID to be set
-         */
-        inline void setEntityID(uint8_t id){m_entityID = id;	};
-    private:
-        //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
-        int16_t m_userDefinedID;
-        //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
-        int16_t m_entityID;
+    /**
+     * Get the entity defined ID
+     * @return Entity ID
+     */
+    inline int16_t getEntityID() const {return m_entityID;}
+
+    /**
+     * Set the user defined ID
+     * @param id User defined ID to be set
+     */
+    inline void setUserDefinedID(uint8_t id) { m_userDefinedID = id; }
+
+    /**
+     * Set the entity ID
+     * @param id Entity ID to be set
+     */
+    inline void setEntityID(uint8_t id) { m_entityID = id; }
+private:
+    //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
+    int16_t m_userDefinedID;
+    //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    int16_t m_entityID;
 };
 
 }

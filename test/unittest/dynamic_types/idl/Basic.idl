@@ -1,0 +1,192 @@
+enum MyEnum
+{
+    A,
+    B,
+    C
+};
+
+typedef MyEnum MyAliasEnum;
+typedef MyAliasEnum MyAliasAliasEnum;
+
+struct EnumStruct
+{
+    MyEnum my_enum;
+};
+
+struct AliasStruct
+{
+    MyAliasEnum my_alias;
+};
+
+struct AliasAliasStruct
+{
+    MyAliasAliasEnum my_alias_alias;
+};
+
+struct BoolStruct
+{
+    boolean my_bool;
+};
+
+struct OctetStruct
+{
+    octet my_octet;
+};
+
+struct ShortStruct
+{
+    short my_int16;
+};
+
+struct LongStruct
+{
+    long my_int32;
+};
+
+struct LongLongStruct
+{
+    long long my_int64;
+};
+
+struct UShortStruct
+{
+    unsigned short my_uint16;
+};
+
+struct ULongStruct
+{
+    unsigned long my_uint32;
+};
+
+struct ULongLongStruct
+{
+    unsigned long long my_uint64;
+};
+
+struct FloatStruct
+{
+    float my_float32;
+};
+
+struct DoubleStruct
+{
+    double my_float64;
+};
+
+struct LongDoubleStruct
+{
+    long double my_float128;
+};
+
+struct CharStruct
+{
+    char my_char;
+};
+
+struct WCharStruct
+{
+    wchar my_wchar;
+};
+
+struct StringStruct
+{
+    string my_string;
+};
+
+struct WStringStruct
+{
+    wstring my_wstring;
+};
+
+struct LargeStringStruct
+{
+    string<41925> my_large_string;
+};
+
+struct LargeWStringStruct
+{
+    wstring<41925> my_large_wstring;
+};
+
+struct ArraytStruct
+{
+    long my_array[2][2][2];
+};
+
+typedef long MyArray[2][2];
+
+struct ArrayArrayStruct
+{
+    MyArray my_array_array[2][2];
+};
+
+struct SequenceStruct
+{
+    sequence<long, 2> my_sequence;
+};
+
+struct SequenceSequenceStruct
+{
+    sequence<sequence<long, 2>, 3> my_sequence_sequence;
+};
+
+struct MapStruct
+{
+    map<long, long, 2> my_map;
+};
+
+struct MapMapStruct
+{
+    map<long, map<long, long, 2> , 2> my_map_map;
+};
+
+struct StructStruct
+{
+    long a;
+    long long b;
+};
+
+struct StructStructStruct
+{
+    StructStruct child_struct;
+    long long child_int64;
+};
+
+union SimpleUnion switch (long)
+{
+    case A:
+        long first;
+    case B:
+        long long second;
+};
+
+union UnionUnion switch (long)
+{
+    case A:
+        long first;
+    case B:
+        SimpleUnion second;
+};
+
+union WCharUnion switch (wchar)
+{
+    case A:
+        long first;
+    case B:
+        long long second;
+};
+
+struct SimpleUnionStruct
+{
+    SimpleUnion my_union;
+};
+
+struct UnionUnionUnionStruct
+{
+    UnionUnion my_union;
+};
+
+struct WCharUnionStruct
+{
+    WCharUnion my_union;
+};

@@ -43,7 +43,7 @@ public:
 	virtual ~Data1mbType();
 	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
 	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
 	std::function<uint32_t()> getSerializedSizeProvider(void *data);
 	void* createData();
 	void deleteData(void * data);

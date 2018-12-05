@@ -17,10 +17,12 @@
  *
  */
 
-#ifndef RTPSPARTICIPANTLISTENER_H_
-#define RTPSPARTICIPANTLISTENER_H_
+#ifndef __RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__
+#define __RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__
 
-#include "RTPSParticipantDiscoveryInfo.h"
+#include "ParticipantDiscoveryInfo.h"
+#include "../reader/ReaderDiscoveryInfo.h"
+#include "../writer/WriterDiscoveryInfo.h"
 
 namespace eprosima{
 namespace fastrtps{
@@ -37,23 +39,52 @@ class RTPS_DllAPI RTPSParticipantListener
     public:
 
         RTPSParticipantListener(){};
+
         virtual ~RTPSParticipantListener(){};
 
-        /**
-         * This method is invoked when a new participant is discovered
-         * @param part Discovered participant
-         * @param info Discovery information of the participant
+        /*!
+         * This method is called when a new Participant is discovered, or a previously discovered participant changes
+         * its QOS or is removed.
+         * @param participant Pointer to the Participant which discovered the remote participant.
+         * @param info Remote participant information. User can take ownership of the object.
          */
-        virtual void onRTPSParticipantDiscovery(RTPSParticipant* part, RTPSParticipantDiscoveryInfo info){(void)part; (void)info;}
+        virtual void onParticipantDiscovery(RTPSParticipant* participant, ParticipantDiscoveryInfo&& info)
+        {
+            (void)participant, (void)info;
+        }
 
 #if HAVE_SECURITY
-        virtual void onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& info) {(void)part; (void)info;}
+        virtual void onParticipantAuthentication(RTPSParticipant* participant, ParticipantAuthenticationInfo&& info)
+        {
+            (void)participant, (void)info;
+        }
 #endif
+
+        /*!
+         * This method is called when a new Reader is discovered, or a previously discovered reader changes
+         * its QOS or is removed.
+         * @param participant Pointer to the Participant which discovered the remote reader.
+         * @param info Remote reader information. User can take ownership of the object.
+         */
+        virtual void onReaderDiscovery(RTPSParticipant* participant, ReaderDiscoveryInfo&& info)
+        {
+            (void)participant, (void)info;
+        }
+
+        /*!
+         * This method is called when a new Writer is discovered, or a previously discovered writer changes
+         * its QOS or is removed.
+         * @param participant Pointer to the Participant which discovered the remote writer.
+         * @param info Remote writer information. User can take ownership of the object.
+         */
+        virtual void onWriterDiscovery(RTPSParticipant* participant, WriterDiscoveryInfo&& info)
+        {
+            (void)participant, (void)info;
+        }
 };
-}
-}
-}
 
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
-
-#endif /* RTPSPARTICIPANTLISTENER_H_ */
+#endif //__RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__

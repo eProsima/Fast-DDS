@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef READERPROXYDATA_H_
-#define READERPROXYDATA_H_
+#ifndef _RTPS_BUILTIN_DATA_READERPROXYDATA_H_
+#define _RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/TopicAttributes.h"
@@ -27,7 +27,9 @@
 
 #include "../../attributes/WriterAttributes.h"
 
-
+#if HAVE_SECURITY
+#include "../../security/accesscontrol/EndpointSecurityAttributes.h"
+#endif
 
 namespace eprosima {
 namespace fastrtps{
@@ -162,7 +164,7 @@ class ReaderProxyData
             m_typeName = std::move(typeName);
         }
 
-        RTPS_DllAPI std::string typeName() const
+        RTPS_DllAPI const std::string& typeName() const
         {
             return m_typeName;
         }
@@ -182,7 +184,7 @@ class ReaderProxyData
             m_topicName = std::move(topicName);
         }
 
-        RTPS_DllAPI std::string topicName() const
+        RTPS_DllAPI const std::string& topicName() const
         {
             return m_topicName;
         }
@@ -237,6 +239,51 @@ class ReaderProxyData
             return m_topicKind;
         }
 
+        RTPS_DllAPI void type_id(TypeIdV1 type_id)
+        {
+            m_type_id = type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1 type_id() const
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1& type_id()
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI void type(TypeObjectV1 type)
+        {
+            m_type = type;
+        }
+
+        RTPS_DllAPI TypeObjectV1 type() const
+        {
+            return m_type;
+        }
+
+        RTPS_DllAPI TypeObjectV1& type()
+        {
+            return m_type;
+        }
+
+        RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
+        {
+            m_topicDiscoveryKind = topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
+        {
+            return m_topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
+        {
+            return m_topicDiscoveryKind;
+        }
+
         /**
          * Convert the data to a parameter list to send this information as a RTPS message.
          * @return Generated parameter list
@@ -251,8 +298,17 @@ class ReaderProxyData
 
         //!
         bool m_expectsInlineQos;
-        //!Reader Qos	
+        //!Reader Qos
         ReaderQos m_qos;
+
+#if HAVE_SECURITY
+        //!EndpointSecurityInfo.endpoint_security_attributes
+        security::EndpointSecurityAttributesMask security_attributes_;
+
+        //!EndpointSecurityInfo.plugin_endpoint_security_attributes
+        security::PluginEndpointSecurityAttributesMask plugin_security_attributes_;
+#endif
+
         /**
          * Clear (put to default) the information.
          */
@@ -269,7 +325,7 @@ class ReaderProxyData
         void copy(ReaderProxyData* rdata);
 
         /**
-         * Convert the ProxyData information to RemoteReaderAttributes object. 
+         * Convert the ProxyData information to RemoteReaderAttributes object.
          * @return Reference to the RemoteReaderAttributes object.
          */
         RemoteReaderAttributes toRemoteReaderAttributes() const;
@@ -296,6 +352,12 @@ class ReaderProxyData
         bool m_isAlive;
         //!Topic kind
         TopicKind_t m_topicKind;
+        //!Topic Discovery Kind
+        TopicDiscoveryKind_t m_topicDiscoveryKind;
+        //!Type Identifier
+        TypeIdV1 m_type_id;
+        //!Type Object
+        TypeObjectV1 m_type;
 };
 
 }
@@ -303,4 +365,4 @@ class ReaderProxyData
 } /* namespace eprosima */
 
 #endif
-#endif /* READERPROXYDATA_H_ */
+#endif // _RTPS_BUILTIN_DATA_READERPROXYDATA_H_

@@ -43,73 +43,84 @@ class PublisherImpl;
  * Class Publisher, used to send data to associated subscribers.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI Publisher {
-	friend class PublisherImpl;
-	virtual ~Publisher();
-public:
-	Publisher(PublisherImpl* pimpl);
+class RTPS_DllAPI Publisher
+{
+    friend class PublisherImpl;
+    virtual ~Publisher();
 
-	/**
-	 * Write data to the topic.
-	 * @param Data Pointer to the data
-	 * @return True if correct
-	 * @par Calling example:
-	 * @snippet fastrtps_example.cpp ex_PublisherWrite
-	 */
-	bool write(void*Data);
+    public:
 
-	/**
-	 * Write data with params to the topic.
-	 * @param Data Pointer to the data
+    Publisher(PublisherImpl* pimpl);
+
+    /**
+     * Write data to the topic.
+     * @param Data Pointer to the data
+     * @return True if correct
+     * @par Calling example:
+     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     */
+    bool write(void*Data);
+
+    /**
+     * Write data with params to the topic.
+     * @param Data Pointer to the data
      * @param wparams Extra write parameters.
-	 * @return True if correct
-	 * @par Calling example:
-	 * @snippet fastrtps_example.cpp ex_PublisherWrite
-	 */
-	bool write(void*Data, rtps::WriteParams &wparams);
+     * @return True if correct
+     * @par Calling example:
+     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     */
+    bool write(void*Data, rtps::WriteParams &wparams);
 
-	/**
-	 * Dispose of a previously written data.
-	 * @param Data Pointer to the data.
-	 * @return True if correct.
-	 */
-	bool dispose(void*Data);
-	/**
-	 * Unregister a previously written data.
-	 * @param Data Pointer to the data.
-	 * @return True if correct.
-	 */
-	bool unregister(void*Data);
-	/**
-	 * Dispose and unregister a previously written data.
-	 * @param Data Pointer to the data.
-	 * @return True if correct.
-	 */
-	bool dispose_and_unregister(void*Data);
+    /**
+     * Dispose of a previously written data.
+     * @param Data Pointer to the data.
+     * @return True if correct.
+     */
+    bool dispose(void*Data);
+    /**
+     * Unregister a previously written data.
+     * @param Data Pointer to the data.
+     * @return True if correct.
+     */
+    bool unregister(void*Data);
+    /**
+     * Dispose and unregister a previously written data.
+     * @param Data Pointer to the data.
+     * @return True if correct.
+     */
+    bool dispose_and_unregister(void*Data);
 
-	/**
-	 * Remove all the Changes in the associated RTPSWriter.
-	 * @param[out] removed Number of elements removed
-	 * @return True if all elements were removed.
-	 */
-	bool removeAllChange(size_t* removed = nullptr);
+    /**
+     * Remove all the Changes in the associated RTPSWriter.
+     * @param[out] removed Number of elements removed
+     * @return True if all elements were removed.
+     */
+    bool removeAllChange(size_t* removed = nullptr);
 
-   bool wait_for_all_acked(const rtps::Time_t& max_wait);
+    bool wait_for_all_acked(const rtps::Time_t& max_wait);
 
-	/**
-	 * Get the GUID_t of the associated RTPSWriter.
-	 * @return GUID_t.
-	 */
-	const rtps::GUID_t& getGuid();
+    /**
+     * Get the GUID_t of the associated RTPSWriter.
+     * @return GUID_t.
+     */
+    const rtps::GUID_t& getGuid();
 
-	/**
-	 * Get the Attributes of the Publisher.
-	 * @return Attributes of the publisher
-	 */
-	PublisherAttributes getAttributes() const;
+    /**
+     * Get the Attributes of the Publisher.
+     * @return Attributes of the publisher
+     */
+    const PublisherAttributes& getAttributes() const;
 
-private:
-	PublisherImpl* mp_impl;
+    /**
+     * Update the Attributes of the publisher.
+     * @param att Reference to a PublisherAttributes object to update the parameters.
+     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
+     */
+    bool updateAttributes(const PublisherAttributes& att);
+
+    private:
+
+    PublisherImpl* mp_impl;
 };
 
 } /* namespace fastrtps */

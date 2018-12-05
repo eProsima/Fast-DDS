@@ -99,7 +99,11 @@ bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void*
     InstanceHandle_t handle;
     if(m_att.topic.topicKind == WITH_KEY)
     {
-        mp_type->getKey(data,&handle);
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
+#endif
+        mp_type->getKey(data,&handle,is_key_protected);
     }
 
     // Block lowlevel writer
@@ -191,7 +195,7 @@ const GUID_t& PublisherImpl::getGuid()
     return mp_writer->getGuid();
 }
 //
-bool PublisherImpl::updateAttributes(PublisherAttributes& att)
+bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
 {
     bool updated = true;
     bool missing = false;
@@ -205,11 +209,11 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
         }
         else
         {
-            for(LocatorListIterator lit1 = this->m_att.unicastLocatorList.begin();
+            for(LocatorListConstIterator lit1 = this->m_att.unicastLocatorList.begin();
                     lit1!=this->m_att.unicastLocatorList.end();++lit1)
             {
                 missing = true;
-                for(LocatorListIterator lit2 = att.unicastLocatorList.begin();
+                for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
                         lit2!= att.unicastLocatorList.end();++lit2)
                 {
                     if(*lit1 == *lit2)
@@ -224,11 +228,11 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
                     logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
                 }
             }
-            for(LocatorListIterator lit1 = this->m_att.multicastLocatorList.begin();
+            for(LocatorListConstIterator lit1 = this->m_att.multicastLocatorList.begin();
                     lit1!=this->m_att.multicastLocatorList.end();++lit1)
             {
                 missing = true;
-                for(LocatorListIterator lit2 = att.multicastLocatorList.begin();
+                for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
                         lit2!= att.multicastLocatorList.end();++lit2)
                 {
                     if(*lit1 == *lit2)
@@ -269,7 +273,7 @@ bool PublisherImpl::updateAttributes(PublisherAttributes& att)
         this->m_att.qos.setQos(att.qos,false);
         this->m_att = att;
         //Notify the participant that a Writer has changed its QOS
-        mp_rtpsParticipant->updateWriter(this->mp_writer,m_att.qos);
+        mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
     }
 
 

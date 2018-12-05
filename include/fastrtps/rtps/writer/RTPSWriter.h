@@ -73,7 +73,7 @@ class RTPSWriter : public Endpoint
      * @param ratt Pointer to the ReaderProxyData object added.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool matched_reader_add(const RemoteReaderAttributes& ratt) = 0;
+    RTPS_DllAPI virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
     /**
      * Remove a matched reader.
      * @param ratt Pointer to the object to remove.
@@ -99,7 +99,7 @@ class RTPSWriter : public Endpoint
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    RTPS_DllAPI virtual void updateAttributes(WriterAttributes& att) = 0;
+    RTPS_DllAPI virtual void updateAttributes(const WriterAttributes& att) = 0;
     /**
      * This method triggers the send operation for unsent changes.
      * @return number of messages sent
@@ -171,6 +171,19 @@ class RTPSWriter : public Endpoint
      */
     inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 
+    /**
+     * Enable or disable sending data to readers separately
+     * NOTE: This will only work for synchronous writers
+     * @param enable If separate sending should be enabled
+     */
+    void set_separate_sending (bool enable) { m_separateSendingEnabled = enable; }
+
+    /**
+     * Inform if data is sent to readers separatedly
+     * @return true if separate sending is enabled
+     */
+    bool get_separate_sending () const { return m_separateSendingEnabled; }
+
     protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -183,8 +196,10 @@ class RTPSWriter : public Endpoint
     WriterHistory* mp_history;
     //!Listener
     WriterListener* mp_listener;
-    //Asynchronout publication activated
+    //!Asynchronous publication activated
     bool is_async_;
+    //!Separate sending activated
+    bool m_separateSendingEnabled;
 
     LocatorList_t mAllShrinkedLocatorList;
 

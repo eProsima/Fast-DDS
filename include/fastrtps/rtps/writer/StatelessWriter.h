@@ -61,7 +61,7 @@ class StatelessWriter : public RTPSWriter
      * @param ratt Attributes of the reader to add.
      * @return True if added.
      */
-    bool matched_reader_add(const RemoteReaderAttributes& ratt) override;
+    bool matched_reader_add(RemoteReaderAttributes& ratt) override;
     /**
      * Remove a matched reader.
      * @param ratt Attributes of the reader to remove.
@@ -83,7 +83,7 @@ class StatelessWriter : public RTPSWriter
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    void updateAttributes(WriterAttributes& att) override {
+    void updateAttributes(const WriterAttributes& att) override {
         (void)att;
         //FOR NOW THERE IS NOTHING TO UPDATE.
     }

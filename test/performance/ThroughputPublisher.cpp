@@ -107,7 +107,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         const std::string& export_prefix,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, bool /*dynamic_types*/, int forced_domain)
+        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain)
     : disc_count_(0),
     data_disc_count_(0),
 #pragma warning(disable:4355)
@@ -118,25 +118,25 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     m_export_csv(export_csv),
     reliable_(reliable),
     m_sXMLConfigFile(sXMLConfigFile),
-    //dynamic_data(dynamic_types),
+    dynamic_data(dynamic_types),
     m_forced_domain(forced_domain)
 {
-    //if (dynamic_data) // Dummy type registration
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
-    //        ));
-    //    struct_type_builder->SetName("ThroughputType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //}
+    if (dynamic_data) // Dummy type registration
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+            ));
+        struct_type_builder->SetName("ThroughputType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
+    }
 
     m_sExportPrefix = export_prefix;
 
@@ -186,11 +186,11 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     }
 
     //REGISTER THE TYPES
-    //if (dynamic_data)
-    //{
-    //    Domain::registerType(mp_par, &m_DynType);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        Domain::registerType(mp_par, &m_DynType);
+    }
+    else
     {
         Domain::registerType(mp_par, (TopicDataType*)&latency_t);
     }
@@ -289,13 +289,13 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         ready = false;
     }
 
-    //if (dynamic_data)
-    //{
-    //    DynamicTypeBuilderFactory::DeleteInstance();
-    //    pubAttr = mp_datapub->getAttributes();
-    //    Domain::removePublisher(mp_datapub);
-    //    Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
-    //}
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        pubAttr = mp_datapub->getAttributes();
+        Domain::removePublisher(mp_datapub);
+        Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
+    }
 }
 
 ThroughputPublisher::~ThroughputPublisher()
@@ -403,39 +403,39 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
 
 bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
 {
-    //if (dynamic_data)
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), size
-    //        ));
-    //    struct_type_builder->SetName("ThroughputType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.CleanDynamicType();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //
-    //    Domain::registerType(mp_par, &m_DynType);
-    //
-    //    mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
-    //
-    //    m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
-    //
-    //    MemberId id;
-    //    DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
-    //    for (uint32_t i = 0; i < size; ++i)
-    //    {
-    //        my_data->InsertSequenceData(id);
-    //        my_data->SetByteValue(0, id);
-    //    }
-    //    m_DynData->ReturnLoanedValue(my_data);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), size
+            ));
+        struct_type_builder->SetName("ThroughputType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.CleanDynamicType();
+        m_DynType.SetDynamicType(m_pDynType);
+
+        Domain::registerType(mp_par, &m_DynType);
+
+        mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
+
+        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+
+        MemberId id;
+        DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
+        for (uint32_t i = 0; i < size; ++i)
+        {
+            my_data->InsertSequenceData(id);
+            my_data->SetByteValue(0, id);
+        }
+        m_DynData->ReturnLoanedValue(my_data);
+    }
+    else
     {
         latency = new ThroughputType((uint16_t)size);
     }
@@ -466,12 +466,12 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         for (uint32_t sample = 0; sample < demand; sample++)
         {
             //cout << sample << "*"<<std::flush;
-            //if (dynamic_data)
-            //{
-            //    m_DynData->SetUint32Value(m_DynData->GetUint32Value(0) + 1, 0);
-            //    mp_datapub->write((void*)m_DynData);
-            //}
-            //else
+            if (dynamic_data)
+            {
+                m_DynData->SetUint32Value(m_DynData->GetUint32Value(0) + 1, 0);
+                mp_datapub->write((void*)m_DynData);
+            }
+            else
             {
                 latency->seqnum++;
                 mp_datapub->write((void*)latency);
@@ -491,15 +491,15 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     eClock::my_sleep(100);
     mp_datapub->removeAllChange();
 
-    //if (dynamic_data)
-    //{
-    //    DynamicTypeBuilderFactory::DeleteInstance();
-    //    DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
-    //    pubAttr = mp_datapub->getAttributes();
-    //    Domain::removePublisher(mp_datapub);
-    //    Domain::unregisterType(mp_par, "ThroughputType");
-    //}
-    //else
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+        pubAttr = mp_datapub->getAttributes();
+        Domain::removePublisher(mp_datapub);
+        Domain::unregisterType(mp_par, "ThroughputType");
+    }
+    else
     {
         delete(latency);
     }

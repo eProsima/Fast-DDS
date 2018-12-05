@@ -79,29 +79,105 @@ class RTPSMessageGroup
             READER
         };
 
-        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE,
-                RTPSMessageGroup_t& msg_group);
+        /**
+         * Basic constructor.
+         * Constructs a RTPSMessageGroup allowing the destination endpoints to change.
+         * @param participant Pointer to the participant sending data.
+         * @param endpoint Pointer to the endpoint sending data.
+         * @param type Type of endpoint (reader / writer).
+         * @param msg_group Reference to data buffer for messages.
+         */
+        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
+            RTPSMessageGroup_t& msg_group);
+
+        /**
+         * Fixed destination constructor.
+         * Constructs a RTPSMessageGroup that will always send messages to the same destinations.
+         * @param participant Pointer to the participant sending data.
+         * @param endpoint Pointer to the endpoint sending data.
+         * @param type Type of endpoint (reader / writer).
+         * @param msg_group Reference to data buffer for messages.
+         * @param locator_list List of locators where messages will be sent
+         * @param remote_endpoints List of destination GUIDs
+         */
+        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
+            RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
+            const std::vector<GUID_t>& remote_endpoints);
 
         ~RTPSMessageGroup();
 
+        /**
+         * Adds a DATA message to the group.
+         * @param change Reference to the cache change to send.
+         * @param remote_readers List of destination GUIDs.
+         * @param locators List of destination locators.
+         * @param expectsInlineQos True when one destination is expecting inline QOS.
+         * @return True when message was added to the group.
+         */
         bool add_data(const CacheChange_t& change, const std::vector<GUID_t>& remote_readers,
                 const LocatorList_t& locators, bool expectsInlineQos);
 
+        /**
+         * Adds a DATA_FRAG message to the group.
+         * @param change Reference to the cache change to send.
+         * @param fragment_number Index (1 based) of the fragment to send.
+         * @param remote_readers List of destination GUIDs.
+         * @param locators List of destination locators.
+         * @param expectsInlineQos True when one destination is expecting inline QOS.
+         * @return True when message was added to the group.
+         */
         bool add_data_frag(const CacheChange_t& change, const uint32_t fragment_number,
                 const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators,
                 bool expectsInlineQos);
 
+        /**
+         * Adds a HEARTBEAT message to the group.
+         * @param remote_readers List of destination GUIDs.
+         * @param firstSN First available sequence number.
+         * @param lastSN Last available sequence number.
+         * @param count Counting identifier.
+         * @param isFinal Should final flag be set?
+         * @param livelinessFlag Should liveliness flag be set?
+         * @param locators List of destination locators.
+         * @return True when message was added to the group.
+         */
         bool add_heartbeat(const std::vector<GUID_t>& remote_readers, const SequenceNumber_t& firstSN,
                 const SequenceNumber_t& lastSN, Count_t count,
                 bool isFinal, bool livelinessFlag, const LocatorList_t& locators);
 
+        /**
+         * Adds a GAP message to the group.
+         * @param changesSeqNum Set of missed sequence numbers.
+         * @param remote_readers List of destination GUIDs.
+         * @param locators List of destination locators.
+         * @return True when message was added to the group.
+         */
         bool add_gap(std::set<SequenceNumber_t>& changesSeqNum, const std::vector<GUID_t>& remote_readers,
                 const LocatorList_t& locators);
 
-        bool add_acknack(const GUID_t& remote_writer, SequenceNumberSet_t& SNSet,
+        /**
+         * Adds a ACKNACK message to the group.
+         * @param remote_writers List of destination GUIDs (note: only first one will be used).
+         * @param SNSet Set of missing sequence numbers.
+         * @param count Counting identifier.
+         * @param finalFlag Should final flag be set?
+         * @param locators List of destination locators.
+         * @return True when message was added to the group.
+         */
+        bool add_acknack(const std::vector<GUID_t>& remote_writers, SequenceNumberSet_t& SNSet,
                 int32_t count, bool finalFlag, const LocatorList_t& locators);
 
-        bool add_nackfrag(const GUID_t& remote_writer, SequenceNumber_t& writerSN,
+        /**
+         * Adds a NACKFRAG message to the group.
+         * @param remote_writers List of destination GUIDs (note: only first one will be used).
+         * @param writerSN Sequence number being nack'ed.
+         * @param fnState Set of missing fragment numbers.
+         * @param count Counting identifier.
+         * @param finalFlag Should final flag be set?
+         * @param locators List of destination locators.
+         * @return True when message was added to the group.
+         */
+        bool add_nackfrag(const std::vector<GUID_t>& remote_writers, SequenceNumber_t& writerSN,
                 FragmentNumberSet_t fnState, int32_t count, const LocatorList_t locators);
 
         uint32_t get_current_bytes_processed() { return currentBytesSent_ + full_msg_->length; }
@@ -111,10 +187,10 @@ class RTPSMessageGroup
         void reset_to_header();
 
         bool check_preconditions(const LocatorList_t& locator_list,
-                const std::vector<GuidPrefix_t>& remote_participants) const;
+                const std::vector<GUID_t>& remote_participants) const;
 
         void flush_and_reset(const LocatorList_t& locator_list,
-                std::vector<GuidPrefix_t>&& remote_participants);
+                const std::vector<GUID_t>& remote_endpoints);
 
         void flush();
 
@@ -139,17 +215,24 @@ class RTPSMessageGroup
 
         uint32_t currentBytesSent_;
 
-#if HAVE_SECURITY
-        ENDPOINT_TYPE type_;
-
-        CDRMessage_t* encrypt_msg_;
-#endif
-
         LocatorList_t current_locators_;
 
         GuidPrefix_t current_dst_;
 
+        bool fixed_destination_;
+
+        const LocatorList_t * fixed_destination_locators_;
+
+        const std::vector<GUID_t> * fixed_destination_guids_;
+
+        GuidPrefix_t fixed_destination_prefix_;
+
+#if HAVE_SECURITY
+        CDRMessage_t* encrypt_msg_;
+
         std::vector<GuidPrefix_t> current_remote_participants_;
+#endif
+
 };
 
 } /* namespace rtps */

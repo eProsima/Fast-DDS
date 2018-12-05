@@ -23,7 +23,6 @@
 #include "FragmentedChangePitStop.h"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
-#include "CompoundReaderListener.h"
 
 #include <typeinfo>
 
@@ -75,25 +74,15 @@ void RTPSReader::releaseCache(CacheChange_t* change)
     return mp_history->release_Cache(change);
 }
 
-ReaderListener* RTPSReader::getListener(){
+ReaderListener* RTPSReader::getListener()
+{
     return mp_listener;
 }
 
-bool RTPSReader::setListener(ReaderListener *target){
-    CompoundReaderListener* readerlistener_cast = dynamic_cast<CompoundReaderListener*>(mp_listener);
-    //Host is not of compound type, replace and move on
-    if(readerlistener_cast == nullptr)
-    {
-        //Not a valid cast, replace base listener
-        mp_listener = target;
-        return true;
-    }
-    else
-    {
-        //If we arrive here it means mp_listener is Infectable
-        readerlistener_cast->attachListener(target);
-        return true;
-    }
+bool RTPSReader::setListener(ReaderListener *target)
+{
+    mp_listener = target;
+    return true;
 }
 
 CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(const SequenceNumber_t& sequence_number,

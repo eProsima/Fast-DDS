@@ -409,7 +409,7 @@ void VideoTestPublisher::InitGStreamer()
                     g_signal_connect(sink, "new-sample", G_CALLBACK(new_sample), this);
 
                     GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                        "width", G_TYPE_INT, 480, "height", G_TYPE_INT, 320/*, "framerate", G_TYPE_STRING, "25/1"*/, NULL);
+                        "width", G_TYPE_INT, 1024, "height", G_TYPE_INT, 720/*, "framerate", G_TYPE_STRING, "25/1"*/, NULL);
 
                     // Link the camera source and colorspace filter using capabilities specified
                     gst_bin_add_many(GST_BIN(pipeline), filesrc, videorate, sink, NULL);

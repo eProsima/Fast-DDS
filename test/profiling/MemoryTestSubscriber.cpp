@@ -40,7 +40,7 @@ MemoryTestSubscriber::MemoryTestSubscriber()
     , m_commandpublistener(nullptr)
     , m_commandsublistener(nullptr)
     , m_echo(true)
-    //, dynamic_data(false)
+    , dynamic_data(false)
     , mp_memory(nullptr)
 {
     m_datasublistener.mp_up = this;
@@ -57,30 +57,30 @@ MemoryTestSubscriber::~MemoryTestSubscriber()
 
 bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, uint32_t data_size, bool /*dynamic_types*/)
+        const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types)
 {
     m_sXMLConfigFile = sXMLConfigFile;
     m_echo = echo;
     n_samples = nsam;
     m_data_size = data_size;
-    //dynamic_data = dynamic_types;
+    dynamic_data = dynamic_types;
 
-    //if (dynamic_data) // Dummy type registration
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
-    //        ));
-    //    struct_type_builder->SetName("MemoryType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //}
+    if (dynamic_data) // Dummy type registration
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+            ));
+        struct_type_builder->SetName("MemoryType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
+    }
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
@@ -103,11 +103,11 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
         return false;
     }
 
-    //if (dynamic_data)
-    //{
-    //    Domain::registerType(mp_participant, &m_DynType);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        Domain::registerType(mp_participant, &m_DynType);
+    }
+    else
     {
         Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
     }
@@ -188,13 +188,13 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
         return false;
     }
 
-    //if (dynamic_data)
-    //{
-    //    DynamicTypeBuilderFactory::DeleteInstance();
-    //    subAttr = mp_datasub->getAttributes();
-    //    Domain::removeSubscriber(mp_datasub);
-    //    Domain::unregisterType(mp_participant, "MemoryType"); // Unregister as we will register it later with correct size
-    //}
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        subAttr = mp_datasub->getAttributes();
+        Domain::removeSubscriber(mp_datasub);
+        Domain::unregisterType(mp_participant, "MemoryType"); // Unregister as we will register it later with correct size
+    }
 
     return true;
 }
@@ -295,17 +295,17 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
 
 void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
-    //if (mp_up->dynamic_data)
-    //{
-    //    subscriber->takeNextData((void*)mp_up->m_DynData, &mp_up->m_sampleinfo);
-    //    ++mp_up->n_received;
-    //    if (mp_up->m_echo)
-    //    {
-    //        std::cout << "Received data: " << mp_up->m_DynData->GetUint32Value(0)
-    //            << "(" << mp_up->n_received << ")" << std::endl;
-    //    }
-    //}
-    //else
+    if (mp_up->dynamic_data)
+    {
+        subscriber->takeNextData((void*)mp_up->m_DynData, &mp_up->m_sampleinfo);
+        ++mp_up->n_received;
+        if (mp_up->m_echo)
+        {
+            std::cout << "Received data: " << mp_up->m_DynData->GetUint32Value(0)
+                << "(" << mp_up->n_received << ")" << std::endl;
+        }
+    }
+    else
     {
         subscriber->takeNextData((void*)mp_up->mp_memory,&mp_up->m_sampleinfo);
         //	cout << "R: "<< mp_up->mp_memory->seqnum << "|"<<mp_up->m_echo<<std::flush;
@@ -338,32 +338,32 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
     cout << "Preparing test with data size: " << datasize + 4 << endl;
 
     //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-    //if (dynamic_data)
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), datasize
-    //        ));
-    //    struct_type_builder->SetName("MemoryType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.CleanDynamicType();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //
-    //    Domain::registerType(mp_participant, &m_DynType);
-    //
-    //    mp_datasub = Domain::createSubscriber(mp_participant, subAttr, &m_datasublistener);
-    //
-    //    m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(
+            DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum",
+            DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), datasize
+            ));
+        struct_type_builder->SetName("MemoryType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.CleanDynamicType();
+        m_DynType.SetDynamicType(m_pDynType);
+
+        Domain::registerType(mp_participant, &m_DynType);
+
+        mp_datasub = Domain::createSubscriber(mp_participant, subAttr, &m_datasublistener);
+
+        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+    }
+    else
     {
         mp_memory = new MemoryType(datasize);
     }
@@ -400,13 +400,13 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
     cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << endl;
     eClock::my_sleep(50);
     //cout << "REMOVED: "<< removed<<endl;
-    //if (dynamic_data)
-    //{
-    //    DynamicTypeBuilderFactory::DeleteInstance();
-    //    DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
-    //    subAttr = mp_datasub->getAttributes();
-    //}
-    //else
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+        subAttr = mp_datasub->getAttributes();
+    }
+    else
     {
         delete(mp_memory);
     }

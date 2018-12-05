@@ -19,6 +19,11 @@
 #ifndef RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #define RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 
+// Include first possible mocks (depending on include on CMakeLists.txt)
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -26,6 +31,10 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+
+#if HAVE_SECURITY
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif
 
 #include <gmock/gmock.h>
 
@@ -45,9 +54,19 @@ class MockParticipantListener : public RTPSParticipantListener
 {
     public:
 
-        MOCK_METHOD2(onRTPSParticipantDiscovery, void (RTPSParticipant*, RTPSParticipantDiscoveryInfo));
+        void onParticipantDiscovery(RTPSParticipant* participant, ParticipantDiscoveryInfo&& info) override
+        {
+            onParticipantDiscovery(participant, info);
+        }
 
-        MOCK_METHOD2(onRTPSParticipantAuthentication, void (RTPSParticipant*, const RTPSParticipantAuthenticationInfo&));
+        MOCK_METHOD2(onParticipantDiscovery, void (RTPSParticipant*, const ParticipantDiscoveryInfo&));
+
+        void onParticipantAuthentication(RTPSParticipant* participant, ParticipantAuthenticationInfo&& info) override
+        {
+            onParticipantAuthentication(participant, info);
+        }
+
+        MOCK_METHOD2(onParticipantAuthentication, void (RTPSParticipant*, const ParticipantAuthenticationInfo&));
 };
 
 class RTPSParticipantImpl
@@ -63,6 +82,14 @@ class RTPSParticipantImpl
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
 
+#if HAVE_SECURITY
+        MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes&());
+		
+        MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_security, bool(const GUID_t&, const ReaderProxyData&));
+
+        MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security,bool(const GUID_t&, const WriterProxyData& remote_writer_data));
+#endif
+
         MOCK_METHOD1(setGuid, void(GUID_t&));
 
         MOCK_METHOD6(createWriter_mock, bool (RTPSWriter** writer, WriterAttributes& param, WriterHistory* hist,WriterListener* listen,
@@ -76,7 +103,9 @@ class RTPSParticipantImpl
         {
             bool ret = createWriter_mock(writer, param , hist, listen, entityId, isBuiltin);
             if(*writer != nullptr)
+            {
                 (*writer)->history_ = hist;
+            }
             return ret;
         }
 

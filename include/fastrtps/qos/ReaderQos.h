@@ -34,8 +34,28 @@ namespace fastrtps {
  */
 class  ReaderQos{
 public:
-	RTPS_DllAPI ReaderQos(){};
-	RTPS_DllAPI virtual ~ReaderQos(){};
+    RTPS_DllAPI ReaderQos() {}
+    RTPS_DllAPI virtual ~ReaderQos() {}
+
+    bool operator==(const ReaderQos& b) const
+    {
+        return (this->m_durability == b.m_durability) &&
+               (this->m_deadline == b.m_deadline) &&
+               (this->m_latencyBudget == b.m_latencyBudget) &&
+               (this->m_liveliness == b.m_liveliness) &&
+               (this->m_reliability == b.m_reliability) &&
+               (this->m_ownership == b.m_ownership) &&
+               (this->m_destinationOrder == b.m_destinationOrder) &&
+               (this->m_userData == b.m_userData) &&
+               (this->m_timeBasedFilter == b.m_timeBasedFilter) &&
+               (this->m_presentation == b.m_presentation) &&
+               (this->m_partition == b.m_partition) &&
+               (this->m_topicData == b.m_topicData) &&
+               (this->m_groupData == b.m_groupData) &&
+               (this->m_durabilityService == b.m_durabilityService) &&
+               (this->m_lifespan == b.m_lifespan);
+    }
+
 	//!Durability Qos, implemented in the library.
 	DurabilityQosPolicy m_durability;
 	//!Deadline Qos, NOT implemented in the library.
@@ -64,9 +84,13 @@ public:
 	GroupDataQosPolicy m_groupData;
 	//!Durability Service Qos, NOT implemented in the library.
 	DurabilityServiceQosPolicy m_durabilityService;
-	//!Lifespan Qos, NOT implemented in the library.
-	LifespanQosPolicy m_lifespan;
-	/**
+    //!Lifespan Qos, NOT implemented in the library.
+    LifespanQosPolicy m_lifespan;
+    //!Data Representation Qos, NOT implemented in the library.
+    DataRepresentationQosPolicy m_dataRepresentation;
+    //!Type consistency enforcement Qos, NOT implemented in the library.
+    TypeConsistencyEnforcementQosPolicy m_typeConsistency;
+    /**
 	 * Set Qos from another class
 	 * @param readerqos Reference from a ReaderQos object.
 	 * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).

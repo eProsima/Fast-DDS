@@ -50,22 +50,11 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         logWarning(RTPS_EDP,"Received change with no Key");
     }
 
-    //Call the slave, if it exists
-    attached_listener_mutex.lock();
-    if(attached_listener != nullptr)
-        attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_PubReader.first, change_in);
-    attached_listener_mutex.unlock();
-
     if(change->kind == ALIVE)
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
         WriterProxyData writerProxyData;
-        CDRMessage_t tempMsg(0);
-        tempMsg.wraps = true;
-        tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
-        tempMsg.length = change_in->serializedPayload.length;
-        tempMsg.max_size = change_in->serializedPayload.max_size;
-        tempMsg.buffer = change_in->serializedPayload.data;
+        CDRMessage_t tempMsg(change_in->serializedPayload);
 
         if(writerProxyData.readFromCDRMessage(&tempMsg))
         {
@@ -130,22 +119,11 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         logWarning(RTPS_EDP,"Received change with no Key");
     }
 
-    //Call the slave, if it exists
-    attached_listener_mutex.lock();
-    if(attached_listener != nullptr)
-        attached_listener->onNewCacheChangeAdded(this->mp_SEDP->mp_SubReader.first, change);
-    attached_listener_mutex.unlock();
-
     if(change->kind == ALIVE)
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
         ReaderProxyData readerProxyData;
-        CDRMessage_t tempMsg(0);
-        tempMsg.wraps = true;
-        tempMsg.msg_endian = change_in->serializedPayload.encapsulation == PL_CDR_BE ? BIGEND : LITTLEEND;
-        tempMsg.length = change_in->serializedPayload.length;
-        tempMsg.max_size = change_in->serializedPayload.max_size;
-        tempMsg.buffer = change_in->serializedPayload.data;
+        CDRMessage_t tempMsg(change_in->serializedPayload);
 
         if(readerProxyData.readFromCDRMessage(&tempMsg))
         {

@@ -19,7 +19,9 @@
 
 #include "ParticipantImpl.h"
 #include <fastrtps/participant/Participant.h>
-#include <fastrtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastrtps/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastrtps/participant/ParticipantListener.h>
 
 #include <fastrtps/TopicDataType.h>
@@ -70,7 +72,9 @@ ParticipantImpl::~ParticipantImpl()
     delete(mp_participant);
 
     if(this->mp_rtpsParticipant != nullptr)
+    {
         RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
+    }
 }
 
 
@@ -147,9 +151,9 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
         logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
-    if(!att.outLocatorList.isValid())
+    if(!att.remoteLocatorList.isValid())
     {
-        logError(PARTICIPANT,"Output Locator List for Publisher contains invalid Locator");
+        logError(PARTICIPANT,"Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
     if(!att.qos.checkQos() || !att.topic.checkQos())
@@ -169,7 +173,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     watt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     watt.endpoint.topicKind = att.topic.topicKind;
     watt.endpoint.unicastLocatorList = att.unicastLocatorList;
-    watt.endpoint.outLocatorList = att.outLocatorList;
+    watt.endpoint.remoteLocatorList = att.remoteLocatorList;
     watt.mode = att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     watt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
@@ -218,15 +222,9 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     m_publishers.push_back(pubpair);
 
     //REGISTER THE WRITER
-    this->mp_rtpsParticipant->registerWriter(writer,att.topic,att.qos);
+    this->mp_rtpsParticipant->registerWriter(writer, att.topic, att.qos);
 
     return pub;
-}
-
-
-std::pair<StatefulReader*,StatefulReader*> ParticipantImpl::getEDPReaders(){
-
-    return mp_rtpsParticipant->getEDPReaders();
 }
 
 std::vector<std::string> ParticipantImpl::getParticipantNames() const {
@@ -269,7 +267,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
         logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
-    if(!att.outLocatorList.isValid())
+    if(!att.remoteLocatorList.isValid())
     {
         logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
@@ -289,7 +287,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     ratt.endpoint.reliabilityKind = att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = att.topic.topicKind;
     ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
-    ratt.endpoint.outLocatorList = att.outLocatorList;
+    ratt.endpoint.remoteLocatorList = att.remoteLocatorList;
     ratt.expectsInlineQos = att.expectsInlineQos;
     ratt.endpoint.properties = att.properties;
     if(att.getEntityID()>0)
@@ -361,7 +359,8 @@ bool ParticipantImpl::registerType(TopicDataType* type)
         logError(PARTICIPANT, "Registered Type must have maximum byte size > 0");
         return false;
     }
-    if (std::string(type->getName()).size() <= 0)
+    const char * name = type->getName();
+    if (strlen(name) <= 0)
     {
         logError(PARTICIPANT, "Registered Type must have a name");
         return false;
@@ -423,36 +422,50 @@ bool ParticipantImpl::unregisterType(const char* typeName)
 
 
 
-void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantDiscovery(RTPSParticipant* part,RTPSParticipantDiscoveryInfo rtpsinfo)
+void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(RTPSParticipant*,
+        rtps::ParticipantDiscoveryInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener!=nullptr)
     {
-        ParticipantDiscoveryInfo info;
-        info.rtps = rtpsinfo;
-        this->mp_participantimpl->mp_rtpsParticipant = part;
-        this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant,info);
+        this->mp_participantimpl->mp_listener->onParticipantDiscovery(mp_participantimpl->mp_participant, std::move(info));
     }
 }
 
 #if HAVE_SECURITY
-void ParticipantImpl::MyRTPSParticipantListener::onRTPSParticipantAuthentication(RTPSParticipant* part, const RTPSParticipantAuthenticationInfo& rtps_info)
+void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(RTPSParticipant*,
+        ParticipantAuthenticationInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener != nullptr)
     {
-        ParticipantAuthenticationInfo info;
-        info.rtps = rtps_info;
-        this->mp_participantimpl->mp_rtpsParticipant = part;
-        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, info);
+        this->mp_participantimpl->mp_listener->onParticipantAuthentication(mp_participantimpl->mp_participant, std::move(info));
     }
 }
 #endif
+
+void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(RTPSParticipant*,
+        rtps::ReaderDiscoveryInfo&& info)
+{
+    if(this->mp_participantimpl->mp_listener!=nullptr)
+    {
+        this->mp_participantimpl->mp_listener->onSubscriberDiscovery(mp_participantimpl->mp_participant, std::move(info));
+    }
+}
+
+void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(RTPSParticipant*,
+        rtps::WriterDiscoveryInfo&& info)
+{
+    if(this->mp_participantimpl->mp_listener!=nullptr)
+    {
+        this->mp_participantimpl->mp_listener->onPublisherDiscovery(mp_participantimpl->mp_participant, std::move(info));
+    }
+}
 
 bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
         EndpointKind_t kind)
 {
     if (kind == WRITER)
         return this->mp_rtpsParticipant->newRemoteWriterDiscovered(partguid, endpointId);
-    else 
+    else
         return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
 }
 

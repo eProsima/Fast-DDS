@@ -19,12 +19,10 @@
 
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-
 #include "../../../../participant/RTPSParticipantImpl.h"
-#include <fastrtps/rtps/participant/RTPSParticipantDiscoveryInfo.h>
+#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 #include <fastrtps/log/Log.h>
@@ -56,7 +54,6 @@ RemoteParticipantLeaseDuration::~RemoteParticipantLeaseDuration()
 
 void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 {
-
     // Unused in release mode.
     (void)msg;
 
@@ -66,9 +63,9 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
                 << mp_participantProxyData->m_guid);
 
         // This assignment must be before removeRemoteParticipant because mp_participantProxyData is deleted there.
-        RTPSParticipantDiscoveryInfo info;
-        info.m_status = DROPPED_RTPSPARTICIPANT;
-        info.m_guid = mp_participantProxyData->m_guid;
+        ParticipantDiscoveryInfo info;
+        info.status = ParticipantDiscoveryInfo::DROPPED_PARTICIPANT;
+        info.info.copy(*mp_participantProxyData);
 
         // Set pointer to null because this call will be delete itself.
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;
@@ -76,9 +73,8 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
         {
             if(mp_PDP->getRTPSParticipant()->getListener()!=nullptr)
             {
-                mp_PDP->getRTPSParticipant()->getListener()->onRTPSParticipantDiscovery(
-                        mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(),
-                        info);
+                mp_PDP->getRTPSParticipant()->getListener()->onParticipantDiscovery(
+                        mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
             }
         }
     }
@@ -93,6 +89,6 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
     }
 }
 
-}
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

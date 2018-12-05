@@ -25,6 +25,7 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 
@@ -76,6 +77,35 @@ XMLP_ret XMLEndpointParser::loadXMLFile(std::string& filename)
         tinyxml2::XMLNode* root = doc.FirstChildElement(STATICDISCOVERY);
         if(!root){
             logError(RTPS_EDP, filename << " XML has errors");
+            return XMLP_ret::XML_ERROR;
+        }
+
+
+        tinyxml2::XMLElement* xml_RTPSParticipant = root->FirstChildElement();
+
+        while(xml_RTPSParticipant != nullptr)
+        {
+            std::string key(xml_RTPSParticipant->Name());
+            if(key == PARTICIPANT)
+            {
+                StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
+                loadXMLParticipantEndpoint(xml_RTPSParticipant, pdata);
+                m_RTPSParticipants.push_back(pdata);
+            }
+            xml_RTPSParticipant = xml_RTPSParticipant->NextSiblingElement();
+        }
+
+    logInfo(RTPS_EDP, "Finished parsing, "<< m_RTPSParticipants.size()<< " participants found.");
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLEndpointParser::loadXMLNode(tinyxml2::XMLDocument& doc)
+{
+    logInfo(RTPS_EDP,"XML node");
+
+        tinyxml2::XMLNode* root = doc.FirstChildElement(STATICDISCOVERY);
+        if(!root){
+            logError(RTPS_EDP, "XML node has errors");
             return XMLP_ret::XML_ERROR;
         }
 
@@ -228,10 +258,10 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             loc.kind = 1;
             const char *address = element->Attribute(ADDRESS);
             std::string auxString(address ? address : "");
-            loc.set_IP4_address(auxString);
+            IPLocator::setIPv4(loc, auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.port = static_cast<uint16_t>(port);
             rdata->unicastLocatorList().push_back(loc);
         }
         else if(key == MULTICAST_LOCATOR)
@@ -240,10 +270,10 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             loc.kind = 1;
             const char *address = element->Attribute(ADDRESS);
             std::string auxString(address ? address : "");
-            loc.set_IP4_address(auxString);
+            IPLocator::setIPv4(loc, auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.port = static_cast<uint16_t>(port);
             rdata->multicastLocatorList().push_back(loc);
         }
         else if(key == TOPIC)
@@ -445,10 +475,10 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             loc.kind = 1;
             const char *address = element->Attribute(ADDRESS);
             std::string auxString(address ? address : "");
-            loc.set_IP4_address(auxString);
+            IPLocator::setIPv4(loc, auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.port = static_cast<uint16_t>(port);
             wdata->unicastLocatorList().push_back(loc);
         }
         else if(key == MULTICAST_LOCATOR)
@@ -457,10 +487,10 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             loc.kind = 1;
             const char *address = element->Attribute(ADDRESS);
             std::string auxString(address ? address : "");
-            loc.set_IP4_address(auxString);
+            IPLocator::setIPv4(loc, auxString);
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
-            loc.port = port;
+            loc.port = static_cast<uint16_t>(port);
             wdata->multicastLocatorList().push_back(loc);
         }
         else if(key == TOPIC)

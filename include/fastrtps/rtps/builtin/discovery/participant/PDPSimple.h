@@ -120,7 +120,7 @@ class PDPSimple
     /**
      * This method returns a pointer to a RTPSParticipantProxyData object if it is found among the registered RTPSParticipants.
      * @param[in] pguid GUID_t of the RTPSParticipant we are looking for.
-     * @param pdata Pointer to pointer of the ParticipantProxyData object.
+     * @param pdata Copy information on ParticipantProxyData object.
      * @return True if found.
      */
     bool lookupParticipantProxyData(const GUID_t& pguid, ParticipantProxyData& pdata);

@@ -40,8 +40,6 @@ bool HelloWorldPublisher::init()
     m_Hello.index(0);
     m_Hello.message("HelloWorld");
     ParticipantAttributes PParam;
-    PParam.rtps.defaultSendPort = 11511;
-    PParam.rtps.use_IP6_to_send = true;
     PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
@@ -88,6 +86,7 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
+        firstConnected = true;
         std::cout << "Publisher matched"<<std::endl;
     }
     else
@@ -97,23 +96,54 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     }
 }
 
-void HelloWorldPublisher::run(uint32_t samples)
+void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
 {
-    for(uint32_t i = 0;i<samples;++i)
+    if (samples == 0)
     {
-        if(!publish())
-            --i;
-        else
+        while(!stop)
         {
-            std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+            if(publish(false))
+            {
+                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+            }
+            eClock::my_sleep(sleep);
         }
-        eClock::my_sleep(25);
+    }
+    else
+    {
+        for(uint32_t i = 0;i<samples;++i)
+        {
+            if(!publish())
+                --i;
+            else
+            {
+                std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
+            }
+            eClock::my_sleep(sleep);
+        }
     }
 }
 
-bool HelloWorldPublisher::publish()
+void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
 {
-    if(m_listener.n_matched>0)
+    stop = false;
+    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
+    if (samples == 0)
+    {
+        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
+        std::cin.ignore();
+        stop = true;
+    }
+    else
+    {
+        std::cout << "Publisher running " << samples << " samples." << std::endl;
+    }
+    thread.join();
+}
+
+bool HelloWorldPublisher::publish(bool waitForListener)
+{
+    if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
         m_Hello.index(m_Hello.index()+1);
         mp_publisher->write((void*)&m_Hello);

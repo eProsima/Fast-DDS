@@ -42,12 +42,12 @@ bool Subscriber::takeNextData(void* data,SampleInfo_t* info)
     return mp_impl->takeNextData(data,info);
 }
 
-bool Subscriber::updateAttributes(SubscriberAttributes& att)
+bool Subscriber::updateAttributes(const SubscriberAttributes& att)
 {
     return mp_impl->updateAttributes(att);
 }
 
-SubscriberAttributes Subscriber::getAttributes() const
+const SubscriberAttributes& Subscriber::getAttributes() const
 {
     return mp_impl->getAttributes();
 }

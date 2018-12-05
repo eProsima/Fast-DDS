@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Time_t.h 	
+ * @file Time_t.h
  */
 
 #ifndef TIME_T_H_
@@ -30,59 +30,75 @@ namespace rtps{
  * Structure Time_t, used to describe times.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI Time_t{
-	//!Seconds
-	int32_t seconds;
-	//!Fraction of second (1 fraction = 1/(2^32) seconds)
-	uint32_t fraction;
-	//! Default constructor. Sets values to zero.
-	Time_t()
-	{
-		seconds = 0;
-		fraction = 0;
-	}
-	/**
-	* @param sec Seconds
-	* @param frac Fraction of second
-	*/
-	Time_t(int32_t sec,uint32_t frac)
-	{
-		seconds = sec;
-		fraction = frac;
-	}
-	
+struct RTPS_DllAPI Time_t
+{
+    //!Seconds
+    int32_t seconds;
+    //!Fraction of second (1 fraction = 1/(2^32) seconds)
+    uint32_t fraction;
+    //! Default constructor. Sets values to zero.
+    Time_t()
+    {
+        seconds = 0;
+        fraction = 0;
+    }
+    /**
+    * @param sec Seconds
+    * @param frac Fraction of second
+    */
+    Time_t(int32_t sec,uint32_t frac)
+    {
+        seconds = sec;
+        fraction = frac;
+    }
+
+    Time_t(long double sec)
+    {
+        seconds = static_cast<uint32_t>(sec);
+        fraction = static_cast<uint32_t>((sec - seconds) * 4294967296ULL);
+    }
+
+    /**
+     *  Returns stored time as nanoseconds
+     */
+    inline int64_t to_ns()
+    {
+        int64_t nano = seconds * 1000000000ULL;
+        nano += (fraction  * 1000000000ULL) / 4294967296ULL; // 1 fraction = 1/(2^32) seconds
+        return nano;
+    }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
-* Comparison assignment
-* @param t1 First Time_t to compare
-* @param t2 Second Time_t to compare
-* @return True if equal
-*/
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if equal
+ */
 static inline bool operator==(const Time_t& t1,const Time_t& t2)
 {
-	if(t1.seconds!=t2.seconds)
-		return false;
-	if(t1.fraction!=t2.fraction)
-		return false;
-	return true;
+    if(t1.seconds!=t2.seconds)
+        return false;
+    if(t1.fraction!=t2.fraction)
+        return false;
+    return true;
 }
 
 /**
-* Comparison assignment
-* @param t1 First Time_t to compare
-* @param t2 Second Time_t to compare
-* @return True if not equal
-*/
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if not equal
+ */
 static inline bool operator!=(const Time_t& t1,const Time_t& t2)
 {
-	if(t1.seconds!=t2.seconds)
-		return true;
-	if(t1.fraction!=t2.fraction)
-		return true;
-	return false;
+    if (t1.seconds != t2.seconds)
+        return true;
+    if (t1.fraction != t2.fraction)
+        return true;
+    return false;
 }
 
 /**
@@ -91,19 +107,40 @@ static inline bool operator!=(const Time_t& t1,const Time_t& t2)
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is less than the second
  */
-static inline bool operator<(const Time_t& t1,const Time_t& t2)
+static inline bool operator<(const Time_t& t1, const Time_t& t2)
 {
-	if(t1.seconds < t2.seconds)
-		return true;
-	else if(t1.seconds > t2.seconds)
-		return false;
-	else
-	{
-		if(t1.fraction < t2.fraction)
-			return true;
-		else
-			return false;
-	}
+    if (t1.seconds < t2.seconds)
+        return true;
+    else if (t1.seconds > t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction < t2.fraction)
+            return true;
+        else
+            return false;
+    }
+}
+
+/**
+ * Checks if a Time_t is greather than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greather than the second
+ */
+static inline bool operator>(const Time_t& t1, const Time_t& t2)
+{
+    if (t1.seconds > t2.seconds)
+        return true;
+    else if (t1.seconds < t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction > t2.fraction)
+            return true;
+        else
+            return false;
+    }
 }
 
 /**
@@ -112,24 +149,77 @@ static inline bool operator<(const Time_t& t1,const Time_t& t2)
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is less or equal than the second
  */
-static inline bool operator<=(const Time_t& t1,const Time_t& t2)
+static inline bool operator<=(const Time_t& t1, const Time_t& t2)
 {
-	if(t1.seconds < t2.seconds)
-		return true;
-	else if(t1.seconds > t2.seconds)
-		return false;
-	else
-	{
-		if(t1.fraction <= t2.fraction)
-			return true;
-		else
-			return false;
-	}
+    if (t1.seconds < t2.seconds)
+        return true;
+    else if (t1.seconds > t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction <= t2.fraction)
+            return true;
+        else
+            return false;
+    }
+}
+
+/**
+ * Checks if a Time_t is greather or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greather or equal than the second
+ */
+static inline bool operator>=(const Time_t& t1, const Time_t& t2)
+{
+    if (t1.seconds > t2.seconds)
+        return true;
+    else if (t1.seconds < t2.seconds)
+        return false;
+    else
+    {
+        if (t1.fraction >= t2.fraction)
+            return true;
+        else
+            return false;
+    }
 }
 
 inline std::ostream& operator<<(std::ostream& output,const Time_t& t)
 {
-	return output << t.seconds<<"."<<t.fraction;
+    return output << t.seconds << "." << t.fraction;
+}
+
+/**
+ * Adds two Time_t.
+ * @param ta First Time_t to add
+ * @param tb Second Time_t to add
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator+(const Time_t &ta, const Time_t &tb)
+{
+    Time_t result(ta.seconds + tb.seconds, ta.fraction + tb.fraction);
+    if (result.fraction < ta.fraction) // Overflow is detected by any of them
+    {
+        ++result.seconds;
+    }
+    return result;
+}
+
+/**
+ * Substracts two Time_t.
+ * @param ta First Time_t to substract
+ * @param tb Second Time_t to substract
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator-(const Time_t &ta, const Time_t &tb)
+{
+    Time_t result(ta.seconds - tb.seconds, ta.fraction - tb.fraction);
+    if (result.fraction > ta.fraction) // Overflow is detected by ta
+    {
+        --result.seconds;
+    }
+    return result;
 }
 
 #endif

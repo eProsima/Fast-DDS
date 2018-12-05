@@ -23,15 +23,15 @@
 #include <asio.hpp>
 #include <condition_variable>
 #include "LatencyTestTypes.h"
-//#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-//#include <fastrtps/types/DynamicDataFactory.h>
-//#include <fastrtps/types/DynamicTypeBuilder.h>
-//#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-//#include <fastrtps/types/TypeDescriptor.h>
-//#include <fastrtps/types/MemberDescriptor.h>
-//#include <fastrtps/types/DynamicType.h>
-//#include <fastrtps/types/DynamicData.h>
-//#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 class LatencyTestSubscriber
 {
@@ -108,15 +108,15 @@ public:
     bool m_echo;
     TestCommandDataType command_t;
     std::string m_sXMLConfigFile;
-    //bool dynamic_data = false;
+    bool dynamic_data = false;
     int m_forcedDomain;
     // Static Types
     LatencyDataType latency_t;
     LatencyType* mp_latency;
     // Dynamic Types
-    //eprosima::fastrtps::types::DynamicData* m_DynData;
-    //eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-    //eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+    eprosima::fastrtps::types::DynamicData* m_DynData;
+    eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+    eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */

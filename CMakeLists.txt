@@ -188,7 +188,6 @@ endif()
 ###############################################################################
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 
-
 ###############################################################################
 # Default shared libraries
 ###############################################################################
@@ -259,7 +258,7 @@ if(EPROSIMA_BUILD AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_I
 endif()
 
 if(COMPILE_EXAMPLES)
-	add_subdirectory(examples)
+    add_subdirectory(examples)
 endif()
 
 ###############################################################################
@@ -361,7 +360,10 @@ set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
 
 set(CPACK_COMPONENTS_ALL headers licenses)
 
-option(INSTALL_EXAMPLES "Install example" ON)
+option(INSTALL_EXAMPLES "Install example" OFF)
+if(EPROSIMA_INSTALLER)
+    set(INSTALL_EXAMPLES ON)
+endif()
 
 if(INSTALL_EXAMPLES)
   # Install examples
@@ -432,10 +434,10 @@ endif()
 if(MSVC OR MSVC_IDE)
     if(EPROSIMA_INSTALLER)
         set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL}
-            libraries_i86Win32VS2013
-            libraries_x64Win64VS2013
             libraries_i86Win32VS2015
             libraries_x64Win64VS2015
+            libraries_i86Win32VS2017
+            libraries_x64Win64VS2017
             )
     else()
         set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})

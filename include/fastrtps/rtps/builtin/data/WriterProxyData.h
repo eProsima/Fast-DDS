@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef WRITERPROXYDATA_H_
-#define WRITERPROXYDATA_H_
+#ifndef _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
+#define _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/TopicAttributes.h"
@@ -27,7 +27,9 @@
 
 #include "../../attributes/ReaderAttributes.h"
 
-
+#if HAVE_SECURITY
+#include "../../security/accesscontrol/EndpointSecurityAttributes.h"
+#endif
 
 namespace eprosima {
 namespace fastrtps{
@@ -180,7 +182,7 @@ class WriterProxyData
             m_typeName = std::move(typeName);
         }
 
-        RTPS_DllAPI std::string typeName() const
+        RTPS_DllAPI const std::string& typeName() const
         {
             return m_typeName;
         }
@@ -200,7 +202,7 @@ class WriterProxyData
             m_topicName = std::move(topicName);
         }
 
-        RTPS_DllAPI std::string topicName() const
+        RTPS_DllAPI const std::string& topicName() const
         {
             return m_topicName;
         }
@@ -270,8 +272,62 @@ class WriterProxyData
             return m_topicKind;
         }
 
+        RTPS_DllAPI void type_id(TypeIdV1 type_id)
+        {
+            m_type_id = type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1 type_id() const
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI TypeIdV1& type_id()
+        {
+            return m_type_id;
+        }
+
+        RTPS_DllAPI void type(TypeObjectV1 type)
+        {
+            m_type = type;
+        }
+
+        RTPS_DllAPI TypeObjectV1 type() const
+        {
+            return m_type;
+        }
+
+        RTPS_DllAPI TypeObjectV1& type()
+        {
+            return m_type;
+        }
+
+        RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
+        {
+            m_topicDiscoveryKind = topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
+        {
+            return m_topicDiscoveryKind;
+        }
+
+        RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
+        {
+            return m_topicDiscoveryKind;
+        }
+
         //!WriterQOS
         WriterQos m_qos;
+
+#if HAVE_SECURITY
+        //!EndpointSecurityInfo.endpoint_security_attributes
+        security::EndpointSecurityAttributesMask security_attributes_;
+
+        //!EndpointSecurityInfo.plugin_endpoint_security_attributes
+        security::PluginEndpointSecurityAttributesMask plugin_security_attributes_;
+#endif
+
         //!Clear the information and return the object to the default state.
         void clear();
         //!Update certain parameters from another object.
@@ -326,6 +382,15 @@ class WriterProxyData
 
         //!Persistence GUID
         GUID_t persistence_guid_;
+
+        //!Topic Discovery Kind
+        TopicDiscoveryKind_t m_topicDiscoveryKind;
+
+        //!Type Identifier
+        TypeIdV1 m_type_id;
+
+        //!Type Object
+        TypeObjectV1 m_type;
 };
 
 }
@@ -333,4 +398,4 @@ class WriterProxyData
 } /* namespace eprosima */
 
 #endif
-#endif /* WRITERPROXYDATA_H_ */
+#endif // _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_

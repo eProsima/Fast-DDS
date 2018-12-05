@@ -21,17 +21,12 @@
 #define PARTICIPANT_H_
 
 #include "../rtps/common/Guid.h"
-
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
 
-#include "../rtps/reader/StatefulReader.h"
 #include <utility>
-
-
 
 namespace eprosima {
 namespace fastrtps{
-
 
 class ParticipantImpl;
 class ParticipantAttributes;
@@ -85,16 +80,6 @@ class RTPS_DllAPI Participant
      */
     bool newRemoteEndpointDiscovered(const rtps::GUID_t& partguid, uint16_t userId,
             rtps::EndpointKind_t kind);
-
-    /**
-     * This method returns a pointer to the Endpoint Discovery Protocol Readers (when not in Static mode)
-     * SimpleEDP creates two readers, one for Publishers and one for Subscribers, and they are both returned
-     * as a std::pair of pointers. These readers in particular have modified listeners that allow a slave 
-     * listener to attach its callbach to the original one, allowing for the addition of logging elements.
-     * 
-     * @return std::pair of pointers to the EDP Readers
-     * */	
-    std::pair<rtps::StatefulReader*, rtps::StatefulReader*> getEDPReaders();
 
     std::vector<std::string> getParticipantNames() const;
 

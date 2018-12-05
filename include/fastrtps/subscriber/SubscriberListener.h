@@ -19,6 +19,8 @@
 #ifndef SUBLISTENER_H_
 #define SUBLISTENER_H_
 
+#include "../fastrtps_dll.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

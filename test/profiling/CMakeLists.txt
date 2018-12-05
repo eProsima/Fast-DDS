@@ -90,6 +90,5 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             set_property(TEST CyclesTest APPEND PROPERTY ENVIRONMENT
                 "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
         endif()
-
     endif()
 endif()

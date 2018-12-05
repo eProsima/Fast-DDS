@@ -97,7 +97,7 @@ namespace eprosima
                  * @param ratt Attributes of the reader to add.
                  * @return True if added.
                  */
-                bool matched_reader_add(const RemoteReaderAttributes& ratt) override;
+                bool matched_reader_add(RemoteReaderAttributes& ratt) override;
                 /**
                  * Remove a matched reader.
                  * @param ratt Attributes of the reader to remove.
@@ -126,7 +126,7 @@ namespace eprosima
                  * Update the Attributes of the Writer.
                  * @param att New attributes
                  */
-                void updateAttributes(WriterAttributes& att) override;
+                void updateAttributes(const WriterAttributes& att) override;
 
                 /**
                  * Find a Reader Proxy in this writer.
@@ -174,7 +174,7 @@ namespace eprosima
                  * Update the WriterTimes attributes of all associated ReaderProxy.
                  * @param times WriterTimes parameter.
                  */
-                void updateTimes(WriterTimes& times);
+                void updateTimes(const WriterTimes& times);
 
                 void add_flow_controller(std::unique_ptr<FlowController> controller) override;
 
@@ -184,16 +184,20 @@ namespace eprosima
                  * @brief Sends a heartbeat to a remote reader.
                  * @remarks This function is non thread-safe.
                  */
-                void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false,
-                        bool send_empty_history_info = false);
+                void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false);
 
                 void process_acknack(const GUID_t reader_guid, uint32_t ack_count,
                         const SequenceNumberSet_t& sn_set, bool final_flag);
 
                 private:
 
+                void send_heartbeat_piggyback_nts_(RTPSMessageGroup& message_group);
+
+                void send_heartbeat_piggyback_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators, 
+                        RTPSMessageGroup& message_group);
+
                 void send_heartbeat_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators,
-                        RTPSMessageGroup& message_group, bool final = false, bool send_empty_history_info = false);
+                        RTPSMessageGroup& message_group, bool final = false);
 
                 void check_acked_status();
 

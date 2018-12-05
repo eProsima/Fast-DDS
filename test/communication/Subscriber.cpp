@@ -79,6 +79,7 @@ int main(int argc, char** argv)
     int arg_count = 1;
     bool notexit = false;
     uint32_t seed = 7800;
+    char* xml_file = nullptr;
 
     while(arg_count < argc)
     {
@@ -96,14 +97,28 @@ int main(int argc, char** argv)
 
             seed = strtol(argv[arg_count], nullptr, 10);
         }
+        else if(strcmp(argv[arg_count], "--xmlfile") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--xmlfile expects a parameter" << std::endl;
+                return -1;
+            }
+
+            xml_file = argv[arg_count];
+        }
 
         ++arg_count;
     }
 
+    if(xml_file)
+    {
+        Domain::loadXMLProfilesFile(xml_file);
+    }
+
     ParticipantAttributes participant_attributes;
+    Domain::getDefaultParticipantAttributes(participant_attributes);
     participant_attributes.rtps.builtin.domainId = seed % 230;
-    participant_attributes.rtps.builtin.leaseDuration.seconds = 3;
-    participant_attributes.rtps.builtin.leaseDuration_announcementperiod.seconds = 1;
     Participant* participant = Domain::createParticipant(participant_attributes);
     if(participant==nullptr)
         return 1;
@@ -121,10 +136,10 @@ int main(int argc, char** argv)
 
     //CREATE THE SUBSCRIBER
     SubscriberAttributes subscriber_attributes;
+    Domain::getDefaultSubscriberAttributes(subscriber_attributes);
     subscriber_attributes.topic.topicKind = NO_KEY;
     subscriber_attributes.topic.topicDataType = type.getName();
     subscriber_attributes.topic.topicName = topic.str();
-    subscriber_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Subscriber* subscriber = Domain::createSubscriber(participant, subscriber_attributes, &listener);
 
     if(subscriber == nullptr)

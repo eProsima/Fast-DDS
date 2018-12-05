@@ -76,7 +76,7 @@ endmacro()
 
 macro(add_gtest test)
     # Parse arguments
-    set(multiValueArgs SOURCES ENVIRONMENTS)
+    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES)
     cmake_parse_arguments(GTEST "" "" "${multiValueArgs}" ${ARGN})
 
     if(GTEST_INDIVIDUAL)
@@ -90,6 +90,9 @@ macro(add_gtest test)
                     endif()
                 endforeach()
             endif()
+            foreach(DEP ${GTEST_DEPENDENCIES})
+                set(WIN_PATH "$<TARGET_FILE_DIR:${DEP}>;${WIN_PATH}")
+            endforeach()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
         endif()
 
@@ -105,7 +108,7 @@ macro(add_gtest test)
 
                 # Add environment
                 if(WIN32)
-                    set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_NAME} PROPERTIES ENVIRONMENT "PATH=${WIN_PATH}")
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 foreach(property ${GTEST_ENVIRONMENTS})
@@ -127,8 +130,11 @@ macro(add_gtest test)
                     endif()
                 endforeach()
             endif()
+            foreach(DEP ${GTEST_DEPENDENCIES})
+                set(WIN_PATH "$<TARGET_FILE_DIR:${DEP}>;${WIN_PATH}")
+            endforeach()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-            set_tests_properties(${test} PROPERTIES ENVIRONMENT "PATH=${WIN_PATH}")
+            set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
         endif()
 
         foreach(property ${GTEST_ENVIRONMENTS})

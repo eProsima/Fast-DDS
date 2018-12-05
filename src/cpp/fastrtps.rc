@@ -86,7 +86,7 @@ END
 #define VER_PRODUCTNAME_STR "FastRTPS"
 
 #ifdef _WIN32
-#if defined(FASTRTPS_SOURCE) && defined(FASTRTPS_DYN_LINK)
+#if defined(fastrtps_EXPORTS)
 
 #ifndef _DEBUG
 #define VER_DEBUG 0

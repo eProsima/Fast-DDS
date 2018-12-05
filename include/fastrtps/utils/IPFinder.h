@@ -87,6 +87,9 @@ class IPFinder
          * */
         RTPS_DllAPI static bool parseIP4(info_IP& info);
         RTPS_DllAPI static bool parseIP6(info_IP& info);
+
+        RTPS_DllAPI static std::string getIPv4Address(const std::string &name);
+        RTPS_DllAPI static std::string getIPv6Address(const std::string &name);
 };
 
 }

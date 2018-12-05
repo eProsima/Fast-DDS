@@ -81,25 +81,25 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*
 
 void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
 {
-    //if (m_up.dynamic_data)
-    //{
-    //    while (subscriber->takeNextData((void*)m_up.m_DynData, &info))
-    //    {
-    //        if (info.sampleKind == ALIVE)
-    //        {
-    //            if ((lastseqnum + 1) < m_up.m_DynData->GetUint32Value(0))
-    //            {
-    //                lostsamples += m_up.m_DynData->GetUint32Value(0) - lastseqnum - 1;
-    //            }
-    //            lastseqnum = m_up.m_DynData->GetUint32Value(0);
-    //        }
-    //        else
-    //        {
-    //            std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
-    //        }
-    //    }
-    //}
-    //else
+    if (m_up.dynamic_data)
+    {
+        while (subscriber->takeNextData((void*)m_up.m_DynData, &info))
+        {
+            if (info.sampleKind == ALIVE)
+            {
+                if ((lastseqnum + 1) < m_up.m_DynData->GetUint32Value(0))
+                {
+                    lostsamples += m_up.m_DynData->GetUint32Value(0) - lastseqnum - 1;
+                }
+                lastseqnum = m_up.m_DynData->GetUint32Value(0);
+            }
+            else
+            {
+                std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
+            }
+        }
+    }
+    else
     {
         //	cout << "NEW DATA MSG: "<< throughputin->seqnum << endl;
         if (m_up.throughputin != nullptr)
@@ -178,32 +178,32 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                 m_up.m_datasize = m_commandin.m_size;
                 m_up.m_demand = m_commandin.m_demand;
                 //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-                //if (m_up.dynamic_data)
-                //{
-                //    // Create basic builders
-                //    DynamicTypeBuilder_ptr struct_type_builder(
-                //        DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-                //
-                //    // Add members to the struct.
-                //    struct_type_builder->AddMember(0, "seqnum",
-                //        DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-                //    struct_type_builder->AddMember(1, "data",
-                //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-                //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), m_up.m_datasize
-                //        ));
-                //    struct_type_builder->SetName("ThroughputType");
-                //
-                //    m_up.m_pDynType = struct_type_builder->Build();
-                //    m_up.m_DynType.CleanDynamicType();
-                //    m_up.m_DynType.SetDynamicType(m_up.m_pDynType);
-                //
-                //    Domain::registerType(m_up.mp_par, &m_up.m_DynType);
-                //
-                //    m_up.mp_datasub = Domain::createSubscriber(m_up.mp_par, m_up.subAttr, &m_up.m_DataSubListener);
-                //
-                //    m_up.m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_up.m_pDynType);
-                //}
-                //else
+                if (m_up.dynamic_data)
+                {
+                    // Create basic builders
+                    DynamicTypeBuilder_ptr struct_type_builder(
+                        DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+                    // Add members to the struct.
+                    struct_type_builder->AddMember(0, "seqnum",
+                        DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+                    struct_type_builder->AddMember(1, "data",
+                        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), m_up.m_datasize
+                        ));
+                    struct_type_builder->SetName("ThroughputType");
+
+                    m_up.m_pDynType = struct_type_builder->Build();
+                    m_up.m_DynType.CleanDynamicType();
+                    m_up.m_DynType.SetDynamicType(m_up.m_pDynType);
+
+                    Domain::registerType(m_up.mp_par, &m_up.m_DynType);
+
+                    m_up.mp_datasub = Domain::createSubscriber(m_up.mp_par, m_up.subAttr, &m_up.m_DataSubListener);
+
+                    m_up.m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_up.m_pDynType);
+                }
+                else
                 {
                     delete(m_up.throughputin);
                     //m_up.throughputin = nullptr;
@@ -241,13 +241,13 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
                 std::unique_lock<std::mutex> lock(m_up.mutex_);
                 m_up.stop_count_ = 1;
                 lock.unlock();
-                //if (m_up.dynamic_data)
-                //{
-                //    DynamicTypeBuilderFactory::DeleteInstance();
-                //    DynamicDataFactory::GetInstance()->DeleteData(m_up.m_DynData);
-                //    m_up.subAttr = m_up.mp_datasub->getAttributes();
-                //}
-                //else
+                if (m_up.dynamic_data)
+                {
+                    DynamicTypeBuilderFactory::DeleteInstance();
+                    DynamicDataFactory::GetInstance()->DeleteData(m_up.m_DynData);
+                    m_up.subAttr = m_up.mp_datasub->getAttributes();
+                }
+                else
                 {
                     //delete(m_up.throughputin);
                     //m_up.throughputin = nullptr;
@@ -300,7 +300,7 @@ ThroughputSubscriber::~ThroughputSubscriber()
 ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
     const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
     const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-    const std::string& sXMLConfigFile, bool /*dynamic_types*/, int forced_domain)
+    const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain)
     : disc_count_(0)
     , data_disc_count_(0)
     , stop_count_(0)
@@ -312,26 +312,26 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     , m_datasize(0)
     , m_demand(0)
     , m_sXMLConfigFile(sXMLConfigFile)
-    //, dynamic_data(dynamic_types)
+    , dynamic_data(dynamic_types)
     , m_forced_domain(forced_domain)
     , throughputin(nullptr)
 {
-    //if (dynamic_data) // Dummy type registration
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
-    //        ));
-    //    struct_type_builder->SetName("ThroughputType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //}
+    if (dynamic_data) // Dummy type registration
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+            ));
+        struct_type_builder->SetName("ThroughputType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
+    }
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
@@ -378,11 +378,11 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     }
 
     //REGISTER THE TYPES
-    //if (dynamic_data)
-    //{
-    //    Domain::registerType(mp_par, &m_DynType);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        Domain::registerType(mp_par, &m_DynType);
+    }
+    else
     {
         Domain::registerType(mp_par, (TopicDataType*)&throughput_t);
     }
@@ -464,13 +464,13 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 
     eClock::my_sleep(1000);
 
-    //if (dynamic_data)
-    //{
-    //    DynamicTypeBuilderFactory::DeleteInstance();
-    //    subAttr = mp_datasub->getAttributes();
-    //    Domain::removeSubscriber(mp_datasub);
-    //    Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
-    //}
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        subAttr = mp_datasub->getAttributes();
+        Domain::removeSubscriber(mp_datasub);
+        Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
+    }
 }
 
 void ThroughputSubscriber::run()
@@ -526,11 +526,11 @@ void ThroughputSubscriber::run()
             mp_commandpubli->write(&comm);
 
             stop_count_ = 0;
-            //if(dynamic_data)
-            //{
-            //    Domain::removeSubscriber(mp_datasub);
-            //    Domain::unregisterType(mp_par, "ThroughputType");
-            //}
+            if(dynamic_data)
+            {
+                Domain::removeSubscriber(mp_datasub);
+                Domain::unregisterType(mp_par, "ThroughputType");
+            }
         }
     }
     return;

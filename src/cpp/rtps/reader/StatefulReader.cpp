@@ -62,7 +62,7 @@ StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 }
 
 
-bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
@@ -74,6 +74,12 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
             return false;
         }
     }
+
+    getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
+
+
+    wdata.endpoint.unicastLocatorList =
+        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({wdata.endpoint.unicastLocatorList});
     WriterProxy* wp = new WriterProxy(wdata, this);
 
     wp->mp_initialAcknack->restart_timer();
@@ -218,7 +224,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
             {
 #if HAVE_SECURITY
-                if(getAttributes()->security_attributes().is_payload_protected)
+                if(getAttributes().security_attributes().is_payload_protected)
                 {
                     change_to_add->copy_not_memcpy(change);
                     if(!getRTPSParticipant()->security_manager().decode_serialized_payload(change->serializedPayload,
@@ -290,7 +296,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
             CacheChange_t* change_to_add = incomingChange;
 
 #if HAVE_SECURITY
-            if(getAttributes()->security_attributes().is_payload_protected)
+            if(getAttributes().security_attributes().is_payload_protected)
             {
                 if(reserveCache(&change_to_add, incomingChange->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
                 {
@@ -311,7 +317,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
 
 #if HAVE_SECURITY
-            if(getAttributes()->security_attributes().is_payload_protected)
+            if(getAttributes().security_attributes().is_payload_protected)
                 releaseCache(change_to_add);
 #endif
 
@@ -379,34 +385,10 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
                 pWP->assertLiveliness();
             }
 
-            GUID_t proxGUID = pWP->m_att.guid;
             wpLock.unlock();
 
             // Maybe now we have to notify user from new CacheChanges.
-            SequenceNumber_t last_notified = update_last_notified(proxGUID, pWP->available_changes_max());
-            SequenceNumber_t nextChangeToNotify = pWP->nextCacheChangeToBeNotified();
-            while(nextChangeToNotify != SequenceNumber_t::unknown())
-            {
-                if( (getListener()!=nullptr) && (nextChangeToNotify > last_notified) )
-                {
-                    mp_history->postSemaphore();
-
-                    CacheChange_t* ch_to_give = nullptr;
-                    if(mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
-                    {
-                        if(!ch_to_give->isRead)
-                        {
-                            getListener()->onNewCacheChangeAdded((RTPSReader*)this,ch_to_give);
-                        }
-                    }
-
-                    // Search again the WriterProxy because could be removed after the unlock.
-                    if(!findWriterProxy(proxGUID, &pWP))
-                        break;
-                }
-
-                nextChangeToNotify = pWP->nextCacheChangeToBeNotified();
-            }
+            NotifyChanges(pWP);
         }
     }
 
@@ -505,39 +487,45 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
 
         writerProxyLock.unlock();
 
-        SequenceNumber_t last_notified = update_last_notified(proxGUID, prox->available_changes_max());
-        SequenceNumber_t nextChangeToNotify = prox->nextCacheChangeToBeNotified();
-        while(nextChangeToNotify != SequenceNumber_t::unknown())
-        {
-            if (nextChangeToNotify > last_notified)
-            {
-                mp_history->postSemaphore();
-
-                if (getListener() != nullptr)
-                {
-                    CacheChange_t* ch_to_give = nullptr;
-
-                    if (mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
-                    {
-                        if (!ch_to_give->isRead)
-                        {
-                            getListener()->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);
-                        }
-                    }
-
-                    // Search again the WriterProxy because could be removed after the unlock.
-                    if (!findWriterProxy(proxGUID, &prox))
-                        break;
-                }
-            }
-
-            nextChangeToNotify = prox->nextCacheChangeToBeNotified();
-        }
+        NotifyChanges(prox);
 
         return ret;
     }
 
     return false;
+}
+
+void StatefulReader::NotifyChanges(WriterProxy* prox)
+{
+    GUID_t proxGUID = prox->m_att.guid;
+    SequenceNumber_t last_notified = update_last_notified(proxGUID, prox->available_changes_max());
+    SequenceNumber_t nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+    while (nextChangeToNotify != SequenceNumber_t::unknown())
+    {
+        if (nextChangeToNotify > last_notified)
+        {
+            mp_history->postSemaphore();
+
+            if (getListener() != nullptr)
+            {
+                CacheChange_t* ch_to_give = nullptr;
+
+                if (mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
+                {
+                    if (!ch_to_give->isRead)
+                    {
+                        getListener()->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);
+                    }
+                }
+
+                // Search again the WriterProxy because could be removed after the unlock.
+                if (!findWriterProxy(proxGUID, &prox))
+                    break;
+            }
+        }
+
+        nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+    }
 }
 
 bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
@@ -656,7 +644,7 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
     return readok;
 }
 
-bool StatefulReader::updateTimes(ReaderTimes& ti)
+bool StatefulReader::updateTimes(const ReaderTimes& ti)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)

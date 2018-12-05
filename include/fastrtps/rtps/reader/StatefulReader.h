@@ -52,7 +52,7 @@ class StatefulReader:public RTPSReader
          * @param wdata Pointer to the WPD object to add.
          * @return True if correctly added.
          */
-        bool matched_writer_add(const RemoteWriterAttributes& wdata);
+        bool matched_writer_add(RemoteWriterAttributes& wdata);
         /**
          * Remove a WriterProxyData from the matached writers.
          * @param wdata Pointer to the WPD object.
@@ -152,7 +152,7 @@ class StatefulReader:public RTPSReader
          * @param times ReaderTimes reference.
          * @return True if correctly updated.
          */
-        bool updateTimes(ReaderTimes& times);
+        bool updateTimes(const ReaderTimes& times);
         /**
          *
          * @return Reference to the ReaderTimes.
@@ -185,7 +185,9 @@ class StatefulReader:public RTPSReader
         /*!
          * @remarks Nn thread-safe.
          */
-        bool findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP);
+        bool findWriterProxy(const GUID_t& writerGUID, WriterProxy** wp);
+
+        void NotifyChanges(WriterProxy* wp);
 
         //!ReaderTimes of the StatefulReader.
         ReaderTimes m_times;

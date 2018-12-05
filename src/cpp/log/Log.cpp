@@ -27,7 +27,7 @@ Log::Resources::~Resources()
    Log::KillThread();
 }
 
-void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer) 
+void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer)
 {
    std::unique_lock<std::mutex> guard(mResources.mConfigMutex);
    mResources.mConsumers.emplace_back(std::move(consumer));
@@ -45,12 +45,12 @@ void Log::Reset()
    mResources.mConsumers.clear();
 }
 
-void Log::Run() 
+void Log::Run()
 {
    std::unique_lock<std::mutex> guard(mResources.mCvMutex);
-   while (mResources.mLogging) 
+   while (mResources.mLogging)
    {
-      while (mResources.mWork) 
+      while (mResources.mWork)
       {
          mResources.mWork = false;
          guard.unlock();
@@ -105,19 +105,19 @@ bool Log::Preprocess(Log::Entry& entry)
    return true;
 }
 
-void Log::KillThread() 
+void Log::KillThread()
 {
    {
       std::unique_lock<std::mutex> guard(mResources.mCvMutex);
       mResources.mLogging = false;
       mResources.mWork = false;
    }
-   if (mResources.mLoggingThread) 
+   if (mResources.mLoggingThread)
    {
       // The #ifdef workaround here is due to an unsolved MSVC bug, which Microsoft has announced
       // they have no intention of solving: https://connect.microsoft.com/VisualStudio/feedback/details/747145
       // Each VS version deals with post-main deallocation of threads in a very different way.
-#if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK)
+#if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
       mResources.mCv.notify_all();
       mResources.mLoggingThread->join();
 #endif
@@ -129,7 +129,7 @@ void Log::QueueLog(const std::string& message, const Log::Context& context, Log:
 {
    {
       std::unique_lock<std::mutex> guard(mResources.mCvMutex);
-      if (!mResources.mLogging && !mResources.mLoggingThread) 
+      if (!mResources.mLogging && !mResources.mLoggingThread)
       {
          mResources.mLogging = true;
          mResources.mLoggingThread.reset(new thread(Log::Run));
@@ -173,5 +173,5 @@ void Log::SetErrorStringFilter(const std::regex& filter)
    mResources.mErrorStringFilter.reset(new std::regex(filter));
 }
 
-} //namespace fastrtps 
-} //namespace eprosima 
+} //namespace fastrtps
+} //namespace eprosima

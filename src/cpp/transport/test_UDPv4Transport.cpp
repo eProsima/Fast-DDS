@@ -21,10 +21,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-static const uint32_t maximumMessageSize = 65500;
-vector<vector<octet> > test_UDPv4Transport::DropLog;
-uint32_t test_UDPv4Transport::DropLogLength = 0;
-bool test_UDPv4Transport::ShutdownAllNetwork = false;
+std::vector<std::vector<octet> > test_UDPv4Transport::test_UDPv4Transport_DropLog;
+uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
+bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
@@ -37,17 +36,17 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
     mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop),
     mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
     {
+        test_UDPv4Transport_DropLogLength = 0;
+        test_UDPv4Transport_ShutdownAllNetwork = false;
         UDPv4Transport::mSendBufferSize = descriptor.sendBufferSize;
         UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
-        DropLog.clear();
-        DropLogLength = descriptor.dropLogLength;
+        test_UDPv4Transport_DropLog.clear();
+        test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
         srand(static_cast<unsigned>(time(NULL)));
     }
 
-RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
-    TransportDescriptorInterface(maximumMessageSize),
-    sendBufferSize(0),
-    receiveBufferSize(0),
+test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
+    SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange),
     dropDataMessagesPercentage(0),
     dropParticipantBuiltinTopicData(false),
     dropPublicationBuiltinTopicData(false),
@@ -61,6 +60,11 @@ RTPS_DllAPI test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
     {
     }
 
+TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
+{
+    return new test_UDPv4Transport(*this);
+}
+
 bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
     if (PacketShouldDrop(sendBuffer, sendBufferSize))
@@ -71,6 +75,19 @@ bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     else
     {
         return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
+    }
+}
+
+bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
+{
+    if (PacketShouldDrop(sendBuffer, sendBufferSize))
+    {
+        LogDrop(sendBuffer, sendBufferSize);
+        return true;
+    }
+    else
+    {
+        return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, pChannelResource);
     }
 }
 
@@ -88,7 +105,7 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
 
 bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize)
 {
-    if(test_UDPv4Transport::ShutdownAllNetwork)
+    if(test_UDPv4Transport_ShutdownAllNetwork)
     {
         return true;
     }
@@ -110,7 +127,7 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
 
     SubmessageHeader_t cdrSubMessageHeader;
     while (cdrMessage.pos < cdrMessage.length)
-    {  
+    {
         ReadSubmessageHeader(cdrMessage, cdrSubMessageHeader);
         if (cdrMessage.pos + cdrSubMessageHeader.submessageLength > cdrMessage.length)
             return false;
@@ -187,11 +204,11 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
 
 bool test_UDPv4Transport::LogDrop(const octet* buffer, uint32_t size)
 {
-    if (DropLog.size() < DropLogLength)
+    if (test_UDPv4Transport_DropLog.size() < test_UDPv4Transport_DropLogLength)
     {
         vector<octet> message;
         message.assign(buffer, buffer + size);
-        DropLog.push_back(message);
+        test_UDPv4Transport_DropLog.push_back(message);
         return true;
     }
 

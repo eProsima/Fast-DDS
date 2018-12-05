@@ -52,7 +52,7 @@ MemoryTestPublisher::MemoryTestPublisher()
     , m_commandpublistener(nullptr)
     , m_commandsublistener(nullptr)
     , m_data_size(0)
-    //, dynamic_data(false)
+    , dynamic_data(false)
     , mp_memory(nullptr)
 {
     m_datapublistener.mp_up = this;
@@ -70,7 +70,7 @@ MemoryTestPublisher::~MemoryTestPublisher()
 bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
         const std::string& export_prefix, const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy, const std::string& sXMLConfigFile,
-        uint32_t data_size, bool /*dynamic_types*/)
+        uint32_t data_size, bool dynamic_types)
 {
     m_sXMLConfigFile = sXMLConfigFile;
     n_samples = n_sam;
@@ -79,24 +79,24 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     m_exportPrefix = export_prefix;
     reliable_ = reliable;
     m_data_size = data_size;
-    //dynamic_data = dynamic_types;
+    dynamic_data = dynamic_types;
 
-    //if (dynamic_data) // Dummy type registration
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
-    //        ));
-    //    struct_type_builder->SetName("MemoryType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //}
+    if (dynamic_data) // Dummy type registration
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+            ));
+        struct_type_builder->SetName("MemoryType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.SetDynamicType(m_pDynType);
+    }
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
@@ -120,11 +120,11 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     }
 
     // Register the type
-    //if (dynamic_data)
-    //{
-    //    Domain::registerType(mp_participant, &m_DynType);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        Domain::registerType(mp_participant, &m_DynType);
+    }
+    else
     {
         Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
     }
@@ -207,13 +207,13 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
         return false;
     }
 
-    //if (dynamic_data)
-    //{
-    //    DynamicTypeBuilderFactory::DeleteInstance();
-    //    pubAttr = mp_datapub->getAttributes();
-    //    Domain::removePublisher(mp_datapub);
-    //    Domain::unregisterType(mp_participant, "MemoryType"); // Unregister as we will register it later with correct size
-    //}
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        pubAttr = mp_datapub->getAttributes();
+        Domain::removePublisher(mp_datapub);
+        Domain::unregisterType(mp_participant, "MemoryType"); // Unregister as we will register it later with correct size
+    }
 
     return true;
 }
@@ -348,39 +348,39 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
     m_status = 0;
     n_received = 0;
 
-    //if (dynamic_data)
-    //{
-    //    // Create basic builders
-    //    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
-    //
-    //    // Add members to the struct.
-    //    struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-    //    struct_type_builder->AddMember(1, "data",
-    //        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-    //            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), datasize
-    //        ));
-    //    struct_type_builder->SetName("MemoryType");
-    //
-    //    m_pDynType = struct_type_builder->Build();
-    //    m_DynType.CleanDynamicType();
-    //    m_DynType.SetDynamicType(m_pDynType);
-    //
-    //    Domain::registerType(mp_participant, &m_DynType);
-    //
-    //    mp_datapub = Domain::createPublisher(mp_participant, pubAttr, &m_datapublistener);
-    //
-    //    m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
-    //
-    //    MemberId id;
-    //    DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
-    //    for (uint32_t i = 0; i < datasize; ++i)
-    //    {
-    //        my_data->InsertSequenceData(id);
-    //        my_data->SetByteValue(0, id);
-    //    }
-    //    m_DynData->ReturnLoanedValue(my_data);
-    //}
-    //else
+    if (dynamic_data)
+    {
+        // Create basic builders
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+
+        // Add members to the struct.
+        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
+        struct_type_builder->AddMember(1, "data",
+            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), datasize
+            ));
+        struct_type_builder->SetName("MemoryType");
+
+        m_pDynType = struct_type_builder->Build();
+        m_DynType.CleanDynamicType();
+        m_DynType.SetDynamicType(m_pDynType);
+
+        Domain::registerType(mp_participant, &m_DynType);
+
+        mp_datapub = Domain::createPublisher(mp_participant, pubAttr, &m_datapublistener);
+
+        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+
+        MemberId id;
+        DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
+        for (uint32_t i = 0; i < datasize; ++i)
+        {
+            my_data->InsertSequenceData(id);
+            my_data->SetByteValue(0, id);
+        }
+        m_DynData->ReturnLoanedValue(my_data);
+    }
+    else
     {
         mp_memory = new MemoryType(datasize);
     }
@@ -415,12 +415,12 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
     {
         for(unsigned int count = 1; count <= n_samples; ++count)
         {
-            //if (dynamic_data)
-            //{
-            //    m_DynData->SetUint32Value(count, 0);
-            //    mp_datapub->write((void*)m_DynData);
-            //}
-            //else
+            if (dynamic_data)
+            {
+                m_DynData->SetUint32Value(count, 0);
+                mp_datapub->write((void*)m_DynData);
+            }
+            else
             {
                 mp_memory->seqnum = count;
                 mp_datapub->write((void*)mp_memory);
@@ -442,15 +442,15 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
     mp_datapub->removeAllChange(&removed);
     //cout << "   REMOVED: "<< removed<<endl;
 
-    //if (dynamic_data)
-    //{
-    //    DynamicTypeBuilderFactory::DeleteInstance();
-    //    DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
-    //    pubAttr = mp_datapub->getAttributes();
-    //    Domain::removePublisher(mp_datapub);
-    //    Domain::unregisterType(mp_participant, "MemoryType");
-    //}
-    //else
+    if (dynamic_data)
+    {
+        DynamicTypeBuilderFactory::DeleteInstance();
+        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+        pubAttr = mp_datapub->getAttributes();
+        Domain::removePublisher(mp_datapub);
+        Domain::unregisterType(mp_participant, "MemoryType");
+    }
+    else
     {
         delete(mp_memory);
     }

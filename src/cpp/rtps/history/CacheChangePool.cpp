@@ -39,10 +39,10 @@ CacheChangePool::~CacheChangePool()
     {
         delete(*it);
     }
-    delete(mp_mutex);
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : mp_mutex(new std::mutex()), memoryMode(memoryPolicy)
+CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : 
+    memoryMode(memoryPolicy)
 {
     //Common for all modes: Set the payload size (maximum allowed), size and size limit
     ++pool_size;
@@ -97,7 +97,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 {
-    std::lock_guard<std::mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::mutex> guard(this->mp_mutex);
 
     switch(memoryMode)
     {
@@ -150,7 +150,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
-    std::lock_guard<std::mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::mutex> guard(this->mp_mutex);
 
     switch(memoryMode)
     {

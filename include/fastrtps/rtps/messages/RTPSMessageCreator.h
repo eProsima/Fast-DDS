@@ -57,7 +57,7 @@ class RTPSMessageCreator
          * @param vendorId Vendor Id.
          * @return True if correct.
          */
-        static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix,ProtocolVersion_t version,VendorId_t vendorId);
+        static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix,const ProtocolVersion_t& version,const VendorId_t& vendorId);
 
         /**
          * Create a Header to the serialized message.
@@ -67,6 +67,14 @@ class RTPSMessageCreator
          */
         static bool addHeader(CDRMessage_t*msg ,const GuidPrefix_t& Prefix);
 
+        /**
+         * Add a custom content to the serialized message.
+         * @param msg Pointer to the Message.
+         * @param content content to create.
+         * @param contentSize size of the content.
+         * @return True if correct.
+         */
+        static bool addCustomContent(CDRMessage_t*msg, const octet* content, const size_t contentSize);
         /**
          * Create SubmessageHeader.
          * @param msg Pointer to the CDRMessage.
@@ -134,9 +142,9 @@ class RTPSMessageCreator
         static bool addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag);
         static bool addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag);
 
-        static bool addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP);
+        static bool addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version, const VendorId_t& vendorId, const GuidPrefix_t& guidP);
+        static bool addSubmessageInfoDST(CDRMessage_t* msg, const GuidPrefix_t& guidP);
 };
-
 }
 } /* namespace rtps */
 } /* namespace eprosima */

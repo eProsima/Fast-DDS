@@ -44,7 +44,8 @@ enum Endianness_t{
 
 //!Reliability enum used for internal purposes
 //!@ingroup COMMON_MODULE
-typedef enum ReliabilityKind_t{
+typedef enum ReliabilityKind_t
+{
     RELIABLE,
     BEST_EFFORT
 }ReliabilityKind_t;
@@ -61,17 +62,26 @@ typedef enum DurabilityKind_t
 
 //!Endpoint kind
 //!@ingroup COMMON_MODULE
-typedef enum EndpointKind_t{
+typedef enum EndpointKind_t
+{
     READER,
     WRITER
 }EndpointKind_t;
 
 //!Topic kind
-typedef enum TopicKind_t{
+typedef enum TopicKind_t
+{
     NO_KEY,
     WITH_KEY
 }TopicKind_t;
 
+//!Topic discovery kind
+typedef enum TopicDiscoveryKind_t
+{
+    NO_CHECK,
+    MINIMAL,
+    COMPLETE
+}TopicDiscoveryKind_t;
 
 #if __BIG_ENDIAN__
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
@@ -98,46 +108,102 @@ typedef uint32_t Count_t;
 #define BIT(i) ((i==0) ? BIT0 : (i==1) ? BIT1 :(i==2)?BIT2:(i==3)?BIT3:(i==4)?BIT4:(i==5)?BIT5:(i==6)?BIT6:(i==7)?BIT7:0x0)
 
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
-struct RTPS_DllAPI ProtocolVersion_t{
+struct RTPS_DllAPI ProtocolVersion_t
+{
     octet m_major;
     octet m_minor;
     ProtocolVersion_t():
-        m_major(2),
-        m_minor(1)
+#if HAVE_SECURITY
+        // As imposed by DDSSEC11-93
+        ProtocolVersion_t(2,3)
+#else
+        ProtocolVersion_t(2,2)
+#endif
     {
 
     };
-    ProtocolVersion_t(octet maj,octet min):
-        m_major(maj),
-        m_minor(min)
+
+    ProtocolVersion_t(octet maj,octet min)
+        : m_major(maj)
+        , m_minor(min)
     {
 
     }
+
+    bool operator==(const ProtocolVersion_t &v) const
+    {
+        return m_major == v.m_major && m_minor == v.m_minor;
+    }
+
+    bool operator!=(const ProtocolVersion_t &v) const
+    {
+        return m_major != v.m_major || m_minor != v.m_minor;
+    }
 };
 
+/**
+ * Prints a ProtocolVersion
+ * @param output Output Stream
+ * @param pv ProtocolVersion
+ * @return OStream.
+ */
+inline std::ostream& operator<<(std::ostream& output, const ProtocolVersion_t& pv){
+    return output << static_cast<int>(pv.m_major) << "." << static_cast<int>(pv.m_minor);
+}
 
 const ProtocolVersion_t c_ProtocolVersion_2_0(2,0);
 const ProtocolVersion_t c_ProtocolVersion_2_1(2,1);
 const ProtocolVersion_t c_ProtocolVersion_2_2(2,2);
+const ProtocolVersion_t c_ProtocolVersion_2_3(2,3);
 
-const ProtocolVersion_t c_ProtocolVersion(2,1);
+const ProtocolVersion_t c_ProtocolVersion;
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
-typedef octet VendorId_t[2];
-
-const VendorId_t c_VendorId_Unknown={0x00,0x00};
-const VendorId_t c_VendorId_eProsima={0x01,0x0F};
-
-
-static inline void set_VendorId_Unknown(VendorId_t& id)
+class VendorId_t
 {
-    id[0]=0x0;id[1]=0x0;
-}
+public:
+    VendorId_t(const VendorId_t &v)// : m_vendor{v[0], v[1]}
+    {
+        // There isn't a explicit constructor because VS2013 doesn't support it.
+        m_vendor[0] = v[0];
+        m_vendor[1] = v[1];
+    }
 
-static inline void set_VendorId_eProsima(VendorId_t& id)
-{
-    id[0]=0x01;id[1]=0x0F;
-}
+    VendorId_t(const octet id0, const octet id1)// : m_vendor{id0, id1}
+    {
+        // There isn't a explicit constructor because VS2013 doesn't support it.
+        m_vendor[0] = id0;
+        m_vendor[1] = id1;
+    }
+
+    VendorId_t& operator=(const VendorId_t &v)
+    {
+        m_vendor[0] = v[0];
+        m_vendor[1] = v[1];
+        return *this;
+    }
+
+    octet& operator[](const int index)
+    {
+        return m_vendor[index];
+    }
+
+    octet operator[](const int index) const
+    {
+        return m_vendor[index];
+    }
+
+    bool operator==(const VendorId_t &v) const
+    {
+        return m_vendor[0] == v[0] && m_vendor[1] == v[1];
+    }
+private:
+    octet m_vendor[2];
+};
+//typedef octet VendorId_t[2];
+
+const VendorId_t c_VendorId_Unknown = {0x00,0x00};
+const VendorId_t c_VendorId_eProsima = {0x01,0x0F};
 
 }
 }

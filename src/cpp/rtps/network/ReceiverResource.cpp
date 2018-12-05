@@ -13,6 +13,11 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <cassert>
+#include <fastrtps/log/Log.h>
+
+#define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
 
 using namespace std;
 
@@ -20,67 +25,85 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator)
+ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator, uint32_t max_size)
+        : mValid(false)
+        , receiver(nullptr)
+        , msg(0)
 {
-   // Internal channel is opened and assigned to this resource.
-   mValid = transport.OpenInputChannel(locator);
-   if (!mValid)
-      return; // Invalid resource to be discarded by the factory.
+    // Internal channel is opened and assigned to this resource.
+    mValid = transport.OpenInputChannel(locator, this, max_size);
+    if (!mValid)
+    {
+        return; // Invalid resource to be discarded by the factory.
+    }
 
-   // Implementation functions are bound to the right transport parameters
-   Cleanup = [&transport,locator](){ transport.ReleaseInputChannel(locator); };
-   Close = [&transport,locator](){ transport.CloseInputChannel(locator); };
-   ReceiveFromAssociatedChannel = [&transport, locator](octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& origin)-> bool
-                                  { return transport.Receive(receiveBuffer, receiveBufferCapacity, receiveBufferSize, locator, origin); };
-   LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-                                 { return transport.DoLocatorsMatch(locator, locatorToCheck); };
-}
-
-bool ReceiverResource::Receive(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize,
-             Locator_t& originLocator)
-{
-   if (ReceiveFromAssociatedChannel)
-   {
-      return ReceiveFromAssociatedChannel(receiveBuffer, receiveBufferCapacity, receiveBufferSize, originLocator);
-   }
-
-   return false;
+    // Implementation functions are bound to the right transport parameters
+    Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
+    LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
+    { return transport.DoInputLocatorsMatch(locator, locatorToCheck); };
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
 {
-   Cleanup.swap(rValueResource.Cleanup);
-   Close.swap(rValueResource.Close);
-   ReceiveFromAssociatedChannel.swap(rValueResource.ReceiveFromAssociatedChannel);
-   LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
+    Cleanup.swap(rValueResource.Cleanup);
+    LocatorMapsToManagedChannel.swap(rValueResource.LocatorMapsToManagedChannel);
+    receiver = rValueResource.receiver;
+    rValueResource.receiver = nullptr;
+    mValid = rValueResource.mValid;
+    rValueResource.mValid = false;
+    msg = std::move(rValueResource.msg);
 }
 
 bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
 {
-   if (LocatorMapsToManagedChannel)
-      return LocatorMapsToManagedChannel(localLocator);
-   return false;
+    if (LocatorMapsToManagedChannel)
+    {
+        return LocatorMapsToManagedChannel(localLocator);
+    }
+    return false;
 }
 
-void ReceiverResource::Abort()
+void ReceiverResource::RegisterReceiver(MessageReceiver* rcv)
 {
-   if(Cleanup)
-   {
-      Cleanup();
-   }
+    std::unique_lock<std::mutex> lock(mtx);
+    if (receiver == nullptr)
+        receiver = rcv;
+}
+
+void ReceiverResource::UnregisterReceiver(MessageReceiver* rcv)
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    if (receiver == rcv)
+        receiver = nullptr;
+}
+
+void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
+    const Locator_t & localLocator, const Locator_t & remoteLocator)
+{
+    (void)localLocator;
+
+    std::unique_lock<std::mutex> lock(mtx);
+    MessageReceiver* rcv = receiver;
+
+    if (rcv != nullptr)
+    {
+        msg.wraps = true;
+        msg.buffer = const_cast<octet*>(data);
+        msg.length = size;
+        msg.max_size = size;
+
+        // TODO: Should we unlock in case UnregisterReceiver is called from callback ?
+        rcv->processCDRMsg(remoteLocator, &msg);
+    }
+
 }
 
 ReceiverResource::~ReceiverResource()
 {
-   if(Cleanup)
-   {
-      Cleanup();
-   }
-
-   if(Close)
-   {
-       Close();
-   }
+    if (Cleanup)
+    {
+        Cleanup();
+    }
 }
 
 } // namespace rtps

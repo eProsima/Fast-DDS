@@ -24,6 +24,7 @@
 
 #include "../../common/Time_t.h"
 #include "../../common/Locator.h"
+#include "../../common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -43,6 +44,8 @@ class WLivelinessPeriodicAssertion;
 class WLPListener;
 class WriterHistory;
 class ReaderHistory;
+class ReaderProxyData;
+class WriterProxyData;
 
 /**
  * Class WLP that implements the Writer Liveliness Protocol described in the RTPS specification.
@@ -87,7 +90,7 @@ public:
 	 * @param wqos Quality of service policies for the writer.
     * @return True if correct.
 	 */
-	bool addLocalWriter(RTPSWriter* W,WriterQos& wqos);
+	bool addLocalWriter(RTPSWriter* W, const WriterQos& wqos);
 	/**
 	 * Remove a local writer from the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
@@ -112,14 +115,34 @@ public:
 	 * @param wqos New writer QoS
 	 * @return True on success
 	 */
-	bool updateLocalWriter(RTPSWriter* W,WriterQos& wqos);
+	bool updateLocalWriter(RTPSWriter* W, const WriterQos& wqos);
 	
 	/**
 	 * Get the RTPS participant
 	 * @return RTPS participant
 	 */
 	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
+
+    /**
+     * Get the livelines builtin writer
+     * @return stateful writer
+     */
+    StatefulWriter* getBuiltinWriter();
+
+    /**
+    * Get the livelines builtin writer's history
+    * @return writer history
+    */
+    WriterHistory* getBuiltinWriterHistory();
 	
+#if HAVE_SECURITY
+    bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
+        const ReaderProxyData& remote_reader_data);
+
+    bool pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
+        const WriterProxyData& remote_writer_data);
+#endif
+
 private:
 	//!Pointer to the local RTPSParticipant.
 	RTPSParticipantImpl* mp_participant;
@@ -143,6 +166,23 @@ private:
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by RTPSParticipant liveliness.
 	std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
+
+#if HAVE_SECURITY
+    //!Pointer to the builtinRTPSParticipantMEssageWriter.
+    StatefulWriter* mp_builtinWriterSecure;
+    //!Pointer to the builtinRTPSParticipantMEssageReader.
+    StatefulReader* mp_builtinReaderSecure;
+    //!Writer History
+    WriterHistory* mp_builtinWriterSecureHistory;
+    //!Reader History
+    ReaderHistory* mp_builtinReaderSecureHistory;
+
+    /**
+     * Create the secure endpoitns used in the WLP.
+     * @return true if correct.
+     */
+    bool createSecureEndpoints();
+#endif
 };
 
 }

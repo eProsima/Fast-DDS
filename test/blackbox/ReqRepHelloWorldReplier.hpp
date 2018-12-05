@@ -88,7 +88,7 @@ class ReqRepHelloWorldReplier
         void init();
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity sample_identity, uint16_t number);
-        void waitDiscovery();
+        void wait_discovery();
         void matched();
         virtual void configSubscriber(const std::string& suffix) = 0;
         virtual void configPublisher(const std::string& suffix) = 0;

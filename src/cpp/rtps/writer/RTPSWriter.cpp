@@ -42,7 +42,8 @@ RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes
     m_livelinessAsserted(false),
     mp_history(hist),
     mp_listener(listen),
-    is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
+    is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true),
+    m_separateSendingEnabled(false)
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif
@@ -147,12 +148,12 @@ uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
     //TODO(Ricardo) inlineqos in future.
 
 #if HAVE_SECURITY
-    if(getAttributes()->security_attributes().is_submessage_protected)
+    if(getAttributes().security_attributes().is_submessage_protected)
     {
         maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
     }
 
-    if(getAttributes()->security_attributes().is_payload_protected)
+    if(getAttributes().security_attributes().is_payload_protected)
     {
         maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
     }
@@ -172,7 +173,7 @@ void RTPSWriter::update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
 #if HAVE_SECURITY
 bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
 {
-    if(getAttributes()->security_attributes().is_payload_protected && change->getFragmentCount() == 0)
+    if(getAttributes().security_attributes().is_payload_protected && change->getFragmentCount() == 0)
     {
         if(encrypt_payload_.max_size < change->serializedPayload.length +
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.

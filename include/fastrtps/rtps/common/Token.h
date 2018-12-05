@@ -60,6 +60,11 @@ class DataHolder
             return *this;
         }
 
+        bool is_nil() const
+        {
+            return class_id_.empty();
+        }
+
         void class_id(const std::string& class_id)
         {
             class_id_ = class_id;
@@ -112,9 +117,10 @@ class DataHolder
 typedef std::vector<DataHolder> DataHolderSeq;
 typedef DataHolder Token;
 typedef Token IdentityToken;
+typedef Token IdentityStatusToken;
 typedef Token PermissionsToken;
+typedef Token AuthenticatedPeerCredentialToken;
 typedef Token PermissionsCredentialToken;
-
 
 class DataHolderHelper
 {

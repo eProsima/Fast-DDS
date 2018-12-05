@@ -46,7 +46,7 @@ RTPSMessageCreator::~RTPSMessageCreator() {
 
 
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix,
-        ProtocolVersion_t version,VendorId_t vendorId)
+        const ProtocolVersion_t& version,const VendorId_t& vendorId)
 {
     CDRMessage::addOctet(msg,'R');
     CDRMessage::addOctet(msg,'T');
@@ -59,9 +59,7 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
     CDRMessage::addOctet(msg,vendorId[0]);
     CDRMessage::addOctet(msg,vendorId[1]);
 
-    for (uint8_t i = 0;i<12;i++){
-        CDRMessage::addOctet(msg,guidPrefix.value[i]);
-    }
+    CDRMessage::addData(msg,guidPrefix.value, 12);
     msg->length = msg->pos;
 
     return true;
@@ -69,13 +67,16 @@ bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPre
 
 bool RTPSMessageCreator::addHeader(CDRMessage_t*msg, const GuidPrefix_t& guidPrefix)
 {
-    ProtocolVersion_t prot;
-    prot = c_ProtocolVersion;
-    VendorId_t vend;
-    set_VendorId_eProsima(vend);
-    return RTPSMessageCreator::addHeader(msg,guidPrefix,prot,vend);
+    return RTPSMessageCreator::addHeader(msg,guidPrefix, c_ProtocolVersion,c_VendorId_eProsima);
 }
 
+bool RTPSMessageCreator::addCustomContent(CDRMessage_t*msg, const octet* content, const size_t contentSize)
+{
+    CDRMessage::addData(msg, content, static_cast<uint32_t>(contentSize));
+    msg->length = msg->pos;
+	
+    return true;
+}
 
 bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
         octet id,octet flags,uint16_t size) {
@@ -116,7 +117,34 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, GuidPrefix_t guidP)
+bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version, 
+    const VendorId_t& vendorId, const GuidPrefix_t& guidPrefix)
+{
+    octet flags = 0x0;
+    uint16_t size = 20;
+#if __BIG_ENDIAN__
+    msg->msg_endian = BIGEND;
+#else
+    flags = flags | BIT(0);
+    msg->msg_endian = LITTLEEND;
+#endif
+
+    CDRMessage::addOctet(msg, INFO_SRC);
+    CDRMessage::addOctet(msg, flags);
+    CDRMessage::addUInt16(msg, size);
+    CDRMessage::addUInt32(msg, 0);
+    CDRMessage::addOctet(msg, version.m_major);
+    CDRMessage::addOctet(msg, version.m_minor);
+
+    CDRMessage::addOctet(msg, vendorId[0]);
+    CDRMessage::addOctet(msg, vendorId[1]);
+
+    CDRMessage::addData(msg, guidPrefix.value, 12);
+
+    return true;
+}
+
+bool RTPSMessageCreator::addSubmessageInfoDST(CDRMessage_t* msg, const GuidPrefix_t& guidP)
 {
     octet flags = 0x0;
     uint16_t size = 12;

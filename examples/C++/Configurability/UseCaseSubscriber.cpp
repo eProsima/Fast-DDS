@@ -63,7 +63,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -88,7 +88,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -113,7 +113,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -136,7 +136,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -152,7 +152,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -174,7 +174,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -190,7 +190,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }
@@ -213,7 +213,7 @@ int main(){
         int choice;
         try{
             choice = std::stoi(userchoice);
-        }catch(std::invalid_argument){
+        }catch(std::invalid_argument&){
             std::cout << "Please input a valid argument" << std::endl;
             continue;
         }

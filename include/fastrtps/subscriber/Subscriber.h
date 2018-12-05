@@ -40,13 +40,13 @@ class SampleInfo_t;
 class RTPS_DllAPI Subscriber
 {
     friend class SubscriberImpl;
-    virtual ~Subscriber(){};
-    public:
+    virtual ~Subscriber(){}
+
+public:
     /**
      * @param pimpl Actual implementation of the subscriber
      */
-    Subscriber(SubscriberImpl* pimpl):mp_impl(pimpl){};
-
+    Subscriber(SubscriberImpl* pimpl) : mp_impl(pimpl) {}
 
     /**
      * Get the associated GUID
@@ -74,19 +74,18 @@ class RTPS_DllAPI Subscriber
      */
     bool takeNextData(void* data,SampleInfo_t* info);
 
-
     /**
      * Update the Attributes of the subscriber;
      * @param att Reference to a SubscriberAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
      */
-    bool updateAttributes(SubscriberAttributes& att);
+    bool updateAttributes(const SubscriberAttributes& att);
 
     /**
      * Get the Attributes of the Subscriber.
      * @return Attributes of the subscriber
      */
-    SubscriberAttributes getAttributes() const;
+    const SubscriberAttributes& getAttributes() const;
 
     /*!
      * @brief Returns there is a clean state with all Publishers.
@@ -102,8 +101,7 @@ class RTPS_DllAPI Subscriber
      */
     uint64_t getUnreadCount() const;
 
-    private:
-
+private:
     SubscriberImpl* mp_impl;
 };
 

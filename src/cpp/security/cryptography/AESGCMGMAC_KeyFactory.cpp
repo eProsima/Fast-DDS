@@ -39,6 +39,59 @@
 #undef max
 #endif
 
+static bool create_kx_key(std::array<uint8_t, 32>& out_data, const std::vector<uint8_t>* first_data, 
+    const char* cookie, const std::vector<uint8_t>* second_data, const std::vector<uint8_t>* shared_secret)
+{
+    uint8_t tmp_data[32 + 16 + 32];
+    uint8_t sha256[32];
+
+    out_data.fill(0);
+
+    memcpy(tmp_data, first_data->data(), 32);
+    memcpy(&tmp_data[32], cookie, 16);
+    memcpy(&tmp_data[32 + 16], second_data->data(), 32);
+
+    if (!EVP_Digest(tmp_data, 32 + 16 + 32, sha256, NULL, EVP_sha256(), NULL))
+    {
+        return false;
+    }
+
+    //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret
+    EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, sha256, 32);
+    EVP_MD_CTX* ctx =
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_new();
+#else
+        (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
+#endif
+    EVP_MD_CTX_init(ctx);
+    EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
+    EVP_DigestSignUpdate(ctx, shared_secret->data(), shared_secret->size());
+    size_t length = 0;
+    EVP_DigestSignFinal(ctx, NULL, &length);
+    if (length > 32)
+    {
+        EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+        EVP_MD_CTX_free(ctx);
+#else
+        EVP_MD_CTX_cleanup(ctx);
+        free(ctx);
+#endif
+        return false;
+    }
+    EVP_DigestSignFinal(ctx, out_data.data(), &length);
+    EVP_PKEY_free(key);
+#if IS_OPENSSL_1_1
+    EVP_MD_CTX_free(ctx);
+#else
+    EVP_MD_CTX_cleanup(ctx);
+    free(ctx);
+#endif
+
+    return true;
+}
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
@@ -48,6 +101,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
                 const IdentityHandle& /*participant_identity*/,
                 const PermissionsHandle& /*participant_permissions*/,
                 const PropertySeq &participant_properties,
+                const ParticipantSecurityAttributes& participant_security_attributes,
                 SecurityException& /*exception*/)
 {
 
@@ -55,50 +109,44 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     AESGCMGMAC_ParticipantCryptoHandle* PCrypto = nullptr;
 
     PCrypto = new AESGCMGMAC_ParticipantCryptoHandle();
+    auto plugin_attrs = participant_security_attributes.plugin_participant_attributes;
+    (*PCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
-    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM if the user does not specify otherwise
+    //Default to AES128 if the user does not specify otherwise (GCM / GMAC depending of RTPS protection kind)
+    bool is_rtps_encrypted = (plugin_attrs &  PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
+    bool use_256_bits = true;
     int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if(!participant_properties.empty()){
-          for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
-              if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
-                      if( it->value() == std::string("AES128_GCM") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                      if( it->value() == std::string("AES128_GMAC") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                      if( it->value() == std::string("AES256_GCM") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                      if( it->value() == std::string("AES256_GMAC") )
-                          transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
-              }// endif
-              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
-                  try{
-                      maxblockspersession = std::stoi( (it)->value() );
-                  }catch(std::invalid_argument){}
-              }
-          }//endfor
+        for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
+            if( (it)->name().compare("dds.sec.crypto.keysize") == 0)
+            {
+                if (it->value().compare("128") == 0) 
+                {
+                    use_256_bits = false;
+                }
+            }
+            if( (it)->name().compare("dds.sec.crypto.maxblockspersession") == 0)
+            {
+                try
+                {
+                    maxblockspersession = std::stoi( (it)->value() );
+                }
+                catch(std::invalid_argument&)
+                {
+                }
+            }
+        }//endfor
     }//endif
 
-    (*PCrypto)->ParticipantKeyMaterial.transformation_kind =
-        transformationtype;
-    (*PCrypto)->transformation_kind = transformationtype;
-    (*PCrypto)->ParticipantKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_salt.data(), 16 );
-
-    (*PCrypto)->ParticipantKeyMaterial.sender_key_id = make_unique_KeyId();
-
-    (*PCrypto)->ParticipantKeyMaterial.master_sender_key.fill(0);
-    RAND_bytes( (*PCrypto)->ParticipantKeyMaterial.master_sender_key.data(), 16 );
-
-    //These values are set by the standard
-    (*PCrypto)->ParticipantKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
+    create_key((*PCrypto)->ParticipantKeyMaterial, is_rtps_encrypted, use_256_bits);
 
     //Set values related to key update policy
     (*PCrypto)->max_blocks_per_session = maxblockspersession;
     (*PCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
 
-    RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint16_t));
+    RAND_bytes( (unsigned char *)( &( (*PCrypto)->session_id ) ), sizeof(uint32_t));
 
     // Fill data to use with ourselves.
     KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
@@ -108,8 +156,16 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     buffer.master_salt = (*PCrypto)->ParticipantKeyMaterial.master_salt;
     buffer.master_sender_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
     buffer.sender_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
-    buffer.receiver_specific_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
-    buffer.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_receiver_specific_key;
+    if (is_origin_auth)
+    {
+        buffer.receiver_specific_key_id = (*PCrypto)->ParticipantKeyMaterial.sender_key_id;
+        buffer.master_receiver_specific_key = (*PCrypto)->ParticipantKeyMaterial.master_sender_key;
+    }
+    else
+    {
+        buffer.receiver_specific_key_id = c_transformKeyIdZero;
+        buffer.master_receiver_specific_key.fill(0);
+    }
 
     (*PCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
     (*PCrypto)->RemoteParticipant2ParticipantKeyMaterial.push_back(buffer);
@@ -139,9 +195,11 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     //Put both elements in the local and remote ParticipantCryptoHandle
 
     const AESGCMGMAC_ParticipantCryptoHandle& local_participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(local_participant_crypto_handle);
+    auto plugin_attrs = local_participant_handle->ParticipantPluginAttributes;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
     AESGCMGMAC_ParticipantCryptoHandle* RPCrypto = new AESGCMGMAC_ParticipantCryptoHandle(); // Remote Participant CryptoHandle, to be returned at the end of the function
 
-    (*RPCrypto)->transformation_kind = local_participant_handle->transformation_kind;
+    (*RPCrypto)->ParticipantPluginAttributes = plugin_attrs;
 
     /*Fill values for Participant2ParticipantKeyMaterial - Used to encrypt outgoing data */
     { //scope for temp var buffer
@@ -151,12 +209,15 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         buffer.transformation_kind = local_participant_handle->ParticipantKeyMaterial.transformation_kind;
         buffer.master_salt = local_participant_handle->ParticipantKeyMaterial.master_salt;
         buffer.master_sender_key = local_participant_handle->ParticipantKeyMaterial.master_sender_key;
+        buffer.sender_key_id = local_participant_handle->ParticipantKeyMaterial.sender_key_id;
         //Generation of remainder values (Remote specific key)
-        buffer.sender_key_id = make_unique_KeyId();
-        buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
-        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
-
+        buffer.receiver_specific_key_id = c_transformKeyIdZero;
+        if (is_origin_auth)
+        {
+            buffer.receiver_specific_key_id = make_unique_KeyId();
+            RAND_bytes(buffer.master_receiver_specific_key.data(), 32);
+        }
         //Attach to both local and remote CryptoHandles
         (*RPCrypto)->Participant2ParticipantKeyMaterial.push_back(buffer);
     }
@@ -165,119 +226,62 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     { //scope for temp var buffer
         KeyMaterial_AES_GCM_GMAC buffer; //Buffer = Participant2ParticipantKxKeyMaterial
 
-        buffer.transformation_kind = std::array<uint8_t,4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-        buffer.master_salt.fill(0);
+        buffer.transformation_kind = c_transfrom_kind_aes256_gcm;
+        buffer.sender_key_id.fill(0);
+        buffer.receiver_specific_key_id.fill(0);
+        buffer.master_receiver_specific_key.fill(0);
 
-        std::vector<uint8_t> concatenation(challenge_1->size() + 16 +
-                challenge_2->size()); //Assembly of the source concatenated sequence that is used to generate master_salt
-
-        std::string KxKeyCookie("key exchange key");
-        memcpy(concatenation.data(), challenge_1->data(), challenge_1->size());
-        memcpy(concatenation.data() + challenge_1->size(), KxKeyCookie.data(), 16);
-        memcpy(concatenation.data() + challenge_1->size() + 16, challenge_2->data(), challenge_2->size());
-
-        //concatenation is used to generate the key to encode the shared_secret and produce the master_salt
-        buffer.master_salt.fill(0);
-        std::array<uint8_t,32> p_master_salt;
-        if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
-            logWarning(SECURITY_CRYPTO,"Error generating the keys to perform token transaction");
-            delete RPCrypto;
-            return nullptr;
-        }
-        //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret
-        EVP_PKEY *key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
-        EVP_MD_CTX* ctx = 
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_new();
-#else
-            (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
-        EVP_MD_CTX_init(ctx);
-        EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
-        EVP_DigestSignUpdate(ctx, shared_secret_ss->data(), shared_secret_ss->size());
-        size_t length = 0;
-        EVP_DigestSignFinal(ctx, NULL, &length);
-        if(length > 32){
-            logWarning(SECURITY_CRYPTO,"Error generating the keys to perform token transaction");
+        if (!create_kx_key(buffer.master_salt, challenge_1, "keyexchange salt", challenge_2, shared_secret_ss))
+        {
+            logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
             exception = SecurityException("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
-            EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_free(ctx);
-#else
-            EVP_MD_CTX_cleanup(ctx);
-            free(ctx);
-#endif
             return nullptr;
         }
-        EVP_DigestSignFinal(ctx, buffer.master_salt.data(), &length);
-        EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-        EVP_MD_CTX_free(ctx);
-#else
-        EVP_MD_CTX_cleanup(ctx);
-        free(ctx);
-#endif
 
-        //Repeat process - concatenation is used to store the sequence to generate master_sender_key
-        std::string KxSaltCookie("keyexchange salt");
-        memcpy(concatenation.data(), challenge_2->data(), challenge_2->size());
-        memcpy(concatenation.data() + challenge_2->size(), KxSaltCookie.data(), 16);
-        memcpy(concatenation.data() + challenge_2->size() + 16, challenge_1->data(), challenge_1->size() );
-        //Compute key to produce master_sender_key
-        buffer.master_sender_key.fill(0);
-        if(!EVP_Digest(concatenation.data(), challenge_1->size() + 16 + challenge_2->size(), p_master_salt.data(), NULL, EVP_sha256(), NULL)){
-            logWarning(SECURITY_CRYPTO,"Error generating master key material");
+        if(!create_kx_key(buffer.master_sender_key, challenge_2, "key exchange key", challenge_1, shared_secret_ss))
+        {
+            logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
+            exception = SecurityException("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
             return nullptr;
         }
-        //The result of p_master_salt is now the key to perform an HMACsha256 of the shared secret that will go into master_sender_key
-        key = EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, NULL, p_master_salt.data(), 32);
-        ctx =
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_new();
-#else
-            (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
-        EVP_MD_CTX_init(ctx);
 
-        EVP_DigestSignInit(ctx, NULL, EVP_sha256(), NULL, key);
-        EVP_DigestSignUpdate(ctx, shared_secret_ss->data(), shared_secret_ss->size());
-        length = 0;
-        EVP_DigestSignFinal(ctx, NULL, &length);
-        if(length > 32){
-            logWarning(SECURITY_CRYPTO,"Error generating master key material");
-            delete RPCrypto;
-            EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-            EVP_MD_CTX_free(ctx);
-#else
-            EVP_MD_CTX_cleanup(ctx);
-            free(ctx);
-#endif
-            return nullptr;
-        }
-        EVP_DigestSignFinal(ctx, buffer.master_sender_key.data(), &length);
-        EVP_PKEY_free(key);
-#if IS_OPENSSL_1_1
-        EVP_MD_CTX_free(ctx);
-#else
-        EVP_MD_CTX_cleanup(ctx);
-        free(ctx);
-#endif
-
-        buffer.sender_key_id.fill(0); //Specified by standard
-        buffer.receiver_specific_key_id.fill(0); //Specified by standard
-        buffer.master_receiver_specific_key.fill(0); //Specified by standard
 
         (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
-        (*RPCrypto)->session_block_counter = local_participant_handle->session_block_counter;
+        (*RPCrypto)->session_block_counter = local_participant_handle->max_blocks_per_session+1;
         (*RPCrypto)->session_id = std::numeric_limits<uint32_t>::max();
         if((*RPCrypto)->session_id == local_participant_handle->session_id)
             (*RPCrypto)->session_id -= 1;
 
         //Attack to PartipantCryptoHandles - both local and remote
         (*RPCrypto)->Participant2ParticipantKxKeyMaterial.push_back(buffer);
+
+        // Create builtin key exchange writer handle
+        AESGCMGMAC_WriterCryptoHandle* wHandle = new AESGCMGMAC_WriterCryptoHandle();
+        (*wHandle)->EndpointPluginAttributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+        (*wHandle)->Participant_master_key_id = c_transformKeyIdZero;
+        (*wHandle)->Parent_participant = RPCrypto;
+        (*wHandle)->EntityKeyMaterial.push_back(buffer);
+        (*wHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
+        (*wHandle)->Remote2EntityKeyMaterial.push_back(buffer);
+        (*wHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
+        (*wHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
+        (*wHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
+        (*RPCrypto)->Writers.push_back(wHandle);
+
+        // Create builtin key exchange reader handle
+        AESGCMGMAC_ReaderCryptoHandle* rHandle = new AESGCMGMAC_ReaderCryptoHandle();
+        (*rHandle)->EndpointPluginAttributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+        (*rHandle)->Participant_master_key_id = c_transformKeyIdZero;
+        (*rHandle)->Parent_participant = RPCrypto;
+        (*rHandle)->EntityKeyMaterial.push_back(buffer);
+        (*rHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
+        (*rHandle)->Remote2EntityKeyMaterial.push_back(buffer);
+        (*rHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
+        (*rHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
+        (*rHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
+        (*RPCrypto)->Readers.push_back(rHandle);
     }
 
     return RPCrypto;
@@ -286,6 +290,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
 DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datawriter_prop,
+                const EndpointSecurityAttributes& datawriter_security_properties,
                 SecurityException& /*exception*/){
 
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
@@ -294,50 +299,78 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
         return nullptr;
     }
 
-    //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
-    AESGCMGMAC_WriterCryptoHandle* WCrypto = new AESGCMGMAC_WriterCryptoHandle();
-
-    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
+    auto plugin_attrs = datawriter_security_properties.plugin_endpoint_attributes;
+    bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
+    bool is_payload_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED) != 0;
+    bool use_256_bits = false;
+    bool use_kx_keys = false;
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datawriter_prop.empty()){
         for(auto it=datawriter_prop.begin(); it!=datawriter_prop.end(); ++it)
         {
-            if( (it)->name() == "dds.sec.crypto.cryptotransformkind")
+            if(it->name().compare("dds.sec.crypto.keysize") == 0)
             {
-                if(it->value() == std::string("AES128_GCM"))
-                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                if(it->value() == std::string("AES128_GMAC"))
-                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                if(it->value() == std::string("AES256_GCM"))
-                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                if(it->value() == std::string("AES256_GMAC"))
-                    transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
-            }// endif
-            if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
-                try{
+                if (it->value().compare("256") == 0)
+                {
+                    use_256_bits = true;
+                }
+            }
+            else if(it->name().compare("dds.sec.crypto.maxblockspersession") == 0)
+            {
+                try
+                {
                     maxblockspersession = std::stoi( (it)->value() );
-                }catch(std::invalid_argument){}
+                }
+                catch(std::invalid_argument&)
+                {
+                }
+            }
+            else if (it->name().compare("dds.sec.builtin_endpoint_name") == 0)
+            {
+                if (it->value().compare("BuiltinParticipantVolatileMessageSecureWriter") == 0)
+                {
+                    use_kx_keys = true;
+                }
             }
         }//endfor
     }//endif
-    (*WCrypto)->transformation_kind = transformationtype;
-    //Fill WriterKeyMaterial - This will be used to cipher full rpts messages
 
-    (*WCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
-    (*WCrypto)->EntityKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*WCrypto)->EntityKeyMaterial.master_salt.data(), 16 );
+    if (use_kx_keys)
+    {
+        return participant_handle->Writers.at(0);
+    }
 
-    (*WCrypto)->EntityKeyMaterial.sender_key_id = make_unique_KeyId();
+    //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
+    AESGCMGMAC_WriterCryptoHandle* WCrypto = new AESGCMGMAC_WriterCryptoHandle();
+    (*WCrypto)->EndpointPluginAttributes = plugin_attrs;
 
-    (*WCrypto)->EntityKeyMaterial.master_sender_key.fill(0);
-    RAND_bytes( (*WCrypto)->EntityKeyMaterial.master_sender_key.data(), 16 );
+    auto session = &(*WCrypto)->Sessions[0];
 
-    (*WCrypto)->EntityKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    (*WCrypto)->EntityKeyMaterial.master_receiver_specific_key.fill(0);
+    if (datawriter_security_properties.is_submessage_protected)
+    {
+        KeyMaterial_AES_GCM_GMAC buffer;
+        create_key(buffer, is_sub_encrypted, use_256_bits);
+        (*WCrypto)->EntityKeyMaterial.push_back(buffer);
+        session->session_block_counter = maxblockspersession + 1; //Set to update upon first usage
+        RAND_bytes((unsigned char *)(&(session->session_id)), sizeof(uint32_t));
+        session++;
+    }
 
+    if (datawriter_security_properties.is_payload_protected)
+    {
+        // TODO: let user decide on key reuse
+        if (!datawriter_security_properties.is_submessage_protected ||
+            (is_payload_encrypted != is_sub_encrypted) )
+        {
+            KeyMaterial_AES_GCM_GMAC buffer;
+            create_key(buffer, is_payload_encrypted, use_256_bits);
+            (*WCrypto)->EntityKeyMaterial.push_back(buffer);
+            session->session_block_counter = maxblockspersession + 1; //Set to update upon first usage
+            RAND_bytes((unsigned char *)(&(session->session_id)), sizeof(uint32_t));
+        }
+    }
+        
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
-    (*WCrypto)->session_block_counter = maxblockspersession+1; //Set to update upon first usage
-    RAND_bytes( (unsigned char *)( &( (*WCrypto)->session_id ) ), sizeof(uint16_t));
 
     std::unique_lock<std::mutex>(participant_handle->mutex_);
 
@@ -354,7 +387,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
                 DatawriterCryptoHandle &local_datawriter_crypto_handle,
                 ParticipantCryptoHandle &remote_participant_crypto,
                 const SharedSecretHandle& /*shared_secret*/,
-                const bool /*relay_only*/,
+                const bool relay_only,
                 SecurityException& /*exception*/)
 {
     //Create Participant2ParticipantKeyMaterial (Based on local ParticipantKeyMaterial) and ParticipantKxKeyMaterial (based on the SharedSecret)
@@ -366,47 +399,84 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         return nullptr;
     }
 
-    std::unique_lock<std::mutex> writer_lock(local_writer_handle->mutex_);
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
 
+    std::unique_lock<std::mutex> writer_lock(local_writer_handle->mutex_);
+    auto plugin_attrs = local_writer_handle->EndpointPluginAttributes;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0;
     AESGCMGMAC_ReaderCryptoHandle* RRCrypto = new AESGCMGMAC_ReaderCryptoHandle(); // Remote Reader CryptoHandle, to be returned at the end of the function
 
-    (*RRCrypto)->transformation_kind = local_writer_handle->transformation_kind;
-
+    (*RRCrypto)->EndpointPluginAttributes = plugin_attrs;
     (*RRCrypto)->Participant_master_key_id = local_writer_handle->Participant_master_key_id;
-    /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
-    { //scope for temp var buffer
+
+    if (local_writer_handle->EntityKeyMaterial.size() == 0)
+    {
+        // This means the local writer is a key exchange writer
+        (*RRCrypto)->Remote2EntityKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
+        (*RRCrypto)->Entity2RemoteKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
+    }
+    else
+    { 
+        /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 
         //These values must match the ones in ParticipantKeymaterial
-        buffer.transformation_kind = local_writer_handle->EntityKeyMaterial.transformation_kind;
-        buffer.master_salt = local_writer_handle->EntityKeyMaterial.master_salt;
-        buffer.master_sender_key = local_writer_handle->EntityKeyMaterial.master_sender_key;
+        buffer.transformation_kind = local_writer_handle->EntityKeyMaterial.at(0).transformation_kind;
+        buffer.master_salt = local_writer_handle->EntityKeyMaterial.at(0).master_salt;
+        buffer.master_sender_key = local_writer_handle->EntityKeyMaterial.at(0).master_sender_key;
 
-        buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.sender_key_id;
-        //buffer.sender_key_id = make_unique_KeyId();  //Unique identifier within the Participant (used to identity submessage types)
+        buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.at(0).sender_key_id;
         //Generation of remainder values (Remote specific key)
-        buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
-        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
+        buffer.receiver_specific_key_id = c_transformKeyIdZero;
+        if (is_origin_auth)
+        {
+            buffer.receiver_specific_key_id = make_unique_KeyId();
+            RAND_bytes(buffer.master_receiver_specific_key.data(), 16);
+        }
 
         //Attach to both local and remote CryptoHandles
         (*RRCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
-        local_writer_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        if (is_origin_auth)
+        {
+            local_writer_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        }
+    }
+
+    auto session = &(*RRCrypto)->Sessions[0];
+    session->session_block_counter = local_writer_handle->Sessions[0].session_block_counter;
+    session->session_id = std::numeric_limits<uint32_t>::max();
+    if (session->session_id == local_writer_handle->Sessions[0].session_id)
+        session->session_id -= 1;
+
+    if (!relay_only && local_writer_handle->EntityKeyMaterial.size() > 1)
+    {
+        KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
+
+        buffer.transformation_kind = local_writer_handle->EntityKeyMaterial.at(1).transformation_kind;
+        buffer.master_salt = local_writer_handle->EntityKeyMaterial.at(1).master_salt;
+        buffer.master_sender_key = local_writer_handle->EntityKeyMaterial.at(1).master_sender_key;
+        buffer.sender_key_id = local_writer_handle->EntityKeyMaterial.at(1).sender_key_id;
+        buffer.master_receiver_specific_key.fill(0);
+        buffer.receiver_specific_key_id = c_transformKeyIdZero;
+
+        //Attach only to remote CryptoHandles
+        (*RRCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
+
+        session++;
+        session->session_block_counter = local_writer_handle->Sessions[0].session_block_counter;
+        session->session_id = std::numeric_limits<uint32_t>::max();
+        if (session->session_id == local_writer_handle->Sessions[0].session_id)
+            session->session_id -= 1;
     }
 
     (*RRCrypto)->max_blocks_per_session = local_writer_handle->max_blocks_per_session;
-    (*RRCrypto)->session_block_counter = local_writer_handle->session_block_counter;
-    (*RRCrypto)->session_id = std::numeric_limits<uint32_t>::max();
-    if((*RRCrypto)->session_id == local_writer_handle->session_id)
-        (*RRCrypto)->session_id -= 1;
 
     writer_lock.unlock();
 
-    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypto);
-
     std::unique_lock<std::mutex> remote_participant_lock(remote_participant->mutex_);
 
-    (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
+    // (*RRCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
 
     (*RRCrypto)->Parent_participant = &remote_participant_crypto;
     //Save this CryptoHandle as part of the remote participant
@@ -419,6 +489,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
 DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
                 ParticipantCryptoHandle &participant_crypto,
                 const PropertySeq &datareader_properties,
+                const EndpointSecurityAttributes& datareder_security_attributes,
                 SecurityException& /*exception*/)
 {
     AESGCMGMAC_ParticipantCryptoHandle& participant_handle = AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
@@ -430,49 +501,58 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datareader(
     //Create ParticipantCryptoHandle, fill Participant KeyMaterial and return it
     AESGCMGMAC_ReaderCryptoHandle* RCrypto = nullptr;
 
-    RCrypto = new AESGCMGMAC_ReaderCryptoHandle();
-
-    std::array<uint8_t, 4> transformationtype{CRYPTO_TRANSFORMATION_KIND_AES128_GCM}; //Default to AES128_GCM
+    auto plugin_attrs = datareder_security_attributes.plugin_endpoint_attributes;
+    bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
+    bool use_256_bits = false;
+    bool use_kx_keys = false;
     int maxblockspersession = 32; //Default to key update every 32 usages
     if(!datareader_properties.empty()){
-          for(auto it=datareader_properties.begin(); it!=datareader_properties.end(); ++it){
-              if( (it)->name() == "dds.sec.crypto.cryptotransformkind"){
-                      if( it->value() == std::string("AES128_GCM") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GCM};
-                      if( it->value() == std::string("AES128_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES128_GMAC};
-                      if( it->value() == std::string("AES256_GCM") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GCM};
-                      if( it->value() == std::string("AES256_GMAC") )
-                            transformationtype = std::array<uint8_t, 4>{CRYPTO_TRANSFORMATION_KIND_AES256_GMAC};
-              }// endif
-              if( (it)->name() == "dds.sec.crypto.maxblockspersession"){
-                  try{
-                      maxblockspersession = std::stoi( (it)->value() );
-                  }catch(std::invalid_argument){}
-              }
-          }//endfor
+        for(auto it=datareader_properties.begin(); it!=datareader_properties.end(); ++it){
+            if (it->name().compare("dds.sec.crypto.keysize") == 0)
+            {
+                if (it->value().compare("256") == 0)
+                {
+                    use_256_bits = true;
+                }
+            }
+            else if (it->name().compare("dds.sec.crypto.maxblockspersession") == 0)
+            {
+                try
+                {
+                    maxblockspersession = std::stoi((it)->value());
+                }
+                catch (std::invalid_argument&)
+                {
+                }
+            }
+            else if (it->name().compare("dds.sec.builtin_endpoint_name") == 0)
+            {
+                if (it->value().compare("BuiltinParticipantVolatileMessageSecureReader") == 0)
+                {
+                    use_kx_keys = true;
+                }
+            }
+        }//endfor
     }//endif
 
-    (*RCrypto)->transformation_kind = transformationtype;
-    //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
+    if (use_kx_keys)
+    {
+        return participant_handle->Readers.at(0);
+    }
 
-    (*RCrypto)->EntityKeyMaterial.transformation_kind = transformationtype;
+    RCrypto = new AESGCMGMAC_ReaderCryptoHandle();
+    (*RCrypto)->EndpointPluginAttributes = plugin_attrs;
 
-    (*RCrypto)->EntityKeyMaterial.master_salt.fill(0);
-    RAND_bytes( (*RCrypto)->EntityKeyMaterial.master_salt.data(), 16 );
-
-    (*RCrypto)->EntityKeyMaterial.sender_key_id = make_unique_KeyId();
-
-    (*RCrypto)->EntityKeyMaterial.master_sender_key.fill(0);
-    RAND_bytes( (*RCrypto)->EntityKeyMaterial.master_sender_key.data(), 16 );
-
-    (*RCrypto)->EntityKeyMaterial.receiver_specific_key_id = {{0, 0, 0, 0}};  //No receiver specific, as this is the Master Participant Key
-    (*RCrypto)->EntityKeyMaterial.master_receiver_specific_key.fill(0);
+    {
+        //Fill ParticipantKeyMaterial - This will be used to cipher full rpts messages
+        KeyMaterial_AES_GCM_GMAC buffer;
+        create_key(buffer, is_sub_encrypted, use_256_bits);
+        (*RCrypto)->EntityKeyMaterial.push_back(buffer);
+    }
 
     (*RCrypto)->max_blocks_per_session = maxblockspersession;
-    (*RCrypto)->session_block_counter = maxblockspersession+1;
-    RAND_bytes( (unsigned char *)( &( (*RCrypto)->session_id ) ), sizeof(uint16_t));
+    (*RCrypto)->Sessions[0].session_block_counter = maxblockspersession+1;
+    RAND_bytes( (unsigned char *)( &( (*RCrypto)->Sessions[0].session_id ) ), sizeof(uint32_t));
 
     std::unique_lock<std::mutex> lock(participant_handle->mutex_);
 
@@ -501,46 +581,62 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         return nullptr;
     }
 
+    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
+
     std::unique_lock<std::mutex> reader_lock(local_reader_handle->mutex_);
+    auto plugin_attrs = local_reader_handle->EndpointPluginAttributes;
+    bool is_origin_auth = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0;
 
     AESGCMGMAC_WriterCryptoHandle* RWCrypto = new AESGCMGMAC_WriterCryptoHandle(); // Remote Writer CryptoHandle, to be returned at the end of the function
 
     (*RWCrypto)->Participant_master_key_id = local_reader_handle->Participant_master_key_id;
-    (*RWCrypto)->transformation_kind = local_reader_handle->transformation_kind;
-    /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
-    { //scope for temp var buffer
+    (*RWCrypto)->EndpointPluginAttributes = local_reader_handle->EndpointPluginAttributes;
+
+    if (local_reader_handle->EntityKeyMaterial.size() == 0)
+    {
+        // This means the local reader is a key exchange writer
+        (*RWCrypto)->Remote2EntityKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
+        (*RWCrypto)->Entity2RemoteKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
+    }
+    else
+    { 
+        /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 
         //These values must match the ones in ParticipantKeymaterial
-        buffer.transformation_kind = local_reader_handle->EntityKeyMaterial.transformation_kind;
-        buffer.master_salt = local_reader_handle->EntityKeyMaterial.master_salt;
-        buffer.master_sender_key = local_reader_handle->EntityKeyMaterial.master_sender_key;
+        buffer.transformation_kind = local_reader_handle->EntityKeyMaterial.at(0).transformation_kind;
+        buffer.master_salt = local_reader_handle->EntityKeyMaterial.at(0).master_salt;
+        buffer.master_sender_key = local_reader_handle->EntityKeyMaterial.at(0).master_sender_key;
+        buffer.sender_key_id = local_reader_handle->EntityKeyMaterial.at(0).sender_key_id;
         //Generation of remainder values (Remote specific key)
-
-        buffer.sender_key_id = local_reader_handle->EntityKeyMaterial.sender_key_id;
-        //buffer.sender_key_id = make_unique_KeyId();
-        buffer.receiver_specific_key_id = make_unique_KeyId();
         buffer.master_receiver_specific_key.fill(0);
-        RAND_bytes( buffer.master_receiver_specific_key.data(), 16 );
+        buffer.receiver_specific_key_id = c_transformKeyIdZero;
+        if (is_origin_auth)
+        {
+            buffer.receiver_specific_key_id = make_unique_KeyId();
+            RAND_bytes(buffer.master_receiver_specific_key.data(), 16);
+        }
 
         //Attach to both local and remote CryptoHandles
         (*RWCrypto)->Remote2EntityKeyMaterial.push_back(buffer);
-        local_reader_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        if (is_origin_auth)
+        {
+            local_reader_handle->Entity2RemoteKeyMaterial.push_back(buffer);
+        }
     }
 
     (*RWCrypto)->max_blocks_per_session = local_reader_handle->max_blocks_per_session;
-    (*RWCrypto)->session_block_counter = local_reader_handle->session_block_counter;
-    (*RWCrypto)->session_id = std::numeric_limits<uint32_t>::max();
-    if((*RWCrypto)->session_id == local_reader_handle->session_id)
-        (*RWCrypto)->session_id -= 1;
+    auto session = &(*RWCrypto)->Sessions[0];
+    session->session_block_counter = local_reader_handle->Sessions[0].session_block_counter;
+    session->session_id = std::numeric_limits<uint32_t>::max();
+    if(session->session_id == local_reader_handle->Sessions[0].session_id)
+        session->session_id -= 1;
 
     reader_lock.unlock();
 
-    AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(remote_participant_crypt);
-
     std::unique_lock<std::mutex> remote_participant_lock(remote_participant->mutex_);
 
-    (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
+    // (*RWCrypto)->Participant2ParticipantKxKeyMaterial = remote_participant->Participant2ParticipantKxKeyMaterial.at(0);
 
     (*RWCrypto)->Parent_participant = &remote_participant_crypt;
 
@@ -666,6 +762,31 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
     }
 
     return false;
+}
+
+void AESGCMGMAC_KeyFactory::create_key(KeyMaterial_AES_GCM_GMAC& key, bool encrypt_then_sign, bool use_256_bits)
+{
+    std::array<uint8_t, 4> transformationtype = encrypt_then_sign
+        ? use_256_bits
+            ? c_transfrom_kind_aes256_gcm
+            : c_transfrom_kind_aes128_gcm
+        : use_256_bits
+            ? c_transfrom_kind_aes256_gmac
+            : c_transfrom_kind_aes128_gmac;
+
+    int nBytes = use_256_bits ? 32 : 16;
+
+    key.transformation_kind = transformationtype;
+
+    key.master_salt.fill(0);
+    RAND_bytes(key.master_salt.data(), nBytes);
+
+    key.sender_key_id = make_unique_KeyId();
+    key.master_sender_key.fill(0);
+    RAND_bytes(key.master_sender_key.data(), nBytes);
+
+    key.receiver_specific_key_id = c_transformKeyIdZero;
+    key.master_receiver_specific_key.fill(0);
 }
 
 CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId(){
