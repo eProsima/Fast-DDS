@@ -368,6 +368,7 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
         }
     }
 }
+#ifndef __APPLE__
 
 TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
 {
@@ -512,6 +513,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
     sem.wait();
     ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
 }
+#endif
 
 TEST_F(UDPv4Tests, open_a_blocked_socket)
 {
