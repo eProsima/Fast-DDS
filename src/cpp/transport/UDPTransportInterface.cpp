@@ -438,7 +438,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPCha
         }
         else
         {
-            auto interface_address = asio::ip::address_v4::from_string(channel->GetInterface());
+            auto interface_address = channel->getSocket()->local_endpoint().address();
             ip::udp::socket socket(mService);
             socket.open(GenerateProtocol());
             socket.bind(asio::ip::udp::endpoint(interface_address, 0));
