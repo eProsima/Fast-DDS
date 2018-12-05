@@ -289,7 +289,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
                 {
                     eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint(infoIP.name, port), port);
                     SetSocketOutbountInterface(unicastSocket, infoIP.name);
-                    if (firstInterface)
+                    if (!firstInterface)
                     {
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
                         firstInterface = true;

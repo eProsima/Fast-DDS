@@ -52,6 +52,20 @@ uint16_t get_port()
     return port;
 }
 
+static void GetIP4s(std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+            interfaces.end(),
+            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;});
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_UDPv4;
+    });
+}
+
+
 class UDPv4Tests: public ::testing::Test
 {
     public:
@@ -354,28 +368,28 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
         }
     }
 }
-#ifndef __APPLE__
-TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets)
+
+TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
 {
     descriptor.interfaceWhiteList.emplace_back("127.0.0.1");
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
-    Locator_t multicastLocator;
-    multicastLocator.port = g_default_port;
-    multicastLocator.kind = LOCATOR_KIND_UDPv4;
-    IPLocator::setIPv4(multicastLocator, "127.0.0.1");
+    Locator_t unicastLocator;
+    unicastLocator.port = g_default_port;
+    unicastLocator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(unicastLocator, "127.0.0.1");
 
     Locator_t outputChannelLocator;
-    outputChannelLocator.port = g_default_port;
+    outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    IPLocator::setIPv4(outputChannelLocator, 239, 255, 1, 4);
+    IPLocator::setIPv4(outputChannelLocator, "127.0.0.1");
 
-    MockReceiverResource receiver(transportUnderTest, multicastLocator);
+    MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
-    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
     Semaphore sem;
@@ -389,7 +403,107 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
+        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, unicastLocator));
+    };
+
+    senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    senderThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
+}
+
+TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP4s(interfaces);
+
+    for(const auto& interface : interfaces)
+    {
+        descriptor.interfaceWhiteList.push_back(interface.name);
+    }
+    UDPv4Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    Locator_t unicastLocator;
+    unicastLocator.port = g_default_port;
+    unicastLocator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(unicastLocator, interfaces.at(0).name);
+
+    Locator_t outputChannelLocator;
+    outputChannelLocator.port = g_default_port + 1;
+    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(outputChannelLocator, interfaces.at(0).name);
+
+    MockReceiverResource receiver(transportUnderTest, unicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
+    octet message[5] = { 'H','e','l','l','o' };
+
+    Semaphore sem;
+    std::function<void()> recCallback = [&]()
+    {
+        EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+        sem.post();
+    };
+
+    msg_recv->setCallback(recCallback);
+
+    auto sendThreadFunction = [&]()
+    {
+        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, unicastLocator));
+    };
+
+    senderThread.reset(new std::thread(sendThreadFunction));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    senderThread->join();
+    sem.wait();
+    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
+}
+
+TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_multicast)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP4s(interfaces);
+
+    for(const auto& interface : interfaces)
+    {
+        descriptor.interfaceWhiteList.push_back(interface.name);
+    }
+    UDPv4Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    Locator_t unicastLocator;
+    unicastLocator.port = g_default_port;
+    unicastLocator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(unicastLocator, "239.255.1.4");
+
+    Locator_t outputChannelLocator;
+    outputChannelLocator.port = g_default_port + 1;
+    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(outputChannelLocator, interfaces.at(0).name);
+
+    MockReceiverResource receiver(transportUnderTest, unicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
+    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
+    octet message[5] = { 'H','e','l','l','o' };
+
+    Semaphore sem;
+    std::function<void()> recCallback = [&]()
+    {
+        EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+        sem.post();
+    };
+
+    msg_recv->setCallback(recCallback);
+
+    auto sendThreadFunction = [&]()
+    {
+        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, unicastLocator));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -413,7 +527,6 @@ TEST_F(UDPv4Tests, open_a_blocked_socket)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     ASSERT_FALSE(transportUnderTest.IsInputChannelOpen(multicastLocator));
 }
-#endif
 
 TEST_F(UDPv4Tests, shrink_locator_lists)
 {
