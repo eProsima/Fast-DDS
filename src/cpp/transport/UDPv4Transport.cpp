@@ -301,7 +301,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
                     // Bind to multicast address
                     UDPChannelResource* pChannelResource;
                     pChannelResource = CreateInputChannelResource(locatorAddressStr, locator, true, maxMsgSize, receiver);
-                    channelResources.push_back(pChannelResource);
+                    mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(pChannelResource);
 
                     // Join group on all whitelisted interfaces
                     for (auto& ip : mInterfaceWhiteList)
