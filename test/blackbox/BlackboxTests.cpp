@@ -43,17 +43,6 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-#define MEMORY_MODE_STRING ReallocMem
-#define MEMORY_MODE_BYTE 1
-#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-#define MEMORY_MODE_STRING DynMem
-#define MEMORY_MODE_BYTE 2
-#else
-#define MEMORY_MODE_STRING PreallocMem
-#define MEMORY_MODE_BYTE 3
-#endif
-
 uint16_t global_port = 0;
 
 #if HAVE_SECURITY
