@@ -414,25 +414,42 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPCha
 
     try
     {
-        Locator_t localLocator;
-        FillLocalIp(localLocator);
-
         channel->Disable();
-
-        ip::udp::socket socket(mService);
-        socket.open(GenerateProtocol());
-        socket.bind(GenerateLocalEndpoint(localLocator, 0));
 
         uint16_t port = IPLocator::getPhysicalPort(locator);
 
-        // We first send directly to localhost, in case all network interfaces are disabled
-        // (which would mean that multicast traffic may not be sent)
-        auto localEndpoint = GenerateLocalEndpoint(localLocator, port);
-        socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
+        if(IsInterfaceWhiteListEmpty())
+        {
+            Locator_t localLocator;
+            FillLocalIp(localLocator);
 
-        // We then send to the address of the input locator
-        auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
-        socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+            ip::udp::socket socket(mService);
+            socket.open(GenerateProtocol());
+            socket.bind(GenerateLocalEndpoint(localLocator, 0));
+
+            // We first send directly to localhost, in case all network interfaces are disabled
+            // (which would mean that multicast traffic may not be sent)
+            auto localEndpoint = GenerateLocalEndpoint(localLocator, port);
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
+
+            // We then send to the address of the input locator
+            auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+        }
+        else
+        {
+            auto interface_address = asio::ip::address_v4::from_string(channel->GetInterface());
+            ip::udp::socket socket(mService);
+            socket.open(GenerateProtocol());
+            socket.bind(asio::ip::udp::endpoint(interface_address, 0));
+
+            auto localEndpoint = ip::udp::endpoint(interface_address, port);
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
+
+            // We then send to the address of the input locator
+            auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+        }
     }
     catch (const std::exception& error)
     {
