@@ -163,6 +163,8 @@ protected:
 
     bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
         uint32_t maxMsgSize);
+    UDPChannelResource* CreateInputChannelResource(const std::string& sInterface, const Locator_t& locator,
+        bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver);
     virtual eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) = 0;
     bool OpenAndBindOutputSockets(const Locator_t& locator);
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);

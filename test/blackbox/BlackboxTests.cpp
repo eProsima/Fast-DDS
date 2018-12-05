@@ -12,23 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "types/HelloWorld.h"
-#include "types/StringType.h"
-#include "types/Data64kbType.h"
-#include "types/Data1mbType.h"
-#include <fastrtps/utils/IPLocator.h>
+#include "BlackboxTests.hpp"
+
+#include "RTPSAsSocketReader.hpp"
+#include "RTPSAsSocketWriter.hpp"
+#include "RTPSWithRegistrationReader.hpp"
+#include "RTPSWithRegistrationWriter.hpp"
+#include "ReqRepAsReliableHelloWorldRequester.hpp"
+#include "ReqRepAsReliableHelloWorldReplier.hpp"
+#include "TCPReqRepHelloWorldRequester.hpp"
+#include "TCPReqRepHelloWorldReplier.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+#include "PubSubWriterReader.hpp"
+
+#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include <fastrtps/transport/UDPv4Transport.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/xmlparser/XMLParser.h>
 
 #include <thread>
+#include <memory>
+#include <cstdlib>
+#include <string>
 
-using eprosima::fastrtps::rtps::IPLocator;
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
-/****** Auxiliary print functions  ******/
-template<class Type>
-void default_receive_print(const Type&)
+uint16_t global_port = 0;
+
+#if HAVE_SECURITY
+static const char* certs_path = nullptr;
+#endif
+
+uint16_t get_port()
 {
-    std::cout << "Received data" << std::endl;
+    uint16_t port = static_cast<uint16_t>(GET_PID());
+
+    if(5000 > port)
+    {
+        port += 5000;
+    }
+
+    std::cout << "Generating port " << port << std::endl;
+    return port;
 }
 
+/****** Auxiliary print functions  ******/
 template<>
 void default_receive_print(const HelloWorld& hello)
 {
@@ -52,12 +86,6 @@ template<>
 void default_receive_print(const Data1mb& data)
 {
     std::cout << "Received Data1mb " << (uint16_t)data.data()[0] << std::endl;;
-}
-
-template<class Type>
-void default_send_print(const Type&)
-{
-    std::cout << "Sent data" << std::endl;
 }
 
 template<>
@@ -91,94 +119,8 @@ void default_send_print(const Data1mb& data)
     std::cout << "Sent Data1mb " << (uint16_t)data.data()[0] << std::endl;;
 }
 
-#include "RTPSAsSocketReader.hpp"
-#include "RTPSAsSocketWriter.hpp"
-#include "RTPSWithRegistrationReader.hpp"
-#include "RTPSWithRegistrationWriter.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
-#include "ReqRepAsReliableHelloWorldReplier.hpp"
-#include "TCPReqRepHelloWorldRequester.hpp"
-#include "TCPReqRepHelloWorldReplier.hpp"
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-#include "PubSubWriterReader.hpp"
-
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-
-
-#include <thread>
-#include <memory>
-#include <cstdlib>
-#include <string>
-#include <gtest/gtest.h>
-
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-
-#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-#define MEMORY_MODE_STRING ReallocMem
-#define MEMORY_MODE_BYTE 1
-#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-#define MEMORY_MODE_STRING DynMem
-#define MEMORY_MODE_BYTE 2
-#else
-#define MEMORY_MODE_STRING PreallocMem
-#define MEMORY_MODE_BYTE 3
-#endif
-
-#define PASTER(x, y) x ## _ ## y
-#define EVALUATOR(x, y) PASTER(x, y)
-#define BLACKBOXTEST(test_case_name, test_name) TEST(EVALUATOR(test_case_name, MEMORY_MODE_STRING), test_name)
-#define BLACKBOXTEST_F(test_case_name, test_name) TEST_F(EVALUATOR(test_case_name, MEMORY_MODE_STRING), test_name)
-#define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
-
-uint16_t global_port = 0;
-
-#if HAVE_SECURITY
-static const char* certs_path = nullptr;
-#endif
-
-uint16_t get_port()
-{
-    uint16_t port = static_cast<uint16_t>(GET_PID());
-
-    if(5000 > port)
-    {
-        port += 5000;
-    }
-
-    std::cout << "Generating port " << port << std::endl;
-    return port;
-}
-
-class BlackboxEnvironment : public ::testing::Environment
-{
-    public:
-
-        void SetUp()
-        {
-            global_port = get_port();
-            //Log::SetVerbosity(Log::Info);
-            //Log::SetCategoryFilter(std::regex("(SECURITY)"));
-        }
-
-        void TearDown()
-        {
-            //Log::Reset();
-            Log::KillThread();
-            eprosima::fastrtps::rtps::RTPSDomain::stopAll();
-        }
-};
-
 /****** Auxiliary data generators *******/
-std::list<HelloWorld> default_helloworld_data_generator(size_t max = 0)
+std::list<HelloWorld> default_helloworld_data_generator(size_t max)
 {
     uint16_t index = 1;
     size_t maximum = max ? max : 10;
@@ -197,7 +139,7 @@ std::list<HelloWorld> default_helloworld_data_generator(size_t max = 0)
     return returnedValue;
 }
 
-std::list<String> default_large_string_data_generator(size_t max = 0)
+std::list<String> default_large_string_data_generator(size_t max)
 {
     uint16_t index = 1;
     size_t maximum = max ? max : 10;
@@ -216,7 +158,7 @@ std::list<String> default_large_string_data_generator(size_t max = 0)
 }
 
 const size_t data64kb_length = 63996;
-std::list<Data64kb> default_data64kb_data_generator(size_t max = 0)
+std::list<Data64kb> default_data64kb_data_generator(size_t max)
 {
     unsigned char index = 1;
     size_t maximum = max ? max : 10;
@@ -238,7 +180,7 @@ std::list<Data64kb> default_data64kb_data_generator(size_t max = 0)
 }
 
 const size_t data300kb_length = 307201;
-std::list<Data1mb> default_data300kb_data_generator(size_t max = 0)
+std::list<Data1mb> default_data300kb_data_generator(size_t max)
 {
     unsigned char index = 1;
     size_t maximum = max ? max : 10;
@@ -259,7 +201,7 @@ std::list<Data1mb> default_data300kb_data_generator(size_t max = 0)
     return returnedValue;
 }
 
-std::list<Data1mb> default_data300kb_mix_data_generator(size_t max = 0)
+std::list<Data1mb> default_data300kb_mix_data_generator(size_t max)
 {
     unsigned char index = 1;
     size_t maximum = max ? max : 10;
@@ -302,18 +244,26 @@ const std::function<void(const Data1mb&)>  default_data300kb_print = [](const Da
 {
     std::cout << (uint16_t)data.data()[0] << " ";
 };
-
-    template<typename T>
-void print_non_received_messages(const std::list<T>& data, const std::function<void(const T&)>& printer)
-{
-    if(data.size() != 0)
-    {
-        std::cout << "Samples not received: ";
-        std::for_each(data.begin(), data.end(), printer);
-        std::cout << std::endl;
-    }
-}
 /***** End auxiliary lambda function *****/
+
+class BlackboxEnvironment : public ::testing::Environment
+{
+    public:
+
+        void SetUp()
+        {
+            global_port = get_port();
+            //Log::SetVerbosity(Log::Info);
+            //Log::SetCategoryFilter(std::regex("(SECURITY)"));
+        }
+
+        void TearDown()
+        {
+            //Log::Reset();
+            Log::KillThread();
+            eprosima::fastrtps::rtps::RTPSDomain::stopAll();
+        }
+};
 
 class EVALUATOR(BlackBoxPersistence, MEMORY_MODE_STRING) : public ::testing::Test
 {
@@ -1463,7 +1413,7 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
         size_t current_received = reader.block_for_at_least(2);
         reader.stopReception();
         // Should be received only two samples.
-        ASSERT_EQ(current_received, 2);
+        ASSERT_EQ(current_received, 2u);
         data = reader.data_not_received();
     }
 }
@@ -1711,55 +1661,6 @@ BLACKBOXTEST(BlackBox, PubReliableKeepAllSubNonReliable)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(2);
-}
-
-//Verify that outLocatorList is used to select the desired output channel
-BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection){
-
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    LocatorList_t WriterOutLocators;
-    Locator_t LocatorBuffer;
-
-    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = 31337;
-
-    WriterOutLocators.push_back(LocatorBuffer);
-
-
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        resource_limits_allocated_samples(2).
-        resource_limits_max_samples(2).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
-    descriptor->m_output_udp_socket = static_cast<uint16_t>(LocatorBuffer.port);
-
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-        resource_limits_allocated_samples(20).
-        disable_builtin_transport().
-        add_user_transport_to_pparams(descriptor).
-        resource_limits_max_samples(20).init();
-
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
-    reader.block_for_all();
 }
 
 //Verify that Cachechanges are removed from History when the a Writer unmatches
