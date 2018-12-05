@@ -210,13 +210,8 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
         std::vector<std::string> vInterfaces = GetBindingInterfacesList();
         for (std::string sInterface : vInterfaces)
         {
-            eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface, IPLocator::getPhysicalPort(locator), is_multicast);
-            UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
-            pChannelResource->SetMessageReceiver(receiver);
-            pChannelResource->SetInterface(sInterface);
-            std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
-                pChannelResource, locator);
-            pChannelResource->SetThread(newThread);
+            UDPChannelResource* pChannelResource; 
+            pChannelResource = CreateInputChannelResource(sInterface, locator, is_multicast, maxMsgSize, receiver);
             mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(pChannelResource);
         }
     }
@@ -230,6 +225,19 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
     }
 
     return true;
+}
+
+UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(const std::string& sInterface, const Locator_t& locator, 
+    bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver)
+{
+    eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface, IPLocator::getPhysicalPort(locator), is_multicast);
+    UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
+    pChannelResource->SetMessageReceiver(receiver);
+    pChannelResource->SetInterface(sInterface);
+    std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
+        pChannelResource, locator);
+    pChannelResource->SetThread(newThread);
+    return pChannelResource;
 }
 
 bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
