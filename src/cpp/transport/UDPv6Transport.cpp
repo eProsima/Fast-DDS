@@ -254,6 +254,10 @@ eProsimaUDPSocket UDPv6Transport::OpenAndBindInputSocket(const std::string& sIp,
     if (is_multicast)
     {
         getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address(true));
+#if defined(SO_REUSEPORT)
+        getSocketPtr(socket)->set_option(asio::detail::socket_option::boolean<
+            ASIO_OS_DEF(SOL_SOCKET), SO_REUSEPORT>(true));
+#endif
     }
 
     getSocketPtr(socket)->bind(GenerateEndpoint(sIp, port));
