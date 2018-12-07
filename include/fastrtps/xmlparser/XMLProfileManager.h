@@ -57,7 +57,7 @@ public:
     * Load the default profiles XML file.
     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
     */
-    RTPS_DllAPI static XMLP_ret loadDefaultXMLFile();
+    RTPS_DllAPI static void loadDefaultXMLFile();
 
     /**
     * Load a profiles XML file.

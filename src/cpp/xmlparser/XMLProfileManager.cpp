@@ -105,22 +105,25 @@ void XMLProfileManager::getDefaultTopicAttributes(TopicAttributes& topic_attribu
     topic_attributes = default_topic_attributes;
 }
 
-XMLP_ret XMLProfileManager::loadDefaultXMLFile()
+void XMLProfileManager::loadDefaultXMLFile()
 {
+    // Try to load the default XML file set with an environment variable.
 #ifdef _WIN32
-	char file_path[MAX_PATH];
-	size_t size = MAX_PATH;
-	if (getenv_s(&size, file_path, size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && size > 0)
-	{
-		return loadXMLFile(file_path);
-	}
+    char file_path[MAX_PATH];
+    size_t size = MAX_PATH;
+    if (getenv_s(&size, file_path, size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && size > 0)
+    {
+        loadXMLFile(file_path);
+    }
 #else
-	if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
-	{
-		return loadXMLFile(file_path);
-	}
+    if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
+    {
+        loadXMLFile(file_path);
+    }
 #endif
-    return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
+
+    // Try to load the default XML file.
+    loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
 }
 
 XMLP_ret XMLProfileManager::loadXMLProfiles(tinyxml2::XMLElement& profiles)
