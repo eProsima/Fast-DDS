@@ -50,7 +50,7 @@ TEST_F(XMLTreeTests, OnlyRoot)
     ASSERT_EQ(false, test_base.removeChild(0));
     ASSERT_EQ(nullptr, test_base.getChild(0));
     ASSERT_EQ(nullptr, test_base.getParent());
-    ASSERT_EQ(0, test_base.getNumChildren());
+    ASSERT_EQ(0u, test_base.getNumChildren());
 }
 
 TEST_F(XMLTreeTests, RootChildren)
@@ -59,44 +59,44 @@ TEST_F(XMLTreeTests, RootChildren)
 
     ASSERT_EQ(false, test_base.removeChild(0));
     ASSERT_EQ(nullptr, test_base.getChild(0));
-    ASSERT_EQ(0, test_base.getNumChildren());
+    ASSERT_EQ(0u, test_base.getNumChildren());
 
     BaseNode* child = new BaseNode{NodeType::APPLICATION};
     test_base.addChild(std::unique_ptr<BaseNode>(child));
 
-    ASSERT_EQ(1, test_base.getNumChildren());
+    ASSERT_EQ(1u, test_base.getNumChildren());
     ASSERT_EQ(child, test_base.getChild(0));
     ASSERT_EQ(&test_base, test_base.getChild(0)->getParent());
     ASSERT_EQ(NodeType::APPLICATION, test_base.getChild(0)->getType());
     ASSERT_EQ(true, test_base.removeChild(0));
-    ASSERT_EQ(0, test_base.getNumChildren());
+    ASSERT_EQ(0u, test_base.getNumChildren());
     ASSERT_EQ(false, test_base.removeChild(0));
 }
 
 TEST_F(XMLTreeTests, RootMultipleChildren)
 {
-    const int num_children = 10;
+    const unsigned int num_children = 10;
     BaseNode test_base{NodeType::ROOT};
 
     ASSERT_EQ(false, test_base.removeChild(0));
     ASSERT_EQ(nullptr, test_base.getChild(0));
-    ASSERT_EQ(0, test_base.getNumChildren());
+    ASSERT_EQ(0u, test_base.getNumChildren());
 
     std::vector<BaseNode*> children_backup;
-    for (int i = 0; i < num_children; ++i)
+    for (unsigned int i = 0; i < num_children; ++i)
     {
         children_backup.push_back(new BaseNode{NodeType::APPLICATION});
         test_base.addChild(std::unique_ptr<BaseNode>(children_backup[i]));
     }
 
-    for (int i = 0; i < num_children; ++i)
+    for (unsigned int i = 0; i < num_children; ++i)
     {
         ASSERT_EQ(children_backup[i], test_base.getChild(i));
         ASSERT_EQ(&test_base, test_base.getChild(i)->getParent());
         ASSERT_EQ(NodeType::APPLICATION, test_base.getChild(i)->getType());
     }
 
-    for (int i = 0; i < num_children; ++i)
+    for (unsigned int i = 0; i < num_children; ++i)
     {
         ASSERT_EQ(num_children - i, test_base.getNumChildren());
         ASSERT_EQ(true, test_base.removeChild(0));

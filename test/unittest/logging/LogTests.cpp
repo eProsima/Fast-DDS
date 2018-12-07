@@ -58,7 +58,7 @@ TEST_F(LogTests, asynchronous_logging)
    logWarning(DifferentCategory, "Sample warning message in another category");
 
    auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(3, consumedEntries.size());
+   ASSERT_EQ(3u, consumedEntries.size());
 }
 
 TEST_F(LogTests, reporting_options)
@@ -66,10 +66,10 @@ TEST_F(LogTests, reporting_options)
    // moving away from the defaults
    Log::ReportFilenames(true);
    Log::ReportFunctions(false);
-   
+
    logError(Reporting, "Error with different reporting options");
    auto consumedEntries = HELPER_WaitForEntries(1);
-   ASSERT_EQ(1, consumedEntries.size());
+   ASSERT_EQ(1u, consumedEntries.size());
    
    auto entry = consumedEntries.back();
    ASSERT_NE(entry.context.filename, nullptr);
@@ -91,7 +91,7 @@ TEST_F(LogTests, multithreaded_logging)
    }
 
    auto consumedEntries = HELPER_WaitForEntries(5);
-   ASSERT_EQ(5, consumedEntries.size());
+   ASSERT_EQ(5u, consumedEntries.size());
 }
 
 TEST_F(LogTests, regex_category_filtering)
@@ -101,7 +101,7 @@ TEST_F(LogTests, regex_category_filtering)
    logError(BadCategory, "If you're seeing this, something went wrong");
    logWarning(EvenMoreGoodCategory, "This should be logged too!");
    auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(2, consumedEntries.size());
+   ASSERT_EQ(2u, consumedEntries.size());
 }
 
 TEST_F(LogTests, multi_criteria_filtering_with_regex)
@@ -116,14 +116,14 @@ TEST_F(LogTests, multi_criteria_filtering_with_regex)
    logError(BadCategory,  "Despite the word \"Good\" being here, this shouldn't be logged");
    logError(GoodCategory, "And neither should this.");
    auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(1, consumedEntries.size());
+   ASSERT_EQ(1u, consumedEntries.size());
 
    Log::SetFilenameFilter(std::regex("(we shouldn't find this ever)"));
    logError(GoodCategory,  "Despite the word \"Good\" being here, this shouldn't be logged because "\
                            "the filename is all wrong");
 
    consumedEntries = HELPER_WaitForEntries(2);
-   ASSERT_EQ(1, consumedEntries.size());
+   ASSERT_EQ(1u, consumedEntries.size());
 }
 
 TEST_F(LogTests, multiple_verbosity_levels)
@@ -133,7 +133,7 @@ TEST_F(LogTests, multiple_verbosity_levels)
    logWarning(VerbosityChecks, "This should be logged too!");
    logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
    auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(2, consumedEntries.size());
+   ASSERT_EQ(2u, consumedEntries.size());
 
    Log::SetVerbosity(Log::Error);
    logError(VerbosityChecks, "This should be logged");
@@ -141,7 +141,7 @@ TEST_F(LogTests, multiple_verbosity_levels)
    logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
 
    consumedEntries = HELPER_WaitForEntries(5);
-   ASSERT_EQ(3, consumedEntries.size());
+   ASSERT_EQ(3u, consumedEntries.size());
 }
 
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)

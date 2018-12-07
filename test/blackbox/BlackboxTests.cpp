@@ -1688,7 +1688,7 @@ BLACKBOXTEST(BlackBox, StatefulReaderCacheChangeRelease){
     std::this_thread::sleep_for(std::chrono::seconds(1));
     reader.startReception(expected_data);
 
-    ASSERT_EQ(reader.getReceivedCount(), 0);
+    ASSERT_EQ(reader.getReceivedCount(), 0u);
 }
 
 BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)

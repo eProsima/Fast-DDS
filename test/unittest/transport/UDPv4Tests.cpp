@@ -557,7 +557,7 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
     list1.clear();
@@ -567,7 +567,7 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locator);
     list1.clear();
@@ -583,7 +583,7 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
     list1.clear();
@@ -603,17 +603,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult2, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
@@ -638,17 +638,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult2, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
@@ -670,17 +670,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult3, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result.size(), 3u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2 || *it == locResult3);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result.size(), 3u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2 || *it == locResult3);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result.size(), 3u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2 || *it == locResult3);
 
@@ -700,17 +700,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult1, 239,255,1,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1);
 

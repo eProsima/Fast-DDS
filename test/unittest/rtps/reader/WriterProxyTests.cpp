@@ -41,7 +41,7 @@ namespace eprosima
                 // Update MISSING changes util sequence number 3.
                 wproxy.missing_changes_update(SequenceNumber_t(0, 3));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 0));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 3);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 3u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 1))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 2))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 3))->getStatus(), ChangeFromWriterStatus_t::MISSING);
@@ -53,7 +53,7 @@ namespace eprosima
                 // Update MISSING changes util sequence number 5.
                 wproxy.missing_changes_update(SequenceNumber_t(0,5));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 0));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 5);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 5u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 1))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 2))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 3))->getStatus(), ChangeFromWriterStatus_t::MISSING);
@@ -67,12 +67,12 @@ namespace eprosima
                 wproxy.received_change_set(SequenceNumber_t(0, 4));
                 wproxy.received_change_set(SequenceNumber_t(0, 5));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 5));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
 
                 // Try to update MISSING changes util sequence number 4.
                 wproxy.missing_changes_update(SequenceNumber_t(0, 4));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 5));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
 
                 // Add three UNKNOWN changes with sequence number 6, 7 and 9.
                 // Add one RECEIVED change with sequence number 8.
@@ -85,7 +85,7 @@ namespace eprosima
                 // Update MISSING changes util sequence number 8.
                 wproxy.missing_changes_update(SequenceNumber_t(0, 8));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 5));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 4);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 4u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 7))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 8))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -94,7 +94,7 @@ namespace eprosima
                 // Update MISSING changes util sequence number 10.
                 wproxy.missing_changes_update(SequenceNumber_t(0, 10));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 5));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 5);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 5u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 7))->getStatus(), ChangeFromWriterStatus_t::MISSING);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 8))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -111,7 +111,7 @@ namespace eprosima
                 // Update LOST changes util sequence number 3.
                 wproxy.lost_changes_update(SequenceNumber_t(0, 3));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 2));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
 
                 // Add two UNKNOWN with sequence numberes 3 and 4.
                 wproxy.m_changesFromW.insert(ChangeFromWriter_t(SequenceNumber_t(0,3)));
@@ -120,12 +120,12 @@ namespace eprosima
                 // Update LOST changes util sequence number 5.
                 wproxy.lost_changes_update(SequenceNumber_t(0, 5));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 4));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
 
                 // Try to update LOST changes util sequence number 4.
                 wproxy.lost_changes_update(SequenceNumber_t(0, 3));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 4));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
 
                 // Add two UNKNOWN changes with sequence number 5 and 8.
                 // Add one MISSING change with sequence number 6.
@@ -141,13 +141,13 @@ namespace eprosima
                 // Update LOST changes util sequence number 8.
                 wproxy.lost_changes_update(SequenceNumber_t(0, 8));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 7));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 1);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 1u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 8))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
 
                 // Update LOST changes util sequence number 10.
                 wproxy.lost_changes_update(SequenceNumber_t(0, 10));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 9));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
             }
 
             TEST(WriterProxyTests, ReceivedChangeSet)
@@ -159,7 +159,7 @@ namespace eprosima
                 // Set received change with sequence number 3.
                 wproxy.received_change_set(SequenceNumber_t(0, 3));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 0));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 3);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 3u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 1))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 2))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 3))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -171,7 +171,7 @@ namespace eprosima
                 // Set received change with sequence number 2
                 wproxy.received_change_set(SequenceNumber_t(0, 2));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 0));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 5);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 5u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 1))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 2))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 3))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -181,21 +181,21 @@ namespace eprosima
                 // Set received change with sequence number 1
                 wproxy.received_change_set(SequenceNumber_t(0, 1));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 2);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 2u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
 
                 // Try to update LOST changes util sequence number 3.
                 wproxy.received_change_set(SequenceNumber_t(0, 3));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 2);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 2u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
 
                 // Add received change with sequence number 6
                 wproxy.received_change_set(SequenceNumber_t(0, 6));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 3);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 3u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -203,7 +203,7 @@ namespace eprosima
                 // Add received change with sequence number 8
                 wproxy.received_change_set(SequenceNumber_t(0, 8));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 5);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 5u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -213,7 +213,7 @@ namespace eprosima
                 // Add received change with sequence number 4
                 wproxy.received_change_set(SequenceNumber_t(0, 4));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 4));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 4);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 4u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 7))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
@@ -222,14 +222,14 @@ namespace eprosima
                 // Add received change with sequence number 5
                 wproxy.received_change_set(SequenceNumber_t(0, 5));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 6));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 2);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 2u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 7))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 8))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
 
                 // Add received change with sequence number 7
                 wproxy.received_change_set(SequenceNumber_t(0, 7));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 8));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
             }
 
             TEST(WriterProxyTests, IrrelevantChangeSet)
@@ -241,7 +241,7 @@ namespace eprosima
                 // Set irrelevant change with sequence number 3.
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 3));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 0));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 3);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 3u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 1))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 2))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 3))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -254,7 +254,7 @@ namespace eprosima
                 // Set irrelevant change with sequence number 2
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 2));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 0));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 5);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 5u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 1))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 2))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 2))->isRelevant(), false);
@@ -266,21 +266,21 @@ namespace eprosima
                 // Set irrelevant change with sequence number 1
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 1));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 2);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 2u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
 
                 // Try to update LOST changes util sequence number 3.
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 3));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 2);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 2u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
 
                 // Add irrelevant change with sequence number 6
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 6));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 3);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 3u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -289,7 +289,7 @@ namespace eprosima
                 // Add irrelevant change with sequence number 8
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 8));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 3));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 5);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 5u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 4))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
@@ -301,7 +301,7 @@ namespace eprosima
                 // Add irrelevant change with sequence number 4
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 4));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 4));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 4);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 4u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 5))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 6))->isRelevant(), false);
@@ -312,7 +312,7 @@ namespace eprosima
                 // Add irrelevant change with sequence number 5
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 5));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 6));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 2);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 2u);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 7))->getStatus(), ChangeFromWriterStatus_t::UNKNOWN);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 8))->getStatus(), ChangeFromWriterStatus_t::RECEIVED);
                 ASSERT_EQ(wproxy.m_changesFromW.find(SequenceNumber_t(0, 8))->isRelevant(), false);
@@ -320,7 +320,7 @@ namespace eprosima
                 // Add irrelevant change with sequence number 7
                 wproxy.irrelevant_change_set(SequenceNumber_t(0, 7));
                 ASSERT_EQ(wproxy.changesFromWLowMark_, SequenceNumber_t(0, 8));
-                ASSERT_EQ(wproxy.m_changesFromW.size(), 0);
+                ASSERT_EQ(wproxy.m_changesFromW.size(), 0u);
             }
 
         } // namespace rtps

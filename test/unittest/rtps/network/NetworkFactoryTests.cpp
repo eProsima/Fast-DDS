@@ -55,7 +55,7 @@ TEST_F(NetworkTests, BuildSenderResource_returns_send_resource_for_a_kind_compat
    auto resources = networkFactoryUnderTest.BuildSenderResources(kindCompatibleLocator);
 
    // Then
-   ASSERT_EQ(1, resources.size());
+   ASSERT_EQ(1u, resources.size());
 }
 
 TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_compatible_transport)
@@ -73,7 +73,7 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_c
 
    // Then
    ASSERT_TRUE(ret);
-   ASSERT_EQ(1, resources.size());
+   ASSERT_EQ(1u, resources.size());
 }
 
 TEST_F(NetworkTests, BuildReceiverResource_returns_multiple_resources_if_multiple_transports_compatible)
@@ -92,7 +92,7 @@ TEST_F(NetworkTests, BuildReceiverResource_returns_multiple_resources_if_multipl
 
    // Then
    ASSERT_TRUE(ret);
-   ASSERT_EQ(2, resources.size());
+   ASSERT_EQ(2u, resources.size());
 }
 
 TEST_F(NetworkTests, BuildSenderResource_returns_multiple_resources_if_multiple_transports_compatible)
@@ -109,7 +109,7 @@ TEST_F(NetworkTests, BuildSenderResource_returns_multiple_resources_if_multiple_
    auto resources = networkFactoryUnderTest.BuildSenderResources(locatorCompatibleWithTwoTransports);
 
    // Then
-   ASSERT_EQ(2, resources.size());
+   ASSERT_EQ(2u, resources.size());
 }
 
 TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_to_that_locator)

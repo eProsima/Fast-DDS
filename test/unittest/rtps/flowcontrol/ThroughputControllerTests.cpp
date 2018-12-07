@@ -88,7 +88,7 @@ TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controlle
     // Then
     // The first 5 are completely cleared
     // And the last one is partially cleared
-    ASSERT_EQ(55, testChangesForUse.size());
+    ASSERT_EQ(55u, testChangesForUse.size());
 
     SequenceNumber_t seqNum(0, 1);
     FragmentNumber_t fragNum = 1;
@@ -118,7 +118,7 @@ TEST_F(ThroughputControllerTests, throughput_controller_carries_over_multiple_at
    sController(otherChangesForUse);
 
    // Then
-   ASSERT_EQ(0, otherChangesForUse.size());
+   ASSERT_EQ(0u, otherChangesForUse.size());
    std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 
@@ -126,18 +126,18 @@ TEST_F(ThroughputControllerTests, throughput_controller_resets_completely_after_
 {
    // Given
    sController(testChangesForUse);
-   ASSERT_EQ(5, testChangesForUse.size());
+   ASSERT_EQ(5u, testChangesForUse.size());
 
    // The controller is now fully closed, so controllering anything will throw all changes away.
    sController(testChangesForUse);
-   ASSERT_EQ(0, testChangesForUse.size());
+   ASSERT_EQ(0u, testChangesForUse.size());
 
    // When
    std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 100));
 
    // The controller should be open now
    sController(otherChangesForUse);
-   EXPECT_EQ(5, otherChangesForUse.size());
+   EXPECT_EQ(5u, otherChangesForUse.size());
    std::this_thread::sleep_for(std::chrono::milliseconds(periodMillisecs + 50));
 }
 
