@@ -589,7 +589,7 @@ TEST_F(TCPv4Tests, shrink_locator_lists)
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
     list1.clear();

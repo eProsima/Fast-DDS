@@ -67,7 +67,7 @@ TEST_F(PersistenceTest, Writer)
     // Initial load should return empty vector
     changes.clear();
     ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
-    ASSERT_EQ(changes.size(), 0);
+    ASSERT_EQ(changes.size(), 0u);
 
     // Add two changes
     change.sequenceNumber.low = 1;
@@ -84,7 +84,7 @@ TEST_F(PersistenceTest, Writer)
     // Loading should return two changes (seqs = 1, 2)
     changes.clear();
     ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
-    ASSERT_EQ(changes.size(), 2);
+    ASSERT_EQ(changes.size(), 2u);
     uint32_t i = 0;
     for (auto it : changes)
     {
@@ -100,7 +100,7 @@ TEST_F(PersistenceTest, Writer)
     // Loading should return one change (seq = 2)
     changes.clear();
     ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
-    ASSERT_EQ(changes.size(), 1);
+    ASSERT_EQ(changes.size(), 1u);
     ASSERT_EQ((*changes.begin())->sequenceNumber, SequenceNumber_t(0, 2));
 
     // Remove seq = 2, and check that load returns empty vector
@@ -108,7 +108,7 @@ TEST_F(PersistenceTest, Writer)
     change.sequenceNumber.low = 2;
     ASSERT_TRUE(service->remove_writer_change_from_storage(persist_guid, change));
     ASSERT_TRUE(service->load_writer_from_storage(persist_guid, guid, changes, &pool));
-    ASSERT_EQ(changes.size(), 0);
+    ASSERT_EQ(changes.size(), 0u);
 }
 
 /*!
@@ -137,7 +137,7 @@ TEST_F(PersistenceTest, Reader)
     // Initial load should return empty map
     seq_map_loaded.clear();
     ASSERT_TRUE(service->load_reader_from_storage(persist_guid, seq_map_loaded));
-    ASSERT_EQ(seq_map_loaded.size(), 0);
+    ASSERT_EQ(seq_map_loaded.size(), 0u);
 
     // Add two changes
     seq_map[guid_1] = seq_1;

@@ -52,19 +52,6 @@ uint16_t get_port()
     return port;
 }
 
-static void GetIP4s(std::vector<IPFinder::info_IP>& interfaces)
-{
-    IPFinder::getIPs(&interfaces, false);
-    auto new_end = remove_if(interfaces.begin(),
-            interfaces.end(),
-            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;});
-    interfaces.erase(new_end, interfaces.end());
-    std::for_each(interfaces.begin(), interfaces.end(), [](auto&& loc)
-    {
-        loc.locator.kind = LOCATOR_KIND_UDPv4;
-    });
-}
-
 
 class UDPv4Tests: public ::testing::Test
 {
@@ -369,6 +356,21 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
     }
 }
 #ifndef __APPLE__
+static void GetIP4s(std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+        interfaces.end(),
+        [](IPFinder::info_IP ip)
+    {
+        return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;
+    });
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_UDPv4;
+    });
+}
 
 TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
 {
@@ -555,7 +557,7 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
     list1.clear();
@@ -565,7 +567,7 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locator);
     list1.clear();
@@ -581,7 +583,7 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
     list1.clear();
@@ -601,17 +603,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult2, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
@@ -636,17 +638,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult2, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result.size(), 2u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2);
 
@@ -668,17 +670,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult3, 192,168,3,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result.size(), 3u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2 || *it == locResult3);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result.size(), 3u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2 || *it == locResult3);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result.size(), 3u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1 || *it == locResult2 || *it == locResult3);
 
@@ -698,17 +700,17 @@ TEST_F(UDPv4Tests, shrink_locator_lists)
     IPLocator::setIPv4(locResult1, 239,255,1,4);
 
     result = transportUnderTest.ShrinkLocatorLists({list1, list2, list3});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1);
 
     result = transportUnderTest.ShrinkLocatorLists({list3, list1, list2});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1);
 
     result = transportUnderTest.ShrinkLocatorLists({list2, list3, list1});
-    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result.size(), 1u);
     for(auto it = result.begin(); it != result.end(); ++it)
         ASSERT_TRUE(*it == locResult1);
 

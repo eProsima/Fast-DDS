@@ -443,11 +443,11 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(KeyMaterial_AES_GCM_GMAC&
         pos = 4 + 3;  // 4 - transformation_kind. 3 - 0's
         key_len = data[pos++];
         // TODO: check key_len
-        std::copy(data + pos, data + pos + key_len, buffer.master_salt.data());
+        memcpy(buffer.master_salt.data(), &data[pos], key_len);
         pos += key_len;
 
         // sender_key_id : octet[4]
-        std::copy(data + pos, data + pos + 4, buffer.sender_key_id.data());
+        memcpy(buffer.sender_key_id.data(), &data[pos], 4);
         pos += 4;
 
         // master_sender_key : sequence<octet,32>
@@ -456,7 +456,7 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(KeyMaterial_AES_GCM_GMAC&
         pos += 3;
         key_len = data[pos++];
         // TODO: check key_len
-        std::copy(data + pos, data + pos + key_len, buffer.master_sender_key.data());
+        memcpy(buffer.master_sender_key.data(), &data[pos], key_len);
         pos += key_len;
 
         // receiver_specific_key_id : octet[4]
@@ -475,7 +475,7 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(KeyMaterial_AES_GCM_GMAC&
             pos += 3;
             key_len = data[pos++];
             // TODO: check key_len
-            std::copy(data + pos, data + pos + key_len, buffer.master_receiver_specific_key.data());
+            memcpy(buffer.master_receiver_specific_key.data(), &data[pos], key_len);
         }
     }
 }
