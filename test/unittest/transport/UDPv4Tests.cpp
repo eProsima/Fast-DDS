@@ -52,19 +52,6 @@ uint16_t get_port()
     return port;
 }
 
-static void GetIP4s(std::vector<IPFinder::info_IP>& interfaces)
-{
-    IPFinder::getIPs(&interfaces, false);
-    auto new_end = remove_if(interfaces.begin(),
-            interfaces.end(),
-            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;});
-    interfaces.erase(new_end, interfaces.end());
-    std::for_each(interfaces.begin(), interfaces.end(), [](auto&& loc)
-    {
-        loc.locator.kind = LOCATOR_KIND_UDPv4;
-    });
-}
-
 
 class UDPv4Tests: public ::testing::Test
 {
@@ -369,6 +356,21 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
     }
 }
 #ifndef __APPLE__
+static void GetIP4s(std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+        interfaces.end(),
+        [](IPFinder::info_IP ip)
+    {
+        return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;
+    });
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_UDPv4;
+    });
+}
 
 TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
 {
