@@ -33,14 +33,14 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
 
-class DynamicTypesDDS12Tests: public ::testing::Test
+class DynamicTypesDDSXTypesTests: public ::testing::Test
 {
     public:
-        DynamicTypesDDS12Tests()
+        DynamicTypesDDSXTypesTests()
         {
         }
 
-        ~DynamicTypesDDS12Tests()
+        ~DynamicTypesDDSXTypesTests()
         {
             Log::KillThread();
         }
@@ -52,7 +52,7 @@ class DynamicTypesDDS12Tests: public ::testing::Test
         }
 };
 
-TEST_F(DynamicTypesDDS12Tests, TypeDescriptors_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, TypeDescriptors_unit_tests)
 {
     // Given
     TypeDescriptor pInt32Descriptor;
@@ -73,7 +73,7 @@ TEST_F(DynamicTypesDDS12Tests, TypeDescriptors_unit_tests)
     ASSERT_FALSE(pInt32Descriptor.Equals(&pInt32Descriptor2));
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_basic_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_basic_unit_tests)
 {
     // Create basic types
     DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Builder();
@@ -98,7 +98,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_basic_unit_tests)
     ASSERT_FALSE(struct_type->Equals(struct_type2.get()));
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicTypeBuilderFactory_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicTypeBuilderFactory_unit_tests)
 {
     // Try to create with invalid values
     ASSERT_FALSE(DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(nullptr));
@@ -367,7 +367,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicTypeBuilderFactory_unit_tests)
 
 
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_int32_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_int32_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Builder();
@@ -468,7 +468,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_int32_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_uint32_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_uint32_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
@@ -569,7 +569,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_uint32_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_int16_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_int16_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Builder();
@@ -670,7 +670,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_int16_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_uint16_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_uint16_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Builder();
@@ -771,7 +771,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_uint16_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_int64_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_int64_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt64Builder();
@@ -872,7 +872,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_int64_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_uint64_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_uint64_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateUint64Builder();
@@ -973,7 +973,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_uint64_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_float32_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_float32_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateFloat32Builder();
@@ -1075,7 +1075,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_float32_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_float64_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_float64_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateFloat64Builder();
@@ -1177,7 +1177,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_float64_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_float128_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_float128_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateFloat128Builder();
@@ -1278,7 +1278,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_float128_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_char8_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_char8_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Builder();
@@ -1380,7 +1380,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_char8_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_char16_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_char16_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Builder();
@@ -1482,7 +1482,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_char16_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_byte_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_byte_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateByteBuilder();
@@ -1583,7 +1583,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_byte_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_bool_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_bool_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateBoolBuilder();
@@ -1684,7 +1684,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_bool_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_enum_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_enum_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::GetInstance()->CreateEnumBuilder();
@@ -1814,7 +1814,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_enum_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_string_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_string_unit_tests)
 {
     uint32_t length = 15;
     {
@@ -1924,7 +1924,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_string_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_wstring_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_wstring_unit_tests)
 {
     uint32_t length = 15;
     {
@@ -2033,7 +2033,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_wstring_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_alias_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_alias_unit_tests)
 {
     {
         std::string name = "ALIAS";
@@ -2092,7 +2092,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_alias_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_multi_alias_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_multi_alias_unit_tests)
 {
     {
         uint32_t length = 15;
@@ -2149,7 +2149,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_multi_alias_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_bitset_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_bitset_unit_tests)
 {
     uint32_t limit = 3;
     {
@@ -2245,7 +2245,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_bitset_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_bitmask_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_bitmask_unit_tests)
 {
     uint32_t limit = 3;
     {
@@ -2362,7 +2362,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_sequence_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_sequence_unit_tests)
 {
     uint32_t length = 2;
     {
@@ -2497,7 +2497,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_sequence_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_sequence_of_sequences_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_sequence_of_sequences_unit_tests)
 {
     uint32_t sequence_length = 2;
     uint32_t sup_sequence_length = 3;
@@ -2648,7 +2648,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_sequence_of_sequences_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_array_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_array_unit_tests)
 {
     std::vector<uint32_t> sequence_lengths = { 2, 2, 2 };
     {
@@ -2790,7 +2790,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_array_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_array_of_arrays_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_array_of_arrays_unit_tests)
 {
     std::vector<uint32_t> sequence_lengths = { 2, 2 };
     {
@@ -2940,7 +2940,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_array_of_arrays_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_map_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_map_unit_tests)
 {
     uint32_t map_length = 2;
     {
@@ -3093,7 +3093,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_map_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_map_of_maps_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_map_of_maps_unit_tests)
 {
     uint32_t map_length = 2;
     {
@@ -3245,7 +3245,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_map_of_maps_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_structure_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_structure_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Builder();
@@ -3323,7 +3323,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_structure_inheritance_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_structure_inheritance_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Builder();
@@ -3404,7 +3404,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_multi_structure_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_multi_structure_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Builder();
@@ -3506,7 +3506,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_multi_structure_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_union_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_union_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Builder();
@@ -3605,7 +3605,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_union_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_union_with_unions_unit_tests)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_union_with_unions_unit_tests)
 {
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateInt32Builder();
@@ -3700,7 +3700,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_union_with_unions_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::GetInstance()->IsEmpty());
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_BoolStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_BoolStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3735,7 +3735,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_BoolStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_OctetStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_OctetStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3768,7 +3768,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_OctetStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ShortStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_ShortStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3801,7 +3801,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ShortStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LongStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_LongStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3834,7 +3834,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LongStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LongLongStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_LongLongStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3867,7 +3867,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LongLongStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_UShortStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_UShortStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3900,7 +3900,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_UShortStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ULongStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_ULongStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3933,7 +3933,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ULongStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ULongLongStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_ULongLongStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3966,7 +3966,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ULongLongStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_FloatStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_FloatStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -3999,7 +3999,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_FloatStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_DoubleStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_DoubleStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4032,7 +4032,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_DoubleStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_CharStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_CharStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4065,7 +4065,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_CharStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_WCharStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_WCharStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4098,7 +4098,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_WCharStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_StringStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_StringStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4131,7 +4131,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_StringStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_WStringStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_WStringStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4164,7 +4164,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_WStringStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LargeStringStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_LargeStringStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4197,7 +4197,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LargeStringStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ArraytStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_ArraytStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4230,7 +4230,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ArraytStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_SequenceStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_SequenceStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4263,7 +4263,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_SequenceStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_StructStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_StructStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4296,7 +4296,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_StructStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_StructStructStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_StructStructStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4329,7 +4329,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_StructStructStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_SimpleUnionStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_SimpleUnionStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4362,7 +4362,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_SimpleUnionStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_UnionUnionUnionStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_UnionUnionUnionStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4395,7 +4395,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_UnionUnionUnionStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_WCharUnionStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_WCharUnionStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4428,7 +4428,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_WCharUnionStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_EnumStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_EnumStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4461,7 +4461,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_EnumStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_AliasStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_AliasStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4494,7 +4494,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_AliasStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_AliasAliasStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_AliasAliasStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4527,7 +4527,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_AliasAliasStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LongDoubleStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_LongDoubleStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4560,7 +4560,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LongDoubleStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LargeWStringStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_LargeWStringStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4593,7 +4593,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_LargeWStringStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ArrayArrayStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_ArrayArrayStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4626,7 +4626,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_ArrayArrayStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_SequenceSequenceStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4659,7 +4659,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_SequenceSequenceStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_MapStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_MapStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
@@ -4692,7 +4692,7 @@ TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_MapStruct_test)
     }
 }
 
-TEST_F(DynamicTypesDDS12Tests, DynamicType_XML_MapMapStruct_test)
+TEST_F(DynamicTypesDDSXTypesTests, DynamicType_XML_MapMapStruct_test)
 {
     using namespace xmlparser;
     using namespace types;

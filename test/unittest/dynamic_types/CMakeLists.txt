@@ -76,7 +76,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         )
 
         set(DYNAMIC_TYPES_DDS_XTYPES_TEST_SOURCE
-        DynamicTypesDDS-XTypes1.2.Tests.cpp
+        DynamicTypesDDSXTypesTests.cpp
         idl/Basic.cxx
         idl/BasicPubSubTypes.cxx
         idl/BasicTypeObject.cxx
@@ -101,7 +101,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             idl/TestTypeObject.cxx
             ${DYNAMIC_TYPES_SOURCE}
         )
-     
+
         include_directories(mock/)
 
         add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
@@ -139,9 +139,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 
 
-        add_executable(DynamicTypes_DDS-XTypes_Tests ${DYNAMIC_TYPES_DDS_XTYPES_TEST_SOURCE})
-        target_compile_definitions(DynamicTypes_DDS-XTypes_Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(DynamicTypes_DDS-XTypes_Tests PRIVATE
+        add_executable(DynamicTypesDDSXTypesTests ${DYNAMIC_TYPES_DDS_XTYPES_TEST_SOURCE})
+        target_compile_definitions(DynamicTypesDDSXTypesTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(DynamicTypesDDSXTypesTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
@@ -150,14 +150,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${TINYXML2_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            )            
-        target_link_libraries(DynamicTypes_DDS-XTypes_Tests ${GTEST_LIBRARIES} ${MOCKS})
+            )
+        target_link_libraries(DynamicTypesDDSXTypesTests ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
-            target_link_libraries(DynamicTypes_DDS-XTypes_Tests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
+            target_link_libraries(DynamicTypesDDSXTypesTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
         else()
-            target_link_libraries(DynamicTypes_DDS-XTypes_Tests ${PRIVACY} fastcdr)
+            target_link_libraries(DynamicTypesDDSXTypesTests ${PRIVACY} fastcdr)
         endif()
-        add_gtest(DynamicTypes_DDS-XTypes_Tests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
+        add_gtest(DynamicTypesDDSXTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
 
     endif()
 endif()

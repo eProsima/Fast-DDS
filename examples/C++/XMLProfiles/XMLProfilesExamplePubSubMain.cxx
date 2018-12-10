@@ -56,8 +56,8 @@ int main(int argc, char** argv)
 
 	std::cout << "Starting " << std::endl;
 
-	// Load an XML file with predefined profiles for publisher and subscriber	
-	xmlparser::XMLProfileManager::loadXMLFile("typesDDSXTypes.xml");
+	// Load an XML file with predefined profiles for publisher and subscriber
+	xmlparser::XMLProfileManager::loadXMLFile("XMLProfilesExample.xml");
 
 	// Register the type being used
 
