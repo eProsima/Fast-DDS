@@ -18,6 +18,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
+const char* DEFAULT_FASTRTPS_ENV_VARIABLE = "FASTRTPS_DEFAULT_PROFILES_FILE";
 const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
 const char* ROOT = "dds";
