@@ -75,6 +75,25 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
         )
 
+        set(DYNAMIC_TYPES_DDS_XTYPES_TEST_SOURCE
+        DynamicTypesDDS-XTypes1.2.Tests.cpp
+        idl/Basic.cxx
+        idl/BasicPubSubTypes.cxx
+        idl/BasicTypeObject.cxx
+        ${DYNAMIC_TYPES_SOURCE}
+
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        )
+
         set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
             DynamicComplexTypesTests.cpp
             idl/Test.cxx
@@ -82,7 +101,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             idl/TestTypeObject.cxx
             ${DYNAMIC_TYPES_SOURCE}
         )
-
+     
         include_directories(mock/)
 
         add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
@@ -105,6 +124,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
         add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
 
+
         add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
         target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(DynamicComplexTypesTests PRIVATE
@@ -119,7 +139,28 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 
 
+        add_executable(DynamicTypes_DDS-XTypes_Tests ${DYNAMIC_TYPES_DDS_XTYPES_TEST_SOURCE})
+        target_compile_definitions(DynamicTypes_DDS-XTypes_Tests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(DynamicTypes_DDS-XTypes_Tests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+            ${TINYXML2_INCLUDE_DIR}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            )            
+        target_link_libraries(DynamicTypes_DDS-XTypes_Tests ${GTEST_LIBRARIES} ${MOCKS})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(DynamicTypes_DDS-XTypes_Tests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
+        else()
+            target_link_libraries(DynamicTypes_DDS-XTypes_Tests ${PRIVACY} fastcdr)
+        endif()
+        add_gtest(DynamicTypes_DDS-XTypes_Tests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
+
     endif()
 endif()
 
 configure_file("types.xml" "types.xml" COPYONLY)
+configure_file("typesDDSXTypes.xml" "typesDDSXTypes.xml" COPYONLY)
