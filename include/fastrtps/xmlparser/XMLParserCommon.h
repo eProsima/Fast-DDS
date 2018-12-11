@@ -299,6 +299,7 @@ extern const char* MAP_KEY_TYPE;
 extern const char* ENUMERATOR;
 extern const char* NON_BASIC_TYPE;
 extern const char* NON_BASIC_TYPE_NAME;
+extern const char* KEY;
 
 // LOG
 extern const char* USE_DEFAULT;

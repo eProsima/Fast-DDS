@@ -923,7 +923,9 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     const char* memberArray = p_root->Attribute(ARRAY_DIMENSIONS);
     const char* memberSequence = p_root->Attribute(SEQ_MAXLENGTH);
     const char* memberMap = p_root->Attribute(MAP_MAXLENGTH);
-    const char* memberKeyType = p_root->Attribute(MAP_KEY_TYPE);
+    const char* memberMapKeyType = p_root->Attribute(MAP_KEY_TYPE);
+    const char* memberTopicKey = p_root->Attribute(KEY);
+
     bool isArray = false;
 
     if (memberName == nullptr && p_dynamictype != nullptr)
@@ -1031,19 +1033,19 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
 
         //const char* keyType = p_root->Attribute(KEY);
         p_dynamictypebuilder_t keyTypeBuilder;
-        if (memberKeyType == nullptr)
+        if (memberMapKeyType == nullptr)
         {
             //tinyxml2::XMLElement* keyElement = p_root->FirstChildElement(KEY);
             //if (keyElement == nullptr)
             //{
-                logError(XMLPARSER, "Error parsing key_value element: Not found.");
+                logError(XMLPARSER, "Error parsing key_type element: Not found.");
                 return nullptr;
             //}
             //keyTypeBuilder = parseXMLMemberDynamicType(keyElement->FirstChildElement(), nullptr, MEMBER_ID_INVALID);
         }
         else
         {
-            keyTypeBuilder = getDiscriminatorTypeBuilder(memberKeyType);
+            keyTypeBuilder = getDiscriminatorTypeBuilder(memberMapKeyType);
         }
 
         if (keyTypeBuilder == nullptr)
@@ -1344,16 +1346,16 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     }
 
     //memberBuilder->SetName(memberName);
-    if (memberKeyType != nullptr)
+    if (memberTopicKey != nullptr)
     {
-        //if (strncmp(memberKeyType, "true", 5) == 0)
-        //{
+        if (strncmp(memberTopicKey, "true", 5) == 0)
+        {
             memberBuilder->ApplyAnnotation("@Key", "true");
             if (p_dynamictype != nullptr)
             {
                 p_dynamictype->ApplyAnnotation("@Key", "true");
             }
-        //}
+        }
     }
 
     if (p_dynamictype != nullptr)
