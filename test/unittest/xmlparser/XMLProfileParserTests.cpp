@@ -14,7 +14,13 @@
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/log/Log.h>
+#include <fastrtps/log/FileConsumer.h>
 #include <gtest/gtest.h>
+#include <memory>
+#include <thread>
+#include <chrono>
+#include <sstream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -34,6 +40,7 @@ class XMLProfileParserTests: public ::testing::Test
 
 TEST_F(XMLProfileParserTests, XMLoadProfiles)
 {
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
@@ -54,6 +61,7 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
 
 TEST_F(XMLProfileParserTests, XMLParserParcipant)
 {
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
 
@@ -123,6 +131,7 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
 {
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
 
@@ -191,6 +200,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
 
 TEST_F(XMLProfileParserTests, XMLParserPublisher)
 {
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string publisher_profile = std::string("test_publisher_profile");
     PublisherAttributes publisher_atts;
 
@@ -259,6 +269,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
 {
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string publisher_profile = std::string("test_publisher_profile");
     PublisherAttributes publisher_atts;
 
@@ -326,6 +337,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
 
 TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 {
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string subscriber_profile = std::string("test_subscriber_profile");
     SubscriberAttributes subscriber_atts;
 
@@ -391,6 +403,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
 {
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string subscriber_profile = std::string("test_subscriber_profile");
     SubscriberAttributes subscriber_atts;
 
@@ -523,10 +536,118 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 #endif
 
+TEST_F(XMLProfileParserTests, file_xml_consumer_append)
+{
+    // First remove previous executions file
+    std::remove("test1.log");
+    Log::Reset();
+
+    xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
+
+    Log::SetVerbosity(Log::Info);
+
+    std::vector<std::unique_ptr<std::thread>> threads;
+    for (int i = 0; i != 5; i++)
+    {
+        threads.emplace_back(new std::thread([i] {
+            logWarning(Multithread, "I'm thread " << i);
+        }));
+    }
+
+    for (auto& thread : threads) {
+        thread->join();
+    }
+
+    Log::ClearConsumers(); // Force close file
+
+    xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
+
+    std::vector<std::unique_ptr<std::thread>> threads2;
+    for (int i = 0; i != 5; i++)
+    {
+        threads2.emplace_back(new std::thread([i] {
+            logWarning(Multithread, "I'm thread " << i + 5);
+        }));
+    }
+
+    for (auto& thread : threads2) {
+        thread->join();
+    }
+
+    Log::ClearConsumers(); // Force close file
+
+    std::ifstream ifs("test1.log");
+    std::string content((std::istreambuf_iterator<char>(ifs)),
+        (std::istreambuf_iterator<char>()));
+
+    for (int i = 0; i != 10; ++i)
+    {
+        std::string str("I'm thread " + i);
+        std::size_t found = content.find(str);
+        ASSERT_TRUE(found != std::string::npos);
+    }
+}
+
+TEST_F(XMLProfileParserTests, log_inactive)
+{
+    Log::Reset();
+
+    xmlparser::XMLProfileManager::loadXMLFile("log_inactive.xml");
+    Log::SetVerbosity(Log::Info);
+
+    std::vector<std::unique_ptr<std::thread>> threads;
+    for (int i = 0; i != 5; i++)
+    {
+        threads.emplace_back(new std::thread([i] {
+            logError(Multithread, "You should not view this message: " << i);
+        }));
+    }
+
+    for (auto& thread : threads) {
+        thread->join();
+    }
+}
+
+TEST_F(XMLProfileParserTests, file_and_default)
+{
+    // First remove previous executions file
+    std::remove("output.log");
+    Log::Reset();
+
+    xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
+
+    Log::SetVerbosity(Log::Info);
+
+    std::vector<std::unique_ptr<std::thread>> threads;
+    for (int i = 0; i != 5; i++)
+    {
+        threads.emplace_back(new std::thread([i] {
+            logWarning(Multithread, "I'm thread " << i);
+        }));
+    }
+
+    for (auto& thread : threads) {
+        thread->join();
+    }
+
+    //Log::ClearConsumers(); // Force close file
+    Log::KillThread();
+
+    std::ifstream ifs("output.log");
+    std::string content((std::istreambuf_iterator<char>(ifs)),
+        (std::istreambuf_iterator<char>()));
+
+    for (int i = 0; i != 5; ++i)
+    {
+        std::string str("I'm thread " + i);
+        std::size_t found = content.find(str);
+        ASSERT_TRUE(found != std::string::npos);
+    }
+}
+
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
