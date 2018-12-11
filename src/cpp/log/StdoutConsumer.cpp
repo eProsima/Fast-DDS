@@ -16,19 +16,9 @@ void StdoutConsumer::Consume(const Log::Entry& entry)
 
 void StdoutConsumer::PrintHeader(const Log::Entry& entry) const
 {
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    std::chrono::system_clock::duration tp = now.time_since_epoch();
-    tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
-    unsigned ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
-#ifdef _WIN32
-    std::tm ltime;
-    localtime_s(&ltime, &now_c);
-    std::cout << C_B_WHITE << std::put_time(&ltime, "%F %T")
-#else
-    std::cout << C_B_WHITE << std::put_time(localtime(&now_c), "%F %T")
-#endif
-       << "." << std::setw(3) << std::setfill('0') <<  ms << " ";
+    std::cout << C_B_WHITE;
+    PrintTimestamp(std::cout);
+    
     switch (entry.kind)
     {
     case Log::Kind::Error:

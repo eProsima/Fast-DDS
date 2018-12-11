@@ -167,6 +167,8 @@ class LogConsumer {
 public:
    virtual ~LogConsumer(){};
    virtual void Consume(const Log::Entry&) = 0;
+protected:
+    void PrintTimestamp(std::ostream& stream) const;
 };
 
 #if defined ( WIN32 )

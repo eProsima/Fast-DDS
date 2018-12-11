@@ -118,6 +118,11 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                 {
                     ret = parseLogConfig(node);
                 }
+                else
+                {
+                    logError(XMLPARSER, "Not expected tag: '" << tag << "'");
+                    ret = XMLP_ret::XML_ERROR;
+                }
             }
 
             node = node->NextSiblingElement();
@@ -1498,57 +1503,53 @@ XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
-    p_aux0 = p_root->FirstChildElement(LOG);
-    tinyxml2::XMLElement* p_element = nullptr;
-
-    if (p_aux0 != nullptr)
+    tinyxml2::XMLElement *p_aux0 = p_root->FirstChildElement(LOG);
+    if (p_aux0 == nullptr)
     {
-        p_element = p_aux0->FirstChildElement(USE_DEFAULT);
-    }
-    else // Directly root is LOG?
-    {
-        p_element = p_root->FirstChildElement(USE_DEFAULT);
+        p_aux0 = p_root;
     }
 
-    if (p_element != nullptr)
+    tinyxml2::XMLElement* p_element = p_aux0->FirstChildElement();
+    const char* tag = nullptr;
+    while (nullptr != p_element)
     {
-        bool use_default = true;
-        std::string auxBool = p_element->GetText();
-        if (std::strcmp(auxBool.c_str(), "FALSE") == 0)
+        if (nullptr != (tag = p_element->Value()))
         {
-            use_default = false;
-        }
-        if (!use_default)
-        {
-            Log::ClearConsumers();
-        }
-    }
-
-    if (p_aux0 != nullptr)
-    {
-        p_element = p_aux0->FirstChildElement(CONSUMER);
-    }
-    else // Directly root is LOG?
-    {
-        p_element = p_root->FirstChildElement(CONSUMER);
-    }
-
-    while(p_element != nullptr)
-    {
-        ret = parseXMLConsumer(*p_element);
-        if (ret != XMLP_ret::XML_OK)
-        {
-            return ret;
+            if (strcmp(tag, USE_DEFAULT) == 0)
+            {
+                bool use_default = true;
+                std::string auxBool = p_element->GetText();
+                if (std::strcmp(auxBool.c_str(), "FALSE") == 0)
+                {
+                    use_default = false;
+                }
+                if (!use_default)
+                {
+                    Log::ClearConsumers();
+                }
+            }
+            else if (strcmp(tag, CONSUMER) == 0)
+            {
+                ret = parseXMLConsumer(*p_element);
+                if (ret != XMLP_ret::XML_OK)
+                {
+                    return ret;
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Not expected tag: '" << tag << "'");
+                ret = XMLP_ret::XML_ERROR;
+            }
         }
         p_element = p_element->NextSiblingElement(CONSUMER);
     }
-
     return ret;
 }
 
 XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
 {
+    XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* p_element = consumer.FirstChildElement(CLASS);
 
     if (p_element != nullptr)
@@ -1557,8 +1558,8 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
 
         if (std::strcmp(classStr.c_str(), "StdoutConsumer") == 0)
         {
-            std::unique_ptr<StdoutConsumer> consumer(new StdoutConsumer);
-            Log::RegisterConsumer(std::move(consumer));
+            std::unique_ptr<StdoutConsumer> new_consumer(new StdoutConsumer);
+            Log::RegisterConsumer(std::move(new_consumer));
         }
         else if (std::strcmp(classStr.c_str(), "FileConsumer") == 0)
         {
@@ -1568,8 +1569,8 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
             tinyxml2::XMLElement* property = consumer.FirstChildElement(PROPERTY);
             if (nullptr == property)
             {
-                std::unique_ptr<FileConsumer> consumer(new FileConsumer);
-                Log::RegisterConsumer(std::move(consumer));
+                std::unique_ptr<FileConsumer> new_consumer(new FileConsumer);
+                Log::RegisterConsumer(std::move(new_consumer));
             }
             else
             {
@@ -1619,17 +1620,18 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
                     property = property->NextSiblingElement(PROPERTY);
                 }
 
-                std::unique_ptr<FileConsumer> consumer(new FileConsumer(outputFile, append));
-                Log::RegisterConsumer(std::move(consumer));
+                std::unique_ptr<FileConsumer> new_consumer(new FileConsumer(outputFile, append));
+                Log::RegisterConsumer(std::move(new_consumer));
             }
         }
         else
         {
             logError(XMLParser, "Unknown log consumer class: " << classStr);
+            ret = XMLP_ret::XML_ERROR;
         }
     }
 
-    return XMLP_ret::XML_OK;
+    return ret;
 }
 
 XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)

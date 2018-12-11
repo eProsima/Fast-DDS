@@ -178,5 +178,22 @@ void Log::SetErrorStringFilter(const std::regex& filter)
    mResources.mErrorStringFilter.reset(new std::regex(filter));
 }
 
+void LogConsumer::PrintTimestamp(std::ostream& stream) const
+{
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    std::chrono::system_clock::duration tp = now.time_since_epoch();
+    tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
+    auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
+    
+#ifdef _WIN32
+    struct tm timeinfo;
+    localtime_s(&timeinfo, &now_c);
+    stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+#else
+    stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+#endif
+}
+
 } //namespace fastrtps
 } //namespace eprosima
