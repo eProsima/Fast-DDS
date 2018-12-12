@@ -74,23 +74,23 @@ public:
    //! Removes all registered consumers, including the default stdout.
    RTPS_DllAPI static void ClearConsumers();
    //! Enables the reporting of filenames in log entries. Disabled by default.
-   RTPS_DllAPI static void ReportFilenames(bool);
+   RTPS_DllAPI static void ReportFilenames(bool) {}
    //! Enables the reporting of function names in log entries. Enabled by default when supported.
-   RTPS_DllAPI static void ReportFunctions(bool);
+   RTPS_DllAPI static void ReportFunctions(bool) {}
    //! Sets the verbosity level, allowing for messages equal or under that priority to be logged.
-   RTPS_DllAPI static void SetVerbosity(Log::Kind kind);
+   RTPS_DllAPI static void SetVerbosity(Log::Kind kind) { mResources.mVerbosity = kind; }
    //! Returns the current verbosity level.
-   RTPS_DllAPI static Log::Kind GetVerbosity();
+   RTPS_DllAPI static Log::Kind GetVerbosity() { return mResources.mVerbosity; }
    //! Sets a filter that will pattern-match against log categories, dropping any unmatched categories.
-   RTPS_DllAPI static void SetCategoryFilter    (const std::regex&);
+   RTPS_DllAPI static void SetCategoryFilter    (const std::regex&) {}
    //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
-   RTPS_DllAPI static void SetFilenameFilter    (const std::regex&);
+   RTPS_DllAPI static void SetFilenameFilter    (const std::regex&) {}
    //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
-   RTPS_DllAPI static void SetErrorStringFilter (const std::regex&);
+   RTPS_DllAPI static void SetErrorStringFilter (const std::regex&) {}
    //! Returns the logging engine to configuration defaults.
    RTPS_DllAPI static void Reset();
    //! Stops the logging thread. It will re-launch on the next call to a successful log macro.
-   RTPS_DllAPI static void KillThread();
+   RTPS_DllAPI static void KillThread() {}
    // Note: In VS2013, if you're linking this class statically, you will have to call KillThread before leaving
    // main, due to an unsolved MSVC bug.
 
@@ -115,7 +115,7 @@ public:
     *  * logWarning(cat, msg);
     *  * logError(cat, msg);
     */
-   RTPS_DllAPI static void QueueLog(const std::string&, const Log::Context&, Log::Kind);
+   RTPS_DllAPI static void QueueLog(const std::string&, const Log::Context&, Log::Kind) {}
 
    struct Resources
    {
@@ -169,52 +169,6 @@ protected:
     void PrintMessage(std::ostream&, const Log::Entry&, bool) const {};
     void PrintNewLine(std::ostream&, bool) const {};
 };
-
-struct Log::Resources Log::mResources;
-
-void Log::Reset()
-{
-    std::unique_lock<std::mutex> configGuard(mResources.mConfigMutex);
-    mResources.mCategoryFilter.reset();
-    mResources.mFilenameFilter.reset();
-    mResources.mErrorStringFilter.reset();
-    mResources.mFilenames = false;
-    mResources.mFunctions = true;
-    mResources.mVerbosity = Log::Error;
-    mResources.mConsumers.clear();
-    mResources.mConsumers.emplace_back(new LogConsumer);
-}
-
-
-void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer)
-{
-    std::unique_lock<std::mutex> guard(mResources.mConfigMutex);
-    mResources.mConsumers.emplace_back(std::move(consumer));
-}
-
-void Log::QueueLog(const std::string&, const Log::Context&, Log::Kind) {}
-
-void Log::ClearConsumers()
-{
-    std::unique_lock<std::mutex> guard(mResources.mConfigMutex);
-    mResources.mConsumers.clear();
-}
-
-void Log::ReportFilenames(bool) {}
-
-void Log::ReportFunctions(bool) {}
-
-void Log::SetVerbosity(Log::Kind kind) { mResources.mVerbosity = kind; }
-
-Log::Kind Log::GetVerbosity() { return mResources.mVerbosity; }
-
-void Log::SetCategoryFilter    (const std::regex&) {}
-
-void Log::SetFilenameFilter    (const std::regex&) {}
-
-void Log::SetErrorStringFilter (const std::regex&) {}
-
-void Log::KillThread() {}
 
 #if defined ( WIN32 )
    #define __func__ __FUNCTION__

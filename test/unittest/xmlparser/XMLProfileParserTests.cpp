@@ -538,111 +538,21 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
-    // First remove previous executions file
-    std::remove("test1.log");
-    Log::Reset();
-
     xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
-
-    Log::SetVerbosity(Log::Info);
-
-    std::vector<std::unique_ptr<std::thread>> threads;
-    for (int i = 0; i != 5; i++)
-    {
-        threads.emplace_back(new std::thread([i] {
-            logWarning(Multithread, "I'm thread " << i);
-        }));
-    }
-
-    for (auto& thread : threads) {
-        thread->join();
-    }
-
-    Log::ClearConsumers(); // Force close file
-
-    xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
-
-    std::vector<std::unique_ptr<std::thread>> threads2;
-    for (int i = 0; i != 5; i++)
-    {
-        threads2.emplace_back(new std::thread([i] {
-            logWarning(Multithread, "I'm thread " << i + 5);
-        }));
-    }
-
-    for (auto& thread : threads2) {
-        thread->join();
-    }
-
-    Log::ClearConsumers(); // Force close file
-
-    std::ifstream ifs("test1.log");
-    std::string content((std::istreambuf_iterator<char>(ifs)),
-        (std::istreambuf_iterator<char>()));
-
-    for (int i = 0; i != 10; ++i)
-    {
-        std::string str("I'm thread " + i);
-        std::size_t found = content.find(str);
-        ASSERT_TRUE(found != std::string::npos);
-    }
+    ASSERT_EQ(Log::mResources.mConsumers.size(), 1);
 }
 
 TEST_F(XMLProfileParserTests, log_inactive)
 {
-    Log::Reset();
-
     xmlparser::XMLProfileManager::loadXMLFile("log_inactive.xml");
-    Log::SetVerbosity(Log::Info);
-
-    std::vector<std::unique_ptr<std::thread>> threads;
-    for (int i = 0; i != 5; i++)
-    {
-        threads.emplace_back(new std::thread([i] {
-            logError(Multithread, "You should not view this message: " << i);
-        }));
-    }
-
-    for (auto& thread : threads) {
-        thread->join();
-    }
+    ASSERT_EQ(Log::mResources.mConsumers.size(), 0);
 }
 
 TEST_F(XMLProfileParserTests, file_and_default)
 {
-    // First remove previous executions file
-    std::remove("output.log");
     Log::Reset();
-
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
-
-    Log::SetVerbosity(Log::Info);
-
-    std::vector<std::unique_ptr<std::thread>> threads;
-    for (int i = 0; i != 5; i++)
-    {
-        threads.emplace_back(new std::thread([i] {
-            logWarning(Multithread, "I'm thread " << i);
-        }));
-    }
-
-    for (auto& thread : threads) {
-        thread->join();
-    }
-
-    //Log::ClearConsumers(); // Force close file
-    Log::KillThread();
-
-    std::ifstream ifs("output.log");
-    std::string content((std::istreambuf_iterator<char>(ifs)),
-        (std::istreambuf_iterator<char>()));
-
-    for (int i = 0; i != 5; ++i)
-    {
-        std::string str("I'm thread " + i);
-        std::size_t found = content.find(str);
-        ASSERT_TRUE(found != std::string::npos);
-    }
+    ASSERT_EQ(Log::mResources.mConsumers.size(), 2);
 }
 
 int main(int argc, char **argv)

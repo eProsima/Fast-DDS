@@ -68,7 +68,7 @@ class TopicAttributes
                    (this->topicDataType == b.topicDataType) &&
                    (this->historyQos == b.historyQos);
         }
-        
+
         /**
         * Get the topic data type
         * @return Topic data type

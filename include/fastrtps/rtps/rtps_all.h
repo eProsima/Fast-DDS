@@ -39,7 +39,6 @@
 #include "history/ReaderHistory.h"
 
 #include "../utils/IPFinder.h"
-#include "../log/Log.h"
 #include "../utils/eClock.h"
 #include "../utils/TimeConversion.h"
 
