@@ -4723,6 +4723,71 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
     }
 }
 
+TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        StringStruct refData;
+        StringStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        ASSERT_FALSE(data->SetStringValue("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
+
+        // SERIALIZATION TEST
+        StringStruct refData;
+        StringStructPubSubType refDatapb;
+
+        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
+        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        ASSERT_FALSE(data->SetStringValue("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
 
 int main(int argc, char **argv)
 {

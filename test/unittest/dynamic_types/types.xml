@@ -2,6 +2,18 @@
 <!-- Types defined following OMG Extensible and Dynamic Topic types for DDS, DDS-XTypes Version 1.2 -->
 
 <types>
+
+  <type>
+        <struct name="ShortStringStruct">
+            <member name="my_short_string" type="string" stringMaxLength="15"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ShortWStringStruct">
+            <member name="my_short_wstring" type="wstring" stringMaxLength="15"/>
+        </struct>
+    </type>
+
     <type>
         <enum name="MyEnum" bitBound="16">
             <enumerator name="A" value="0"/>
@@ -115,6 +127,26 @@
             <member name="my_large_wstring" type="wstring" stringMaxLength="41925"/>
         </struct>
     </type>
+    <!-- TODO new test for this -->
+
+
+    <type>
+        <typedef name="MyAliasString" type="string"/>
+    </type>
+    <type>
+        <struct name="StructAliasString">
+	        <member name="my_alias_string" type="nonBasic" nonBasicTypeName="MyAliasString"/>
+        </struct>
+    </type>
+     <type>
+        <typedef name="MyAliasWString" type="wstring"/>
+    </type>
+    <type>
+        <struct name="StructAliasWString">
+	        <member name="my_alias_wstring" type="nonBasic" nonBasicTypeName="MyAliasWString"/>
+        </struct>
+    </type>
+    <!-- end TODO new test for this -->
     <type>
         <struct name="ArraytStruct">
             <member name="my_array" type="int32" arrayDimensions="2,2,2"/>
@@ -143,7 +175,7 @@
     </type>
     <type>
         <struct name="MapStruct">
-            <member name="my_map" type="int32" key_type="int32" mapMaxLength="2"/>
+            <member name="my_map" type="int32" key_type="int32" mapMaxLength="2 + 5"/>
         </struct>
     </type>
     <type>
