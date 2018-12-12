@@ -159,6 +159,18 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
 #endif
     }
 
+    if (mp_RTPSParticipant->getAttributes().builtin.use_LookupServiceServer)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
+    }
+    
+    if (mp_RTPSParticipant->getAttributes().builtin.use_LookupServiceServer)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+    }
+
 #if HAVE_SECURITY
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
 #endif

@@ -134,6 +134,12 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         }
     }
 
+    // If the reader doesn't have any data representation, it inherits the configuration of its topic.
+    if (rqos.m_dataRepresentation.m_value.size() == 0 && att.dataRepresentationQos.m_value.size() > 0)
+    {
+        rpd.m_qos.m_dataRepresentation.m_value = att.dataRepresentationQos.m_value;
+    }
+
     //ADD IT TO THE LIST OF READERPROXYDATA
     ParticipantProxyData pdata;
     if(!this->mp_PDP->addReaderProxyData(&rpd, pdata))
@@ -223,6 +229,12 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
         }
     }
 
+    // If the writer doesn't have any data representation, it inherits the configuration of its topic.
+    if (wqos.m_dataRepresentation.m_value.size() == 0 && att.dataRepresentationQos.m_value.size() > 0)
+    {
+        wpd.m_qos.m_dataRepresentation.m_value.push_back(*att.dataRepresentationQos.m_value.begin());
+    }
+
     //ADD IT TO THE LIST OF READERPROXYDATA
     ParticipantProxyData pdata;
     if(!this->mp_PDP->addWriterProxyData(&wpd, pdata))
@@ -268,6 +280,12 @@ bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, con
     }
 #endif
 
+    // If the reader doesn't have any data representation, it inherits the configuration of its topic.
+    if (rqos.m_dataRepresentation.m_value.size() == 0 && att.dataRepresentationQos.m_value.size() > 0)
+    {
+        rdata.m_qos.m_dataRepresentation.m_value = att.dataRepresentationQos.m_value;
+    }
+
     if(this->mp_PDP->addReaderProxyData(&rdata, pdata))
     {
         processLocalReaderProxyData(reader, &rdata);
@@ -309,6 +327,12 @@ bool EDP::updatedLocalWriter(RTPSWriter* writer, const TopicAttributes& att, con
         wdata.plugin_security_attributes_ = 0UL;
     }
 #endif
+
+    // If the writer doesn't have any data representation, it inherits the configuration of its topic.
+    if (wqos.m_dataRepresentation.m_value.size() == 0 && att.dataRepresentationQos.m_value.size() > 0)
+    {
+        wdata.m_qos.m_dataRepresentation.m_value.push_back(*att.dataRepresentationQos.m_value.begin());
+    }
 
     if(this->mp_PDP->addWriterProxyData(&wdata, pdata))
     {
@@ -442,6 +466,35 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
         return false;
     }
 
+    DataRepresentationId writerRepresentation = XCDR_DATA_REPRESENTATION;
+    if (wdata->m_qos.m_dataRepresentation.m_value.size() > 0)
+    {
+        writerRepresentation = *wdata->m_qos.m_dataRepresentation.m_value.begin();
+    }
+
+    if (writerRepresentation != XCDR_DATA_REPRESENTATION || rdata->m_qos.m_dataRepresentation.m_value.size() > 0)
+    {
+        // Check if the remote reader supports the data representation of the writer.
+        if (std::find(rdata->m_qos.m_dataRepresentation.m_value.begin(),
+            rdata->m_qos.m_dataRepresentation.m_value.end(), writerRepresentation)
+            == rdata->m_qos.m_dataRepresentation.m_value.end())
+        {
+            if (writerRepresentation == XCDR_DATA_REPRESENTATION &&
+                std::find(rdata->m_qos.m_dataRepresentation.m_value.begin(),
+                    rdata->m_qos.m_dataRepresentation.m_value.end(), XCDR2_DATA_REPRESENTATION)
+                != rdata->m_qos.m_dataRepresentation.m_value.end())
+            {
+                // Different Types but they are compatible.
+            }
+            else
+            {
+                logWarning(RTPS_EDP, "INCOMPATIBLE Data Representation QOS (topic: " << rdata->topicName()
+                    << "):Remote reader " << rdata->guid() << " hasn't any representation compatible");
+                return false;
+            }
+        }
+    }
+
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif
@@ -558,6 +611,35 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif
+
+    DataRepresentationId remoteWriterRepresentation = XCDR_DATA_REPRESENTATION;
+    if (wdata->m_qos.m_dataRepresentation.m_value.size() > 0)
+    {
+        remoteWriterRepresentation = *wdata->m_qos.m_dataRepresentation.m_value.begin();
+    }
+
+    if (remoteWriterRepresentation != XCDR_DATA_REPRESENTATION || rdata->m_qos.m_dataRepresentation.m_value.size() > 0)
+    {
+        // Check if the reader supports the data representation of the remote writer.
+        if (std::find(rdata->m_qos.m_dataRepresentation.m_value.begin(),
+            rdata->m_qos.m_dataRepresentation.m_value.end(), remoteWriterRepresentation)
+            == rdata->m_qos.m_dataRepresentation.m_value.end())
+        {
+            if (remoteWriterRepresentation == XCDR_DATA_REPRESENTATION &&
+                std::find(rdata->m_qos.m_dataRepresentation.m_value.begin(),
+                    rdata->m_qos.m_dataRepresentation.m_value.end(), XCDR2_DATA_REPRESENTATION)
+                != rdata->m_qos.m_dataRepresentation.m_value.end())
+            {
+                // Different Types but they are compatible.
+            }
+            else
+            {
+                logWarning(RTPS_EDP, "INCOMPATIBLE Data Representation QOS (topic: " << rdata->topicName()
+                    << "):Remote reader " << rdata->guid() << " hasn't any representation compatible");
+                return false;
+            }
+        }
+    }
 
     //Partition check:
     bool matched = false;

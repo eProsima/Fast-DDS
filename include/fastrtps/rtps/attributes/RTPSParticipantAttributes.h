@@ -100,10 +100,20 @@ class BuiltinAttributes
         bool use_SIMPLE_EndpointDiscoveryProtocol;
 
         /**
-         * If set to true, StaticEDP based on an XML file would be implemented.
-         * The XML filename must be provided.
-         */
+        * If set to true, StaticEDP based on an XML file would be implemented.
+        * The XML filename must be provided.
+        */
         bool use_STATIC_EndpointDiscoveryProtocol;
+        /**
+        * If set to true, a LookupService Server will be running to send the information
+        * of the type identifiers and type objects during the discovery.
+        */
+        bool use_LookupServiceServer;
+        /**
+        * If set to true, a LookupService Client will be running to ask for information
+        * of the type identifiers and type objects during the discovery.
+        */
+        bool use_LookupServiceClient;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
@@ -148,6 +158,8 @@ class BuiltinAttributes
             use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
+            use_LookupServiceServer = false;
+            use_LookupServiceClient = false;
             m_staticEndpointXMLFilename = "";
             domainId = 0;
             leaseDuration.seconds = 130;
@@ -166,6 +178,8 @@ class BuiltinAttributes
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
+                   (this->use_LookupServiceServer == b.use_LookupServiceServer) &&
+                   (this->use_LookupServiceClient == b.use_LookupServiceClient) &&
                    (this->domainId == b.domainId) &&
                    (this->leaseDuration == b.leaseDuration) &&
                    (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&

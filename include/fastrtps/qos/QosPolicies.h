@@ -946,21 +946,34 @@ class PublishModeQosPolicy : public QosPolicy {
 * Enum DataRepresentationId, different kinds of topic data representation
 */
 typedef enum DataRepresentationId : int16_t {
-    XCDR_DATA_REPRESENTATION,    //!<
-    XML_DATA_REPRESENTATION,    //!<
-    XCDR2_DATA_REPRESENTATION    //!<
+    XCDR_DATA_REPRESENTATION = 0,	//!< Extended CDR Encoding version 1
+    XML_DATA_REPRESENTATION = 1,	//!< XML Data Representation
+    XCDR2_DATA_REPRESENTATION= 2	//!< Extended CDR Enconding version 2
 }DataRepresentationId_t;
 
 /**
 * Class DataRepresentationQosPolicy,
 */
-class DataRepresentationQosPolicy :public Parameter_t, public QosPolicy
+class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
     std::vector<DataRepresentationId_t> m_value;
     RTPS_DllAPI DataRepresentationQosPolicy() {};
     virtual RTPS_DllAPI ~DataRepresentationQosPolicy() {};
+
+    /**
+    * Compares the given policy to check if it's equal.
+    * @param b QoS Policy.
+    * @return True if the policy is equal.
+    */
+    bool operator==(const DataRepresentationQosPolicy& b) const
+    {
+        return (this->m_value == b.m_value) &&
+            Parameter_t::operator==(b) &&
+            QosPolicy::operator==(b);
+    }
+
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.

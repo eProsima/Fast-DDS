@@ -253,6 +253,11 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     }
 #endif
 
+    if (m_qos.m_dataRepresentation.sendAlways() || m_qos.m_dataRepresentation.hasChanged)
+    {
+        if (!m_qos.m_dataRepresentation.addToCDRMessage(msg)) return false;
+    }
+
     return CDRMessage::addParameterSentinel(msg);
 }
 
@@ -486,6 +491,14 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 plugin_security_attributes_ = p->plugin_security_attributes;
             }
 #endif
+
+            case PID_DATA_REPRESENTATION:
+            {
+                DataRepresentationQosPolicy* p = (DataRepresentationQosPolicy*)(*it);
+                m_qos.m_dataRepresentation = *p;
+                break;
+            }
+
             default:
             {
                 //logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(param)->Pid <<" NOT CONSIDERED");

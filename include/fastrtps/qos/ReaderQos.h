@@ -54,7 +54,8 @@ public:
                (this->m_groupData == b.m_groupData) &&
                (this->m_durabilityService == b.m_durabilityService) &&
                (this->m_lifespan == b.m_lifespan) &&
-               (this->m_disablePositiveACKs == b.m_disablePositiveACKs);
+               (this->m_disablePositiveACKs == b.m_disablePositiveACKs)
+               (this->m_dataRepresentation == b.m_dataRepresentation);
     }
 
     //!Durability Qos, implemented in the library.
@@ -87,7 +88,7 @@ public:
     DurabilityServiceQosPolicy m_durabilityService;
     //!Lifespan Qos, NOT implemented in the library.
     LifespanQosPolicy m_lifespan;
-    //!Data Representation Qos, NOT implemented in the library.
+    //!Data Representation Qos, implemented in the library.
     DataRepresentationQosPolicy m_dataRepresentation;
     //!Type consistency enforcement Qos, NOT implemented in the library.
     TypeConsistencyEnforcementQosPolicy m_typeConsistency;
