@@ -31,41 +31,21 @@ FileConsumer::~FileConsumer()
 void FileConsumer::Consume(const Log::Entry& entry)
 {
    PrintHeader(entry);
-   mFile << entry.message;
+   PrintMessage(mFile, entry, false);
    PrintContext(entry);
-   mFile << std::endl;
+   PrintNewLine(mFile, false);
    mFile.flush();
 }
 
 void FileConsumer::PrintHeader(const Log::Entry& entry)
 {
-    PrintTimestamp(mFile);
-
-    switch (entry.kind)
-    {
-    case Log::Kind::Error:
-        mFile << "[" << entry.context.category << " Error] ";
-        break;
-    case Log::Kind::Warning:
-        mFile << "[" << entry.context.category << " Warning] ";
-        break;
-    case Log::Kind::Info:
-        mFile << "[" << entry.context.category << " Info] ";
-        break;
-    }
+    PrintTimestamp(mFile, entry, false);
+    LogConsumer::PrintHeader(mFile, entry, false);
 }
 
 void FileConsumer::PrintContext(const Log::Entry& entry)
 {
-    if (entry.context.filename)
-    {
-      mFile << " (" << entry.context.filename;
-      mFile << ":" << entry.context.line << ")";
-    }
-    if (entry.context.function)
-    {
-      mFile << " -> Function " << entry.context.function;
-    }
+    LogConsumer::PrintContext(mFile, entry, false);
 }
 
 } // Namespace fastrtps

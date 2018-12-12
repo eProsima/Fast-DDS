@@ -112,6 +112,7 @@ public:
       std::string message;
       Log::Context context;
       Log::Kind kind;
+      std::string timestamp;
    };
 
    /**
@@ -158,6 +159,7 @@ private:
    static bool Preprocess(Entry&);
    static void LaunchThread();
    static void Run();
+   static void GetTimestamp(std::string&);
 };
 
 /**
@@ -165,10 +167,14 @@ private:
  */
 class LogConsumer {
 public:
-   virtual ~LogConsumer(){};
-   virtual void Consume(const Log::Entry&) = 0;
+    virtual ~LogConsumer(){};
+    virtual void Consume(const Log::Entry&) = 0;
 protected:
-    void PrintTimestamp(std::ostream& stream) const;
+    void PrintTimestamp(std::ostream& stream, const Log::Entry&, bool color) const;
+    void PrintHeader(std::ostream& stream, const Log::Entry&, bool color) const;
+    void PrintContext(std::ostream& stream, const Log::Entry&, bool color) const;
+    void PrintMessage(std::ostream& stream, const Log::Entry&, bool color) const;
+    void PrintNewLine(std::ostream& stream, bool color) const;
 };
 
 #if defined ( WIN32 )

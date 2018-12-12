@@ -4,6 +4,7 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/log/StdoutConsumer.h>
+#include <fastrtps/log/Colors.h>
 #include <iostream>
 
 using namespace std;
@@ -132,6 +133,7 @@ void Log::KillThread()
 
 void Log::QueueLog(const std::string& message, const Log::Context& context, Log::Kind kind)
 {
+
    {
       std::unique_lock<std::mutex> guard(mResources.mCvMutex);
       if (!mResources.mLogging && !mResources.mLoggingThread)
@@ -141,7 +143,9 @@ void Log::QueueLog(const std::string& message, const Log::Context& context, Log:
       }
    }
 
-   mResources.mLogs.Push(Log::Entry{message, context, kind});
+   std::string timestamp;
+   GetTimestamp(timestamp);
+   mResources.mLogs.Push(Log::Entry{message, context, kind, timestamp});
    {
       std::unique_lock<std::mutex> guard(mResources.mCvMutex);
       mResources.mWork = true;
@@ -178,14 +182,15 @@ void Log::SetErrorStringFilter(const std::regex& filter)
    mResources.mErrorStringFilter.reset(new std::regex(filter));
 }
 
-void LogConsumer::PrintTimestamp(std::ostream& stream) const
+void Log::GetTimestamp(std::string& timestamp)
 {
+    std::stringstream stream;
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
     std::chrono::system_clock::duration tp = now.time_since_epoch();
     tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
     auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
-    
+
 #ifdef _WIN32
     struct tm timeinfo;
     localtime_s(&timeinfo, &now_c);
@@ -193,6 +198,63 @@ void LogConsumer::PrintTimestamp(std::ostream& stream) const
 #else
     stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
 #endif
+    timestamp = stream.str();
+}
+
+void LogConsumer::PrintTimestamp(std::ostream& stream, const Log::Entry& entry, bool color) const
+{
+    std::string white = (color) ? C_B_WHITE : "";
+    stream << white << entry.timestamp;
+}
+
+void LogConsumer::PrintHeader(std::ostream& stream, const Log::Entry& entry, bool color) const
+{
+    std::string c_b_color = (!color) ? "" :
+                            (entry.kind == Log::Kind::Error) ? C_B_RED :
+                            (entry.kind == Log::Kind::Warning) ? C_B_YELLOW :
+                            (entry.kind == Log::Kind::Info) ? C_B_GREEN : "";
+
+    std::string white = (color) ? C_B_WHITE : "";
+
+    std::string kind = (entry.kind == Log::Kind::Error) ? "Error" :
+                       (entry.kind == Log::Kind::Warning) ? "Warning" :
+                       (entry.kind == Log::Kind::Info) ? "Info" : "";
+
+    stream << c_b_color << "[" << white << entry.context.category << c_b_color << " " << kind << "] ";
+}
+
+void LogConsumer::PrintContext(std::ostream& stream, const Log::Entry& entry, bool color) const
+{
+    if (color)
+    {
+        stream << C_B_BLUE;
+    }
+    if (entry.context.filename)
+    {
+        stream << " (" << entry.context.filename;
+        stream << ":" << entry.context.line << ")";
+    }
+    if (entry.context.function)
+    {
+        stream << " -> Function ";
+        if (color)
+        {
+            stream << C_CYAN;
+        }
+        stream << entry.context.function;
+    }
+}
+
+void LogConsumer::PrintMessage(std::ostream& stream, const Log::Entry& entry, bool color) const
+{
+    std::string white = (color) ? C_WHITE : "";
+    stream << white << entry.message;
+}
+
+void LogConsumer::PrintNewLine(std::ostream& stream, bool color) const
+{
+    std::string def = (color) ? C_DEF : "";
+    stream << def << std::endl;
 }
 
 } //namespace fastrtps
