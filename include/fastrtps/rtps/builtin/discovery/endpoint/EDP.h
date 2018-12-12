@@ -229,6 +229,8 @@ class EDP
          */
         bool pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const WriterProxyData& wdata);
 
+        bool checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
         bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 
         bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
