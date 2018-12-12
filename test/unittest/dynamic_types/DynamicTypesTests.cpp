@@ -3702,10 +3702,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_BoolStruct_test)
 {
     using namespace xmlparser;
     using namespace types;
+    const char* config_file = "types.xml";
     tinyxml2::XMLDocument doc;
-    doc.LoadFile("typesDDSXTypes.xml");
-    tinyxml2::XMLElement *element = doc.FirstChildElement("types");
-    XMLP_ret ret = XMLProfileManager::loadXMLDynamicTypes(*element);
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(config_file);
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
@@ -4722,6 +4722,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
         XMLProfileManager::DeleteInstance();
     }
 }
+
 
 int main(int argc, char **argv)
 {

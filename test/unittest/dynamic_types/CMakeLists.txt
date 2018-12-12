@@ -75,25 +75,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
         )
 
-        set(DYNAMIC_TYPES_DDS_XTYPES_TEST_SOURCE
-        DynamicTypesDDSXTypesTests.cpp
-        idl/Basic.cxx
-        idl/BasicPubSubTypes.cxx
-        idl/BasicTypeObject.cxx
-        ${DYNAMIC_TYPES_SOURCE}
-
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
-        )
-
         set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
             DynamicComplexTypesTests.cpp
             idl/Test.cxx
@@ -138,29 +119,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 
-
-        add_executable(DynamicTypesDDSXTypesTests ${DYNAMIC_TYPES_DDS_XTYPES_TEST_SOURCE})
-        target_compile_definitions(DynamicTypesDDSXTypesTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(DynamicTypesDDSXTypesTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-            ${TINYXML2_INCLUDE_DIR}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            )
-        target_link_libraries(DynamicTypesDDSXTypesTests ${GTEST_LIBRARIES} ${MOCKS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(DynamicTypesDDSXTypesTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
-        else()
-            target_link_libraries(DynamicTypesDDSXTypesTests ${PRIVACY} fastcdr)
-        endif()
-        add_gtest(DynamicTypesDDSXTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
-
     endif()
 endif()
 
 configure_file("types.xml" "types.xml" COPYONLY)
-configure_file("typesDDSXTypes.xml" "typesDDSXTypes.xml" COPYONLY)
