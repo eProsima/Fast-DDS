@@ -572,7 +572,9 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
-static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &disc)
+static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &disc, uint32_t bound = 0);
+
+static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &disc, uint32_t bound)
 {
     /*
     mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 ||
@@ -635,11 +637,11 @@ static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &dis
     }
     else if (disc.compare(STRING) == 0)
     {
-        return factory->CreateStringBuilder();
+        return factory->CreateStringBuilder(bound);
     }
     else if (disc.compare(WSTRING) == 0)
     {
-        return factory->CreateWstringBuilder();
+        return factory->CreateWstringBuilder(bound);
     }
 
     return XMLProfileManager::getDynamicTypeByName(disc);
@@ -685,7 +687,13 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
         }
         else
         {
-            valueBuilder = getDiscriminatorTypeBuilder(type);
+            uint32_t bound = 0;
+            const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
+            if (boundStr != nullptr)
+            {
+                bound = std::atoi(boundStr);
+            }
+            valueBuilder = getDiscriminatorTypeBuilder(type, bound);
         }
 
         if (valueBuilder == nullptr)
@@ -1286,31 +1294,43 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     }
     else if (strncmp(memberType, STRING, 7) == 0)
     {
+        uint32_t bound = 0;
+        const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
+        if (boundStr != nullptr)
+        {
+            bound = std::atoi(boundStr);
+        }
         if (!isArray)
         {
-            memberBuilder = factory->CreateStringBuilder();
+            memberBuilder = factory->CreateStringBuilder(bound);
         }
         else
         {
-            types::DynamicTypeBuilder* innerBuilder = factory->CreateStringBuilder();
-            std::vector<uint32_t> bounds;
-            dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory->CreateArrayBuilder(innerBuilder, bounds);
+            types::DynamicTypeBuilder* innerBuilder = factory->CreateStringBuilder(bound);
+            std::vector<uint32_t> boundsArray;
+            dimensionsToArrayBounds(memberArray, boundsArray);
+            memberBuilder = factory->CreateArrayBuilder(innerBuilder, boundsArray);
             //factory->DeleteBuilder(innerBuilder);
         }
     }
     else if (strncmp(memberType, WSTRING, 8) == 0)
     {
+        uint32_t bound = 0;
+        const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
+        if (boundStr != nullptr)
+        {
+            bound = std::atoi(boundStr);
+        }
         if (!isArray)
         {
-            memberBuilder = factory->CreateWstringBuilder();
+            memberBuilder = factory->CreateWstringBuilder(bound);
         }
         else
         {
-            types::DynamicTypeBuilder* innerBuilder = factory->CreateWstringBuilder();
-            std::vector<uint32_t> bounds;
-            dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory->CreateArrayBuilder(innerBuilder, bounds);
+            types::DynamicTypeBuilder* innerBuilder = factory->CreateWstringBuilder(bound);
+            std::vector<uint32_t> boundsArray;
+            dimensionsToArrayBounds(memberArray, boundsArray);
+            memberBuilder = factory->CreateArrayBuilder(innerBuilder, boundsArray);
             //factory->DeleteBuilder(innerBuilder);
         }
     }
