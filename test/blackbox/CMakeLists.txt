@@ -97,10 +97,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ###############################################################################
         # Unit tests
         ###############################################################################
-        set(BLACKBOXTEST_TEST_SOURCE BlackboxTests.cpp
+        set(BLACKBOXTESTS_TEST_SOURCE BlackboxTests.cpp
             NetworkConf.cpp
             )
-        set(BLACKBOXTESTS_SOURCE ${BLACKBOXTEST_TEST_SOURCE}
+        set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
             types/String.cpp
