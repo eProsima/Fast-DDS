@@ -21,10 +21,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        set(LOGTESTS_SOURCE
+        set(LOG_COMMON_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            LogTests.cpp)
+            )
+
+        set(LOGTESTS_TEST_SOURCE LogTests.cpp)
+
+        set(LOGTESTS_SOURCE
+            ${LOG_COMMON_SOURCE}
+            ${LOGTESTS_TEST_SOURCE})
 
         include_directories(mock/)
 
@@ -32,19 +38,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LogTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS} )
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(LogTests ${PRIVACY}
-                iphlpapi Shlwapi
-                )
-        endif()
-        add_gtest(LogTests SOURCES ${LOGTESTS_SOURCE})
+        target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            )
+        add_gtest(LogTests SOURCES ${LOGTESTS_TEST_SOURCE})
+
+        set(LOGFILETESTS_TEST_SOURCE LogFileTests.cpp)
 
         set(LOGFILETESTS_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${LOG_COMMON_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
-            LogFileTests.cpp)
+            ${LOGFILETESTS_TEST_SOURCE})
 
         # External sources
         if(TINYXML2_SOURCE_DIR)
@@ -59,17 +63,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(LogFileTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LogFileTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogFileTests ${GTEST_LIBRARIES} ${MOCKS} )
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(LogFileTests ${PRIVACY}
-                iphlpapi Shlwapi
-                )
-        endif()
-        target_link_libraries(LogFileTests ${PRIVACY} fastcdr)
-        if(TINYXML2_LIBRARY)
-            target_link_libraries(LogFileTests ${PRIVACY} ${TINYXML2_LIBRARY} )
-        endif()
-        add_gtest(LogFileTests SOURCES ${LOGFILETESTS_SOURCE})
+        target_link_libraries(LogFileTests ${GTEST_LIBRARIES} ${MOCKS}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${TINYXML2_LIBRARY}>:${TINYXML2_LIBRARY}>
+            fastcdr
+            )
+
+        add_gtest(LogFileTests SOURCES ${LOGFILETESTS_TEST_SOURCE})
 
     endif()
 endif()

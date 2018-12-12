@@ -54,9 +54,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
+            #${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            #${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            #${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
 
@@ -102,23 +102,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLProfileParserTests ${PRIVACY} fastcdr)
-        else()
-            target_link_libraries(XMLProfileParserTests ${PRIVACY} fastcdr)
-        endif()
-
-        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLProfileParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
-        endif()
-        if(TINYXML2_LIBRARY)
-            target_link_libraries(XMLProfileParserTests ${PRIVACY}
-                ${TINYXML2_LIBRARY}
-                )
-        endif()
+        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            $<$<BOOL:${TINYXML2_LIBRARY}>:${TINYXML2_LIBRARY}>
+            fastcdr
+            )
         add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
 
 
@@ -185,20 +177,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_BINARY_DIR}/include
             )
 
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
-        endif()
-
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLParserTests ${PRIVACY} fastcdr)
-        else()
-            target_link_libraries(XMLParserTests ${PRIVACY} fastcdr)
-        endif()
-
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} )
-        if(TINYXML2_LIBRARY)
-            target_link_libraries(XMLParserTests ${PRIVACY} ${TINYXML2_LIBRARY} )
-        endif()
+        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            $<$<BOOL:${TINYXML2_LIBRARY}>:${TINYXML2_LIBRARY}>
+            fastcdr
+        )
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
     endif()
 endif()

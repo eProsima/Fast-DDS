@@ -15,12 +15,12 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/log/FileConsumer.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
 #include <chrono>
 #include <sstream>
+#include <fstream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
