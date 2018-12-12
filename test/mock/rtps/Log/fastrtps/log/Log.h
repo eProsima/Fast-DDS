@@ -17,10 +17,12 @@
 #define _FASTRTPS_LOG_LOG_H_
 
 #include <fastrtps/utils/DBQueue.h>
+#include <fastrtps/fastrtps_dll.h>
 #include <memory>
 #include <regex>
 #include <thread>
 #include <atomic>
+#include <sstream>
 
 /**
  * eProsima log mock.
@@ -68,27 +70,27 @@ public:
     * Registers an user defined consumer to route log output. There is a default
     * stdout consumer active as default.
     */
-   static void RegisterConsumer(std::unique_ptr<LogConsumer>);
+   RTPS_DllAPI static void RegisterConsumer(std::unique_ptr<LogConsumer>);
    //! Removes all registered consumers, including the default stdout.
-   static void ClearConsumers();
+   RTPS_DllAPI static void ClearConsumers();
    //! Enables the reporting of filenames in log entries. Disabled by default.
-   static void ReportFilenames(bool);
+   RTPS_DllAPI static void ReportFilenames(bool);
    //! Enables the reporting of function names in log entries. Enabled by default when supported.
-   static void ReportFunctions(bool);
+   RTPS_DllAPI static void ReportFunctions(bool);
    //! Sets the verbosity level, allowing for messages equal or under that priority to be logged.
-   static void SetVerbosity(Log::Kind kind);
+   RTPS_DllAPI static void SetVerbosity(Log::Kind kind);
    //! Returns the current verbosity level.
-   static Log::Kind GetVerbosity();
+   RTPS_DllAPI static Log::Kind GetVerbosity();
    //! Sets a filter that will pattern-match against log categories, dropping any unmatched categories.
-   static void SetCategoryFilter    (const std::regex&);
+   RTPS_DllAPI static void SetCategoryFilter    (const std::regex&);
    //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
-   static void SetFilenameFilter    (const std::regex&);
+   RTPS_DllAPI static void SetFilenameFilter    (const std::regex&);
    //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
-   static void SetErrorStringFilter (const std::regex&);
+   RTPS_DllAPI static void SetErrorStringFilter (const std::regex&);
    //! Returns the logging engine to configuration defaults.
-   static void Reset();
+   RTPS_DllAPI static void Reset();
    //! Stops the logging thread. It will re-launch on the next call to a successful log macro.
-   static void KillThread();
+   RTPS_DllAPI static void KillThread();
    // Note: In VS2013, if you're linking this class statically, you will have to call KillThread before leaving
    // main, due to an unsolved MSVC bug.
 
@@ -113,7 +115,7 @@ public:
     *  * logWarning(cat, msg);
     *  * logError(cat, msg);
     */
-   static void QueueLog(const std::string&, const Log::Context&, Log::Kind);
+   RTPS_DllAPI static void QueueLog(const std::string&, const Log::Context&, Log::Kind);
 
    struct Resources
    {

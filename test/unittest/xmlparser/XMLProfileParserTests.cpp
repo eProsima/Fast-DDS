@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/log/Log.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/log/Log.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
