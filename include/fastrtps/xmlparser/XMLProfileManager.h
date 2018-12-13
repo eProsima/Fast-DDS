@@ -15,8 +15,6 @@
 #ifndef XML_PROFILE_MANAGER_H_
 #define XML_PROFILE_MANAGER_H_
 
-#include "stdio.h"
-#include <string>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -25,6 +23,9 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicPubSubType.h>
+
+#include <stdio.h>
+#include <string>
 #include <map>
 
 

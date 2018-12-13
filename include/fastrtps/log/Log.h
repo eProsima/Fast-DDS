@@ -76,7 +76,7 @@ public:
     * Registers an user defined consumer to route log output. There is a default
     * stdout consumer active as default.
     */
-   RTPS_DllAPI static void RegisterConsumer(std::unique_ptr<LogConsumer>);
+   RTPS_DllAPI static void RegisterConsumer(std::unique_ptr<LogConsumer>&);
    //! Removes all registered consumers, including the default stdout.
    RTPS_DllAPI static void ClearConsumers();
    //! Enables the reporting of filenames in log entries. Disabled by default.
@@ -127,7 +127,7 @@ private:
    struct Resources
    {
       DBQueue<Entry> mLogs;
-      std::vector<std::unique_ptr<LogConsumer> > mConsumers;
+      std::vector<std::unique_ptr<LogConsumer>> mConsumers;
 
       std::unique_ptr<std::thread> mLoggingThread;
 

@@ -113,6 +113,7 @@ set(${PROJECT_NAME}_source_files
     types/TypeNamesGenerator.cpp
     types/TypesBase.cpp
 
+    attributes/TopicAttributes.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosPolicies.cpp

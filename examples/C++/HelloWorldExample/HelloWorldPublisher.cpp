@@ -25,6 +25,8 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 
+#include <thread>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 

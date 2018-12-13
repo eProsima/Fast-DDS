@@ -28,7 +28,7 @@ Log::Resources::~Resources()
    Log::KillThread();
 }
 
-void Log::RegisterConsumer(std::unique_ptr<LogConsumer> consumer)
+void Log::RegisterConsumer(std::unique_ptr<LogConsumer>& consumer)
 {
    std::unique_lock<std::mutex> guard(mResources.mConfigMutex);
    mResources.mConsumers.emplace_back(std::move(consumer));

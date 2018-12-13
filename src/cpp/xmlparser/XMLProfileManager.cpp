@@ -15,13 +15,15 @@
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/log/Log.h>
+
 #include <cstdlib>
 #ifdef _WIN32
 #include <windows.h>
 #endif
-namespace eprosima {
-namespace fastrtps {
-namespace xmlparser {
+
+using namespace eprosima::fastrtps;
+using namespace ::xmlparser;
 
 std::map<std::string, up_participant_t> XMLProfileManager::m_participant_profiles;
 ParticipantAttributes default_participant_attributes;
@@ -503,7 +505,3 @@ XMLP_ret XMLProfileManager::extractTopicProfile(up_base_node_t& profile, const s
     }
     return XMLP_ret::XML_OK;
 }
-
-} /* xmlparser  */
-} /* namespace  */
-} /* namespace eprosima */

@@ -29,8 +29,6 @@
 #include "../qos/WriterQos.h"
 #include "../rtps/attributes/PropertyPolicy.h"
 
-
-
 namespace eprosima {
 namespace fastrtps{
 

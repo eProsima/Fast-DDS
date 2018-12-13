@@ -18,6 +18,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

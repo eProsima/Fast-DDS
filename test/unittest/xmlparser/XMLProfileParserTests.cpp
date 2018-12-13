@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/log/Log.h>
+#include <fastrtps/log/FileConsumer.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
@@ -24,23 +25,29 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace ::testing;
+
+// Initialize Log mock
+LogMock log_mock;
+std::function<void(std::unique_ptr<LogConsumer>&)> Log::RegisterConsumerFunc =
+    [](std::unique_ptr<LogConsumer>& c) { log_mock.RegisterConsumer(c); };
+std::function<void()> Log::ClearConsumersFunc = []() { log_mock.ClearConsumers(); };
 
 class XMLProfileParserTests: public ::testing::Test
 {
     public:
+
         XMLProfileParserTests()
         {
         }
 
         ~XMLProfileParserTests()
         {
-            Log::KillThread();
         }
 };
 
 TEST_F(XMLProfileParserTests, XMLoadProfiles)
 {
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
@@ -61,7 +68,6 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
 
 TEST_F(XMLProfileParserTests, XMLParserParcipant)
 {
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
 
@@ -131,7 +137,6 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
 {
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
 
@@ -200,7 +205,6 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
 
 TEST_F(XMLProfileParserTests, XMLParserPublisher)
 {
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string publisher_profile = std::string("test_publisher_profile");
     PublisherAttributes publisher_atts;
 
@@ -269,7 +273,6 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
 {
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string publisher_profile = std::string("test_publisher_profile");
     PublisherAttributes publisher_atts;
 
@@ -337,7 +340,6 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
 
 TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 {
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string subscriber_profile = std::string("test_subscriber_profile");
     SubscriberAttributes subscriber_atts;
 
@@ -403,7 +405,6 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
 {
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     std::string subscriber_profile = std::string("test_subscriber_profile");
     SubscriberAttributes subscriber_atts;
 
@@ -538,26 +539,25 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
+    EXPECT_CALL(log_mock, ClearConsumers()).Times(1);
+    EXPECT_CALL(log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
-    ASSERT_EQ(Log::mResources.mConsumers.size(), 1);
 }
 
 TEST_F(XMLProfileParserTests, log_inactive)
 {
+    EXPECT_CALL(log_mock, ClearConsumers()).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_inactive.xml");
-    ASSERT_EQ(Log::mResources.mConsumers.size(), 0);
 }
 
 TEST_F(XMLProfileParserTests, file_and_default)
 {
-    Log::Reset();
+    EXPECT_CALL(log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
-    ASSERT_EQ(Log::mResources.mConsumers.size(), 2);
 }
 
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

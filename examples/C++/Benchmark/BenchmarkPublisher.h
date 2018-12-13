@@ -37,6 +37,9 @@
 #include "Benchmark_medium.h"
 #include "Benchmark_big.h"
 
+#include <chrono>
+#include <atomic>
+
 class BenchMarkPublisher {
 public:
 	BenchMarkPublisher();
