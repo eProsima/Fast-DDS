@@ -64,6 +64,16 @@ protected:
     std::string get_key_from_hash(
             const DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
+            
+    void fill_minimal_information(
+            TypeInformation* info,
+            const TypeIdentifier* ident,
+            const TypeObject* obj) const;
+            
+    void fill_complete_information(
+            TypeInformation* info,
+            const TypeIdentifier* ident,
+            const TypeObject* obj) const;
 
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();
@@ -71,6 +81,9 @@ public:
     RTPS_DllAPI static ResponseCode delete_instance();
 
     ~TypeObjectFactory();
+
+    RTPS_DllAPI const TypeInformation* get_type_information(
+            const std::string &type_name) const;
 
     RTPS_DllAPI const TypeObject* get_type_object(
             const std::string& type_name,

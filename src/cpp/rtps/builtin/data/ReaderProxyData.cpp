@@ -147,67 +147,67 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
         ParameterVendorId_t p(PID_VENDORID,4);
         if (!p.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)
+    if(m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged())
     {
         if (!m_qos.m_durability.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged)
+    if(m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged())
     {
         if (!m_qos.m_durabilityService.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_deadline.sendAlways() || m_qos.m_deadline.hasChanged)
+    if(m_qos.m_deadline.sendAlways() || m_qos.m_deadline.hasChanged())
     {
         if (!m_qos.m_deadline.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_latencyBudget.sendAlways() || m_qos.m_latencyBudget.hasChanged)
+    if(m_qos.m_latencyBudget.sendAlways() || m_qos.m_latencyBudget.hasChanged())
     {
         if (!m_qos.m_latencyBudget.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_liveliness.sendAlways() || m_qos.m_liveliness.hasChanged)
+    if(m_qos.m_liveliness.sendAlways() || m_qos.m_liveliness.hasChanged())
     {
         if (!m_qos.m_liveliness.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_reliability.sendAlways() || m_qos.m_reliability.hasChanged)
+    if(m_qos.m_reliability.sendAlways() || m_qos.m_reliability.hasChanged())
     {
         if (!m_qos.m_reliability.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_lifespan.sendAlways() || m_qos.m_lifespan.hasChanged)
+    if(m_qos.m_lifespan.sendAlways() || m_qos.m_lifespan.hasChanged())
     {
         if (!m_qos.m_lifespan.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged)
+    if(m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged())
     {
         if (!m_qos.m_userData.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged)
+    if(m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged())
     {
         if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_ownership.sendAlways() || m_qos.m_ownership.hasChanged)
+    if(m_qos.m_ownership.sendAlways() || m_qos.m_ownership.hasChanged())
     {
         if (!m_qos.m_ownership.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_destinationOrder.sendAlways() || m_qos.m_destinationOrder.hasChanged)
+    if(m_qos.m_destinationOrder.sendAlways() || m_qos.m_destinationOrder.hasChanged())
     {
         if (!m_qos.m_destinationOrder.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_presentation.sendAlways() || m_qos.m_presentation.hasChanged)
+    if(m_qos.m_presentation.sendAlways() || m_qos.m_presentation.hasChanged())
     {
         if (!m_qos.m_presentation.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_partition.sendAlways() || m_qos.m_partition.hasChanged)
+    if(m_qos.m_partition.sendAlways() || m_qos.m_partition.hasChanged())
     {
         if (!m_qos.m_partition.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged)
+    if(m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged())
     {
         if (!m_qos.m_topicData.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_groupData.sendAlways() || m_qos.m_groupData.hasChanged)
+    if(m_qos.m_groupData.sendAlways() || m_qos.m_groupData.hasChanged())
     {
         if (!m_qos.m_groupData.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged)
+    if(m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged())
     {
         if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
@@ -240,7 +240,7 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     }
 #endif
 
-    if (m_qos.m_dataRepresentation.sendAlways() || m_qos.m_dataRepresentation.hasChanged)
+    if (m_qos.m_dataRepresentation.sendAlways() || m_qos.m_dataRepresentation.hasChanged())
     {
         if (!m_qos.m_dataRepresentation.addToCDRMessage(msg)) return false;
     }

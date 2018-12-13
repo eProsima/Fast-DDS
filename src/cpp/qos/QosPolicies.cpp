@@ -364,3 +364,51 @@ bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
     return true;
 }
+
+bool XTypes::TypeInformation::addToCDRMessage(CDRMessage_t* msg)
+{
+    size_t size = eprosima::fastrtps::TypeInformation::getCdrSerializedSize(*m_type_information) + 4;
+    SerializedPayload_t payload(static_cast<uint32_t>(size));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    ser.serialize_encapsulation();
+
+    m_type_information->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+    this->length = static_cast<uint16_t>(payload.length);
+    valid &= CDRMessage::addUInt16(msg, this->length);
+
+    return valid & CDRMessage::addData(msg, payload.data, payload.length);
+}
+
+bool XTypes::TypeInformation::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+{
+    SerializedPayload_t payload(size);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, size);
+
+    CDRMessage::readData(msg, payload.data, size); // Object that manages the raw buffer.
+
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+
+    // Deserialize encapsulation.
+    deser.read_encapsulation();
+    payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    try
+    {
+        m_type_information->deserialize(deser);
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}

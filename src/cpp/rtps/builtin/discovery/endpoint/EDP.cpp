@@ -140,6 +140,79 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         rpd.m_qos.m_dataRepresentation.m_value = att.dataRepresentationQos.m_value;
     }
 
+    for (DataRepresentationId_t representation : att.dataRepresentationQos.m_value)
+    {
+        switch (representation)
+        {
+            case DataRepresentationId_t::XCDR_DATA_REPRESENTATION:
+                {
+                    if (att.type_id.m_type_identifier->_d() == 0) // Not set
+                    {
+                        const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
+                                rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                        if (type_id == nullptr)
+                        {
+                            logError(EDP, "Type identifier " << rpd.typeName() << " isn't registered.");
+                        }
+                        else
+                        {
+                            *rpd.type_id().m_type_identifier = *type_id;
+                        }
+                    }
+                    else
+                    {
+                        rpd.type_id(att.type_id);
+                    }
+
+                    if (att.type.m_type_object->_d() == 0
+                        && (att.type_id.m_type_identifier->_d() == EK_MINIMAL
+                        || att.type_id.m_type_identifier->_d() == EK_COMPLETE)) // Not set
+                    {
+                        const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
+                                rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                        if (type_obj == nullptr)
+                        {
+                            logError(EDP, "Type object " << rpd.typeName() << " isn't registered.");
+                        }
+                        else
+                        {
+                            *rpd.type().m_type_object = *type_obj;
+                        }
+                    }
+                    else
+                    {
+                        rpd.type(att.type);
+                    }
+                }
+                break;
+            case DataRepresentationId_t::XML_DATA_REPRESENTATION:
+                // Not supported
+                break;
+            case DataRepresentationId_t::XCDR2_DATA_REPRESENTATION:
+                {
+                    if (att.type_information.isAssigned())
+                    {
+                        rpd.type_information(att.type_information);
+                    }
+                    else
+                    {
+                        const TypeInformation* type_info =
+                            TypeObjectFactory::GetInstance()->GetTypeInformation(rpd.typeName());
+                        if (type_info == nullptr)
+                        {
+                            logError(EDP, "Type information " << rpd.typeName() << " isn't registered.");
+                        }
+                        else
+                        {
+                            rpd.type_information() = *type_info;
+                        }
+                    }
+                }
+                break;
+            default: break;
+        }
+    }
+
     //ADD IT TO THE LIST OF READERPROXYDATA
     ParticipantProxyData pdata;
     if(!this->mp_PDP->addReaderProxyData(&rpd, pdata))
@@ -233,6 +306,79 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
     if (wqos.m_dataRepresentation.m_value.size() == 0 && att.dataRepresentationQos.m_value.size() > 0)
     {
         wpd.m_qos.m_dataRepresentation.m_value.push_back(*att.dataRepresentationQos.m_value.begin());
+    }
+
+    for (DataRepresentationId_t representation : att.dataRepresentationQos.m_value)
+    {
+        switch (representation)
+        {
+            case DataRepresentationId_t::XCDR_DATA_REPRESENTATION:
+                {
+                    if (att.type_id.m_type_identifier->_d() == 0) // Not set
+                    {
+                        const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
+                                wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                        if (type_id == nullptr)
+                        {
+                            logError(EDP, "Type identifier " << wpd.typeName() << " isn't registered.");
+                        }
+                        else
+                        {
+                            *wpd.type_id().m_type_identifier = *type_id;
+                        }
+                    }
+                    else
+                    {
+                        wpd.type_id(att.type_id);
+                    }
+
+                    if (att.type.m_type_object->_d() == 0
+                        && (att.type_id.m_type_identifier->_d() == EK_MINIMAL
+                        || att.type_id.m_type_identifier->_d() == EK_COMPLETE)) // Not set
+                    {
+                        const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
+                                wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                        if (type_obj == nullptr)
+                        {
+                            logError(EDP, "Type object " << wpd.typeName() << " isn't registered.");
+                        }
+                        else
+                        {
+                            *wpd.type().m_type_object = *type_obj;
+                        }
+                    }
+                    else
+                    {
+                        wpd.type(att.type);
+                    }
+                }
+                break;
+            case DataRepresentationId_t::XML_DATA_REPRESENTATION:
+                // Not supported
+                break;
+            case DataRepresentationId_t::XCDR2_DATA_REPRESENTATION:
+                {
+                    if (att.type_information.isAssigned())
+                    {
+                        wpd.type_information(att.type_information);
+                    }
+                    else
+                    {
+                        const TypeInformation* type_info =
+                            TypeObjectFactory::GetInstance()->GetTypeInformation(wpd.typeName());
+                        if (type_info == nullptr)
+                        {
+                            logError(EDP, "Type information " << wpd.typeName() << " isn't registered.");
+                        }
+                        else
+                        {
+                            wpd.type_information() = *type_info;
+                        }
+                    }
+                }
+                break;
+            default: break;
+        }
     }
 
     //ADD IT TO THE LIST OF READERPROXYDATA
@@ -551,6 +697,7 @@ bool EDP::checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderP
                 != rdata->m_qos.m_dataRepresentation.m_value.end())
             {
                 // Different Types but they are compatible.
+                return true;
             }
             else
             {

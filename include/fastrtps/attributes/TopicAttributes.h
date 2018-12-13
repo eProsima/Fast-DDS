@@ -119,10 +119,12 @@ public:
         DataRepresentationQosPolicy dataRepresentationQos;
         //!QOS Regarding the consistency data to check.
         TypeConsistencyEnforcementQosPolicy typeConsistencyQos;
-        //!Type Identifier
+        //!Type Identifier XTYPES 1.1
         TypeIdV1 type_id;
-        //!Type Object
+        //!Type Object XTYPES 1.1
         TypeObjectV1 type;
+        //!XTYPES 1.2
+        XTypes::TypeInformation type_information;
 
         /**
          * Method to check whether the defined QOS are correct.

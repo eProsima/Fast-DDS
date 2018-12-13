@@ -40,75 +40,75 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
     if (first_time)
     {
         m_durability = qos.m_durability;
-        m_durability.hasChanged = true;
+        m_durability.hasChanged(true);
     }
     if (first_time || m_deadline.period != qos.m_deadline.period)
     {
         m_deadline = qos.m_deadline;
-        m_deadline.hasChanged = true;
+        m_deadline.hasChanged(true);
     }
     if (m_latencyBudget.duration != qos.m_latencyBudget.duration)
     {
         m_latencyBudget = qos.m_latencyBudget;
-        m_latencyBudget.hasChanged = true;
+        m_latencyBudget.hasChanged(true);
     }
     if (m_liveliness.lease_duration != qos.m_liveliness.lease_duration)
     {
         m_liveliness.lease_duration = qos.m_liveliness.lease_duration;
-        m_liveliness.hasChanged = true;
+        m_liveliness.hasChanged(true);
     }
     if (first_time)
     {
         m_liveliness = qos.m_liveliness;
-        m_liveliness.hasChanged = true;
+        m_liveliness.hasChanged(true);
     }
     if (first_time)
     {
         m_reliability = qos.m_reliability;
-        m_reliability.hasChanged = true;
+        m_reliability.hasChanged(true);
     }
     if (first_time)
     {
         m_ownership = qos.m_ownership;
-        m_ownership.hasChanged = true;
+        m_ownership.hasChanged(true);
     }
     if (m_destinationOrder.kind != qos.m_destinationOrder.kind)
     {
         m_destinationOrder = qos.m_destinationOrder;
-        m_destinationOrder.hasChanged = true;
+        m_destinationOrder.hasChanged(true);
     }
     if (m_userData.getDataVec() != qos.m_userData.getDataVec())
     {
         m_userData = qos.m_userData;
-        m_userData.hasChanged = true;
+        m_userData.hasChanged(true);
     }
     if (first_time || m_timeBasedFilter.minimum_separation != qos.m_timeBasedFilter.minimum_separation)
     {
         m_timeBasedFilter = qos.m_timeBasedFilter;
-        m_timeBasedFilter.hasChanged = true;
+        m_timeBasedFilter.hasChanged(true);
     }
     if (first_time || m_presentation.access_scope != qos.m_presentation.access_scope ||
         m_presentation.coherent_access != qos.m_presentation.coherent_access ||
         m_presentation.ordered_access != qos.m_presentation.ordered_access)
     {
         m_presentation = qos.m_presentation;
-        m_presentation.hasChanged = true;
+        m_presentation.hasChanged(true);
     }
     if (qos.m_partition.getNames().size() > 0)
     {
         m_partition = qos.m_partition;
-        m_partition.hasChanged = true;
+        m_partition.hasChanged(true);
     }
 
     if (m_topicData.getValue() != qos.m_topicData.getValue())
     {
         m_topicData = qos.m_topicData;
-        m_topicData.hasChanged = true;
+        m_topicData.hasChanged(true);
     }
     if (m_groupData.getValue() != qos.m_groupData.getValue())
     {
         m_groupData = qos.m_groupData;
-        m_groupData.hasChanged = true;
+        m_groupData.hasChanged(true);
     }
     if (first_time || m_durabilityService.history_kind != qos.m_durabilityService.history_kind ||
         m_durabilityService.history_depth != qos.m_durabilityService.history_depth ||
@@ -119,17 +119,17 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
         )
     {
         m_durabilityService = qos.m_durabilityService;
-        m_durabilityService.hasChanged = true;
+        m_durabilityService.hasChanged(true);
     }
     if (m_lifespan.duration != qos.m_lifespan.duration)
     {
         m_lifespan = qos.m_lifespan;
-        m_lifespan.hasChanged = true;
+        m_lifespan.hasChanged(true);
     }
     if (qos.m_ownershipStrength.value != m_ownershipStrength.value)
     {
         m_ownershipStrength = qos.m_ownershipStrength;
-        m_ownershipStrength.hasChanged = true;
+        m_ownershipStrength.hasChanged(true);
     }
     if (first_time)
     {
@@ -142,7 +142,7 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
         *qos.m_dataRepresentation.m_value.begin() != *m_dataRepresentation.m_value.begin()))
     {
         m_dataRepresentation = qos.m_dataRepresentation;
-        m_dataRepresentation.hasChanged = true;
+        m_dataRepresentation.hasChanged(true);
     }
 }
 

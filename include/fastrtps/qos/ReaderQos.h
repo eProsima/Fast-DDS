@@ -94,6 +94,12 @@ public:
     TypeConsistencyEnforcementQosPolicy m_typeConsistency;
     //!Disable positive ACKs QoS
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;
+	//!Type Identifier XTYPES 1.1
+	TypeIdV1 type_id;
+	//!Type Object XTYPES 1.1
+	TypeObjectV1 type;
+	//!XTYPES 1.2
+	XTypes::TypeInformation type_information;
     /**
      * Set Qos from another class
      * @param readerqos Reference from a ReaderQos object.

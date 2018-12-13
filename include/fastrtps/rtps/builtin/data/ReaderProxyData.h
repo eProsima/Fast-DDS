@@ -239,7 +239,7 @@ class ReaderProxyData
             return m_topicKind;
         }
 
-        RTPS_DllAPI void type_id(TypeIdV1 type_id)
+        RTPS_DllAPI void type_id(const TypeIdV1& type_id)
         {
             m_type_id = type_id;
         }
@@ -254,7 +254,7 @@ class ReaderProxyData
             return m_type_id;
         }
 
-        RTPS_DllAPI void type(TypeObjectV1 type)
+        RTPS_DllAPI void type(const TypeObjectV1& type)
         {
             m_type = type;
         }
@@ -267,6 +267,21 @@ class ReaderProxyData
         RTPS_DllAPI TypeObjectV1& type()
         {
             return m_type;
+        }
+
+        RTPS_DllAPI void type_information(const XTypes::TypeInformation& type_information)
+        {
+            m_type_information = type_information;
+        }
+
+        RTPS_DllAPI XTypes::TypeInformation type_information() const
+        {
+            return m_type_information;
+        }
+
+        RTPS_DllAPI XTypes::TypeInformation& type_information()
+        {
+            return m_type_information;
         }
 
         RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
@@ -359,6 +374,8 @@ class ReaderProxyData
         TypeIdV1 m_type_id;
         //!Type Object
         TypeObjectV1 m_type;
+        //!Type Information
+        XTypes::TypeInformation m_type_information;
 };
 
 }

@@ -202,6 +202,72 @@ void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
     }
 }
 
+const TypeInformation* TypeObjectFactory::get_type_information(
+        const std::string &type_name) const
+{
+    const TypeIdentifier* comp_identifier = get_type_identifier(type_name, true);
+    const TypeIdentifier* min_identifier = get_type_identifier(type_name, false);
+    if (comp_identifier == nullptr && min_identifier == nullptr)
+    {
+        return nullptr;
+    }
+
+    TypeInformation *information = new TypeInformation();
+
+    if (min_identifier != nullptr)
+    {
+        const TypeObject* object = get_type_object(min_identifier);
+        fill_minimal_information(information, min_identifier, object);
+    }
+
+    if (comp_identifier != nullptr)
+    {
+        const TypeObject* object = get_type_object(comp_identifier);
+        fill_minimal_information(information, comp_identifier, object);
+    }
+
+    return information;
+}
+
+void TypeObjectFactory::fill_minimal_information(
+        TypeInformation *info,
+        const TypeIdentifier* ident,
+        const TypeObject* obj) const
+{
+    info->minimal().typeid_with_size().type_id(*ident);
+
+    //switch(ident->_d())
+    //{
+    //
+    //}
+
+    //info->minimal().typeid_with_size().typeobject_serialized_size(0); // TODO?
+    //info->minimal().dependent_typeid_count(ident->)
+}
+
+void TypeObjectFactory::fill_complete_information(
+        TypeInformation *info,
+        const TypeIdentifier* ident,
+        const TypeObject* obj) const
+{
+    info->complete().typeid_with_size().type_id(*ident);
+
+    if (obj == nullptr)
+    {
+        info->complete().dependent_typeid_count(0);
+        info->complete().typeid_with_size().typeobject_serialized_size(0);
+    }
+    else
+    {
+        info->complete().typeid_with_size().typeobject_serialized_size(TypeObject::getCdrSerializedSize(*obj));
+    }
+
+    switch(ident->_d())
+    {
+        case EK
+    }
+}
+
 const TypeObject* TypeObjectFactory::get_type_object(const std::string& type_name, bool complete) const
 {
     const TypeIdentifier* identifier = get_type_identifier(type_name, complete);

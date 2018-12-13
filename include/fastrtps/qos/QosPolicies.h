@@ -40,20 +40,24 @@ class QosPolicy
 {
 public:
     QosPolicy()
-        : hasChanged(false),
+        : m_hasChanged(false),
           m_sendAlways(false)
     {}
     QosPolicy(bool b_sendAlways)
-        : hasChanged(false),
+        : m_hasChanged(false),
           m_sendAlways(b_sendAlways)
     {}
     virtual ~ QosPolicy(){}
 
     bool operator==(const QosPolicy& b) const
     {
-        return (this->hasChanged == b.hasChanged) &&
+        return (this->m_hasChanged == b.m_hasChanged) &&
                (this->m_sendAlways == b.m_sendAlways);
     }
+
+    virtual bool hasChanged() const { return m_hasChanged; }
+    virtual bool& hasChanged() { return m_hasChanged; }
+    virtual void hasChanged(bool changed) { m_hasChanged = changed; }
 
     /**
      * Whether it should always be sent.
@@ -61,10 +65,8 @@ public:
      */
     virtual bool sendAlways() const {return m_sendAlways;}
 
-public:
-    bool hasChanged;
-
 protected:
+    bool m_hasChanged;
     bool m_sendAlways;
 };
 
@@ -575,7 +577,7 @@ public:
      * Appends a name to the list of partition names.
      * @param name Name to append.
      */
-    RTPS_DllAPI inline void push_back(const char* name){ names.push_back(std::string(name)); hasChanged=true; }
+    RTPS_DllAPI inline void push_back(const char* name){ names.push_back(std::string(name)); hasChanged(true); }
     /**
      * Clears list of partition names
      */
@@ -589,7 +591,7 @@ public:
      * Overrides partition names
      * @param nam Vector of partition name strings.
      */
-    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; hasChanged=true; }
+    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; hasChanged(true); }
 
 private:
     std::vector<std::string> names;
@@ -946,9 +948,9 @@ class PublishModeQosPolicy : public QosPolicy {
 * Enum DataRepresentationId, different kinds of topic data representation
 */
 typedef enum DataRepresentationId : int16_t {
-    XCDR_DATA_REPRESENTATION = 0,	//!< Extended CDR Encoding version 1
-    XML_DATA_REPRESENTATION = 1,	//!< XML Data Representation
-    XCDR2_DATA_REPRESENTATION= 2	//!< Extended CDR Enconding version 2
+    XCDR_DATA_REPRESENTATION = 0,   //!< Extended CDR Encoding version 1
+    XML_DATA_REPRESENTATION = 1,    //!< XML Data Representation
+    XCDR2_DATA_REPRESENTATION= 2    //!< Extended CDR Encoding version 2
 }DataRepresentationId_t;
 
 /**
@@ -1181,6 +1183,95 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
 };
+
+/**
+* Class XTypes::TypeInformation
+*/
+namespace XTypes
+{
+
+class TypeInformation : private Parameter_t, public QosPolicy
+{
+public:
+    RTPS_DllAPI TypeInformation() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false)
+    {
+        //m_type_information = new eprosima::fastrtps::TypeInformation();
+        m_type_information = nullptr;
+        m_is_assigned = false;
+    }
+
+    RTPS_DllAPI TypeInformation(const TypeInformation& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_information = new eprosima::fastrtps::TypeInformation();
+        *m_type_information = *type.m_type_information;
+        m_is_assigned = true;
+    }
+
+    RTPS_DllAPI TypeInformation(TypeInformation&& type)
+         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+    {
+        m_type_information = type.m_type_information;
+        type.m_type_information = nullptr;
+        m_is_assigned = m_type_information != nullptr;
+    }
+
+    RTPS_DllAPI TypeInformation& operator=(const TypeInformation& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        delete m_type_information;
+        m_type_information = new eprosima::fastrtps::TypeInformation();
+        *m_type_information = *type.m_type_information;
+        m_is_assigned = true;
+
+        return *this;
+    }
+
+    RTPS_DllAPI TypeInformation& operator=(TypeInformation&& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        m_type_information = type.m_type_information;
+        type.m_type_information = nullptr;
+        m_is_assigned = m_type_information != nullptr;
+
+        return *this;
+    }
+
+    virtual RTPS_DllAPI ~TypeInformation()
+    {
+        delete m_type_information;
+    }
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+
+    RTPS_DllAPI bool isAssigned() const { return m_is_assigned; }
+
+    RTPS_DllAPI TypeInformation& operator=(const eprosima::fastrtps::TypeInformation& type_info)
+    {
+        delete m_type_information;
+        m_type_information = new eprosima::fastrtps::TypeInformation();
+        *m_type_information = type_info;
+        m_is_assigned = true;
+        return *this;
+    }
+
+private:
+    eprosima::fastrtps::TypeInformation* m_type_information;
+    bool m_is_assigned;
+};
+
+} // namespace XTypes
 
 }
 }
