@@ -24,9 +24,21 @@
  * eProsima log mock.
  */
 
-#define logInfo(cat,msg) void(0)
-#define logWarning(cat,msg) void(0)
-#define logError(cat,msg) void(0)
+#define logInfo(cat,msg)                                                                                \
+    {                                                                                                   \
+        NulStreambuf null_buffer;                                                                       \
+        std::ostream null_stream(&null_buffer);                                                         \
+        null_stream << msg;                                                                             \
+    }
+
+#define logWarning(cat,msg) logInfo(cat,msg)
+#define logError(cat,msg) logInfo(cat,msg)
+
+class NulStreambuf : public std::streambuf
+{
+protected:
+    int overflow(int c) { return c; }
+};
 
 namespace eprosima {
 namespace fastrtps {
@@ -54,7 +66,13 @@ using ::testing::Invoke;
 class LogMock
 {
     public:
-        MOCK_METHOD1(RegisterConsumer, void(std::unique_ptr<LogConsumer>&&));
+        // r-value support for mocked function.
+        void RegisterConsumer(std::unique_ptr<LogConsumer>&& p)
+        {
+            RegisterConsumer(p);
+        }
+
+        MOCK_METHOD1(RegisterConsumer, void(std::unique_ptr<LogConsumer>&));
 
         MOCK_METHOD0(ClearConsumers, void());
 };
