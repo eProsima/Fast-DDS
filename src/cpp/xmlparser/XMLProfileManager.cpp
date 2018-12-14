@@ -348,6 +348,7 @@ XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::
 
 XMLP_ret XMLProfileManager::extractParticipantProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_participant_t p_node_part = dynamic_cast<p_node_participant_t>(profile.get());
@@ -378,6 +379,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(up_base_node_t& profile, c
 
 XMLP_ret XMLProfileManager::extractPublisherProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_publisher_t p_node_part = dynamic_cast<p_node_publisher_t>(profile.get());
@@ -408,6 +410,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(up_base_node_t& profile, con
 
 XMLP_ret XMLProfileManager::extractSubscriberProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_subscriber_t p_node_part = dynamic_cast<p_node_subscriber_t>(profile.get());
@@ -478,6 +481,7 @@ p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(const std::string
 
 XMLP_ret XMLProfileManager::extractTopicProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_topic_t p_node_topic = dynamic_cast<p_node_topic_t>(profile.get());

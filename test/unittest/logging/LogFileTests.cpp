@@ -29,9 +29,8 @@ TEST(LogFileTests, file_consumer)
     // First remove previous executions file
     std::remove("file_consumer.log");
 
-    std::unique_ptr<LogConsumer> fileConsumer(new FileConsumer("file_consumer.log"));
     Log::ClearConsumers();
-    Log::RegisterConsumer(fileConsumer);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new FileConsumer("file_consumer.log")));
     Log::SetVerbosity(Log::Info);
 
     vector<unique_ptr<thread>> threads;
@@ -65,9 +64,8 @@ TEST(LogFileTests, file_consumer_append)
     // First remove previous executions file
     std::remove("append.log");
 
-    std::unique_ptr<LogConsumer> fileConsumer(new FileConsumer("append.log", true));
     Log::ClearConsumers();
-    Log::RegisterConsumer(fileConsumer);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new FileConsumer("append.log", true)));
     Log::SetVerbosity(Log::Info);
 
     vector<unique_ptr<thread>> threads;
@@ -84,8 +82,7 @@ TEST(LogFileTests, file_consumer_append)
 
     Log::ClearConsumers(); // Force close file
 
-    std::unique_ptr<LogConsumer> fileConsumer2(new FileConsumer("append.log", true));
-    Log::RegisterConsumer(fileConsumer2);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new FileConsumer("append.log", true)));
 
     vector<unique_ptr<thread>> threads2;
     for (int i = 0; i != 5; i++)

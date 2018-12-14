@@ -29,8 +29,8 @@ using namespace ::testing;
 
 // Initialize Log mock
 LogMock log_mock;
-std::function<void(std::unique_ptr<LogConsumer>&)> Log::RegisterConsumerFunc =
-    [](std::unique_ptr<LogConsumer>& c) { log_mock.RegisterConsumer(c); };
+std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc =
+    [](std::unique_ptr<LogConsumer>&& c) { log_mock.RegisterConsumer(std::move(c)); };
 std::function<void()> Log::ClearConsumersFunc = []() { log_mock.ClearConsumers(); };
 
 class XMLProfileParserTests: public ::testing::Test
@@ -559,5 +559,6 @@ TEST_F(XMLProfileParserTests, file_and_default)
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
+    testing::Mock::AllowLeak(&log_mock); // log_mock is global, is that the reason?
     return RUN_ALL_TESTS();
 }

@@ -1628,6 +1628,7 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
 // TODO
 XMLP_ret XMLParser::getXMLOctetVector(tinyxml2::XMLElement *elem, std::vector<octet> &/*octetVector*/, uint8_t /*ident*/)
 {
+    (void)(elem);
     logError(XMLPARSER, "Tag '" << elem->Value() << "' octetVector do not supported for now");
     return XMLP_ret::XML_OK;
 }
@@ -1712,4 +1713,3 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     *s = text;
     return XMLP_ret::XML_OK;
 }
-

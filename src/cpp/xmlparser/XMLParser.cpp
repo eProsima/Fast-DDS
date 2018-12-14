@@ -1558,8 +1558,7 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
 
         if (std::strcmp(classStr.c_str(), "StdoutConsumer") == 0)
         {
-            std::unique_ptr<LogConsumer> new_consumer(new StdoutConsumer);
-            Log::RegisterConsumer(new_consumer);
+            Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new StdoutConsumer));
         }
         else if (std::strcmp(classStr.c_str(), "FileConsumer") == 0)
         {
@@ -1569,8 +1568,7 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
             tinyxml2::XMLElement* property = consumer.FirstChildElement(PROPERTY);
             if (nullptr == property)
             {
-                std::unique_ptr<LogConsumer> new_consumer(new FileConsumer);
-                Log::RegisterConsumer(new_consumer);
+                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new FileConsumer));
             }
             else
             {
@@ -1620,8 +1618,7 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
                     property = property->NextSiblingElement(PROPERTY);
                 }
 
-                std::unique_ptr<LogConsumer> new_consumer(new FileConsumer(outputFile, append));
-                Log::RegisterConsumer(new_consumer);
+                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new FileConsumer(outputFile, append)));
             }
         }
         else

@@ -31,9 +31,8 @@ class LogTests: public ::testing::Test
    LogTests()
    {
        mockConsumer = new MockConsumer();
-       std::unique_ptr<LogConsumer> consumer(mockConsumer);
-       std::unique_ptr<LogConsumer> defaultConsumer(new StdoutConsumer);
-       Log::RegisterConsumer(consumer);
+
+       Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
        Log::SetVerbosity(Log::Info);
    }
 

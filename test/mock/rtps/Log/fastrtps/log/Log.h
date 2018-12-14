@@ -24,9 +24,9 @@
  * eProsima log mock.
  */
 
-#define logInfo(cat,msg) do {} while(0)
-#define logWarning(cat,msg) do {} while(0)
-#define logError(cat,msg) do {} while(0)
+#define logInfo(cat,msg) void(0)
+#define logWarning(cat,msg) void(0)
+#define logError(cat,msg) void(0)
 
 namespace eprosima {
 namespace fastrtps {
@@ -42,18 +42,19 @@ class Log
 {
     public:
 
-        static std::function<void(std::unique_ptr<LogConsumer>&)> RegisterConsumerFunc;
-        static void RegisterConsumer(std::unique_ptr<LogConsumer>& c) { RegisterConsumerFunc(c); }
+        static std::function<void(std::unique_ptr<LogConsumer>&&)> RegisterConsumerFunc;
+        static void RegisterConsumer(std::unique_ptr<LogConsumer>&& c) { RegisterConsumerFunc(std::move(c)); }
 
         static std::function<void()> ClearConsumersFunc;
         static void ClearConsumers() { ClearConsumersFunc(); }
 };
 
+using ::testing::_;
+using ::testing::Invoke;
 class LogMock
 {
     public:
-
-        MOCK_METHOD1(RegisterConsumer, void(std::unique_ptr<LogConsumer>&));
+        MOCK_METHOD1(RegisterConsumer, void(std::unique_ptr<LogConsumer>&&));
 
         MOCK_METHOD0(ClearConsumers, void());
 };
