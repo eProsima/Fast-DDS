@@ -39,6 +39,7 @@ class FileConsumer : public LogConsumer
 
 MATCHER(IsFileConsumer, "Argument is a FileConsumer object?")
 {
+    *result_listener << (typeid(*arg.get()) == typeid(FileConsumer));
     return typeid(*arg.get()) == typeid(FileConsumer);
 }
 

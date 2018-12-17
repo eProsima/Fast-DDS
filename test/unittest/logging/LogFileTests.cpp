@@ -53,7 +53,7 @@ TEST(LogFileTests, file_consumer)
 
     for (int i = 0; i != 5; ++i)
     {
-        std::string str("I'm thread " + i);
+        std::string str("I'm thread " + std::to_string(i));
         std::size_t found = content.find(str);
         ASSERT_TRUE(found != std::string::npos);
     }
@@ -104,7 +104,7 @@ TEST(LogFileTests, file_consumer_append)
 
     for (int i = 0; i != 10; ++i)
     {
-        std::string str("I'm thread " + i);
+        std::string str("I'm thread " + std::to_string(i));
         std::size_t found = content.find(str);
         ASSERT_TRUE(found != std::string::npos);
     }

@@ -13,7 +13,7 @@ FileConsumer::FileConsumer(const std::string &filename, bool append)
     : mOutputFile(filename)
     , mAppend(append)
 {
-    if (append)
+    if (mAppend)
     {
         mFile.open(mOutputFile, std::ios::out | std::ios::app);
     }
