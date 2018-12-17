@@ -28,10 +28,10 @@ using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 
 // Initialize Log mock
-LogMock log_mock;
+LogMock *log_mock;
 std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc =
-    [](std::unique_ptr<LogConsumer>&& c) { log_mock.RegisterConsumer(std::move(c)); };
-std::function<void()> Log::ClearConsumersFunc = []() { log_mock.ClearConsumers(); };
+    [](std::unique_ptr<LogConsumer>&& c) { log_mock->RegisterConsumer(std::move(c)); };
+std::function<void()> Log::ClearConsumersFunc = []() { log_mock->ClearConsumers(); };
 
 class XMLProfileParserTests: public ::testing::Test
 {
@@ -39,10 +39,12 @@ class XMLProfileParserTests: public ::testing::Test
 
         XMLProfileParserTests()
         {
+            log_mock = new LogMock();
         }
 
         ~XMLProfileParserTests()
         {
+            delete log_mock;
         }
 };
 
@@ -539,26 +541,25 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 {
-    EXPECT_CALL(log_mock, ClearConsumers()).Times(1);
-    EXPECT_CALL(log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
+    EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
+    EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
 }
 
 TEST_F(XMLProfileParserTests, log_inactive)
 {
-    EXPECT_CALL(log_mock, ClearConsumers()).Times(1);
+    EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_inactive.xml");
 }
 
 TEST_F(XMLProfileParserTests, file_and_default)
 {
-    EXPECT_CALL(log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
+    EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
 }
 
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
-    testing::Mock::AllowLeak(&log_mock); // log_mock is global, is that the reason?
     return RUN_ALL_TESTS();
 }
