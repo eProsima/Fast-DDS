@@ -41,7 +41,7 @@ namespace fastrtps{
 namespace rtps {
 
 std::mutex RTPSDomain::m_mutex;
-std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(0);
+std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
 std::vector<RTPSDomain::t_p_RTPSParticipant> RTPSDomain::m_RTPSParticipants;
 std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
 
