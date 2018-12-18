@@ -77,17 +77,21 @@ macro(eprosima_find_thirdparty package thirdparty_name)
     if(NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE)))
 
         option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
+        option(THIRDPARTY_UPDATE "Activate the auto update of internal thirdparties" ON)
 
         if(THIRDPARTY OR THIRDPARTY_${package})
-            execute_process(
-                COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                RESULT_VARIABLE EXECUTE_RESULT
-                )
+            if(THIRDPARTY_UPDATE OR NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}")
+                message(STATUS "${package} thirdparty is being updated...")
+                execute_process(
+                    COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                    RESULT_VARIABLE EXECUTE_RESULT
+                    )
 
-            if(EXECUTE_RESULT EQUAL 0)
-            else()
-                message(FATAL_ERROR "Cannot configure Git submodule ${package}")
+                if(EXECUTE_RESULT EQUAL 0)
+                else()
+                    message(FATAL_ERROR "Cannot configure Git submodule ${package}")
+                endif()
             endif()
             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name})
             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name})
