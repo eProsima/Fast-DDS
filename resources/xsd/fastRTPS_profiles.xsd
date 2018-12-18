@@ -142,33 +142,33 @@
 
     <xs:complexType name="udpv4LocatorType">
         <xs:all minOccurs="0">
-            <xs:element name="port" type="uint32Type"/>
-            <xs:element name="address" type="stringType"/>
+            <xs:element name="port" type="uint32Type" minOccurs="0"/>
+            <xs:element name="address" type="stringType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
     <xs:complexType name="udpv6LocatorType">
         <xs:all minOccurs="0">
-            <xs:element name="port" type="uint32Type"/>
-            <xs:element name="address" type="stringType"/>
+            <xs:element name="port" type="uint32Type" minOccurs="0"/>
+            <xs:element name="address" type="stringType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
     <xs:complexType name="tcpv4LocatorType">
         <xs:all minOccurs="0">
-            <xs:element name="port" type="uint16Type"/>
-            <xs:element name="physical_port" type="uint16Type"/>
-            <xs:element name="address" type="stringType"/>
-            <xs:element name="wan_address" type="stringType"/>
-            <xs:element name="unique_lan_id" type="stringType"/>
+            <xs:element name="port" type="uint16Type" minOccurs="0"/>
+            <xs:element name="physical_port" type="uint16Type" minOccurs="0"/>
+            <xs:element name="address" type="stringType" minOccurs="0"/>
+            <xs:element name="wan_address" type="stringType" minOccurs="0"/>
+            <xs:element name="unique_lan_id" type="stringType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
     <xs:complexType name="tcpv6LocatorType">
         <xs:choice>
-            <xs:element name="port" type="uint16Type"/>
-            <xs:element name="physical_port" type="uint16Type"/>
-            <xs:element name="address" type="stringType"/>
+            <xs:element name="port" type="uint16Type" minOccurs="0"/>
+            <xs:element name="physical_port" type="uint16Type" minOccurs="0"/>
+            <xs:element name="address" type="stringType" minOccurs="0"/>
         </xs:choice>
     </xs:complexType>
 

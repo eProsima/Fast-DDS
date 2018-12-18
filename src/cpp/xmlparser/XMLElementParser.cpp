@@ -1478,7 +1478,6 @@ XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishMode
 
 XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &duration, uint8_t ident)
 {
-    //ARCE: 
     /*
         <xs:complexType name="durationType">
             <xs:all>
@@ -1488,61 +1487,62 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
         </xs:complexType>
     */
 
-    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
-
-    if (nullptr != (p_aux0 = elem->FirstChildElement(BY_NAME)))
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
-        /*<xs:simpleType name="durationTypeEnum">
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="INFINITE"/>
-            <xs:enumeration value="ZERO"/>
-            <xs:enumeration value="INVALID"/>
-          </xs:restriction>
-        </xs:simpleType>*/
-        const char* text = p_aux0->GetText();
-        if (nullptr == text)
+        name = p_aux0->Name();
+        if (strcmp(name, SECONDS) == 0)
         {
-            logError(XMLPARSER, "Node '" << BY_NAME << "' without content");
-            return XMLP_ret::XML_ERROR;
+            /*
+                <xs:simpleType name="nonNegativeInteger_Duration_SEC">
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_SEC|([0-9])*)?"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            */
+            const char* text = p_aux0->GetText();
+            if (nullptr == text)
+            {
+                logError(XMLPARSER, "Node 'SECONDS' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+            if (strcmp(text, DURATION_INFINITY) == 0)
+                duration = c_TimeInfinite;
+            if (strcmp(text, DURATION_INFINITE_SEC) == 0)
+                duration.seconds = c_TimeInfinite.seconds;
+            else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
+            {
+                logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
+                return XMLP_ret::XML_ERROR;
+            }
         }
-             if (strcmp(text, _INFINITE) == 0) duration = c_TimeInfinite;
-        else if (strcmp(text,      ZERO) == 0) duration = c_TimeZero;
-        else if (strcmp(text,   INVALID) == 0) duration = c_TimeInvalid;
-        else
+        else if (strcmp(name, FRACTION) == 0)
         {
-            logError(XMLPARSER, "Node '" << BY_NAME << "' bad content");
-            return XMLP_ret::XML_ERROR;
-        }
-
-        // Both ways forbidden
-        if (nullptr != (p_aux0 = elem->FirstChildElement(BY_VAL)))
-        {
-            logError(XMLPARSER, "Node '" << BY_NAME << "' with several definitions");
-            return XMLP_ret::XML_ERROR;
+            /*
+                <xs:simpleType name="nonNegativeInteger_Duration_NSEC">
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="(DURATION_INFINITY|DURATION_INFINITE_NSEC|([0-9])*)?"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            */
+            const char* text = p_aux0->GetText();
+            if (nullptr == text)
+            {
+                logError(XMLPARSER, "Node 'FRACTION' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+            if (strcmp(text, DURATION_INFINITY) == 0)
+                duration = c_TimeInfinite;
+            if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
+                duration.fraction = c_TimeInfinite.fraction;
+            else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.fraction, ident))
+            {
+                logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
+                return XMLP_ret::XML_ERROR;
+            }
         }
     }
-
-    if (nullptr != (p_aux0 = elem->FirstChildElement(BY_VAL)))
-    {
-        /*<xs:complexType name="durationTypeValue">
-          <xs:sequence>
-            <xs:element name="seconds" type="int32Type"/>
-            <xs:element name="fraction" type="uint32Type"/>
-          </xs:sequence>
-        </xs:complexType>*/
-
-        // seconds - uint32Type
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(SECONDS)))
-        {
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux1, &duration.seconds, ident)) return XMLP_ret::XML_ERROR; // TODO: getXMLUint
-        }
-        // fraction - uint32Type
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(FRACTION)))
-        {
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &duration.fraction, ident)) return XMLP_ret::XML_ERROR;
-        }
-    }
-
     return XMLP_ret::XML_OK;
 }
 
@@ -1635,6 +1635,202 @@ XMLP_ret XMLParser::getXMLReaderTimes(tinyxml2::XMLElement *elem, ReaderTimes &t
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+{
+    /*
+        <xs:complexType name="udpv4LocatorType">
+            <xs:all minOccurs="0">
+                <xs:element name="port" type="uint32Type" minOccurs="0"/>
+                <xs:element name="address" type="stringType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    locator.kind = LOCATOR_KIND_UDPv4;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, PORT) == 0)
+        {
+            // port - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, ADDRESS) == 0)
+        {
+            // address - stringType
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setIPv4(locator, s);
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'udpv4LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+{
+    /*
+        <xs:complexType name="udpv6LocatorType">
+            <xs:all minOccurs="0">
+                <xs:element name="port" type="uint32Type" minOccurs="0"/>
+                <xs:element name="address" type="stringType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    locator.kind = LOCATOR_KIND_UDPv6;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, PORT) == 0)
+        {
+            // port - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, ADDRESS) == 0)
+        {
+            // address - stringType
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setIPv6(locator, s);
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'udpv6LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+{
+    /*
+        <xs:complexType name="tcpv4LocatorType">
+            <xs:all minOccurs="0">
+                <xs:element name="port" type="uint16Type" minOccurs="0"/>
+                <xs:element name="physical_port" type="uint16Type" minOccurs="0"/>
+                <xs:element name="address" type="stringType" minOccurs="0"/>
+                <xs:element name="wan_address" type="stringType" minOccurs="0"/>
+                <xs:element name="unique_lan_id" type="stringType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    locator.kind = LOCATOR_KIND_TCPv4;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, PORT) == 0)
+        {
+            // port - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PHYSICAL_PORT) == 0)
+        {
+            // port - uint32Type
+            uint16_t port(0);
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setPhysicalPort(locator, port);
+        }
+        else if (strcmp(name, ADDRESS) == 0)
+        {
+            // address - stringType
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setIPv4(locator, s);
+        }
+        else if (strcmp(name, WAN_ADDRESS) == 0)
+        {
+            // address - stringType
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setWan(locator, s);
+        }
+        else if (strcmp(name, UNIQUE_LAN_ID) == 0)
+        {
+            // address - stringType
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setLanID(locator, s);
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'tcpv4LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident)
+{
+    /*
+        <xs:complexType name="tcpv6LocatorType">
+            <xs:choice>
+                <xs:element name="port" type="uint16Type" minOccurs="0"/>
+                <xs:element name="physical_port" type="uint16Type" minOccurs="0"/>
+                <xs:element name="address" type="stringType" minOccurs="0"/>
+            </xs:choice>
+        </xs:complexType>
+    */
+
+    locator.kind = LOCATOR_KIND_TCPv6;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, PORT) == 0)
+        {
+            // port - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PHYSICAL_PORT) == 0)
+        {
+            // port - uint32Type
+            uint16_t port(0);
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setPhysicalPort(locator, port);
+        }
+        else if (strcmp(name, ADDRESS) == 0)
+        {
+            // address - stringType
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+                return XMLP_ret::XML_ERROR;
+            IPLocator::setIPv6(locator, s);
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'tcpv6LocatorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t &locatorList, uint8_t ident)
 {
     /*
@@ -1644,9 +1840,7 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
             </xs:sequence>
         </xs:complexType>
     */
-
-    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr, *p_aux2 = nullptr;
-
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
     p_aux0 = elem->FirstChildElement(LOCATOR);
     if (nullptr == p_aux0)
     {
@@ -1656,7 +1850,6 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
 
     while (nullptr != p_aux0)
     {
-        //ARCE:
         /*
             <xs:complexType name="locatorType">
                 <xs:choice>
@@ -1668,132 +1861,30 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
             </xs:complexType>
         */
         Locator_t loc;
-        // kind
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(KIND)))
+        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(UDPv4_LOCATOR)))
         {
-            /*<xs:simpleType name="locatorKindType">
-              <xs:restriction base="xs:string">
-                <xs:enumeration value="RESERVED"/>
-                <xs:enumeration value="UDPv4"/>
-                <xs:enumeration value="TCPv4"/>
-                <xs:enumeration value="UDPv6"/>
-                <xs:enumeration value="TCPv6"/>
-              </xs:restriction>
-            </xs:simpleType>*/
-            const char* text = p_aux1->GetText();
-            if (nullptr == text)
-            {
-                logError(XMLPARSER, "Node '" << KIND << "' without content");
+            if (XMLP_ret::XML_OK != getXMLLocatorUDPv4(p_aux1, loc, ident + 1))
                 return XMLP_ret::XML_ERROR;
-            }
-            if (strcmp(text, RESERVED) == 0)
-                loc.kind = LOCATOR_KIND_RESERVED;
-            else if (strcmp(text, UDPv4) == 0)
-                loc.kind = LOCATOR_KIND_UDPv4;
-            else if (strcmp(text, UDPv6) == 0)
-                loc.kind = LOCATOR_KIND_UDPv6;
-            else if (strcmp(text, TCPv4) == 0)
-                loc.kind = LOCATOR_KIND_TCPv4;
-            else if (strcmp(text, TCPv6) == 0)
-                loc.kind = LOCATOR_KIND_TCPv6;
-            else
-            {
-                logError(XMLPARSER, "Node '" << KIND << "' bad content");
-                return XMLP_ret::XML_ERROR;
-            }
         }
-
-        // port - uint32Type
-        bool bPortOption = false;
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(PORT)))
+        else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(UDPv6_LOCATOR)))
         {
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &loc.port, ident + 1))
+            if (XMLP_ret::XML_OK != getXMLLocatorUDPv6(p_aux1, loc, ident + 1))
                 return XMLP_ret::XML_ERROR;
-            bPortOption = true;
         }
-
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(PORTS)))
+        else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(TCPv4_LOCATOR)))
         {
-            if (bPortOption)
-            {
-                logError(XMLPARSER, "Incompatible ports configuration ( 'port' <-> 'ports (physical_port & logical port)'.");
+            if (XMLP_ret::XML_OK != getXMLLocatorTCPv4(p_aux1, loc, ident + 1))
                 return XMLP_ret::XML_ERROR;
-            }
-
-            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(LOGICAL_PORT)))
-            {
-                uint16_t aux;
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &aux, ident + 1))
-                    return XMLP_ret::XML_ERROR;
-                IPLocator::setLogicalPort(loc, aux);
-            }
-
-            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(PHYSICAL_PORT)))
-            {
-                uint16_t aux;
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux2, &aux, ident + 1))
-                    return XMLP_ret::XML_ERROR;
-                IPLocator::setPhysicalPort(loc, aux);
-            }
         }
-
-        /// address - stringType
-        bool bAddressOption = false;
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(ADDRESS)))
+        else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(TCPv6_LOCATOR)))
         {
-            std::string s = "";
-            if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1))
+            if (XMLP_ret::XML_OK != getXMLLocatorTCPv6(p_aux1, loc, ident + 1))
                 return XMLP_ret::XML_ERROR;
-            IPLocator::setIPv4(loc, s);
-            bAddressOption = true;
         }
-
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(IPV6_ADDRESS)))
+        else if (nullptr != (p_aux1 = p_aux0->FirstChildElement()))
         {
-            if (bAddressOption)
-            {
-                logError(XMLPARSER, "Incompatible address configuration ( 'address' <-> 'ipv6_address' <-> 'addresses_ (unique_lan_id & wan_address & ip_address)'.");
-                return XMLP_ret::XML_ERROR;
-            }
-
-            std::string s = "";
-            if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident + 1))
-                return XMLP_ret::XML_ERROR;
-            IPLocator::setIPv6(loc, s);
-            bAddressOption = true;
-        }
-
-        if (nullptr != (p_aux1 = p_aux0->FirstChildElement(ADDRESSES)))
-        {
-            if (bAddressOption)
-            {
-                logError(XMLPARSER, "Incompatible address configuration ( 'address' <-> 'ipv6_address' <-> 'addresses_ (unique_lan_id & wan_address & ip_address)'.");
-                return XMLP_ret::XML_ERROR;
-            }
-
-            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(UNIQUE_LAN_ID)))
-            {
-                std::string sUniqueLanId;
-                if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sUniqueLanId, ident + 1))
-                    return XMLP_ret::XML_ERROR;
-                IPLocator::setLanID(loc, sUniqueLanId);
-            }
-
-            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(WAN_ADDRESS)))
-            {
-                std::string sWanAddr;
-                if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sWanAddr, ident + 1))
-                    return XMLP_ret::XML_ERROR;
-                IPLocator::setWan(loc, sWanAddr);
-            }
-
-            if (nullptr != (p_aux2 = p_aux1->FirstChildElement(IP_ADDRESS)))
-            {
-                std::string sIPddr;
-                if (XMLP_ret::XML_OK != getXMLString(p_aux2, &sIPddr, ident + 1))
-                    return XMLP_ret::XML_ERROR;
-                IPLocator::setIPv4(loc, sIPddr);
-            }
+            logError(XMLPARSER, "Invalid element found into 'locatorType'. Name: " << p_aux1->Name());
+            return XMLP_ret::XML_ERROR;
         }
 
         locatorList.push_back(loc);
