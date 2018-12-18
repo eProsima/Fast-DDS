@@ -22,8 +22,6 @@
 
 #include "../rtps/attributes/RTPSParticipantAttributes.h"
 
-
-
 namespace eprosima{
 namespace fastrtps{
 
@@ -50,7 +48,5 @@ public:
 
 }
 }
-
-
 
 #endif /* PARTICIPANTATTRIBUTES_H_ */

@@ -29,6 +29,9 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 
+#include <fastrtps/log/StdoutConsumer.h>
+#include <fastrtps/log/FileConsumer.h>
+
 #include <tinyxml2.h>
 #include <iostream>
 #include <cstdlib>
@@ -54,8 +57,17 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
             // Just types in the XML.
             if (nullptr == (p_root = xmlDoc.FirstChildElement(TYPES)))
             {
-                logError(XMLPARSER, "Not found root tag");
-                ret = XMLP_ret::XML_ERROR;
+                // Just log config in the XML.
+                if (nullptr == (p_root = xmlDoc.FirstChildElement(LOG)))
+                {
+                    logError(XMLPARSER, "Not found root tag");
+                    ret = XMLP_ret::XML_ERROR;
+                }
+                else
+                {
+                    root.reset(new BaseNode{NodeType::LOG});
+                    ret  = parseLogConfig(p_root);
+                }
             }
             else
             {
@@ -101,6 +113,15 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                 else if (strcmp(tag, TOPIC) == 0)
                 {
                     ret = parseXMLTopicData(node, *root);
+                }
+                else if (strcmp(tag, LOG) == 0)
+                {
+                    ret = parseLogConfig(node);
+                }
+                else
+                {
+                    logError(XMLPARSER, "Not expected tag: '" << tag << "'");
+                    ret = XMLP_ret::XML_ERROR;
                 }
             }
 
@@ -1460,6 +1481,154 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
 XMLP_ret XMLParser::parseDynamicTypes(tinyxml2::XMLElement* p_root)
 {
     return parseXMLTypes(p_root);
+}
+
+XMLP_ret XMLParser::parseLogConfig(tinyxml2::XMLElement* p_root)
+{
+    /*
+    <xs:element name="log">
+      <xs:complexType>
+        <xs:boolean name="use_default"/>
+        <xs:sequence>
+          <xs:element maxOccurs="consumer">
+            <xs:complexType>
+              <xs:element name="class" type="string" minOccurs="1" maxOccurs="1"/>
+              <xs:sequence>
+                <xs:element name="propertyType"/>
+              </xs:sequence>
+            </xs:complexType>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+    */
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    tinyxml2::XMLElement *p_aux0 = p_root->FirstChildElement(LOG);
+    if (p_aux0 == nullptr)
+    {
+        p_aux0 = p_root;
+    }
+
+    tinyxml2::XMLElement* p_element = p_aux0->FirstChildElement();
+    const char* tag = nullptr;
+    while (nullptr != p_element)
+    {
+        if (nullptr != (tag = p_element->Value()))
+        {
+            if (strcmp(tag, USE_DEFAULT) == 0)
+            {
+                bool use_default = true;
+                std::string auxBool = p_element->GetText();
+                if (std::strcmp(auxBool.c_str(), "FALSE") == 0)
+                {
+                    use_default = false;
+                }
+                if (!use_default)
+                {
+                    Log::ClearConsumers();
+                }
+            }
+            else if (strcmp(tag, CONSUMER) == 0)
+            {
+                ret = parseXMLConsumer(*p_element);
+                if (ret != XMLP_ret::XML_OK)
+                {
+                    return ret;
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Not expected tag: '" << tag << "'");
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        p_element = p_element->NextSiblingElement(CONSUMER);
+    }
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    tinyxml2::XMLElement* p_element = consumer.FirstChildElement(CLASS);
+
+    if (p_element != nullptr)
+    {
+        std::string classStr = p_element->GetText();
+
+        if (std::strcmp(classStr.c_str(), "StdoutConsumer") == 0)
+        {
+            Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new StdoutConsumer));
+        }
+        else if (std::strcmp(classStr.c_str(), "FileConsumer") == 0)
+        {
+            std::string outputFile = "output.log";
+            bool append = false;
+
+            tinyxml2::XMLElement* property = consumer.FirstChildElement(PROPERTY);
+            if (nullptr == property)
+            {
+                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new FileConsumer));
+            }
+            else
+            {
+                tinyxml2::XMLElement* p_auxName = nullptr;
+                tinyxml2::XMLElement* p_auxValue = nullptr;
+                while (nullptr != property)
+                {
+                    // name - stringType
+                    if (nullptr != (p_auxName = property->FirstChildElement(NAME)))
+                    {
+                        std::string s = p_auxName->GetText();
+
+                        if (std::strcmp(s.c_str(), "filename") == 0)
+                        {
+                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
+                            {
+                                outputFile = p_auxValue->GetText();
+                            }
+                            else
+                            {
+                                logError(XMLParser, "Filename value cannot be found for " << classStr
+                                    << " log consumer.");
+                            }
+                        }
+                        else if (std::strcmp(s.c_str(), "append") == 0)
+                        {
+                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
+                            {
+                                std::string auxBool = p_auxValue->GetText();
+                                if (std::strcmp(auxBool.c_str(), "TRUE") == 0)
+                                {
+                                    append = true;
+                                }
+                            }
+                            else
+                            {
+                                logError(XMLParser, "Append value cannot be found for " << classStr
+                                    << " log consumer.");
+                            }
+                        }
+                        else
+                        {
+                            logError(XMLParser, "Unknown property " << s << " in " << classStr
+                                << " log consumer.");
+                        }
+                    }
+                    property = property->NextSiblingElement(PROPERTY);
+                }
+
+                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new FileConsumer(outputFile, append)));
+            }
+        }
+        else
+        {
+            logError(XMLParser, "Unknown log consumer class: " << classStr);
+            ret = XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return ret;
 }
 
 XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)

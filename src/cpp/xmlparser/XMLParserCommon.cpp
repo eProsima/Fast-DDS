@@ -31,6 +31,7 @@ const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
 const char* TYPES = "types";
+const char* LOG = "log";
 
 const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";
@@ -281,6 +282,10 @@ const char* VALUE_TYPE = "value_type";
 const char* LENGHT = "length";
 const char* MAXLENGTH = "maxLength";
 
+// LOG
+const char* USE_DEFAULT = "use_default";
+const char* CONSUMER = "consumer";
+const char* CLASS = "class";
 
 } /* xmlparser */
 } /* namespace */

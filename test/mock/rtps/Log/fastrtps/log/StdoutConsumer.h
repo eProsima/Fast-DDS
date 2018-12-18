@@ -20,15 +20,7 @@
 namespace eprosima {
 namespace fastrtps {
 
-class StdoutConsumer: public LogConsumer {
-public:
-    virtual ~StdoutConsumer() {};
-    RTPS_DllAPI virtual void Consume(const Log::Entry&);
-
-private:
-    void PrintHeader(const Log::Entry&) const;
-    void PrintContext(const Log::Entry&) const;
-};
+class StdoutConsumer : public LogConsumer {};
 
 } // namespace fastrtps
 } // namespace eprosima

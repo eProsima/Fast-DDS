@@ -12,25 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STDOUT_CONSUMER_H
-#define STDOUT_CONSUMER_H
+/**
+ * @file FileConsumer.h
+ *
+ */
+
+#ifndef FILE_CONSUMER_H
+#define FILE_CONSUMER_H
 
 #include <fastrtps/log/Log.h>
+#include <gmock/gmock.h>
 
 namespace eprosima {
 namespace fastrtps {
 
-class StdoutConsumer: public LogConsumer {
-public:
-    virtual ~StdoutConsumer() {};
-    RTPS_DllAPI virtual void Consume(const Log::Entry&);
+class FileConsumer : public LogConsumer
+{
+    public:
 
-private:
-    void PrintHeader(const Log::Entry&) const;
-    void PrintContext(const Log::Entry&) const;
+        FileConsumer() = default;
+
+        FileConsumer(const std::string &, bool = false) {};
+
+        virtual ~FileConsumer() {}
 };
+
+MATCHER(IsFileConsumer, "Argument is a FileConsumer object?")
+{
+    *result_listener << (typeid(*arg.get()) == typeid(FileConsumer));
+    return typeid(*arg.get()) == typeid(FileConsumer);
+}
 
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // FILE_CONSUMER_H

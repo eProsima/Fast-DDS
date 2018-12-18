@@ -26,7 +26,7 @@ namespace fastrtps{
 /**
  * Double buffered, threadsafe queue for MPSC (multi-producer, single-consumer) comms.
  */
-template<class T> 
+template<class T>
 class DBQueue {
 
 public:
@@ -34,9 +34,9 @@ public:
       mForegroundQueue(&mQueueAlpha),
       mBackgroundQueue(&mQueueBeta)
    {}
-      
+
    //! Clears foreground queue and swaps queues.
-   void Swap() 
+   void Swap()
    {
       std::unique_lock<std::mutex> fgGuard(mForegroundMutex);
       std::unique_lock<std::mutex> bgGuard(mBackgroundMutex);
@@ -44,13 +44,13 @@ public:
       // Clear the foreground queue.
       std::queue<T>().swap(*mForegroundQueue);
 
-      auto* swap       = mBackgroundQueue;  
+      auto* swap       = mBackgroundQueue;
       mBackgroundQueue = mForegroundQueue;
       mForegroundQueue = swap;
    }
 
    //! Pushes to the background queue.
-   void Push(const T& item) 
+   void Push(const T& item)
    {
       std::unique_lock<std::mutex> guard(mBackgroundMutex);
       mBackgroundQueue->push(item);
@@ -71,7 +71,7 @@ public:
    }
 
    //! Pops from the foreground queue.
-   void Pop() 
+   void Pop()
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
       mForegroundQueue->pop();
@@ -82,6 +82,14 @@ public:
    {
       std::unique_lock<std::mutex> guard(mForegroundMutex);
       return mForegroundQueue->empty();
+   }
+
+   //! Reports whether the both queues are empty.
+   bool BothEmpty() const
+   {
+      std::unique_lock<std::mutex> guard(mForegroundMutex);
+      std::unique_lock<std::mutex> bgGuard(mBackgroundMutex);
+      return mForegroundQueue->empty() && mBackgroundQueue->empty();
    }
 
    //! Reports the size of the foreground queue.

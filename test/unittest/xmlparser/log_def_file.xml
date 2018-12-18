@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds>
+    <log>
+        <use_default>TRUE</use_default>
+        <consumer>
+            <class>FileConsumer</class>
+        </consumer>
+    </log>
+</dds>
