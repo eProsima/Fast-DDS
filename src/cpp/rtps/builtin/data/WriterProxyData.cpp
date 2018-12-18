@@ -41,7 +41,9 @@ WriterProxyData::WriterProxyData()
     , m_topicKind(NO_KEY)
     , m_topicDiscoveryKind(NO_CHECK)
     {
-        // TODO Auto-generated constructor stub
+        // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
+        // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
+        m_qos.m_typeConsistency.m_kind = DISALLOW_TYPE_COERCION;
     }
 
 WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
@@ -496,6 +498,13 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
             {
                 DataRepresentationQosPolicy* p = (DataRepresentationQosPolicy*)(*it);
                 m_qos.m_dataRepresentation = *p;
+                break;
+            }
+
+            case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+            {
+                TypeConsistencyEnforcementQosPolicy * p = (TypeConsistencyEnforcementQosPolicy*)(*it);
+                m_qos.m_typeConsistency = *p;
                 break;
             }
 

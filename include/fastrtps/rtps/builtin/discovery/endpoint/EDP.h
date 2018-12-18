@@ -231,6 +231,8 @@ class EDP
 
         bool checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 
+        bool checkTypeValidation(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
         bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 
         bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,

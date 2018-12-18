@@ -1304,6 +1304,79 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
     return false;
 }
 
+bool TypeIdentifier::consistent(const TypeIdentifier &x,
+        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+{
+    if (this == &x) return true; // Same memory!
+
+    if (this->_d() != x._d())
+    {
+        return false;
+    }
+
+    switch (this->_d())
+    {
+        case TK_NONE:
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+            return true;
+        case TI_STRING8_SMALL:
+        case TI_STRING16_SMALL:
+            return this->string_sdefn().consistent(x.string_sdefn(), localConsistency, remoteConsistency);
+
+        case TI_STRING8_LARGE:
+        case TI_STRING16_LARGE:
+            return this->string_ldefn().consistent(x.string_ldefn(), localConsistency, remoteConsistency);
+
+        case TI_PLAIN_SEQUENCE_SMALL:
+            return this->seq_sdefn().consistent(x.seq_sdefn(), localConsistency, remoteConsistency);
+
+        case TI_PLAIN_SEQUENCE_LARGE:
+            return this->seq_ldefn().consistent(x.seq_ldefn(), localConsistency, remoteConsistency);
+
+        case TI_PLAIN_ARRAY_SMALL:
+            return this->array_sdefn().consistent(x.array_sdefn(), localConsistency, remoteConsistency);
+
+        case TI_PLAIN_ARRAY_LARGE:
+            return this->array_ldefn().consistent(x.array_ldefn(), localConsistency, remoteConsistency);
+
+        case TI_PLAIN_MAP_SMALL:
+            return this->map_sdefn().consistent(x.map_sdefn(), localConsistency, remoteConsistency);
+
+        case TI_PLAIN_MAP_LARGE:
+            return this->map_ldefn().consistent(x.map_ldefn(), localConsistency, remoteConsistency);
+
+        case EK_MINIMAL:
+        case EK_COMPLETE:
+        {
+            //return memcmp(this->equivalence_hash(), other.equivalence_hash(), 14) == 0;
+            for (int i = 0; i < 14; ++i)
+            {
+                if (this->equivalence_hash()[i] != x.equivalence_hash()[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        default:
+            break;
+    }
+    return false;
+}
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

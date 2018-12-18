@@ -559,10 +559,14 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
     {
         return false;
     }
-    if (wdata->typeName() != rdata->typeName())
+
+    // Type Consistency Enforcement QosPolicy
+    if (!checkTypeValidation(wdata, rdata))
     {
+        // TODO Trigger INCONSISTENT_TOPIC status change
         return false;
     }
+
     if(wdata->topicKind() != rdata->topicKind())
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
@@ -708,21 +712,69 @@ bool EDP::checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderP
     return true;
 }
 
+bool EDP::checkTypeValidation(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
+{
+    if ((wdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION
+        || rdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION)
+        && rdata->typeName() != wdata->typeName())
+    {
+        logWarning(RTPS_EDP, "Type Validation (DISALLOW_TYPE_COERCION) FAILED (typeName: " << rdata->typeName()
+            << "): Local reader " << rdata->guid() << " didn't match with remote writer ("
+            << wdata->guid() << ") (typeName: " << wdata->typeName() << ")");
+        return false;
+    }
+
+    // First try XTypes 1.2
+    if (wdata->m_qos.type_information.get() != nullptr && rdata->m_qos.type_information.get() != nullptr)
+    {
+        // TODO I'm not sure... TypeInformation is TypeObjectV2 in theory, so...
+        return wdata->m_qos.type_information.get()->complete().typeid_with_size().type_id().consistent(
+            rdata->m_qos.type_information.get()->complete().typeid_with_size().type_id(),
+            rdata->m_qos.m_typeConsistency, wdata->m_qos.m_typeConsistency);
+    }
+    else if (wdata->m_qos.type.m_type_object != nullptr && rdata->m_qos.type.m_type_object != nullptr
+        && wdata->m_qos.type.m_type_object->_d() != static_cast<uint8_t>(0x00)
+        && rdata->m_qos.type.m_type_object->_d() != static_cast<uint8_t>(0x00))
+    {
+        // Both provide TypeObject
+        return rdata->m_qos.type.m_type_object->consistent(*wdata->m_qos.type.m_type_object,
+            rdata->m_qos.m_typeConsistency, wdata->m_qos.m_typeConsistency);
+    }
+    else if (wdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION
+        || rdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION
+        || wdata->m_qos.type_information.get() == nullptr
+        || rdata->m_qos.type_information.get() == nullptr)
+    {
+        if (rdata->m_qos.m_typeConsistency.m_force_type_validation
+            || wdata->m_qos.m_typeConsistency.m_force_type_validation)
+        {
+                return false;
+        }
+        return rdata->typeName() == wdata->typeName();
+    }
+    return true;
+}
+
 bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata)
 {
     if (rdata->topicName() != wdata->topicName())
     {
         return false;
     }
-    if (rdata->typeName() != wdata->typeName())
+
+    // Type Consistency Enforcement QosPolicy
+    if (!checkTypeValidation(wdata, rdata))
     {
+        // TODO Trigger INCONSISTENT_TOPIC status change
         return false;
     }
+
     if(rdata->topicKind() != wdata->topicKind())
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() << " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<
-                "), local reader subscribes as keyed: " << rdata->topicKind())
-            return false;
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() << " is publishing in topic "
+            << wdata->topicName() << "(keyed:" << wdata->topicKind() << "), local reader subscribes as keyed: "
+            << rdata->topicKind());
+        return false;
     }
     if(!checkTypeIdentifier(wdata, rdata))
     {

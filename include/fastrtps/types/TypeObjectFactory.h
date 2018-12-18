@@ -64,12 +64,12 @@ protected:
     std::string get_key_from_hash(
             const DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
-            
+
     void fill_minimal_information(
             TypeInformation* info,
             const TypeIdentifier* ident,
             const TypeObject* obj) const;
-            
+
     void fill_complete_information(
             TypeInformation* info,
             const TypeIdentifier* ident,
