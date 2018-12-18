@@ -520,7 +520,6 @@
             <xs:element name="times" type="writerTimesType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-            <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
             <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
@@ -537,7 +536,6 @@
             <xs:element name="times" type="readerTimesType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-            <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
             <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
@@ -786,4 +784,83 @@
         </xs:sequence>
       </xs:complexType>
     </xs:element>
+
+    <!-- Dynamic Types -->
+    <xs:element name="types">
+        <xs:complexType>
+            <xs:group ref="moduleElems"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:group name="moduleElems">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="struct" type="structDcl" minOccurs="0"/>
+                <xs:element name="union" type="unionDcl" minOccurs="0"/>
+                <xs:element name="enum" type="enumDcl" minOccurs="0"/>
+                <xs:element name="typedef" type="typedefDcl" minOccurs="0"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="structDcl">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="member" type="memberDcl" minOccurs="1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="caseDcl">
+        <xs:sequence>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="caseValue" type="string" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:choice>
+            <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="unionDcl">
+        <xs:sequence>
+            <xs:element name="discriminator" type="string" minOccurs="1"/>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="case" type="caseDcl" minOccurs="1"/>
+            </xs:sequence>
+        </xs:sequence>
+        <xs:attribute name="name" type="identifierName" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="enumeratorType">
+        <xs:attribute name="name" type="stringType" use="required"/>
+        <xs:attribute name="value" type="stringType" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="enum">
+        <xs:attribute ref="name" use="required"/>
+        <xs:sequence>
+            <xs:element name="enumerator" type="enumeratorType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="memberDcl">
+        <xs:attribute name="name" type="string" use="required"/>
+        <xs:attribute name="type" type="string" use="required"/>
+        <xs:attribute name="arrayDimensions" type="string" use="optional"/>
+        <xs:attribute name="nonBasic" type="string" use="optional"/>
+        <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
+        <xs:attribute name="mapMaxLength" type="string" use="optional"/>
+        <xs:sequence>
+            <xs:element name="member" type="memberDcl" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+
+
+
+
+
+
 </xs:schema>

@@ -301,6 +301,7 @@ extern const char* ENUMERATOR;
 extern const char* NON_BASIC_TYPE;
 extern const char* NON_BASIC_TYPE_NAME;
 extern const char* KEY;
+extern const char* MEMBER;
 
 // LOG
 extern const char* USE_DEFAULT;

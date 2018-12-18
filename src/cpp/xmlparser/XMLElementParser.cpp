@@ -118,6 +118,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
             // simpleEDP
             for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != NULL; p_aux1 = p_aux1->NextSiblingElement())
             {
+                name = p_aux1->Name();
                 if (strcmp(name, PUBWRITER_SUBREADER) == 0)
                 {
                     // PUBWRITER_SUBREADER - boolType
@@ -1509,7 +1510,7 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
             }
             if (strcmp(text, DURATION_INFINITY) == 0)
                 duration = c_TimeInfinite;
-            if (strcmp(text, DURATION_INFINITE_SEC) == 0)
+            else if (strcmp(text, DURATION_INFINITE_SEC) == 0)
                 duration.seconds = c_TimeInfinite.seconds;
             else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
             {
@@ -1534,13 +1535,18 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
             }
             if (strcmp(text, DURATION_INFINITY) == 0)
                 duration = c_TimeInfinite;
-            if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
+            else if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
                 duration.fraction = c_TimeInfinite.fraction;
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.fraction, ident))
             {
                 logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
                 return XMLP_ret::XML_ERROR;
             }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'durationType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
         }
     }
     return XMLP_ret::XML_OK;
@@ -1940,7 +1946,7 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
 
     tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr, *p_aux2 = nullptr;
     const char* name = nullptr;
-    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
         if (strcmp(name, PROPERTIES) == 0)
@@ -2001,60 +2007,57 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
         else if (strcmp(name, BIN_PROPERTIES) == 0)
         {
             // TODO: The value will be std::vector<uint8_t>
-            if (nullptr != (p_aux0 = elem->FirstChildElement()))
+            p_aux1 = p_aux0->FirstChildElement(PROPERTY);
+            if (nullptr == p_aux1)
             {
-                p_aux1 = p_aux0->FirstChildElement(PROPERTY);
-                if (nullptr == p_aux1)
-                {
-                    logError(XMLPARSER, "Node '" << BIN_PROPERTIES << "' without content");
-                    return XMLP_ret::XML_ERROR;
-                }
+                logError(XMLPARSER, "Node '" << BIN_PROPERTIES << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
 
-                while (nullptr != p_aux1)
+            while (nullptr != p_aux1)
+            {
+                /*
+                    <xs:complexType name="binaryPropertyType">
+                        <xs:all>
+                            <xs:element name="name" type="stringType"/>
+                            <xs:element name="value" type="stringType"/><!-- std::vector<uint8_t> -->
+                            <xs:element name="propagate" type="boolType"/>
+                        </xs:all>
+                    </xs:complexType>
+                */
+                const char* sub_name = nullptr;
+                BinaryProperty bin_prop;
+                for (p_aux2 = p_aux1->FirstChildElement(); p_aux2 != NULL; p_aux2 = p_aux2->NextSiblingElement())
                 {
-                    /*
-                        <xs:complexType name="binaryPropertyType">
-                            <xs:all>
-                                <xs:element name="name" type="stringType"/>
-                                <xs:element name="value" type="stringType"/><!-- std::vector<uint8_t> -->
-                                <xs:element name="propagate" type="boolType"/>
-                            </xs:all>
-                        </xs:complexType>
-                    */
-                    const char* sub_name = nullptr;
-                    BinaryProperty bin_prop;
-                    for (p_aux2 = p_aux1->FirstChildElement(); p_aux2 != NULL; p_aux2 = p_aux2->NextSiblingElement())
+                    sub_name = p_aux2->Name();
+                    if (strcmp(sub_name, NAME) == 0)
                     {
-                        sub_name = p_aux2->Name();
-                        if (strcmp(sub_name, NAME) == 0)
-                        {
-                            // name - stringType
-                            std::string s = "";
-                            if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) 
-                                return XMLP_ret::XML_ERROR;
-                            bin_prop.name(s);
-                        }
-                        else if (strcmp(sub_name, VALUE) == 0)
-                        {
-                            // TODO:
-                            // value - stringType
-                            logError(XMLPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
-                            /*std::string s = "";
-                            if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::XML_ERROR;
-                            bin_prop.value(s);*/
-                        }
-                        else if (strcmp(sub_name, PROPAGATE) == 0)
-                        {
-                            // propagate - boolType
-                            bool b = false;
-                            if (XMLP_ret::XML_OK != getXMLBool(p_aux2, &b, ident + 2)) 
-                                return XMLP_ret::XML_ERROR;
-                            bin_prop.propagate(b);
-                        }
+                        // name - stringType
+                        std::string s = "";
+                        if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2))
+                            return XMLP_ret::XML_ERROR;
+                        bin_prop.name(s);
                     }
-                    propertiesPolicy.binary_properties().push_back(bin_prop);
-                    p_aux1 = p_aux1->NextSiblingElement(PROPERTY);
+                    else if (strcmp(sub_name, VALUE) == 0)
+                    {
+                        // TODO:
+                        // value - stringType
+                        logError(XMLPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
+                        /*std::string s = "";
+                        if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::XML_ERROR;
+                        bin_prop.value(s);*/
+                    }
+                    else if (strcmp(sub_name, PROPAGATE) == 0)
+                    {
+                        // propagate - boolType
+                        bool b = false;
+                        if (XMLP_ret::XML_OK != getXMLBool(p_aux2, &b, ident + 2))
+                            return XMLP_ret::XML_ERROR;
+                        bin_prop.propagate(b);
+                    }
                 }
+                propertiesPolicy.binary_properties().push_back(bin_prop);
+                p_aux1 = p_aux1->NextSiblingElement(PROPERTY);
             }
         }
     }

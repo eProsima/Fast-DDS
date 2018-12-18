@@ -188,41 +188,45 @@ XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
 XMLP_ret XMLParser::parseXMLTypes(tinyxml2::XMLElement* p_root)
 {
     /*
-    <xs:element name="types">
-      <xs:complexType>
-        <xs:group ref="moduleElems"/>
-      </xs:complexType>
-    </xs:element>
+        <xs:element name="types">
+            <xs:complexType>
+                <xs:group ref="moduleElems"/>
+            </xs:complexType>
+        </xs:element>
     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement *p_aux0 = nullptr;
+    tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
     p_aux0 = p_root->FirstChildElement(TYPES);
-
     if (p_aux0 != nullptr)
     {
-        tinyxml2::XMLElement* p_element = p_aux0->FirstChildElement(TYPE);
-        while(p_element != nullptr)
+        const char* name = nullptr;
+        for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
         {
-            ret = parseXMLDynamicType(p_element);
-            if (ret != XMLP_ret::XML_OK)
+            name = p_aux1->Name();
+            if (strcmp(name, TYPE) == 0)
             {
-                return ret;
+                if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux1))
+                    return XMLP_ret::XML_ERROR;
             }
-            p_element = p_element->NextSiblingElement(TYPE);
+            else
+            {
+                logError(XMLPARSER, "Invalid element found into 'types'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
         }
     }
     else // Directly root is TYPES?
     {
-        tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TYPE);
-        while(p_element != nullptr)
+        const char* name = nullptr;
+        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
         {
-            ret = parseXMLDynamicType(p_element);
-            if (ret != XMLP_ret::XML_OK)
+            name = p_aux0->Name();
+            if (strcmp(name, TYPE) == 0)
             {
-                return ret;
+                if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux0))
+                    return XMLP_ret::XML_ERROR;
             }
-            p_element = p_element->NextSiblingElement(TYPE);
         }
     }
     return ret;
@@ -569,38 +573,37 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
 XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
 {
     /*
-    <xs:group name="moduleElems">
-      <xs:sequence>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element name="struct" type="structDcl" minOccurs="0"/>
-          <xs:element name="union" type="unionDcl" minOccurs="0"/>
-          <!-- TODO add more -->
-        </xs:choice>
-      </xs:sequence>
-    </xs:group>
+        <xs:group name="moduleElems">
+            <xs:sequence>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="struct" type="structDcl" minOccurs="0"/>
+                    <xs:element name="union" type="unionDcl" minOccurs="0"/>
+                    <xs:element name="enum" type="enumDcl" minOccurs="0"/>
+                    <xs:element name="typedef" type="typedefDcl" minOccurs="0"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:group>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement *p_element = nullptr;
-
-    for (p_element = p_root->FirstChildElement();
-            p_element != nullptr; p_element = p_element->NextSiblingElement())
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
-        const std::string type = p_element->Value();
+        const std::string type = p_aux0->Value();
         if (type.compare(STRUCT) == 0)
         {
-            ret = parseXMLStructDynamicType(p_element);
+            ret = parseXMLStructDynamicType(p_aux0);
         }
         else if (type.compare(UNION) == 0)
         {
-            ret = parseXMLUnionDynamicType(p_element);
+            ret = parseXMLUnionDynamicType(p_aux0);
         }
         else if (type.compare(ENUM) == 0)
         {
-            ret = parseXMLEnumDynamicType(p_element);
+            ret = parseXMLEnumDynamicType(p_aux0);
         }
         else if (type.compare(TYPEDEF) == 0)
         {
-            ret = parseXMLAliasDynamicType(p_element);
+            ret = parseXMLAliasDynamicType(p_aux0);
         }
         else
         {
@@ -694,26 +697,21 @@ static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &dis
 XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
 {
     /*
-    <typedef name="MyAliasEnum" value="MyEnum"/>
-    ||
-    <typedef name="MyAlias">
-        <long dimensions="2,2"/>
-    </typedef>
+        <typedef name="MyAliasEnum" value="MyEnum"/>
+
+        <typedef name="MyAlias">
+            <long dimensions="2,2"/>
+        </typedef>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
-    const char* name = p_root->Attribute(NAME);
-    const char* type = p_root->Attribute(TYPE);
-    const char* typeNonBasicName = p_root->Attribute(NON_BASIC_TYPE_NAME);
-    const char* memberArray = p_root->Attribute(ARRAY_DIMENSIONS);
-    const char* memberSequence = p_root->Attribute(SEQ_MAXLENGTH);
-    const char* memberMap = p_root->Attribute(MAP_MAXLENGTH);
-
     p_dynamictypebuilder_t valueBuilder;
 
+    const char* type = p_root->Attribute(TYPE);
     if (type != nullptr)
     {
         if (strcmp(type, NON_BASIC_TYPE) == 0)
         {
+            const char* typeNonBasicName = p_root->Attribute(NON_BASIC_TYPE_NAME);
             if (typeNonBasicName != nullptr)
             {
                 type = typeNonBasicName;
@@ -725,7 +723,9 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
             }
         }
 
-        if ((memberArray != nullptr) || (memberSequence != nullptr) || (memberMap != nullptr))
+        if ((p_root->Attribute(ARRAY_DIMENSIONS) != nullptr) || 
+            (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) || 
+            (p_root->Attribute(MAP_MAXLENGTH) != nullptr))
         {
             valueBuilder = parseXMLMemberDynamicType(p_root , nullptr, MEMBER_ID_INVALID);
         }
@@ -740,16 +740,17 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
             valueBuilder = getDiscriminatorTypeBuilder(type, bound);
         }
 
-        if (valueBuilder == nullptr)
+        if (valueBuilder != nullptr)
         {
-            logError(XMLPARSER, "Error parsing alias type: Value not recognized.");
-            ret = XMLP_ret::XML_ERROR;
+            const char* name = p_root->Attribute(NAME);
+            p_dynamictypebuilder_t typeBuilder =
+                types::DynamicTypeBuilderFactory::GetInstance()->CreateAliasBuilder(valueBuilder, name);
+            XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
         }
         else
         {
-            p_dynamictypebuilder_t typeBuilder =
-                    types::DynamicTypeBuilderFactory::GetInstance()->CreateAliasBuilder(valueBuilder, name);
-            XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+            logError(XMLPARSER, "Error parsing alias type: Value not recognized.");
+            ret = XMLP_ret::XML_ERROR;
         }
     }
     else
@@ -763,27 +764,35 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
 XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
 {
     /*
-    <enum name="MyEnum">
-        <literal name="A" value="0"/>
-        <literal name="B" value="1"/>
-        <literal name="C" value="2"/>
-    </enum>
+        <xs:complexType name="enumeratorType">
+            <xs:attribute name="name" type="stringType" use="required"/>
+            <xs:attribute name="value" type="stringType" use="optional"/>
+        </xs:complexType>
+
+        <xs:complexType name="enum">
+            <xs:attribute ref="name" use="required"/>
+            <xs:sequence>
+                <xs:element name="enumerator" type="enumeratorType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        //TODO: Enum bitbound to set the internal field
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* enumName = p_root->Attribute(NAME);
     p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::GetInstance()->CreateEnumBuilder();
-
     uint32_t currValue = 0;
     for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(ENUMERATOR);
             literal != nullptr; literal = literal->NextSiblingElement(ENUMERATOR))
     {
         const char* name = literal->Attribute(NAME);
-        const char* value = literal->Attribute(VALUE);
         if (name == nullptr)
         {
             logError(XMLPARSER, "Error parsing enum type: Literals must have name.");
             return XMLP_ret::XML_ERROR;
         }
+       
+        const char* value = literal->Attribute(VALUE);
         if (value != nullptr)
         {
             currValue = std::atoi(value);
@@ -798,26 +807,36 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
 XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
 {
     /*
-    <xs:complexType name="structDcl">
-      <xs:sequence>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element name="member" type="memberDcl" minOccurs="1"/>
-        </xs:choice>
-      </xs:sequence>
-      <xs:attribute name="name" type="string" use="required"/>
-    </xs:complexType>
+        <xs:complexType name="structDcl">
+            <xs:sequence>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="member" type="memberDcl" minOccurs="1"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="name" type="string" use="required"/>
+        </xs:complexType>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* name = p_root->Attribute(NAME);
     p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
     typeBuilder->SetName(name);
     uint32_t mId = 0;
+    const char* element_name = nullptr;
     for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
             p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
-        p_dynamictypebuilder_t mType = parseXMLMemberDynamicType(p_element, typeBuilder, mId++);
-        if (mType == nullptr)
+        element_name = p_element->Name();
+        if (strcmp(element_name, MEMBER) == 0)
         {
+            p_dynamictypebuilder_t mType = parseXMLMemberDynamicType(p_element, typeBuilder, mId++);
+            if (mType == nullptr)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'structDcl'. Name: " << element_name);
             return XMLP_ret::XML_ERROR;
         }
     }
@@ -830,28 +849,28 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
 XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
 {
     /*
-    <xs:complexType name="caseDcl">
-      <xs:sequence>
-        <xs:choice minOccurs="1" maxOccurs="unbounded">
-          <xs:element name="caseValue" type="string" minOccurs="1" maxOccurs="unbounded"/>
-        </xs:choice>
-        <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
-      </xs:sequence>
-    </xs:complexType>
+        <xs:complexType name="caseDcl">
+            <xs:sequence>
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element name="caseValue" type="string" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:choice>
+                <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
 
-    <xs:complexType name="unionDcl">
-      <xs:sequence>
-        <xs:element name="discriminator" type="string" minOccurs="1"/>
-        <xs:sequence maxOccurs="unbounded">
-          <xs:element name="case" type="caseDcl" minOccurs="1"/>
-        </xs:sequence>
-      </xs:sequence>
-      <xs:attribute name="name" type="identifierName" use="required"/>
-    </xs:complexType>
+        <xs:complexType name="unionDcl">
+            <xs:sequence>
+                <xs:element name="discriminator" type="string" minOccurs="1"/>
+                <xs:sequence maxOccurs="unbounded">
+                    <xs:element name="case" type="caseDcl" minOccurs="1"/>
+                </xs:sequence>
+            </xs:sequence>
+            <xs:attribute name="name" type="identifierName" use="required"/>
+        </xs:complexType>
     */
+
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* name = p_root->Attribute(NAME);
-
     tinyxml2::XMLElement *p_element = p_root->FirstChildElement(DISCRIMINATOR);
     if (p_element != nullptr)
     {
@@ -876,7 +895,6 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
                 for (tinyxml2::XMLElement *caseValue = p_element->FirstChildElement(CASE_DISCRIMINATOR);
                     caseValue != nullptr; caseValue = caseValue->NextSiblingElement(CASE_DISCRIMINATOR))
                 {
-                    //ret = parseXMLMemberDynamicType(p_element, typeBuilder);
                     const char* values = caseValue->Attribute(VALUE);
                     if (values == nullptr)
                     {
@@ -967,6 +985,19 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
 p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype, MemberId mId, const std::string& values)
 {
+    /*
+        <xs:complexType name="memberDcl">
+            <xs:attribute name="name" type="string" use="required"/>
+            <xs:attribute name="type" type="string" use="required"/>
+            <xs:attribute name="arrayDimensions" type="string" use="optional"/>
+            <xs:attribute name="nonBasic" type="string" use="optional"/>
+            <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
+            <xs:attribute name="mapMaxLength" type="string" use="optional"/>
+            <xs:sequence>
+                <xs:element name="member" type="memberDcl" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    */
     if (p_root == nullptr)
     {
         logError(XMLPARSER, "Error parsing member: Node not found.");
@@ -974,14 +1005,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     }
 
     const char* memberType = p_root->Attribute(TYPE);
-    const char* memberNonBasicTypeName = p_root->Attribute(NON_BASIC_TYPE_NAME);
     const char* memberName = p_root->Attribute(NAME);
-    const char* memberArray = p_root->Attribute(ARRAY_DIMENSIONS);
-    const char* memberSequence = p_root->Attribute(SEQ_MAXLENGTH);
-    const char* memberMap = p_root->Attribute(MAP_MAXLENGTH);
-    const char* memberMapKeyType = p_root->Attribute(MAP_KEY_TYPE);
-    const char* memberTopicKey = p_root->Attribute(KEY);
-
     bool isArray = false;
 
     if (memberName == nullptr && p_dynamictype != nullptr)
@@ -996,6 +1020,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         return nullptr;
     }
 
+    const char* memberArray = p_root->Attribute(ARRAY_DIMENSIONS);
     if (memberArray != nullptr)
     {
         isArray = true;
@@ -1003,6 +1028,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
 
     if (strcmp(memberType, NON_BASIC_TYPE) == 0)
     {
+        const char* memberNonBasicTypeName = p_root->Attribute(NON_BASIC_TYPE_NAME);
         if (memberNonBasicTypeName != nullptr)
         {
             memberType = memberNonBasicTypeName;
@@ -1017,6 +1043,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     types::DynamicTypeBuilder* memberBuilder = nullptr;
     types::DynamicTypeBuilderFactory* factory = types::DynamicTypeBuilderFactory::GetInstance();
 
+    const char* memberSequence = p_root->Attribute(SEQ_MAXLENGTH);
     if (memberSequence != nullptr)
     {
         /*
@@ -1027,13 +1054,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
             </sequence>
             In this example, inner sequence's name is ignored and can be omited.
          */
-
-        p_dynamictypebuilder_t contentType;
-        {
-
-            contentType = getDiscriminatorTypeBuilder(memberType);
-        }
-
+        p_dynamictypebuilder_t contentType = getDiscriminatorTypeBuilder(memberType);
         if (contentType == nullptr)
         {
             logError(XMLPARSER, "Error parsing sequence element type: Cannot be recognized.");
@@ -1060,7 +1081,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (memberMap != nullptr)
+    else if (p_root->Attribute(MAP_MAXLENGTH) != nullptr)
     {
         /*
             In maps allowed formats are (complex format includes the basic):
@@ -1082,39 +1103,37 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         // Parse key
 
         //const char* keyType = p_root->Attribute(KEY);
-        p_dynamictypebuilder_t keyTypeBuilder;
-        if (memberMapKeyType == nullptr)
+        p_dynamictypebuilder_t keyTypeBuilder = nullptr;
+        const char* memberMapKeyType = p_root->Attribute(MAP_KEY_TYPE);
+        if (memberMapKeyType != nullptr)
+        {
+            keyTypeBuilder = getDiscriminatorTypeBuilder(memberMapKeyType);
+            if (keyTypeBuilder == nullptr)
+            {
+                logError(XMLPARSER, "Error parsing map's key element type: Cannot be recognized.");
+                return nullptr;
+            }
+        }
+        else
         {
             logError(XMLPARSER, "Error parsing key_type element: Not found.");
             return nullptr;
         }
-        else
-        {
-            keyTypeBuilder = getDiscriminatorTypeBuilder(memberMapKeyType);
-        }
-
-        if (keyTypeBuilder == nullptr)
-        {
-            logError(XMLPARSER, "Error parsing map's key element type: Cannot be recognized.");
-            return nullptr;
-        }
 
         // Parse value
-        //const char* valueType = p_root->Attribute(VALUE_TYPE);
         p_dynamictypebuilder_t valueTypeBuilder;
-        if (memberType == nullptr)
+        if (memberType != nullptr)
         {
-            logError(XMLPARSER, "Error parsing value_value element: Not found.");
-            return nullptr;
+            valueTypeBuilder = getDiscriminatorTypeBuilder(memberType);
+            if (valueTypeBuilder == nullptr)
+            {
+                logError(XMLPARSER, "Error parsing map's value element type: Cannot be recognized.");
+                return nullptr;
+            }
         }
         else
         {
-            valueTypeBuilder = getDiscriminatorTypeBuilder(memberType);
-        }
-
-        if (valueTypeBuilder == nullptr)
-        {
-            logError(XMLPARSER, "Error parsing map's value element type: Cannot be recognized.");
+            logError(XMLPARSER, "Error parsing value_value element: Not found.");
             return nullptr;
         }
 
@@ -1393,7 +1412,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         }
     }
 
-    //memberBuilder->SetName(memberName);
+    const char* memberTopicKey = p_root->Attribute(KEY);
     if (memberTopicKey != nullptr)
     {
         if (strncmp(memberTopicKey, "true", 5) == 0)
@@ -1933,7 +1952,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
                 <xs:element name="times" type="writerTimesType" minOccurs="0"/>
                 <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
                 <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
@@ -2048,7 +2066,6 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
                 <xs:element name="times" type="readerTimesType" minOccurs="0"/>
                 <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
                 <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
