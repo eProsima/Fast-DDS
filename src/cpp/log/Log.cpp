@@ -35,8 +35,8 @@ void Log::RegisterConsumer(std::unique_ptr<LogConsumer> &&consumer)
 
 void Log::ClearConsumers()
 {
-    std::unique_lock<std::mutex> working(mResources.mWorkingMutex);
-    mResources.mWorkingCv.wait(working, [&]()
+    std::unique_lock<std::mutex> working(mResources.mCvMutex);
+    mResources.mCv.wait(working, [&]()
     {
         return mResources.mLogs.BothEmpty();
     });
@@ -67,7 +67,6 @@ void Log::Run()
             mResources.mWork = false;
             guard.unlock();
             {
-                std::unique_lock<std::mutex> working(mResources.mWorkingMutex);
                 mResources.mLogs.Swap();
                 while (!mResources.mLogs.Empty())
                 {
@@ -82,10 +81,10 @@ void Log::Run()
 
                     mResources.mLogs.Pop();
                 }
-                mResources.mWorkingCv.notify_all();
             }
             guard.lock();
         }
+        mResources.mCv.notify_one();
         if (mResources.mLogging)
             mResources.mCv.wait(guard);
     }

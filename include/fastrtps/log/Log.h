@@ -149,8 +149,6 @@ class Log
         std::unique_ptr<std::regex> mErrorStringFilter;
 
         std::atomic<Log::Kind> mVerbosity;
-        std::condition_variable mWorkingCv;
-        std::mutex mWorkingMutex;
 
         Resources();
         ~Resources();
