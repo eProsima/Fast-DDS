@@ -30,11 +30,11 @@ FileConsumer::~FileConsumer()
 
 void FileConsumer::Consume(const Log::Entry& entry)
 {
-   PrintHeader(entry);
-   PrintMessage(mFile, entry, false);
-   PrintContext(entry);
-   PrintNewLine(mFile, false);
-   mFile.flush();
+    PrintHeader(entry);
+    PrintMessage(mFile, entry, false);
+    PrintContext(entry);
+    PrintNewLine(mFile, false);
+    mFile.flush();
 }
 
 void FileConsumer::PrintHeader(const Log::Entry& entry)
