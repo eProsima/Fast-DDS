@@ -66,12 +66,12 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         else if (strcmp(name, _EDP) == 0)
         {
             /*
-            <xs:simpleType name="EDPType">
-            <xs:restriction base="xs:string">
-            <xs:enumeration value="SIMPLE"/>
-            <xs:enumeration value="STATIC"/>
-            </xs:restriction>
-            </xs:simpleType>
+                <xs:simpleType name="EDPType">
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="SIMPLE"/>
+                        <xs:enumeration value="STATIC"/>
+                    </xs:restriction>
+                </xs:simpleType>
             */
             const char* text = p_aux0->GetText();
             if (nullptr == text)

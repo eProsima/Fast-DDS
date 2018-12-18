@@ -490,19 +490,19 @@
 
     <xs:complexType name="rtpsParticipantAttributesType">
         <xs:all minOccurs="0">
-            <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
-            <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
-            <xs:element name="sendSocketBufferSize" type="uint32Type"/>
-            <xs:element name="listenSocketBufferSize" type="uint32Type"/>
-            <xs:element name="builtin" type="builtinAttributesType"/>
-            <xs:element name="port" type="portType"/>
+            <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
+            <xs:element name="listenSocketBufferSize" type="uint32Type" minOccurs="0"/>
+            <xs:element name="builtin" type="builtinAttributesType" minOccurs="0"/>
+            <xs:element name="port" type="portType" minOccurs="0"/>
             <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
-            <xs:element name="participantID" type="int32Type"/>
-            <xs:element name="throughputController" type="throughputControllerType"/>
-            <xs:element name="userTransports" type="stringListType"/>
-            <xs:element name="useBuiltinTransports" type="boolType"/>
-            <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-            <xs:element name="name" type="stringType"/>
+            <xs:element name="participantID" type="int32Type" minOccurs="0"/>
+            <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+            <xs:element name="userTransports" type="stringListType" minOccurs="0"/>
+            <xs:element name="useBuiltinTransports" type="boolType" minOccurs="0"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+            <xs:element name="name" type="stringType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
@@ -515,34 +515,34 @@
 
     <xs:complexType name="publisherProfileType">
         <xs:all minOccurs="0">
-            <xs:element name="topic" type="topicAttributesType"/>
-            <xs:element name="qos" type="writerQosPoliciesType"/>
-            <xs:element name="times" type="writerTimesType"/>
-            <xs:element name="unicastLocatorList" type="locatorListType"/>
-            <xs:element name="multicastLocatorList" type="locatorListType"/>
-            <xs:element name="outLocatorList" type="locatorListType"/>
-            <xs:element name="throughputController" type="throughputControllerType"/>
-            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
-            <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-            <xs:element name="userDefinedID" type="int16Type"/>
-            <xs:element name="entityID" type="int16Type"/>
+            <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+            <xs:element name="qos" type="writerQosPoliciesType" minOccurs="0"/>
+            <xs:element name="times" type="writerTimesType" minOccurs="0"/>
+            <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+            <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+            <xs:element name="entityID" type="int16Type" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="profile_name" type="stringType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="subscriberProfileType">
         <xs:all minOccurs="0">
-            <xs:element name="topic" type="topicAttributesType"/>
-            <xs:element name="qos" type="readerQosPoliciesType"/>
-            <xs:element name="times" type="readerTimesType"/>
-            <xs:element name="unicastLocatorList" type="locatorListType"/>
-            <xs:element name="multicastLocatorList" type="locatorListType"/>
-            <xs:element name="outLocatorList" type="locatorListType"/>
-            <xs:element name="expectsInlineQos" type="boolType"/>
-            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
-            <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-            <xs:element name="userDefinedID" type="int16Type"/>
-            <xs:element name="entityID" type="int16Type"/>
+            <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+            <xs:element name="qos" type="readerQosPoliciesType" minOccurs="0"/>
+            <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+            <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
+            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+            <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+            <xs:element name="entityID" type="int16Type" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="profile_name" type="stringType" use="required"/>
     </xs:complexType>
@@ -600,6 +600,7 @@
                 <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

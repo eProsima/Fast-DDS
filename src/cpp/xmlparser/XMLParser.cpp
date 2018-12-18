@@ -71,28 +71,28 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
             }
             else
             {
-                root.reset(new BaseNode{NodeType::TYPES});
-                ret  = parseDynamicTypes(p_root);
+                root.reset(new BaseNode{ NodeType::TYPES });
+                ret = parseDynamicTypes(p_root);
             }
         }
         else
         {
-            root.reset(new BaseNode{NodeType::PROFILES});
-            ret  = parseProfiles(p_root, *root);
+            root.reset(new BaseNode{ NodeType::PROFILES });
+            ret = parseProfiles(p_root, *root);
         }
     }
     else
     {
-        root.reset(new BaseNode{NodeType::ROOT});
+        root.reset(new BaseNode{ NodeType::ROOT });
         tinyxml2::XMLElement* node = p_root->FirstChildElement();
-        const char* tag       = nullptr;
+        const char* tag = nullptr;
         while (nullptr != node)
         {
             if (nullptr != (tag = node->Value()))
             {
                 if (strcmp(tag, PROFILES) == 0)
                 {
-                    up_base_node_t profiles_node = up_base_node_t{new BaseNode{NodeType::PROFILES}};
+                    up_base_node_t profiles_node = up_base_node_t{ new BaseNode{NodeType::PROFILES} };
                     if (XMLP_ret::XML_OK == (ret = parseProfiles(node, *profiles_node)))
                     {
                         root->addChild(std::move(profiles_node));
@@ -163,6 +163,14 @@ XMLP_ret XMLParser::parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 
 XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
 {
+    /*
+        <xs:complexType name="TransportDescriptorListType">
+            <xs:sequence>   
+                <xs:element name="transport_descriptor" type="rtpsTransportDescriptorType"/>
+            </xs:sequence>
+        </xs:complexType>
+    */
+
     XMLP_ret ret = XMLP_ret::XML_OK;
     tinyxml2::XMLElement* p_element = p_root->FirstChildElement(TRANSPORT_DESCRIPTOR);
     while(p_element != nullptr)
@@ -222,33 +230,29 @@ XMLP_ret XMLParser::parseXMLTypes(tinyxml2::XMLElement* p_root)
 
 XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
 {
-    /*<xs:complexType name="rtpsTransportDescriptorType">
-    <xs:all minOccurs="0">
-    <xs:element name="transport_id" type="stringType"/>
-    <xs:element name="type" type="stringType"/>
-    <xs:element name="sendBufferSize" type="int32Type"/>
-    <xs:element name="receiveBufferSize" type="int32Type"/>
-    <xs:element name="TTL" type="int8Type"/>
-    <xs:element name="maxMessageSize" type="uint32Type"/>
-    <xs:element name="maxInitialPeersRange" type="uint32Type"/>
-    <xs:element name="interfaceWhiteList" type="stringListType"/>
-    <xs:sequence>
-    <xs:element name="id" type="stringType"/>
-    </xs:sequence>
-    <xs:element name="wan_addr" type="stringType"/>
-    <xs:element name="output_port" type="uint16Type"/>
-    <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
-    <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
-    <xs:element name="max_logical_port" type="uint16Type"/>
-    <xs:element name="logical_port_range" type="uint16Type"/>
-    <xs:element name="logical_port_increment" type="uint16Type"/>
-    <xs:element name="metadata_logical_port" type="uint16Type"/>
-    <xs:element name="ListeningPorts" type="uint16ListType"/>
-    <xs:sequence>
-    <xs:element name="port" type="uint16Type"/>
-    </xs:sequence>
-    </xs:all>
-    </xs:complexType>*/
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="transport_id" type="stringType"/>
+                <xs:element name="type" type="stringType"/>
+                <xs:element name="sendBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="receiveBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="TTL" type="uint8Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="interfaceWhiteList" type="stringListType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="wan_addr" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="output_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="keep_alive_frequency_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="keep_alive_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="max_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="logical_port_range" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="ListeningPorts" type="portListType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+    */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     std::string sId = "";
@@ -336,6 +340,10 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 return ret;
             }
         }
+        else
+        {
+            logError(XMLPARSER, "Invalid transport type: '" << sType << "'");
+        }
 
         ret = parseXMLCommonTransportData(p_root, pDescriptor);
         if (ret != XMLP_ret::XML_OK)
@@ -350,81 +358,103 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
 
 XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
 {
-    /*<xs:complexType name="rtpsTransportDescriptorType">
-    <xs:all minOccurs="0">
-    <xs:element name="sendBufferSize" type="int32Type"/>
-    <xs:element name="receiveBufferSize" type="int32Type"/>
-    <xs:element name="TTL" type="int8Type"/>
-    <xs:element name="maxMessageSize" type="uint32Type"/>
-    <xs:element name="maxInitialPeersRange" type="uint32Type"/>
-    <xs:element name="interfaceWhiteList" type="stringListType"/>
-    <xs:sequence>
-    <xs:element name="id" type="stringType"/>
-    </xs:sequence>
-    </xs:all>
-    </xs:complexType>*/
-
-    tinyxml2::XMLElement* p_aux = nullptr;
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="transport_id" type="stringType"/>
+                <xs:element name="type" type="stringType"/>
+                <xs:element name="sendBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="receiveBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="TTL" type="uint8Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="interfaceWhiteList" type="stringListType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="wan_addr" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="output_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="keep_alive_frequency_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="keep_alive_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="max_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="logical_port_range" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="ListeningPorts" type="portListType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+    */
 
     std::shared_ptr<rtps::SocketTransportDescriptor> pDesc = std::dynamic_pointer_cast<rtps::SocketTransportDescriptor>(p_transport);
 
-    // sendBufferSize - int32Type
-    if (nullptr != (p_aux = p_root->FirstChildElement(SEND_BUFFER_SIZE)))
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
-        int iSize = 0;
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iSize, 0) || iSize < 0)
-            return XMLP_ret::XML_ERROR;
-        pDesc->sendBufferSize = iSize;
-    }
-
-    // receiveBufferSize - int32Type
-    if (nullptr != (p_aux = p_root->FirstChildElement(RECEIVE_BUFFER_SIZE)))
-    {
-        int iSize = 0;
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iSize, 0) || iSize < 0)
-            return XMLP_ret::XML_ERROR;
-        pDesc->receiveBufferSize = iSize;
-    }
-
-    // TTL - int8Type
-    if (nullptr != (p_aux = p_root->FirstChildElement(TTL)))
-    {
-        int iTTL = 0;
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &iTTL, 0) || iTTL < 0 || iTTL > 255)
-            return XMLP_ret::XML_ERROR;
-        pDesc->TTL = static_cast<uint8_t>(iTTL);
-    }
-
-    // maxMessageSize - uint32Type
-    if (nullptr != (p_aux = p_root->FirstChildElement(MAX_MESSAGE_SIZE)))
-    {
-        uint32_t uSize = 0;
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &uSize, 0))
-            return XMLP_ret::XML_ERROR;
-        pDesc->maxMessageSize = uSize;
-    }
-
-    // maxInitialPeersRange - uint32Type
-    if (nullptr != (p_aux = p_root->FirstChildElement(MAX_INITIAL_PEERS_RANGE)))
-    {
-        uint32_t uRange = 0;
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &uRange, 0))
-            return XMLP_ret::XML_ERROR;
-        pDesc->maxInitialPeersRange = uRange;
-    }
-
-    // InterfaceWhiteList stringListType
-    if (nullptr != (p_aux = p_root->FirstChildElement(WHITE_LIST)))
-    {
-        tinyxml2::XMLElement* p_aux1 = p_aux->FirstChildElement(ADDRESS);
-        while (nullptr != p_aux1)
+        name = p_aux0->Name();
+        if (strcmp(name, SEND_BUFFER_SIZE) == 0)
         {
-            const char* text = p_aux1->GetText();
-            if (nullptr != text)
+            // sendBufferSize - int32Type
+            int iSize = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSize, 0) || iSize < 0)
+                return XMLP_ret::XML_ERROR;
+            pDesc->sendBufferSize = iSize;
+        }
+        else if (strcmp(name, RECEIVE_BUFFER_SIZE) == 0)
+        {
+            // receiveBufferSize - int32Type
+            int iSize = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSize, 0) || iSize < 0)
+                return XMLP_ret::XML_ERROR;
+            pDesc->receiveBufferSize = iSize;
+        }
+        else if (strcmp(name, TTL) == 0)
+        {
+            // TTL - int8Type
+            int iTTL = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTTL, 0) || iTTL < 0 || iTTL > 255)
+                return XMLP_ret::XML_ERROR;
+            pDesc->TTL = static_cast<uint8_t>(iTTL);
+        }
+        else if (strcmp(name, MAX_MESSAGE_SIZE) == 0)
+        {
+            // maxMessageSize - uint32Type
+            uint32_t uSize = 0;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uSize, 0))
+                return XMLP_ret::XML_ERROR;
+            pDesc->maxMessageSize = uSize;
+        }
+        else if (strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0)
+        {
+            // maxInitialPeersRange - uint32Type
+            uint32_t uRange = 0;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &uRange, 0))
+                return XMLP_ret::XML_ERROR;
+            pDesc->maxInitialPeersRange = uRange;
+        }
+        else if (strcmp(name, WHITE_LIST) == 0)
+        {
+            // InterfaceWhiteList stringListType
+            tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(ADDRESS);
+            while (nullptr != p_aux1)
             {
-                pDesc->interfaceWhiteList.emplace_back(text);
+                const char* text = p_aux1->GetText();
+                if (nullptr != text)
+                {
+                    pDesc->interfaceWhiteList.emplace_back(text);
+                }
+                p_aux1 = p_aux1->NextSiblingElement(ADDRESS);
             }
-            p_aux1 = p_aux1->NextSiblingElement(ADDRESS);
+        }
+        else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, UDP_OUTPUT_PORT) == 0 ||
+            strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 ||
+            strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 || strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
+            strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
+            strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0)
+        {
+            // Parsed outside of this method
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
         }
     }
     return XMLP_ret::XML_OK;
@@ -432,84 +462,98 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
 
 XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport)
 {
-    /*<xs:complexType name="rtpsTransportDescriptorType">
-    <xs:all minOccurs="0">
-    <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
-    <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
-    <xs:element name="max_logical_port" type="uint16Type"/>
-    <xs:element name="logical_port_range" type="uint16Type"/>
-    <xs:element name="logical_port_increment" type="uint16Type"/>
-    <xs:element name="metadata_logical_port" type="uint16Type"/>
-    <xs:element name="ListeningPorts" type="uint16ListType"/>
-    <xs:sequence>
-    <xs:element name="port" type="uint16Type"/>
-    </xs:sequence>
-    </xs:all>
-    </xs:complexType>*/
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
+                <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
+                <xs:element name="max_logical_port" type="uint16Type"/>
+                <xs:element name="logical_port_range" type="uint16Type"/>
+                <xs:element name="logical_port_increment" type="uint16Type"/>
+                <xs:element name="metadata_logical_port" type="uint16Type"/>
+                <xs:element name="ListeningPorts" type="uint16ListType"/>
+                <xs:sequence>
+                    <xs:element name="port" type="uint16Type"/>
+                </xs:sequence>
+            </xs:all>
+        </xs:complexType>
+    */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     std::shared_ptr<rtps::TCPTransportDescriptor> pTCPDesc = std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(p_transport);
     if (pTCPDesc != nullptr)
     {
         tinyxml2::XMLElement *p_aux0 = nullptr;
-
-        // keep_alive_frequency_ms - uint32Type
-        if (nullptr != (p_aux0 = p_root->FirstChildElement(KEEP_ALIVE_FREQUENCY)))
+        const char* name = nullptr;
+        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
         {
-            int iFrequency(0);
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iFrequency, 0))
-                return XMLP_ret::XML_ERROR;
-            pTCPDesc->keep_alive_frequency_ms = static_cast<uint32_t>(iFrequency);
-        }
-
-        // keep_alive_timeout_ms - uint32Type
-        if (nullptr != (p_aux0 = p_root->FirstChildElement(KEEP_ALIVE_TIMEOUT)))
-        {
-            int iTimeout(0);
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
-                return XMLP_ret::XML_ERROR;
-            pTCPDesc->keep_alive_timeout_ms = static_cast<uint32_t>(iTimeout);
-        }
-
-        // max_logical_port - uint16Type
-        if (nullptr != (p_aux0 = p_root->FirstChildElement(MAX_LOGICAL_PORT)))
-        {
-            int iPort(0);
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
-                return XMLP_ret::XML_ERROR;
-            pTCPDesc->max_logical_port = static_cast<uint16_t>(iPort);
-        }
-
-        // logical_port_range - uint16Type
-        if (nullptr != (p_aux0 = p_root->FirstChildElement(LOGICAL_PORT_RANGE)))
-        {
-            int iPort(0);
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
-                return XMLP_ret::XML_ERROR;
-            pTCPDesc->logical_port_range = static_cast<uint16_t>(iPort);
-        }
-
-        // logical_port_increment - uint16Type
-        if (nullptr != (p_aux0 = p_root->FirstChildElement(LOGICAL_PORT_INCREMENT)))
-        {
-            int iPort(0);
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
-                return XMLP_ret::XML_ERROR;
-            pTCPDesc->logical_port_increment = static_cast<uint16_t>(iPort);
-        }
-
-        // ListeningPorts uint16ListType
-        if (nullptr != (p_aux0 = p_root->FirstChildElement(LISTENING_PORTS)))
-        {
-            tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(PORT);
-            while (nullptr != p_aux1)
+            name = p_aux0->Name();
+            if (strcmp(name, KEEP_ALIVE_FREQUENCY) == 0)
             {
-                int iPort = 0;
-                if (XMLP_ret::XML_OK != getXMLInt(p_aux1, &iPort, 0) || iPort < 0 || iPort > 65535)
+                // keep_alive_frequency_ms - uint32Type
+                int iFrequency(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iFrequency, 0))
                     return XMLP_ret::XML_ERROR;
-                pTCPDesc->add_listener_port(static_cast<uint16_t>(iPort));
+                pTCPDesc->keep_alive_frequency_ms = static_cast<uint32_t>(iFrequency);
+            }
+            else if (strcmp(name, KEEP_ALIVE_TIMEOUT) == 0)
+            {
+                // keep_alive_timeout_ms - uint32Type
+                int iTimeout(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
+                    return XMLP_ret::XML_ERROR;
+                pTCPDesc->keep_alive_timeout_ms = static_cast<uint32_t>(iTimeout);
+            }
+            else if (strcmp(name, MAX_LOGICAL_PORT) == 0)
+            {
+                // max_logical_port - uint16Type
+                int iPort(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                    return XMLP_ret::XML_ERROR;
+                pTCPDesc->max_logical_port = static_cast<uint16_t>(iPort);
+            }
+            else if (strcmp(name, LOGICAL_PORT_RANGE) == 0)
+            {
+                // logical_port_range - uint16Type
+                int iPort(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                    return XMLP_ret::XML_ERROR;
+                pTCPDesc->logical_port_range = static_cast<uint16_t>(iPort);
+            }
+            else if (strcmp(name, LOGICAL_PORT_INCREMENT) == 0)
+            {
+                // logical_port_increment - uint16Type
+                int iPort(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iPort, 0) || iPort < 0 || iPort > 65535)
+                    return XMLP_ret::XML_ERROR;
+                pTCPDesc->logical_port_increment = static_cast<uint16_t>(iPort);
+            }
+            else if (strcmp(name, LISTENING_PORTS) == 0)
+            {
+                // ListeningPorts uint16ListType
+                tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(PORT);
+                while (nullptr != p_aux1)
+                {
+                    int iPort = 0;
+                    if (XMLP_ret::XML_OK != getXMLInt(p_aux1, &iPort, 0) || iPort < 0 || iPort > 65535)
+                        return XMLP_ret::XML_ERROR;
 
-                p_aux1 = p_aux1->NextSiblingElement(PORT);
+                    pTCPDesc->add_listener_port(static_cast<uint16_t>(iPort));
+                    p_aux1 = p_aux1->NextSiblingElement(PORT);
+                }
+            }
+            else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, TRANSPORT_ID) == 0 ||
+                strcmp(name, TYPE) == 0 || strcmp(name, SEND_BUFFER_SIZE) == 0 ||
+                strcmp(name, RECEIVE_BUFFER_SIZE) == 0 || strcmp(name, TTL) == 0 ||
+                strcmp(name, MAX_MESSAGE_SIZE) == 0 || strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
+                strcmp(name, WHITE_LIST) == 0)
+            {
+                // Parsed Outside of this method
+            }
+            else
+            {
+                logError(XMLPARSER, "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
             }
         }
     }
@@ -903,14 +947,12 @@ static bool dimensionsToLabels(const std::string& labelStr, std::vector<uint64_t
     bool def = false;
 
     labels.clear();
-
     while (std::getline(ss, item, ','))
     {
-        if (item == DEFAULT) def = true;
+        if (item == DEFAULT)
+            def = true;
         else
-        {
             labels.push_back(std::atoi(item.c_str()));
-        }
     }
 
     return def;
@@ -1454,8 +1496,22 @@ XMLP_ret XMLParser::parseXMLTopicData(tinyxml2::XMLElement* p_root, BaseNode& ro
 
 XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode)
 {
+    /*
+        <xs:element name="profiles">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="transport_descriptors" type="TransportDescriptorListType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
+    */
+
     tinyxml2::XMLElement* p_profile = p_root->FirstChildElement();
-    const char* tag       = nullptr;
+    const char* tag = nullptr;
     while (nullptr != p_profile)
     {
         if (nullptr != (tag = p_profile->Value()))
@@ -1481,20 +1537,17 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 parseXMLTopicData(p_profile, profilesNode);
             }
-            else if (strcmp(tag, QOS_PROFILE))
+            else if (strcmp(tag, QOS_PROFILE) == 0)
             {
+                logError(XMLPARSER, "Field 'QOS_PROFILE' do not supported for now");
             }
-            else if (strcmp(tag, APPLICATION))
+            else if (strcmp(tag, APPLICATION) == 0)
             {
+                logError(XMLPARSER, "Field 'APPLICATION' do not supported for now");
             }
-            else if (strcmp(tag, TYPE))
+            else if (strcmp(tag, TYPE) == 0)
             {
-            }
-            else if (strcmp(tag, DATA_WRITER))
-            {
-            }
-            else if (strcmp(tag, DATA_READER))
-            {
+                logError(XMLPARSER, "Field 'TYPE' do not supported for now");
             }
             else
             {
@@ -1726,10 +1779,10 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* node, DataNode<TopicAttri
 
     addAllAttributes(node, topic_node);
 
-    uint8_t ident     = 1;
+    uint8_t ident = 1;
     if (XMLP_ret::XML_OK != getXMLTopicAttributes(node, *topic_node.get(), ident))
     {
-            return XMLP_ret::XML_ERROR;
+        return XMLP_ret::XML_ERROR;
     }
 
     return XMLP_ret::XML_OK;
@@ -1737,23 +1790,25 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* node, DataNode<TopicAttri
 
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ParticipantAttributes>& participant_node)
 {
-    /*<xs:complexType name="rtpsParticipantAttributesType">
-      <xs:all minOccurs="0">
-        <xs:element name="defaultUnicastLocatorList" type="locatorListType"/>
-        <xs:element name="defaultMulticastLocatorList" type="locatorListType"/>
-        <xs:element name="sendSocketBufferSize" type="uint32Type"/>
-        <xs:element name="listenSocketBufferSize" type="uint32Type"/>
-        <xs:element name="builtin" type="builtinAttributesType"/>
-        <xs:element name="port" type="portType"/>
-        <xs:element name="userData" type="octetVectorType"/>
-        <xs:element name="participantID" type="int32Type"/>
-        <xs:element name="throughputController" type="throughputControllerType"/>
-        <xs:element name="userTransports" type="stringListType"/>
-        <xs:element name="useBuiltinTransports" type="boolType"/>
-        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-        <xs:element name="name" type="stringType"/>
-      </xs:all>
-    </xs:complexType>*/
+    /*
+        <xs:complexType name="rtpsParticipantAttributesType">
+            <xs:all minOccurs="0">
+                <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
+                <xs:element name="listenSocketBufferSize" type="uint32Type" minOccurs="0"/>
+                <xs:element name="builtin" type="builtinAttributesType" minOccurs="0"/>
+                <xs:element name="port" type="portType" minOccurs="0"/>
+                <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
+                <xs:element name="participantID" type="int32Type" minOccurs="0"/>
+                <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+                <xs:element name="userTransports" type="stringListType" minOccurs="0"/>
+                <xs:element name="useBuiltinTransports" type="boolType" minOccurs="0"/>
+                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+                <xs:element name="name" type="stringType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
 
     if (nullptr == p_profile)
     {
@@ -1770,113 +1825,124 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         return XMLP_ret::XML_ERROR;
     }
 
-    uint8_t ident     = 1;
-    tinyxml2::XMLElement* p_aux = nullptr;
-    // defaultUnicastLocatorList
-    if (nullptr != (p_aux = p_element->FirstChildElement(DEF_UNI_LOC_LIST)))
+    uint8_t ident = 1;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_element->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
-        if (XMLP_ret::XML_OK !=
-            getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultUnicastLocatorList, ident))
+        name = p_aux0->Name();
+        if (strcmp(name, DEF_UNI_LOC_LIST) == 0)
+        {
+            // defaultUnicastLocatorList
+            if (XMLP_ret::XML_OK !=
+                getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultUnicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, DEF_MULTI_LOC_LIST) == 0)
+        {
+            // defaultMulticastLocatorList
+            if (XMLP_ret::XML_OK !=
+                getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, SEND_SOCK_BUF_SIZE) == 0)
+        {
+            // sendSocketBufferSize - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &participant_node.get()->rtps.sendSocketBufferSize, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, LIST_SOCK_BUF_SIZE) == 0)
+        {
+            // listenSocketBufferSize - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &participant_node.get()->rtps.listenSocketBufferSize, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, BUILTIN) == 0)
+        {
+            // builtin
+            if (XMLP_ret::XML_OK != getXMLBuiltinAttributes(p_aux0, participant_node.get()->rtps.builtin, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PORT) == 0)
+        {
+            // port
+            if (XMLP_ret::XML_OK != getXMLPortParameters(p_aux0, participant_node.get()->rtps.port, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, USER_DATA) == 0)
+        {
+            // TODO: userData
+            if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, participant_node.get()->rtps.userData, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PART_ID) == 0)
+        {
+            // participantID - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &participant_node.get()->rtps.participantID, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, THROUGHPUT_CONT) == 0)
+        {
+            // throughputController
+            if (XMLP_ret::XML_OK !=
+                getXMLThroughputController(p_aux0, participant_node.get()->rtps.throughputController, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, USER_TRANS) == 0)
+        {
+            // userTransports
+            if (XMLP_ret::XML_OK != getXMLTransports(p_aux0, participant_node.get()->rtps.userTransports, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, USE_BUILTIN_TRANS) == 0)
+        {
+            // useBuiltinTransports - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &participant_node.get()->rtps.useBuiltinTransports, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PROPERTIES_POLICY) == 0)
+        {
+            // propertiesPolicy
+            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, participant_node.get()->rtps.properties, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, NAME) == 0)
+        {
+            // name - stringType
+            std::string s;
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident))
+                return XMLP_ret::XML_ERROR;
+            participant_node.get()->rtps.setName(s.c_str());
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'rtpsParticipantAttributesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
+        }
     }
-    // defaultMulticastLocatorList
-    if (nullptr != (p_aux = p_element->FirstChildElement(DEF_MULTI_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK !=
-            getXMLLocatorList(p_aux, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // sendSocketBufferSize - uint32Type
-    if (nullptr != (p_aux = p_element->FirstChildElement(SEND_SOCK_BUF_SIZE)))
-    {
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.get()->rtps.sendSocketBufferSize, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // listenSocketBufferSize - uint32Type
-    if (nullptr != (p_aux = p_element->FirstChildElement(LIST_SOCK_BUF_SIZE)))
-    {
-        if (XMLP_ret::XML_OK != getXMLUint(p_aux, &participant_node.get()->rtps.listenSocketBufferSize, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // builtin
-    if (nullptr != (p_aux = p_element->FirstChildElement(BUILTIN)))
-    {
-        if (XMLP_ret::XML_OK != getXMLBuiltinAttributes(p_aux, participant_node.get()->rtps.builtin, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // port
-    if (nullptr != (p_aux = p_element->FirstChildElement(PORT)))
-    {
-        if (XMLP_ret::XML_OK != getXMLPortParameters(p_aux, participant_node.get()->rtps.port, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // TODO: userData
-    if (nullptr != (p_aux = p_element->FirstChildElement(USER_DATA)))
-    {
-        if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux, participant_node.get()->rtps.userData, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // participantID - int32Type
-    if (nullptr != (p_aux = p_element->FirstChildElement(PART_ID)))
-    {
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &participant_node.get()->rtps.participantID, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // throughputController
-    if (nullptr != (p_aux = p_element->FirstChildElement(THROUGHPUT_CONT)))
-    {
-        if (XMLP_ret::XML_OK !=
-            getXMLThroughputController(p_aux, participant_node.get()->rtps.throughputController, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // userTransports
-    if (nullptr != (p_aux = p_element->FirstChildElement(USER_TRANS)))
-    {
-        if (XMLP_ret::XML_OK != getXMLTransports(p_aux, participant_node.get()->rtps.userTransports, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // useBuiltinTransports - boolType
-    if (nullptr != (p_aux = p_element->FirstChildElement(USE_BUILTIN_TRANS)))
-    {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &participant_node.get()->rtps.useBuiltinTransports, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // propertiesPolicy
-    if (nullptr != (p_aux = p_element->FirstChildElement(PROPERTIES_POLICY)))
-    {
-        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, participant_node.get()->rtps.properties, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // name - stringType
-    if (nullptr != (p_aux = p_element->FirstChildElement(NAME)))
-    {
-        std::string s;
-        if (XMLP_ret::XML_OK != getXMLString(p_aux, &s, ident))
-            return XMLP_ret::XML_ERROR;
-        participant_node.get()->rtps.setName(s.c_str());
-    }
-
     return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<PublisherAttributes>& publisher_node)
 {
-    /*<xs:complexType name="publisherProfileType">
-      <xs:all minOccurs="0">
-        <xs:element name="topic" type="topicAttributesType"/>
-        <xs:element name="qos" type="writerQosPoliciesType"/>
-        <xs:element name="times" type="writerTimesType"/>
-        <xs:element name="unicastLocatorList" type="locatorListType"/>
-        <xs:element name="multicastLocatorList" type="locatorListType"/>
-        <xs:element name="outLocatorList" type="locatorListType"/>
-        <xs:element name="throughputController" type="throughputControllerType"/>
-        <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
-        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-        <xs:element name="userDefinedID" type="int16Type"/>
-        <xs:element name="entityID" type="int16Type"/>
-      </xs:all>
-      <xs:attribute name="profile_name" type="stringType" use="required"/>
-    </xs:complexType>*/
+    /*
+        <xs:complexType name="publisherProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+                <xs:element name="qos" type="writerQosPoliciesType" minOccurs="0"/>
+                <xs:element name="times" type="writerTimesType" minOccurs="0"/>
+                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+        </xs:complexType>
+    */
 
     if (nullptr == p_profile)
     {
@@ -1886,100 +1952,112 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
 
     addAllAttributes(p_profile, publisher_node);
 
-    uint8_t ident     = 1;
-    tinyxml2::XMLElement* p_aux = nullptr;
-    // topic
-    if (nullptr != (p_aux = p_profile->FirstChildElement(TOPIC)))
+    uint8_t ident = 1;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
-        if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux, publisher_node.get()->topic, ident))
+        name = p_aux0->Name();
+        if (strcmp(name, TOPIC) == 0)
+        {
+            // topic
+            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, publisher_node.get()->topic, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, QOS) == 0)
+        {
+            // qos
+            if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux0, publisher_node.get()->qos, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, TIMES) == 0)
+        {
+            // times
+            if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux0, publisher_node.get()->times, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, UNI_LOC_LIST) == 0)
+        {
+            // unicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher_node.get()->unicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, MULTI_LOC_LIST) == 0)
+        {
+            // multicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher_node.get()->multicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, REM_LOC_LIST) == 0)
+        {
+            // remoteLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher_node.get()->remoteLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, THROUGHPUT_CONT) == 0)
+        {
+            // throughputController
+            if (XMLP_ret::XML_OK !=
+                getXMLThroughputController(p_aux0, publisher_node.get()->throughputController, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, HIST_MEM_POLICY) == 0)
+        {
+            // historyMemoryPolicy
+            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, publisher_node.get()->historyMemoryPolicy, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PROPERTIES_POLICY) == 0)
+        {
+            // propertiesPolicy
+            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, publisher_node.get()->properties, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, USER_DEF_ID) == 0)
+        {
+            // userDefinedID - int16type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            publisher_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, ENTITY_ID) == 0)
+        {
+            // entityID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            publisher_node.get()->setEntityID(static_cast<uint8_t>(i));
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'publisherProfileType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
-    }
-    // qos
-    if (nullptr != (p_aux = p_profile->FirstChildElement(QOS)))
-    {
-        if (XMLP_ret::XML_OK != getXMLWriterQosPolicies(p_aux, publisher_node.get()->qos, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // times
-    if (nullptr != (p_aux = p_profile->FirstChildElement(TIMES)))
-    {
-        if (XMLP_ret::XML_OK != getXMLWriterTimes(p_aux, publisher_node.get()->times, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // unicastLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(UNI_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->unicastLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // multicastLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(MULTI_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->multicastLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // remoteLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(REM_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, publisher_node.get()->remoteLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // throughputController
-    if (nullptr != (p_aux = p_profile->FirstChildElement(THROUGHPUT_CONT)))
-    {
-        if (XMLP_ret::XML_OK !=
-            getXMLThroughputController(p_aux, publisher_node.get()->throughputController, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // historyMemoryPolicy
-    if (nullptr != (p_aux = p_profile->FirstChildElement(HIST_MEM_POLICY)))
-    {
-        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux, publisher_node.get()->historyMemoryPolicy, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // propertiesPolicy
-    if (nullptr != (p_aux = p_profile->FirstChildElement(PROPERTIES_POLICY)))
-    {
-        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, publisher_node.get()->properties, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // userDefinedID - int16type
-    if (nullptr != (p_aux = p_profile->FirstChildElement(USER_DEF_ID)))
-    {
-        int i = 0;
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
-            return XMLP_ret::XML_ERROR;
-        publisher_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
-    }
-    // entityID - int16Type
-    if (nullptr != (p_aux = p_profile->FirstChildElement(ENTITY_ID)))
-    {
-        int i = 0;
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
-            return XMLP_ret::XML_ERROR;
-        publisher_node.get()->setEntityID(static_cast<uint8_t>(i));
+        }
     }
     return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<SubscriberAttributes>& subscriber_node)
 {
-    /*<xs:complexType name="subscriberProfileType">
-      <xs:all minOccurs="0">
-        <xs:element name="topic" type="topicAttributesType"/>
-        <xs:element name="qos" type="readerQosPoliciesType"/>
-        <xs:element name="times" type="readerTimesType"/>
-        <xs:element name="unicastLocatorList" type="locatorListType"/>
-        <xs:element name="multicastLocatorList" type="locatorListType"/>
-        <xs:element name="outLocatorList" type="locatorListType"/>
-        <xs:element name="expectsInlineQos" type="boolType"/>
-        <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType"/>
-        <xs:element name="propertiesPolicy" type="propertyPolicyType"/>
-        <xs:element name="userDefinedID" type="int16Type"/>
-        <xs:element name="entityID" type="int16Type"/>
-      </xs:all>
-      <xs:attribute name="profile_name" type="stringType" use="required"/>
-    </xs:complexType>*/
+    /*
+        <xs:complexType name="subscriberProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="topic" type="topicAttributesType" minOccurs="0"/>
+                <xs:element name="qos" type="readerQosPoliciesType" minOccurs="0"/>
+                <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+                <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="outLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
+                <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+                <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+                <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
+                <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+        </xs:complexType>
+    */
 
     if (nullptr == p_profile)
     {
@@ -1989,78 +2067,89 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
 
     addAllAttributes(p_profile, subscriber_node);
 
-    uint8_t ident     = 1;
-    tinyxml2::XMLElement* p_aux = nullptr;
-    // topic
-    if (nullptr != (p_aux = p_profile->FirstChildElement(TOPIC)))
+    uint8_t ident = 1;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
-        if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux, subscriber_node.get()->topic, ident))
+        name = p_aux0->Name();
+        if (strcmp(name, TOPIC) == 0)
+        {
+            // topic
+            if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, subscriber_node.get()->topic, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, QOS) == 0)
+        {
+            // qos
+            if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux0, subscriber_node.get()->qos, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, TIMES) == 0)
+        {
+            // times
+            if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux0, subscriber_node.get()->times, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, UNI_LOC_LIST) == 0)
+        {
+            // unicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->unicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, MULTI_LOC_LIST) == 0)
+        {
+            // multicastLocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->multicastLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, REM_LOC_LIST) == 0)
+        {
+            // remote LocatorList
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->remoteLocatorList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, EXP_INLINE_QOS) == 0)
+        {
+            // expectsInlineQos - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber_node.get()->expectsInlineQos, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, HIST_MEM_POLICY) == 0)
+        {
+            // historyMemoryPolicy
+            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, subscriber_node.get()->historyMemoryPolicy, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PROPERTIES_POLICY) == 0)
+        {
+            // propertiesPolicy
+            if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, subscriber_node.get()->properties, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, USER_DEF_ID) == 0)
+        {
+            // userDefinedID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            subscriber_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, ENTITY_ID) == 0)
+        {
+            // entityID - int16Type
+            int i = 0;
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+                return XMLP_ret::XML_ERROR;
+            subscriber_node.get()->setEntityID(static_cast<uint8_t>(i));
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'subscriberProfileType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
+        }
     }
-    // qos
-    if (nullptr != (p_aux = p_profile->FirstChildElement(QOS)))
-    {
-        if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux, subscriber_node.get()->qos, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // times
-    if (nullptr != (p_aux = p_profile->FirstChildElement(TIMES)))
-    {
-        if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux, subscriber_node.get()->times, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // unicastLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(UNI_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->unicastLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // multicastLocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(MULTI_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->multicastLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // remote LocatorList
-    if (nullptr != (p_aux = p_profile->FirstChildElement(REM_LOC_LIST)))
-    {
-        if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux, subscriber_node.get()->remoteLocatorList, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // expectsInlineQos - boolType
-    if (nullptr != (p_aux = p_profile->FirstChildElement(EXP_INLINE_QOS)))
-    {
-        if (XMLP_ret::XML_OK != getXMLBool(p_aux, &subscriber_node.get()->expectsInlineQos, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // historyMemoryPolicy
-    if (nullptr != (p_aux = p_profile->FirstChildElement(HIST_MEM_POLICY)))
-    {
-        if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux, subscriber_node.get()->historyMemoryPolicy, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // propertiesPolicy
-    if (nullptr != (p_aux = p_profile->FirstChildElement(PROPERTIES_POLICY)))
-    {
-        if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux, subscriber_node.get()->properties, ident))
-            return XMLP_ret::XML_ERROR;
-    }
-    // userDefinedID - int16Type
-    if (nullptr != (p_aux = p_profile->FirstChildElement(USER_DEF_ID)))
-    {
-        int i = 0;
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
-            return XMLP_ret::XML_ERROR;
-        subscriber_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
-    }
-    // entityID - int16Type
-    if (nullptr != (p_aux = p_profile->FirstChildElement(ENTITY_ID)))
-    {
-        int i = 0;
-        if (XMLP_ret::XML_OK != getXMLInt(p_aux, &i, ident) || i > 255)
-            return XMLP_ret::XML_ERROR;
-        subscriber_node.get()->setEntityID(static_cast<uint8_t>(i));
-    }
+
     return XMLP_ret::XML_OK;
 }
 
