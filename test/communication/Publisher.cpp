@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 {
     int arg_count = 1;
     bool exit_on_lost_liveliness = false;
-    uint32_t seed = 7800, wait = 0;
+    uint32_t seed = 7800, wait = 0, num_publishers = 1;
     char* xml_file = nullptr;
 
     while(arg_count < argc)
@@ -141,6 +141,16 @@ int main(int argc, char** argv)
 
             xml_file = argv[arg_count];
         }
+        else if (strcmp(argv[arg_count], "--publisher_number") == 0)
+        {
+            if (++arg_count >= argc)
+            {
+                std::cout << "--publisher_number expects a parameter" << std::endl;
+                return -1;
+            }
+
+            num_publishers = strtol(argv[arg_count], nullptr, 10);
+        }
 
         ++arg_count;
     }
@@ -163,22 +173,27 @@ int main(int argc, char** argv)
     Domain::registerType(participant,&type);
 
     PubListener listener;
+    std::vector<Publisher*> publishers;
 
-    // Generate topic name
-    std::ostringstream topic;
-    topic << "HelloWorldTopic_" << asio::ip::host_name() << "_" << seed;
-
-    //CREATE THE PUBLISHER
-    PublisherAttributes publisher_attributes;
-    Domain::getDefaultPublisherAttributes(publisher_attributes);
-    publisher_attributes.topic.topicKind = NO_KEY;
-    publisher_attributes.topic.topicDataType = type.getName();
-    publisher_attributes.topic.topicName = topic.str();
-    Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
-    if(publisher == nullptr)
+    for (uint32_t i = 0; i < num_publishers; i++)
     {
-        Domain::removeParticipant(participant);
-        return 1;
+        // Generate topic name
+        std::ostringstream topic;
+        topic << "HelloWorldTopic_" << asio::ip::host_name() << "_" << seed << "_" << i;
+
+        //CREATE THE PUBLISHER
+        PublisherAttributes publisher_attributes;
+        Domain::getDefaultPublisherAttributes(publisher_attributes);
+        publisher_attributes.topic.topicKind = NO_KEY;
+        publisher_attributes.topic.topicDataType = type.getName();
+        publisher_attributes.topic.topicName = topic.str();
+        Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
+        if (publisher == nullptr)
+        {
+            Domain::removeParticipant(participant);
+            return 1;
+        }
+        publishers.push_back(publisher);
     }
 
     if(wait > 0)
@@ -193,7 +208,10 @@ int main(int argc, char** argv)
 
     while(run)
     {
-        publisher->write((void*)&data);
+        for (Publisher* publisher : publishers)
+        {
+            publisher->write((void*)&data);
+        }
 
         if(data.index() == 4)
             data.index() = 1;
