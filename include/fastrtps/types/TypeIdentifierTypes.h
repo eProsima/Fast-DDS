@@ -49,6 +49,7 @@ namespace types{
 
 // Forward declaration
 class TypeIdentifier;
+class StringLTypeDefn;
 
 /*!
  * @brief This class represents the structure StringSTypeDefn defined by the user in the IDL file.
@@ -149,6 +150,10 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const StringSTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+
+    RTPS_DllAPI bool consistent(const StringLTypeDefn &x,
         const TypeConsistencyEnforcementQosPolicy& localConsistency,
         const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 
@@ -254,6 +259,10 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const StringLTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+
+    RTPS_DllAPI bool consistent(const StringSTypeDefn &x,
         const TypeConsistencyEnforcementQosPolicy& localConsistency,
         const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 

@@ -14,6 +14,8 @@
 
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/types/TypeObject.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/log/Log.h>
 #include <fastcdr/exceptions/BadParamException.h>
 #include <fastcdr/Cdr.h>
 
@@ -602,15 +604,17 @@ bool CompleteTypeDetail::operator==(const CompleteTypeDetail& other) const
     return false;
 }
 
-bool CompleteTypeDetail::consistent(const CompleteTypeDetail &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+bool CompleteTypeDetail::consistent(const CompleteTypeDetail&,
+        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
+    // Don't check Type details
+    return true;
+
     // TODO annotations?
     // Isn't a member name, but makes sense to apply here?
-    return (localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_member_names)
-        || m_type_name == x.m_type_name;
-
+    //return (localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_member_names)
+    //    || m_type_name == x.m_type_name;
 }
 
 CompleteStructHeader::CompleteStructHeader()
@@ -2596,13 +2600,12 @@ bool CommonAliasBody::operator==(const CommonAliasBody& other) const
         m_related_type == other.m_related_type;
 }
 
-bool CommonAliasBody::consistent(const CommonAliasBody &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
-{
-    return m_related_type.consistent(x.m_related_type, localConsistency, remoteConsistency);
-
-}
+//bool CommonAliasBody::consistent(const CommonAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//{
+//    return m_related_type.consistent(x.m_related_type, localConsistency, remoteConsistency);
+//}
 
 CompleteAliasBody::CompleteAliasBody()
 {
@@ -2685,14 +2688,13 @@ bool CompleteAliasBody::operator==(const CompleteAliasBody& other) const
     return false;
 }
 
-bool CompleteAliasBody::consistent(const CompleteAliasBody &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
-{
-    // TODO Annotations?
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
-
-}
+//bool CompleteAliasBody::consistent(const CompleteAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//{
+//    // TODO Annotations?
+//    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+//}
 
 MinimalAliasBody::MinimalAliasBody()
 {
@@ -2751,13 +2753,12 @@ bool MinimalAliasBody::operator==(const MinimalAliasBody& other) const
     return m_common == other.m_common;
 }
 
-bool MinimalAliasBody::consistent(const MinimalAliasBody &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
-{
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
-
-}
+//bool MinimalAliasBody::consistent(const MinimalAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//{
+//    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+//}
 
 CompleteAliasHeader::CompleteAliasHeader()
 {
@@ -2816,13 +2817,12 @@ bool CompleteAliasHeader::operator==(const CompleteAliasHeader& other) const
     return m_detail == other.m_detail;
 }
 
-bool CompleteAliasHeader::consistent(const CompleteAliasHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
-{
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency);
-
-}
+//bool CompleteAliasHeader::consistent(const CompleteAliasHeader &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//{
+//    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency);
+//}
 
 MinimalAliasHeader::MinimalAliasHeader()
 {
@@ -2865,12 +2865,12 @@ void MinimalAliasHeader::deserialize(eprosima::fastcdr::Cdr &)
 {
 }
 
-bool MinimalAliasHeader::consistent(const MinimalAliasHeader&,
-        const TypeConsistencyEnforcementQosPolicy&,
-        const TypeConsistencyEnforcementQosPolicy&) const
-{
-    return true;
-}
+//bool MinimalAliasHeader::consistent(const MinimalAliasHeader&,
+//        const TypeConsistencyEnforcementQosPolicy&,
+//        const TypeConsistencyEnforcementQosPolicy&) const
+//{
+//    return true;
+//}
 
 CompleteAliasType::CompleteAliasType()
 {
@@ -2945,14 +2945,13 @@ bool CompleteAliasType::operator==(const CompleteAliasType& other) const
             m_body == other.m_body;
 }
 
-bool CompleteAliasType::consistent(const CompleteAliasType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
-{
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_body.consistent(x.m_body, localConsistency, remoteConsistency);
-
-}
+//bool CompleteAliasType::consistent(const CompleteAliasType &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//{
+//    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
+//        && m_body.consistent(x.m_body, localConsistency, remoteConsistency);
+//}
 
 MinimalAliasType::MinimalAliasType()
 {
@@ -3027,14 +3026,13 @@ bool MinimalAliasType::operator==(const MinimalAliasType& other) const
             m_body == other.m_body;
 }
 
-bool MinimalAliasType::consistent(const MinimalAliasType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
-{
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_body.consistent(x.m_body, localConsistency, remoteConsistency);
-
-}
+//bool MinimalAliasType::consistent(const MinimalAliasType &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//{
+//    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
+//        && m_body.consistent(x.m_body, localConsistency, remoteConsistency);
+//}
 
 CompleteElementDetail::CompleteElementDetail()
 {
@@ -7542,12 +7540,37 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
         const TypeConsistencyEnforcementQosPolicy& localConsistency,
         const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
 {
+    // Resolve aliases
+    if (m__d == TK_ALIAS)
+    {
+        const TypeIdentifier& aliasedId = m_alias_type.body().common().related_type();
+        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        if (aliasedObj == nullptr)
+        {
+            logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
+            return false;
+        }
+        return aliasedObj->complete().consistent(x, localConsistency, remoteConsistency);
+    }
+
+    if (x.m__d == TK_ALIAS)
+    {
+        const TypeIdentifier& aliasedId = x.m_alias_type.body().common().related_type();
+        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        if (aliasedObj == nullptr)
+        {
+            logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
+            return false;
+        }
+        return this->consistent(aliasedObj->complete(), localConsistency, remoteConsistency);
+    }
+
     if (m__d != x.m__d) return false;
 
     switch(m__d)
     {
-        case TK_ALIAS:
-            return m_alias_type.consistent(x.m_alias_type, localConsistency, remoteConsistency);
+        //case TK_ALIAS:
+        //    return m_alias_type.consistent(x.m_alias_type, localConsistency, remoteConsistency);
         case TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, localConsistency, remoteConsistency);
         case TK_STRUCTURE:
@@ -8493,12 +8516,37 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
         const TypeConsistencyEnforcementQosPolicy& localConsistency,
         const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
 {
+    // Resolve aliases
+    if (m__d == TK_ALIAS)
+    {
+        const TypeIdentifier& aliasedId = m_alias_type.body().common().related_type();
+        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        if (aliasedObj == nullptr)
+        {
+            logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
+            return false;
+        }
+        return aliasedObj->minimal().consistent(x, localConsistency, remoteConsistency);
+    }
+
+    if (x.m__d == TK_ALIAS)
+    {
+        const TypeIdentifier& aliasedId = x.m_alias_type.body().common().related_type();
+        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        if (aliasedObj == nullptr)
+        {
+            logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
+            return false;
+        }
+        return this->consistent(aliasedObj->minimal(), localConsistency, remoteConsistency);
+    }
+
     if (m__d != x.m__d) return false;
 
     switch(m__d)
     {
-        case TK_ALIAS:
-            return m_alias_type.consistent(x.m_alias_type, localConsistency, remoteConsistency);
+        //case TK_ALIAS:
+        //    return m_alias_type.consistent(x.m_alias_type, localConsistency, remoteConsistency);
         case TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, localConsistency, remoteConsistency);
         case TK_STRUCTURE:

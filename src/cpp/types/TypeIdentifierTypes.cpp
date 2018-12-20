@@ -113,6 +113,14 @@ bool StringSTypeDefn::consistent(const StringSTypeDefn &x,
         || m_bound >= x.m_bound;
 }
 
+bool StringSTypeDefn::consistent(const StringLTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+        const TypeConsistencyEnforcementQosPolicy&) const
+{
+    return (localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_string_bounds)
+        || m_bound >= x.bound();
+}
+
 StringLTypeDefn::StringLTypeDefn()
 {
     m_bound = 0;
@@ -182,6 +190,14 @@ bool StringLTypeDefn::consistent(const StringLTypeDefn &x,
 {
     return (localConsistency.m_kind == ALLOW_TYPE_COERCION &&  localConsistency.m_ignore_string_bounds)
         || m_bound >= x.m_bound;
+}
+
+bool StringLTypeDefn::consistent(const StringSTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+        const TypeConsistencyEnforcementQosPolicy&) const
+{
+    return (localConsistency.m_kind == ALLOW_TYPE_COERCION &&  localConsistency.m_ignore_string_bounds)
+        || m_bound >= x.bound();
 }
 
 PlainCollectionHeader::PlainCollectionHeader()

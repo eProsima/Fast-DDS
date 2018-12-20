@@ -741,14 +741,18 @@ bool EDP::checkTypeValidation(const WriterProxyData* wdata, const ReaderProxyDat
             rdata->m_qos.m_typeConsistency, wdata->m_qos.m_typeConsistency);
     }
     else if (wdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION
-        || rdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION
-        || wdata->m_qos.type_information.get() == nullptr
-        || rdata->m_qos.type_information.get() == nullptr)
+            || rdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION
+            || wdata->m_qos.type_information.get() == nullptr
+            || rdata->m_qos.type_information.get() == nullptr)
     {
         if (rdata->m_qos.m_typeConsistency.m_force_type_validation
             || wdata->m_qos.m_typeConsistency.m_force_type_validation)
         {
-                return false;
+            logWarning(RTPS_EDP, "Type Validation FAILED due to force_type_validation (typeName: "
+                << rdata->typeName() << "): Local reader " << rdata->guid()
+                << " didn't match with remote writer (" << wdata->guid() << ") (typeName: "
+                << wdata->typeName() << ")");
+            return false;
         }
         return rdata->typeName() == wdata->typeName();
     }

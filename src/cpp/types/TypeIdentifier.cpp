@@ -20,6 +20,8 @@
  */
 
 #include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/log/Log.h>
 
 #include <fastcdr/Cdr.h>
 
@@ -1240,7 +1242,7 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
                 && *this->seq_sdefn().element_identifier() == *other.seq_sdefn().element_identifier();
 
         case TI_PLAIN_SEQUENCE_LARGE:
-            return this->seq_ldefn().bound() == this->seq_ldefn().bound()
+            return this->seq_ldefn().bound() == other.seq_ldefn().bound()
                 && *this->seq_ldefn().element_identifier() == *other.seq_ldefn().element_identifier();
 
         case TI_PLAIN_ARRAY_SMALL:
@@ -1276,12 +1278,12 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
             }
 
         case TI_PLAIN_MAP_SMALL:
-            return this->map_sdefn().bound() == this->map_sdefn().bound()
+            return this->map_sdefn().bound() == other.map_sdefn().bound()
                 && *this->map_sdefn().key_identifier() == *other.map_sdefn().key_identifier()
                 && *this->map_sdefn().element_identifier() == *other.map_sdefn().element_identifier();
 
         case TI_PLAIN_MAP_LARGE:
-            return this->map_ldefn().bound() == this->map_ldefn().bound()
+            return this->map_ldefn().bound() == other.map_ldefn().bound()
                 && *this->map_ldefn().key_identifier() == *other.map_ldefn().key_identifier()
                 && *this->map_ldefn().element_identifier() == *other.map_ldefn().element_identifier();
 
@@ -1310,11 +1312,6 @@ bool TypeIdentifier::consistent(const TypeIdentifier &x,
 {
     if (this == &x) return true; // Same memory!
 
-    if (this->_d() != x._d())
-    {
-        return false;
-    }
-
     switch (this->_d())
     {
         case TK_NONE:
@@ -1331,14 +1328,51 @@ bool TypeIdentifier::consistent(const TypeIdentifier &x,
         case TK_FLOAT128:
         case TK_CHAR8:
         case TK_CHAR16:
+            if (this->_d() != x._d())
+            {
+                return false;
+            }
             return true;
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
-            return this->string_sdefn().consistent(x.string_sdefn(), localConsistency, remoteConsistency);
-
         case TI_STRING8_LARGE:
         case TI_STRING16_LARGE:
-            return this->string_ldefn().consistent(x.string_ldefn(), localConsistency, remoteConsistency);
+            if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_SMALL)
+            {
+                return this->string_sdefn().consistent(x.string_sdefn(), localConsistency, remoteConsistency);
+            }
+            else if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_LARGE)
+            {
+                return this->string_sdefn().consistent(x.string_ldefn(), localConsistency, remoteConsistency);
+            }
+            else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_SMALL)
+            {
+                return this->string_sdefn().consistent(x.string_sdefn(), localConsistency, remoteConsistency);
+            }
+            else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_LARGE)
+            {
+                return this->string_sdefn().consistent(x.string_ldefn(), localConsistency, remoteConsistency);
+            }
+            else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_SMALL)
+            {
+                return this->string_ldefn().consistent(x.string_sdefn(), localConsistency, remoteConsistency);
+            }
+            else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_LARGE)
+            {
+                return this->string_ldefn().consistent(x.string_ldefn(), localConsistency, remoteConsistency);
+            }
+            else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_SMALL)
+            {
+                return this->string_ldefn().consistent(x.string_sdefn(), localConsistency, remoteConsistency);
+            }
+            else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_LARGE)
+            {
+                return this->string_ldefn().consistent(x.string_ldefn(), localConsistency, remoteConsistency);
+            }
+            else
+            {
+                return false;
+            }
 
         case TI_PLAIN_SEQUENCE_SMALL:
             return this->seq_sdefn().consistent(x.seq_sdefn(), localConsistency, remoteConsistency);
@@ -1361,15 +1395,24 @@ bool TypeIdentifier::consistent(const TypeIdentifier &x,
         case EK_MINIMAL:
         case EK_COMPLETE:
         {
-            //return memcmp(this->equivalence_hash(), other.equivalence_hash(), 14) == 0;
-            for (int i = 0; i < 14; ++i)
+            if (this->_d() != x._d())
             {
-                if (this->equivalence_hash()[i] != x.equivalence_hash()[i])
-                {
-                    return false;
-                }
+                return false;
             }
-            return true;
+
+            const TypeObject* localObj = TypeObjectFactory::GetInstance()->GetTypeObject(this);
+            const TypeObject* remoteObj = TypeObjectFactory::GetInstance()->GetTypeObject(&x);
+            if (localObj == nullptr)
+            {
+                logWarning(XTYPES, "Local TypeIdentifier doesn't have a related TypeObject");
+                return false;
+            }
+            if (remoteObj == nullptr)
+            {
+                logWarning(XTYPES, "Remote TypeIdentifier doesn't have a related TypeObject");
+                return false;
+            }
+            return localObj->consistent(*remoteObj, localConsistency, remoteConsistency);
         }
         default:
             break;

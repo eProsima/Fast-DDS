@@ -1,0 +1,30 @@
+// Enum
+
+enum MyEnumWide
+{
+    A,
+    B,
+    C,
+    D
+};
+
+struct MyEnumWideStruct
+{
+    MyEnumWide my_enum_wide;
+};
+
+
+union SimpleWideUnion switch (long)
+{
+    case A:
+        long first;
+    case B:
+        long long second;
+    case D:
+        octet third;
+};
+
+struct SimpleWideUnionStruct
+{
+    SimpleWideUnion my_union;
+};

@@ -1277,9 +1277,9 @@ public:
 
     RTPS_DllAPI bool operator==(const CommonAliasBody& other) const;
 
-    RTPS_DllAPI bool consistent(const CommonAliasBody &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+//    RTPS_DllAPI bool consistent(const CommonAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 private:
     AliasMemberFlag m_related_flags;
     TypeIdentifier m_related_type;
@@ -1322,9 +1322,9 @@ public:
 
     RTPS_DllAPI bool operator==(const CompleteAliasBody& other) const;
 
-    RTPS_DllAPI bool consistent(const CompleteAliasBody &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+//    RTPS_DllAPI bool consistent(const CompleteAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 private:
     CommonAliasBody m_common;
     AppliedBuiltinMemberAnnotations m_ann_builtin;
@@ -1356,9 +1356,9 @@ public:
 
     RTPS_DllAPI bool operator==(const MinimalAliasBody& other) const;
 
-    RTPS_DllAPI bool consistent(const MinimalAliasBody &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+//    RTPS_DllAPI bool consistent(const MinimalAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 private:
     CommonAliasBody m_common;
 };
@@ -1388,9 +1388,9 @@ public:
 
     RTPS_DllAPI bool operator==(const CompleteAliasHeader& other) const;
 
-    RTPS_DllAPI bool consistent(const CompleteAliasHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+//    RTPS_DllAPI bool consistent(const CompleteAliasHeader &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 private:
     CompleteTypeDetail m_detail;
 };
@@ -1415,9 +1415,9 @@ public:
 
     RTPS_DllAPI bool operator==(const MinimalAliasHeader&) const { return true; }
 
-    RTPS_DllAPI bool consistent(const MinimalAliasHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+//    RTPS_DllAPI bool consistent(const MinimalAliasHeader &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 private:
 };
 
@@ -1458,9 +1458,9 @@ public:
 
     RTPS_DllAPI bool operator==(const CompleteAliasType& other) const;
 
-    RTPS_DllAPI bool consistent(const CompleteAliasType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+//    RTPS_DllAPI bool consistent(const CompleteAliasType &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 private:
     AliasTypeFlag m_alias_flags;
     CompleteAliasHeader m_header;
@@ -1503,9 +1503,9 @@ public:
 
     RTPS_DllAPI bool operator==(const MinimalAliasType& other) const;
 
-    RTPS_DllAPI bool consistent(const MinimalAliasType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+//    RTPS_DllAPI bool consistent(const MinimalAliasType &x,
+//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
+//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
 private:
     AliasTypeFlag m_alias_flags;
     MinimalAliasHeader m_header;
