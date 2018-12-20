@@ -155,6 +155,11 @@
         </struct>
     </type>
     <type>
+        <struct name="ArrayArrayArrayStruct">
+            <member name="my_array_array_array" type="nonBasic" nonBasicTypeName="ArrayArrayStruct" arrayDimensions="2,2"/>
+        </struct>
+    </type>
+    <type>
         <struct name="SequenceStruct">
             <member name="my_sequence" type="nonBasic" nonBasicTypeName="int32" sequenceMaxLength="2"/>
         </struct>

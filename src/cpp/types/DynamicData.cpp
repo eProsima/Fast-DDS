@@ -4323,7 +4323,7 @@ ResponseCode DynamicData::InsertComplexValue(DynamicData_ptr value, MemberId& ou
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(mComplexValues.size());
-            mComplexValues.insert(std::make_pair(outId, DynamicDataFactory::GetInstance()->CreateCopy(value)));
+            mComplexValues.insert(std::make_pair(outId, DynamicDataFactory::GetInstance()->CreateCopy(value.get())));
             return ResponseCode::RETCODE_OK;
 #else
             outId = static_cast<MemberId>(mValues.size());
