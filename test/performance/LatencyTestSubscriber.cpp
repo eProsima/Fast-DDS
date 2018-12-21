@@ -165,6 +165,9 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
     PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    PubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
+
     if (!reliable)
     {
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -201,6 +204,9 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
         st << asio::ip::host_name() << "_";
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
+    SubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    SubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
+
     if (reliable)
     {
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -236,6 +242,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 
@@ -254,6 +262,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     sct << pid << "_PUB2SUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    SubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    SubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
