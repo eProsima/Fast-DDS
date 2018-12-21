@@ -144,6 +144,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
     PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    PubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
+
     if (!reliable)
     {
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -181,7 +184,8 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-
+    PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 
     if (mp_commandpub == nullptr)
@@ -201,6 +205,8 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    SubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    SubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
 

@@ -398,6 +398,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         st << asio::ip::host_name() << "_";
     st << pid << "_UP";
     Sparam.topic.topicName = st.str();
+    Sparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    Sparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     if (reliable)
     {
         //RELIABLE
@@ -432,6 +434,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         pct << asio::ip::host_name() << "_";
     pct << pid << "_SUB2PUB";
     Wparam.topic.topicName = pct.str();
+    Wparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    Wparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
@@ -447,6 +451,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         sct << asio::ip::host_name() << "_";
     sct << pid << "_PUB2SUB";
     Rparam.topic.topicName = sct.str();
+    Rparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    Rparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
