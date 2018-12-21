@@ -45,6 +45,7 @@ using namespace eprosima::fastrtps::xmlparser;
 namespace eprosima {
 namespace fastrtps {
 
+std::recursive_mutex Domain::m_mutex;
 std::vector<Domain::t_p_Participant> Domain::m_participants;
 bool Domain::default_xml_profiles_loaded = false;
 
@@ -62,6 +63,8 @@ Domain::~Domain()
 
 void Domain::stopAll()
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
+
     while(m_participants.size()>0)
     {
         Domain::removeParticipant(m_participants.begin()->first);
@@ -78,6 +81,8 @@ void Domain::stopAll()
 
 bool Domain::removeParticipant(Participant* part)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
+
     if(part!=nullptr)
     {
         for(auto it = m_participants.begin();it!= m_participants.end();++it)
@@ -96,6 +101,7 @@ bool Domain::removeParticipant(Participant* part)
 
 bool Domain::removePublisher(Publisher* pub)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     if(pub!=nullptr)
     {
         for(auto it = m_participants.begin();it!= m_participants.end();++it)
@@ -112,6 +118,7 @@ bool Domain::removePublisher(Publisher* pub)
 
 bool Domain::removeSubscriber(Subscriber* sub)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     if(sub!=nullptr)
     {
         for(auto it = m_participants.begin();it!= m_participants.end();++it)
@@ -140,6 +147,7 @@ Participant* Domain::createParticipant(const std::string &participant_profile, P
         logError(PARTICIPANT, "Problem loading profile '" << participant_profile << "'");
         return nullptr;
     }
+
     return createParticipant(participant_att, listen);
 }
 
@@ -161,7 +169,10 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
     pubsubpair.first = pubsubpar;
     pubsubpair.second = pspartimpl;
 
-    m_participants.push_back(pubsubpair);
+    {
+        std::lock_guard<std::recursive_mutex> guard(m_mutex);
+        m_participants.push_back(pubsubpair);
+    }
     return pubsubpar;
 }
 
@@ -184,11 +195,13 @@ Publisher* Domain::createPublisher(Participant *part, const std::string &publish
         logError(PUBLISHER, "Problem loading profile '" << publisher_profile << "'");
         return nullptr;
     }
+ 
     return createPublisher(part, publisher_att, listen);
 }
 
 Publisher* Domain::createPublisher(Participant *part, PublisherAttributes &att, PublisherListener *listen)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
     {
         if(it->second->getGuid() == part->getGuid())
@@ -230,11 +243,13 @@ Subscriber* Domain::createSubscriber(Participant *part, const std::string &subsc
         logError(PUBLISHER, "Problem loading profile '" << subscriber_profile << "'");
         return nullptr;
     }
+
     return createSubscriber(part, subscriber_att, listen);
 }
 
 Subscriber* Domain::createSubscriber(Participant *part, SubscriberAttributes &att, SubscriberListener *listen)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
     {
         if(it->second->getGuid() == part->getGuid())
@@ -247,6 +262,7 @@ Subscriber* Domain::createSubscriber(Participant *part, SubscriberAttributes &at
 
 bool Domain::getRegisteredType(Participant* part, const char* typeName, TopicDataType** type)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end();++it)
     {
         if(it->second->getGuid() == part->getGuid())
@@ -259,9 +275,9 @@ bool Domain::getRegisteredType(Participant* part, const char* typeName, TopicDat
 
 bool Domain::registerType(Participant* part, TopicDataType* type)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     //TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
     //haya problemas si el usuario lo destruye antes de tiempo.
-
     for (auto it = m_participants.begin(); it != m_participants.end();++it)
     {
         if(it->second->getGuid() == part->getGuid())
@@ -274,6 +290,8 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
 
 bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* type)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
+
     using namespace eprosima::fastrtps::types;
     TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
 
@@ -314,6 +332,8 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* ty
 
 bool Domain::unregisterType(Participant* part, const char* typeName)
 {
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
+
     //TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
     //haya problemas si el usuario lo destruye antes de tiempo.
     for (auto it = m_participants.begin(); it != m_participants.end();++it)
