@@ -278,6 +278,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     Wparam2.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam2.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Wparam2.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_par, Wparam2, (PublisherListener*)&this->m_CommandPubListener);
 
