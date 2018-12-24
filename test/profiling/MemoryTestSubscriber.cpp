@@ -274,6 +274,7 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
         }
         else if(command.m_command == STOP)
         {
+            cout << "Publisher has stopped the test" << endl;
             mp_up->mutex_.lock();
             ++mp_up->data_count_;
             mp_up->mutex_.unlock();
@@ -281,6 +282,7 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
         }
         else if(command.m_command == STOP_ERROR)
         {
+            cout << "Publisher has canceled the test" << endl;
             mp_up->m_status = -1;
             mp_up->mutex_.lock();
             ++mp_up->data_count_;
