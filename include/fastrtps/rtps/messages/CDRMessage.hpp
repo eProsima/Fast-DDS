@@ -314,6 +314,28 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
     return valid;
 }
 
+inline bool CDRMessage::readString(CDRMessage_t*msg, string_255* stri)
+{
+    uint32_t str_size = 1;
+    bool valid = true;
+    valid &= CDRMessage::readUInt32(msg, &str_size);
+    if (msg->pos + str_size > msg->length)
+    {
+        return false;
+    }
+
+    *stri = "";
+    if (str_size > 1)
+    {
+        *stri = (const char*) &(msg->buffer[msg->pos]);
+    }
+    msg->pos += str_size;
+    int rest = (str_size) % 4;
+    rest = rest == 0 ? 0 : 4 - rest;
+    msg->pos += rest;
+
+    return valid;
+}
 
 inline bool CDRMessage::addData(CDRMessage_t*msg, const octet *data, const uint32_t length)
 {

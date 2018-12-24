@@ -291,7 +291,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
 
                         ParameterString_t* p = (ParameterString_t*)(*it);
                         //cout << "ENTITY NAME " << p->m_string<<endl;
-                        this->m_participantName = std::string(p->getName());
+                        this->m_participantName = p->getName();
                         break;
                     }
                 case PID_PROPERTY_LIST:

@@ -330,12 +330,24 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
     // name - stringType
     if (nullptr != (p_aux0 = elem->FirstChildElement(NAME)))
     {
-        if (XMLP_ret::XML_OK != getXMLString(p_aux0, &topic.topicName, ident)) return XMLP_ret::XML_ERROR;
+        const char* text;
+        if (nullptr == (text = p_aux0->GetText()))
+        {
+            logError(XMLPARSER, "<" << p_aux0->Value() << "> getXMLString XML_ERROR!");
+            return XMLP_ret::XML_ERROR;
+        }
+        topic.topicName = text;
     }
     // dataType - stringType
     if (nullptr != (p_aux0 = elem->FirstChildElement(DATA_TYPE)))
     {
-        if (XMLP_ret::XML_OK != getXMLString(p_aux0, &topic.topicDataType, ident)) return XMLP_ret::XML_ERROR;
+        const char* text;
+        if (nullptr == (text = p_aux0->GetText()))
+        {
+            logError(XMLPARSER, "<" << p_aux0->Value() << "> getXMLString XML_ERROR!");
+            return XMLP_ret::XML_ERROR;
+        }
+        topic.topicDataType = text;
     }
     // historyQos
     if (nullptr != (p_aux0 = elem->FirstChildElement(HISTORY_QOS)))

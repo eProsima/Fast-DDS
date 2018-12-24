@@ -958,7 +958,7 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
     auto pdp = mp_builtinProtocols->mp_PDP;
     for (auto it = pdp->ParticipantProxiesBegin(); it != pdp->ParticipantProxiesEnd(); ++it)
     {
-        participant_names.emplace_back((*it)->m_participantName);
+        participant_names.emplace_back((*it)->m_participantName.to_string());
     }
     return participant_names;
 }

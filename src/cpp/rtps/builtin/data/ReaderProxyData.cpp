@@ -377,13 +377,13 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 case PID_TOPIC_NAME:
                     {
                         ParameterString_t*p = (ParameterString_t*)(*it);
-                        m_topicName = std::string(p->getName());
+                        m_topicName = p->getName();
                         break;
                     }
                 case PID_TYPE_NAME:
                     {
-                        ParameterString_t*p = (ParameterString_t*)(*it);
-                        m_typeName = std::string(p->getName());
+                        ParameterString_t* p = (ParameterString_t*)(*it);
+                        m_typeName = p->getName();
                         break;
                     }
                 case PID_PARTICIPANT_GUID:
