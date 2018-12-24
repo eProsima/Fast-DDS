@@ -134,18 +134,6 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     // Create Data Publisher
     std::string profile_name = "publisher_profile";
     PublisherAttributes PubDataparam;
-    PubDataparam.topic.topicDataType = "VideoType";
-    PubDataparam.topic.topicKind = NO_KEY;
-    std::ostringstream pt;
-    pt << "VideoTest_";
-    if (hostname)
-        pt << asio::ip::host_name() << "_";
-    pt << pid << "_PUB2SUB";
-    PubDataparam.topic.topicName = pt.str();
-    PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
-    PubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    PubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     if (!reliable)
     {
@@ -160,13 +148,23 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
 
     if(m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
-    }
-    else
-    {
-        mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
+        eprosima::fastrtps::xmlparser::XMLProfileManager::fillPublisherAttributes(profile_name, PubDataparam);
     }
 
+    PubDataparam.topic.topicDataType = "VideoType";
+    PubDataparam.topic.topicKind = NO_KEY;
+    std::ostringstream pt;
+    pt << "VideoTest_";
+    if (hostname)
+        pt << asio::ip::host_name() << "_";
+    pt << pid << "_PUB2SUB";
+    PubDataparam.topic.topicName = pt.str();
+    PubDataparam.times.heartbeatPeriod.seconds = 0;
+    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    PubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
+
+    mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
     if (mp_datapub == nullptr)
     {
         return false;
@@ -183,7 +181,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     pct << pid << "_PUB2SUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
     PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
     PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);

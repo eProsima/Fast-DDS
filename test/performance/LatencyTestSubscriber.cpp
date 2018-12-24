@@ -242,6 +242,8 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
     PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
     PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 

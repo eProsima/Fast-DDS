@@ -142,16 +142,6 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     // Create Data subscriber
     std::string profile_name = "subscriber_profile";
     SubscriberAttributes SubDataparam;
-    SubDataparam.topic.topicDataType = "VideoType";
-    SubDataparam.topic.topicKind = NO_KEY;
-    std::ostringstream st;
-    st << "VideoTest_";
-    if (hostname)
-        st << asio::ip::host_name() << "_";
-    st << pid << "_PUB2SUB";
-    SubDataparam.topic.topicName = st.str();
-    SubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    SubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     if (reliable)
     {
@@ -165,13 +155,21 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
-    }
-    else
-    {
-        mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
+        eprosima::fastrtps::xmlparser::XMLProfileManager::fillSubscriberAttributes(profile_name, SubDataparam);
     }
 
+    SubDataparam.topic.topicDataType = "VideoType";
+    SubDataparam.topic.topicKind = NO_KEY;
+    std::ostringstream st;
+    st << "VideoTest_";
+    if (hostname)
+        st << asio::ip::host_name() << "_";
+    st << pid << "_PUB2SUB";
+    SubDataparam.topic.topicName = st.str();
+    SubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
+    SubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
+
+    mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
     if (mp_datasub == nullptr)
     {
         return false;
@@ -188,6 +186,7 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     pct << pid << "_SUB2PUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
     PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
