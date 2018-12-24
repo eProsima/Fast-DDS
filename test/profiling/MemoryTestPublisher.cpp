@@ -434,6 +434,8 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
     command.m_command = STOP;
     mp_commandpub->write(&command);
 
+    eClock::my_sleep(500);
+    
     if(m_status !=0)
     {
         cout << "Error in test "<<endl;
