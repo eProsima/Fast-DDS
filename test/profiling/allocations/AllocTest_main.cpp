@@ -32,6 +32,7 @@ int main(int argc, char** argv)
 {
     std::cout << "Starting "<< std::endl;
     int type = 1;
+    bool wait_unmatch = false;
     const char* profile = "tl_be";
     if(argc > 2)
     {
@@ -41,6 +42,8 @@ int main(int argc, char** argv)
             type = 2;
 
         profile = argv[2];
+
+        wait_unmatch = (argc > 3) && (strcmp(argv[3], "true") == 0);
     }
     else
     {
@@ -65,7 +68,7 @@ int main(int argc, char** argv)
                 AllocTestPublisher mypub;
                 if(mypub.init(profile))
                 {
-                    mypub.run(60);
+                    mypub.run(60, wait_unmatch);
                 }
                 break;
             }
@@ -74,7 +77,7 @@ int main(int argc, char** argv)
                 AllocTestSubscriber mysub;
                 if(mysub.init(profile))
                 {
-                    mysub.run();
+                    mysub.run(wait_unmatch);
                 }
                 break;
             }

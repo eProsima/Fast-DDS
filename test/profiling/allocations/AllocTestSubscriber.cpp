@@ -89,12 +89,12 @@ void AllocTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 }
 
 
-void AllocTestSubscriber::run()
+void AllocTestSubscriber::run(bool wait_unmatch)
 {
-  run(60);
+  run(60, wait_unmatch);
 }
 
-void AllocTestSubscriber::run(uint32_t number)
+void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
 {
     // Restart callgrind graph
     callgrind_zero_count();
@@ -126,8 +126,19 @@ void AllocTestSubscriber::run(uint32_t number)
     // Flush callgrind graph
     callgrind_dump();
 
-    std::cout << "All messages received. Press enter to stop subscriber" << std::endl;
-    std::cin.ignore();
+    if (wait_unmatch)
+    {
+        std::cout << "All messages received. Waiting for publisher to stop." << std::endl;
+        while (m_listener.n_matched > 0)
+        {
+            eClock::my_sleep(25);
+        }
+    }
+    else
+    {
+        std::cout << "All messages received. Waiting a bit to let publisher receive acks." << std::endl;
+        eClock::my_sleep(500);
+    }
 
     // Flush callgrind graph
     callgrind_dump();

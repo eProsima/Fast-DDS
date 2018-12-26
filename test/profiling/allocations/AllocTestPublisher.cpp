@@ -78,7 +78,7 @@ void AllocTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Ma
     }
 }
 
-void AllocTestPublisher::run(uint32_t samples)
+void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
 {
     // Restart callgrind graph
     callgrind_zero_count();
@@ -92,8 +92,8 @@ void AllocTestPublisher::run(uint32_t samples)
     // Flush callgrind graph
     callgrind_dump();
 
-    std::cout << "Publisher matched. Press enter to start sending samples" << std::endl;
-    std::cin.ignore();
+    std::cout << "Publisher matched. Sending samples" << std::endl;
+    eClock::my_sleep(500);
 
     for(uint32_t i = 0;i<samples;++i)
     {
@@ -101,7 +101,7 @@ void AllocTestPublisher::run(uint32_t samples)
             --i;
         else
         {
-            std::cout << "Message with index: "<< m_data.index()<< " SENT"<<std::endl;
+            std::cout << "Message with index: "<< m_data.index() << " SENT"<<std::endl;
         }
         eClock::my_sleep(500);
 
@@ -110,16 +110,27 @@ void AllocTestPublisher::run(uint32_t samples)
             // Flush callgrind graph
             callgrind_dump();
 
-            std::cout << "First message has been sent. Press enter to continue sending samples" << std::endl;
-            std::cin.ignore();
+            std::cout << "First message has been sent" << std::endl;
+            eClock::my_sleep(500);
         }
     }
 
     // Flush callgrind graph
     callgrind_dump();
 
-    std::cout << "All messages have been sent. Press enter to stop publisher" << std::endl;
-    std::cin.ignore();
+    if(wait_unmatch)
+    {
+        std::cout << "All messages have been sent. Waiting for subscriber to stop." << std::endl;
+        while (m_listener.n_matched > 0)
+        {
+            eClock::my_sleep(25);
+        }
+    }
+    else
+    {
+        std::cout << "All messages have been sent. Waiting a bit to let subscriber receive samples." << std::endl;
+        eClock::my_sleep(500);
+    }
 
     // Flush callgrind graph
     callgrind_dump();

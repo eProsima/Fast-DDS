@@ -39,9 +39,9 @@ public:
 	//!Initialize the subscriber
 	bool init(const char* profile);
 	//!RUN the subscriber
-	void run();
+	void run(bool wait_unmatch=false);
 	//!Run the subscriber until number samples have been recevied.
-	void run(uint32_t number);
+	void run(uint32_t number, bool wait_unmatch = false);
 private:
 	eprosima::fastrtps::Participant* mp_participant;
 	eprosima::fastrtps::Subscriber* mp_subscriber;

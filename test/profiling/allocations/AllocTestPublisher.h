@@ -38,7 +38,7 @@ public:
     //!Publish a sample
     bool publish();
     //!Run for number samples
-    void run(uint32_t number);
+    void run(uint32_t number, bool wait_unmatch = false);
 private:
     AllocTestTypePubSubType m_type;
     AllocTestType m_data;
