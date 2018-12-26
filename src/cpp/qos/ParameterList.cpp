@@ -256,7 +256,7 @@ int32_t ParameterList::readParameterListfromCDRMsg(CDRMessage_t*msg, ParameterLi
                             return -1;
                         }
                         ParameterString_t* p = new ParameterString_t(pid,plength);
-                        std::string aux;
+                        string_255 aux;
                         valid &= CDRMessage::readString(msg,&aux);
                         p->setName(aux.c_str());
                         //                cout << "READ: "<< p->m_string<<endl;

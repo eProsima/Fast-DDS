@@ -104,7 +104,7 @@ class ParticipantProxyData
         //!Manual liveliness count
         Count_t m_manualLivelinessCount;
         //!Participant name
-        std::string m_participantName;
+        string_255 m_participantName;
         //!
         InstanceHandle_t m_key;
         //!

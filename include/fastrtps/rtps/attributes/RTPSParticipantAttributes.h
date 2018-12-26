@@ -26,6 +26,7 @@
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "../../transport/TransportInterface.h"
 #include "../resources/ResourceManagement.h"
+#include "../../utils/fixed_size_string.hpp"
 
 #include <memory>
 
@@ -259,7 +260,7 @@ class RTPSParticipantAttributes
 
     private:
         //!Name of the participant.
-        std::string name;
+        string_255 name;
 };
 
 }

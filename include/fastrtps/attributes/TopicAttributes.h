@@ -52,8 +52,8 @@ class TopicAttributes
         {
             topicKind = tKind;
             topicDiscoveryKind = tDiscovery;
-            topicName = std::string(name);
-            topicDataType = std::string(dataType);
+            topicName = name;
+            topicDataType = dataType;
         }
 
         virtual ~TopicAttributes() {}
@@ -70,7 +70,7 @@ class TopicAttributes
         * Get the topic data type
         * @return Topic data type
         */
-        const std::string& getTopicDataType() const {
+        const string_255& getTopicDataType() const {
             return topicDataType;
         }
 
@@ -95,7 +95,7 @@ class TopicAttributes
          * Get the topic name
          * @return Topic name
          */
-        const std::string& getTopicName() const {
+        const string_255& getTopicName() const {
             return topicName;
         }
 
@@ -104,9 +104,9 @@ class TopicAttributes
         //! Topic discovery kind, default value NO_CHECK.
         rtps::TopicDiscoveryKind_t topicDiscoveryKind;
         //! Topic Name.
-        std::string topicName;
+        string_255 topicName;
         //!Topic Data Type.
-        std::string topicDataType;
+        string_255 topicDataType;
         //!QOS Regarding the History to be saved.
         HistoryQosPolicy historyQos;
         //!QOS Regarding the resources to allocate.

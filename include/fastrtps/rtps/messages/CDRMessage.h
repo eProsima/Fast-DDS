@@ -65,6 +65,7 @@ namespace CDRMessage{
 	  inline bool readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberSet_t* snset);
 	  inline bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
 	  inline bool readString(CDRMessage_t*msg,std::string* p_str);
+      inline bool readString(CDRMessage_t*msg, string_255* stri);
 	  inline bool readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocvec);
 
       inline bool readProperty(CDRMessage_t* msg, Property& property);

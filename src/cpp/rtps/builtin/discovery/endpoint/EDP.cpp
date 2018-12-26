@@ -95,7 +95,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         {
             //*rpd.type_id().m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(rpd.typeName());
             const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
-                    rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    rpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
                 logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << rpd.typeName() << " isn't registered.");
@@ -116,7 +116,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         {
             //*rpd.type().m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject(rpd.typeName());
             const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
-                    rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    rpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
                 logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << rpd.typeName() << " isn't registered.");
@@ -183,7 +183,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
         if (att.type_id.m_type_identifier->_d() == 0) // Not set
         {
             const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
-                    wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    wpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
                 logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << wpd.typeName() << " isn't registered.");
@@ -203,7 +203,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
                 || att.type_id.m_type_identifier->_d() == EK_COMPLETE)) // Not set
         {
             const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
-                    wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    wpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
                 logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << wpd.typeName() << " isn't registered.");

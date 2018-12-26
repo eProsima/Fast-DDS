@@ -190,7 +190,7 @@ Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(att.topic.getTopicName());
+    property.value(att.topic.getTopicName().c_str());
     watt.endpoint.properties.properties().push_back(std::move(property));
     if(att.qos.m_partition.getNames().size() > 0)
     {
@@ -300,7 +300,7 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(att.topic.getTopicName());
+    property.value(att.topic.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
     if(att.qos.m_partition.getNames().size() > 0)
     {

@@ -103,7 +103,7 @@ public:
 	 * @param[out] rdataptr Pointer to pointer to return the information.
 	 * @return True if found.
 	 */
-	XMLP_ret lookforReader(std::string partname, uint16_t id, rtps::ReaderProxyData** rdataptr);
+	XMLP_ret lookforReader(const char* partname, uint16_t id, rtps::ReaderProxyData** rdataptr);
 	/**
 	 * Look for a writer in the previously loaded endpoints.
 	 * @param[in] partname RTPSParticipant name
@@ -111,7 +111,7 @@ public:
 	 * @param[out] wdataptr Pointer to pointer to return the information.
 	 * @return True if found
 	 */
-	XMLP_ret lookforWriter(std::string partname, uint16_t id, rtps::WriterProxyData** wdataptr);
+	XMLP_ret lookforWriter(const char* partname, uint16_t id, rtps::WriterProxyData** wdataptr);
 
 private:
 	std::set<int16_t> m_endpointIds;
