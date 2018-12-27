@@ -101,12 +101,6 @@ namespace eprosima
                 }
 
                 /*!
-                 * @brief Lists all requested changes.
-                 * @return STL vector with the requested change list.
-                 */
-                std::vector<const ChangeForReader_t*> get_requested_changes() const;
-
-                /*!
                  * @brief Sets a change to a particular status (if present in the ReaderProxy)
                  * @param change change to search and set.
                  * @param status Status to apply.

@@ -203,23 +203,6 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
     return isSomeoneWasSetRequested;
 }
 
-std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
-{
-    std::vector<const ChangeForReader_t*> unsent_changes;
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-
-    auto it = m_changesForReader.begin();
-    for (; it != m_changesForReader.end(); ++it)
-    {
-        if (it->getStatus() == REQUESTED)
-        {
-            unsent_changes.push_back(&(*it));
-        }
-    }
-
-    return unsent_changes;
-}
-
 void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status)
 {
     if (seq_num <= changesFromRLowMark_)
