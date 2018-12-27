@@ -17,8 +17,11 @@
  *
  */
 
-#ifndef ALLOCTESTCOMMON_H_
-#define ALLOCTESTCOMMON_H_
+#ifndef FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
+#define FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
+
+namespace eprosima_profiling
+{
 
 /**
  * Used to run callgrind with --zero-before=callgrind_zero_count. 
@@ -32,5 +35,37 @@ void callgrind_zero_count();
  */
 void callgrind_dump();
 
-#endif
+/**
+ * Called when entities have been created. Memory profiling should begin.
+ */
+void entities_created();
+
+/**
+ * Called after remote entity has been discovered. Data exchange will start.
+ */
+void discovery_finished();
+
+/**
+ * Called after first sample has been sent/received.
+ */
+void first_sample_exchanged();
+
+/**
+ * Called after all samples have been sent/received. Undiscovery will begin.
+ */
+void all_samples_exchanged();
+
+/**
+ * Called after remote entity has been undiscovered. Memory profiling should end.
+ */
+void undiscovery_finished();
+
+/**
+ * Print memory profiling results.
+ */
+void print_results();
+
+}   // namespace eprosima_profiling
+
+#endif   // FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
 

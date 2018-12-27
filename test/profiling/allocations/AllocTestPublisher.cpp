@@ -55,6 +55,7 @@ bool AllocTestPublisher::init(const char* profile)
     if(mp_publisher == nullptr)
         return false;
 
+    eprosima_profiling::entities_created();
     return true;
 
 }
@@ -80,17 +81,13 @@ void AllocTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Ma
 
 void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
 {
-    // Restart callgrind graph
-    callgrind_zero_count();
-
     std::cout << "Publisher waiting for subscriber..." << std::endl;
     while (m_listener.n_matched <= 0)
     {
         eClock::my_sleep(25);
     }
 
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::discovery_finished();
 
     std::cout << "Publisher matched. Sending samples" << std::endl;
     eClock::my_sleep(500);
@@ -101,22 +98,20 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
             --i;
         else
         {
-            std::cout << "Message with index: "<< m_data.index() << " SENT"<<std::endl;
+            std::cout << "Message with index: "<< m_data.index() << " SENT" << std::endl;
         }
         eClock::my_sleep(500);
 
         if (i == 0)
         {
-            // Flush callgrind graph
-            callgrind_dump();
+            eprosima_profiling::first_sample_exchanged();
 
             std::cout << "First message has been sent" << std::endl;
             eClock::my_sleep(500);
         }
     }
 
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::all_samples_exchanged();
 
     if(wait_unmatch)
     {
@@ -132,8 +127,8 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
         eClock::my_sleep(500);
     }
 
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::undiscovery_finished();
+    eprosima_profiling::print_results();
 }
 
 bool AllocTestPublisher::publish()

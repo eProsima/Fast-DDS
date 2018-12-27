@@ -52,7 +52,7 @@ bool AllocTestSubscriber::init(const char* profile)
     if(mp_subscriber == nullptr)
         return false;
 
-    // Breakpoint placed here. First snapshot taken.
+    eprosima_profiling::entities_created();
     return true;
 }
 
@@ -96,17 +96,13 @@ void AllocTestSubscriber::run(bool wait_unmatch)
 
 void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
 {
-    // Restart callgrind graph
-    callgrind_zero_count();
-
     std::cout << "Subscriber waiting for publisher..." << std::endl;
     while (m_listener.n_matched <= 0)
     {
         eClock::my_sleep(25);
     }
 
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::discovery_finished();
 
     std::cout << "Subscriber matched. Waiting for first sample..." << std::endl;
     while (this->m_listener.n_samples < 1)
@@ -114,8 +110,7 @@ void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
         eClock::my_sleep(25);
     }
 
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::first_sample_exchanged();
 
     std::cout << "First sample received. Waiting for rest of samples..." << std::endl;
     while (this->m_listener.n_samples < number)
@@ -123,8 +118,7 @@ void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
         eClock::my_sleep(25);
     }
 
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::all_samples_exchanged();
 
     if (wait_unmatch)
     {
@@ -140,6 +134,6 @@ void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
         eClock::my_sleep(500);
     }
 
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::undiscovery_finished();
+    eprosima_profiling::print_results();
 }
