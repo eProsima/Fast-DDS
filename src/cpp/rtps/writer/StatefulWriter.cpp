@@ -247,8 +247,7 @@ void StatefulWriter::send_any_unsent_changes()
 
             // Loop all changes
             bool is_reliable = (remoteReader->m_att.endpoint.reliabilityKind == RELIABLE);
-            std::vector<ChangeForReader_t*> unsentChanges = remoteReader->get_unsent_changes();
-            for (auto unsentChange : unsentChanges)
+            auto unsent_change_process = [&](const ChangeForReader_t* unsentChange)
             {
                 SequenceNumber_t seqNum = unsentChange->getSequenceNumber();
 
@@ -282,7 +281,8 @@ void StatefulWriter::send_any_unsent_changes()
                     }
                     remoteReader->set_change_to_status(seqNum, UNDERWAY); //TODO(Ricardo) Review
                 } // Relevance
-            } // Changes loop
+            };
+            remoteReader->for_each_unsent_change(unsent_change_process);
 
             if (!irrelevant.empty())
             {
@@ -298,10 +298,7 @@ void StatefulWriter::send_any_unsent_changes()
 
         for (auto remoteReader : matched_readers)
         {
-            std::lock_guard<std::recursive_mutex> rguard(*remoteReader->mp_mutex);
-            std::vector<ChangeForReader_t*> unsentChanges = remoteReader->get_unsent_changes();
-
-            for (auto unsentChange : unsentChanges)
+            auto unsent_change_process = [&](const ChangeForReader_t* unsentChange)
             {
                 if (unsentChange->isRelevant() && unsentChange->isValid())
                 {
@@ -319,7 +316,9 @@ void StatefulWriter::send_any_unsent_changes()
                     notRelevantChanges.add_sequence_number(unsentChange->getSequenceNumber(), remoteReader);
                     remoteReader->set_change_to_status(unsentChange->getSequenceNumber(), UNDERWAY); //TODO(Ricardo) Review
                 }
-            }
+            };
+
+            remoteReader->for_each_unsent_change(unsent_change_process);
         }
 
         if (m_pushMode)

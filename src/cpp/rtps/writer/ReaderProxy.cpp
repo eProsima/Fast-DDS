@@ -203,25 +203,6 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
     return isSomeoneWasSetRequested;
 }
 
-
-//TODO(Ricardo) Temporal
-//std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
-std::vector<ChangeForReader_t*> ReaderProxy::get_unsent_changes()
-{
-    std::vector<ChangeForReader_t*> unsent_changes;
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-
-    for (auto &change_for_reader : m_changesForReader)
-    {
-        if (change_for_reader.getStatus() == UNSENT)
-        {
-            unsent_changes.push_back(const_cast<ChangeForReader_t*>(&change_for_reader));
-        }
-    }
-
-    return unsent_changes;
-}
-
 std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
 {
     std::vector<const ChangeForReader_t*> unsent_changes;
