@@ -149,7 +149,7 @@ public:
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
 
     /**
-    * Sets if the transports are going to retry sents on error.
+     * Sets if the transport is going to retry sends on error.
     * @param active Flag enable/disable the retry feature.
     */
     virtual void setSendRetry(bool active) = 0;
