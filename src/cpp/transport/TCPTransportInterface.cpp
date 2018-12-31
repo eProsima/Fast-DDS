@@ -96,6 +96,7 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
 TCPTransportInterface::TCPTransportInterface()
     : mRTCPMessageManager(nullptr)
     , mCleanSocketsPoolTimer(nullptr)
+    , mSendRetryActive(true)
 {
 }
 
@@ -547,7 +548,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
         return p.second == pChannelResource;
     });
 
-    if (searchIt != mChannelResources.end() && pChannelResource->IsAlive())
+    if (searchIt != mChannelResources.end() && pChannelResource->IsAlive() && mSendRetryActive)
     {
         TCPChannelResource *newChannel = nullptr;
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
@@ -1011,12 +1012,17 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
 
         return success;
     }
-    else
+    else if (mSendRetryActive)
     {
         logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
             << IPLocator::getLogicalPort(remoteLocator));
         eClock::my_sleep(100);
         return false;
+    }
+    else
+    {
+        // With the retry disabled, the messages are discarded
+        return true;
     }
 }
 
@@ -1343,6 +1349,11 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
     // TODO: Add WAN address
 
     return true;
+}
+
+void TCPTransportInterface::setSendRetry(bool active)
+{
+    mSendRetryActive = active;
 }
 
 

@@ -277,6 +277,17 @@ bool NetworkFactory::fillDefaultUnicastLocator(Locator_t &locator, const RTPSPar
     return result;
 }
 
+/**
+* Sets if the transports are going to retry sents on error.
+* */
+void NetworkFactory::setSendRetry(bool active)
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        transport->setSendRetry(active);
+    }
+}
+
 uint16_t NetworkFactory::calculateWellKnownPort(const RTPSParticipantAttributes& att) const
 {
     return static_cast<uint16_t>(att.port.portBase +

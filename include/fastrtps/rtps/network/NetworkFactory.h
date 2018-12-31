@@ -134,6 +134,12 @@ class NetworkFactory
          * */
         bool fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const;
 
+        /**
+        * Sets if the transports are going to retry sents on error.
+        * @param active Flag enable/disable the retry feature.
+        */
+        void setSendRetry(bool active);
+
     private:
 
         std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;

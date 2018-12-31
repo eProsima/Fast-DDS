@@ -263,6 +263,7 @@ protected:
     std::shared_ptr<std::thread> ioServiceThread;
     RTCPMessageManager* mRTCPMessageManager;
     mutable std::mutex mSocketsMapMutex;
+    bool mSendRetryActive;
 
     std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
     std::vector<TCPAcceptor*> mDeletedAcceptors;
@@ -338,6 +339,12 @@ protected:
     void Clean(); // Must be called on childs destructors!
 
     virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const = 0;
+
+    /**
+    * Sets if the transports are going to retry sents on error.
+    * @param active Flag enable/disable the retry feature.
+    */
+    virtual void setSendRetry(bool active) override;
 };
 
 } // namespace rtps

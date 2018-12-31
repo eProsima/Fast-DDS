@@ -147,6 +147,12 @@ public:
         LocatorList_t& list) const = 0;
 
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
+
+    /**
+    * Sets if the transports are going to retry sents on error.
+    * @param active Flag enable/disable the retry feature.
+    */
+    virtual void setSendRetry(bool active) = 0;
 };
 
 } // namespace rtps
