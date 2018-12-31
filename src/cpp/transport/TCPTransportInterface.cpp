@@ -95,8 +95,8 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
 
 TCPTransportInterface::TCPTransportInterface()
     : mRTCPMessageManager(nullptr)
-    , mCleanSocketsPoolTimer(nullptr)
     , mSendRetryActive(true)
+    , mCleanSocketsPoolTimer(nullptr)
 {
 }
 
