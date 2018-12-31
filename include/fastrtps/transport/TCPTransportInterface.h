@@ -341,7 +341,7 @@ protected:
     virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const = 0;
 
     /**
-    * Sets if the transports are going to retry sents on error.
+     * Sets if the transport is going to retry sends on error.
     * @param active Flag enable/disable the retry feature.
     */
     virtual void setSendRetry(bool active) override;
