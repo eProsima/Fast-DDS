@@ -263,7 +263,7 @@ protected:
     std::shared_ptr<std::thread> ioServiceThread;
     RTCPMessageManager* mRTCPMessageManager;
     mutable std::mutex mSocketsMapMutex;
-    bool mSendRetryActive;
+    std::atomic<bool> mSendRetryActive;
 
     std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
     std::vector<TCPAcceptor*> mDeletedAcceptors;
