@@ -55,8 +55,7 @@ void prepare_SequenceNumberSet(std::set<SequenceNumber_t>& changesSeqNum,
     {
         if(new_pair)
         {
-            SequenceNumberSet_t seqset;
-            seqset.base = (*it) + 1; // IN CASE IN THIS SEQNUMSET there is only 1 number.
+            SequenceNumberSet_t seqset((*it) + 1); // IN CASE IN THIS SEQNUMSET there is only 1 number.
             pair_T pair(*it,seqset);
             sequences.push_back(pair);
             new_pair = false;
@@ -67,14 +66,14 @@ void prepare_SequenceNumberSet(std::set<SequenceNumber_t>& changesSeqNum,
         if((*it - sequences.back().first).low == count) //CONTINUOUS FROM THE START
         {
             ++count;
-            sequences.back().second.base = (*it)+1;
+            sequences.back().second.base((*it)+1);
             continue;
         }
         else
         {
             if(seqnumset_init) //FIRST TIME SINCE it was continuous
             {
-                sequences.back().second.base = (*(std::prev(it)) + 1);
+                sequences.back().second.base((*(std::prev(it)) + 1));
                 seqnumset_init = false;
             }
             // Try to add, If it fails the diference between *it and base is greater than 255.

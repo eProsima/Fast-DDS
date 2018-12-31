@@ -172,9 +172,9 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
     bool isSomeoneWasSetRequested = false;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    for (auto sit = seqNumSet.get_begin(); sit != seqNumSet.get_end(); ++sit)
+    seqNumSet.for_each([&](SequenceNumber_t sit)
     {
-        auto chit = m_changesForReader.find(ChangeForReader_t(*sit));
+        auto chit = m_changesForReader.find(ChangeForReader_t(sit));
 
         if (chit != m_changesForReader.end())
         {
@@ -188,13 +188,13 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
 
             isSomeoneWasSetRequested = true;
         }
-    }
+    });
 
     if (isSomeoneWasSetRequested)
     {
         logInfo(RTPS_WRITER, "Requested Changes: " << seqNumSet);
     }
-    else if (!seqNumSet.isSetEmpty())
+    else if (!seqNumSet.empty())
     {
         logWarning(RTPS_WRITER, "Requested Changes: " << seqNumSet
             << " not found (low mark: " << changesFromRLowMark_ << ")");

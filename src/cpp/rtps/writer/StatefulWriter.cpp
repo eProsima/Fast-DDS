@@ -973,10 +973,10 @@ void StatefulWriter::process_acknack(const GUID_t reader_guid, uint32_t ack_coun
             if(remote_reader->m_lastAcknackCount < ack_count)
             {
                 remote_reader->m_lastAcknackCount = ack_count;
-                if(sn_set.base != SequenceNumber_t(0, 0))
+                if(sn_set.base() != SequenceNumber_t(0, 0))
                 {
                     // Sequence numbers before Base are set as Acknowledged.
-                    remote_reader->acked_changes_set(sn_set.base);
+                    remote_reader->acked_changes_set(sn_set.base());
                     if (remote_reader->requested_changes_set(sn_set) && remote_reader->mp_nackResponse != nullptr)
                     {
                         remote_reader->mp_nackResponse->restart_timer();
@@ -986,7 +986,7 @@ void StatefulWriter::process_acknack(const GUID_t reader_guid, uint32_t ack_coun
                         mp_periodicHB->restart_timer();
                     }
                 }
-                else if(sn_set.isSetEmpty() && !final_flag)
+                else if(sn_set.empty() && !final_flag)
                 {
                     send_heartbeat_to_nts(*remote_reader, true);
                 }

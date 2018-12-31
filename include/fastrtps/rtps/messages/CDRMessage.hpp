@@ -153,30 +153,24 @@ inline bool CDRMessage::readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* s
     return true;
 }
 
-inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* sns)
+inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(CDRMessage_t* msg)
 {
     bool valid = true;
-    valid &=CDRMessage::readSequenceNumber(msg,&sns->base);
+
+    SequenceNumber_t seqNum;
+    valid &=CDRMessage::readSequenceNumber(msg,&seqNum);
+    SequenceNumberSet_t sns(seqNum);
     uint32_t numBits = 0;
     valid &=CDRMessage::readUInt32(msg,&numBits);
-    int32_t bitmap;
-    SequenceNumber_t seqNum;
-    for(uint32_t i=0;i<(numBits+31)/32;++i)
+    uint32_t n_longs = (numBits + 31ul) / 32ul;
+    uint32_t bitmap[8];
+    for(uint32_t i=0;i<n_longs;++i)
     {
-        valid &= CDRMessage::readInt32(msg,&bitmap);
-        for(uint8_t bit=0;bit<32;++bit)
-        {
-            if((bitmap & (1<<(31-bit%32)))==(1<<(31-bit%32)))
-            {
-                seqNum = sns->base+(i*32+bit);
-                if(!sns->add(seqNum))
-                {
-                    return false;
-                }
-            }
-        }
+        valid &= CDRMessage::readUInt32(msg,&bitmap[i]);
     }
-    return valid;
+    if (valid) sns.bitmap_set(numBits, bitmap);
+
+    return sns;
 }
 
 inline bool CDRMessage::readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberSet_t* fns)
@@ -547,44 +541,25 @@ inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
         const SequenceNumberSet_t* sns)
 {
-    CDRMessage::addSequenceNumber(msg, &sns->base);
+    SequenceNumber_t base = sns->base();
+    CDRMessage::addSequenceNumber(msg, &base);
 
     //Add set
-    if(sns->isSetEmpty())
+    if(sns->empty())
     {
         addUInt32(msg,0); //numbits 0
         return true;
     }
 
-    SequenceNumber_t maxseqNum = sns->get_maxSeqNum();
-
-    uint32_t numBits = (maxseqNum - sns->base + 1).low;
-    assert((maxseqNum - sns->base + 1).high == 0);
-
-    if(numBits >= 256)
-        numBits = 255;
+    uint32_t numBits;
+    uint32_t n_longs;
+    std::array<uint32_t,8> bitmap;
+    sns->bitmap_get(numBits, bitmap, n_longs);
 
     addUInt32(msg, numBits);
-    uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
-    uint32_t bitmap[8];
-
-    for(uint32_t i = 0; i < n_longs; i++)
-        bitmap[i] = 0;
-
-    uint32_t deltaN = 0;
-    for(auto it = sns->get_begin();
-            it != sns->get_end(); ++it)
-    {
-        deltaN = (*it - sns->base).low;
-        assert((*it - sns->base).high == 0);
-        if(deltaN < 256)
-            bitmap[(uint32_t)(deltaN/32)] = (bitmap[(uint32_t)(deltaN/32)] | (1<<(31-deltaN%32)));
-        else
-            break;
-    }
 
     for(uint32_t i= 0;i<n_longs;i++)
-        addInt32(msg,bitmap[i]);
+        addUInt32(msg,bitmap[i]);
 
     return true;
 }
