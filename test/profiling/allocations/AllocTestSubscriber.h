@@ -26,10 +26,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-
-
-
-
+#include <string>
 #include "AllocTestType.h"
 
 class AllocTestSubscriber {
@@ -45,6 +42,7 @@ public:
 private:
 	eprosima::fastrtps::Participant* mp_participant;
 	eprosima::fastrtps::Subscriber* mp_subscriber;
+	std::string m_profile;
 public:
 	class SubListener:public eprosima::fastrtps::SubscriberListener
 	{

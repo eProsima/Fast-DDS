@@ -36,6 +36,7 @@ mp_subscriber(nullptr)
 
 bool AllocTestSubscriber::init(const char* profile)
 {
+    m_profile = profile;
     Domain::loadXMLProfilesFile("test_xml_profiles.xml");
     mp_participant = Domain::createParticipant("test_participant_profile");
     if(mp_participant==nullptr)
@@ -135,5 +136,5 @@ void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
     }
 
     eprosima_profiling::undiscovery_finished();
-    eprosima_profiling::print_results();
+    eprosima_profiling::print_results("subscriber", m_profile);
 }

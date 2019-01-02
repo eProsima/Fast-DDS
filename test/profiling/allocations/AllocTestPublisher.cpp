@@ -29,8 +29,9 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-AllocTestPublisher::AllocTestPublisher():mp_participant(nullptr),
-mp_publisher(nullptr)
+AllocTestPublisher::AllocTestPublisher()
+: mp_participant(nullptr)
+, mp_publisher(nullptr)
 {
 
 
@@ -40,6 +41,7 @@ bool AllocTestPublisher::init(const char* profile)
 {
     m_data.index(0);
 
+    m_profile = profile;
     Domain::loadXMLProfilesFile("test_xml_profiles.xml");
     mp_participant = Domain::createParticipant("test_participant_profile");
     if (mp_participant == nullptr)
@@ -128,7 +130,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
     }
 
     eprosima_profiling::undiscovery_finished();
-    eprosima_profiling::print_results();
+    eprosima_profiling::print_results("publisher", m_profile);
 }
 
 bool AllocTestPublisher::publish()

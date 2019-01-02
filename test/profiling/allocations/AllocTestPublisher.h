@@ -25,8 +25,7 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
-
-
+#include <string>
 #include "AllocTestType.h"
 
 class AllocTestPublisher {
@@ -44,6 +43,7 @@ private:
     AllocTestType m_data;
     eprosima::fastrtps::Participant* mp_participant;
     eprosima::fastrtps::Publisher* mp_publisher;
+    std::string m_profile;
     class PubListener:public eprosima::fastrtps::PublisherListener
     {
     public:

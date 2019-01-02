@@ -20,6 +20,8 @@
 #ifndef FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
 #define FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
 
+#include <string>
+
 namespace eprosima_profiling
 {
 
@@ -63,7 +65,7 @@ void undiscovery_finished();
 /**
  * Print memory profiling results.
  */
-void print_results();
+void print_results(const std::string& entity, const std::string& config);
 
 }   // namespace eprosima_profiling
 

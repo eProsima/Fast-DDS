@@ -21,7 +21,7 @@
 
 #include <atomic>
 #include <iostream>
-
+#include <fstream>
 #include "osrf_testing_tools_cpp/memory_tools/memory_tools.hpp"
 
 using MemoryToolsService = osrf_testing_tools_cpp::memory_tools::MemoryToolsService;
@@ -120,18 +120,30 @@ void undiscovery_finished()
 /**
  * Print memory profiling results.
  */
-void print_results() 
+void print_results(const std::string& entity, const std::string& config) 
 {
+    std::stringstream output_stream;
+    output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
+    << " \"Phase 1 Allocations\", \"Phase 1 Deallocations\","
+    << " \"Phase 2 Allocations\", \"Phase 2 Deallocations\","
+    << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"";
+
     for(size_t i = 0; i < 4; i++)
     {
         size_t allocs = g_allocations[i].load();
         size_t deallocs = g_deallocations[i].load();
 
-        if( (allocs + deallocs) > 0)
+        output_stream << allocs << "," << deallocs;
+        if (i < 3)
         {
-            std::cerr << "Phase " << i << ": " << allocs << " allocations and " << deallocs << " deallocations" << std::endl;
+            output_stream << ",";
         }
     }
+
+    std::ofstream outFile;
+    outFile.open("alloc_test_" + entity + "_" + config + ".csv");
+    outFile << output_stream.str();
+    outFile.close();
 }
 
 }   // namespace eprosima_profiling
