@@ -34,7 +34,7 @@ public:
 	AllocTestSubscriber();
 	virtual ~AllocTestSubscriber();
 	//!Initialize the subscriber
-	bool init(const char* profile, const std::string& outputFile);
+	bool init(const char* profile, int domainId, const std::string& outputFile);
 	//!RUN the subscriber
 	void run(bool wait_unmatch=false);
 	//!Run the subscriber until number samples have been recevied.

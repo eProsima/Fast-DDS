@@ -33,7 +33,7 @@ public:
     AllocTestPublisher();
     virtual ~AllocTestPublisher();
     //!Initialize
-    bool init(const char* profile, const std::string& outputFile);
+    bool init(const char* profile, int domainId, const std::string& outputFile);
     //!Publish a sample
     bool publish();
     //!Run for number samples

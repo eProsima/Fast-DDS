@@ -34,12 +34,21 @@ mp_subscriber(nullptr)
 {
 }
 
-bool AllocTestSubscriber::init(const char* profile, const std::string& outputFile)
+bool AllocTestSubscriber::init(const char* profile, int domainId, const std::string& outputFile)
 {
     m_profile = profile;
     m_outputFile = outputFile;
     Domain::loadXMLProfilesFile("test_xml_profiles.xml");
-    mp_participant = Domain::createParticipant("test_participant_profile");
+
+    ParticipantAttributes participant_att;
+    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
+        eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
+            participant_att))
+    {
+        participant_att.rtps.builtin.domainId = domainId;
+        mp_participant = Domain::createParticipant(participant_att);
+    }
+
     if(mp_participant==nullptr)
         return false;
 
