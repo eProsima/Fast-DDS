@@ -120,7 +120,7 @@ void undiscovery_finished()
 /**
  * Print memory profiling results.
  */
-void print_results(const std::string& entity, const std::string& config) 
+void print_results(const std::string& file_prefix, const std::string& entity, const std::string& config) 
 {
     std::stringstream output_stream;
     output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
@@ -141,7 +141,7 @@ void print_results(const std::string& entity, const std::string& config)
     }
 
     std::ofstream outFile;
-    outFile.open("alloc_test_" + entity + "_" + config + ".csv");
+    outFile.open(file_prefix + "alloc_test_" + entity + "_" + config + ".csv");
     outFile << output_stream.str();
     outFile.close();
 }

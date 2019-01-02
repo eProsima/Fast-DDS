@@ -65,7 +65,7 @@ void undiscovery_finished();
 /**
  * Print memory profiling results.
  */
-void print_results(const std::string& entity, const std::string& config);
+void print_results(const std::string& file_prefix, const std::string& entity, const std::string& config);
 
 }   // namespace eprosima_profiling
 

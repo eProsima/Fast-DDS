@@ -34,6 +34,7 @@ int main(int argc, char** argv)
     int type = 1;
     bool wait_unmatch = false;
     const char* profile = "tl_be";
+    std::string outputFile = "";
     if(argc > 2)
     {
         if(strcmp(argv[1],"publisher")==0)
@@ -44,6 +45,10 @@ int main(int argc, char** argv)
         profile = argv[2];
 
         wait_unmatch = (argc > 3) && (strcmp(argv[3], "true") == 0);
+        if (argc > 4)
+        {
+            outputFile = argv[4];
+        }
     }
     else
     {
@@ -66,7 +71,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 AllocTestPublisher mypub;
-                if(mypub.init(profile))
+                if(mypub.init(profile, outputFile))
                 {
                     mypub.run(60, wait_unmatch);
                 }
@@ -75,7 +80,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 AllocTestSubscriber mysub;
-                if(mysub.init(profile))
+                if(mysub.init(profile, outputFile))
                 {
                     mysub.run(wait_unmatch);
                 }

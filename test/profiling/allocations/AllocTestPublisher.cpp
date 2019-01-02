@@ -37,11 +37,12 @@ AllocTestPublisher::AllocTestPublisher()
 
 }
 
-bool AllocTestPublisher::init(const char* profile)
+bool AllocTestPublisher::init(const char* profile, const std::string& outputFile)
 {
     m_data.index(0);
 
     m_profile = profile;
+    m_outputFile = outputFile;
     Domain::loadXMLProfilesFile("test_xml_profiles.xml");
     mp_participant = Domain::createParticipant("test_participant_profile");
     if (mp_participant == nullptr)
@@ -130,7 +131,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
     }
 
     eprosima_profiling::undiscovery_finished();
-    eprosima_profiling::print_results("publisher", m_profile);
+    eprosima_profiling::print_results(m_outputFile, "publisher", m_profile);
 }
 
 bool AllocTestPublisher::publish()

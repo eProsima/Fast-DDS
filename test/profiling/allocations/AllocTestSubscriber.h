@@ -34,7 +34,7 @@ public:
 	AllocTestSubscriber();
 	virtual ~AllocTestSubscriber();
 	//!Initialize the subscriber
-	bool init(const char* profile);
+	bool init(const char* profile, const std::string& outputFile);
 	//!RUN the subscriber
 	void run(bool wait_unmatch=false);
 	//!Run the subscriber until number samples have been recevied.
@@ -43,6 +43,7 @@ private:
 	eprosima::fastrtps::Participant* mp_participant;
 	eprosima::fastrtps::Subscriber* mp_subscriber;
 	std::string m_profile;
+	std::string m_outputFile;
 public:
 	class SubListener:public eprosima::fastrtps::SubscriberListener
 	{
