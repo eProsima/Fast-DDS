@@ -140,7 +140,7 @@ void print_results(const std::string& file_prefix, const std::string& entity, co
         }
     }
 
-    string output_filename = file_prefix;
+    std::string output_filename = file_prefix;
     if (file_prefix.length() == 0)
     {
         output_filename = "alloc_test_" + entity + "_" + config + ".csv";
