@@ -26,8 +26,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Find requirements
-find_package(fastcdr REQUIRED)
-find_package(fastrtps REQUIRED)
 find_package(osrf_testing_tools_cpp REQUIRED)
 
 message(STATUS "Configuring AllocationTest...")
