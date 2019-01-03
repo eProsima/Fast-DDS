@@ -1120,6 +1120,11 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(acceptor->mSocket);
             acceptor->mSocket = nullptr;
 #endif
+
+            getSocketPtr(unicastSocket)->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
+            getSocketPtr(unicastSocket)->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
+            getSocketPtr(unicastSocket)->set_option(ip::tcp::no_delay(true));
+
             // Store the new connection.
             TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, mService,
                 unicastSocket, GetConfiguration()->maxMessageSize);
@@ -1184,6 +1189,10 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
         {
             try
             {
+                outputSocket->getSocket()->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
+                outputSocket->getSocket()->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
+                outputSocket->getSocket()->set_option(ip::tcp::no_delay(true));
+
                 outputSocket->SetThread(
                     new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
                 outputSocket->SetRTCPThread(
