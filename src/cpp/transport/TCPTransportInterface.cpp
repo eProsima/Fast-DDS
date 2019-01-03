@@ -76,6 +76,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , logical_port_range(20)
     , logical_port_increment(2)
     , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
+    , avoid_tcp_delay(false)
     , wait_for_tcp_negotiation(false)
 {
 }
@@ -89,6 +90,7 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , logical_port_range(t.logical_port_range)
     , logical_port_increment(t.logical_port_increment)
     , tcp_negotiation_timeout(t.tcp_negotiation_timeout)
+    , avoid_tcp_delay(t.avoid_tcp_delay)
     , wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
 {
 }
@@ -1117,7 +1119,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
 
             getSocketPtr(unicastSocket)->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
             getSocketPtr(unicastSocket)->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
-            getSocketPtr(unicastSocket)->set_option(ip::tcp::no_delay(true));
+            getSocketPtr(unicastSocket)->set_option(ip::tcp::no_delay(GetConfiguration()->avoid_tcp_delay));
 
             // Store the new connection.
             TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, mService,
@@ -1185,7 +1187,7 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
             {
                 outputSocket->getSocket()->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
                 outputSocket->getSocket()->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
-                outputSocket->getSocket()->set_option(ip::tcp::no_delay(true));
+                outputSocket->getSocket()->set_option(ip::tcp::no_delay(GetConfiguration()->avoid_tcp_delay));
 
                 outputSocket->SetThread(
                     new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
