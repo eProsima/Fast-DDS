@@ -126,7 +126,7 @@ void print_results(const std::string& file_prefix, const std::string& entity, co
     output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
     << " \"Phase 1 Allocations\", \"Phase 1 Deallocations\","
     << " \"Phase 2 Allocations\", \"Phase 2 Deallocations\","
-    << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"";
+    << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"\n";
 
     for(size_t i = 0; i < 4; i++)
     {
