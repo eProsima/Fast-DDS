@@ -165,7 +165,7 @@ XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
 {
     /*
         <xs:complexType name="TransportDescriptorListType">
-            <xs:sequence>   
+            <xs:sequence>
                 <xs:element name="transport_descriptor" type="rtpsTransportDescriptorType"/>
             </xs:sequence>
         </xs:complexType>
@@ -697,14 +697,11 @@ static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &dis
 XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
 {
     /*
-        <typedef name="MyAliasEnum" value="MyEnum"/>
+        <typedef name="MyAliasEnum" type="nonBasic" nonBasicTypeName="MyEnum"/>
 
-        <typedef name="MyAlias">
-            <long dimensions="2,2"/>
-        </typedef>
+        <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
-    p_dynamictypebuilder_t valueBuilder;
 
     const char* type = p_root->Attribute(TYPE);
     if (type != nullptr)
@@ -723,8 +720,9 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
             }
         }
 
-        if ((p_root->Attribute(ARRAY_DIMENSIONS) != nullptr) || 
-            (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) || 
+        p_dynamictypebuilder_t valueBuilder;
+        if ((p_root->Attribute(ARRAY_DIMENSIONS) != nullptr) ||
+            (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) ||
             (p_root->Attribute(MAP_MAXLENGTH) != nullptr))
         {
             valueBuilder = parseXMLMemberDynamicType(p_root , nullptr, MEMBER_ID_INVALID);
@@ -791,7 +789,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
             logError(XMLPARSER, "Error parsing enum type: Literals must have name.");
             return XMLP_ret::XML_ERROR;
         }
-       
+
         const char* value = literal->Attribute(VALUE);
         if (value != nullptr)
         {
@@ -933,7 +931,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(tinyxml2::XMLElement* p_root)
                 }
             }
 
-            XMLProfileManager::insertDynamicTypeByName(name, std::move(typeBuilder));
+            XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
         }
     }
     else

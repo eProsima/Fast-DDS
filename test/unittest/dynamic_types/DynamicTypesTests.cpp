@@ -4632,25 +4632,57 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
+        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::GetInstance();
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
-        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pbType->GetDynamicType());
 
-        // SERIALIZATION TEST
-        ArrayArrayStruct refData;
-        ArrayArrayStructPubSubType refDatapb;
+        // Manual comparision test
+        /*
+        typedef long MyArray[2][2];
 
-        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
-        SerializedPayload_t payload(payloadSize);
-        SerializedPayload_t dynamic_payload(payloadSize);
-        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
-        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+        struct ArrayArrayStruct
+        {
+            MyArray my_array_array[2][2];
+        };
 
-        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
-        SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
-        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        struct ArrayArrayArrayStruct
+        {
+            ArrayArrayStruct my_array_array_array[2][2];
+        };
 
-        ASSERT_TRUE(DynamicDataFactory::GetInstance()->DeleteData(data) == ResponseCode::RETCODE_OK);
+        ======
+
+        <type>
+            <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
+        </type>
+        <type>
+            <struct name="ArrayArrayStruct">
+                <member name="my_array_array" type="nonBasic" nonBasicTypeName="MyArray" arrayDimensions="2,2"/>
+            </struct>
+        </type>
+        <type>
+            <struct name="ArrayArrayArrayStruct">
+                <member name="my_array_array_array" type="nonBasic" nonBasicTypeName="ArrayArrayStruct" arrayDimensions="2,2"/>
+            </struct>
+        </type>
+        */
+        // Typedef aka Alias
+        DynamicTypeBuilder_ptr int32_builder = m_factory->CreateInt32Builder();
+        DynamicTypeBuilder_ptr array_builder = m_factory->CreateArrayBuilder(int32_builder.get(), { 2, 2 });
+        DynamicTypeBuilder_ptr myArray_builder = m_factory->CreateAliasBuilder(array_builder.get(), "MyArray");
+
+        // Struct ArrayArrayStruct
+        DynamicTypeBuilder_ptr aas_builder = m_factory->CreateStructBuilder();
+        DynamicTypeBuilder_ptr aMyArray_builder = m_factory->CreateArrayBuilder(myArray_builder.get(), { 2, 2 });
+        aas_builder->AddMember(0, "my_array_array", aMyArray_builder.get());
+        aas_builder->SetName("ArrayArrayStruct");
+
+        // Struct ArrayArrayArrayStruct
+        DynamicTypeBuilder_ptr aaas_builder = m_factory->CreateStructBuilder();
+        DynamicTypeBuilder_ptr aas_array_builder = m_factory->CreateArrayBuilder(aas_builder.get(), { 2, 2 });
+        aaas_builder->AddMember(0, "my_array_array_array", aas_array_builder.get());
+        aaas_builder->SetName("ArrayArrayArrayStruct");
+
+        ASSERT_TRUE(pbType->GetDynamicType()->Equals(aaas_builder->Build().get()));
 
         delete(pbType);
         XMLProfileManager::DeleteInstance();
