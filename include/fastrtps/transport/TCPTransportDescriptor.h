@@ -35,6 +35,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor {
     uint16_t logical_port_range;
     uint16_t logical_port_increment;
     uint32_t tcp_negotiation_timeout;
+    bool avoid_tcp_delay;
     bool wait_for_tcp_negotiation;
 
     void add_listener_port(uint16_t port)
