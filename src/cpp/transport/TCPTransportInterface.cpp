@@ -76,7 +76,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , logical_port_range(20)
     , logical_port_increment(2)
     , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
-    , avoid_tcp_delay(true)
+    , avoid_tcp_delay(false)
     , wait_for_tcp_negotiation(false)
 {
 }
