@@ -446,15 +446,61 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& add_to_unicast_locator_list(const std::string& ip, uint32_t port)
+    {
+        eprosima::fastrtps::rtps::Locator_t loc;
+        IPLocator::setIPv4(loc, ip);
+        loc.port = port;
+        publisher_attr_.unicastLocatorList.push_back(loc);
+
+        return *this;
+    }
+
     PubSubWriter& multicastLocatorList(eprosima::fastrtps::rtps::LocatorList_t multicastLocators)
     {
         publisher_attr_.multicastLocatorList = multicastLocators;
         return *this;
     }
 
+    PubSubWriter& add_to_multicast_locator_list(const std::string& ip, uint32_t port)
+    {
+        eprosima::fastrtps::rtps::Locator_t loc;
+        IPLocator::setIPv4(loc, ip);
+        loc.port = port;
+        publisher_attr_.multicastLocatorList.push_back(loc);
+
+        return *this;
+    }
+
     PubSubWriter& metatraffic_unicast_locator_list(eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
     {
         participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = unicastLocators;
+        return *this;
+    }
+
+    PubSubWriter& add_to_metatraffic_unicast_locator_list(const std::string& ip, uint32_t port)
+    {
+        eprosima::fastrtps::rtps::Locator_t loc;
+        IPLocator::setIPv4(loc, ip);
+        loc.port = port;
+        participant_attr_.rtps.builtin.metatrafficUnicastLocatorList.push_back(loc);
+
+        return *this;
+    }
+
+    PubSubWriter& metatraffic_multicast_locator_list(eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
+    {
+        participant_attr_.rtps.builtin.metatrafficMulticastLocatorList = unicastLocators;
+        return *this;
+    }
+
+    PubSubWriter& add_to_metatraffic_multicast_locator_list(const std::string& ip, uint32_t port)
+    {
+        eprosima::fastrtps::rtps::Locator_t loc;
+        IPLocator::setIPv4(loc, ip);
+        loc.port = port;
+        participant_attr_.rtps.builtin.metatrafficMulticastLocatorList.push_back(loc);
+
         return *this;
     }
 
