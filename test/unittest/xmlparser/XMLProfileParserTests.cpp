@@ -243,7 +243,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
-    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeInvalid);
+    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
@@ -310,7 +310,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
-    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeInvalid);
+    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
