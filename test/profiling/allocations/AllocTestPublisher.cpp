@@ -80,6 +80,7 @@ AllocTestPublisher::~AllocTestPublisher()
 
 void AllocTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
@@ -90,6 +91,25 @@ void AllocTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Ma
         n_matched--;
         std::cout << "Publisher unmatched"<<std::endl;
     }
+    cv.notify_all();
+}
+
+bool AllocTestPublisher::PubListener::is_matched()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    return n_matched > 0;
+}
+
+void AllocTestPublisher::PubListener::wait_match()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched > 0; });
+}
+
+void AllocTestPublisher::PubListener::wait_unmatch()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched <= 0; });
 }
 
 void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
@@ -98,10 +118,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
     eprosima_profiling::callgrind_zero_count();
 
     std::cout << "Publisher waiting for subscriber..." << std::endl;
-    while (m_listener.n_matched <= 0)
-    {
-        eClock::my_sleep(25);
-    }
+    m_listener.wait_match();
 
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
@@ -138,10 +155,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
     if(wait_unmatch)
     {
         std::cout << "All messages have been sent. Waiting for subscriber to stop." << std::endl;
-        while (m_listener.n_matched > 0)
-        {
-            eClock::my_sleep(25);
-        }
+        m_listener.wait_unmatch();
     }
     else
     {
@@ -157,7 +171,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
 
 bool AllocTestPublisher::publish()
 {
-    if(m_listener.n_matched>0)
+    if(m_listener.is_matched())
     {
         m_data.index(m_data.index()+1);
         mp_publisher->write((void*)&m_data);

@@ -74,6 +74,7 @@ AllocTestSubscriber::~AllocTestSubscriber() {
 
 void AllocTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
@@ -84,6 +85,7 @@ void AllocTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/
         n_matched--;
         std::cout << "Subscriber unmatched"<<std::endl;
     }
+    cv.notify_all();
 }
 
 void AllocTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
@@ -92,14 +94,33 @@ void AllocTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
     {
         if(m_info.sampleKind == ALIVE)
         {
+            std::unique_lock<std::mutex> lock(mtx);
             this->n_samples++;
             // Print your structure data here.
             std::cout << "Message " << m_Hello.index() << " RECEIVED" << std::endl;
+            cv.notify_all();
         }
     }
 
 }
 
+void AllocTestSubscriber::SubListener::wait_match()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched > 0; });
+}
+
+void AllocTestSubscriber::SubListener::wait_unmatch()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched <= 0; });
+}
+
+void AllocTestSubscriber::SubListener::wait_until_total_received_at_least(uint32_t n)
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this, n]() { return n_samples >= n; });
+}
 
 void AllocTestSubscriber::run(bool wait_unmatch)
 {
@@ -112,30 +133,21 @@ void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
     eprosima_profiling::callgrind_zero_count();
 
     std::cout << "Subscriber waiting for publisher..." << std::endl;
-    while (m_listener.n_matched <= 0)
-    {
-        eClock::my_sleep(25);
-    }
+    m_listener.wait_match();
 
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
     eprosima_profiling::discovery_finished();
 
     std::cout << "Subscriber matched. Waiting for first sample..." << std::endl;
-    while (this->m_listener.n_samples < 1)
-    {
-        eClock::my_sleep(25);
-    }
+    m_listener.wait_until_total_received_at_least(1ul);
 
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
     eprosima_profiling::first_sample_exchanged();
 
     std::cout << "First sample received. Waiting for rest of samples..." << std::endl;
-    while (this->m_listener.n_samples < number)
-    {
-        eClock::my_sleep(25);
-    }
+    m_listener.wait_until_total_received_at_least(number);
 
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
@@ -144,10 +156,7 @@ void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
     if (wait_unmatch)
     {
         std::cout << "All messages received. Waiting for publisher to stop." << std::endl;
-        while (m_listener.n_matched > 0)
-        {
-            eClock::my_sleep(25);
-        }
+        m_listener.wait_unmatch();
     }
     else
     {

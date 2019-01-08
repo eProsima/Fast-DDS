@@ -26,6 +26,8 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <string>
+#include <condition_variable>
+#include <mutex>
 #include "AllocTestType.h"
 
 class AllocTestPublisher {
@@ -51,7 +53,15 @@ private:
         PubListener():n_matched(0){};
         ~PubListener(){};
         void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        bool is_matched();
+        void wait_match();
+        void wait_unmatch();
+
+    private:
         int n_matched;
+        std::mutex mtx;
+        std::condition_variable cv;
     }m_listener;
 };
 

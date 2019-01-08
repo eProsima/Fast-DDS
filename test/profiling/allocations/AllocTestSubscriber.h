@@ -27,6 +27,9 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <string>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include "AllocTestType.h"
 
 class AllocTestSubscriber {
@@ -48,15 +51,24 @@ public:
 	class SubListener:public eprosima::fastrtps::SubscriberListener
 	{
 	public:
-		SubListener():n_matched(0),n_samples(0){};
-		~SubListener(){};
+		SubListener():n_matched(0),n_samples(0){}
+		~SubListener(){}
+
 		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-		AllocTestType m_Hello;
-		eprosima::fastrtps::SampleInfo_t m_info;
-		int n_matched;
-		uint32_t n_samples;
-	}m_listener;
+        
+        void wait_match();
+        void wait_unmatch();
+        void wait_until_total_received_at_least(uint32_t n);
+
+    private:
+        AllocTestType m_Hello;
+        eprosima::fastrtps::SampleInfo_t m_info;
+        int n_matched;
+        uint32_t n_samples;
+        std::mutex mtx;
+        std::condition_variable cv;
+    }m_listener;
 private:
 	AllocTestTypePubSubType m_type;
 };
