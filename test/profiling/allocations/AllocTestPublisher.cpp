@@ -94,12 +94,17 @@ void AllocTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Ma
 
 void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
 {
+    // Restart callgrind graph
+    eprosima_profiling::callgrind_zero_count();
+
     std::cout << "Publisher waiting for subscriber..." << std::endl;
     while (m_listener.n_matched <= 0)
     {
         eClock::my_sleep(25);
     }
 
+    // Flush callgrind graph
+    eprosima_profiling::callgrind_dump();
     eprosima_profiling::discovery_finished();
 
     std::cout << "Publisher matched. Sending samples" << std::endl;
@@ -117,6 +122,8 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
 
         if (i == 0)
         {
+            // Flush callgrind graph
+            eprosima_profiling::callgrind_dump();
             eprosima_profiling::first_sample_exchanged();
 
             std::cout << "First message has been sent" << std::endl;
@@ -124,6 +131,8 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
         }
     }
 
+    // Flush callgrind graph
+    eprosima_profiling::callgrind_dump();
     eprosima_profiling::all_samples_exchanged();
 
     if(wait_unmatch)
@@ -140,6 +149,8 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
         eClock::my_sleep(500);
     }
 
+    // Flush callgrind graph
+    eprosima_profiling::callgrind_dump();
     eprosima_profiling::undiscovery_finished();
     eprosima_profiling::print_results(m_outputFile, "publisher", m_profile);
 }
