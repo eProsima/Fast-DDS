@@ -315,7 +315,7 @@
     <xs:complexType name="livelinessQosPolicyType">
         <xs:all minOccurs="0">
             <xs:element name="kind" type="livelinessQosKindType" minOccurs="0"/>
-            <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
+            <xs:element name="lease_duration" type="durationType" minOccurs="0"/>
             <xs:element name="announcement_period" type="durationType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
@@ -599,6 +599,7 @@
                 <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="types" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -812,6 +813,16 @@
             </xs:sequence>
         </xs:sequence>
         <xs:attribute name="name" type="identifierName" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="typedefDcl">
+        <xs:attribute name="name" type="identifierName" use="required"/>
+        <xs:attribute name="type" type="string" use="required"/>
+        <xs:attribute name="key_type" type="string" use="optional"/>
+        <xs:attribute name="arrayDimensions" type="string" use="optional"/>
+        <xs:attribute name="nonBasicTypeName" type="string" use="optional"/>
+        <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
+        <xs:attribute name="mapMaxLength" type="string" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="enumeratorType">

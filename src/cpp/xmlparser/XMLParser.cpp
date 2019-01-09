@@ -704,6 +704,16 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
         <typedef name="MyAliasEnum" type="nonBasic" nonBasicTypeName="MyEnum"/>
 
         <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
+
+        <xs:complexType name="typedefDcl">
+            <xs:attribute name="name" type="identifierName" use="required"/>
+            <xs:attribute name="type" type="string" use="required"/>
+            <xs:attribute name="key_type" type="string" use="optional"/>
+            <xs:attribute name="arrayDimensions" type="string" use="optional"/>
+            <xs:attribute name="nonBasicTypeName" type="string" use="optional"/>
+            <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
+            <xs:attribute name="mapMaxLength" type="string" use="optional"/>
+        </xs:complexType>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
 
