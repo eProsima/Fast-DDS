@@ -255,7 +255,7 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
     {
         ChangeForReader_t newch(*it);
         newch.markFragmentsAsSent(fragment);
-        if (newch.getUnsentFragments().isSetEmpty())
+        if (newch.getUnsentFragments().empty())
         {
             allFragmentsSent = true;
         }

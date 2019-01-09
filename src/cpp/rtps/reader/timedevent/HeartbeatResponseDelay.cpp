@@ -127,7 +127,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                 assert(fit != cit->getDataFragments()->end());
 
                 // Store FragmentNumberSet_t base.
-                frag_sns.base = frag_num;
+                frag_sns.base(frag_num);
 
                 // Fill the FragmentNumberSet_t bitmap.
                 for(; fit != cit->getDataFragments()->end(); ++fit)
