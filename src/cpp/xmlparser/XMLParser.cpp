@@ -114,6 +114,10 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                 {
                     ret = parseXMLTopicData(node, *root);
                 }
+                else if (strcmp(tag, TYPES) == 0)
+                {
+                    ret = parseXMLTypes(node);
+                }
                 else if (strcmp(tag, LOG) == 0)
                 {
                     ret = parseLogConfig(node);
@@ -253,7 +257,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 <xs:element name="logical_port_range" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="ListeningPorts" type="portListType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
@@ -381,7 +385,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
                 <xs:element name="logical_port_range" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="ListeningPorts" type="portListType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
@@ -475,7 +479,7 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 <xs:element name="logical_port_range" type="uint16Type"/>
                 <xs:element name="logical_port_increment" type="uint16Type"/>
                 <xs:element name="metadata_logical_port" type="uint16Type"/>
-                <xs:element name="ListeningPorts" type="uint16ListType"/>
+                <xs:element name="listening_ports" type="uint16ListType"/>
                 <xs:sequence>
                     <xs:element name="port" type="uint16Type"/>
                 </xs:sequence>
@@ -534,7 +538,7 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
             }
             else if (strcmp(name, LISTENING_PORTS) == 0)
             {
-                // ListeningPorts uint16ListType
+                // listening_ports uint16ListType
                 tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(PORT);
                 while (nullptr != p_aux1)
                 {
@@ -700,6 +704,16 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
         <typedef name="MyAliasEnum" type="nonBasic" nonBasicTypeName="MyEnum"/>
 
         <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
+
+        <xs:complexType name="typedefDcl">
+            <xs:attribute name="name" type="identifierName" use="required"/>
+            <xs:attribute name="type" type="string" use="required"/>
+            <xs:attribute name="key_type" type="string" use="optional"/>
+            <xs:attribute name="arrayDimensions" type="string" use="optional"/>
+            <xs:attribute name="nonBasicTypeName" type="string" use="optional"/>
+            <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
+            <xs:attribute name="mapMaxLength" type="string" use="optional"/>
+        </xs:complexType>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
 
@@ -1553,6 +1567,10 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             else if (strcmp(tag, TOPIC) == 0)
             {
                 parseXMLTopicData(p_profile, profilesNode);
+            }
+            else if (strcmp(tag, TYPES) == 0)
+            {
+                parseXMLTypes(p_profile);
             }
             else if (strcmp(tag, QOS_PROFILE) == 0)
             {
