@@ -202,232 +202,228 @@ ParameterList_t ParticipantProxyData::AllQostoParameterList()
 
 bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation)
 {
-    ParameterList_t parameter_list;
-
-    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, use_encapsulation) > 0)
+    auto param_process = [this](const Parameter_t* param)
     {
-        for(std::vector<Parameter_t*>::iterator it = parameter_list.m_parameters.begin();
-                it!=parameter_list.m_parameters.end();++it)
+        switch (param->Pid)
         {
-            switch((*it)->Pid)
+            case PID_KEY_HASH:
             {
-                case PID_KEY_HASH:
-                    {
-                        ParameterKey_t*p = (ParameterKey_t*)(*it);
-                        GUID_t guid;
-                        iHandle2GUID(guid,p->key);
-                        this->m_guid = guid;
-                        this->m_key = p->key;
-                        break;
-                    }
-                case PID_PROTOCOL_VERSION:
-                    {
-                        ParameterProtocolVersion_t * p = (ParameterProtocolVersion_t*)(*it);
-                        if(p->protocolVersion.m_major < c_ProtocolVersion.m_major)
-                        {
-                            return false;
-                        }
-                        this->m_protocolVersion = p->protocolVersion;
-                        break;
-                    }
-                case PID_VENDORID:
-                    {
-                        ParameterVendorId_t * p = (ParameterVendorId_t*)(*it);
-                        this->m_VendorId[0] = p->vendorId[0];
-                        this->m_VendorId[1] = p->vendorId[1];
-                        break;
-                    }
-                case PID_EXPECTS_INLINE_QOS:
-                    {
-                        ParameterBool_t * p = (ParameterBool_t*)(*it);
-                        this->m_expectsInlineQos = p->value;
-                        break;
-                    }
-                case PID_PARTICIPANT_GUID:
-                    {
-                        ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-                        this->m_guid = p->guid;
-                        this->m_key = p->guid;
-                        break;
-                    }
-                case PID_METATRAFFIC_MULTICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        this->m_metatrafficMulticastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_METATRAFFIC_UNICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        this->m_metatrafficUnicastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_DEFAULT_UNICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        this->m_defaultUnicastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_DEFAULT_MULTICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        this->m_defaultMulticastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_PARTICIPANT_LEASE_DURATION:
-                    {
-                        ParameterTime_t* p = (ParameterTime_t*)(*it);
-                        this->m_leaseDuration = p->time;
-                        break;
-                    }
-                case PID_BUILTIN_ENDPOINT_SET:
-                    {
-                        ParameterBuiltinEndpointSet_t* p = (ParameterBuiltinEndpointSet_t*)(*it);
-                        this->m_availableBuiltinEndpoints = p->endpointSet;
-                        break;
-                    }
-                case PID_ENTITY_NAME:
-                    {
-
-                        ParameterString_t* p = (ParameterString_t*)(*it);
-                        //cout << "ENTITY NAME " << p->m_string<<endl;
-                        this->m_participantName = p->getName();
-                        break;
-                    }
-                case PID_PROPERTY_LIST:
-                    {
-                        ParameterPropertyList_t*p = (ParameterPropertyList_t*)(*it);
-                        this->m_properties = *p;
-                        break;
-                    }
-                case PID_USER_DATA:
-                    {
-                        UserDataQosPolicy*p = (UserDataQosPolicy*)(*it);
-                        this->m_userData = p->getDataVec();
-                        break;
-                    }
-                case PID_IDENTITY_TOKEN:
-                    {
-#if HAVE_SECURITY
-                        ParameterToken_t* p = (ParameterToken_t*)(*it);
-                        this->identity_token_ = std::move(p->token);
-#else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
-#endif
-                        break;
-                    }
-                case PID_PERMISSIONS_TOKEN:
-                    {
-#if HAVE_SECURITY
-                        ParameterToken_t* p = (ParameterToken_t*)(*it);
-                        this->permissions_token_ = std::move(p->token);
-#else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
-#endif
-                        break;
-                    }
-                case PID_PARTICIPANT_SECURITY_INFO:
-                    {
-#if HAVE_SECURITY
-                        ParameterParticipantSecurityInfo_t* p = (ParameterParticipantSecurityInfo_t*)(*it);
-                        this->security_attributes_ = p->security_attributes;
-                        this->plugin_security_attributes_ = p->plugin_security_attributes;
-#else
-                        logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
-#endif
-                        break;
-                    }
-
-                    default: break;
-                }
+                ParameterKey_t*p = (ParameterKey_t*)(param);
+                GUID_t guid;
+                iHandle2GUID(guid, p->key);
+                this->m_guid = guid;
+                this->m_key = p->key;
+                break;
             }
-            return true;
+            case PID_PROTOCOL_VERSION:
+            {
+                ParameterProtocolVersion_t * p = (ParameterProtocolVersion_t*)(param);
+                if (p->protocolVersion.m_major < c_ProtocolVersion.m_major)
+                {
+                    return false;
+                }
+                this->m_protocolVersion = p->protocolVersion;
+                break;
+            }
+            case PID_VENDORID:
+            {
+                ParameterVendorId_t * p = (ParameterVendorId_t*)(param);
+                this->m_VendorId[0] = p->vendorId[0];
+                this->m_VendorId[1] = p->vendorId[1];
+                break;
+            }
+            case PID_EXPECTS_INLINE_QOS:
+            {
+                ParameterBool_t * p = (ParameterBool_t*)(param);
+                this->m_expectsInlineQos = p->value;
+                break;
+            }
+            case PID_PARTICIPANT_GUID:
+            {
+                ParameterGuid_t * p = (ParameterGuid_t*)(param);
+                this->m_guid = p->guid;
+                this->m_key = p->guid;
+                break;
+            }
+            case PID_METATRAFFIC_MULTICAST_LOCATOR:
+            {
+                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                this->m_metatrafficMulticastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_METATRAFFIC_UNICAST_LOCATOR:
+            {
+                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                this->m_metatrafficUnicastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_DEFAULT_UNICAST_LOCATOR:
+            {
+                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                this->m_defaultUnicastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_DEFAULT_MULTICAST_LOCATOR:
+            {
+                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                this->m_defaultMulticastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_PARTICIPANT_LEASE_DURATION:
+            {
+                ParameterTime_t* p = (ParameterTime_t*)(param);
+                this->m_leaseDuration = p->time;
+                break;
+            }
+            case PID_BUILTIN_ENDPOINT_SET:
+            {
+                ParameterBuiltinEndpointSet_t* p = (ParameterBuiltinEndpointSet_t*)(param);
+                this->m_availableBuiltinEndpoints = p->endpointSet;
+                break;
+            }
+            case PID_ENTITY_NAME:
+            {
+
+                ParameterString_t* p = (ParameterString_t*)(param);
+                //cout << "ENTITY NAME " << p->m_string<<endl;
+                this->m_participantName = p->getName();
+                break;
+            }
+            case PID_PROPERTY_LIST:
+            {
+                ParameterPropertyList_t*p = (ParameterPropertyList_t*)(param);
+                this->m_properties = *p;
+                break;
+            }
+            case PID_USER_DATA:
+            {
+                UserDataQosPolicy*p = (UserDataQosPolicy*)(param);
+                this->m_userData = p->getDataVec();
+                break;
+            }
+            case PID_IDENTITY_TOKEN:
+            {
+#if HAVE_SECURITY
+                ParameterToken_t* p = (ParameterToken_t*)(param);
+                this->identity_token_ = std::move(p->token);
+#else
+                logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+#endif
+                break;
+            }
+            case PID_PERMISSIONS_TOKEN:
+            {
+#if HAVE_SECURITY
+                ParameterToken_t* p = (ParameterToken_t*)(param);
+                this->permissions_token_ = std::move(p->token);
+#else
+                logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+#endif
+                break;
+            }
+            case PID_PARTICIPANT_SECURITY_INFO:
+            {
+#if HAVE_SECURITY
+                ParameterParticipantSecurityInfo_t* p = (ParameterParticipantSecurityInfo_t*)(param);
+                this->security_attributes_ = p->security_attributes;
+                this->plugin_security_attributes_ = p->plugin_security_attributes;
+#else
+                logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+#endif
+                break;
+            }
+
+            default: break;
         }
 
-        return false;
-    }
-
-
-    void ParticipantProxyData::clear()
-    {
-        m_protocolVersion = ProtocolVersion_t();
-        m_guid = GUID_t();
-        //set_VendorId_Unknown(m_VendorId);
-        m_VendorId = c_VendorId_Unknown;
-        m_expectsInlineQos = false;
-        m_availableBuiltinEndpoints = 0;
-        m_metatrafficUnicastLocatorList.clear();
-        m_metatrafficMulticastLocatorList.clear();
-        m_defaultUnicastLocatorList.clear();
-        m_defaultMulticastLocatorList.clear();
-        m_manualLivelinessCount = 0;
-        m_participantName = "";
-        m_key = InstanceHandle_t();
-        m_leaseDuration = Duration_t();
-        isAlive = true;
-#if HAVE_SECURITY
-        identity_token_ = IdentityToken();
-        permissions_token_ = PermissionsToken();
-        security_attributes_ = 0UL;
-        plugin_security_attributes_ = 0UL;
-#endif
-        m_properties.properties.clear();
-        m_properties.length = 0;
-        m_userData.clear();
-    }
-
-    void ParticipantProxyData::copy(ParticipantProxyData& pdata)
-    {
-        m_protocolVersion = pdata.m_protocolVersion;
-        m_guid = pdata.m_guid;
-        m_VendorId[0] = pdata.m_VendorId[0];
-        m_VendorId[1] = pdata.m_VendorId[1];
-        m_availableBuiltinEndpoints = pdata.m_availableBuiltinEndpoints;
-        m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
-        m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
-        m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
-        m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
-        m_manualLivelinessCount = pdata.m_manualLivelinessCount;
-        m_participantName = pdata.m_participantName;
-        m_leaseDuration = pdata.m_leaseDuration;
-        m_key = pdata.m_key;
-        isAlive = pdata.isAlive;
-        m_properties = pdata.m_properties;
-        m_userData = pdata.m_userData;
-#if HAVE_SECURITY
-        identity_token_ = pdata.identity_token_;
-        permissions_token_ = pdata.permissions_token_;
-        security_attributes_ = pdata.security_attributes_;
-        plugin_security_attributes_ = pdata.plugin_security_attributes_;
-#endif
-    }
-
-    bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
-    {
-        m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
-        m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
-        m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
-        m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
-        m_manualLivelinessCount = pdata.m_manualLivelinessCount;
-        m_properties = pdata.m_properties;
-        m_leaseDuration = pdata.m_leaseDuration;
-        m_userData = pdata.m_userData;
-        isAlive = true;
-#if HAVE_SECURITY
-        identity_token_ = pdata.identity_token_;
-        permissions_token_ = pdata.permissions_token_;
-        security_attributes_ = pdata.security_attributes_;
-        plugin_security_attributes_ = pdata.plugin_security_attributes_;
-#endif
-        if(this->mp_leaseDurationTimer != nullptr)
-        {
-            mp_leaseDurationTimer->cancel_timer();
-            mp_leaseDurationTimer->update_interval(m_leaseDuration);
-            mp_leaseDurationTimer->restart_timer();
-        }
         return true;
+    };
+
+    uint32_t qos_size;
+    return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
+}
+
+
+void ParticipantProxyData::clear()
+{
+    m_protocolVersion = ProtocolVersion_t();
+    m_guid = GUID_t();
+    //set_VendorId_Unknown(m_VendorId);
+    m_VendorId = c_VendorId_Unknown;
+    m_expectsInlineQos = false;
+    m_availableBuiltinEndpoints = 0;
+    m_metatrafficUnicastLocatorList.clear();
+    m_metatrafficMulticastLocatorList.clear();
+    m_defaultUnicastLocatorList.clear();
+    m_defaultMulticastLocatorList.clear();
+    m_manualLivelinessCount = 0;
+    m_participantName = "";
+    m_key = InstanceHandle_t();
+    m_leaseDuration = Duration_t();
+    isAlive = true;
+#if HAVE_SECURITY
+    identity_token_ = IdentityToken();
+    permissions_token_ = PermissionsToken();
+    security_attributes_ = 0UL;
+    plugin_security_attributes_ = 0UL;
+#endif
+    m_properties.properties.clear();
+    m_properties.length = 0;
+    m_userData.clear();
+}
+
+void ParticipantProxyData::copy(ParticipantProxyData& pdata)
+{
+    m_protocolVersion = pdata.m_protocolVersion;
+    m_guid = pdata.m_guid;
+    m_VendorId[0] = pdata.m_VendorId[0];
+    m_VendorId[1] = pdata.m_VendorId[1];
+    m_availableBuiltinEndpoints = pdata.m_availableBuiltinEndpoints;
+    m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+    m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+    m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
+    m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
+    m_manualLivelinessCount = pdata.m_manualLivelinessCount;
+    m_participantName = pdata.m_participantName;
+    m_leaseDuration = pdata.m_leaseDuration;
+    m_key = pdata.m_key;
+    isAlive = pdata.isAlive;
+    m_properties = pdata.m_properties;
+    m_userData = pdata.m_userData;
+#if HAVE_SECURITY
+    identity_token_ = pdata.identity_token_;
+    permissions_token_ = pdata.permissions_token_;
+    security_attributes_ = pdata.security_attributes_;
+    plugin_security_attributes_ = pdata.plugin_security_attributes_;
+#endif
+}
+
+bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
+{
+    m_metatrafficUnicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
+    m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+    m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
+    m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
+    m_manualLivelinessCount = pdata.m_manualLivelinessCount;
+    m_properties = pdata.m_properties;
+    m_leaseDuration = pdata.m_leaseDuration;
+    m_userData = pdata.m_userData;
+    isAlive = true;
+#if HAVE_SECURITY
+    identity_token_ = pdata.identity_token_;
+    permissions_token_ = pdata.permissions_token_;
+    security_attributes_ = pdata.security_attributes_;
+    plugin_security_attributes_ = pdata.plugin_security_attributes_;
+#endif
+    if (this->mp_leaseDurationTimer != nullptr)
+    {
+        mp_leaseDurationTimer->cancel_timer();
+        mp_leaseDurationTimer->update_interval(m_leaseDuration);
+        mp_leaseDurationTimer->restart_timer();
     }
+    return true;
+}
 
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
-}

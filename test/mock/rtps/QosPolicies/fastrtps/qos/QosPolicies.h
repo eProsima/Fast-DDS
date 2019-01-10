@@ -67,6 +67,7 @@ typedef enum DurabilityQosPolicyKind: rtps::octet{
  */
 class DurabilityQosPolicy : private Parameter_t, public QosPolicy
 {
+        friend class ParameterList;
     public:
         RTPS_DllAPI DurabilityQosPolicy():Parameter_t(PID_DURABILITY,PARAMETER_KIND_LENGTH),QosPolicy(true),kind(VOLATILE_DURABILITY_QOS){};
         virtual RTPS_DllAPI ~DurabilityQosPolicy(){};
@@ -119,7 +120,9 @@ class DurabilityQosPolicy : private Parameter_t, public QosPolicy
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeInifinite.
  */
-class DeadlineQosPolicy : private Parameter_t, public QosPolicy {
+class DeadlineQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         RTPS_DllAPI DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(rtps::c_TimeInfinite){	};
         virtual RTPS_DllAPI ~DeadlineQosPolicy(){};
@@ -140,7 +143,9 @@ class DeadlineQosPolicy : private Parameter_t, public QosPolicy {
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeZero.
  */
-class LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
+class LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         RTPS_DllAPI LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(rtps::c_TimeZero){};
         virtual RTPS_DllAPI ~LatencyBudgetQosPolicy(){};
@@ -175,7 +180,9 @@ typedef enum LivelinessQosPolicyKind:rtps::octet {
  * lease_duration: Default value c_TimeInfinite.
  * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
  */
-class LivelinessQosPolicy : private Parameter_t, public QosPolicy {
+class LivelinessQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         RTPS_DllAPI LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),QosPolicy(true),
         kind(AUTOMATIC_LIVELINESS_QOS){lease_duration = rtps::c_TimeInfinite; announcement_period = rtps::c_TimeInfinite;};
@@ -209,6 +216,7 @@ typedef enum ReliabilityQosPolicyKind:rtps::octet {
  */
 class ReliabilityQosPolicy : private Parameter_t, public QosPolicy
 {
+        friend class ParameterList;
     public:
         RTPS_DllAPI ReliabilityQosPolicy() : Parameter_t(PID_RELIABILITY,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
         QosPolicy(true), //indicate send always
@@ -243,7 +251,9 @@ enum OwnershipQosPolicyKind:rtps::octet {
  * Class OwnershipQosPolicy, to indicate the ownership kind of the endpoints.
  * kind: Default value SHARED_OWNERSHIP_QOS.
  */
-class OwnershipQosPolicy : private Parameter_t, public QosPolicy {
+class OwnershipQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         RTPS_DllAPI OwnershipQosPolicy():Parameter_t(PID_OWNERSHIP,PARAMETER_KIND_LENGTH),QosPolicy(true),
         kind(SHARED_OWNERSHIP_QOS){};
@@ -275,7 +285,9 @@ enum DestinationOrderQosPolicyKind :rtps::octet{
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * kind: Default value BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS
  */
-class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
+class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         DestinationOrderQosPolicyKind kind;
         RTPS_DllAPI DestinationOrderQosPolicy():Parameter_t(PID_DESTINATION_ORDER,PARAMETER_KIND_LENGTH),QosPolicy(true),
@@ -296,9 +308,10 @@ class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy {
 /**
  * Class UserDataQosPolicy, to transmit user data during the discovery phase.
  */
-class UserDataQosPolicy : private Parameter_t, public QosPolicy{
+class UserDataQosPolicy : private Parameter_t, public QosPolicy
+{
     friend class ParameterList;
-    public:
+public:
     RTPS_DllAPI UserDataQosPolicy() :Parameter_t(PID_USER_DATA, 0), QosPolicy(false){};
     virtual RTPS_DllAPI ~UserDataQosPolicy(){};
 
@@ -333,7 +346,9 @@ class UserDataQosPolicy : private Parameter_t, public QosPolicy{
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * minimum_separation: Default value c_TimeZero
  */
-class TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy {
+class TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
 
         RTPS_DllAPI TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false),minimum_separation(rtps::c_TimeZero){};
@@ -371,6 +386,7 @@ enum PresentationQosPolicyAccessScopeKind:rtps::octet
  */
 class PresentationQosPolicy : private Parameter_t, public QosPolicy
 {
+        friend class ParameterList;
     public:
         PresentationQosPolicyAccessScopeKind access_scope;
         bool coherent_access;
@@ -538,7 +554,9 @@ enum HistoryQosPolicyKind:rtps::octet {
  * kind: Default value KEEP_LAST_HISTORY_QOS.
  * depth: Default value 1000.
  */
-class HistoryQosPolicy : private Parameter_t, public QosPolicy {
+class HistoryQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         HistoryQosPolicyKind kind;
         int32_t depth;
@@ -563,7 +581,9 @@ class HistoryQosPolicy : private Parameter_t, public QosPolicy {
  * max_samples_per_instance: Default value 400.
  * allocated_samples: Default value 100.
  */
-class ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
+class ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         int32_t max_samples;
         int32_t max_instances;
@@ -595,7 +615,9 @@ class ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy {
  * max_instances: Default value -1.
  * max_samples_per_instance: Default value -1.
  */
-class DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy {
+class DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         rtps::Duration_t service_cleanup_delay;
         HistoryQosPolicyKind history_kind;
@@ -623,7 +645,9 @@ class DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy {
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * duration: Default value c_TimeInfinite.
  */
-class LifespanQosPolicy : private Parameter_t, public QosPolicy {
+class LifespanQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         RTPS_DllAPI LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(rtps::c_TimeInfinite){};
         virtual RTPS_DllAPI ~LifespanQosPolicy(){};
@@ -643,7 +667,9 @@ class LifespanQosPolicy : private Parameter_t, public QosPolicy {
  * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
  * value: Default value 0.
  */
-class OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy {
+class OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy 
+{
+        friend class ParameterList;
     public:
         uint32_t value;
         RTPS_DllAPI OwnershipStrengthQosPolicy():Parameter_t(PID_OWNERSHIP_STRENGTH,4),QosPolicy(false),value(0){};
@@ -666,7 +692,9 @@ class OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy {
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * value: Default value 0.
  */
-class TransportPriorityQosPolicy : private Parameter_t , public QosPolicy{
+class TransportPriorityQosPolicy : private Parameter_t , public QosPolicy
+{
+        friend class ParameterList;
     public:
         uint32_t value;
         RTPS_DllAPI TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),QosPolicy(false),value(0){};
@@ -715,6 +743,7 @@ typedef enum DataRepresentationId : int16_t {
 */
 class DataRepresentationQosPolicy :private Parameter_t, public QosPolicy
 {
+    friend class ParameterList;
 public:
     std::vector<DataRepresentationId_t> m_value;
     RTPS_DllAPI DataRepresentationQosPolicy() {};
@@ -741,6 +770,7 @@ enum TypeConsistencyKind : uint32_t
 */
 class TypeConsistencyEnforcementQosPolicy : private Parameter_t, public QosPolicy
 {
+    friend class ParameterList;
 public:
     TypeConsistencyKind m_kind;
     bool m_ignore_sequence_bounds;
@@ -767,6 +797,7 @@ public:
 */
 class TypeIdV1 : private Parameter_t, public QosPolicy
 {
+    friend class ParameterList;
 public:
 
     RTPS_DllAPI TypeIdV1() : Parameter_t(PID_TYPE_IDV1, 0), QosPolicy(false)
@@ -825,6 +856,7 @@ public:
 */
 class TypeObjectV1 : private Parameter_t, public QosPolicy
 {
+    friend class ParameterList;
 public:
 
     RTPS_DllAPI TypeObjectV1() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false)

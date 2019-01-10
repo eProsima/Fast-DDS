@@ -273,225 +273,227 @@ ParameterList_t ReaderProxyData::toParameterList()
 
 bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-    ParameterList_t parameter_list;
-    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, true)>0)
+    auto param_process = [this](const Parameter_t* param)
     {
-        for(std::vector<Parameter_t*>::iterator it = parameter_list.m_parameters.begin();
-                it!=parameter_list.m_parameters.end();++it)
+        switch (param->Pid)
         {
-            switch((*it)->Pid)
+            case PID_DURABILITY:
             {
-                case PID_DURABILITY:
-                    {
-                        DurabilityQosPolicy * p = (DurabilityQosPolicy*)(*it);
-                        m_qos.m_durability = *p;
-                        break;
-                    }
-                case PID_DURABILITY_SERVICE:
-                    {
-                        DurabilityServiceQosPolicy * p = (DurabilityServiceQosPolicy*)(*it);
-                        m_qos.m_durabilityService = *p;
-                        break;
-                    }
-                case PID_DEADLINE:
-                    {
-                        DeadlineQosPolicy * p = (DeadlineQosPolicy*)(*it);
-                        m_qos.m_deadline = *p;
-                        break;
-                    }
-                case PID_LATENCY_BUDGET:
-                    {
-                        LatencyBudgetQosPolicy * p = (LatencyBudgetQosPolicy*)(*it);
-                        m_qos.m_latencyBudget = *p;
-                        break;
-                    }
-                case PID_LIVELINESS:
-                    {
-                        LivelinessQosPolicy * p = (LivelinessQosPolicy*)(*it);
-                        m_qos.m_liveliness = *p;
-                        break;
-                    }
-                case PID_RELIABILITY:
-                    {
-                        ReliabilityQosPolicy * p = (ReliabilityQosPolicy*)(*it);
-                        m_qos.m_reliability = *p;
-                        break;
-                    }
-                case PID_LIFESPAN:
-                    {
+                DurabilityQosPolicy * p = (DurabilityQosPolicy*)(param);
+                m_qos.m_durability = *p;
+                break;
+            }
+            case PID_DURABILITY_SERVICE:
+            {
+                DurabilityServiceQosPolicy * p = (DurabilityServiceQosPolicy*)(param);
+                m_qos.m_durabilityService = *p;
+                break;
+            }
+            case PID_DEADLINE:
+            {
+                DeadlineQosPolicy * p = (DeadlineQosPolicy*)(param);
+                m_qos.m_deadline = *p;
+                break;
+            }
+            case PID_LATENCY_BUDGET:
+            {
+                LatencyBudgetQosPolicy * p = (LatencyBudgetQosPolicy*)(param);
+                m_qos.m_latencyBudget = *p;
+                break;
+            }
+            case PID_LIVELINESS:
+            {
+                LivelinessQosPolicy * p = (LivelinessQosPolicy*)(param);
+                m_qos.m_liveliness = *p;
+                break;
+            }
+            case PID_RELIABILITY:
+            {
+                ReliabilityQosPolicy * p = (ReliabilityQosPolicy*)(param);
+                m_qos.m_reliability = *p;
+                break;
+            }
+            case PID_LIFESPAN:
+            {
 
-                        LifespanQosPolicy * p = (LifespanQosPolicy*)(*it);
-                        m_qos.m_lifespan = *p;
-                        break;
-                    }
-                case PID_USER_DATA:
-                    {
-                        UserDataQosPolicy * p = (UserDataQosPolicy*)(*it);
-                        m_qos.m_userData = *p;
-                        break;
-                    }
-                case PID_TIME_BASED_FILTER:
-                    {
-                        TimeBasedFilterQosPolicy * p = (TimeBasedFilterQosPolicy*)(*it);
-                        m_qos.m_timeBasedFilter = *p;
-                        break;
-                    }
-                case PID_OWNERSHIP:
-                    {
-                        OwnershipQosPolicy * p = (OwnershipQosPolicy*)(*it);
-                        m_qos.m_ownership = *p;
-                        break;
-                    }
-                case PID_DESTINATION_ORDER:
-                    {
-                        DestinationOrderQosPolicy * p = (DestinationOrderQosPolicy*)(*it);
-                        m_qos.m_destinationOrder = *p;
-                        break;
-                    }
+                LifespanQosPolicy * p = (LifespanQosPolicy*)(param);
+                m_qos.m_lifespan = *p;
+                break;
+            }
+            case PID_USER_DATA:
+            {
+                UserDataQosPolicy * p = (UserDataQosPolicy*)(param);
+                m_qos.m_userData = *p;
+                break;
+            }
+            case PID_TIME_BASED_FILTER:
+            {
+                TimeBasedFilterQosPolicy * p = (TimeBasedFilterQosPolicy*)(param);
+                m_qos.m_timeBasedFilter = *p;
+                break;
+            }
+            case PID_OWNERSHIP:
+            {
+                OwnershipQosPolicy * p = (OwnershipQosPolicy*)(param);
+                m_qos.m_ownership = *p;
+                break;
+            }
+            case PID_DESTINATION_ORDER:
+            {
+                DestinationOrderQosPolicy * p = (DestinationOrderQosPolicy*)(param);
+                m_qos.m_destinationOrder = *p;
+                break;
+            }
 
-                case PID_PRESENTATION:
-                    {
-                        PresentationQosPolicy * p = (PresentationQosPolicy*)(*it);
-                        m_qos.m_presentation = *p;
-                        break;
-                    }
-                case PID_PARTITION:
-                    {
-                        PartitionQosPolicy * p = (PartitionQosPolicy*)(*it);
-                        m_qos.m_partition = *p;
-                        break;
-                    }
-                case PID_TOPIC_DATA:
-                    {
-                        TopicDataQosPolicy * p = (TopicDataQosPolicy*)(*it);
-                        m_qos.m_topicData = *p;
-                        break;
-                    }
-                case PID_GROUP_DATA:
-                    {
+            case PID_PRESENTATION:
+            {
+                PresentationQosPolicy * p = (PresentationQosPolicy*)(param);
+                m_qos.m_presentation = *p;
+                break;
+            }
+            case PID_PARTITION:
+            {
+                PartitionQosPolicy * p = (PartitionQosPolicy*)(param);
+                m_qos.m_partition = *p;
+                break;
+            }
+            case PID_TOPIC_DATA:
+            {
+                TopicDataQosPolicy * p = (TopicDataQosPolicy*)(param);
+                m_qos.m_topicData = *p;
+                break;
+            }
+            case PID_GROUP_DATA:
+            {
 
-                        GroupDataQosPolicy * p = (GroupDataQosPolicy*)(*it);
-                        m_qos.m_groupData = *p;
-                        break;
-                    }
-                case PID_TOPIC_NAME:
-                    {
-                        ParameterString_t*p = (ParameterString_t*)(*it);
-                        m_topicName = p->getName();
-                        break;
-                    }
-                case PID_TYPE_NAME:
-                    {
-                        ParameterString_t* p = (ParameterString_t*)(*it);
-                        m_typeName = p->getName();
-                        break;
-                    }
-                case PID_PARTICIPANT_GUID:
-                    {
-                        ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-                        for(uint8_t i = 0; i < 16; ++i)
-                        {
-                            if(i < 12)
-                                m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
-                            else
-                                m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
-                        }
-                        break;
-                    }
-                case PID_ENDPOINT_GUID:
-                    {
-                        ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-                        m_guid = p->guid;
-                        for(uint8_t i=0;i<16;++i)
-                        {
-                            if(i<12)
-                                m_key.value[i] = p->guid.guidPrefix.value[i];
-                            else
-                                m_key.value[i] = p->guid.entityId.value[i - 12];
-                        }
-                        break;
-                    }
-                case PID_UNICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        m_unicastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_MULTICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        m_multicastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_EXPECTS_INLINE_QOS:
-                    {
-                        ParameterBool_t*p =(ParameterBool_t*)(*it);
-                        m_expectsInlineQos = p->value;
-                        break;
-                    }
-                case PID_KEY_HASH:
-                    {
-                        ParameterKey_t*p=(ParameterKey_t*)(*it);
-                        m_key = p->key;
-                        iHandle2GUID(m_guid,m_key);
-                        break;
-                    }
-                case PID_DATA_REPRESENTATION:
+                GroupDataQosPolicy * p = (GroupDataQosPolicy*)(param);
+                m_qos.m_groupData = *p;
+                break;
+            }
+            case PID_TOPIC_NAME:
+            {
+                ParameterString_t*p = (ParameterString_t*)(param);
+                m_topicName = p->getName();
+                break;
+            }
+            case PID_TYPE_NAME:
+            {
+                ParameterString_t* p = (ParameterString_t*)(param);
+                m_typeName = p->getName();
+                break;
+            }
+            case PID_PARTICIPANT_GUID:
+            {
+                ParameterGuid_t * p = (ParameterGuid_t*)(param);
+                for (uint8_t i = 0; i < 16; ++i)
                 {
-                    DataRepresentationQosPolicy * p = (DataRepresentationQosPolicy*)(*it);
-                    m_qos.m_dataRepresentation = *p;
-                    break;
+                    if (i < 12)
+                        m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
+                    else
+                        m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
                 }
-                case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+                break;
+            }
+            case PID_ENDPOINT_GUID:
+            {
+                ParameterGuid_t * p = (ParameterGuid_t*)(param);
+                m_guid = p->guid;
+                for (uint8_t i = 0; i<16; ++i)
                 {
-                    TypeConsistencyEnforcementQosPolicy * p = (TypeConsistencyEnforcementQosPolicy*)(*it);
-                    m_qos.m_typeConsistency = *p;
-                    break;
+                    if (i<12)
+                        m_key.value[i] = p->guid.guidPrefix.value[i];
+                    else
+                        m_key.value[i] = p->guid.entityId.value[i - 12];
                 }
-                case PID_TYPE_IDV1:
-                    {
-                        TypeIdV1 * p = (TypeIdV1*)(*it);
-                        m_type_id = *p;
-                        m_topicDiscoveryKind = MINIMAL;
-                        if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
-                        {
-                            m_topicDiscoveryKind = COMPLETE;
-                        }
-                        break;
-                    }
-                case PID_TYPE_OBJECTV1:
-                    {
-                        TypeObjectV1 * p = (TypeObjectV1*)(*it);
-                        m_type = *p;
-                        m_topicDiscoveryKind = MINIMAL;
-                        if (m_type.m_type_object->_d() == EK_COMPLETE)
-                        {
-                            m_topicDiscoveryKind = COMPLETE;
-                        }
-                        break;
-                    }
+                break;
+            }
+            case PID_UNICAST_LOCATOR:
+            {
+                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                m_unicastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_MULTICAST_LOCATOR:
+            {
+                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                m_multicastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_EXPECTS_INLINE_QOS:
+            {
+                ParameterBool_t*p = (ParameterBool_t*)(param);
+                m_expectsInlineQos = p->value;
+                break;
+            }
+            case PID_KEY_HASH:
+            {
+                ParameterKey_t*p = (ParameterKey_t*)(param);
+                m_key = p->key;
+                iHandle2GUID(m_guid, m_key);
+                break;
+            }
+            case PID_DATA_REPRESENTATION:
+            {
+                DataRepresentationQosPolicy * p = (DataRepresentationQosPolicy*)(param);
+                m_qos.m_dataRepresentation = *p;
+                break;
+            }
+            case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+            {
+                TypeConsistencyEnforcementQosPolicy * p = (TypeConsistencyEnforcementQosPolicy*)(param);
+                m_qos.m_typeConsistency = *p;
+                break;
+            }
+            case PID_TYPE_IDV1:
+            {
+                TypeIdV1 * p = (TypeIdV1*)(param);
+                m_type_id = *p;
+                m_topicDiscoveryKind = MINIMAL;
+                if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
+                {
+                    m_topicDiscoveryKind = COMPLETE;
+                }
+                break;
+            }
+            case PID_TYPE_OBJECTV1:
+            {
+                TypeObjectV1 * p = (TypeObjectV1*)(param);
+                m_type = *p;
+                m_topicDiscoveryKind = MINIMAL;
+                if (m_type.m_type_object->_d() == EK_COMPLETE)
+                {
+                    m_topicDiscoveryKind = COMPLETE;
+                }
+                break;
+            }
 #if HAVE_SECURITY
-                case PID_ENDPOINT_SECURITY_INFO:
-                    {
-                        ParameterEndpointSecurityInfo_t*p=(ParameterEndpointSecurityInfo_t*)(*it);
-                        security_attributes_ = p->security_attributes;
-                        plugin_security_attributes_ = p->plugin_security_attributes;
-                    }
+            case PID_ENDPOINT_SECURITY_INFO:
+            {
+                ParameterEndpointSecurityInfo_t*p = (ParameterEndpointSecurityInfo_t*)(param);
+                security_attributes_ = p->security_attributes;
+                plugin_security_attributes_ = p->plugin_security_attributes;
+            }
 #endif
-                default:
-                    {
-                        //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(*it)->Pid << " NOT CONSIDERED");
-                        break;
-                    }
+            default:
+            {
+                //logInfo(RTPS_PROXY_DATA,"Parameter with ID: "  <<(uint16_t)(param)->Pid << " NOT CONSIDERED");
+                break;
             }
         }
-        if(m_guid.entityId.value[3] == 0x04)
+        return true;
+    };
+
+    uint32_t qos_size;
+    if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
+    {
+        if (m_guid.entityId.value[3] == 0x04)
             m_topicKind = NO_KEY;
-        else if(m_guid.entityId.value[3] == 0x07)
+        else if (m_guid.entityId.value[3] == 0x07)
             m_topicKind = WITH_KEY;
 
         return true;
     }
+
     return false;
 }
 
