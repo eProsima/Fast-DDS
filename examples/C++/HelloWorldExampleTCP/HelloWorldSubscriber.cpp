@@ -36,15 +36,23 @@ mp_subscriber(nullptr)
 {
 }
 
-bool HelloWorldSubscriber::init()
+bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
 {
     ParticipantAttributes PParam;
     int32_t kind = LOCATOR_KIND_TCPv4;
 
     Locator_t initial_peer_locator;
     initial_peer_locator.kind = kind;
-    IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
-    initial_peer_locator.port = 5100;
+	if (!wan_ip.empty())
+	{
+		IPLocator::setIPv4(initial_peer_locator, wan_ip);
+		std::cout << wan_ip << ":" << port << std::endl;
+	}
+	else
+	{
+		IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
+	}
+    initial_peer_locator.port = port;
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
     PParam.rtps.builtin.domainId = 0;
