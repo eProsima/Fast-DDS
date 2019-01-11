@@ -24,7 +24,6 @@
 
 #include <vector>
 #include <algorithm>
-#include <sstream>
 #include <limits.h>
 #include <cassert>
 
@@ -364,38 +363,7 @@ struct SequenceNumberDiff
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 //!@ingroup COMMON_MODULE
-class SequenceNumberSet_t : public BitmapRange<SequenceNumber_t, SequenceNumberDiff, 256>
-{
-    public:
-
-        SequenceNumberSet_t() : BitmapRange() {}
-        explicit SequenceNumberSet_t(SequenceNumber_t base) : BitmapRange(base) {}
-
-        /**
-         * Get a string representation of the set
-         * @return string representation of the set
-         */
-        std::string print() const
-        {
-            std::stringstream ss;
-
-#ifdef LLONG_MAX
-            ss << base_.to64long() << ":";
-#else
-            ss << "{high: " << base_.high << ", low: " << base_.low << "} :";
-#endif
-
-            for_each([&](SequenceNumber_t it)
-            {
-#ifdef LLONG_MAX
-                ss << it.to64long() << "-";
-#else
-                ss << "{high: " << it.high << ", low: " << it.low << "} -";
-#endif
-            });
-            return ss.str();
-        }
-};
+using SequenceNumberSet_t = BitmapRange<SequenceNumber_t, SequenceNumberDiff, 256>;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
