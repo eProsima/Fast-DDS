@@ -97,7 +97,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if(mypub.init(wan_ip, port))
+                if(mypub.init(wan_ip,static_cast<uint16_t>(port)))
                 {
                     mypub.run(count, sleep);
                 }
@@ -106,7 +106,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if(mysub.init(wan_ip, port))
+                if(mysub.init(wan_ip, static_cast<uint16_t>(port)))
                 {
                     mysub.run();
                 }
