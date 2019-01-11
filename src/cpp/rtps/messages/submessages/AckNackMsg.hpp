@@ -57,18 +57,11 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
     if(finalFlag)
         flags = flags | BIT(1);
 
-    try{
-        CDRMessage::addEntityId(&submsgElem,&readerId);
-        CDRMessage::addEntityId(&submsgElem,&writerId);
-        //Add Sequence Number
-        CDRMessage::addSequenceNumberSet(&submsgElem,&SNSet);
-        CDRMessage::addInt32(&submsgElem,count);
-    }
-    catch(int e)
-    {
-        logError(RTPS_CDR_MSG,"Message creator fails"<<e<<endl)
-            return false;
-    }
+    CDRMessage::addEntityId(&submsgElem,&readerId);
+    CDRMessage::addEntityId(&submsgElem,&writerId);
+    //Add Sequence Number
+    CDRMessage::addSequenceNumberSet(&submsgElem,&SNSet);
+    CDRMessage::addInt32(&submsgElem,count);
 
     //Once the submessage elements are added, the header is created
     RTPSMessageCreator::addSubmessageHeader(msg,ACKNACK, flags, (uint16_t)submsgElem.length);
@@ -84,7 +77,8 @@ bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
 bool RTPSMessageCreator::addMessageNackFrag(CDRMessage_t* msg, const GuidPrefix_t& guidprefix,
         const GuidPrefix_t& remoteGuidPrefix,
         const EntityId_t& readerId, const EntityId_t& writerId,
-        SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count){
+        SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count)
+{
     try
     {
         RTPSMessageCreator::addHeader(msg, guidprefix);
@@ -114,20 +108,13 @@ bool RTPSMessageCreator::addSubmessageNackFrag(CDRMessage_t* msg,
     submsgElem.msg_endian = LITTLEEND;
 #endif
 
-    try{
-        CDRMessage::addEntityId(&submsgElem, &readerId);
-        CDRMessage::addEntityId(&submsgElem, &writerId);
-        //Add Sequence Number
-        CDRMessage::addSequenceNumber(&submsgElem, &writerSN);
-        // Add fragment number status
-        CDRMessage::addFragmentNumberSet(&submsgElem, &fnState);
-        CDRMessage::addUInt32(&submsgElem, count);
-    }
-    catch (int e)
-    {
-        logError(RTPS_CDR_MSG, "Message creator fails" << e << endl)
-            return false;
-    }
+    CDRMessage::addEntityId(&submsgElem, &readerId);
+    CDRMessage::addEntityId(&submsgElem, &writerId);
+    //Add Sequence Number
+    CDRMessage::addSequenceNumber(&submsgElem, &writerSN);
+    // Add fragment number status
+    CDRMessage::addFragmentNumberSet(&submsgElem, &fnState);
+    CDRMessage::addUInt32(&submsgElem, count);
 
     //Once the submessage elements are added, the header is created
     RTPSMessageCreator::addSubmessageHeader(msg, NACK_FRAG, flags, (uint16_t)submsgElem.length);

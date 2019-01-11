@@ -25,7 +25,6 @@
 #include <set>
 #include <cmath>
 #include <algorithm>
-#include <sstream>
 
 namespace eprosima{
 namespace fastrtps{
