@@ -63,12 +63,14 @@ Domain::~Domain()
 
 void Domain::stopAll()
 {
-    std::lock_guard<std::recursive_mutex> guard(m_mutex);
-
-    while(m_participants.size()>0)
     {
-        Domain::removeParticipant(m_participants.begin()->first);
+        std::lock_guard<std::recursive_mutex> guard(m_mutex);
+        while (m_participants.size() > 0)
+        {
+            Domain::removeParticipant(m_participants.begin()->first);
+        }
     }
+
     // Deletes DynamicTypes and TypeObject factories
     DynamicTypeBuilderFactory::DeleteInstance();
     DynamicDataFactory::DeleteInstance();
@@ -290,8 +292,6 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
 
 bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* type)
 {
-    std::lock_guard<std::recursive_mutex> guard(m_mutex);
-
     using namespace eprosima::fastrtps::types;
     TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
 
