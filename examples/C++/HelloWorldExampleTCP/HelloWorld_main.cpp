@@ -25,6 +25,8 @@
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/log/Log.h>
 
+#include <string>
+
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
@@ -34,6 +36,8 @@ int main(int argc, char** argv)
     int type = 1;
     int count = 0;
     long sleep = 100;
+	std::string wan_ip;
+	int port = 5100;
 
     if(argc > 1)
     {
@@ -43,24 +47,46 @@ int main(int argc, char** argv)
             if (argc >= 3)
             {
                 count = atoi(argv[2]);
-                if (argc == 4)
+                if (argc > 3)
                 {
                     sleep = atoi(argv[3]);
                 }
+
+				if (argc > 4)
+				{
+					wan_ip = std::string(argv[4]);
+				}
+
+				if (argc > 5)
+				{
+					port = atoi(argv[5]);
+				}
             }
         }
         else if(strcmp(argv[1],"subscriber")==0)
         {
             type = 2;
+			
+			if (argc > 2)
+			{
+				wan_ip = std::string(argv[2]);
+			}
+
+			if (argc > 3)
+			{
+				port = atoi(argv[3]);
+			}
         }
     }
     else
     {
         std::cout << "publisher OR subscriber argument needed" << std::endl;
-        std::cout << "publisher has optional arguments: publisher [times] [interval] " << std::endl;
+        std::cout << "publisher has optional arguments: publisher [times] [interval] [wan_ip] [port] " << std::endl;
         std::cout << "\ttimes: Number of messages to send (default: unlimited = 0). " << std::endl;
         std::cout << "\t\tIf times is set greater than 0, no messages will be sent until a subscriber matches. " << std::endl;
-        std::cout << "\tinterval: Milliseconds between messages (default: 100). " << std::endl;
+		std::cout << "\tinterval: Milliseconds between messages (default: 100). " << std::endl;
+		std::cout << "\twap_ip: TODO " << std::endl;
+		std::cout << "\tport: TODO " << std::endl;
         Log::Reset();
         return 0;
     }
@@ -71,7 +97,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if(mypub.init())
+                if(mypub.init(wan_ip, port))
                 {
                     mypub.run(count, sleep);
                 }
@@ -80,7 +106,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if(mysub.init())
+                if(mysub.init(wan_ip, port))
                 {
                     mysub.run();
                 }
