@@ -29,6 +29,20 @@ using namespace rtps;
 
 #define IF_VALID_CALL {if(valid){qos_size += plength;if(!processor(&p)) return false;}else{return false;}break;}
 
+bool ParameterList::writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg)
+{
+    bool valid = CDRMessage::addOctet(msg, 0);
+    if (msg->msg_endian == BIGEND)
+    {
+        valid &= CDRMessage::addOctet(msg, PL_CDR_BE);
+    }
+    else
+    {
+        valid &= CDRMessage::addOctet(msg, PL_CDR_LE);
+    }
+    valid &= CDRMessage::addUInt16(msg, 0);
+    return valid;
+}
 
 bool ParameterList::writeParameterListToCDRMsg(CDRMessage_t* msg, ParameterList_t* plist, bool use_encapsulation)
 {
@@ -38,16 +52,7 @@ bool ParameterList::writeParameterListToCDRMsg(CDRMessage_t* msg, ParameterList_
     if (use_encapsulation)
     {
         // Set encapsulation
-        CDRMessage::addOctet(msg, 0);
-        if (msg->msg_endian == BIGEND)
-        {
-            CDRMessage::addOctet(msg, PL_CDR_BE);
-        }
-        else
-        {
-            CDRMessage::addOctet(msg, PL_CDR_LE);
-        }
-        CDRMessage::addUInt16(msg, 0);
+        writeEncapsulationToCDRMsg(msg);
     }
 
     for (std::vector<Parameter_t*>::iterator it = plist->m_parameters.begin();
@@ -58,12 +63,7 @@ bool ParameterList::writeParameterListToCDRMsg(CDRMessage_t* msg, ParameterList_
             return false;
         }
     }
-    if (!CDRMessage::addParameterSentinel(msg))
-    {
-        return false;
-    }
-
-    return true;
+    return CDRMessage::addParameterSentinel(msg);
 }
 
 bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMessage_t* msg, uint32_t& qos_size)

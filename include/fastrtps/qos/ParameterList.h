@@ -68,6 +68,13 @@ class ParameterList
     public:
 
         /**
+         * Write parameterList encapsulation to the CDRMessage.
+         * @param msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
+         * @return True if correct.
+         */
+        static bool writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg);
+
+        /**
          * Update the CDRMessage of a parameterList.
          * @param msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
          * @param plist Pointer to the parameterList.

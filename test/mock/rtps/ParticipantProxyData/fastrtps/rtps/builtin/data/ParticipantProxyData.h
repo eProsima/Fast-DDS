@@ -40,8 +40,7 @@ class ParticipantProxyData
         {
         }
 
-        ParameterList_t AllQostoParameterList() { return ParameterList_t(); }
-
+        bool writeToCDRMessage(CDRMessage_t* /*msg*/, bool /*write_encapsulation*/) { return true; }
         bool readFromCDRMessage(CDRMessage_t* /*msg*/) { return true; }
 
         GUID_t m_guid;

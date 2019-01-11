@@ -284,7 +284,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
             local_participant_data->m_manualLivelinessCount++;
             InstanceHandle_t key = local_participant_data->m_key;
-            ParameterList_t parameter_list = local_participant_data->AllQostoParameterList();
+            ParticipantProxyData proxy_data_copy(*local_participant_data);
             this->mp_mutex->unlock();
 
             if(mp_SPDPWriterHistory->getHistorySize() > 0)
@@ -304,7 +304,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
                 aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-                if(ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true))
+                if(proxy_data_copy.writeToCDRMessage(&aux_msg, true))
                 {
                     change->serializedPayload.length = (uint16_t)aux_msg.length;
 
@@ -326,7 +326,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
     else
     {
         this->mp_mutex->lock();
-        ParameterList_t parameter_list = getLocalParticipantProxyData()->AllQostoParameterList();
+        ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
         this->mp_mutex->unlock();
 
         if(mp_SPDPWriterHistory->getHistorySize() > 0)
@@ -345,7 +345,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            if(ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true))
+            if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
             {
                 change->serializedPayload.length = (uint16_t)aux_msg.length;
 
@@ -978,8 +978,7 @@ CDRMessage_t PDPSimple::get_participant_proxy_data_serialized(Endianness_t endia
     CDRMessage_t cdr_msg;
     cdr_msg.msg_endian = endian;
 
-    ParameterList_t parameter_list = getLocalParticipantProxyData()->AllQostoParameterList();
-    if(!ParameterList::writeParameterListToCDRMsg(&cdr_msg, &parameter_list, false))
+    if (!getLocalParticipantProxyData()->writeToCDRMessage(&cdr_msg, false))
     {
         cdr_msg.pos = 0;
         cdr_msg.length = 0;
