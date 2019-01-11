@@ -181,12 +181,6 @@ protected:
     virtual void SetSendBufferSize(uint32_t size) = 0;
     virtual void SetSocketOutbountInterface(eProsimaUDPSocket&, const std::string&) = 0;
 
-    /**
-     * Sets if the transport is going to retry sends on error.
-    * @param active Flag enable/disable the retry feature.
-    */
-    virtual void setSendRetry(bool /*active*/) override {};
-
     /*
         struct LocatorCompare {
         bool operator()(const Locator_t& lhs, const Locator_t& rhs) const

@@ -152,7 +152,7 @@ public:
      * Sets if the transport is going to retry sends on error.
     * @param active Flag enable/disable the retry feature.
     */
-    virtual void setSendRetry(bool active) = 0;
+    virtual void setSendRetry(bool /*active*/) {};
 };
 
 } // namespace rtps
