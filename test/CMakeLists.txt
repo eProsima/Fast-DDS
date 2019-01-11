@@ -40,8 +40,6 @@ if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
    if(CTEST_MEMORYCHECK_COMMAND)
       add_subdirectory(profiling)
    endif()
-
-   add_subdirectory(profiling/allocations)
 endif()
 
 ###############################################################################
