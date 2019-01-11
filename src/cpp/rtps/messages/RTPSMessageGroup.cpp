@@ -427,12 +427,11 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
 
     add_info_ts_in_buffer(remote_readers);
 
-    ParameterList_t* inlineQos = NULL;
+    InlineQosWriter* inlineQos = nullptr;
     if(expectsInlineQos)
     {
         //TODOG INLINEQOS
-        //if(W->getInlineQos()->m_parameters.size()>0)
-        //    inlineQos = W->getInlineQos();
+        //inlineQos = W->getInlineQos();
     }
 
 #if HAVE_SECURITY
@@ -488,12 +487,11 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
 
     add_info_ts_in_buffer(remote_readers);
 
-    ParameterList_t* inlineQos = NULL;
+    InlineQosWriter* inlineQos = NULL;
     if(expectsInlineQos)
     {
         //TODOG INLINEQOS
-        //if(W->getInlineQos()->m_parameters.size()>0)
-        //    inlineQos = W->getInlineQos();
+        //inlineQos = W->getInlineQos();
     }
 
 #if HAVE_SECURITY

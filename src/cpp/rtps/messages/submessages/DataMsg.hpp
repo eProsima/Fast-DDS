@@ -22,7 +22,7 @@ namespace fastrtps{
 namespace rtps{
 
 bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
-        GuidPrefix_t& guidprefix, const CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,ParameterList_t* inlineQos)
+        GuidPrefix_t& guidprefix, const CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,InlineQosWriter* inlineQos)
 {
     try{
 
@@ -46,7 +46,7 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
 
 bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_t* change,
-        TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, ParameterList_t* inlineQos) {
+        TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, InlineQosWriter* inlineQos) {
     CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)change->serializedPayload.length);
     CDRMessage::initCDRMsg(&submsgElem);
     //Create the two CDR msgs
@@ -143,10 +143,10 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
             if(change->kind != ALIVE)
                 CDRMessage::addParameterStatus(&submsgElem,status);
 
-            if(inlineQos!=NULL)
-                ParameterList::writeParameterListToCDRMsg(&submsgElem, inlineQos, false);
-            else
-                CDRMessage::addParameterSentinel(&submsgElem);
+            if (inlineQos != nullptr)
+                inlineQos->writeQosToCDRMessage(&submsgElem);
+
+            CDRMessage::addParameterSentinel(&submsgElem);
         }
 
         //Add Serialized Payload
@@ -196,7 +196,7 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
 
 bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& guidprefix,
         const CacheChange_t* change, uint32_t fragment_number, TopicKind_t topicKind, const EntityId_t& readerId,
-        bool expectsInlineQos, ParameterList_t* inlineQos)
+        bool expectsInlineQos, InlineQosWriter* inlineQos)
 {
 
     try{
@@ -236,7 +236,7 @@ bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& gui
 
 bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheChange_t* change, uint32_t fragment_number,
         uint32_t sample_size, TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos,
-        ParameterList_t* inlineQos)
+        InlineQosWriter* inlineQos)
 {
     CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)change->serializedPayload.length);
     CDRMessage::initCDRMsg(&submsgElem);
@@ -342,10 +342,10 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
             if(change->kind != ALIVE)
                 CDRMessage::addParameterStatus(&submsgElem,status);
 
-            if(inlineQos!=NULL)
-                ParameterList::writeParameterListToCDRMsg(&submsgElem, inlineQos, false);
-            else
-                CDRMessage::addParameterSentinel(&submsgElem);
+            if (inlineQos != nullptr)
+                inlineQos->writeQosToCDRMessage(&submsgElem);
+
+            CDRMessage::addParameterSentinel(&submsgElem);
         }
 
         //Add Serialized Payload XXX TODO

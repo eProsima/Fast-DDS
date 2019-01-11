@@ -224,9 +224,8 @@ void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumb
    TopicKind_t topic = WITH_KEY;
    EntityId_t entityID;
    CacheChange_t change;
-   ParameterList_t parameters;
    change.sequenceNumber = sequenceNumber; // Here is where the SN propagates from
-	RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, &parameters);
+   RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, nullptr);
 }
 
 void test_UDPv4Tests::HELPER_FillAckNackMessage(CDRMessage_t& message)
