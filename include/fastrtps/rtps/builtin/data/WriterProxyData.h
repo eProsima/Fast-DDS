@@ -336,8 +336,8 @@ class WriterProxyData
         void update(WriterProxyData* rdata);
         //!Copy all information from another object.
         void copy(WriterProxyData* rdata);
-        //!Convert the information to a parameter list to be send in a CDRMessage.
-        ParameterList_t toParameterList();
+        //!Write as a parameter list on a CDRMessage_t
+        bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
         //!Read a parameter list from a CDRMessage_t.
         RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
 

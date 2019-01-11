@@ -535,8 +535,6 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
                 ALIVE, wdata->key());
         if(change != nullptr)
         {
-            //wdata->toParameterList();
-
             CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
@@ -547,8 +545,7 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = wdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            wdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
