@@ -297,6 +297,32 @@ void TCPv4Transport::EndpointToLocator(const ip::tcp::endpoint& endpoint, Locato
     IPLocator::setIPv4(locator, ipBytes.data());
 }
 
+bool TCPv4Transport::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
+{
+    bool result = TCPTransportInterface::fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+
+    const TCPv4TransportDescriptor* config = static_cast<const TCPv4TransportDescriptor*>(GetConfiguration());
+    if (config->wan_addr[0] != 0 || config->wan_addr[1] != 0 || config->wan_addr[2] != 0 || config->wan_addr[3] != 0)
+    {
+        IPLocator::setIPv4(locator, config->wan_addr[0], config->wan_addr[1], config->wan_addr[2], config->wan_addr[3]);
+    }
+
+    return result;
+}
+
+bool TCPv4Transport::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
+{
+    bool result = TCPTransportInterface::fillUnicastLocator(locator, well_known_port);
+
+    const TCPv4TransportDescriptor* config = static_cast<const TCPv4TransportDescriptor*>(GetConfiguration());
+    if (config->wan_addr[0] != 0 || config->wan_addr[1] != 0 || config->wan_addr[2] != 0 || config->wan_addr[3] != 0)
+    {
+        IPLocator::setIPv4(locator, config->wan_addr[0], config->wan_addr[1], config->wan_addr[2], config->wan_addr[3]);
+    }
+
+    return result;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
