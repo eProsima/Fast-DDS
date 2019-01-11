@@ -96,179 +96,145 @@ ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
     return *this;
 }
 
-ParameterList_t ReaderProxyData::toParameterList()
+bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation)
 {
-    ParameterList_t parameter_list;
+    if (write_encapsulation)
+    {
+        if (!ParameterList::writeEncapsulationToCDRMsg(msg)) return false;
+    }
 
     for(LocatorListIterator lit = m_unicastLocatorList.begin();
             lit!=m_unicastLocatorList.end();++lit)
     {
-        ParameterLocator_t* p = new ParameterLocator_t(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterLocator_t p(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     for(LocatorListIterator lit = m_multicastLocatorList.begin();
             lit!=m_multicastLocatorList.end();++lit)
     {
-        ParameterLocator_t* p = new ParameterLocator_t(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterLocator_t p(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterBool_t * p = new ParameterBool_t(PID_EXPECTS_INLINE_QOS,PARAMETER_BOOL_LENGTH,m_expectsInlineQos);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterBool_t p(PID_EXPECTS_INLINE_QOS,PARAMETER_BOOL_LENGTH,m_expectsInlineQos);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterGuid_t p(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME, 0, m_topicName);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterString_t p(PID_TOPIC_NAME, 0, m_topicName);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,m_typeName);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterString_t p(PID_TYPE_NAME,0,m_typeName);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,m_key);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterKey_t p(PID_KEY_HASH,16,m_key);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterGuid_t * p = new ParameterGuid_t(PID_ENDPOINT_GUID,16,m_guid);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterGuid_t p(PID_ENDPOINT_GUID,16,m_guid);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(PID_PROTOCOL_VERSION,4);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterProtocolVersion_t p(PID_PROTOCOL_VERSION,4);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterVendorId_t*p = new ParameterVendorId_t(PID_VENDORID,4);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterVendorId_t p(PID_VENDORID,4);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)
     {
-        DurabilityQosPolicy*p = new DurabilityQosPolicy();
-        *p = m_qos.m_durability;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_durability.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged)
     {
-        DurabilityServiceQosPolicy*p = new DurabilityServiceQosPolicy();
-        *p = m_qos.m_durabilityService;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_durabilityService.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_deadline.sendAlways() || m_qos.m_deadline.hasChanged)
     {
-        DeadlineQosPolicy*p = new DeadlineQosPolicy();
-        *p = m_qos.m_deadline;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_deadline.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_latencyBudget.sendAlways() || m_qos.m_latencyBudget.hasChanged)
     {
-        LatencyBudgetQosPolicy*p = new LatencyBudgetQosPolicy();
-        *p = m_qos.m_latencyBudget;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_latencyBudget.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_liveliness.sendAlways() || m_qos.m_liveliness.hasChanged)
     {
-        LivelinessQosPolicy*p = new LivelinessQosPolicy();
-        *p = m_qos.m_liveliness;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_liveliness.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_reliability.sendAlways() || m_qos.m_reliability.hasChanged)
     {
-        ReliabilityQosPolicy*p = new ReliabilityQosPolicy();
-        *p = m_qos.m_reliability;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_reliability.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_lifespan.sendAlways() || m_qos.m_lifespan.hasChanged)
     {
-        LifespanQosPolicy*p = new LifespanQosPolicy();
-        *p = m_qos.m_lifespan;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_lifespan.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged)
     {
-        UserDataQosPolicy*p = new UserDataQosPolicy();
-        *p = m_qos.m_userData;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_userData.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged)
     {
-        TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
-        *p = m_qos.m_timeBasedFilter;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_ownership.sendAlways() || m_qos.m_ownership.hasChanged)
     {
-        OwnershipQosPolicy*p = new OwnershipQosPolicy();
-        *p = m_qos.m_ownership;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_ownership.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_destinationOrder.sendAlways() || m_qos.m_destinationOrder.hasChanged)
     {
-        DestinationOrderQosPolicy*p = new DestinationOrderQosPolicy();
-        *p = m_qos.m_destinationOrder;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_destinationOrder.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_presentation.sendAlways() || m_qos.m_presentation.hasChanged)
     {
-        PresentationQosPolicy*p = new PresentationQosPolicy();
-        *p = m_qos.m_presentation;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_presentation.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_partition.sendAlways() || m_qos.m_partition.hasChanged)
     {
-        PartitionQosPolicy*p = new PartitionQosPolicy();
-        *p = m_qos.m_partition;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_partition.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged)
     {
-        TopicDataQosPolicy*p = new TopicDataQosPolicy();
-        *p = m_qos.m_topicData;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_topicData.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_groupData.sendAlways() || m_qos.m_groupData.hasChanged)
     {
-        GroupDataQosPolicy*p = new GroupDataQosPolicy();
-        *p = m_qos.m_groupData;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_groupData.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged)
     {
-        TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
-        *p = m_qos.m_timeBasedFilter;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
 
     if (m_topicDiscoveryKind != NO_CHECK)
     {
         if (m_type_id.m_type_identifier->_d() != 0)
         {
-            TypeIdV1 * p = new TypeIdV1();
-            *p = m_type_id;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
+            if (!m_type_id.addToCDRMessage(msg)) return false;
         }
 
         if (m_type.m_type_object->_d() != 0)
         {
-            TypeObjectV1 * p = new TypeObjectV1();
-            *p = m_type;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
+            if (!m_type.addToCDRMessage(msg)) return false;
         }
     }
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
-        ParameterEndpointSecurityInfo_t*p = new ParameterEndpointSecurityInfo_t();
-        p->security_attributes = security_attributes_;
-        p->plugin_security_attributes = plugin_security_attributes_;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterEndpointSecurityInfo_t p;
+        p.security_attributes = security_attributes_;
+        p.plugin_security_attributes = plugin_security_attributes_;
+        if (!p.addToCDRMessage(msg)) return false;
     }
 #endif
 
-    logInfo(RTPS_PROXY_DATA,"DiscoveredReaderData converted to ParameterList with " << parameter_list.m_parameters.size()<< " parameters");
-    return parameter_list;
+    return CDRMessage::addParameterSentinel(msg);
 }
 
 bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)

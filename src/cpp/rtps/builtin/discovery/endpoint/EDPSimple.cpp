@@ -480,8 +480,6 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
 
         if(change !=nullptr)
         {
-            rdata->toParameterList();
-
             CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
@@ -492,8 +490,7 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = rdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            rdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
