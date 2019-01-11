@@ -38,7 +38,7 @@ mp_publisher(nullptr)
 
 }
 
-bool HelloWorldPublisher::init()
+bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
 {
     stop = false;
     m_Hello.index(0);
@@ -57,7 +57,12 @@ bool HelloWorldPublisher::init()
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     //descriptor->set_WAN_address("127.0.0.1");
-    descriptor->add_listener_port(5100);
+	if (!wan_ip.empty())
+	{
+		descriptor->set_WAN_address(wan_ip);
+		std::cout << wan_ip << ":" << port << std::endl;
+	}
+    descriptor->add_listener_port(port);
     PParam.rtps.userTransports.push_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
