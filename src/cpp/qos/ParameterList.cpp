@@ -44,28 +44,6 @@ bool ParameterList::writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg)
     return valid;
 }
 
-bool ParameterList::writeParameterListToCDRMsg(CDRMessage_t* msg, ParameterList_t* plist, bool use_encapsulation)
-{
-    assert(msg != nullptr);
-    assert(plist != nullptr);
-
-    if (use_encapsulation)
-    {
-        // Set encapsulation
-        writeEncapsulationToCDRMsg(msg);
-    }
-
-    for (std::vector<Parameter_t*>::iterator it = plist->m_parameters.begin();
-        it != plist->m_parameters.end(); ++it)
-    {
-        if (!(*it)->addToCDRMessage(msg))
-        {
-            return false;
-        }
-    }
-    return CDRMessage::addParameterSentinel(msg);
-}
-
 bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMessage_t* msg, uint32_t& qos_size)
 {
     auto parameter_process = [&](const Parameter_t* p)

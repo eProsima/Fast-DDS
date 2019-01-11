@@ -31,35 +31,7 @@ namespace eprosima {
 namespace fastrtps {
 
 /**
- * ParameterList_t class, used to store multiple parameters as a vector of pointers to the base class.
- * @ingroup PARAMETER_MODULE
- */
-class ParameterList_t
-{
-    public:
-
-        ParameterList_t() {}
-
-        ParameterList_t(ParameterList_t&& plist) : m_parameters(std::move(plist.m_parameters)) {}
-
-        virtual ~ParameterList_t()
-        {
-            for(std::vector<Parameter_t*>::iterator it = m_parameters.begin();
-                    it!=m_parameters.end();++it)
-                delete(*it);
-            m_parameters.clear();
-        }
-
-        //! Vector of the pointers to the parameters.
-        std::vector<Parameter_t*> m_parameters;
-
-    private:
-
-        ParameterList_t(const ParameterList_t& plist) = delete;
-};
-
-/**
- * ParameterList class has static methods to update or read a ParameterList_t
+ * ParameterList class has static methods to update or read a list of Parameter_t
  * @ingroup PARAMETER_MODULE
  */
 
@@ -73,14 +45,6 @@ class ParameterList
          * @return True if correct.
          */
         static bool writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg);
-
-        /**
-         * Update the CDRMessage of a parameterList.
-         * @param msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
-         * @param plist Pointer to the parameterList.
-         * @return True if correct.
-         */
-        static bool writeParameterListToCDRMsg(rtps::CDRMessage_t* msg, ParameterList_t* plist, bool use_encapsulation);
 
         /**
          * Update the information of a cache change parsing the inline qos from a CDRMessage

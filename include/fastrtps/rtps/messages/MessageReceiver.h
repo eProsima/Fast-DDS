@@ -70,8 +70,6 @@ class MessageReceiver
 #if HAVE_SECURITY
         CDRMessage_t m_crypto_msg;
 #endif
-        //!PArameter list
-        ParameterList_t m_ParamList;
         // Functions to associate/remove associatedendpoints
         void associateEndpoint(Endpoint *to_add);
         void removeEndpoint(Endpoint *to_remove);
