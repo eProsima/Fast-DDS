@@ -149,10 +149,9 @@ public:
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
 
     /**
-     * Sets if the transport is going to retry sends on error.
-    * @param active Flag enable/disable the retry feature.
+     * Shutdown method to close the connections of the transports.
     */
-    virtual void setSendRetry(bool /*active*/) {};
+    virtual void Shutdown() {};
 };
 
 } // namespace rtps

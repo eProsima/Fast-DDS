@@ -341,10 +341,9 @@ protected:
     virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const = 0;
 
     /**
-     * Sets if the transport is going to retry sends on error.
-    * @param active Flag enable/disable the retry feature.
+     * Shutdown method to close the connections of the transports.
     */
-    virtual void setSendRetry(bool active) override;
+    virtual void Shutdown() override;
 };
 
 } // namespace rtps

@@ -135,10 +135,9 @@ class NetworkFactory
         bool fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const;
 
         /**
-         * Sets if the transports are going to retry sends on error.
-        * @param active Flag enable/disable the retry feature.
+         * Shutdown method to close the connections of the transports.
         */
-        void setSendRetry(bool active);
+        void Shutdown();
 
     private:
 

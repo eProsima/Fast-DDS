@@ -243,7 +243,7 @@ const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
     // Disable Retries on Transports
-    m_network_Factory.setSendRetry(false);
+    m_network_Factory.Shutdown();
 
     // Safely abort threads.
     for(auto& block : m_receiverResourcelist)

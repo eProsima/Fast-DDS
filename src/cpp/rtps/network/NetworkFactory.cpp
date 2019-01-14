@@ -277,14 +277,11 @@ bool NetworkFactory::fillDefaultUnicastLocator(Locator_t &locator, const RTPSPar
     return result;
 }
 
-/**
- * Sets if the transports are going to retry sends on error.
-* */
-void NetworkFactory::setSendRetry(bool active)
+void NetworkFactory::Shutdown()
 {
     for (auto& transport : mRegisteredTransports)
     {
-        transport->setSendRetry(active);
+        transport->Shutdown();
     }
 }
 

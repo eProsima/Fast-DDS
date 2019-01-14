@@ -1351,9 +1351,9 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
     return true;
 }
 
-void TCPTransportInterface::setSendRetry(bool active)
+void TCPTransportInterface::Shutdown()
 {
-    mSendRetryActive = active;
+    mSendRetryActive = false;
 }
 
 
