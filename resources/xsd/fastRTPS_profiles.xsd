@@ -576,6 +576,8 @@
             <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="avoid_tcp_delay" type="boolType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
