@@ -66,6 +66,8 @@ extern const char* LOGICAL_PORT_INCREMENT;
 extern const char* AVOID_TCP_DELAY;
 extern const char* METADATA_LOGICAL_PORT;
 extern const char* LISTENING_PORTS;
+extern const char* CALCULATE_CRC;
+extern const char* CHECK_CRC;
 
 extern const char* QOS_PROFILE;
 extern const char* APPLICATION;

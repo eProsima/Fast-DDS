@@ -78,6 +78,8 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
     , avoid_tcp_delay(false)
     , wait_for_tcp_negotiation(false)
+    , calculate_crc(true)
+    , check_crc(true)
 {
 }
 
@@ -92,6 +94,8 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , tcp_negotiation_timeout(t.tcp_negotiation_timeout)
     , avoid_tcp_delay(t.avoid_tcp_delay)
     , wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
+    , calculate_crc(t.calculate_crc)
+    , check_crc(t.check_crc)
 {
 }
 
@@ -322,7 +326,10 @@ void TCPTransportInterface::FillTCPHeader(TCPHeader& header, const octet* sendBu
 {
     header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getSize());
     header.logicalPort = logicalPort;
-    CalculateCRC(header, sendBuffer, sendBufferSize);
+    if (GetConfiguration()->calculate_crc)
+    {
+        CalculateCRC(header, sendBuffer, sendBufferSize);
+    }
 }
 
 
@@ -811,7 +818,7 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
                             body_size);
                         //logInfo(RTCP_MSG_IN, " Received [ReadBody]");
 
-                        if (!CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                        if (GetConfiguration()->check_crc && !CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
                         {
                             logWarning(RTCP_MSG_IN, "Bad TCP header CRC");
                         }

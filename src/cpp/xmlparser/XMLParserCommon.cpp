@@ -51,6 +51,8 @@ const char* LOGICAL_PORT_INCREMENT = "logical_port_increment";
 const char* AVOID_TCP_DELAY = "avoid_tcp_delay";
 const char* METADATA_LOGICAL_PORT = "metadata_logical_port";
 const char* LISTENING_PORTS = "listening_ports";
+const char* CALCULATE_CRC = "calculate_crc";
+const char* CHECK_CRC = "check_crc";
 
 const char* QOS_PROFILE = "qos_profile";
 const char* APPLICATION = "application";

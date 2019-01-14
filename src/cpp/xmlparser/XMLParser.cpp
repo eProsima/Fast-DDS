@@ -258,6 +258,8 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
@@ -456,6 +458,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 || strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
             strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
             strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
+            strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
             strcmp(name, AVOID_TCP_DELAY) == 0)
         {
             // Parsed outside of this method
@@ -484,6 +487,8 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 <xs:sequence>
                     <xs:element name="port" type="uint16Type"/>
                 </xs:sequence>
+                <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
@@ -558,6 +563,18 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                     pTCPDesc->add_listener_port(static_cast<uint16_t>(iPort));
                     p_aux1 = p_aux1->NextSiblingElement(PORT);
                 }
+            }
+            else if (strcmp(name, CALCULATE_CRC) == 0)
+            {
+                tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(CALCULATE_CRC);
+                std::string auxBool = p_aux1->GetText();
+                pTCPDesc->calculate_crc = std::strcmp(auxBool.c_str(), "TRUE") == 0;
+            }
+            else if (strcmp(name, CHECK_CRC) == 0)
+            {
+                tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(CHECK_CRC);
+                std::string auxBool = p_aux1->GetText();
+                pTCPDesc->calculate_crc = std::strcmp(auxBool.c_str(), "TRUE") == 0;
             }
             else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, TRANSPORT_ID) == 0 ||
                 strcmp(name, TYPE) == 0 || strcmp(name, SEND_BUFFER_SIZE) == 0 ||
