@@ -48,14 +48,12 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
     });
 }
 
-static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
+static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator, const octet* local_wan)
 {
-    if (IPLocator::hasWan(locator))
+    const octet* wan = IPLocator::getWan(locator);
+    if (IPLocator::hasWan(locator) && (memcmp(local_wan, wan, 4) != 0))
     {
-        return{ { IPLocator::getWan(locator)[0],
-            IPLocator::getWan(locator)[1],
-            IPLocator::getWan(locator)[2],
-            IPLocator::getWan(locator)[3]} };
+        return{ { wan[0], wan[1], wan[2], wan[3]} };
     }
     else
     {
@@ -260,7 +258,7 @@ ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_
 
 ip::tcp::endpoint TCPv4Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const
 {
-    return ip::tcp::endpoint(asio::ip::address_v4(locatorToNative(loc)), port);
+    return ip::tcp::endpoint(asio::ip::address_v4(locatorToNative(loc, mConfiguration_.wan_addr)), port);
 }
 
 ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(uint16_t port) const
@@ -301,11 +299,9 @@ bool TCPv4Transport::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t 
 {
     bool result = TCPTransportInterface::fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
 
-    const TCPv4TransportDescriptor* config = static_cast<const TCPv4TransportDescriptor*>(GetConfiguration());
-    if (config->wan_addr[0] != 0 || config->wan_addr[1] != 0 || config->wan_addr[2] != 0 || config->wan_addr[3] != 0)
-    {
-        IPLocator::setIPv4(locator, config->wan_addr[0], config->wan_addr[1], config->wan_addr[2], config->wan_addr[3]);
-    }
+    IPLocator::setWan(locator, 
+        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
+        mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
 
     return result;
 }
@@ -314,11 +310,9 @@ bool TCPv4Transport::fillUnicastLocator(Locator_t &locator, uint32_t well_known_
 {
     bool result = TCPTransportInterface::fillUnicastLocator(locator, well_known_port);
 
-    const TCPv4TransportDescriptor* config = static_cast<const TCPv4TransportDescriptor*>(GetConfiguration());
-    if (config->wan_addr[0] != 0 || config->wan_addr[1] != 0 || config->wan_addr[2] != 0 || config->wan_addr[3] != 0)
-    {
-        IPLocator::setIPv4(locator, config->wan_addr[0], config->wan_addr[1], config->wan_addr[2], config->wan_addr[3]);
-    }
+    IPLocator::setWan(locator, 
+        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1], 
+        mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
 
     return result;
 }
