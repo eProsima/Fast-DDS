@@ -566,15 +566,17 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
             }
             else if (strcmp(name, CALCULATE_CRC) == 0)
             {
-                tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(CALCULATE_CRC);
-                std::string auxBool = p_aux1->GetText();
-                pTCPDesc->calculate_crc = std::strcmp(auxBool.c_str(), "TRUE") == 0;
+                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->calculate_crc, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
             }
             else if (strcmp(name, CHECK_CRC) == 0)
             {
-                tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(CHECK_CRC);
-                std::string auxBool = p_aux1->GetText();
-                pTCPDesc->calculate_crc = std::strcmp(auxBool.c_str(), "TRUE") == 0;
+                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->check_crc, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
             }
             else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, TRANSPORT_ID) == 0 ||
                 strcmp(name, TYPE) == 0 || strcmp(name, SEND_BUFFER_SIZE) == 0 ||
