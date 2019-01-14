@@ -85,8 +85,12 @@ int main(int argc, char** argv)
         std::cout << "\ttimes: Number of messages to send (default: unlimited = 0). " << std::endl;
         std::cout << "\t\tIf times is set greater than 0, no messages will be sent until a subscriber matches. " << std::endl;
         std::cout << "\tinterval: Milliseconds between messages (default: 100). " << std::endl;
-        std::cout << "\twap_ip: Public IP Address of the server, this field must be filled for the server and client. " << std::endl;
-        std::cout << "\tport: Physical Port of the server, this field must be filled for the server and client \n\t\tand it must be allowed in the router of the server. " << std::endl;
+        std::cout << "\twap_ip: Public IP Address of the server. " << std::endl;
+        std::cout << "\tport: Physical Port of the server, this port must be allowed in the router of the server. " << std::endl;
+        std::cout << "\nsubscriber has optional arguments: subscriber [wan_ip] [port] " << std::endl;
+        std::cout << "\twap_ip: Public IP Address of the server. " << std::endl;
+        std::cout << "\tport: Physical Port of the server. " << std::endl;
+
         Log::Reset();
         return 0;
     }

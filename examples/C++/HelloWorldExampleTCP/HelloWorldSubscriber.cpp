@@ -31,8 +31,9 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
-mp_subscriber(nullptr)
+HelloWorldSubscriber::HelloWorldSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
 {
 }
 
@@ -43,15 +44,15 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
 
     Locator_t initial_peer_locator;
     initial_peer_locator.kind = kind;
-	if (!wan_ip.empty())
-	{
-		IPLocator::setIPv4(initial_peer_locator, wan_ip);
-		std::cout << wan_ip << ":" << port << std::endl;
-	}
-	else
-	{
-		IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
-	}
+    if (!wan_ip.empty())
+    {
+        IPLocator::setIPv4(initial_peer_locator, wan_ip);
+        std::cout << wan_ip << ":" << port << std::endl;
+    }
+    else
+    {
+        IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
+    }
     initial_peer_locator.port = port;
     PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
@@ -66,11 +67,11 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
     PParam.rtps.userTransports.push_back(descriptor);
 
     mp_participant = Domain::createParticipant(PParam);
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
         return false;
 
     //REGISTER THE TYPE
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(mp_participant, &m_type);
 
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
@@ -83,47 +84,47 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
     Rparam.topic.resourceLimitsQos.allocated_samples = 20;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
+    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
 
-    if(mp_subscriber == nullptr)
+    if (mp_subscriber == nullptr)
         return false;
 
 
     return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber() {
+HelloWorldSubscriber::~HelloWorldSubscriber() 
+{
     Domain::removeParticipant(mp_participant);
 }
 
-void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* ,MatchingInfo& info)
+void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber*, MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         //logError(HW, "Matched");
-        std::cout << "[RTCP] Subscriber matched"<<std::endl;
+        std::cout << "[RTCP] Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "[RTCP] Subscriber unmatched"<<std::endl;
+        std::cout << "[RTCP] Subscriber unmatched" << std::endl;
     }
 }
 
 void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-    if(sub->takeNextData((void*)&m_Hello, &m_info))
+    if (sub->takeNextData((void*)&m_Hello, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             this->n_samples++;
             // Print your structure data here.
             //logError(HW, "RECEIVED " <<  m_Hello.index());
-            std::cout << "[RTCP] Message "<<m_Hello.message()<< " "<< m_Hello.index()<< " RECEIVED"<<std::endl;
+            std::cout << "[RTCP] Message " << m_Hello.message() << " " << m_Hello.index() << " RECEIVED" << std::endl;
         }
     }
-
 }
 
 
@@ -135,7 +136,7 @@ void HelloWorldSubscriber::run()
 
 void HelloWorldSubscriber::run(uint32_t number)
 {
-    std::cout << "[RTCP] Subscriber running until "<< number << "samples have been received"<<std::endl;
-    while(number < this->m_listener.n_samples)
+    std::cout << "[RTCP] Subscriber running until " << number << "samples have been received" << std::endl;
+    while (number < this->m_listener.n_samples)
         eClock::my_sleep(500);
 }
