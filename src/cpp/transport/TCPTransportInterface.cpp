@@ -230,21 +230,22 @@ void TCPTransportInterface::DeleteSocket(TCPChannelResource *channelResource)
 
 bool TCPTransportInterface::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size) const
 {
-    uint32_t crc(0);
-    for (uint32_t i = 0; i < size; ++i)
-    {
-        crc = RTCPMessageManager::addToCRC(crc, data[i]);
-    }
-    return crc == header.crc;
+    return true;
+    //uint32_t crc(0);
+    //for (uint32_t i = 0; i < size; ++i)
+    //{
+    //    crc = RTCPMessageManager::addToCRC(crc, data[i]);
+    //}
+    //return crc == header.crc;
 }
 
 void TCPTransportInterface::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size) const
 {
     uint32_t crc(0);
-    for (uint32_t i = 0; i < size; ++i)
-    {
-        crc = RTCPMessageManager::addToCRC(crc, data[i]);
-    }
+    //for (uint32_t i = 0; i < size; ++i)
+    //{
+    //    crc = RTCPMessageManager::addToCRC(crc, data[i]);
+    //}
     header.crc = crc;
 }
 
