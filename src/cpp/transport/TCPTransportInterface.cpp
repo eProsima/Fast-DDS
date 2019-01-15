@@ -302,7 +302,13 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTCP_MSG_OUT, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
+        logError(RTCP_MSG_OUT, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
+        return false;
+    }
+    catch (const asio::error_code& code)
+    {
+        (void)code;
+        logError(RTCP, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with code: " << code);
         return false;
     }
 
