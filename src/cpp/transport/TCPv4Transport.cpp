@@ -299,7 +299,7 @@ bool TCPv4Transport::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t 
 {
     bool result = TCPTransportInterface::fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
 
-    IPLocator::setWan(locator, 
+    IPLocator::setWan(locator,
         mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
         mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
 
@@ -310,8 +310,8 @@ bool TCPv4Transport::fillUnicastLocator(Locator_t &locator, uint32_t well_known_
 {
     bool result = TCPTransportInterface::fillUnicastLocator(locator, well_known_port);
 
-    IPLocator::setWan(locator, 
-        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1], 
+    IPLocator::setWan(locator,
+        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
         mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
 
     return result;
@@ -330,11 +330,36 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
     {
         LocatorListConstIterator it = locatorList.begin();
         LocatorList_t pendingUnicast;
+
         bool add = true;
         while (it != locatorList.end())
         {
             assert((*it).kind == mTransportKind);
             add = true;
+
+            // Check is local interface.
+            auto localInterface = mCurrentInterfaces.begin();
+            for (; localInterface != mCurrentInterfaces.end(); ++localInterface)
+            {
+                if (CompareLocatorIP(localInterface->locator, *it))
+                {
+                    // Loopback locator
+                    Locator_t loopbackLocator;
+                    FillLocalIp(loopbackLocator);
+                    IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
+                    IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
+                    pendingUnicast.push_back(loopbackLocator);
+                    break;
+                }
+            }
+
+            // Add localhost?
+            if (localInterface == mCurrentInterfaces.end() && IPLocator::isLocal(*it))
+            {
+                pendingUnicast.push_back(*it);
+                ++it;
+                continue;
+            }
 
             // Check Remote WAN locators.
             if (memcmp(IPLocator::getWan(*it), mConfiguration_.wan_addr, 4) != 0)
@@ -383,24 +408,7 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
 
             if (add)
             {
-                // Check is local interface.
-                auto localInterface = mCurrentInterfaces.begin();
-                for (; localInterface != mCurrentInterfaces.end(); ++localInterface)
-                {
-                    if (CompareLocatorIP(localInterface->locator, *it))
-                    {
-                        // Loopback locator
-                        Locator_t loopbackLocator;
-                        FillLocalIp(loopbackLocator);
-                        IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
-                        IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
-                        pendingUnicast.push_back(loopbackLocator);
-                        break;
-                    }
-                }
-
-                if (localInterface == mCurrentInterfaces.end())
-                    pendingUnicast.push_back(*it);
+                pendingUnicast.push_back(*it);
             }
 
             ++it;
