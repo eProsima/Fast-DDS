@@ -67,7 +67,8 @@ void Domain::stopAll()
         std::lock_guard<std::mutex> guard(m_mutex);
         while (m_participants.size() > 0)
         {
-            Domain::removeParticipant(m_participants.begin()->first);
+            delete(m_participants.back().second);
+            m_participants.pop_back();
         }
     }
 
