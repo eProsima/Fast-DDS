@@ -270,8 +270,6 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
     PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
-    PubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    PubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     
     if (!reliable)
     {
@@ -309,8 +307,6 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
         st << asio::ip::host_name() << "_";
     st << pid << "_SUB2PUB";
     SubDataparam.topic.topicName = st.str();
-    SubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    SubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     if (reliable)
     {
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -349,8 +345,6 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
-    PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 
@@ -372,8 +366,6 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
-    PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
 

@@ -166,8 +166,6 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
         st << asio::ip::host_name() << "_";
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
-    SubDataparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    SubDataparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
     if (mp_datasub == nullptr)
@@ -188,8 +186,6 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    PubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    PubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 
@@ -210,8 +206,6 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    SubCommandParam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    SubCommandParam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
 
