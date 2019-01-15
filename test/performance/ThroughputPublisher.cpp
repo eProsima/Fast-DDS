@@ -209,14 +209,12 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     }
     pt << pid << "_UP";
     Wparam.topic.topicName = pt.str();
-    Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100);
-    Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
-    Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
-    Wparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    Wparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     if (reliable)
     {
         //RELIABLE
+        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100);
+        Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
+        Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
         Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     }
     else
@@ -255,8 +253,6 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     }
     sct << pid << "_SUB2PUB";
     Rparam.topic.topicName = sct.str();
-    Rparam.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    Rparam.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
@@ -274,8 +270,6 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     }
     pct << pid << "_PUB2SUB";
     Wparam2.topic.topicName = pct.str();
-    Wparam2.qos.m_liveliness.lease_duration = c_TimeInfinite;
-    Wparam2.qos.m_liveliness.announcement_period = Duration_t(1, 0);
     Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam2.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     Wparam2.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
