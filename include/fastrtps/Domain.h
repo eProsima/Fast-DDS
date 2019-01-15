@@ -185,7 +185,7 @@ public:
 
 private:
 
-    static std::recursive_mutex m_mutex;
+    static std::mutex m_mutex;
     static std::vector<t_p_Participant> m_participants;
     static bool default_xml_profiles_loaded;
 
