@@ -1031,7 +1031,7 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     {
         logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
             << IPLocator::getLogicalPort(remoteLocator));
-        //eClock::my_sleep(100);
+        eClock::my_sleep(0);
         return false;
     }
     else
