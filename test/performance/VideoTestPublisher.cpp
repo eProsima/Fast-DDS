@@ -50,6 +50,9 @@ VideoTestPublisher::VideoTestPublisher()
     , m_dropRate(0)
     , m_sendSleepTime(0)
     , m_forcedDomain(-1)
+    , m_videoWidth(1024)
+    , m_videoHeight(720)
+    , m_videoFrameRate(30)
 {
     m_datapublistener.mp_up = this;
     m_commandpublistener.mp_up = this;
@@ -69,7 +72,8 @@ VideoTestPublisher::~VideoTestPublisher()
 
 bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time, int forced_domain)
+        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time, 
+        int forced_domain, int videoWidth, int videoHeight, int videoFrameRate)
 {
     large_data = true;
     m_testTime = test_time;
@@ -80,6 +84,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     n_subscribers = n_sub;
     reliable_ = reliable;
     m_forcedDomain = forced_domain;
+    m_videoWidth = videoWidth;
+    m_videoHeight = videoHeight;
+    m_videoFrameRate = videoFrameRate;
 
     // GSTREAMER PIPELINE INITIALIZATION.
     InitGStreamer();
@@ -410,8 +417,10 @@ void VideoTestPublisher::InitGStreamer()
                     g_object_set(sink, "emit-signals", TRUE, NULL);
                     g_signal_connect(sink, "new-sample", G_CALLBACK(new_sample), this);
 
+                    /*std::string sFramerate = std::to_string(m_videoFrameRate) + "/1";*/
                     GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                        "width", G_TYPE_INT, 1024, "height", G_TYPE_INT, 720/*, "framerate", G_TYPE_STRING, "25/1"*/, NULL);
+                        "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight,
+                        "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
 
                     // Link the camera source and colorspace filter using capabilities specified
                     gst_bin_add_many(GST_BIN(pipeline), filesrc, videorate, sink, NULL);

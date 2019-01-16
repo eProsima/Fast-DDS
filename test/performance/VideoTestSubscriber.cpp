@@ -46,6 +46,9 @@ VideoTestSubscriber::VideoTestSubscriber()
     , g_servertimestamp(0)
     , g_clienttimestamp(0)
     , g_framesDropped(0)
+    , m_videoWidth(1024)
+    , m_videoHeight(720)
+    , m_videoFrameRate(30)
 {
     m_datasublistener.mp_up = this;
     m_commandpublistener.mp_up = this;
@@ -81,7 +84,8 @@ VideoTestSubscriber::~VideoTestSubscriber()
 
 bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix, int forced_domain)
+        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix, 
+        int forced_domain, int video_width, int video_height, int frame_rate)
 {
     large_data = true;
     m_sXMLConfigFile = sXMLConfigFile;
@@ -90,6 +94,9 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     m_bExportCsv = export_csv;
     m_sExportPrefix = export_prefix;
     m_forcedDomain = forced_domain;
+    m_videoWidth = video_width;
+    m_videoHeight = video_height;
+    m_videoFrameRate = frame_rate;
 
     InitGStreamer();
 
@@ -437,7 +444,8 @@ void VideoTestSubscriber::InitGStreamer()
             g_signal_connect(appsrc, "need-data", G_CALLBACK(start_feed_cb), this);
             g_signal_connect(appsrc, "enough-data", G_CALLBACK(stop_feed_cb), this);
             GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                "width", G_TYPE_INT, 1024, "height", G_TYPE_INT, 720, NULL);
+                "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight, 
+                "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
             gst_app_src_set_caps(GST_APP_SRC(appsrc), caps);
             gst_caps_unref(caps);
 
