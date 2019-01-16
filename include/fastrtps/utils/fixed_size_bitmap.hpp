@@ -62,7 +62,7 @@ public:
      * Default constructor.
      * Constructs an empty range with default base.
      */
-    BitmapRange() noexcept : base_(), bitmap_(), num_bits_(0u) {}
+    BitmapRange() noexcept : base_(), range_max_(base_ + (NBITS - 1)), bitmap_(), num_bits_(0u) {}
 
     /**
      * Base-specific constructor.
@@ -70,7 +70,7 @@ public:
      * 
      * @param base   Specific base value for the created range.
      */
-    explicit BitmapRange(T base) noexcept : base_(base), bitmap_(), num_bits_(0u) {}
+    explicit BitmapRange(T base) noexcept : base_(base), range_max_(base + (NBITS - 1)), bitmap_(), num_bits_(0u) {}
 
     // We don't need to define copy/move constructors/assignment operators as the default ones would be enough
 
@@ -89,6 +89,7 @@ public:
     void base(T base) noexcept
     {
         base_ = base;
+        range_max_ = base_ + (NBITS - 1);
         num_bits_ = 0;
         bitmap_.fill(0UL);
     }
@@ -117,9 +118,8 @@ public:
      */
     bool add(const T& item) noexcept
     {
-        // Compute maximum allowed value and check item is inside the allowed range.
-        T max = base_ + (NBITS - 1);
-        if ((item >= base_) && (max >= item))
+        // Check item is inside the allowed range.
+        if ((item >= base_) && (range_max_ >= item))
         {
             // Calc distance from base to item, and set the corresponding bit.
             Diff d_func;
@@ -198,7 +198,7 @@ public:
                 // Call the function for the corresponding item
                 f(item + offset);
 
-                // Clear the least significant bit
+                // Clear the most significant bit
                 bits &= ~(1UL << bit);
             }
 
@@ -209,6 +209,7 @@ public:
 
 protected:
     T base_;               ///< Holds base value of the range.
+    T range_max_;          ///< Holds maximum allowed value of the range.
     bitmap_type bitmap_;   ///< Holds the bitmap values.
     uint32_t num_bits_;    ///< Holds the highest bit set in the bitmap.
 }; 
