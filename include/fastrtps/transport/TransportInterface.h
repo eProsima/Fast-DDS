@@ -147,6 +147,11 @@ public:
         LocatorList_t& list) const = 0;
 
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
+
+    /**
+     * Shutdown method to close the connections of the transports.
+    */
+    virtual void Shutdown() {};
 };
 
 } // namespace rtps
