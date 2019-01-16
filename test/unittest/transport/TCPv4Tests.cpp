@@ -40,6 +40,7 @@ const uint32_t ReceiveBufferCapacity = 65536;
 static uint16_t g_default_port = 0;
 static uint16_t g_output_port = 0;
 static uint16_t g_input_port = 0;
+static std::string g_test_wan_address = "88.88.88.88";
 
 uint16_t get_port(uint16_t offset)
 {
@@ -51,6 +52,19 @@ uint16_t get_port(uint16_t offset)
     }
 
     return port;
+}
+
+static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+{
+    IPFinder::getIPs(&locNames, return_loopback);
+    auto new_end = remove_if(locNames.begin(),
+        locNames.end(),
+        [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL; });
+    locNames.erase(new_end, locNames.end());
+    std::for_each(locNames.begin(), locNames.end(), [](auto&& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_TCPv4;
+    });
 }
 
 class TCPv4Tests: public ::testing::Test
@@ -73,7 +87,7 @@ class TCPv4Tests: public ::testing::Test
         std::unique_ptr<std::thread> senderThread;
         std::unique_ptr<std::thread> receiverThread;
 };
-
+/*
 TEST_F(TCPv4Tests, locators_with_kind_1_supported)
 {
     // Given
@@ -563,41 +577,90 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 }
 
 #endif
-
+*/
 TEST_F(TCPv4Tests, shrink_locator_lists)
 {
+    std::vector<IPFinder::info_IP> localInterfaces;
+    GetIP4s(localInterfaces, false);
+
     TCPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
-    LocatorList_t result, list1, list2, list3;
-    Locator_t locator, locResult1, locResult2, locResult3;
+    LocatorList_t result, list1;
+    Locator_t locator, locator2, locator3;
     locator.kind = LOCATOR_KIND_TCPv4;
     locator.port = g_default_port;
-    locResult1.kind = LOCATOR_KIND_TCPv4;
-    locResult1.port = g_default_port;
-    locResult2.kind = LOCATOR_KIND_TCPv4;
-    locResult2.port = g_default_port;
-    locResult3.kind = LOCATOR_KIND_TCPv4;
-    locResult3.port = g_default_port;
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    locator3.kind = LOCATOR_KIND_TCPv4;
+    locator3.port = g_default_port;
 
     // Check shrink of only one locator list unicast.
     IPLocator::setIPv4(locator, 192,168,1,4);
-    IPLocator::setIPv4(locResult1, 192,168,1,4);
+    IPLocator::setIPv4(locator2, 192,168,1,4);
     list1.push_back(locator);
     IPLocator::setIPv4(locator, 192,168,2,5);
-    IPLocator::setIPv4(locResult2, 192,168,2,5);
+    IPLocator::setIPv4(locator3, 192,168,2,5);
     list1.push_back(locator);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
     ASSERT_EQ(result.size(), 2u);
-    for(auto it = result.begin(); it != result.end(); ++it)
-        ASSERT_TRUE(*it == locResult1 || *it == locResult2);
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+        ASSERT_TRUE(*it == locator2 || *it == locator3);
+    }
     list1.clear();
+
+    // Shrink Two Localhosts and return localhost.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 127, 0, 0, 1);
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    IPLocator::setIPv4(locator2, 127, 0, 0, 1);
+    list1.push_back(locator2);
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 1u);
+    ASSERT_TRUE(*result.begin() == locator);
+    list1.clear();
+
+    // Shrink Several Local addresses and return localhost.
+    if (localInterfaces.size() > 0)
+    {
+        locator.kind = LOCATOR_KIND_TCPv4;
+        locator.port = g_default_port;
+        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+        locator2.kind = LOCATOR_KIND_TCPv4;
+        locator2.port = g_default_port;
+        IPLocator::setIPv4(locator2, localInterfaces.begin()->locator);
+        list1.push_back(locator2);
+        if (localInterfaces.size() > 1)
+        {
+            IPLocator::setIPv4(locator2, localInterfaces[1].locator);
+            list1.push_back(locator2);
+        }
+
+        result = transportUnderTest.ShrinkLocatorLists({ list1 });
+        ASSERT_EQ(result.size(), 1u);
+        ASSERT_TRUE(*result.begin() == locator);
+        list1.clear();
+    }
+
+    // Shrink two WAN Adresses ( Same as mine ) With same LAN Address and same Logical Port and Same Physical Port and return only one.
+
+    // Shrink two WAN Adresses ( Same as mine ) With same LAN Address and same Logical Port and Different Physical Port and return two one.
+
+    //TODO: Shrink two WAN Adresses and return only two (SAME WAN ADDRESS THAN MINE AND DIFFERENT LAN ADDRESS AND PORT)
+
+    //TODO: Shrink two WAN Adresses and return only one (SAME WAN ADDRESS BUT DIFFERENT TO MINE AND PORT)
+
 }
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);
+    descriptor.set_WAN_address(g_test_wan_address);
 }
 
 int main(int argc, char **argv)
