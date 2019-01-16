@@ -123,11 +123,27 @@ void undiscovery_finished()
  */
 void print_results(const std::string& file_prefix, const std::string& entity, const std::string& config) 
 {
+    std::string output_filename = file_prefix;
+    if (file_prefix.length() == 0)
+    {
+        output_filename = "alloc_test_" + entity + "_" + config + ".csv";
+    }
+
+    std::ofstream outFile;
+    outFile.open(output_filename, std::ofstream::app);
+
+    // Check the file is new
+    long pos = outFile.tellp();
+
     std::stringstream output_stream;
-    output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
-    << " \"Phase 1 Allocations\", \"Phase 1 Deallocations\","
-    << " \"Phase 2 Allocations\", \"Phase 2 Deallocations\","
-    << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"\n";
+
+    if(pos == 0)
+    {
+        output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
+            << " \"Phase 1 Allocations\", \"Phase 1 Deallocations\","
+            << " \"Phase 2 Allocations\", \"Phase 2 Deallocations\","
+            << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"\n";
+    }
 
     for(size_t i = 0; i < 4; i++)
     {
@@ -140,15 +156,8 @@ void print_results(const std::string& file_prefix, const std::string& entity, co
             output_stream << ",";
         }
     }
+    output_stream << std::endl;
 
-    std::string output_filename = file_prefix;
-    if (file_prefix.length() == 0)
-    {
-        output_filename = "alloc_test_" + entity + "_" + config + ".csv";
-    }
-
-    std::ofstream outFile;
-    outFile.open(output_filename);
     outFile << output_stream.str();
     outFile.close();
 }

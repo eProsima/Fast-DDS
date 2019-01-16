@@ -40,3 +40,22 @@ Second argument is optional, defaults to `tl_be` and indicates the kind of qos t
 | `vo_re` | volatile reliable           |
 
 Third argument is optional, defaults to false, and indicates whether the test should wait for unmatching or not.
+
+### Result
+
+This test generates a CSV file containing the number of allocations and deallocations in each phase.
+The name of the CSV file follows next rule:
+
+```
+alloc_test_<entity>_<profile>.csv
+```
+
+## Generating plot
+
+This test comes with a python script which shows in a plot the allocations registered in a CSV file.
+
+```
+python3 allocation_plot.py <csv file> [0,1,2,3]
+```
+
+The last argument is the phases you want to see in the plot.
