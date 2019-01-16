@@ -84,10 +84,10 @@ void Domain::stopAll()
 
 bool Domain::removeParticipant(Participant* part)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
-
     if(part!=nullptr)
     {
+        std::lock_guard<std::mutex> guard(m_mutex);
+
         for(auto it = m_participants.begin();it!= m_participants.end();++it)
         {
             if(it->second->getGuid() == part->getGuid())
@@ -104,9 +104,10 @@ bool Domain::removeParticipant(Participant* part)
 
 bool Domain::removePublisher(Publisher* pub)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
     if(pub!=nullptr)
     {
+        std::lock_guard<std::mutex> guard(m_mutex);
+
         for(auto it = m_participants.begin();it!= m_participants.end();++it)
         {
             if(it->second->getGuid().guidPrefix == pub->getGuid().guidPrefix)
@@ -121,9 +122,10 @@ bool Domain::removePublisher(Publisher* pub)
 
 bool Domain::removeSubscriber(Subscriber* sub)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
     if(sub!=nullptr)
     {
+        std::lock_guard<std::mutex> guard(m_mutex);
+
         for(auto it = m_participants.begin();it!= m_participants.end();++it)
         {
             if(it->second->getGuid().guidPrefix == sub->getGuid().guidPrefix)
