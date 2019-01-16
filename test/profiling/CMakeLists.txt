@@ -92,3 +92,5 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
     endif()
 endif()
+
+add_subdirectory(allocations)
