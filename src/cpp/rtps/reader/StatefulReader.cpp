@@ -405,18 +405,18 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
     {
         std::lock_guard<std::recursive_mutex> guardWriterProxy(*pWP->getMutex());
         SequenceNumber_t auxSN;
-        SequenceNumber_t finalSN = gapList.base -1;
+        SequenceNumber_t finalSN = gapList.base() - 1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
         {
             if(pWP->irrelevant_change_set(auxSN))
                 fragmentedChangePitStop_->try_to_remove(auxSN, pWP->m_att.guid);
         }
 
-        for(auto it = gapList.get_begin(); it != gapList.get_end();++it)
+        gapList.for_each([&](SequenceNumber_t it)
         {
-            if(pWP->irrelevant_change_set((*it)))
-                fragmentedChangePitStop_->try_to_remove((*it), pWP->m_att.guid);
-        }
+            if(pWP->irrelevant_change_set(it))
+                fragmentedChangePitStop_->try_to_remove(it, pWP->m_att.guid);
+        });
     }
 
     return true;

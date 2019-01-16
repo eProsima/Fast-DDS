@@ -31,6 +31,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(FIXEDSIZESTRINGTESTS_SOURCE
             FixedSizeStringTests.cpp)
 
+        set(BITMAPRANGETESTS_SOURCE
+            BitmapRangeTests.cpp)
+
         include_directories(mock/)
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -51,5 +54,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(FixedSizeStringTests ${GTEST_LIBRARIES} ${MOCKS})
         add_gtest(FixedSizeStringTests SOURCES ${FIXEDSIZESTRINGTESTS_SOURCE})
+
+
+        add_executable(BitmapRangeTests ${BITMAPRANGETESTS_SOURCE})
+        target_compile_definitions(BitmapRangeTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(BitmapRangeTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(BitmapRangeTests ${GTEST_LIBRARIES} ${MOCKS})
+        add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
     endif()
 endif()

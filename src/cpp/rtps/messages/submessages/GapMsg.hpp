@@ -54,19 +54,11 @@ bool RTPSMessageCreator::addSubmessageGap(CDRMessage_t* msg, const SequenceNumbe
     submsgElem.msg_endian   = LITTLEEND;
 #endif
 
-    try{
-        CDRMessage::addEntityId(&submsgElem,&readerId);
-        CDRMessage::addEntityId(&submsgElem,&writerId);
-        //Add Sequence Number
-        CDRMessage::addSequenceNumber(&submsgElem,&seqNumFirst);
-        CDRMessage::addSequenceNumberSet(&submsgElem,&seqNumList);
-    }
-    catch(int e)
-    {
-        logError(RTPS_CDR_MSG,"Gap submessage error"<<e<<endl)
-            return false;
-    }
-
+    CDRMessage::addEntityId(&submsgElem,&readerId);
+    CDRMessage::addEntityId(&submsgElem,&writerId);
+    //Add Sequence Number
+    CDRMessage::addSequenceNumber(&submsgElem,&seqNumFirst);
+    CDRMessage::addSequenceNumberSet(&submsgElem,&seqNumList);
 
     //Once the submessage elements are added, the header is created
     RTPSMessageCreator::addSubmessageHeader(msg, GAP, flags, (uint16_t)submsgElem.length);

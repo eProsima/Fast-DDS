@@ -190,7 +190,7 @@ void StatelessWriter::update_unsent_changes(ReaderLocator& reader_locator,
         {
             it->markFragmentsAsSent(fragNum);
             FragmentNumberSet_t fragment_sns = it->getUnsentFragments();
-            if(fragment_sns.isSetEmpty())
+            if(fragment_sns.empty())
                 reader_locator.unsent_changes.erase(it);
         }
         else

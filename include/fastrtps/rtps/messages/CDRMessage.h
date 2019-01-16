@@ -61,7 +61,7 @@ namespace CDRMessage{
 	  inline bool readUInt16(CDRMessage_t* msg,uint16_t* i16);
 	  inline bool readLocator(CDRMessage_t* msg,Locator_t* loc);
 	  inline bool readOctet(CDRMessage_t* msg, octet* o);
-	  inline bool readSequenceNumberSet(CDRMessage_t* msg, SequenceNumberSet_t* snset);
+	  inline SequenceNumberSet_t readSequenceNumberSet(CDRMessage_t* msg);
 	  inline bool readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberSet_t* snset);
 	  inline bool readTimestamp(CDRMessage_t*msg,Time_t* ts);
 	  inline bool readString(CDRMessage_t*msg,std::string* p_str);

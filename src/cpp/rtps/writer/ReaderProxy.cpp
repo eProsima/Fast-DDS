@@ -18,38 +18,41 @@
  */
 
 
+#include <fastrtps/log/Log.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
-#include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <mutex>
 
 #include <cassert>
 
-using namespace eprosima::fastrtps::rtps;
+
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 
-ReaderProxy::ReaderProxy(const RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
+ReaderProxy::ReaderProxy(const RemoteReaderAttributes& rdata, const WriterTimes& times, StatefulWriter* SW) :
     m_att(rdata), mp_SFW(SW),
     mp_nackResponse(nullptr), mp_nackSupression(nullptr), m_lastAcknackCount(0),
     mp_mutex(new std::recursive_mutex()), lastNackfragCount_(0)
 {
-    if(rdata.endpoint.reliabilityKind == RELIABLE)
+    if (rdata.endpoint.reliabilityKind == RELIABLE)
     {
-        mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
-        mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+        mp_nackResponse = new NackResponseDelay(this, TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
+        mp_nackSupression = new NackSupressionDuration(this, TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
     }
 
     // Use remoteLocatorList as joint unicast + multicast locators
     m_att.endpoint.remoteLocatorList.assign(m_att.endpoint.unicastLocatorList);
     m_att.endpoint.remoteLocatorList.push_back(m_att.endpoint.multicastLocatorList);
 
-    logInfo(RTPS_WRITER,"Reader Proxy created");
+    logInfo(RTPS_WRITER, "Reader Proxy created");
 }
 
 
@@ -61,13 +64,13 @@ ReaderProxy::~ReaderProxy()
 
 void ReaderProxy::destroy_timers()
 {
-    if(mp_nackResponse != nullptr)
+    if (mp_nackResponse != nullptr)
     {
         delete(mp_nackResponse);
         mp_nackResponse = nullptr;
     }
 
-    if(mp_nackSupression != nullptr)
+    if (mp_nackSupression != nullptr)
     {
         delete(mp_nackSupression);
         mp_nackSupression = nullptr;
@@ -80,11 +83,11 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
 
     assert(change.getSequenceNumber() > changesFromRLowMark_);
     assert(m_changesForReader.rbegin() != m_changesForReader.rend() ?
-            change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber() :
-            true);
+        change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber() :
+        true);
 
     // For best effort readers, changes are acked when being sent
-    if(m_changesForReader.size() == 0 && change.getStatus() == ACKNOWLEDGED)
+    if (m_changesForReader.empty() && change.getStatus() == ACKNOWLEDGED)
     {
         changesFromRLowMark_ = change.getSequenceNumber();
         return;
@@ -93,7 +96,9 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
     m_changesForReader.insert(change);
     //TODO (Ricardo) Remove this functionality from here. It is not his place.
     if (change.getStatus() == UNSENT)
+    {
         AsyncWriterThread::wakeUp(mp_SFW);
+    }
 }
 
 size_t ReaderProxy::countChangesForReader() const
@@ -106,8 +111,10 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    if(sequence_number <= changesFromRLowMark_)
+    if (sequence_number <= changesFromRLowMark_)
+    {
         return true;
+    }
 
     auto chit = m_changesForReader.find(ChangeForReader_t(sequence_number));
     assert(chit != m_changesForReader.end());
@@ -120,7 +127,7 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     SequenceNumber_t future_low_mark = seqNum;
 
-    if(seqNum > changesFromRLowMark_)
+    if (seqNum > changesFromRLowMark_)
     {
         auto chit = m_changesForReader.find(seqNum);
         m_changesForReader.erase(m_changesForReader.begin(), chit);
@@ -131,17 +138,17 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
         // after losing lease duration.
 
         SequenceNumber_t current_sequence = seqNum;
-        if(seqNum < mp_SFW->get_seq_num_min())
+        if (seqNum < mp_SFW->get_seq_num_min())
         {
             current_sequence = mp_SFW->get_seq_num_min();
         }
         future_low_mark = current_sequence;
 
-        for(; current_sequence <= changesFromRLowMark_; ++current_sequence)
+        for (; current_sequence <= changesFromRLowMark_; ++current_sequence)
         {
             CacheChange_t* change = nullptr;
 
-            if(mp_SFW->mp_history->get_change(current_sequence, mp_SFW->getGuid(), &change))
+            if (mp_SFW->mp_history->get_change(current_sequence, mp_SFW->getGuid(), &change))
             {
                 ChangeForReader_t cr(change);
                 cr.setStatus(UNACKNOWLEDGED);
@@ -160,16 +167,16 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
     changesFromRLowMark_ = future_low_mark - 1;
 }
 
-bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet)
+bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
 {
     bool isSomeoneWasSetRequested = false;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    for(std::vector<SequenceNumber_t>::iterator sit=seqNumSet.begin();sit!=seqNumSet.end();++sit)
+    seqNumSet.for_each([&](SequenceNumber_t sit)
     {
-        auto chit = m_changesForReader.find(ChangeForReader_t(*sit));
+        auto chit = m_changesForReader.find(ChangeForReader_t(sit));
 
-        if(chit != m_changesForReader.end())
+        if (chit != m_changesForReader.end())
         {
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
@@ -181,60 +188,34 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
 
             isSomeoneWasSetRequested = true;
         }
-    }
+    });
 
-    if(isSomeoneWasSetRequested)
+    if (isSomeoneWasSetRequested)
     {
-        logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
+        logInfo(RTPS_WRITER, "Requested Changes: " << seqNumSet);
     }
-    else if(!seqNumSet.empty())
+    else if (!seqNumSet.empty())
     {
-        logWarning(RTPS_WRITER,"Requested Changes: " << seqNumSet
-                   << " not found (low mark: " << changesFromRLowMark_ << ")");
+        logWarning(RTPS_WRITER, "Requested Changes: " << seqNumSet
+            << " not found (low mark: " << changesFromRLowMark_ << ")");
     }
 
     return isSomeoneWasSetRequested;
 }
 
-
-//TODO(Ricardo) Temporal
-//std::vector<const ChangeForReader_t*> ReaderProxy::get_unsent_changes() const
-std::vector<ChangeForReader_t*> ReaderProxy::get_unsent_changes()
-{
-    std::vector<ChangeForReader_t*> unsent_changes;
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-
-    for(auto &change_for_reader : m_changesForReader)
-        if(change_for_reader.getStatus() == UNSENT)
-            unsent_changes.push_back(const_cast<ChangeForReader_t*>(&change_for_reader));
-
-    return unsent_changes;
-}
-
-std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
-{
-    std::vector<const ChangeForReader_t*> unsent_changes;
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-
-    auto it = m_changesForReader.begin();
-    for (; it!= m_changesForReader.end(); ++it)
-        if(it->getStatus() == REQUESTED)
-            unsent_changes.push_back(&(*it));
-
-    return unsent_changes;
-}
-
 void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status)
 {
-    if(seq_num <= changesFromRLowMark_)
+    if (seq_num <= changesFromRLowMark_)
+    {
         return;
+    }
 
     auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
     bool mustWakeUpAsyncThread = false;
 
-    if(it != m_changesForReader.end())
+    if (it != m_changesForReader.end())
     {
-        if(status == ACKNOWLEDGED && it == m_changesForReader.begin())
+        if (status == ACKNOWLEDGED && it == m_changesForReader.begin())
         {
             m_changesForReader.erase(it);
             changesFromRLowMark_ = seq_num;
@@ -243,42 +224,53 @@ void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeFo
         {
             ChangeForReader_t newch(*it);
             newch.setStatus(status);
-            if (status == UNSENT) mustWakeUpAsyncThread = true;
+            if (status == UNSENT)
+            {
+                mustWakeUpAsyncThread = true;
+            }
             auto hint = m_changesForReader.erase(it);
             m_changesForReader.insert(hint, newch);
         }
     }
 
     if (mustWakeUpAsyncThread)
+    {
         AsyncWriterThread::wakeUp(mp_SFW);
+    }
 }
 
 bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, FragmentNumber_t fragment)
 {
-    if(change->sequenceNumber <= changesFromRLowMark_)
+    if (change->sequenceNumber <= changesFromRLowMark_)
+    {
         return false;
+    }
 
     bool allFragmentsSent = false;
     auto it = m_changesForReader.find(ChangeForReader_t(change->sequenceNumber));
 
-    bool mustWakeUpAsyncThread = false; 
+    bool mustWakeUpAsyncThread = false;
 
-    if(it != m_changesForReader.end())
+    if (it != m_changesForReader.end())
     {
         ChangeForReader_t newch(*it);
         newch.markFragmentsAsSent(fragment);
-        if (newch.getUnsentFragments().isSetEmpty())
+        if (newch.getUnsentFragments().empty())
         {
             allFragmentsSent = true;
         }
         else
+        {
             mustWakeUpAsyncThread = true;
+        }
         auto hint = m_changesForReader.erase(it);
         m_changesForReader.insert(hint, newch);
     }
 
     if (mustWakeUpAsyncThread)
+    {
         AsyncWriterThread::wakeUp(mp_SFW);
+    }
 
     return allFragmentsSent;
 }
@@ -289,30 +281,34 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
     bool mustWakeUpAsyncThread = false;
 
     auto it = m_changesForReader.begin();
-    while(it != m_changesForReader.end())
+    while (it != m_changesForReader.end())
     {
-        if(it->getStatus() == previous)
+        if (it->getStatus() == previous)
         {
-            if(next == ACKNOWLEDGED && it == m_changesForReader.begin())
+            if (next == ACKNOWLEDGED && it == m_changesForReader.begin())
             {
                 changesFromRLowMark_ = it->getSequenceNumber();
                 it = m_changesForReader.erase(it);
                 continue;
             }
-            else
-            {
+
+
                 // Note: we can perform this cast as we are not touching the sorting field (seq_num)
-                const_cast<ChangeForReader_t&>(*it).setStatus(next);
-                if (next == UNSENT && previous != UNSENT)
-                    mustWakeUpAsyncThread = true;
+            const_cast<ChangeForReader_t&>(*it).setStatus(next);
+            if (next == UNSENT && previous != UNSENT)
+            {
+                mustWakeUpAsyncThread = true;
             }
+
         }
 
         ++it;
     }
 
     if (mustWakeUpAsyncThread)
+    {
         AsyncWriterThread::wakeUp(mp_SFW);
+    }
 }
 
 //TODO(Ricardo)
@@ -322,8 +318,10 @@ void ReaderProxy::setNotValid(CacheChange_t* change)
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Check sequence number is in the container, because it was not clean up.
-    if(m_changesForReader.size() == 0 || change->sequenceNumber < m_changesForReader.begin()->getSequenceNumber())
+    if (m_changesForReader.empty() || change->sequenceNumber < m_changesForReader.begin()->getSequenceNumber())
+    {
         return;
+    }
 
     auto chit = m_changesForReader.find(ChangeForReader_t(change));
 
@@ -333,7 +331,7 @@ void ReaderProxy::setNotValid(CacheChange_t* change)
     // Note: we can perform this cast as we are not touching the sorting field (seq_num)
     auto & newch = const_cast<ChangeForReader_t&>(*chit);
 
-    if(chit == m_changesForReader.begin())
+    if (chit == m_changesForReader.begin())
     {
         assert(chit->getStatus() != ACKNOWLEDGED);
 
@@ -347,7 +345,9 @@ void ReaderProxy::setNotValid(CacheChange_t* change)
         // In case its state is not ACKNOWLEDGED, set it to UNACKNOWLEDGE because from now reader has to confirm
         // it will not be expecting it.
         if (newch.getStatus() != ACKNOWLEDGED)
+        {
             newch.setStatus(UNACKNOWLEDGED);
+        }
     }
     newch.notValid();
 }
@@ -357,9 +357,9 @@ bool ReaderProxy::thereIsUnacknowledged() const
     bool returnedValue = false;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    for(auto it = m_changesForReader.begin(); it!=m_changesForReader.end(); ++it)
+    for (auto& it : m_changesForReader)
     {
-        if(it->getStatus() == UNACKNOWLEDGED)
+        if (it.getStatus() == UNACKNOWLEDGED)
         {
             returnedValue = true;
             break;
@@ -375,23 +375,27 @@ bool change_min(const ChangeForReader_t* ch1, const ChangeForReader_t* ch2)
 }
 
 bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
-        ChangeForReader_t* changeForReader)
+    ChangeForReader_t* changeForReader)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    *changeForReader = **std::min_element(Changes->begin(),Changes->end(),change_min);
+    *changeForReader = **std::min_element(Changes->begin(), Changes->end(), change_min);
     return true;
 }
 
-bool ReaderProxy::requested_fragment_set(SequenceNumber_t sequence_number, const FragmentNumberSet_t& frag_set)
+bool ReaderProxy::requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     // Locate the outbound change referenced by the NACK_FRAG
-    auto changeIter = std::find_if(m_changesForReader.begin(), m_changesForReader.end(), 
-            [sequence_number](const ChangeForReader_t& change)
-            {return change.getSequenceNumber() == sequence_number;});
+    auto changeIter = std::find_if(m_changesForReader.begin(), m_changesForReader.end(),
+        [sequence_number](const ChangeForReader_t& change)
+    {
+        return change.getSequenceNumber() == sequence_number;
+    });
     if (changeIter == m_changesForReader.end())
+    {
         return false;
+    }
 
     ChangeForReader_t newch(*changeIter);
     auto hint = m_changesForReader.erase(changeIter);
@@ -399,8 +403,14 @@ bool ReaderProxy::requested_fragment_set(SequenceNumber_t sequence_number, const
 
     // If it was UNSENT, we shouldn't switch back to REQUESTED to prevent stalling.
     if (newch.getStatus() != UNSENT)
+    {
         newch.setStatus(REQUESTED);
+    }
     m_changesForReader.insert(hint, newch);
 
     return true;
 }
+
+}   // namespace rtps
+}   // namespace fastrtps
+}   // namespace eprosima

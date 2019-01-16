@@ -848,8 +848,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
     CDRMessage::readEntityId(msg,&writerGUID.entityId);
 
 
-    SequenceNumberSet_t SNSet;
-    CDRMessage::readSequenceNumberSet(msg,&SNSet);
+    SequenceNumberSet_t SNSet = CDRMessage::readSequenceNumberSet(msg);
     uint32_t Ackcount;
     CDRMessage::readUInt32(msg,&Ackcount);
     //Is the final message?
@@ -903,8 +902,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh,
     CDRMessage::readEntityId(msg,&writerGUID.entityId);
     SequenceNumber_t gapStart;
     CDRMessage::readSequenceNumber(msg,&gapStart);
-    SequenceNumberSet_t gapList;
-    CDRMessage::readSequenceNumberSet(msg,&gapList);
+    SequenceNumberSet_t gapList = CDRMessage::readSequenceNumberSet(msg);
     if(gapStart <= SequenceNumber_t(0, 0))
         return false;
 

@@ -24,6 +24,7 @@
 
 #include "../Endpoint.h"
 #include "../attributes/ReaderAttributes.h"
+#include "../common/SequenceNumber.h"
 
 #include <map>
 
@@ -39,8 +40,6 @@ namespace eprosima
             class ReaderHistory;
             struct CacheChange_t;
             class WriterProxy;
-            struct SequenceNumber_t;
-            class SequenceNumberSet_t;
             class FragmentedChangePitStop;
 
             /**

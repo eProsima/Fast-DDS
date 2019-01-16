@@ -71,8 +71,7 @@ void InitialAckNack::event(EventCode code, const char* msg)
         }
 
         // Send initial NACK.
-        SequenceNumberSet_t sns;
-        sns.base = SequenceNumber_t(0, 0);
+        SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
 
         logInfo(RTPS_READER,"Sending ACKNACK: "<< sns);
 

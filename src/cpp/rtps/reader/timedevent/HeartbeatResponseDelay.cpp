@@ -73,9 +73,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
 
         if(!missing_changes.empty() || !mp_WP->m_heartbeatFinalFlag)
         {
-            SequenceNumberSet_t sns;
-            sns.base = mp_WP->available_changes_max();
-            sns.base++;
+            SequenceNumberSet_t sns(mp_WP->available_changes_max() + 1);
 
             for(auto ch : missing_changes)
             {
@@ -87,7 +85,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                     if(!sns.add(ch.getSequenceNumber()))
                     {
                         logInfo(RTPS_READER,"Sequence number " << ch.getSequenceNumber()
-                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base);
+                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base());
                     }
                 }
                 else
@@ -101,7 +99,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
             logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 
             bool final = false;
-            if(sns.isSetEmpty())
+            if(sns.empty())
                 final = true;
 
             group.add_acknack(m_remote_endpoints, sns, mp_WP->mp_SFR->m_acknackCount, final, m_destination_locators);
@@ -129,7 +127,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                 assert(fit != cit->getDataFragments()->end());
 
                 // Store FragmentNumberSet_t base.
-                frag_sns.base = frag_num;
+                frag_sns.base(frag_num);
 
                 // Fill the FragmentNumberSet_t bitmap.
                 for(; fit != cit->getDataFragments()->end(); ++fit)
