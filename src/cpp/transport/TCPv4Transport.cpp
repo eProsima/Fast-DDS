@@ -331,11 +331,11 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
         LocatorListConstIterator it = locatorList.begin();
         LocatorList_t pendingUnicast;
 
-        bool add = true;
+        bool addLocator = true;
         while (it != locatorList.end())
         {
             assert((*it).kind == mTransportKind);
-            add = true;
+            addLocator = true;
 
             // Check is local interface.
             auto localInterface = mCurrentInterfaces.begin();
@@ -349,6 +349,7 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
                     IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
                     pendingUnicast.push_back(loopbackLocator);
+                    addLocator = false;
                     break;
                 }
             }
@@ -357,6 +358,11 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
             if (localInterface == mCurrentInterfaces.end() && IPLocator::isLocal(*it))
             {
                 pendingUnicast.push_back(*it);
+                ++it;
+                continue;
+            }
+            else if (!addLocator)
+            {
                 ++it;
                 continue;
             }
@@ -370,7 +376,7 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     if (memcmp(IPLocator::getWan(*unicastLocator), IPLocator::getWan(*it), 4) == 0 && unicastLocator->port == it->port)
                     {
                         ++it;
-                        add = false;
+                        addLocator = false;
                         break;
                     }
                 }
@@ -383,15 +389,15 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     if (memcmp(IPLocator::getIPv4(*unicastLocator), IPLocator::getIPv4(*it), 4) == 0 && unicastLocator->port == it->port)
                     {
                         ++it;
-                        add = false;
+                        addLocator = false;
                         break;
                     }
                 }
             }
 
-            if (add)
+            if (addLocator)
             {
-                add = false;
+                addLocator = false;
 
                 // Only allow already connected locators.
                 for (auto locatorIt = connectedLocators.begin(); locatorIt != connectedLocators.end(); ++locatorIt)
@@ -400,13 +406,13 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                         (!IPLocator::hasWan(*it) && memcmp(IPLocator::getIPv4(*it), IPLocator::getIPv4(*locatorIt), 4) == 0)) &&
                         IPLocator::getPhysicalPort(*locatorIt) == IPLocator::getPhysicalPort(*it))
                     {
-                        add = true;
+                        addLocator = true;
                         break;
                     }
                 }
             }
 
-            if (add)
+            if (addLocator)
             {
                 pendingUnicast.push_back(*it);
             }
