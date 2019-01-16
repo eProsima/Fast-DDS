@@ -121,7 +121,10 @@ enum  optionIndex {
     TEST_TIME,
     DROP_RATE,
     SEND_SLEEP_TIME,
-    FORCED_DOMAIN
+    FORCED_DOMAIN,
+    WIDTH,
+    HEIGHT,
+    FRAMERATE
 };
 
 const option::Descriptor usage[] = {
@@ -146,6 +149,9 @@ const option::Descriptor usage[] = {
     { DROP_RATE, 0, "", "droprate",             Arg::Numeric,   "\t--droprate \tSending drop percentage ( 0 - 100 )." },
     { SEND_SLEEP_TIME, 0, "", "sleeptime",      Arg::Numeric,   "\t--sleeptime \tMaximum sleep time before shipments (milliseconds)." },
     { FORCED_DOMAIN, 0, "", "domain",           Arg::Numeric,   "\t--domain \tRTPS Domain." },
+    { WIDTH, 0, "", "width",                    Arg::Numeric,   "\t--width \tWidth of the video." },
+    { HEIGHT, 0, "", "height",                  Arg::Numeric,   "\t--height \tHeight of the video." },
+    { FRAMERATE, 0, "", "rate",                 Arg::Numeric,   "\t--rate \tFrame rate of the video." },
 
     { 0, 0, 0, 0, 0, 0 }
 };
@@ -155,6 +161,8 @@ const int c_n_samples = 10000;
 int main(int argc, char** argv)
 {
     int columns;
+
+    Log::SetVerbosity(Log::Warning);
 
 #if defined(_WIN32)
     char* buf = nullptr;
@@ -178,6 +186,9 @@ int main(int argc, char** argv)
     int drop_rate = 0;
     int max_sleep_time = 0;
     int forced_domain = -1;
+    int video_width = 1024;
+    int video_height = 720;
+    int frame_rate = 30;
     int n_samples = c_n_samples;
 #if HAVE_SECURITY
     bool use_security = false;
@@ -312,6 +323,16 @@ int main(int argc, char** argv)
                 forced_domain = strtol(opt.arg, nullptr, 10);
                 break;
 
+            case WIDTH:
+                video_width = strtol(opt.arg, nullptr, 10);
+                break;
+            case HEIGHT:
+                video_height = strtol(opt.arg, nullptr, 10);
+                break;
+            case FRAMERATE:
+                frame_rate = strtol(opt.arg, nullptr, 10);
+                break;
+
 #if HAVE_SECURITY
             case USE_SECURITY:
                 if (strcmp(opt.arg, "true") == 0)
@@ -397,14 +418,14 @@ int main(int argc, char** argv)
         cout << "Performing video test" << endl;
         VideoTestPublisher pub;
         pub.init(sub_number, n_samples, reliable, seed, hostname, pub_part_property_policy,
-            pub_property_policy, large_data, sXMLConfigFile, test_time, drop_rate, max_sleep_time, forced_domain);
+            pub_property_policy, large_data, sXMLConfigFile, test_time, drop_rate, max_sleep_time, forced_domain, video_width, video_height, frame_rate);
         pub.run();
     }
     else
     {
         VideoTestSubscriber sub;
         sub.init(n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile, export_csv, export_prefix, forced_domain);
+            large_data, sXMLConfigFile, export_csv, export_prefix, forced_domain, video_width, video_height, frame_rate);
         sub.run();
     }
 
