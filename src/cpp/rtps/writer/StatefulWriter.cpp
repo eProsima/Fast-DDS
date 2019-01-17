@@ -155,7 +155,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             if (!m_separateSendingEnabled)
             {
                 RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
-                if (!group.add_data(*change, mAllRemoteReaders, mAllShrinkedLocatorList, expectsInlineQos))
+                if (!group.add_data(*change, all_remote_readers_, mAllShrinkedLocatorList, expectsInlineQos))
                 {
                     logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                 }
@@ -421,7 +421,7 @@ void StatefulWriter::send_any_unsent_changes()
                 {
                     if (mp_history->isFull())
                     {
-                        send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group);
+                        send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group);
                     }
                     else
                     {
@@ -430,7 +430,7 @@ void StatefulWriter::send_any_unsent_changes()
 
                         if (currentUsageSendBufferSize_ < 0)
                         {
-                            send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group);
+                            send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group);
                         }
                     }
                 }
@@ -453,7 +453,7 @@ void StatefulWriter::send_any_unsent_changes()
         else
         {
             RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
-            send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group, true);
+            send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group, true);
         }
     }
 
@@ -472,15 +472,14 @@ void StatefulWriter::send_any_unsent_changes()
  */
 bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-
-    if(rdata.guid == c_Guid_Unknown)
+    if (rdata.guid == c_Guid_Unknown)
     {
-        logError(RTPS_WRITER,"Reliable Writer need GUID_t of matched readers");
+        logError(RTPS_WRITER, "Reliable Writer need GUID_t of matched readers");
         return false;
     }
 
-    std::vector<GUID_t> allRemoteReaders;
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
     std::vector<LocatorList_t> allLocatorLists;
 
     // Check if it is already matched.
@@ -493,17 +492,16 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             return false;
         }
 
-        allRemoteReaders.push_back((*it)->m_att.guid);
         allLocatorLists.push_back((*it)->m_att.endpoint.remoteLocatorList);
     }
 
     // Add info of new datareader.
-    allRemoteReaders.push_back(rdata.guid);
+    all_remote_readers_.push_back(rdata.guid);
     LocatorList_t locators(rdata.endpoint.unicastLocatorList);
     locators.push_back(rdata.endpoint.multicastLocatorList);
     allLocatorLists.push_back(locators);
 
-    update_cached_info_nts(std::move(allRemoteReaders), allLocatorLists);
+    update_cached_info_nts(allLocatorLists);
 
     getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList, false);
 
@@ -592,7 +590,6 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
     ReaderProxy *rproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    std::vector<GUID_t> allRemoteReaders;
     std::vector<LocatorList_t> allLocatorLists;
 
     auto it = matched_readers.begin();
@@ -609,12 +606,12 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
             continue;
         }
 
-        allRemoteReaders.push_back((*it)->m_att.guid);
         allLocatorLists.push_back((*it)->m_att.endpoint.remoteLocatorList);
         ++it;
     }
 
-    update_cached_info_nts(std::move(allRemoteReaders), allLocatorLists);
+    all_remote_readers_.remove(rdata.guid);
+    update_cached_info_nts(allLocatorLists);
 
     if(matched_readers.size()==0)
         this->mp_periodicHB->cancel_timer();
@@ -956,7 +953,7 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(const std::vector<GUID_t>& re
 
 void StatefulWriter::send_heartbeat_piggyback_nts_(RTPSMessageGroup& message_group)
 {
-    send_heartbeat_piggyback_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, message_group);
+    send_heartbeat_piggyback_nts_(all_remote_readers_, mAllShrinkedLocatorList, message_group);
 }
 
 void StatefulWriter::process_acknack(const GUID_t reader_guid, uint32_t ack_count,

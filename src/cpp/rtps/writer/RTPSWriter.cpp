@@ -26,36 +26,39 @@
 
 #include <mutex>
 
-using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 
-RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes& att, WriterHistory* hist, WriterListener* listen):
-    Endpoint(impl,guid,att.endpoint),
+RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes& att, WriterHistory* hist, WriterListener* listen) :
+    Endpoint(impl, guid, att.endpoint),
     m_pushMode(true),
     m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.bytesPerPeriod ?
-            att.throughputController.bytesPerPeriod > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
-            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-            att.throughputController.bytesPerPeriod :
-            impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
-            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-            impl->getMaxMessageSize(), impl->getGuid().guidPrefix),
+        att.throughputController.bytesPerPeriod > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
+        impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
+        att.throughputController.bytesPerPeriod :
+        impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
+        impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
+        impl->getMaxMessageSize(), impl->getGuid().guidPrefix),
     m_livelinessAsserted(false),
     mp_history(hist),
     mp_listener(listen),
     is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true),
-    m_separateSendingEnabled(false)
+    m_separateSendingEnabled(false),
+    all_remote_readers_(att.matching_reader_number)
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = mp_mutex;
-    logInfo(RTPS_WRITER,"RTPSWriter created");
+    logInfo(RTPS_WRITER, "RTPSWriter created");
 }
 
 RTPSWriter::~RTPSWriter()
 {
-    logInfo(RTPS_WRITER,"RTPSWriter destructor");
+    logInfo(RTPS_WRITER, "RTPSWriter destructor");
 
     // Deletion of the events has to be made in child destructor.
 
@@ -64,21 +67,21 @@ RTPSWriter::~RTPSWriter()
 }
 
 CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
-        ChangeKind_t changeKind, InstanceHandle_t handle)
+    ChangeKind_t changeKind, InstanceHandle_t handle)
 {
-    logInfo(RTPS_WRITER,"Creating new change");
+    logInfo(RTPS_WRITER, "Creating new change");
     CacheChange_t* ch = nullptr;
 
-    if(!mp_history->reserve_Cache(&ch, dataCdrSerializedSize))
+    if (!mp_history->reserve_Cache(&ch, dataCdrSerializedSize))
     {
-        logWarning(RTPS_WRITER,"Problem reserving Cache from the History");
+        logWarning(RTPS_WRITER, "Problem reserving Cache from the History");
         return nullptr;
     }
 
     ch->kind = changeKind;
-    if(m_att.topicKind == WITH_KEY && !handle.isDefined())
+    if (m_att.topicKind == WITH_KEY && !handle.isDefined())
     {
-        logWarning(RTPS_WRITER,"Changes in KEYED Writers need a valid instanceHandle");
+        logWarning(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
     }
     ch->instanceHandle = handle;
     ch->writerGUID = m_guid;
@@ -88,7 +91,7 @@ CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSe
 SequenceNumber_t RTPSWriter::get_seq_num_min()
 {
     CacheChange_t* change;
-    if(mp_history->get_min_change(&change) && change!= nullptr)
+    if (mp_history->get_min_change(&change) && change != nullptr)
         return change->sequenceNumber;
     else
         return c_SequenceNumber_Unknown;
@@ -97,7 +100,7 @@ SequenceNumber_t RTPSWriter::get_seq_num_min()
 SequenceNumber_t RTPSWriter::get_seq_num_max()
 {
     CacheChange_t* change;
-    if(mp_history->get_max_change(&change) && change!=nullptr)
+    if (mp_history->get_max_change(&change) && change != nullptr)
         return change->sequenceNumber;
     else
         return c_SequenceNumber_Unknown;
@@ -119,7 +122,7 @@ bool RTPSWriter::remove_older_changes(unsigned int max)
     bool at_least_one = remove_ret;
     unsigned int count = 1;
 
-    while(remove_ret && (!limit || count < max))
+    while (remove_ret && (!limit || count < max))
     {
         remove_ret = mp_history->remove_min_change();
         ++count;
@@ -148,12 +151,12 @@ uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
     //TODO(Ricardo) inlineqos in future.
 
 #if HAVE_SECURITY
-    if(getAttributes().security_attributes().is_submessage_protected)
+    if (getAttributes().security_attributes().is_submessage_protected)
     {
         maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_rtps_submessage(m_guid);
     }
 
-    if(getAttributes().security_attributes().is_payload_protected)
+    if (getAttributes().security_attributes().is_payload_protected)
     {
         maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
     }
@@ -162,10 +165,8 @@ uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
     return maxDataSize;
 }
 
-void RTPSWriter::update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
-            std::vector<LocatorList_t>& allLocatorLists)
+void RTPSWriter::update_cached_info_nts(std::vector<LocatorList_t>& allLocatorLists)
 {
-    mAllRemoteReaders = std::move(allRemoteReaders);
     mAllShrinkedLocatorList.clear();
     mAllShrinkedLocatorList.push_back(mp_RTPSParticipant->network_factory().ShrinkLocatorLists(allLocatorLists));
 }
@@ -173,27 +174,27 @@ void RTPSWriter::update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
 #if HAVE_SECURITY
 bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
 {
-    if(getAttributes().security_attributes().is_payload_protected && change->getFragmentCount() == 0)
+    if (getAttributes().security_attributes().is_payload_protected && change->getFragmentCount() == 0)
     {
-        if(encrypt_payload_.max_size < change->serializedPayload.length +
+        if (encrypt_payload_.max_size < change->serializedPayload.length +
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-            + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
+            +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/ &&
             (mp_history->m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE ||
-            mp_history->m_att.memoryPolicy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE))
+                mp_history->m_att.memoryPolicy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE))
         {
             encrypt_payload_.data = (octet*)realloc(encrypt_payload_.data, change->serializedPayload.length +
                     // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-                    + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
-                    + 16 + 4 /*SecureDataTag*/);
+                +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
+                + 16 + 4 /*SecureDataTag*/);
             encrypt_payload_.max_size = change->serializedPayload.length +
                 // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-                + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
+                +20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1) /* SecureDataBodey*/
                 + 16 + 4 /*SecureDataTag*/;
         }
 
-        if(!mp_RTPSParticipant->security_manager().encode_serialized_payload(change->serializedPayload,
-                    encrypt_payload_, m_guid))
+        if (!mp_RTPSParticipant->security_manager().encode_serialized_payload(change->serializedPayload,
+            encrypt_payload_, m_guid))
         {
             logError(RTPS_WRITER, "Error encoding change " << change->sequenceNumber);
             return false;
@@ -218,3 +219,7 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
     return true;
 }
 #endif
+
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima

@@ -23,6 +23,7 @@
 #include "../common/Guid.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "EndpointAttributes.h"
+#include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
 
 namespace eprosima{
 namespace fastrtps{
@@ -102,6 +103,9 @@ class  WriterAttributes
 
         //! Disable the sending of heartbeat piggybacks.
         bool disableHeartbeatPiggyback;
+
+        //! Qos on the number of readers that can be matched against this writer.
+        ResourceLimitedContainerConfig matching_reader_number;
 };
 
 /**

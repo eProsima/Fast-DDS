@@ -112,7 +112,8 @@ class StatelessWriter : public RTPSWriter
 
     private:
 
-    std::vector<GUID_t> get_builtin_guid();
+    void get_builtin_guid(ResourceLimitedVector<GUID_t>& guidVector);
+    bool has_builtin_guid();
 
     void update_locators_nts_(const GUID_t& optionalGuid);
 

@@ -22,6 +22,7 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 #include <vector>
 #include <memory>
 #include <functional>
@@ -203,10 +204,9 @@ class RTPSWriter : public Endpoint
 
     LocatorList_t mAllShrinkedLocatorList;
 
-    std::vector<GUID_t> mAllRemoteReaders;
+    ResourceLimitedVector<GUID_t> all_remote_readers_;
 
-    void update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
-            std::vector<LocatorList_t>& allLocatorLists);
+    void update_cached_info_nts(std::vector<LocatorList_t>& allLocatorLists);
 
     /**
      * Initialize the header of hte CDRMessages.
