@@ -84,7 +84,7 @@ VideoTestSubscriber::~VideoTestSubscriber()
 
 bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix, 
+        const std::string& sXMLConfigFile, bool export_csv, const std::string& export_prefix,
         int forced_domain, int video_width, int video_height, int frame_rate)
 {
     large_data = true;
@@ -177,6 +177,7 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
     if (mp_datasub == nullptr)
     {
+        std::cout << "Cannot create data subscriber" << std::endl;
         return false;
     }
 
@@ -231,6 +232,7 @@ void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*s
     if(info.status == MATCHED_MATCHING)
     {
         logInfo(VideoTest,"Data Sub Matched ");
+        std::cout << "Data Sub Matched " << std::endl;
         ++mp_up->disc_count_;
     }
     else
@@ -251,6 +253,7 @@ void VideoTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*
     if(info.status == MATCHED_MATCHING)
     {
         logInfo(VideoTest, "Command Pub Matched ");
+        std::cout << "Command Pub Matched " << std::endl;
         ++mp_up->disc_count_;
     }
     else
@@ -271,6 +274,7 @@ void VideoTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* 
     if(info.status == MATCHED_MATCHING)
     {
         logInfo(VideoTest, "Command Sub Matched ");
+        std::cout << "Command Sub Matched " << std::endl;
         ++mp_up->disc_count_;
     }
     else
@@ -371,6 +375,8 @@ bool VideoTestSubscriber::test()
     --comm_count_;
     lock.unlock();
 
+    cout << "TEST STARTED" << endl;
+
     t_start_ = std::chrono::steady_clock::now();
     t_drop_start_ = t_start_;
     m_status = 0;
@@ -444,7 +450,7 @@ void VideoTestSubscriber::InitGStreamer()
             g_signal_connect(appsrc, "need-data", G_CALLBACK(start_feed_cb), this);
             g_signal_connect(appsrc, "enough-data", G_CALLBACK(stop_feed_cb), this);
             GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight, 
+                "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight,
                 "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
             gst_app_src_set_caps(GST_APP_SRC(appsrc), caps);
             gst_caps_unref(caps);
@@ -550,6 +556,7 @@ gboolean VideoTestSubscriber::push_data_cb(VideoTestSubscriber* sub)
         if (ret != GST_FLOW_OK)
         {
             // We got some error, stop sending data
+            std::cout << "Error on received frame" << std::endl;
             return FALSE;
         }
     }
