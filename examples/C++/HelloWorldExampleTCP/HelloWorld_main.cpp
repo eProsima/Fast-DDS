@@ -80,16 +80,26 @@ int main(int argc, char** argv)
     }
     else
     {
-        std::cout << "publisher OR subscriber argument needed" << std::endl;
-        std::cout << "publisher has optional arguments: publisher [times] [interval] [wan_ip] [port] " << std::endl;
-        std::cout << "\ttimes: Number of messages to send (default: unlimited = 0). " << std::endl;
-        std::cout << "\t\tIf times is set greater than 0, no messages will be sent until a subscriber matches. " << std::endl;
-        std::cout << "\tinterval: Milliseconds between messages (default: 100). " << std::endl;
-        std::cout << "\twap_ip: Public IP Address of the server. " << std::endl;
-        std::cout << "\tport: Physical Port of the server, this port must be allowed in the router of the server. " << std::endl;
-        std::cout << "\nsubscriber has optional arguments: subscriber [wan_ip] [port] " << std::endl;
-        std::cout << "\twap_ip: Public IP Address of the server. " << std::endl;
-        std::cout << "\tport: Physical Port of the server. " << std::endl;
+        std::cout << "There was an error with the input arguments." << std::endl << std::endl;
+        std::cout << "This example needs at least the argument to set if it is going to work" << std::endl;
+        std::cout << "as a 'publisher' or as a 'subscriber'." << std::endl << std::endl;
+        
+        std::cout << "The publisher is going to work as a TCP server and if the test" << std::endl;
+        std::cout << "is through a NAT it must have its public IP in the wan_ip argument." << std::endl << std::endl;
+        std::cout << "The optional arguments are: publisher [times] [interval] [wan_ip] [port] " << std::endl;
+        std::cout << "\t- times: Number of messages to send (default: unlimited = 0). " << std::endl;
+        std::cout << "\t\t If times is set greater than 0, no messages will be sent until a subscriber matches. " << std::endl;
+        std::cout << "\t- interval: Milliseconds between messages (default: 100). " << std::endl;
+        std::cout << "\t- wap_ip: Public IP Address of the publisher. " << std::endl;
+        std::cout << "\t- port: Physical Port to listening incoming connections, this port must be allowed in" << std::endl;
+        std::cout << "\t\tthe router of the publisher if the test is going to use WAN IP. " << std::endl << std::endl;
+        
+        std::cout << "The subscriber is going to work as a TCP client. If the test is through a NAT" << std::endl;
+        std::cout << "server_ip must have the WAN IP of the publisher and if the test is on LAN" << std::endl;
+        std::cout << "it must have the LAN IP of the publisher" << std::endl << std::endl;
+        std::cout << "The optional arguments are: subscriber [server_ip] [port] " << std::endl;
+        std::cout << "\t- server_ip: IP Address of the publisher. " << std::endl;
+        std::cout << "\t- port: Physical Port where the publisher is listening for connections." << std::endl << std::endl;
 
         Log::Reset();
         return 0;
