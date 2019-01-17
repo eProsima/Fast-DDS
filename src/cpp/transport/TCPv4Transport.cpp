@@ -375,7 +375,6 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                 {
                     if (memcmp(IPLocator::getWan(*unicastLocator), IPLocator::getWan(*it), 4) == 0 && unicastLocator->port == it->port)
                     {
-                        ++it;
                         addLocator = false;
                         break;
                     }
@@ -388,7 +387,6 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                 {
                     if (memcmp(IPLocator::getIPv4(*unicastLocator), IPLocator::getIPv4(*it), 4) == 0 && unicastLocator->port == it->port)
                     {
-                        ++it;
                         addLocator = false;
                         break;
                     }
@@ -410,13 +408,12 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                         break;
                     }
                 }
-            }
 
-            if (addLocator)
-            {
-                pendingUnicast.push_back(*it);
+                if (addLocator)
+                {
+                    pendingUnicast.push_back(*it);
+                }
             }
-
             ++it;
         }
 
