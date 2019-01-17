@@ -105,6 +105,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
         add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
 
+
         add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
         target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(DynamicComplexTypesTests PRIVATE
@@ -117,7 +118,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             target_link_libraries(DynamicComplexTypesTests ${PRIVACY} fastcdr)
         endif()
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
-
 
     endif()
 endif()

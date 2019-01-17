@@ -6,7 +6,7 @@
             <builtin>
                 <domainId>80</domainId>
                 <leaseDuration>
-                    <durationbyname>INFINITE</durationbyname>
+                    <sec>DURATION_INFINITY</sec>
                 </leaseDuration>
             </builtin>
         </rtps>

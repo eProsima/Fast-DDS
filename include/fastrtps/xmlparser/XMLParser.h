@@ -178,6 +178,11 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLHistoryMemoryPolicy(tinyxml2::XMLElement* elem,
 															rtps::MemoryManagementPolicy_t& historyMemoryPolicy, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLLocatorList(tinyxml2::XMLElement* elem, rtps::LocatorList_t& locatorList, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLWriterTimes(tinyxml2::XMLElement* elem, rtps::WriterTimes& times, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLReaderTimes(tinyxml2::XMLElement* elem, rtps::ReaderTimes& times, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLDuration(tinyxml2::XMLElement* elem, rtps::Duration_t& duration, uint8_t ident);

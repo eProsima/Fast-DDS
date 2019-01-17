@@ -263,6 +263,7 @@ protected:
     std::shared_ptr<std::thread> ioServiceThread;
     RTCPMessageManager* mRTCPMessageManager;
     mutable std::mutex mSocketsMapMutex;
+    std::atomic<bool> mSendRetryActive;
 
     std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
     std::vector<TCPAcceptor*> mDeletedAcceptors;
@@ -338,6 +339,11 @@ protected:
     void Clean(); // Must be called on childs destructors!
 
     virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const = 0;
+
+    /**
+     * Shutdown method to close the connections of the transports.
+    */
+    virtual void Shutdown() override;
 };
 
 } // namespace rtps
