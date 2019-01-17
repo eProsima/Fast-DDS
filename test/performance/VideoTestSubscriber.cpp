@@ -629,6 +629,16 @@ void VideoTestSubscriber::analyzeTimes()
 {
     if (samples_.size() > 0)
     {
+        for (int i = 0; i < drops_.size(); ++i)
+        {
+            drops_[i] -= drops_[0];
+        }
+
+        if (drops_.size() > 1)
+        {
+            drops_.pop_back();
+        }
+
         TimeStats TS;
         TS.received = static_cast<uint32_t>(samples_.size());
         {
@@ -643,7 +653,8 @@ void VideoTestSubscriber::analyzeTimes()
                 auxstdev += pow(((*tit) - TS.pAvgMean), 2);
             }
             auxstdev = sqrt(auxstdev / avgs_.size());
-            TS.pAvgStdev = static_cast<double>(round(auxstdev));
+            TS.pAvgStdev = auxstdev;
+            //TS.pAvgStdev = static_cast<double>(round(auxstdev));
 
             std::sort(avgs_.begin(), avgs_.end());
             size_t elem = 0;
@@ -684,7 +695,8 @@ void VideoTestSubscriber::analyzeTimes()
                 auxstdev += pow(((*tit) - TS.pDropMean), 2);
             }
             auxstdev = sqrt(auxstdev / drops_.size());
-            TS.pDropStdev = static_cast<double>(round(auxstdev));
+            //TS.pDropStdev = static_cast<double>(round(auxstdev));
+            TS.pDropStdev = auxstdev;
 
             std::sort(drops_.begin(), drops_.end());
             size_t elem = 0;
@@ -734,21 +746,21 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
         Drop 99.99%%, Drop max" << std::endl;
 
     printf("Statistics for video test \n");
-    printf("     Samples,   Avg stdev,    Avg Mean,     min Avg,     Avg 50%%,     Avg 90%%,   Avg 99%%,\
-    Avg 99.99%%,     Avg max,  Drop stdev,   Drop Mean,    min Drop,    Drop 50%%,    Drop 90%%,    Drop 99%%,\
- Drop 99.99%%,    Drop max\n");
-    printf("------------,------------,------------,------------,------------,------------,------------,\
-------------,------------,------------,------------,------------,------------,------------,------------,\
-------------,------------\n");
+    printf("    Samples,  Avg stdev,   Avg Mean,    min Avg,    Avg 50%%,    Avg 90%%,    Avg 99%%,   Avg 99.99%%,    Avg max\n");
+    printf("-----------,-----------,-----------,-----------,-----------,-----------,-----------,-------------,-----------\n");
+    printf("%11u,%11.2f,%11.2f,%11.2f,%11.2f,%11.2f,%11.2f,%13.2f,%11.2f \n\n\n",
+        TS.received, TS.pAvgStdev, TS.pAvgMean, TS.m_minAvg, TS.pAvg50, TS.pAvg90, TS.pAvg99, TS.pAvg9999, TS.m_maxAvg);
 
-    output_file_csv << TS.received << "," << TS.pAvgMean << "," << TS.m_minAvg << "," << TS.m_minAvg << "," <<
+    printf("    Samples, FameDrop stdev, FameDrop Mean, min FameDrop,  FameDrop 50%%,  FameDrop 90%%,  FameDrop 99%%, FameDrop 99.99%%,  FameDrop max\n");
+    printf("-----------,---------------,--------------,-------------,--------------,--------------,--------------,----------------,--------------\n");
+    printf("%11u,%15.2f,%14.2f,%13.2f,%14.2f,%14.2f,%14.2f,%16.2f,%14.2f \n",
+        TS.received, TS.pDropStdev, TS.pDropMean, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
+
+    output_file_csv << TS.received << "," << TS.pAvgStdev << "," << TS.pAvgMean << "," << TS.m_minAvg <<
         TS.pAvg50 << "," << TS.pAvg90 << "," << TS.pAvg99 << "," << TS.pAvg9999 << "," << TS.m_maxAvg << "," <<
-        TS.pDropMean << "," << TS.m_minDrop << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
+        TS.pDropStdev << "," << TS.pDropMean << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
         "," << TS.pDrop99 << "," << TS.pDrop9999 << "," << TS.m_maxDrop << "," << std::endl;
 
-    printf("%12u,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f,%12.2f \n",
-        TS.received, TS.pAvgMean, TS.m_minAvg, TS.m_minAvg, TS.pAvg50, TS.pAvg90, TS.pAvg99, TS.pAvg9999, TS.m_maxAvg,
-        TS.pDropMean, TS.m_minDrop, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
 
     if (m_bExportCsv)
     {
