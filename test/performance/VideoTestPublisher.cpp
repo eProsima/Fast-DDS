@@ -471,7 +471,10 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
 
                     if (rand() % 100 > sub->m_dropRate)
                     {
-                        sub->mp_datapub->write((void*)sub->mp_video_out);
+                        if (!sub->mp_datapub->write((void*)sub->mp_video_out))
+                        {
+                            std::cout << "VideoPublication::run -> Cannot write video" << std::endl;
+                        }
                     }
                     gst_buffer_unmap(buffer, &map);
                 }
@@ -484,8 +487,16 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
             gst_sample_unref(sample);
             returned_value =  GST_FLOW_OK;
         }
+        else
+        {
+            std::cout << "VideoPublication::run -> Sample is nullptr" << std::endl;
+        }
 
         returned_value =  GST_FLOW_ERROR;
+    }
+    else
+    {
+        std::cout << "VideoPublication::run -> Sample is nullptr" << std::endl;
     }
 
     returned_value =  GST_FLOW_OK;
