@@ -629,7 +629,7 @@ void VideoTestSubscriber::analyzeTimes()
 {
     if (samples_.size() > 0)
     {
-        for (int i = 0; i < drops_.size(); ++i)
+        for (uint32_t i = 0; i < drops_.size(); ++i)
         {
             drops_[i] -= drops_[0];
         }
