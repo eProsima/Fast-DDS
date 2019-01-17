@@ -642,88 +642,94 @@ void VideoTestSubscriber::analyzeTimes()
         TimeStats TS;
         TS.received = static_cast<uint32_t>(samples_.size());
         {
-            // AVG
-            TS.m_minAvg = *std::min_element(avgs_.begin(), avgs_.end());
-            TS.m_maxAvg = *std::max_element(avgs_.begin(), avgs_.end());
-
-            TS.pAvgMean = std::accumulate(avgs_.begin(), avgs_.end(), double(0)) / avgs_.size();
-            double auxstdev = 0;
-            for (std::vector<double>::iterator tit = avgs_.begin(); tit != avgs_.end(); ++tit)
+            if (avgs_.size() > 0)
             {
-                auxstdev += pow(((*tit) - TS.pAvgMean), 2);
+                // AVG
+                TS.m_minAvg = *std::min_element(avgs_.begin(), avgs_.end());
+                TS.m_maxAvg = *std::max_element(avgs_.begin(), avgs_.end());
+
+                TS.pAvgMean = std::accumulate(avgs_.begin(), avgs_.end(), double(0)) / avgs_.size();
+                double auxstdev = 0;
+                for (std::vector<double>::iterator tit = avgs_.begin(); tit != avgs_.end(); ++tit)
+                {
+                    auxstdev += pow(((*tit) - TS.pAvgMean), 2);
+                }
+                auxstdev = sqrt(auxstdev / avgs_.size());
+                TS.pAvgStdev = auxstdev;
+                //TS.pAvgStdev = static_cast<double>(round(auxstdev));
+
+                std::sort(avgs_.begin(), avgs_.end());
+                size_t elem = 0;
+
+                elem = static_cast<size_t>(avgs_.size() * 0.5);
+                if (elem > 0 && elem <= avgs_.size())
+                    TS.pAvg50 = avgs_.at(--elem);
+                else
+                    TS.pAvg50 = NAN;
+
+                elem = static_cast<size_t>(avgs_.size() * 0.9);
+                if (elem > 0 && elem <= avgs_.size())
+                    TS.pAvg90 = avgs_.at(--elem);
+                else
+                    TS.pAvg90 = NAN;
+
+                elem = static_cast<size_t>(avgs_.size() * 0.99);
+                if (elem > 0 && elem <= avgs_.size())
+                    TS.pAvg99 = avgs_.at(--elem);
+                else
+                    TS.pAvg99 = NAN;
+
+                elem = static_cast<size_t>(avgs_.size() * 0.9999);
+                if (elem > 0 && elem <= avgs_.size())
+                    TS.pAvg9999 = avgs_.at(--elem);
+                else
+                    TS.pAvg9999 = NAN;
             }
-            auxstdev = sqrt(auxstdev / avgs_.size());
-            TS.pAvgStdev = auxstdev;
-            //TS.pAvgStdev = static_cast<double>(round(auxstdev));
-
-            std::sort(avgs_.begin(), avgs_.end());
-            size_t elem = 0;
-
-            elem = static_cast<size_t>(avgs_.size() * 0.5);
-            if (elem > 0 && elem <= avgs_.size())
-                TS.pAvg50 = avgs_.at(--elem);
-            else
-                TS.pAvg50 = NAN;
-
-            elem = static_cast<size_t>(avgs_.size() * 0.9);
-            if (elem > 0 && elem <= avgs_.size())
-                TS.pAvg90 = avgs_.at(--elem);
-            else
-                TS.pAvg90 = NAN;
-
-            elem = static_cast<size_t>(avgs_.size() * 0.99);
-            if (elem > 0 && elem <= avgs_.size())
-                TS.pAvg99 = avgs_.at(--elem);
-            else
-                TS.pAvg99 = NAN;
-
-            elem = static_cast<size_t>(avgs_.size() * 0.9999);
-            if (elem > 0 && elem <= avgs_.size())
-                TS.pAvg9999 = avgs_.at(--elem);
-            else
-                TS.pAvg9999 = NAN;
         }
         {
-            // DROP
-            TS.m_minDrop = *std::min_element(drops_.begin(), drops_.end());
-            TS.m_maxDrop = *std::max_element(drops_.begin(), drops_.end());
-
-            TS.pDropMean = std::accumulate(drops_.begin(), drops_.end(), double(0)) / drops_.size();
-            double auxstdev = 0;
-            for (std::vector<double>::iterator tit = drops_.begin(); tit != drops_.end(); ++tit)
+            if (drops_.size() > 0)
             {
-                auxstdev += pow(((*tit) - TS.pDropMean), 2);
+                // DROP
+                TS.m_minDrop = *std::min_element(drops_.begin(), drops_.end());
+                TS.m_maxDrop = *std::max_element(drops_.begin(), drops_.end());
+
+                TS.pDropMean = std::accumulate(drops_.begin(), drops_.end(), double(0)) / drops_.size();
+                double auxstdev = 0;
+                for (std::vector<double>::iterator tit = drops_.begin(); tit != drops_.end(); ++tit)
+                {
+                    auxstdev += pow(((*tit) - TS.pDropMean), 2);
+                }
+                auxstdev = sqrt(auxstdev / drops_.size());
+                //TS.pDropStdev = static_cast<double>(round(auxstdev));
+                TS.pDropStdev = auxstdev;
+
+                std::sort(drops_.begin(), drops_.end());
+                size_t elem = 0;
+
+                elem = static_cast<size_t>(drops_.size() * 0.5);
+                if (elem > 0 && elem <= drops_.size())
+                    TS.pDrop50 = drops_.at(--elem);
+                else
+                    TS.pDrop50 = NAN;
+
+                elem = static_cast<size_t>(drops_.size() * 0.9);
+                if (elem > 0 && elem <= drops_.size())
+                    TS.pDrop90 = drops_.at(--elem);
+                else
+                    TS.pDrop90 = NAN;
+
+                elem = static_cast<size_t>(drops_.size() * 0.99);
+                if (elem > 0 && elem <= drops_.size())
+                    TS.pDrop99 = drops_.at(--elem);
+                else
+                    TS.pDrop99 = NAN;
+
+                elem = static_cast<size_t>(drops_.size() * 0.9999);
+                if (elem > 0 && elem <= drops_.size())
+                    TS.pDrop9999 = drops_.at(--elem);
+                else
+                    TS.pDrop9999 = NAN;
             }
-            auxstdev = sqrt(auxstdev / drops_.size());
-            //TS.pDropStdev = static_cast<double>(round(auxstdev));
-            TS.pDropStdev = auxstdev;
-
-            std::sort(drops_.begin(), drops_.end());
-            size_t elem = 0;
-
-            elem = static_cast<size_t>(drops_.size() * 0.5);
-            if (elem > 0 && elem <= drops_.size())
-                TS.pDrop50 = drops_.at(--elem);
-            else
-                TS.pDrop50 = NAN;
-
-            elem = static_cast<size_t>(drops_.size() * 0.9);
-            if (elem > 0 && elem <= drops_.size())
-                TS.pDrop90 = drops_.at(--elem);
-            else
-                TS.pDrop90 = NAN;
-
-            elem = static_cast<size_t>(drops_.size() * 0.99);
-            if (elem > 0 && elem <= drops_.size())
-                TS.pDrop99 = drops_.at(--elem);
-            else
-                TS.pDrop99 = NAN;
-
-            elem = static_cast<size_t>(drops_.size() * 0.9999);
-            if (elem > 0 && elem <= drops_.size())
-                TS.pDrop9999 = drops_.at(--elem);
-            else
-                TS.pDrop9999 = NAN;
         }
 
         m_stats.push_back(TS);
