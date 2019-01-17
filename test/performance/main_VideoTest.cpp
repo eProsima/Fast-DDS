@@ -145,7 +145,7 @@ const option::Descriptor usage[] = {
 #endif
     { LARGE_DATA, 0, "l", "large",              Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",                   Arg::String,    "\t--xml \tXML Configuration file." },
-    { TEST_TIME, 0, "", "testtime",             Arg::Numeric,   "\t--testtime \tTest duration time." },
+    { TEST_TIME, 0, "", "testtime",             Arg::Numeric,   "\t--testtime \tTest duration time in seconds." },
     { DROP_RATE, 0, "", "droprate",             Arg::Numeric,   "\t--droprate \tSending drop percentage ( 0 - 100 )." },
     { SEND_SLEEP_TIME, 0, "", "sleeptime",      Arg::Numeric,   "\t--sleeptime \tMaximum sleep time before shipments (milliseconds)." },
     { FORCED_DOMAIN, 0, "", "domain",           Arg::Numeric,   "\t--domain \tRTPS Domain." },
@@ -182,7 +182,7 @@ int main(int argc, char** argv)
 
     bool pub_sub = false;
     int sub_number = 1;
-    int test_time = 100;
+    int test_time = 10;
     int drop_rate = 0;
     int max_sleep_time = 0;
     int forced_domain = -1;

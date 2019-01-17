@@ -503,7 +503,7 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
 
     std::chrono::steady_clock::time_point send_end = std::chrono::steady_clock::now();
     std::unique_lock<std::mutex> lock(sub->mutex_);
-    if(std::chrono::duration<double, std::deci>(send_end - sub->send_start_).count() >= sub->m_testTime)
+    if(std::chrono::duration<double, std::ratio<1, 1>>(send_end - sub->send_start_).count() >= sub->m_testTime)
     {
         sub->timer_on_ = true;
         sub->timer_cond_.notify_one();
