@@ -63,7 +63,7 @@ extern const char* KEEP_ALIVE_TIMEOUT;
 extern const char* MAX_LOGICAL_PORT;
 extern const char* LOGICAL_PORT_RANGE;
 extern const char* LOGICAL_PORT_INCREMENT;
-extern const char* AVOID_TCP_DELAY;
+extern const char* ENABLE_TCP_NODELAY;
 extern const char* METADATA_LOGICAL_PORT;
 extern const char* LISTENING_PORTS;
 extern const char* CALCULATE_CRC;

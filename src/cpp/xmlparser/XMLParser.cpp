@@ -460,7 +460,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
             strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
             strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
-            strcmp(name, AVOID_TCP_DELAY) == 0)
+            strcmp(name, ENABLE_TCP_NODELAY) == 0)
         {
             // Parsed outside of this method
         }
@@ -543,13 +543,13 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                     return XMLP_ret::XML_ERROR;
                 pTCPDesc->logical_port_increment = static_cast<uint16_t>(iPort);
             }
-            // avoid_tcp_delay - boolType
-            else if (strcmp(name, AVOID_TCP_DELAY) == 0)
+            // enable_tcp_nodelay - boolType
+            else if (strcmp(name, ENABLE_TCP_NODELAY) == 0)
             {
-                bool bAvoidDelay(false);
-                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &bAvoidDelay, 0))
+                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->enable_tcp_nodelay, 0))
+                {
                     return XMLP_ret::XML_ERROR;
-                pTCPDesc->avoid_tcp_delay = bAvoidDelay;
+                }
             }
             else if (strcmp(name, LISTENING_PORTS) == 0)
             {
