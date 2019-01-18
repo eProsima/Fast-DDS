@@ -81,6 +81,9 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
                 }
                 break;
             }
+
+            default:
+                break;
         }
 
         return true;
@@ -781,7 +784,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
             return false;
         }
     }
-    return qos_size;
+    return true;
 }
 
 bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const uint16_t search_pid)
