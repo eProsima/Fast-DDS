@@ -182,6 +182,7 @@ XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
         ret = parseXMLTransportData(p_element);
         if (ret != XMLP_ret::XML_OK)
         {
+            logError(XMLPARSER, "Error parsing transports");
             return ret;
         }
         p_element = p_element->NextSiblingElement(TRANSPORT_DESCRIPTOR);
@@ -1543,6 +1544,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
 
     tinyxml2::XMLElement* p_profile = p_root->FirstChildElement();
     const char* tag = nullptr;
+    bool parseOk = true;
     while (nullptr != p_profile)
     {
         if (nullptr != (tag = p_profile->Value()))
@@ -1550,27 +1552,27 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             // If profile parsing functions fails, log and continue.
             if (strcmp(tag, TRANSPORT_DESCRIPTORS) == 0)
             {
-                parseXMLTransportsProf(p_profile);
+                parseOk &= parseXMLTransportsProf(p_profile) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, PARTICIPANT) == 0)
             {
-                parseXMLParticipantProf(p_profile, profilesNode);
+                parseOk &= parseXMLParticipantProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, PUBLISHER) == 0 || strcmp(tag, DATA_WRITER) == 0)
             {
-                parseXMLPublisherProf(p_profile, profilesNode);
+                parseOk &= parseXMLPublisherProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, SUBSCRIBER) == 0 || strcmp(tag, DATA_READER) == 0)
             {
-                parseXMLSubscriberProf(p_profile, profilesNode);
+                parseOk &= parseXMLSubscriberProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, TOPIC) == 0)
             {
-                parseXMLTopicData(p_profile, profilesNode);
+                parseOk &= parseXMLTopicData(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, TYPES) == 0)
             {
-                parseXMLTypes(p_profile);
+                parseOk &= parseXMLTypes(p_profile) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, QOS_PROFILE) == 0)
             {
@@ -1588,6 +1590,12 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 logError(XMLPARSER, "Not expected tag: '" << tag << "'");
             }
+        }
+
+        if (!parseOk)
+        {
+            logError(XMLPARSER, "Error parsing profiles");
+            return XMLP_ret::XML_ERROR;
         }
         p_profile = p_profile->NextSiblingElement();
     }
