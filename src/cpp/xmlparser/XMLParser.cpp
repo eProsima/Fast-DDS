@@ -618,6 +618,7 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
 
         if (ret != XMLP_ret::XML_OK)
         {
+            logError(XMLPARSER, "Error parsing type " << type << ".");
             break;
         }
     }
@@ -1070,7 +1071,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         p_dynamictypebuilder_t contentType = getDiscriminatorTypeBuilder(memberType);
         if (contentType == nullptr)
         {
-            logError(XMLPARSER, "Error parsing sequence element type: Cannot be recognized.");
+            logError(XMLPARSER, "Error parsing sequence element type: Cannot be recognized: " << memberType);
             return nullptr;
         }
 
@@ -1425,6 +1426,19 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         }
     }
 
+
+    if (memberBuilder == nullptr)
+    {
+        if (!isArray)
+        {
+            logError(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
+        }
+        else
+        {
+            logError(XMLPARSER, "Failed creating " << memberType << " array: " << memberName);
+        }
+    }
+
     const char* memberTopicKey = p_root->Attribute(KEY);
     if (memberTopicKey != nullptr)
     {
@@ -1594,7 +1608,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
 
         if (!parseOk)
         {
-            logError(XMLPARSER, "Error parsing profiles");
+            logError(XMLPARSER, "Error parsing profile's tag " << tag);
             return XMLP_ret::XML_ERROR;
         }
         p_profile = p_profile->NextSiblingElement();
