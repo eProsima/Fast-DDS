@@ -56,8 +56,11 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @param history History QoS policy for the reader
          * @param resource Resource Limit QoS policy for the reader
          */
-        SubscriberHistory(SubscriberImpl* pimpl,uint32_t payloadMax,
-                HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource, rtps::MemoryManagementPolicy_t mempolicy);
+        SubscriberHistory(SubscriberImpl* pimpl,
+                          uint32_t payloadMax,
+                          const HistoryQosPolicy& history,
+                          const ResourceLimitsQosPolicy& resource,
+                          rtps::MemoryManagementPolicy_t mempolicy);
         virtual ~SubscriberHistory();
 
         /**

@@ -149,9 +149,7 @@ inline bool IsAddressDefined(const Locator_t& loc)
 
 inline bool IsLocatorValid(const Locator_t&loc)
 {
-    if (loc.kind < 0)
-        return false;
-    return true;
+    return (0 <= loc.kind);
 }
 
 inline bool operator<(const Locator_t &loc1, const Locator_t &loc2)
@@ -306,7 +304,7 @@ public:
         }
     }
 
-    RTPS_DllAPI bool empty() {
+    RTPS_DllAPI bool empty() const {
         return m_locators.empty();
     }
 
@@ -338,9 +336,9 @@ public:
         return false;
     }
 
-    RTPS_DllAPI bool isValid()
+    RTPS_DllAPI bool isValid() const
     {
-        for (LocatorListIterator it = this->begin(); it != this->end(); ++it)
+        for (LocatorListConstIterator it = this->begin(); it != this->end(); ++it)
         {
             if (!IsLocatorValid(*it))
                 return false;

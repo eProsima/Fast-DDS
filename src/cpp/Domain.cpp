@@ -160,7 +160,7 @@ Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantLis
 {
     Participant* pubsubpar = new Participant();
     ParticipantImpl* pspartimpl = new ParticipantImpl(att,pubsubpar,listen);
-    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps,&pspartimpl->m_rtps_listener);
+    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &pspartimpl->m_rtps_listener);
 
     if(part == nullptr)
     {
@@ -204,7 +204,7 @@ Publisher* Domain::createPublisher(Participant *part, const std::string &publish
     return createPublisher(part, publisher_att, listen);
 }
 
-Publisher* Domain::createPublisher(Participant *part, PublisherAttributes &att, PublisherListener *listen)
+Publisher* Domain::createPublisher(Participant *part, const PublisherAttributes &att, PublisherListener *listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
@@ -252,7 +252,7 @@ Subscriber* Domain::createSubscriber(Participant *part, const std::string &subsc
     return createSubscriber(part, subscriber_att, listen);
 }
 
-Subscriber* Domain::createSubscriber(Participant *part, SubscriberAttributes &att, SubscriberListener *listen)
+Subscriber* Domain::createSubscriber(Participant *part, const SubscriberAttributes &att, SubscriberListener *listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)

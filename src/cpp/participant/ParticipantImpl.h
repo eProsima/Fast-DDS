@@ -63,7 +63,7 @@ class ParticipantImpl
     typedef std::vector<t_p_SubscriberPair> t_v_SubscriberPairs;
 
     private:
-    ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen = nullptr);
+    ParticipantImpl(const ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen = nullptr);
     virtual ~ParticipantImpl();
 
     public:
@@ -88,7 +88,7 @@ class ParticipantImpl
      * @param listen Pointer to the listener.
      * @return Pointer to the created Publisher.
      */
-    Publisher* createPublisher(PublisherAttributes& att, PublisherListener* listen=nullptr);
+    Publisher* createPublisher(const PublisherAttributes& att, PublisherListener* listen=nullptr);
 
     /**
      * Create a Subscriber in this Participant.
@@ -96,7 +96,7 @@ class ParticipantImpl
      * @param listen Pointer to the listener.
      * @return Pointer to the created Subscriber.
      */
-    Subscriber* createSubscriber(SubscriberAttributes& att, SubscriberListener* listen=nullptr);
+    Subscriber* createSubscriber(const SubscriberAttributes& att, SubscriberListener* listen=nullptr);
 
     /**
      * Remove a Publisher from this participant.

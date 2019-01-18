@@ -35,8 +35,8 @@
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 
-PublisherImpl::PublisherImpl(ParticipantImpl* p,TopicDataType*pdatatype,
-        PublisherAttributes& att,PublisherListener* listen ):
+PublisherImpl::PublisherImpl(ParticipantImpl* p, TopicDataType*pdatatype,
+        const PublisherAttributes& att, PublisherListener* listen ):
     mp_participant(p),
     mp_writer(nullptr),
     mp_type(pdatatype),

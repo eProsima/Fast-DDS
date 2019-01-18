@@ -61,7 +61,7 @@ class PublisherImpl
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
     PublisherImpl(ParticipantImpl* p,TopicDataType* ptype,
-            PublisherAttributes& att,PublisherListener* p_listen = nullptr);
+            const PublisherAttributes& att,PublisherListener* p_listen = nullptr);
 
     virtual ~PublisherImpl();
 

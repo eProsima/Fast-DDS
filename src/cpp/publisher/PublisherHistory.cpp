@@ -34,8 +34,11 @@ extern eprosima::fastrtps::rtps::WriteParams WRITE_PARAM_DEFAULT;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-PublisherHistory::PublisherHistory(PublisherImpl* pimpl, uint32_t payloadMaxSize, HistoryQosPolicy& history,
-        ResourceLimitsQosPolicy& resource, MemoryManagementPolicy_t mempolicy):
+PublisherHistory::PublisherHistory(PublisherImpl* pimpl,
+                                   uint32_t payloadMaxSize,
+                                   const HistoryQosPolicy& history,
+                                   const ResourceLimitsQosPolicy& resource,
+                                   MemoryManagementPolicy_t mempolicy):
     WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
                 history.kind == KEEP_ALL_HISTORY_QOS ?
                         resource.allocated_samples :

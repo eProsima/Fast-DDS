@@ -36,8 +36,8 @@ namespace eprosima {
 namespace fastrtps {
 
 
-SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
-        SubscriberAttributes& att,SubscriberListener* listen):
+SubscriberImpl::SubscriberImpl(ParticipantImpl* p, TopicDataType* ptype,
+        const SubscriberAttributes& att, SubscriberListener* listen):
     mp_participant(p),
     mp_reader(nullptr),
     mp_type(ptype),

@@ -67,7 +67,7 @@ public:
      * @param listen ParticipantListener Pointer.
      * @return Participant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI static Participant* createParticipant(ParticipantAttributes &att,
+    RTPS_DllAPI static Participant* createParticipant(ParticipantAttributes& att,
                                                       ParticipantListener *listen = nullptr);
 
     RTPS_DllAPI static void getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes);
@@ -91,7 +91,7 @@ public:
      * @return Pointer to the created Publisher (nullptr if not created).
      */
     RTPS_DllAPI static Publisher* createPublisher(Participant *part,
-                                                  PublisherAttributes &att,
+                                                  const PublisherAttributes& att,
                                                   PublisherListener *listen = nullptr);
 
     RTPS_DllAPI static void getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes);
@@ -114,7 +114,7 @@ public:
      * @return Pointer to the created Subscriber (nullptr if not created).
      */
     RTPS_DllAPI static Subscriber* createSubscriber(Participant *part,
-                                                    SubscriberAttributes &att,
+                                                    const SubscriberAttributes& att,
                                                     SubscriberListener *listen = nullptr);
 
     RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);

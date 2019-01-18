@@ -47,7 +47,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
+ParticipantImpl::ParticipantImpl(const ParticipantAttributes& patt, Participant* pspart, ParticipantListener* listen):
     m_att(patt),
     mp_rtpsParticipant(nullptr),
     mp_participant(pspart),
@@ -111,7 +111,7 @@ const GUID_t& ParticipantImpl::getGuid() const
     return this->mp_rtpsParticipant->getGuid();
 }
 
-Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
+Publisher* ParticipantImpl::createPublisher(const PublisherAttributes& att,
         PublisherListener* listen)
 {
     logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName());
@@ -231,7 +231,7 @@ std::vector<std::string> ParticipantImpl::getParticipantNames() const {
     return mp_rtpsParticipant->getParticipantNames();
 }
 
-Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
+Subscriber* ParticipantImpl::createSubscriber(const SubscriberAttributes& att,
         SubscriberListener* listen)
 {
     logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName())
