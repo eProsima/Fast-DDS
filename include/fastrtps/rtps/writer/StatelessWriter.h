@@ -21,9 +21,10 @@
 #define STATELESSWRITER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "../common/Time_t.h"
 #include "RTPSWriter.h"
 #include "ReaderLocator.h"
+#include "../common/Time_t.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 
 #include <list>
 
@@ -118,7 +119,7 @@ class StatelessWriter : public RTPSWriter
     void update_locators_nts_(const GUID_t& optionalGuid);
 
     std::vector<ReaderLocator> reader_locators, fixed_locators;
-    std::vector<RemoteReaderAttributes> m_matched_readers;
+    ResourceLimitedVector<RemoteReaderAttributes> m_matched_readers;
     std::vector<std::unique_ptr<FlowController> > m_controllers;
 };
 }

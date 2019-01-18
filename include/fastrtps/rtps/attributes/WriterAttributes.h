@@ -133,6 +133,14 @@ class  RemoteReaderAttributes
 
         }
 
+        auto compare_guid_function() const
+        {
+            return [this](const RemoteReaderAttributes& rhs)
+            {
+                return this->guid == rhs.guid;
+            };
+        }
+
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
 

@@ -435,29 +435,24 @@ bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    std::vector<LocatorList_t> allLocatorLists;
-    bool found = false, addGuid = !has_builtin_guid();
-
-    auto rit = m_matched_readers.begin();
-    while(rit!=m_matched_readers.end())
+    bool found = m_matched_readers.remove_if(rdata.compare_guid_function());
+    if (found)
     {
-        if((*rit).guid == rdata.guid)
+        std::vector<LocatorList_t> allLocatorLists;
+        bool addGuid = !has_builtin_guid();
+
+        for (auto rit = m_matched_readers.begin(); rit != m_matched_readers.end(); ++rit)
         {
-            rit = m_matched_readers.erase(rit);
-            found = true;
-            continue;
+            LocatorList_t locators((*rit).endpoint.unicastLocatorList);
+            locators.push_back((*rit).endpoint.multicastLocatorList);
+            allLocatorLists.push_back(locators);
         }
 
-        LocatorList_t locators((*rit).endpoint.unicastLocatorList);
-        locators.push_back((*rit).endpoint.multicastLocatorList);
-        allLocatorLists.push_back(locators);
-        ++rit;
+        if (addGuid) all_remote_readers_.remove(rdata.guid);
+        update_cached_info_nts(allLocatorLists);
+
+        update_locators_nts_(c_Guid_Unknown);
     }
-
-    if (addGuid) all_remote_readers_.remove(rdata.guid);
-    update_cached_info_nts(allLocatorLists);
-
-    update_locators_nts_(c_Guid_Unknown);
 
     return found;
 }
@@ -465,15 +460,7 @@ bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 bool StatelessWriter::matched_reader_is_matched(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(auto rit = m_matched_readers.begin();
-            rit!=m_matched_readers.end();++rit)
-    {
-        if((*rit).guid == rdata.guid)
-        {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(m_matched_readers.begin(), m_matched_readers.end(), rdata.compare_guid_function());
 }
 
 void StatelessWriter::unsent_changes_reset()
