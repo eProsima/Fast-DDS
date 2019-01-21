@@ -420,6 +420,23 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
         unicastResult.push_back(pendingUnicast);
     }
 
+    if (!IsInterfaceWhiteListEmpty())
+    {
+        bool bValid = false;
+        for (Locator_t loc : unicastResult)
+        {
+            if (IsInterfaceAllowed(IPLocator::toIPv4string(loc)))
+            {
+                bValid = true;
+            }
+        }
+
+        if (!bValid)
+        {
+            logError(RTCP, "There isn't any valid TCP Address on the whitelist");
+        }
+    }
+
     LocatorList_t result(std::move(unicastResult));
     return result;
 }
