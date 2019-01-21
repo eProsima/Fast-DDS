@@ -170,7 +170,9 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     std::ostringstream st;
     st << "VideoTest_";
     if (hostname)
+    {
         st << asio::ip::host_name() << "_";
+    }
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
 
@@ -188,7 +190,9 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     std::ostringstream pct;
     pct << "VideoTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_SUB2PUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -196,7 +200,6 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-
     if (mp_commandpub == nullptr)
     {
         return false;
@@ -208,7 +211,9 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     std::ostringstream sct;
     sct << "VideoTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_PUB2SUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -216,19 +221,16 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-
     if (mp_commandsub == nullptr)
     {
         return false;
     }
-
     return true;
 }
 
 void VideoTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
-
     if(info.status == MATCHED_MATCHING)
     {
         logInfo(VideoTest,"Data Sub Matched ");
@@ -270,7 +272,6 @@ void VideoTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*
 void VideoTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
-
     if(info.status == MATCHED_MATCHING)
     {
         logInfo(VideoTest, "Command Sub Matched ");
@@ -584,8 +585,14 @@ void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpoin
             printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
 
             g_clear_error(&err);
-            if (err) g_error_free(err);
-            if (debug_info) g_free(debug_info);
+            if (err)
+            {
+                g_error_free(err);
+            }
+            if (debug_info)
+            {
+                g_free(debug_info);
+            }
 
             //if (loop) g_main_loop_quit(loop);
         }
@@ -598,8 +605,14 @@ void VideoTestSubscriber::message_cb(GstBus* /*bus*/, GstMessage* message, gpoin
             printf("# GST INTERNAL # Debugging information: %s\n", debug_info ? debug_info : "none");
 
             g_clear_error(&err);
-            if (err) g_error_free(err);
-            if (debug_info) g_free(debug_info);
+            if (err)
+            {
+                g_error_free(err);
+            }
+            if (debug_info)
+            {
+                g_free(debug_info);
+            }
         }
         break;
         case GST_MESSAGE_INFO:
@@ -663,27 +676,43 @@ void VideoTestSubscriber::analyzeTimes()
 
                 elem = static_cast<size_t>(avgs_.size() * 0.5);
                 if (elem > 0 && elem <= avgs_.size())
+                {
                     TS.pAvg50 = avgs_.at(--elem);
+                }
                 else
+                {
                     TS.pAvg50 = NAN;
+                }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.9);
                 if (elem > 0 && elem <= avgs_.size())
+                {
                     TS.pAvg90 = avgs_.at(--elem);
+                }
                 else
+                {
                     TS.pAvg90 = NAN;
+                }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.99);
                 if (elem > 0 && elem <= avgs_.size())
+                {
                     TS.pAvg99 = avgs_.at(--elem);
+                }
                 else
+                {
                     TS.pAvg99 = NAN;
+                }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.9999);
                 if (elem > 0 && elem <= avgs_.size())
+                {
                     TS.pAvg9999 = avgs_.at(--elem);
+                }
                 else
+                {
                     TS.pAvg9999 = NAN;
+                }
             }
         }
         {
@@ -708,27 +737,43 @@ void VideoTestSubscriber::analyzeTimes()
 
                 elem = static_cast<size_t>(drops_.size() * 0.5);
                 if (elem > 0 && elem <= drops_.size())
+                {
                     TS.pDrop50 = drops_.at(--elem);
+                }
                 else
+                {
                     TS.pDrop50 = NAN;
+                }
 
                 elem = static_cast<size_t>(drops_.size() * 0.9);
                 if (elem > 0 && elem <= drops_.size())
+                {
                     TS.pDrop90 = drops_.at(--elem);
+                }
                 else
+                {
                     TS.pDrop90 = NAN;
+                }
 
                 elem = static_cast<size_t>(drops_.size() * 0.99);
                 if (elem > 0 && elem <= drops_.size())
+                {
                     TS.pDrop99 = drops_.at(--elem);
+                }
                 else
+                {
                     TS.pDrop99 = NAN;
+                }
 
                 elem = static_cast<size_t>(drops_.size() * 0.9999);
                 if (elem > 0 && elem <= drops_.size())
+                {
                     TS.pDrop9999 = drops_.at(--elem);
+                }
                 else
+                {
                     TS.pDrop9999 = NAN;
+                }
             }
         }
 
@@ -766,7 +811,6 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
         TS.pAvg50 << "," << TS.pAvg90 << "," << TS.pAvg99 << "," << TS.pAvg9999 << "," << TS.m_maxAvg << "," <<
         TS.pDropStdev << "," << TS.pDropMean << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
         "," << TS.pDrop99 << "," << TS.pDrop9999 << "," << TS.m_maxDrop << "," << std::endl;
-
 
     if (m_bExportCsv)
     {

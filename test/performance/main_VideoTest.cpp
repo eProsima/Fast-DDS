@@ -62,16 +62,24 @@ struct Arg: public option::Arg
 
     static option::ArgStatus Unknown(const option::Option& option, bool msg)
     {
-        if (msg) printError("Unknown option '", option, "'\n");
+        if (msg)
+        {
+            printError("Unknown option '", option, "'\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
     static option::ArgStatus Required(const option::Option& option, bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
-        return option::ARG_OK;
+        {
+            return option::ARG_OK;
+        }
 
-        if (msg) printError("Option '", option, "' requires an argument\n");
+        if (msg)
+        {
+            printError("Option '", option, "' requires an argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
@@ -86,7 +94,10 @@ struct Arg: public option::Arg
             return option::ARG_OK;
         }
 
-        if (msg) printError("Option '", option, "' requires a numeric argument\n");
+        if (msg)
+        {
+            printError("Option '", option, "' requires a numeric argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
@@ -233,7 +244,9 @@ int main(int argc, char** argv)
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
 
     if (parse.error())
+    {
         return 1;
+    }
 
     if (options[HELP])
     {

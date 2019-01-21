@@ -61,10 +61,29 @@ VideoTestPublisher::VideoTestPublisher()
 
 VideoTestPublisher::~VideoTestPublisher()
 {
-    if (sink)   gst_object_unref(GST_OBJECT(sink)), sink = nullptr;
-    if (videorate)   gst_object_unref(GST_OBJECT(videorate)), videorate = nullptr;
-    if (filesrc)   gst_object_unref(GST_OBJECT(filesrc)), filesrc = nullptr;
-    if (pipeline)   gst_object_unref(GST_OBJECT(pipeline)), pipeline = nullptr;
+    if (sink)
+    {
+        gst_object_unref(GST_OBJECT(sink));
+        sink = nullptr;
+    }
+
+    if (videorate)
+    {
+        gst_object_unref(GST_OBJECT(videorate));
+        videorate = nullptr;
+    }
+
+    if (filesrc)
+    {
+        gst_object_unref(GST_OBJECT(filesrc));
+        filesrc = nullptr;
+    }
+
+    if (pipeline)
+    {
+        gst_object_unref(GST_OBJECT(pipeline));
+        pipeline = nullptr;
+    }
 
     Domain::removeParticipant(mp_participant);
 }
@@ -163,7 +182,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     std::ostringstream pt;
     pt << "VideoTest_";
     if (hostname)
+    {
         pt << asio::ip::host_name() << "_";
+    }
     pt << pid << "_PUB2SUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
@@ -182,7 +203,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     std::ostringstream pct;
     pct << "VideoTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_PUB2SUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -202,7 +225,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     std::ostringstream sct;
     sct << "VideoTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_SUB2PUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -210,7 +235,6 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-
     if (mp_commandsub == nullptr)
     {
         return false;
@@ -274,7 +298,6 @@ void VideoTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*p
 void VideoTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
-
     if(info.status == MATCHED_MATCHING)
     {
         cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
@@ -428,9 +451,6 @@ void VideoTestPublisher::InitGStreamer()
                     ok = gst_element_link_filtered(filesrc, videorate, caps) == TRUE;
                     ok = gst_element_link_filtered(videorate, sink, caps) == TRUE;
                     gst_caps_unref(caps);
-                    if (ok)
-                    {
-                    }
                 }
             }
         }
@@ -441,7 +461,6 @@ void VideoTestPublisher::InitGStreamer()
 GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublisher *sub)
 {
     GstFlowReturn returned_value = GST_FLOW_ERROR;
-
     if (sub->mp_video_out != nullptr)
     {
         if (sub->m_sendSleepTime != 0)
