@@ -89,19 +89,12 @@ class StatelessWriter : public RTPSWriter
         //FOR NOW THERE IS NOTHING TO UPDATE.
     }
 
-    bool add_locator(Locator_t& loc);
+    bool set_fixed_locators(const LocatorList_t& locator_list);
 
-    void update_unsent_changes(ReaderLocator& reader_locator,
-            const SequenceNumber_t& seqNum, const FragmentNumber_t fragNum);
+    void update_unsent_changes(const SequenceNumber_t& seqNum, const FragmentNumber_t fragNum);
 
     //!Reset the unsent changes.
     void unsent_changes_reset();
-
-    /**
-     * Get the number of matched readers
-     * @return Number of matched readers
-     */
-    inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
 
     bool is_acked_by_all(const CacheChange_t* a_change) const override;
 
@@ -118,8 +111,10 @@ class StatelessWriter : public RTPSWriter
 
     void update_locators_nts_(const GUID_t& optionalGuid);
 
-    std::vector<ReaderLocator> reader_locators, fixed_locators;
-    ResourceLimitedVector<RemoteReaderAttributes> m_matched_readers;
+    bool is_inline_qos_expected_ = false;
+    LocatorList_t fixed_locators_;
+    ResourceLimitedVector<RemoteReaderAttributes> matched_readers_;
+    ResourceLimitedVector<ChangeForReader_t, std::true_type> unsent_changes_;
     std::vector<std::unique_ptr<FlowController> > m_controllers;
 };
 }
