@@ -36,10 +36,28 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+static ResourceLimitedContainerConfig resource_limits_from_history(const HistoryAttributes& history_attributes)
+{
+    return 
+    { 
+        history_attributes.initialReservedCaches > 0 ? 
+            static_cast<size_t>(history_attributes.initialReservedCaches) : 0,
+        history_attributes.maximumReservedCaches > 0 ? 
+            static_cast<size_t>(history_attributes.maximumReservedCaches) : std::numeric_limits<size_t>::max(),
+        1u
+    };
+}
 
-StatelessWriter::StatelessWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
-    RTPSWriter(pimpl,guid,att,hist,listen)
+
+StatelessWriter::StatelessWriter(
+        RTPSParticipantImpl* participant,
+        GUID_t& guid,
+        WriterAttributes& attributes,
+        WriterHistory* history,
+        WriterListener* listener)
+    : RTPSWriter(participant, guid, attributes, history, listener)
+    , matched_readers_(attributes.matching_reader_number)
+    , unsent_changes_(resource_limits_from_history(history->m_att))
 {
     get_builtin_guid(all_remote_readers_);
 }
@@ -50,23 +68,31 @@ StatelessWriter::~StatelessWriter()
     logInfo(RTPS_WRITER,"StatelessWriter destructor";);
 }
 
-void StatelessWriter::get_builtin_guid(ResourceLimitedVector<GUID_t>& guidVector)
+void StatelessWriter::get_builtin_guid(ResourceLimitedVector<GUID_t>& guid_vector)
 {
-    if(m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
-        guidVector.emplace_back(GUID_t{GuidPrefix_t(), c_EntityId_SPDPReader});
+    if (m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
+    {
+        guid_vector.emplace_back(GUID_t{ GuidPrefix_t(), c_EntityId_SPDPReader });
+    }
 #if HAVE_SECURITY
-    else if(m_guid.entityId == ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER)
-        guidVector.emplace_back(GUID_t{GuidPrefix_t(), participant_stateless_message_reader_entity_id});
+    else if (m_guid.entityId == ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER)
+    {
+        guid_vector.emplace_back(GUID_t{ GuidPrefix_t(), participant_stateless_message_reader_entity_id });
+    }
 #endif
 }
 
 bool StatelessWriter::has_builtin_guid()
 {
     if (m_guid.entityId == ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER)
+    {
         return true;
+    }
 #if HAVE_SECURITY
     if (m_guid.entityId == ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER)
+    {
         return true;
+    }
 #endif
     return false;
 }
@@ -77,14 +103,14 @@ bool StatelessWriter::has_builtin_guid()
 
 // TODO(Ricardo) This function only can be used by history. Private it and frined History.
 // TODO(Ricardo) Look for other functions
-void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
+void StatelessWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     if (!mAllShrinkedLocatorList.empty())
     {
 #if HAVE_SECURITY
-        encrypt_cachechange(cptr);
+        encrypt_cachechange(change);
 #endif
 
         if (!isAsync())
@@ -94,15 +120,15 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
             if(m_separateSendingEnabled)
             {
                 std::vector<GUID_t> guids(1);
-                for (auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
+                for (const RemoteReaderAttributes& it : matched_readers_)
                 {
-                    guids.at(0) = it->guid;
+                    guids.at(0) = it.guid;
                     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                        it->endpoint.unicastLocatorList, guids);
+                        it.endpoint.unicastLocatorList, guids);
                     
-                    if (!group.add_data(*cptr, guids, it->endpoint.unicastLocatorList, it->expectsInlineQos))
+                    if (!group.add_data(*change, guids, it.endpoint.unicastLocatorList, it.expectsInlineQos))
                     {
-                        logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                        logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                     }
                 }
             }
@@ -111,20 +137,20 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
                 RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
                     mAllShrinkedLocatorList, all_remote_readers_);
 
-                if (!group.add_data(*cptr, all_remote_readers_, mAllShrinkedLocatorList, is_inline_qos_expected_))
+                if (!group.add_data(*change, all_remote_readers_, mAllShrinkedLocatorList, is_inline_qos_expected_))
                 {
-                    logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);
+                    logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                 }
             }
 
             if (mp_listener != nullptr)
             {
-                mp_listener->onWriterChangeReceivedByAll(this, cptr);
+                mp_listener->onWriterChangeReceivedByAll(this, change);
             }
         }
         else
         {
-            unsent_changes_.push_back(ChangeForReader_t(cptr));
+            unsent_changes_.push_back(ChangeForReader_t(change));
             AsyncWriterThread::wakeUp(this);
         }
     }
@@ -133,7 +159,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
         logInfo(RTPS_WRITER, "No reader to add change.");
         if (mp_listener != nullptr)
         {
-            mp_listener->onWriterChangeReceivedByAll(this, cptr);
+            mp_listener->onWriterChangeReceivedByAll(this, change);
         }
     }
 }
@@ -173,20 +199,22 @@ bool StatelessWriter::is_acked_by_all(const CacheChange_t* change) const
     return true;
 }
 
-void StatelessWriter::update_unsent_changes(const SequenceNumber_t& seqNum, const FragmentNumber_t fragNum)
+void StatelessWriter::update_unsent_changes(
+        const SequenceNumber_t& seq_num, 
+        const FragmentNumber_t& frag_num)
 {
-    auto find_by_seq_num = [seqNum](const ChangeForReader_t& unsent_change)
+    auto find_by_seq_num = [seq_num](const ChangeForReader_t& unsent_change)
     {
-        return seqNum == unsent_change.getSequenceNumber();
+        return seq_num == unsent_change.getSequenceNumber();
     };
 
     auto it = std::find_if(unsent_changes_.begin(), unsent_changes_.end(), find_by_seq_num);
     if(it != unsent_changes_.end())
     {
-        bool should_remove = fragNum == 0;
+        bool should_remove = (frag_num == 0);
         if (!should_remove)
         {
-            it->markFragmentsAsSent(fragNum);
+            it->markFragmentsAsSent(frag_num);
             FragmentNumberSet_t fragment_sns = it->getUnsentFragments();
             should_remove = fragment_sns.empty();
         }
@@ -206,18 +234,22 @@ void StatelessWriter::send_any_unsent_changes()
     ReaderLocator tmp;
     RTPSWriterCollector<ReaderLocator*> changesToSend;
 
-    for (auto unsentChange : unsent_changes_)
+    for (const ChangeForReader_t& unsentChange : unsent_changes_)
     {
         changesToSend.add_change(unsentChange.getChange(), &tmp, unsentChange.getUnsentFragments());
     }
 
     // Clear through local controllers
-    for (auto& controller : m_controllers)
+    for (auto& controller : flow_controllers_)
+    {
         (*controller)(changesToSend);
+    }
 
     // Clear through parent controllers
     for (auto& controller : mp_RTPSParticipant->getFlowControllers())
+    {
         (*controller)(changesToSend);
+    }
 
     RTPSMessageGroup group(mp_RTPSParticipant, this,  RTPSMessageGroup::WRITER, m_cdrmessages,
         mAllShrinkedLocatorList, all_remote_readers_);
@@ -266,43 +298,51 @@ void StatelessWriter::send_any_unsent_changes()
  *	MATCHED_READER-RELATED METHODS
  */
 
-bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& rdata)
+bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attributes)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     std::vector<LocatorList_t> allLocatorLists;
     bool addGuid = !has_builtin_guid();
 
-    for(auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
+    for(const RemoteReaderAttributes& reader : matched_readers_)
     {
-        if((*it).guid == rdata.guid)
+        if(reader.guid == reader_attributes.guid)
         {
             logWarning(RTPS_WRITER, "Attempting to add existing reader");
             return false;
         }
 
-        LocatorList_t locators((*it).endpoint.unicastLocatorList);
-        locators.push_back((*it).endpoint.multicastLocatorList);
+        LocatorList_t locators(reader.endpoint.unicastLocatorList);
+        locators.push_back(reader.endpoint.multicastLocatorList);
         allLocatorLists.push_back(locators);
     }
 
     // Add info of new datareader.
-    if(addGuid)
-        all_remote_readers_.push_back(rdata.guid);
-    LocatorList_t locators(rdata.endpoint.unicastLocatorList);
-    locators.push_back(rdata.endpoint.multicastLocatorList);
+    if (addGuid)
+    {
+        all_remote_readers_.push_back(reader_attributes.guid);
+    }
+    LocatorList_t locators(reader_attributes.endpoint.unicastLocatorList);
+    locators.push_back(reader_attributes.endpoint.multicastLocatorList);
     allLocatorLists.push_back(locators);
 
     update_cached_info_nts(allLocatorLists);
 
-    matched_readers_.push_back(rdata);
-    is_inline_qos_expected_ |= rdata.expectsInlineQos;
+    matched_readers_.push_back(reader_attributes);
+    is_inline_qos_expected_ |= reader_attributes.expectsInlineQos;
 
-    update_locators_nts_(rdata.endpoint.durabilityKind >= TRANSIENT_LOCAL ? rdata.guid : c_Guid_Unknown);
+    update_locators_nts();
+    if (reader_attributes.endpoint.durabilityKind >= TRANSIENT_LOCAL)
+    {
+        unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
+        AsyncWriterThread::wakeUp(this);
+    }
+
 
     getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList, false);
 
-    logInfo(RTPS_READER,"Reader " << rdata.guid << " added to "<<m_guid.entityId);
+    logInfo(RTPS_READER,"Reader " << reader_attributes.guid << " added to "<<m_guid.entityId);
     return true;
 }
 
@@ -319,7 +359,7 @@ bool StatelessWriter::set_fixed_locators(const LocatorList_t& locator_list)
 
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    for (auto input_locator : locator_list)
+    for (const Locator_t& input_locator : locator_list)
     {
         if (std::find(fixed_locators_.begin(), fixed_locators_.end(), input_locator) == fixed_locators_.end())
         {
@@ -331,81 +371,48 @@ bool StatelessWriter::set_fixed_locators(const LocatorList_t& locator_list)
     return true;
 }
 
-void StatelessWriter::update_locators_nts_(const GUID_t& optionalGuid)
+void StatelessWriter::update_locators_nts()
 {
     // Update mAllShrinkedLocatorList because at this point it was only updated
     // with locators of matched_readers_, and not the fixed locators.
     mAllShrinkedLocatorList.push_back(fixed_locators_);
-
-    for(auto it = mAllShrinkedLocatorList.begin(); it != mAllShrinkedLocatorList.end(); ++it)
-    {
-        // Find guids
-        for(const RemoteReaderAttributes& remoteReader : matched_readers_)
-        {
-            bool found = false;
-
-            for(auto loc = remoteReader.endpoint.unicastLocatorList.begin(); loc != remoteReader.endpoint.unicastLocatorList.end(); ++loc)
-            {
-                if(*loc == *it ||
-                        (mp_RTPSParticipant->network_factory().is_local_locator(*loc) &&
-                         mp_RTPSParticipant->network_factory().is_local_locator(*it)))
-                {
-                    found = true;
-                    break;
-                }
-            }
-
-            for(auto loc = remoteReader.endpoint.multicastLocatorList.begin(); !found && loc != remoteReader.endpoint.multicastLocatorList.end(); ++loc)
-                if(*loc == *it)
-                {
-                    found = true;
-                    break;
-                }
-
-            if(found)
-            {
-                if(remoteReader.guid == optionalGuid)
-                {
-                    unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
-                    AsyncWriterThread::wakeUp(this);
-                }
-            }
-        }
-    }
 }
 
-bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
+bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& reader_attributes)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    bool found = matched_readers_.remove_if(rdata.compare_guid_function());
+    bool found = matched_readers_.remove_if(reader_attributes.compare_guid_function());
     if (found)
     {
         std::vector<LocatorList_t> allLocatorLists;
         bool addGuid = !has_builtin_guid();
         is_inline_qos_expected_ = false;
 
-        for (auto rit = matched_readers_.begin(); rit != matched_readers_.end(); ++rit)
+        for (const RemoteReaderAttributes& rit : matched_readers_)
         {
-            LocatorList_t locators((*rit).endpoint.unicastLocatorList);
-            locators.push_back((*rit).endpoint.multicastLocatorList);
+            LocatorList_t locators(rit.endpoint.unicastLocatorList);
+            locators.push_back(rit.endpoint.multicastLocatorList);
             allLocatorLists.push_back(locators);
-            is_inline_qos_expected_ |= rit->expectsInlineQos;
+            is_inline_qos_expected_ |= rit.expectsInlineQos;
         }
 
-        if (addGuid) all_remote_readers_.remove(rdata.guid);
+        if (addGuid)
+        {
+            all_remote_readers_.remove(reader_attributes.guid);
+        }
         update_cached_info_nts(allLocatorLists);
 
-        update_locators_nts_(c_Guid_Unknown);
+        update_locators_nts();
     }
 
     return found;
 }
 
-bool StatelessWriter::matched_reader_is_matched(const RemoteReaderAttributes& rdata)
+bool StatelessWriter::matched_reader_is_matched(const RemoteReaderAttributes& reader_attributes)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    return std::any_of(matched_readers_.begin(), matched_readers_.end(), rdata.compare_guid_function());
+    return std::any_of(matched_readers_.begin(), matched_readers_.end(), reader_attributes.compare_guid_function());
 }
 
 void StatelessWriter::unsent_changes_reset()
@@ -418,10 +425,10 @@ void StatelessWriter::unsent_changes_reset()
 
 void StatelessWriter::add_flow_controller(std::unique_ptr<FlowController> controller)
 {
-    m_controllers.push_back(std::move(controller));
+    flow_controllers_.push_back(std::move(controller));
 }
 
 
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
-}
