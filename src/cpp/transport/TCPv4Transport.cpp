@@ -48,14 +48,12 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
     });
 }
 
-static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
+static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator, const octet* local_wan)
 {
-    if (IPLocator::hasWan(locator))
+    const octet* wan = IPLocator::getWan(locator);
+    if (IPLocator::hasWan(locator) && (memcmp(local_wan, wan, 4) != 0))
     {
-        return{ { IPLocator::getWan(locator)[0],
-            IPLocator::getWan(locator)[1],
-            IPLocator::getWan(locator)[2],
-            IPLocator::getWan(locator)[3]} };
+        return{ { wan[0], wan[1], wan[2], wan[3]} };
     }
     else
     {
@@ -260,7 +258,7 @@ ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_
 
 ip::tcp::endpoint TCPv4Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const
 {
-    return ip::tcp::endpoint(asio::ip::address_v4(locatorToNative(loc)), port);
+    return ip::tcp::endpoint(asio::ip::address_v4(locatorToNative(loc, mConfiguration_.wan_addr)), port);
 }
 
 ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(uint16_t port) const
@@ -295,6 +293,28 @@ void TCPv4Transport::EndpointToLocator(const ip::tcp::endpoint& endpoint, Locato
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v4().to_bytes();
     IPLocator::setIPv4(locator, ipBytes.data());
+}
+
+bool TCPv4Transport::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
+{
+    bool result = TCPTransportInterface::fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+
+    IPLocator::setWan(locator, 
+        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
+        mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
+
+    return result;
+}
+
+bool TCPv4Transport::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
+{
+    bool result = TCPTransportInterface::fillUnicastLocator(locator, well_known_port);
+
+    IPLocator::setWan(locator, 
+        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1], 
+        mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
+
+    return result;
 }
 
 } // namespace rtps
