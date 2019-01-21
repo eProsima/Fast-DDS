@@ -350,8 +350,7 @@ bool IPLocator::setWan(Locator_t &locator, octet o1, octet o2, octet o3, octet o
 
 bool IPLocator::setWan(Locator_t &locator, const std::string &wan)
 {
-    std::string ipv4 = IPFinder::getIPv4Address(wan);
-    std::stringstream ss(ipv4);
+    std::stringstream ss(wan);
     int a, b, c, d; //to store the 4 ints
     char ch; //to temporarily store the '.'
     ss >> a >> ch >> b >> ch >> c >> ch >> d;
