@@ -420,7 +420,7 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
         unicastResult.push_back(pendingUnicast);
     }
 
-    if (!IsInterfaceWhiteListEmpty())
+    if (!IsInterfaceWhiteListEmpty() && unicastResult.size() > 0)
     {
         bool bValid = false;
         for (Locator_t loc : unicastResult)
