@@ -98,24 +98,24 @@ int main(int argc, char** argv)
 
     switch (type)
     {
-    case 1:
-    {
-        HelloWorldPublisher mypub;
-        if (mypub.init(wan_ip, static_cast<uint16_t>(port)))
-        {
-            mypub.run(count, sleep);
-        }
-        break;
-    }
-    case 2:
-    {
-        HelloWorldSubscriber mysub;
-        if (mysub.init(wan_ip, static_cast<uint16_t>(port)))
-        {
-            mysub.run();
-        }
-        break;
-    }
+        case 1:
+            {
+                HelloWorldPublisher mypub;
+                if (mypub.init(wan_ip, static_cast<uint16_t>(port)))
+                {
+                    mypub.run(count, sleep);
+                }
+                break;
+            }
+        case 2:
+            {
+                HelloWorldSubscriber mysub;
+                if (mysub.init(wan_ip, static_cast<uint16_t>(port)))
+                {
+                    mysub.run();
+                }
+                break;
+            }
     }
     Domain::stopAll();
     Log::Reset();
