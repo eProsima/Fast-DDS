@@ -388,6 +388,32 @@ class ParameterBool_t:public Parameter_t{
 #define PARAMETER_BOOL_LENGTH 4
 
 /**
+*
+*/
+class ParameterStatusInfo_t :public Parameter_t
+{
+public:
+    uint8_t status;
+    ParameterStatusInfo_t() :status(0) {}
+
+    /**
+    * Constructor using a parameter PID and the parameter length
+    * @param pid Pid of the parameter
+    * @param in_length Its associated length
+    */
+    ParameterStatusInfo_t(ParameterId_t pid, uint16_t in_length) :Parameter_t(pid, in_length), status(0) {}
+    ParameterStatusInfo_t(ParameterId_t pid, uint16_t in_length, uint8_t instatus) :Parameter_t(pid, in_length), status(instatus) {}
+    /**
+    * Add the parameter to a CDRMessage_t message.
+    * @param[in,out] msg Pointer to the message where the parameter should be added.
+    * @return True if the parameter was correctly added.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+#define PARAMETER_STATUS_INFO_LENGTH 4
+
+/**
  *
  */
 class ParameterCount_t:public Parameter_t{

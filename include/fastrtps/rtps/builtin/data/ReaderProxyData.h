@@ -285,10 +285,11 @@ class ReaderProxyData
         }
 
         /**
-         * Convert the data to a parameter list to send this information as a RTPS message.
-         * @return Generated parameter list
+         * Write as a parameter list on a CDRMessage_t
+         * @return True on success
          */
-        ParameterList_t toParameterList();
+        bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
+
         /**
          *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
