@@ -86,7 +86,7 @@ typedef enum DurabilityQosPolicyKind: rtps::octet{
  * Class DurabilityQosPolicy, to indicate the durability of the samples.
  * kind: Default value for Subscribers: VOLATILE_DURABILITY_QOS, for Publishers TRANSIENT_LOCAL_DURABILITY_QOS
  */
-class DurabilityQosPolicy : private Parameter_t, public QosPolicy
+class DurabilityQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -151,7 +151,7 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeInifinite.
  */
-class DeadlineQosPolicy : private Parameter_t, public QosPolicy
+class DeadlineQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -186,7 +186,7 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeZero.
  */
-class LatencyBudgetQosPolicy : private Parameter_t, public QosPolicy {
+class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy {
     friend class ParameterList;
 public:
     RTPS_DllAPI LatencyBudgetQosPolicy()
@@ -233,7 +233,7 @@ typedef enum LivelinessQosPolicyKind:rtps::octet {
  * lease_duration: Default value c_TimeInfinite.
  * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
  */
-class LivelinessQosPolicy : private Parameter_t, public QosPolicy
+class LivelinessQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -282,7 +282,7 @@ typedef enum ReliabilityQosPolicyKind:rtps::octet {
  * kind: Default value BEST_EFFORT_RELIABILITY_QOS for ReaderQos and RELIABLE_RELIABILITY_QOS for WriterQos.
  * max_blocking_time: Not Used in this version.
  */
-class ReliabilityQosPolicy : private Parameter_t, public QosPolicy
+class ReliabilityQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -330,7 +330,7 @@ enum OwnershipQosPolicyKind:rtps::octet {
  * Class OwnershipQosPolicy, to indicate the ownership kind of the endpoints.
  * kind: Default value SHARED_OWNERSHIP_QOS.
  */
-class OwnershipQosPolicy : private Parameter_t, public QosPolicy
+class OwnershipQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -375,7 +375,7 @@ enum DestinationOrderQosPolicyKind :rtps::octet{
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * kind: Default value BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS
  */
-class DestinationOrderQosPolicy : private Parameter_t, public QosPolicy
+class DestinationOrderQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -409,7 +409,7 @@ public:
 /**
  * Class UserDataQosPolicy, to transmit user data during the discovery phase.
  */
-class UserDataQosPolicy : private Parameter_t, public QosPolicy
+class UserDataQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -455,7 +455,7 @@ private:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * minimum_separation: Default value c_TimeZero
  */
-class TimeBasedFilterQosPolicy : private Parameter_t, public QosPolicy
+class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -505,7 +505,7 @@ enum PresentationQosPolicyAccessScopeKind:rtps::octet
  * coherent_access: Default value false.
  * ordered_access: Default value false.
  */
-class PresentationQosPolicy : private Parameter_t, public QosPolicy
+class PresentationQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -545,7 +545,7 @@ public:
 /**
  * Class PartitionQosPolicy, to indicate the Partition Qos.
  */
-class  PartitionQosPolicy : private Parameter_t, public QosPolicy
+class  PartitionQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
     friend class rtps::EDP;
@@ -600,7 +600,7 @@ private:
 /**
  * Class TopicDataQosPolicy, to indicate the Topic Data.
  */
-class  TopicDataQosPolicy : private Parameter_t, public QosPolicy
+class  TopicDataQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -652,7 +652,7 @@ private:
 /**
  * Class GroupDataQosPolicy, to indicate the Group Data.
  */
-class  GroupDataQosPolicy : private Parameter_t, public QosPolicy
+class  GroupDataQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -715,7 +715,7 @@ enum HistoryQosPolicyKind:rtps::octet {
  * kind: Default value KEEP_LAST_HISTORY_QOS.
  * depth: Default value 1000.
  */
-class HistoryQosPolicy : private Parameter_t, public QosPolicy
+class HistoryQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -755,7 +755,7 @@ public:
  * max_samples_per_instance: Default value 400.
  * allocated_samples: Default value 100.
  */
-class ResourceLimitsQosPolicy : private Parameter_t, public QosPolicy
+class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -790,7 +790,7 @@ public:
  * max_instances: Default value -1.
  * max_samples_per_instance: Default value -1.
  */
-class DurabilityServiceQosPolicy : private Parameter_t, public QosPolicy
+class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -838,7 +838,7 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * duration: Default value c_TimeInfinite.
  */
-class LifespanQosPolicy : private Parameter_t, public QosPolicy
+class LifespanQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -872,7 +872,7 @@ public:
  * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
  * value: Default value 0.
  */
-class OwnershipStrengthQosPolicy : private Parameter_t, public QosPolicy 
+class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy 
 {
     friend class ParameterList;
 public:
@@ -909,7 +909,7 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * value: Default value 0.
  */
-class TransportPriorityQosPolicy : private Parameter_t , public QosPolicy
+class TransportPriorityQosPolicy : public Parameter_t , public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -955,7 +955,7 @@ typedef enum DataRepresentationId : int16_t {
 /**
 * Class DataRepresentationQosPolicy,
 */
-class DataRepresentationQosPolicy :private Parameter_t, public QosPolicy
+class DataRepresentationQosPolicy :public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -979,7 +979,7 @@ enum TypeConsistencyKind : uint32_t
 /**
 * Class DataRepresentationQosPolicy,
 */
-class TypeConsistencyEnforcementQosPolicy : private Parameter_t, public QosPolicy
+class TypeConsistencyEnforcementQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -1003,7 +1003,7 @@ public:
 /**
 * Class TypeIdV1,
 */
-class TypeIdV1 : private Parameter_t, public QosPolicy
+class TypeIdV1 : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -1070,7 +1070,7 @@ public:
 /**
 * Class TypeObjectV1,
 */
-class TypeObjectV1 : private Parameter_t, public QosPolicy
+class TypeObjectV1 : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
