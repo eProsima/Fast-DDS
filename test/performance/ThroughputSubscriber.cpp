@@ -395,7 +395,9 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     std::ostringstream st;
     st << "ThroughputTest_";
     if (hostname)
+    {
         st << asio::ip::host_name() << "_";
+    }
     st << pid << "_UP";
     Sparam.topic.topicName = st.str();
     if (reliable)
@@ -429,11 +431,14 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     std::ostringstream pct;
     pct << "ThroughputTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_SUB2PUB";
     Wparam.topic.topicName = pct.str();
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Wparam.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpubli = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_CommandPubListener);
 
@@ -444,7 +449,9 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     std::ostringstream sct;
     sct << "ThroughputTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_PUB2SUB";
     Rparam.topic.topicName = sct.str();
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -455,12 +462,16 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 
     t_start_ = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i)
+    {
         t_end_ = std::chrono::steady_clock::now();
+    }
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << std::endl;
 
     if (mp_datasub == nullptr || mp_commandsub == nullptr || mp_commandpubli == nullptr)
+    {
         ready = false;
+    }
 
     eClock::my_sleep(1000);
 
@@ -476,7 +487,9 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 void ThroughputSubscriber::run()
 {
     if (!ready)
+    {
         return;
+    }
     std::cout << "Waiting for command discovery" << std::endl;
     std::unique_lock<std::mutex> lock(mutex_);
     disc_cond_.wait(lock, [&](){
@@ -487,7 +500,6 @@ void ThroughputSubscriber::run()
     while (stop_count_ != 2)
     {
         stop_cond_.wait(lock);
-
         if (stop_count_ == 1)
         {
             std::cout << "Waiting clean state" << std::endl;
@@ -534,5 +546,4 @@ void ThroughputSubscriber::run()
         }
     }
     return;
-
 }

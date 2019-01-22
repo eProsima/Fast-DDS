@@ -33,11 +33,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldPublisher::HelloWorldPublisher():mp_participant(nullptr),
-mp_publisher(nullptr)
+HelloWorldPublisher::HelloWorldPublisher()
+    : mp_participant(nullptr)
+    , mp_publisher(nullptr)
 {
-
-
 }
 
 bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
@@ -70,7 +69,9 @@ bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
     mp_participant = Domain::createParticipant(PParam);
 
     if (mp_participant == nullptr)
+    {
         return false;
+    }
     //REGISTER THE TYPE
 
     Domain::registerType(mp_participant, &m_type);
@@ -89,7 +90,9 @@ bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     mp_publisher = Domain::createPublisher(mp_participant, Wparam, (PublisherListener*)&m_listener);
     if (mp_publisher == nullptr)
+    {
         return false;
+    }
 
     return true;
 }
@@ -134,7 +137,9 @@ void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
         for (uint32_t i = 0; i < samples; ++i)
         {
             if (!publish())
+            {
                 --i;
+            }
             else
             {
                 std::cout << "[RTCP] Message: " << m_Hello.message() << " with index: " << m_Hello.index() << " SENT" << std::endl;

@@ -179,6 +179,8 @@ bool MemoryTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 
@@ -431,7 +433,7 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
 
     command.m_command = STOP;
     mp_commandpub->write(&command);
-
+    
     if(m_status !=0)
     {
         cout << "Error in test "<<endl;

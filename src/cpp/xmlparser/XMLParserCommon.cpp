@@ -48,8 +48,11 @@ const char* KEEP_ALIVE_TIMEOUT = "keep_alive_timeout_ms";
 const char* MAX_LOGICAL_PORT = "max_logical_port";
 const char* LOGICAL_PORT_RANGE = "logical_port_range";
 const char* LOGICAL_PORT_INCREMENT = "logical_port_increment";
+const char* ENABLE_TCP_NODELAY = "enable_tcp_nodelay";
 const char* METADATA_LOGICAL_PORT = "metadata_logical_port";
 const char* LISTENING_PORTS = "listening_ports";
+const char* CALCULATE_CRC = "calculate_crc";
+const char* CHECK_CRC = "check_crc";
 
 const char* QOS_PROFILE = "qos_profile";
 const char* APPLICATION = "application";

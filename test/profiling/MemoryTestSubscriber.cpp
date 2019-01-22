@@ -160,6 +160,8 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 
@@ -272,6 +274,7 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
         }
         else if(command.m_command == STOP)
         {
+            cout << "Publisher has stopped the test" << endl;
             mp_up->mutex_.lock();
             ++mp_up->data_count_;
             mp_up->mutex_.unlock();
@@ -279,6 +282,7 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
         }
         else if(command.m_command == STOP_ERROR)
         {
+            cout << "Publisher has canceled the test" << endl;
             mp_up->m_status = -1;
             mp_up->mutex_.lock();
             ++mp_up->data_count_;
