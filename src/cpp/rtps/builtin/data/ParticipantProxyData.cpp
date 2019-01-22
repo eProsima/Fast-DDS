@@ -212,6 +212,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_KEY_HASH:
             {
                 const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
+                assert(p != nullptr);
                 GUID_t guid;
                 iHandle2GUID(guid, p->key);
                 this->m_guid = guid;
@@ -221,6 +222,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_PROTOCOL_VERSION:
             {
                 const ParameterProtocolVersion_t* p = dynamic_cast<const ParameterProtocolVersion_t*>(param);
+                assert(p != nullptr);
                 if (p->protocolVersion.m_major < c_ProtocolVersion.m_major)
                 {
                     return false;
@@ -231,6 +233,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_VENDORID:
             {
                 const ParameterVendorId_t* p = dynamic_cast<const ParameterVendorId_t*>(param);
+                assert(p != nullptr);
                 this->m_VendorId[0] = p->vendorId[0];
                 this->m_VendorId[1] = p->vendorId[1];
                 break;
@@ -238,12 +241,14 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_EXPECTS_INLINE_QOS:
             {
                 const ParameterBool_t* p = dynamic_cast<const ParameterBool_t*>(param);
+                assert(p != nullptr);
                 this->m_expectsInlineQos = p->value;
                 break;
             }
             case PID_PARTICIPANT_GUID:
             {
                 const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
+                assert(p != nullptr);
                 this->m_guid = p->guid;
                 this->m_key = p->guid;
                 break;
@@ -251,56 +256,63 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_METATRAFFIC_MULTICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                assert(p != nullptr);
                 this->m_metatrafficMulticastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_METATRAFFIC_UNICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                assert(p != nullptr);
                 this->m_metatrafficUnicastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_DEFAULT_UNICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                assert(p != nullptr);
                 this->m_defaultUnicastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_DEFAULT_MULTICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                assert(p != nullptr);
                 this->m_defaultMulticastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_PARTICIPANT_LEASE_DURATION:
             {
                 const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
+                assert(p != nullptr);
                 this->m_leaseDuration = p->time;
                 break;
             }
             case PID_BUILTIN_ENDPOINT_SET:
             {
                 const ParameterBuiltinEndpointSet_t* p = dynamic_cast<const ParameterBuiltinEndpointSet_t*>(param);
+                assert(p != nullptr);
                 this->m_availableBuiltinEndpoints = p->endpointSet;
                 break;
             }
             case PID_ENTITY_NAME:
             {
-
                 const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
-                //cout << "ENTITY NAME " << p->m_string<<endl;
+                assert(p != nullptr);
                 this->m_participantName = p->getName();
                 break;
             }
             case PID_PROPERTY_LIST:
             {
                 const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
+                assert(p != nullptr);
                 this->m_properties = *p;
                 break;
             }
             case PID_USER_DATA:
             {
                 const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
+                assert(p != nullptr);
                 this->m_userData = p->getDataVec();
                 break;
             }
@@ -308,6 +320,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             {
 #if HAVE_SECURITY
                 const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
+                assert(p != nullptr);
                 this->identity_token_ = std::move(p->token);
 #else
                 logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
@@ -318,6 +331,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             {
 #if HAVE_SECURITY
                 const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
+                assert(p != nullptr);
                 this->permissions_token_ = std::move(p->token);
 #else
                 logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
@@ -329,6 +343,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
 #if HAVE_SECURITY
                 const ParameterParticipantSecurityInfo_t* p = 
                     dynamic_cast<const ParameterParticipantSecurityInfo_t*>(param);
+                assert(p != nullptr);
                 this->security_attributes_ = p->security_attributes;
                 this->plugin_security_attributes_ = p->plugin_security_attributes;
 #else

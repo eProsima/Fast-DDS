@@ -53,6 +53,7 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
             case PID_KEY_HASH:
             {
                 const ParameterKey_t* p_key = dynamic_cast<const ParameterKey_t*>(p);
+                assert(p_key != nullptr);
                 change.instanceHandle = p_key->key;
                 break;
             }
@@ -60,6 +61,7 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
             case PID_RELATED_SAMPLE_IDENTITY:
             {
                 const ParameterSampleIdentity_t* p_id = dynamic_cast<const ParameterSampleIdentity_t*>(p);
+                assert(p_id != nullptr);
                 change.write_params.sample_identity(p_id->sample_id);
                 break;
             }
@@ -67,6 +69,7 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
             case PID_STATUS_INFO:
             {
                 const ParameterStatusInfo_t* p_status = dynamic_cast<const ParameterStatusInfo_t*>(p);
+                assert(p_status != nullptr);
                 if (p_status->status == 1)
                 {
                     change.kind = NOT_ALIVE_DISPOSED;
