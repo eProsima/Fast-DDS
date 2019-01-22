@@ -42,7 +42,7 @@ typedef struct
 } tmutex_record;
 
 constexpr size_t g_tmutex_records_max_length = 10;
-std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{{-1, nullptr, 0}}};
+std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{-1, nullptr, 0}};
 int32_t g_tmutex_records_end = -1;
 
 int32_t tmutex_find_record(void* mutex)
@@ -68,7 +68,7 @@ void eprosima::fastrtps::tmutex_start_recording()
 {
     assert(0 == g_tmutex_thread_pid);
     g_tmutex_thread_pid = GET_PID();
-    g_tmutex_records = {{{-1, nullptr, 0}}};
+    g_tmutex_records = {{-1, nullptr, 0}};
     g_tmutex_records_end = -1;
 }
 
