@@ -52,21 +52,21 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
         {
             case PID_KEY_HASH:
             {
-                ParameterKey_t* p_key = (ParameterKey_t*)p;
+                const ParameterKey_t* p_key = dynamic_cast<const ParameterKey_t*>(p);
                 change.instanceHandle = p_key->key;
                 break;
             }
 
             case PID_RELATED_SAMPLE_IDENTITY:
             {
-                ParameterSampleIdentity_t* p_id = (ParameterSampleIdentity_t*)p;
+                const ParameterSampleIdentity_t* p_id = dynamic_cast<const ParameterSampleIdentity_t*>(p);
                 change.write_params.sample_identity(p_id->sample_id);
                 break;
             }
 
             case PID_STATUS_INFO:
             {
-                ParameterStatusInfo_t* p_status = (ParameterStatusInfo_t*)p;
+                const ParameterStatusInfo_t* p_status = dynamic_cast<const ParameterStatusInfo_t*>(p);
                 if (p_status->status == 1)
                 {
                     change.kind = NOT_ALIVE_DISPOSED;

@@ -211,7 +211,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
         {
             case PID_KEY_HASH:
             {
-                ParameterKey_t*p = (ParameterKey_t*)(param);
+                const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
                 GUID_t guid;
                 iHandle2GUID(guid, p->key);
                 this->m_guid = guid;
@@ -220,7 +220,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             }
             case PID_PROTOCOL_VERSION:
             {
-                ParameterProtocolVersion_t * p = (ParameterProtocolVersion_t*)(param);
+                const ParameterProtocolVersion_t* p = dynamic_cast<const ParameterProtocolVersion_t*>(param);
                 if (p->protocolVersion.m_major < c_ProtocolVersion.m_major)
                 {
                     return false;
@@ -230,84 +230,84 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             }
             case PID_VENDORID:
             {
-                ParameterVendorId_t * p = (ParameterVendorId_t*)(param);
+                const ParameterVendorId_t* p = dynamic_cast<const ParameterVendorId_t*>(param);
                 this->m_VendorId[0] = p->vendorId[0];
                 this->m_VendorId[1] = p->vendorId[1];
                 break;
             }
             case PID_EXPECTS_INLINE_QOS:
             {
-                ParameterBool_t * p = (ParameterBool_t*)(param);
+                const ParameterBool_t* p = dynamic_cast<const ParameterBool_t*>(param);
                 this->m_expectsInlineQos = p->value;
                 break;
             }
             case PID_PARTICIPANT_GUID:
             {
-                ParameterGuid_t * p = (ParameterGuid_t*)(param);
+                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
                 this->m_guid = p->guid;
                 this->m_key = p->guid;
                 break;
             }
             case PID_METATRAFFIC_MULTICAST_LOCATOR:
             {
-                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 this->m_metatrafficMulticastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_METATRAFFIC_UNICAST_LOCATOR:
             {
-                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 this->m_metatrafficUnicastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_DEFAULT_UNICAST_LOCATOR:
             {
-                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 this->m_defaultUnicastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_DEFAULT_MULTICAST_LOCATOR:
             {
-                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 this->m_defaultMulticastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_PARTICIPANT_LEASE_DURATION:
             {
-                ParameterTime_t* p = (ParameterTime_t*)(param);
+                const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
                 this->m_leaseDuration = p->time;
                 break;
             }
             case PID_BUILTIN_ENDPOINT_SET:
             {
-                ParameterBuiltinEndpointSet_t* p = (ParameterBuiltinEndpointSet_t*)(param);
+                const ParameterBuiltinEndpointSet_t* p = dynamic_cast<const ParameterBuiltinEndpointSet_t*>(param);
                 this->m_availableBuiltinEndpoints = p->endpointSet;
                 break;
             }
             case PID_ENTITY_NAME:
             {
 
-                ParameterString_t* p = (ParameterString_t*)(param);
+                const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
                 //cout << "ENTITY NAME " << p->m_string<<endl;
                 this->m_participantName = p->getName();
                 break;
             }
             case PID_PROPERTY_LIST:
             {
-                ParameterPropertyList_t*p = (ParameterPropertyList_t*)(param);
+                const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
                 this->m_properties = *p;
                 break;
             }
             case PID_USER_DATA:
             {
-                UserDataQosPolicy*p = (UserDataQosPolicy*)(param);
+                const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
                 this->m_userData = p->getDataVec();
                 break;
             }
             case PID_IDENTITY_TOKEN:
             {
 #if HAVE_SECURITY
-                ParameterToken_t* p = (ParameterToken_t*)(param);
+                const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
                 this->identity_token_ = std::move(p->token);
 #else
                 logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
@@ -317,7 +317,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_PERMISSIONS_TOKEN:
             {
 #if HAVE_SECURITY
-                ParameterToken_t* p = (ParameterToken_t*)(param);
+                const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
                 this->permissions_token_ = std::move(p->token);
 #else
                 logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
@@ -327,7 +327,8 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_PARTICIPANT_SECURITY_INFO:
             {
 #if HAVE_SECURITY
-                ParameterParticipantSecurityInfo_t* p = (ParameterParticipantSecurityInfo_t*)(param);
+                const ParameterParticipantSecurityInfo_t* p = 
+                    dynamic_cast<const ParameterParticipantSecurityInfo_t*>(param);
                 this->security_attributes_ = p->security_attributes;
                 this->plugin_security_attributes_ = p->plugin_security_attributes;
 #else

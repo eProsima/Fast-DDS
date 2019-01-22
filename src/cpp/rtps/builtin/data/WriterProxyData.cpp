@@ -257,118 +257,116 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
         {
             case PID_DURABILITY:
             {
-                DurabilityQosPolicy * p = (DurabilityQosPolicy*)(param);
+                const DurabilityQosPolicy* p = dynamic_cast<const DurabilityQosPolicy*>(param);
                 m_qos.m_durability = *p;
                 break;
             }
             case PID_DURABILITY_SERVICE:
             {
-                DurabilityServiceQosPolicy * p = (DurabilityServiceQosPolicy*)(param);
+                const DurabilityServiceQosPolicy* p = dynamic_cast<const DurabilityServiceQosPolicy*>(param);
                 m_qos.m_durabilityService = *p;
                 break;
             }
             case PID_DEADLINE:
             {
-                DeadlineQosPolicy * p = (DeadlineQosPolicy*)(param);
+                const DeadlineQosPolicy* p = dynamic_cast<const DeadlineQosPolicy*>(param);
                 m_qos.m_deadline = *p;
                 break;
             }
             case PID_LATENCY_BUDGET:
             {
-                LatencyBudgetQosPolicy * p = (LatencyBudgetQosPolicy*)(param);
+                const LatencyBudgetQosPolicy* p = dynamic_cast<const LatencyBudgetQosPolicy*>(param);
                 m_qos.m_latencyBudget = *p;
                 break;
             }
             case PID_LIVELINESS:
             {
-                LivelinessQosPolicy * p = (LivelinessQosPolicy*)(param);
+                const LivelinessQosPolicy* p = dynamic_cast<const LivelinessQosPolicy*>(param);
                 m_qos.m_liveliness = *p;
                 break;
             }
             case PID_RELIABILITY:
             {
-                ReliabilityQosPolicy * p = (ReliabilityQosPolicy*)(param);
+                const ReliabilityQosPolicy* p = dynamic_cast<const ReliabilityQosPolicy*>(param);
                 m_qos.m_reliability = *p;
                 break;
             }
             case PID_LIFESPAN:
             {
-
-                LifespanQosPolicy * p = (LifespanQosPolicy*)(param);
+                const LifespanQosPolicy* p = dynamic_cast<const LifespanQosPolicy*>(param);
                 m_qos.m_lifespan = *p;
                 break;
             }
             case PID_USER_DATA:
             {
-                UserDataQosPolicy * p = (UserDataQosPolicy*)(param);
+                const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
                 m_qos.m_userData = *p;
                 break;
             }
             case PID_TIME_BASED_FILTER:
             {
-                TimeBasedFilterQosPolicy * p = (TimeBasedFilterQosPolicy*)(param);
+                const TimeBasedFilterQosPolicy* p = dynamic_cast<const TimeBasedFilterQosPolicy*>(param);
                 m_qos.m_timeBasedFilter = *p;
                 break;
             }
             case PID_OWNERSHIP:
             {
-                OwnershipQosPolicy * p = (OwnershipQosPolicy*)(param);
+                const OwnershipQosPolicy* p = dynamic_cast<const OwnershipQosPolicy*>(param);
                 m_qos.m_ownership = *p;
                 break;
             }
             case PID_OWNERSHIP_STRENGTH:
             {
-                OwnershipStrengthQosPolicy * p = (OwnershipStrengthQosPolicy*)(param);
+                const OwnershipStrengthQosPolicy* p = dynamic_cast<const OwnershipStrengthQosPolicy*>(param);
                 m_qos.m_ownershipStrength = *p;
                 break;
             }
             case PID_DESTINATION_ORDER:
             {
-                DestinationOrderQosPolicy * p = (DestinationOrderQosPolicy*)(param);
+                const DestinationOrderQosPolicy* p = dynamic_cast<const DestinationOrderQosPolicy*>(param);
                 m_qos.m_destinationOrder = *p;
                 break;
             }
 
             case PID_PRESENTATION:
             {
-                PresentationQosPolicy * p = (PresentationQosPolicy*)(param);
+                const PresentationQosPolicy* p = dynamic_cast<const PresentationQosPolicy*>(param);
                 m_qos.m_presentation = *p;
                 break;
             }
             case PID_PARTITION:
             {
-                PartitionQosPolicy * p = (PartitionQosPolicy*)(param);
+                const PartitionQosPolicy* p = dynamic_cast<const PartitionQosPolicy*>(param);
                 m_qos.m_partition = *p;
                 break;
             }
             case PID_TOPIC_DATA:
             {
-                TopicDataQosPolicy * p = (TopicDataQosPolicy*)(param);
+                const TopicDataQosPolicy* p = dynamic_cast<const TopicDataQosPolicy*>(param);
                 m_qos.m_topicData = *p;
                 break;
             }
             case PID_GROUP_DATA:
             {
-
-                GroupDataQosPolicy * p = (GroupDataQosPolicy*)(param);
+                const GroupDataQosPolicy* p = dynamic_cast<const GroupDataQosPolicy*>(param);
                 m_qos.m_groupData = *p;
                 break;
             }
             case PID_TOPIC_NAME:
             {
-                ParameterString_t*p = (ParameterString_t*)(param);
+                const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
                 m_topicName = p->getName();
                 break;
             }
             case PID_TYPE_NAME:
             {
-                ParameterString_t*p = (ParameterString_t*)(param);
+                const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
                 m_typeName = p->getName();
                 break;
             }
             case PID_PARTICIPANT_GUID:
             {
-                ParameterGuid_t * p = (ParameterGuid_t*)(param);
+                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
                 for (uint8_t i = 0; i < 16; ++i)
                 {
                     if (i < 12)
@@ -380,7 +378,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
             }
             case PID_ENDPOINT_GUID:
             {
-                ParameterGuid_t * p = (ParameterGuid_t*)(param);
+                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
                 m_guid = p->guid;
                 for (uint8_t i = 0; i<16; ++i)
                 {
@@ -393,32 +391,32 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
             }
             case PID_PERSISTENCE_GUID:
             {
-                ParameterGuid_t * p = (ParameterGuid_t*)(param);
+                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
                 persistence_guid_ = p->guid;
             }
             break;
             case PID_UNICAST_LOCATOR:
             {
-                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 m_unicastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_MULTICAST_LOCATOR:
             {
-                ParameterLocator_t* p = (ParameterLocator_t*)(param);
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 m_multicastLocatorList.push_back(p->locator);
                 break;
             }
             case PID_KEY_HASH:
             {
-                ParameterKey_t*p = (ParameterKey_t*)(param);
+                const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
                 m_key = p->key;
                 iHandle2GUID(m_guid, m_key);
                 break;
             }
             case PID_TYPE_IDV1:
             {
-                TypeIdV1 * p = (TypeIdV1*)(param);
+                const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
                 m_type_id = *p;
                 m_topicDiscoveryKind = MINIMAL;
                 if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
@@ -429,7 +427,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
             }
             case PID_TYPE_OBJECTV1:
             {
-                TypeObjectV1 * p = (TypeObjectV1*)(param);
+                const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
                 m_type = *p;
                 m_topicDiscoveryKind = MINIMAL;
                 if (m_type.m_type_object->_d() == EK_COMPLETE)
@@ -441,7 +439,8 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 #if HAVE_SECURITY
             case PID_ENDPOINT_SECURITY_INFO:
             {
-                ParameterEndpointSecurityInfo_t*p = (ParameterEndpointSecurityInfo_t*)(param);
+                const ParameterEndpointSecurityInfo_t* p = 
+                    dynamic_cast<const ParameterEndpointSecurityInfo_t*>(param);
                 security_attributes_ = p->security_attributes;
                 plugin_security_attributes_ = p->plugin_security_attributes;
             }
