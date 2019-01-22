@@ -64,23 +64,36 @@ void tmutex_stop_recording();
 
 /*!
  * @brief If recording process is active then the mutex will be recorded.
+ * @param[in] mutex_type_id Identifier of the mutex type.
+ * @param[in] mutex Pointer of the mutex to be recorded.
  */
-void tmutex_record_typed_mutex_(int id, void* mutex);
+void tmutex_record_typed_mutex_(int mutex_type_id, void* mutex);
 
 template<class T>
 void tmutex_record_mutex_(T*) { static_assert(sizeof(T) == 0, "mutex type not supported yet"); }
 
 /*!
  * @brief Gets the pointer of the selected recorded mutex.
+ * @param[in] index Position of the recorded mutex.
+ * @return Pointer to the selected mutex.
  */
 void* tmutex_get_mutex(size_t index);
 
+/*!
+ * @brief Locks the selected recorded mutex.
+ * @param[in] index Position of the recorded mutex.
+ */
 void tmutex_lock_mutex(size_t index);
 
+/*!
+ * @brief Unlocks the selected recorded mutex.
+ * @param[in] index Position of the recorded mutex.
+ */
 void tmutex_unlock_mutex(size_t index);
 
 /*!
  * @brief Returns the number of mutex recorded.
+ * @return Number of mutex recorded.
  */
 size_t tmutex_get_num_mutexes();
 

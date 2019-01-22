@@ -78,7 +78,7 @@ void eprosima::fastrtps::tmutex_stop_recording()
     g_tmutex_thread_pid = 0;
 }
 
-void eprosima::fastrtps::tmutex_record_typed_mutex_(int id, void* mutex)
+void eprosima::fastrtps::tmutex_record_typed_mutex_(int mutex_type_id, void* mutex)
 {
     assert(0 < g_tmutex_thread_pid);
 
@@ -89,7 +89,7 @@ void eprosima::fastrtps::tmutex_record_typed_mutex_(int id, void* mutex)
     {
         assert(g_tmutex_records_max_length > g_tmutex_records_end + 1);
         position = ++g_tmutex_records_end;
-        g_tmutex_records[position].id = id;
+        g_tmutex_records[position].id = mutex_type_id;
         g_tmutex_records[position].mutex = mutex;
     }
 
