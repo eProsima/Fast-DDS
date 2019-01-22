@@ -1743,13 +1743,15 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
         name = p_aux0->Name();
         if (strcmp(name, PORT) == 0)
         {
-            // port - uint32Type
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+            // port - uint16Type
+            uint16_t port(0);
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
                 return XMLP_ret::XML_ERROR;
+            IPLocator::setLogicalPort(locator, port);
         }
         else if (strcmp(name, PHYSICAL_PORT) == 0)
         {
-            // port - uint32Type
+            // physical_port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
                 return XMLP_ret::XML_ERROR;
@@ -1808,13 +1810,15 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
         name = p_aux0->Name();
         if (strcmp(name, PORT) == 0)
         {
-            // port - uint32Type
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+            // port - uint16Type
+            uint16_t port(0);
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
                 return XMLP_ret::XML_ERROR;
+            IPLocator::setLogicalPort(locator, port);
         }
         else if (strcmp(name, PHYSICAL_PORT) == 0)
         {
-            // port - uint32Type
+            // physical_port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
                 return XMLP_ret::XML_ERROR;
