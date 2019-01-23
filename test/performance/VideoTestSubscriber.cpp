@@ -785,7 +785,9 @@ void VideoTestSubscriber::analyzeTimes()
 void VideoTestSubscriber::printStat(TimeStats& TS)
 {
     std::ofstream outFile;
+    std::ofstream outMeanFile;
     std::stringstream output_file_csv;
+    std::stringstream output_mean_csv;
     std::string str_reliable = "besteffort";
     if (m_bReliable)
     {
@@ -795,6 +797,8 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
     output_file_csv << "Samples, Avg stdev, Avg Mean, min Avg, Avg 50 %%, Avg 90 %%, Avg 99 %%, \
         Avg 99.99%%, Avg max, Drop stdev, Drop Mean, min Drop, Drop 50 %%, Drop 90 %%, Drop 99 %%, \
         Drop 99.99%%, Drop max" << std::endl;
+
+    output_mean_csv << "Avg Mean" << std::endl;
 
     printf("Statistics for video test \n");
     printf("    Samples,  Avg stdev,   Avg Mean,    min Avg,    Avg 50%%,    Avg 90%%,    Avg 99%%,   Avg 99.99%%,    Avg max\n");
@@ -812,11 +816,15 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
         TS.pDropStdev << "," << TS.pDropMean << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
         "," << TS.pDrop99 << "," << TS.pDrop9999 << "," << TS.m_maxDrop << "," << std::endl;
 
+    output_mean_csv << TS.pAvgMean << "," << std::endl;
+
     if (m_bExportCsv)
     {
         if (m_sExportPrefix.length() > 0)
         {
             outFile.open(m_sExportPrefix + ".csv");
+            outMeanFile.open(m_sExportPrefix + "_Mean.csv");
+            outMeanFile << output_mean_csv.str();
         }
         else
         {
