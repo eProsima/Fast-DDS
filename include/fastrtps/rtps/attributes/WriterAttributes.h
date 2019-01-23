@@ -104,8 +104,8 @@ class  WriterAttributes
         //! Disable the sending of heartbeat piggybacks.
         bool disableHeartbeatPiggyback;
 
-        //! Qos on the number of readers that can be matched against this writer.
-        ResourceLimitedContainerConfig matching_reader_number;
+        //! Define the allocation behaviour for matched-reader-dependent collections.
+        ResourceLimitedContainerConfig matched_readers_allocation;
 };
 
 /**

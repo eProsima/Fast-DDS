@@ -56,7 +56,7 @@ StatelessWriter::StatelessWriter(
         WriterHistory* history,
         WriterListener* listener)
     : RTPSWriter(participant, guid, attributes, history, listener)
-    , matched_readers_(attributes.matching_reader_number)
+    , matched_readers_(attributes.matched_readers_allocation)
     , unsent_changes_(resource_limits_from_history(history->m_att))
 {
     get_builtin_guid(all_remote_readers_);
