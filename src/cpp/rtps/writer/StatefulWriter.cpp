@@ -130,11 +130,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                     changeForReader.setStatus(UNACKNOWLEDGED);
                 }
 
-                (*it)->mp_mutex->lock();
+                (*it)->mp_mutex.lock();
                 changeForReader.setRelevance((*it)->rtps_is_relevant(change));
                 (*it)->addChange(changeForReader);
                 expectsInlineQos |= (*it)->m_att.expectsInlineQos;
-                (*it)->mp_mutex->unlock();
+                (*it)->mp_mutex.unlock();
 
                 if((*it)->mp_nackSupression != nullptr) // It is reliable
                     (*it)->mp_nackSupression->restart_timer();
@@ -185,7 +185,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                     changeForReader.setStatus(UNACKNOWLEDGED);
                 }
 
-                std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+                std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
                 changeForReader.setRelevance((*it)->rtps_is_relevant(change));
                 (*it)->addChange(changeForReader);
             }
@@ -235,7 +235,7 @@ void StatefulWriter::send_any_unsent_changes()
 
         for (auto remoteReader : matched_readers)
         {
-            std::lock_guard<std::recursive_mutex> rguard(*remoteReader->mp_mutex);
+            std::lock_guard<std::recursive_mutex> rguard(remoteReader->mp_mutex);
 
             // For possible GAP
             std::set<SequenceNumber_t> irrelevant;
@@ -360,7 +360,7 @@ void StatefulWriter::send_any_unsent_changes()
                     {
                         for (auto remoteReader : changeToSend.remoteReaders)
                         {
-                            std::lock_guard<std::recursive_mutex> rguard(*remoteReader->mp_mutex);
+                            std::lock_guard<std::recursive_mutex> rguard(remoteReader->mp_mutex);
                             bool allFragmentsSent = remoteReader->mark_fragment_as_sent_for_change(changeToSend.cacheChange, changeToSend.fragmentNumber);
 
                             if (remoteReader->m_att.endpoint.reliabilityKind == RELIABLE)
@@ -396,7 +396,7 @@ void StatefulWriter::send_any_unsent_changes()
                     {
                         for (auto remoteReader : changeToSend.remoteReaders)
                         {
-                            std::lock_guard<std::recursive_mutex> rguard(*remoteReader->mp_mutex);
+                            std::lock_guard<std::recursive_mutex> rguard(remoteReader->mp_mutex);
                             if (remoteReader->m_att.endpoint.reliabilityKind == RELIABLE)
                             {
                                 remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY);
@@ -485,7 +485,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     // Check if it is already matched.
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
         if((*it)->m_att.guid == rdata.guid)
         {
             logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
@@ -595,7 +595,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
     auto it = matched_readers.begin();
     while(it != matched_readers.end())
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
 
         if((*it)->m_att.guid == rdata.guid)
         {
@@ -636,7 +636,7 @@ bool StatefulWriter::matched_reader_is_matched(const RemoteReaderAttributes& rda
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<ReaderProxy*>::iterator it=matched_readers.begin();it!=matched_readers.end();++it)
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
         if((*it)->m_att.guid == rdata.guid)
         {
             return true;
@@ -651,7 +651,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
     std::vector<ReaderProxy*>::iterator it;
     for(it=matched_readers.begin();it!=matched_readers.end();++it)
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
         if((*it)->m_att.guid == readerGuid)
         {
             *RP = *it;
@@ -691,7 +691,7 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
         if((*it)->countChangesForReader() > 0)
         {
             all_acked_ = false;
@@ -719,7 +719,7 @@ void StatefulWriter::check_acked_status()
 
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
 
         if(min_low_mark == SequenceNumber_t() || (*it)->get_low_mark() < min_low_mark)
         {
@@ -782,7 +782,7 @@ bool StatefulWriter::try_remove_change(std::chrono::microseconds& microseconds,
 
     for(auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+        std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
 
         if(min_low_mark == SequenceNumber_t() || (*it)->get_low_mark() < min_low_mark)
         {
@@ -840,7 +840,7 @@ void StatefulWriter::updateTimes(const WriterTimes& times)
         for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
                 it!=this->matched_readers.end();++it)
         {
-            std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
 
             if((*it)->mp_nackResponse != nullptr) // It is reliable
                 (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
@@ -855,7 +855,7 @@ void StatefulWriter::updateTimes(const WriterTimes& times)
         for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
                 it!=this->matched_readers.end();++it)
         {
-            std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
             (*it)->mp_nackResponse->update_interval(times.nackResponseDelay);
         }
     }
@@ -864,7 +864,7 @@ void StatefulWriter::updateTimes(const WriterTimes& times)
         for(std::vector<ReaderProxy*>::iterator it = this->matched_readers.begin();
                 it!=this->matched_readers.end();++it)
         {
-            std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
+            std::lock_guard<std::recursive_mutex> rguard((*it)->mp_mutex);
 
             if((*it)->mp_nackSupression != nullptr) // It is reliable
                 (*it)->mp_nackSupression->update_interval(times.nackSupressionDuration);
@@ -963,7 +963,7 @@ void StatefulWriter::process_acknack(const GUID_t reader_guid, uint32_t ack_coun
 
     for(auto remote_reader : matched_readers)
     {
-        std::lock_guard<std::recursive_mutex> reader_guard(*remote_reader->mp_mutex);
+        std::lock_guard<std::recursive_mutex> reader_guard(remote_reader->mp_mutex);
 
         if(remote_reader->m_att.guid == reader_guid)
         {

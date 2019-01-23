@@ -57,7 +57,7 @@ void NackResponseDelay::event(EventCode code, const char* msg)
     {
         logInfo(RTPS_WRITER,"Responding to Acknack msg";);
         std::lock_guard<std::recursive_mutex> guardW(*mp_RP->mp_SFW->getMutex());
-        std::lock_guard<std::recursive_mutex> guard(*mp_RP->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guard(mp_RP->mp_mutex);
         mp_RP->convert_status_on_all_changes(REQUESTED, UNSENT);
     }
 }
