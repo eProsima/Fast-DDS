@@ -82,16 +82,25 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
     }
 
+    std::map<UDPChannelResource*, asio::ip::address> addresses;
     // It may sound redundant, but we must mark all the related channel to be killed first.
     for (UDPChannelResource* channel_resource : channel_resources)
     {
+        if (channel_resource->IsAlive())
+        {
+            addresses[channel_resource] = channel_resource->getSocket()->local_endpoint().address();
+        }
+        else
+        {
+            addresses[channel_resource] = asio::ip::address();
+        }
         channel_resource->Disable();
     }
 
     // Then we release the channels
     for (UDPChannelResource* channel : channel_resources)
     {
-        ReleaseInputChannel(locator, channel);
+        ReleaseInputChannel(locator, addresses[channel]);
         channel->getSocket()->cancel();
         channel->getSocket()->close();
         delete channel;
@@ -414,12 +423,10 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
     }
 }
 
-bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPChannelResource* channel)
+bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address)
 {
     try
     {
-        channel->Disable();
-
         uint16_t port = IPLocator::getPhysicalPort(locator);
 
         if(IsInterfaceWhiteListEmpty())
@@ -444,7 +451,6 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, UDPCha
         }
         else
         {
-            auto interface_address = channel->getSocket()->local_endpoint().address();
             ip::udp::socket socket(mService);
             socket.open(GenerateProtocol());
             socket.bind(asio::ip::udp::endpoint(interface_address, 0));
