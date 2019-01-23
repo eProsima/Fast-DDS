@@ -105,7 +105,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
-            $<$<BOOL:${TINYXML2_LIBRARY}>:${TINYXML2_LIBRARY}>
+            ${TINYXML2_LIBRARY}
             fastcdr
             )
         add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
@@ -177,7 +177,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(XMLParserTests ${GTEST_LIBRARIES}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
-            $<$<BOOL:${TINYXML2_LIBRARY}>:${TINYXML2_LIBRARY}>
+            ${TINYXML2_LIBRARY}
             fastcdr
         )
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
