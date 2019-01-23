@@ -84,6 +84,9 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
     std::map<UDPChannelResource*, asio::ip::address> addresses;
     // It may sound redundant, but we must mark all the related channel to be killed first.
+    // Mostly in Windows, but in Linux can happen too, if we access to the endpoint
+    // of an already closed socket we get an exception. So we store the interface address to
+    // be used in the ReleaseInputChannel call later.
     for (UDPChannelResource* channel_resource : channel_resources)
     {
         if (channel_resource->IsAlive())

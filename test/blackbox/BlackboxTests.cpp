@@ -5660,7 +5660,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P5_6_P4)
     ASSERT_TRUE(reader.is_matched());
 }
 
-// Used to reproduce ClearPath VPN environment issue guess about multicast.
+// Used to reproduce VPN environment issue with multicast.
 BLACKBOXTEST(BlackBox, MulticastCommunicationBadReader)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -5692,7 +5692,7 @@ BLACKBOXTEST(BlackBox, MulticastCommunicationBadReader)
     ASSERT_FALSE(readerMultiBad.is_matched());
 }
 
-// Used to reproduce ClearPath VPN environment issue guess about multicast.
+// Used to reproduce VPN environment issue with multicast.
 BLACKBOXTEST(BlackBox, MulticastCommunicationOkReader)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
