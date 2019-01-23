@@ -87,8 +87,6 @@ public:
     template <class UnaryFunction>
     void for_each_unsent_change(UnaryFunction f) const
     {
-        std::lock_guard<std::recursive_mutex> guard(mp_mutex);
-
         for (auto &change_for_reader : m_changesForReader)
         {
             if (change_for_reader.getStatus() == UNSENT)
@@ -197,9 +195,6 @@ public:
     {
         return changesFromRLowMark_;
     }
-
-    //!Mutex
-    mutable std::recursive_mutex mp_mutex;
 
     //!Set of the changes and its state.
     std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;

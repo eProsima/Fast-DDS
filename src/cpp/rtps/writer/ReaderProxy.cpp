@@ -50,8 +50,10 @@ ReaderProxy::ReaderProxy(
 {
     if (rdata.endpoint.reliabilityKind == RELIABLE)
     {
-        mp_nackResponse = new NackResponseDelay(this, TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
-        mp_nackSupression = new NackSupressionDuration(this, TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+        mp_nackResponse = new NackResponseDelay(mp_SFW, rdata.guid, 
+            TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
+        mp_nackSupression = new NackSupressionDuration(mp_SFW, rdata.guid, 
+            TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
     }
 
     // Use remoteLocatorList as joint unicast + multicast locators
@@ -84,8 +86,6 @@ void ReaderProxy::destroy_timers()
 
 void ReaderProxy::addChange(const ChangeForReader_t& change)
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
-
     assert(change.getSequenceNumber() > changesFromRLowMark_);
     assert(m_changesForReader.rbegin() != m_changesForReader.rend() ?
         change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber() :
@@ -108,14 +108,11 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
 
 size_t ReaderProxy::countChangesForReader() const
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
     return m_changesForReader.size();
 }
 
 bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
-
     if (sequence_number <= changesFromRLowMark_)
     {
         return true;
@@ -129,7 +126,6 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
 
 void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
     SequenceNumber_t future_low_mark = seqNum;
 
     if (seqNum > changesFromRLowMark_)
@@ -175,7 +171,6 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
 bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
 {
     bool isSomeoneWasSetRequested = false;
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
 
     seqNumSet.for_each([&](SequenceNumber_t sit)
     {
@@ -282,7 +277,6 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
 
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
     bool mustWakeUpAsyncThread = false;
 
     auto it = m_changesForReader.begin();
@@ -320,8 +314,6 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
 //void ReaderProxy::setNotValid(const CacheChange_t* change)
 void ReaderProxy::setNotValid(CacheChange_t* change)
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
-
     // Check sequence number is in the container, because it was not clean up.
     if (m_changesForReader.empty() || change->sequenceNumber < m_changesForReader.begin()->getSequenceNumber())
     {
@@ -359,19 +351,15 @@ void ReaderProxy::setNotValid(CacheChange_t* change)
 
 bool ReaderProxy::thereIsUnacknowledged() const
 {
-    bool returnedValue = false;
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
-
-    for (auto& it : m_changesForReader)
+    for (const ChangeForReader_t& it : m_changesForReader)
     {
         if (it.getStatus() == UNACKNOWLEDGED)
         {
-            returnedValue = true;
-            break;
+            return true;
         }
     }
 
-    return returnedValue;
+    return false;
 }
 
 bool change_min(const ChangeForReader_t* ch1, const ChangeForReader_t* ch2)
@@ -382,7 +370,6 @@ bool change_min(const ChangeForReader_t* ch1, const ChangeForReader_t* ch2)
 bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
     ChangeForReader_t* changeForReader)
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
     *changeForReader = **std::min_element(Changes->begin(), Changes->end(), change_min);
     return true;
 }
@@ -420,8 +407,6 @@ bool ReaderProxy::process_nack_frag(
         const SequenceNumber_t& sequence_number,
         const FragmentNumberSet_t& fragments_state)
 {
-    std::lock_guard<std::recursive_mutex> guardReaderProxy(mp_mutex);
-
     if (m_att.guid == reader_guid)
     {
         if (lastNackfragCount_ < nack_count)

@@ -17,47 +17,63 @@
  *
  */
 
-#ifndef NACKRESPONSEDELAY_H_
-#define NACKRESPONSEDELAY_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../../resources/TimedEvent.h"
-#include "../../messages/RTPSMessageGroup.h"
+#ifndef  FASTRTPS_RTPS_WRITER_TIMEDEVENT_NACKRESPONSEDELAY_H_
+#define  FASTRTPS_RTPS_WRITER_TIMEDEVENT_NACKRESPONSEDELAY_H_
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include "../../resources/TimedEvent.h"
+#include "../../common/Guid.h"
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class StatefulWriter;
-class ReaderProxy;
 
 /**
  * NackResponseDelay class use to delay the response to an NACK message.
  * @ingroup WRITER_MODULE
  */
-class NackResponseDelay:public TimedEvent {
+class NackResponseDelay : public TimedEvent 
+{
 public:
-	/**
-	*
-	* @param p_RP
-	* @param intervalmillisec
-	*/
-	NackResponseDelay(ReaderProxy* p_RP,double intervalmillisec);
-	virtual ~NackResponseDelay();
+    /**
+     * Construct a NackResponseDelay event.
+     *
+     * @param writer           Pointer to the StatefulWriter creating this event
+     * @param reader_guid      GUID of the related reader proxy
+     * @param interval_in_ms   Event interval in miliseconds
+     */
+    NackResponseDelay(
+            StatefulWriter* writer,
+            const GUID_t& reader_guid,
+            double interval_in_ms);
 
-	/**
-	* Method invoked when the event occurs
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
+    virtual ~NackResponseDelay();
 
-	//!Associated reader proxy
-	ReaderProxy* mp_RP;
+    /**
+     * Method invoked when the event occurs
+     *
+     * @param code Code representing the status of the event
+     * @param msg Message associated to the event
+     */
+    void event(
+            EventCode code, 
+            const char* msg = nullptr) override;
+
+private:
+
+    //! Associated stateful writer
+    StatefulWriter* writer_;
+
+    //! GUID of the reader proxy
+    GUID_t reader_guid_;
 };
-}
-}
+
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
-#endif /* NACKRESPONSEDELAY_H_ */
+#endif /*  FASTRTPS_RTPS_WRITER_TIMEDEVENT_NACKRESPONSEDELAY_H_ */

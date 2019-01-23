@@ -186,6 +186,10 @@ namespace eprosima
                  */
                 void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false);
 
+                void perform_nack_response(const GUID_t& reader_guid);
+
+                void perform_nack_supression(const GUID_t& reader_guid);
+
                 void process_acknack(const GUID_t reader_guid, uint32_t ack_count,
                         const SequenceNumberSet_t& sn_set, bool final_flag);
 

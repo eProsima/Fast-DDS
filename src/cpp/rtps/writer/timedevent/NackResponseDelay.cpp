@@ -18,46 +18,50 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
-#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
-#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/ReaderProxy.h>
 #include "../../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-
-#include <mutex>
-
-using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 NackResponseDelay::~NackResponseDelay()
 {
     destroy();
 }
 
-NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):
-    TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
-            p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), millisec),
-    mp_RP(p_RP)
+NackResponseDelay::NackResponseDelay(
+        StatefulWriter* writer,
+        const GUID_t& reader_guid,
+        double interval_in_ms)
+    : TimedEvent(
+            writer->getRTPSParticipant()->getEventResource().getIOService(),
+            writer->getRTPSParticipant()->getEventResource().getThread(), 
+            interval_in_ms)
+    , writer_(writer)
+    , reader_guid_(reader_guid)
 {
 }
 
-void NackResponseDelay::event(EventCode code, const char* msg)
+void NackResponseDelay::event(
+        EventCode code, 
+        const char* msg)
 {
-
     // Unused in release mode.
     (void)msg;
 
     if(code == EVENT_SUCCESS)
     {
-        logInfo(RTPS_WRITER,"Responding to Acknack msg";);
-        std::lock_guard<std::recursive_mutex> guardW(*mp_RP->mp_SFW->getMutex());
-        std::lock_guard<std::recursive_mutex> guard(mp_RP->mp_mutex);
-        mp_RP->convert_status_on_all_changes(REQUESTED, UNSENT);
+        logInfo(RTPS_WRITER, "Responding to Acknack msg";);
+        writer_->perform_nack_response(reader_guid_);
     }
 }
+
+
+} /* namespace rtps */
+} /* namespace fastrtps */
+} /* namespace eprosima */
