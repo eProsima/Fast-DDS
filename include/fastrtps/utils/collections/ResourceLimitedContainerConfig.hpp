@@ -20,6 +20,7 @@
 #ifndef FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_
 #define FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_
 
+#include <cstddef>
 #include <limits>
 
 namespace eprosima {
@@ -35,7 +36,7 @@ struct ResourceLimitedContainerConfig
 #if defined(_MSC_VER) && _MSC_VER <= 1900
 
     // Initializer list construction won't work on MSVS 2015 if you have struct fields initializers
-    ResourceLimitsConfig(
+    ResourceLimitedContainerConfig(
             size_t ini = 0, 
             size_t max = std::numeric_limits<size_t>::max(),
             size_t inc = 1u)

@@ -230,13 +230,13 @@ TEST_F(ResourceLimitedVectorTests, remove_if)
     auto is_odd = [](int i) { return (i & 1) != 0; };
 
     // Remove all odd items and check no errors
-    for (int i = 0; i < NUM_ITEMS / 2; i++)
+    for (size_t i = 0; i < NUM_ITEMS / 2; i++)
     {
         ASSERT_TRUE(uut.remove_if(is_odd));
     }
 
     // Trying to remove odd items should give errors
-    for (int i = 0; i < NUM_ITEMS / 2; i++)
+    for (size_t i = 0; i < NUM_ITEMS / 2; i++)
     {
         ASSERT_FALSE(uut.remove_if(is_odd));
     }
