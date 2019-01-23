@@ -65,7 +65,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(LogFileTests ${GTEST_LIBRARIES} ${MOCKS}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-            $<$<BOOL:${TINYXML2_LIBRARY}>:${TINYXML2_LIBRARY}>
+            ${TINYXML2_LIBRARY}
             fastcdr
             )
 
