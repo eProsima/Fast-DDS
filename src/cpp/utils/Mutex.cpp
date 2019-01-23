@@ -18,9 +18,9 @@
  */
 
 #include <fastrtps/utils/Mutex.hpp>
-#include <iostream>
 
 #if defined(EPROSIMA_MUTEX_TEST)
+#include <array>
 #include <typeinfo>
 #include <cassert>
 #endif
@@ -42,7 +42,7 @@ typedef struct
 } tmutex_record;
 
 constexpr size_t g_tmutex_records_max_length = 10;
-std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{-1, nullptr, 0}};
+std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{{-1, nullptr, 0}}};
 int32_t g_tmutex_records_end = -1;
 
 int32_t tmutex_find_record(void* mutex)
