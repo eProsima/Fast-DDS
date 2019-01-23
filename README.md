@@ -1,5 +1,10 @@
 # eProsima Fast RTPS
+
+[![Releases](https://img.shields.io/github/release/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Issues](https://img.shields.io/github/issues/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/issues)
+[![Forks](https://img.shields.io/github/forks/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/network/members)
+[![Stars](https://img.shields.io/github/stars/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/stargazers)
 
 <a href="http://www.eprosima.com"><img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ" align="left" hspace="8" vspace="2" width="100" height="100" ></a>
 *eprosima Fast RTPS* is a C++ implementation of the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP, 
@@ -23,6 +28,12 @@ eProsima Fast RTPS has been adopted by multiple organizations in many sectors in
 
 * Robotics: ROS (Robotic Operating System) as their default middleware for ROS2.
 * EU R&D: FIWARE Incubated GE.
+
+## Supported platforms
+
+* Linux [![Linux Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Linux/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Linux)
+* Windows [![Windows Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Windows/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Windows)
+* Mac [![Mac Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac)
 
 ## Installation Guide
 You can get either a binary distribution of *eprosima Fast RTPS* or compile the library yourself from source.

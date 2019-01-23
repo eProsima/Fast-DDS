@@ -70,7 +70,7 @@ class VideoTestSubscriber
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
                 const std::string& sXMLConfigFile, bool export_csv, const std::string& export_file,
-                int forced_domain);
+                int forced_domain, int video_width, int video_height, int frame_rate);
 
         void run();
         bool test();
@@ -124,6 +124,9 @@ class VideoTestSubscriber
         bool m_bExportCsv;
         std::string m_sExportPrefix;
         int m_forcedDomain;
+        int m_videoWidth;
+        int m_videoHeight;
+        int m_videoFrameRate;
 
         std::thread thread_;
         std::deque<VideoType> packet_deque_;

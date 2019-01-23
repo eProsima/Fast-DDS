@@ -43,7 +43,6 @@ ThroughputPublisher::DataPubListener::~DataPubListener(){}
 void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.dataMutex_);
-
     if (info.status == MATCHED_MATCHING)
     {
         //std::cout << C_RED << "DATA Pub Matched" << C_DEF << std::endl;
@@ -64,7 +63,6 @@ ThroughputPublisher::CommandSubListener::~CommandSubListener(){}
 void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
-
     if (info.status == MATCHED_MATCHING)
     {
         std::cout << C_RED << "COMMAND Sub Matched" << C_DEF << std::endl;
@@ -87,7 +85,6 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
     MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
-
     if (info.status == MATCHED_MATCHING)
     {
         std::cout << C_RED << "COMMAND Pub Matched" << C_DEF << std::endl;
@@ -272,6 +269,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     Wparam2.topic.topicName = pct.str();
     Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam2.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Wparam2.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_par, Wparam2, (PublisherListener*)&this->m_CommandPubListener);
 
@@ -309,6 +307,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
     {
         return;
     }
+
     if (demand == 0 || msg_size == 0)
     {
         if (!this->loadDemandsPayload())
@@ -421,9 +420,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         m_DynType.SetDynamicType(m_pDynType);
 
         Domain::registerType(mp_par, &m_DynType);
-
         mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
-
         m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
 
         MemberId id;
@@ -562,7 +559,6 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         std::cout << "PROBLEM READING RESULTS;" << std::endl;
 
     return false;
-
 }
 
 bool ThroughputPublisher::loadDemandsPayload()

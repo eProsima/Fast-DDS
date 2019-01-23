@@ -42,7 +42,7 @@ static void GetIP6s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
         locNames.end(),
         [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL; });
     locNames.erase(new_end, locNames.end());
-    std::for_each(locNames.begin(), locNames.end(), [](auto&& loc)
+    std::for_each(locNames.begin(), locNames.end(), [](IPFinder::info_IP& loc)
     {
         loc.locator.kind = LOCATOR_KIND_TCPv6;
     });

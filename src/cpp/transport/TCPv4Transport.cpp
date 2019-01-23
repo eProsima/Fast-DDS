@@ -42,20 +42,18 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
         locNames.end(),
         [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL; });
     locNames.erase(new_end, locNames.end());
-    std::for_each(locNames.begin(), locNames.end(), [](auto&& loc)
+    std::for_each(locNames.begin(), locNames.end(), [](IPFinder::info_IP& loc)
     {
         loc.locator.kind = LOCATOR_KIND_TCPv4;
     });
 }
 
-static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator)
+static asio::ip::address_v4::bytes_type locatorToNative(Locator_t& locator, const octet* local_wan)
 {
-    if (IPLocator::hasWan(locator))
+    const octet* wan = IPLocator::getWan(locator);
+    if (IPLocator::hasWan(locator) && (memcmp(local_wan, wan, 4) != 0))
     {
-        return{ { IPLocator::getWan(locator)[0],
-            IPLocator::getWan(locator)[1],
-            IPLocator::getWan(locator)[2],
-            IPLocator::getWan(locator)[3]} };
+        return{ { wan[0], wan[1], wan[2], wan[3]} };
     }
     else
     {
@@ -260,7 +258,7 @@ ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(const Locator_t& loc, uint16_
 
 ip::tcp::endpoint TCPv4Transport::GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const
 {
-    return ip::tcp::endpoint(asio::ip::address_v4(locatorToNative(loc)), port);
+    return ip::tcp::endpoint(asio::ip::address_v4(locatorToNative(loc, mConfiguration_.wan_addr)), port);
 }
 
 ip::tcp::endpoint TCPv4Transport::GenerateEndpoint(uint16_t port) const
@@ -295,6 +293,152 @@ void TCPv4Transport::EndpointToLocator(const ip::tcp::endpoint& endpoint, Locato
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v4().to_bytes();
     IPLocator::setIPv4(locator, ipBytes.data());
+}
+
+bool TCPv4Transport::fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const
+{
+    bool result = TCPTransportInterface::fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+
+    IPLocator::setWan(locator,
+        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
+        mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
+
+    return result;
+}
+
+bool TCPv4Transport::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
+{
+    bool result = TCPTransportInterface::fillUnicastLocator(locator, well_known_port);
+
+    IPLocator::setWan(locator,
+        mConfiguration_.wan_addr[0], mConfiguration_.wan_addr[1],
+        mConfiguration_.wan_addr[2], mConfiguration_.wan_addr[3]);
+
+    return result;
+}
+
+LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+{
+    LocatorList_t unicastResult;
+    LocatorList_t connectedLocators;
+    for (auto it = mChannelResources.begin(); it != mChannelResources.end(); ++it)
+    {
+        connectedLocators.push_back(it->first);
+    }
+
+    for (const LocatorList_t& locatorList : locatorLists)
+    {
+        LocatorListConstIterator it = locatorList.begin();
+        LocatorList_t pendingUnicast;
+
+        bool addLocator = true;
+        while (it != locatorList.end())
+        {
+            assert((*it).kind == mTransportKind);
+            addLocator = true;
+
+            // Check is local interface.
+            auto localInterface = mCurrentInterfaces.begin();
+            for (; localInterface != mCurrentInterfaces.end(); ++localInterface)
+            {
+                if (CompareLocatorIP(localInterface->locator, *it))
+                {
+                    // Loopback locator
+                    Locator_t loopbackLocator;
+                    FillLocalIp(loopbackLocator);
+                    IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
+                    IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
+                    pendingUnicast.push_back(loopbackLocator);
+                    addLocator = false;
+                    break;
+                }
+            }
+
+            // Add localhost?
+            if (localInterface == mCurrentInterfaces.end() && IPLocator::isLocal(*it))
+            {
+                pendingUnicast.push_back(*it);
+                ++it;
+                continue;
+            }
+            else if (!addLocator)
+            {
+                ++it;
+                continue;
+            }
+
+            // Check Remote WAN locators.
+            if (memcmp(IPLocator::getWan(*it), mConfiguration_.wan_addr, 4) != 0)
+            {
+                // Only allow one locator with the same WAN and physical port.
+                for (auto unicastLocator = unicastResult.begin(); unicastLocator != unicastResult.end(); ++unicastLocator)
+                {
+                    if (memcmp(IPLocator::getWan(*unicastLocator), IPLocator::getWan(*it), 4) == 0 && unicastLocator->port == it->port)
+                    {
+                        addLocator = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // With the same wan than the server, only allow one locator with the same address and physical port.
+                for (auto unicastLocator = unicastResult.begin(); unicastLocator != unicastResult.end(); ++unicastLocator)
+                {
+                    if (memcmp(IPLocator::getIPv4(*unicastLocator), IPLocator::getIPv4(*it), 4) == 0 && unicastLocator->port == it->port)
+                    {
+                        addLocator = false;
+                        break;
+                    }
+                }
+            }
+
+            if (addLocator)
+            {
+                addLocator = false;
+
+                // Only allow already connected locators.
+                for (auto locatorIt = connectedLocators.begin(); locatorIt != connectedLocators.end(); ++locatorIt)
+                {
+                    if (((IPLocator::hasWan(*it) && memcmp(IPLocator::getWan(*it), IPLocator::getIPv4(*locatorIt), 4) == 0) ||
+                        (!IPLocator::hasWan(*it) && memcmp(IPLocator::getIPv4(*it), IPLocator::getIPv4(*locatorIt), 4) == 0)) &&
+                        IPLocator::getPhysicalPort(*locatorIt) == IPLocator::getPhysicalPort(*it))
+                    {
+                        addLocator = true;
+                        break;
+                    }
+                }
+
+                if (addLocator)
+                {
+                    pendingUnicast.push_back(*it);
+                }
+            }
+            ++it;
+        }
+
+        unicastResult.push_back(pendingUnicast);
+    }
+
+    if (!IsInterfaceWhiteListEmpty() && unicastResult.size() > 0)
+    {
+        bool bValid = false;
+        for (Locator_t loc : unicastResult)
+        {
+            if (IsInterfaceAllowed(IPLocator::toIPv4string(loc)))
+            {
+                bValid = true;
+            }
+        }
+
+        if (!bValid)
+        {
+            logError(RTCP, "There isn't any valid TCP Address on the whitelist");
+        }
+    }
+
+    LocatorList_t result(std::move(unicastResult));
+    return result;
 }
 
 } // namespace rtps

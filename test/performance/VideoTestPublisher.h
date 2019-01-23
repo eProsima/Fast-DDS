@@ -59,7 +59,7 @@ class VideoTestPublisher
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
                 const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time,
-                int forced_domain);
+                int forced_domain, int video_width, int video_height, int frame_rate);
         void run();
         bool test(uint32_t datasize);
 
@@ -110,8 +110,10 @@ class VideoTestPublisher
         int m_dropRate;
         int m_sendSleepTime;
         int m_forcedDomain;
-
-    protected:
+        int m_videoWidth;
+        int m_videoHeight;
+        int m_videoFrameRate;
+protected:
 
         void InitGStreamer();
         static GstFlowReturn new_sample(GstElement *sink, VideoTestPublisher *sub);

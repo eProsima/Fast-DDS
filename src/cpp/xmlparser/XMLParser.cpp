@@ -182,6 +182,7 @@ XMLP_ret XMLParser::parseXMLTransportsProf(tinyxml2::XMLElement* p_root)
         ret = parseXMLTransportData(p_element);
         if (ret != XMLP_ret::XML_OK)
         {
+            logError(XMLPARSER, "Error parsing transports");
             return ret;
         }
         p_element = p_element->NextSiblingElement(TRANSPORT_DESCRIPTOR);
@@ -258,6 +259,8 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
@@ -455,7 +458,9 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0 ||
             strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 || strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
             strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
-            strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0)
+            strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
+            strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
+            strcmp(name, ENABLE_TCP_NODELAY) == 0)
         {
             // Parsed outside of this method
         }
@@ -483,6 +488,8 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 <xs:sequence>
                     <xs:element name="port" type="uint16Type"/>
                 </xs:sequence>
+                <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
@@ -536,6 +543,14 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                     return XMLP_ret::XML_ERROR;
                 pTCPDesc->logical_port_increment = static_cast<uint16_t>(iPort);
             }
+            // enable_tcp_nodelay - boolType
+            else if (strcmp(name, ENABLE_TCP_NODELAY) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->enable_tcp_nodelay, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
             else if (strcmp(name, LISTENING_PORTS) == 0)
             {
                 // listening_ports uint16ListType
@@ -548,6 +563,20 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
 
                     pTCPDesc->add_listener_port(static_cast<uint16_t>(iPort));
                     p_aux1 = p_aux1->NextSiblingElement(PORT);
+                }
+            }
+            else if (strcmp(name, CALCULATE_CRC) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->calculate_crc, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, CHECK_CRC) == 0)
+            {
+                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->check_crc, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
                 }
             }
             else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, TRANSPORT_ID) == 0 ||
@@ -617,6 +646,7 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
 
         if (ret != XMLP_ret::XML_OK)
         {
+            logError(XMLPARSER, "Error parsing type " << type << ".");
             break;
         }
     }
@@ -1069,7 +1099,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         p_dynamictypebuilder_t contentType = getDiscriminatorTypeBuilder(memberType);
         if (contentType == nullptr)
         {
-            logError(XMLPARSER, "Error parsing sequence element type: Cannot be recognized.");
+            logError(XMLPARSER, "Error parsing sequence element type: Cannot be recognized: " << memberType);
             return nullptr;
         }
 
@@ -1424,6 +1454,19 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         }
     }
 
+
+    if (memberBuilder == nullptr)
+    {
+        if (!isArray)
+        {
+            logError(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
+        }
+        else
+        {
+            logError(XMLPARSER, "Failed creating " << memberType << " array: " << memberName);
+        }
+    }
+
     const char* memberTopicKey = p_root->Attribute(KEY);
     if (memberTopicKey != nullptr)
     {
@@ -1543,6 +1586,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
 
     tinyxml2::XMLElement* p_profile = p_root->FirstChildElement();
     const char* tag = nullptr;
+    bool parseOk = true;
     while (nullptr != p_profile)
     {
         if (nullptr != (tag = p_profile->Value()))
@@ -1550,27 +1594,27 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             // If profile parsing functions fails, log and continue.
             if (strcmp(tag, TRANSPORT_DESCRIPTORS) == 0)
             {
-                parseXMLTransportsProf(p_profile);
+                parseOk &= parseXMLTransportsProf(p_profile) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, PARTICIPANT) == 0)
             {
-                parseXMLParticipantProf(p_profile, profilesNode);
+                parseOk &= parseXMLParticipantProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, PUBLISHER) == 0 || strcmp(tag, DATA_WRITER) == 0)
             {
-                parseXMLPublisherProf(p_profile, profilesNode);
+                parseOk &= parseXMLPublisherProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, SUBSCRIBER) == 0 || strcmp(tag, DATA_READER) == 0)
             {
-                parseXMLSubscriberProf(p_profile, profilesNode);
+                parseOk &= parseXMLSubscriberProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, TOPIC) == 0)
             {
-                parseXMLTopicData(p_profile, profilesNode);
+                parseOk &= parseXMLTopicData(p_profile, profilesNode) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, TYPES) == 0)
             {
-                parseXMLTypes(p_profile);
+                parseOk &= parseXMLTypes(p_profile) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, QOS_PROFILE) == 0)
             {
@@ -1588,6 +1632,12 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 logError(XMLPARSER, "Not expected tag: '" << tag << "'");
             }
+        }
+
+        if (!parseOk)
+        {
+            logError(XMLPARSER, "Error parsing profile's tag " << tag);
+            return XMLP_ret::XML_ERROR;
         }
         p_profile = p_profile->NextSiblingElement();
     }
