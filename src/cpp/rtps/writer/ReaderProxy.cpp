@@ -387,10 +387,10 @@ bool ReaderProxy::minChange(std::vector<ChangeForReader_t*>* Changes,
     return true;
 }
 
-bool ReaderProxy::requested_fragment_set(const SequenceNumber_t& sequence_number, const FragmentNumberSet_t& frag_set)
+bool ReaderProxy::requested_fragment_set(
+        const SequenceNumber_t& sequence_number, 
+        const FragmentNumberSet_t& frag_set)
 {
-    std::lock_guard<std::recursive_mutex> guard(mp_mutex);
-
     // Locate the outbound change referenced by the NACK_FRAG
     auto changeIter = std::find_if(m_changesForReader.begin(), m_changesForReader.end(),
         [sequence_number](const ChangeForReader_t& change)
@@ -402,8 +402,7 @@ bool ReaderProxy::requested_fragment_set(const SequenceNumber_t& sequence_number
         return false;
     }
 
-    ChangeForReader_t newch(*changeIter);
-    auto hint = m_changesForReader.erase(changeIter);
+    ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*changeIter);
     newch.markFragmentsAsUnsent(frag_set);
 
     // If it was UNSENT, we shouldn't switch back to REQUESTED to prevent stalling.
@@ -411,9 +410,34 @@ bool ReaderProxy::requested_fragment_set(const SequenceNumber_t& sequence_number
     {
         newch.setStatus(REQUESTED);
     }
-    m_changesForReader.insert(hint, newch);
 
     return true;
+}
+
+bool ReaderProxy::process_nack_frag(
+        const GUID_t& reader_guid, 
+        uint32_t nack_count,
+        const SequenceNumber_t& sequence_number,
+        const FragmentNumberSet_t& fragments_state)
+{
+    std::lock_guard<std::recursive_mutex> guardReaderProxy(mp_mutex);
+
+    if (m_att.guid == reader_guid)
+    {
+        if (lastNackfragCount_ < nack_count)
+        {
+            lastNackfragCount_ = nack_count;
+            // TODO Not doing Acknowledged.
+            if (requested_fragment_set(sequence_number, fragments_state))
+            {
+                mp_nackResponse->restart_timer();
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 }   // namespace rtps

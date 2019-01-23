@@ -1025,19 +1025,8 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
 
                 for (auto rit = SF->matchedReadersBegin(); rit != SF->matchedReadersEnd(); ++rit)
                 {
-                    std::lock_guard<std::recursive_mutex> guardReaderProxy((*rit)->mp_mutex);
-
-                    if ((*rit)->m_att.guid == readerGUID)
+                    if ((*rit)->process_nack_frag(readerGUID, Ackcount, writerSN, fnState))
                     {
-                        if ((*rit)->getLastNackfragCount() < Ackcount)
-                        {
-                            (*rit)->setLastNackfragCount(Ackcount);
-                            // TODO Not doing Acknowledged.
-                            if((*rit)->requested_fragment_set(writerSN, fnState))
-                            {
-                                (*rit)->mp_nackResponse->restart_timer();
-                            }
-                        }
                         break;
                     }
                 }

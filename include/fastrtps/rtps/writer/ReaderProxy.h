@@ -153,16 +153,6 @@ public:
             ChangeForReader_t* changeForReader);
 
     /*!
-     * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.
-     * @param[in] frag_set set containing the requested fragments to be sent.
-     * @param[in] sequence_number Sequence number to be paired with the requested fragments.
-     * @return True if there is at least one requested fragment. False in other case.
-     */
-    bool requested_fragment_set(
-            const SequenceNumber_t& sequence_number, 
-            const FragmentNumberSet_t& frag_set);
-
-    /*!
      * @brief Returns the last NACKFRAG count.
      * @return Last NACKFRAG count.
      */
@@ -179,6 +169,12 @@ public:
     {
         lastNackfragCount_ = lastNackfragCount;
     }
+
+    bool process_nack_frag(
+            const GUID_t& reader_guid, 
+            uint32_t nack_count,
+            const SequenceNumber_t& sequence_number,
+            const FragmentNumberSet_t& fragments_state);
 
     //! Timed Event to manage the Acknack response delay.
     NackResponseDelay* mp_nackResponse;
@@ -213,6 +209,17 @@ private:
     uint32_t lastNackfragCount_;
 
     SequenceNumber_t changesFromRLowMark_;
+
+    /*!
+     * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.
+     * @param[in] frag_set set containing the requested fragments to be sent.
+     * @param[in] sequence_number Sequence number to be paired with the requested fragments.
+     * @return True if there is at least one requested fragment. False in other case.
+     */
+    bool requested_fragment_set(
+            const SequenceNumber_t& sequence_number, 
+            const FragmentNumberSet_t& frag_set);
+
 };
 
 } /* namespace rtps */
