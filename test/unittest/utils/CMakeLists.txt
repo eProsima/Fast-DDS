@@ -72,6 +72,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(TMutexTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(TMutexTests ${GTEST_LIBRARIES})
-        add_gtest(gTMutexTests SOURCES ${TMUTEXTESTS_SOURCE})
+        add_gtest(TMutexTests SOURCES ${TMUTEXTESTS_SOURCE})
     endif()
 endif()
