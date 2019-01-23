@@ -127,12 +127,24 @@ public:
         return mMsgReceiver;
     }
 
+    inline void terminate()
+    {
+        terminated_ = true;
+    }
+
+    inline bool terminated()
+    {
+        return terminated_;
+    }
+
+
 private:
 
     TransportReceiverInterface* mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
     std::string interface_;
+    std::atomic<bool> terminated_;
     UDPChannelResource(const UDPChannelResource&) = delete;
     UDPChannelResource& operator=(const UDPChannelResource&) = delete;
 };
