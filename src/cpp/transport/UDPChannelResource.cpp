@@ -24,7 +24,6 @@ UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket)
     : mMsgReceiver(nullptr)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
-    , terminated_(false)
 {
 }
 
@@ -33,7 +32,6 @@ UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket, uint32_t maxMs
     , mMsgReceiver(nullptr)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
-    , terminated_(false)
 {
 }
 
@@ -41,7 +39,6 @@ UDPChannelResource::UDPChannelResource(UDPChannelResource&& channelResource)
     : mMsgReceiver(channelResource.mMsgReceiver)
     , socket_(moveSocket(channelResource.socket_))
     , only_multicast_purpose_(channelResource.only_multicast_purpose_)
-    , terminated_(channelResource.terminated())
 {
     channelResource.mMsgReceiver = nullptr;
 }

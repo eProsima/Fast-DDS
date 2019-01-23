@@ -181,8 +181,6 @@ protected:
     virtual void SetSendBufferSize(uint32_t size) = 0;
     virtual void SetSocketOutbountInterface(eProsimaUDPSocket&, const std::string&) = 0;
 
-    void release_input_channel_thread(const Locator_t&, UDPChannelResource*);
-
     /*
         struct LocatorCompare {
         bool operator()(const Locator_t& lhs, const Locator_t& rhs) const

@@ -21,7 +21,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/eClock.h>
 
 using namespace std;
 using namespace asio;
@@ -83,34 +82,22 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
     }
 
-    std::vector<std::thread*> thread_list;
+    // It may sound redundant, but we must mark all the related channel to be killed first.
     for (UDPChannelResource* channel_resource : channel_resources)
     {
-        std::thread* new_thread = new std::thread(&UDPTransportInterface::release_input_channel_thread, this,
-            locator, channel_resource);
-        thread_list.push_back(new_thread);
+        channel_resource->Disable();
     }
 
-    for(std::thread* thread : thread_list)
+    // Then we release the channels
+    for (UDPChannelResource* channel : channel_resources)
     {
-        thread->join();
-        delete thread;
+        ReleaseInputChannel(locator, channel);
+        channel->getSocket()->cancel();
+        channel->getSocket()->close();
+        delete channel;
     }
 
     return true;
-}
-
-void UDPTransportInterface::release_input_channel_thread(const Locator_t& locator, UDPChannelResource* channel)
-{
-    while (!channel->terminated())
-    {
-        ReleaseInputChannel(locator, channel);
-        eClock::my_sleep(100);
-    }
-
-    channel->getSocket()->cancel();
-    channel->getSocket()->close();
-    delete channel;
 }
 
 bool UDPTransportInterface::CloseOutputChannel(const Locator_t& locator)
@@ -398,7 +385,6 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
             logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
         }
     }
-    pChannelResource->terminate();
 }
 
 bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet* receiveBuffer,
