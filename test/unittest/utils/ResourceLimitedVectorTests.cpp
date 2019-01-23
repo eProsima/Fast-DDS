@@ -37,7 +37,7 @@ TEST_F(ResourceLimitedVectorTests, default_constructor)
 
     // Should be empty and non-allocated
     ASSERT_TRUE(uut.empty());
-    ASSERT_EQ(uut.capacity(), 0);
+    ASSERT_EQ(uut.capacity(), 0u);
 
     // Add all items and check no errors
     for (int i : testbed)
@@ -108,7 +108,7 @@ TEST_F(ResourceLimitedVectorTests, prealocated_growing_1_config)
     ASSERT_TRUE(uut.empty());
 
     // Capacity should have been reserved
-    ASSERT_EQ(uut.size(), 0);
+    ASSERT_EQ(uut.size(), 0u);
     ASSERT_EQ(uut.capacity(), NUM_ITEMS);
 
     // Values should be correctly added
