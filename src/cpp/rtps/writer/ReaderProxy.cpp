@@ -157,7 +157,7 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
             }
             else
             {
-                ChangeForReader_t cr;
+                ChangeForReader_t cr(current_sequence);
                 cr.setStatus(UNACKNOWLEDGED);
                 cr.notValid();
                 m_changesForReader.insert(cr);
@@ -178,14 +178,9 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
 
         if (chit != m_changesForReader.end())
         {
-            ChangeForReader_t newch(*chit);
+            ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*chit);
             newch.setStatus(REQUESTED);
             newch.markAllFragmentsAsUnsent();
-
-            auto hint = m_changesForReader.erase(chit);
-
-            m_changesForReader.insert(hint, newch);
-
             isSomeoneWasSetRequested = true;
         }
     });
@@ -222,14 +217,12 @@ void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeFo
         }
         else
         {
-            ChangeForReader_t newch(*it);
+            ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
             newch.setStatus(status);
             if (status == UNSENT)
             {
                 mustWakeUpAsyncThread = true;
             }
-            auto hint = m_changesForReader.erase(it);
-            m_changesForReader.insert(hint, newch);
         }
     }
 
@@ -253,7 +246,7 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
 
     if (it != m_changesForReader.end())
     {
-        ChangeForReader_t newch(*it);
+        ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
         newch.markFragmentsAsSent(fragment);
         if (newch.getUnsentFragments().empty())
         {
@@ -263,8 +256,6 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
         {
             mustWakeUpAsyncThread = true;
         }
-        auto hint = m_changesForReader.erase(it);
-        m_changesForReader.insert(hint, newch);
     }
 
     if (mustWakeUpAsyncThread)
@@ -292,7 +283,7 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
             }
 
 
-                // Note: we can perform this cast as we are not touching the sorting field (seq_num)
+            // Note: we can perform this cast as we are not touching the sorting field (seq_num)
             const_cast<ChangeForReader_t&>(*it).setStatus(next);
             if (next == UNSENT && previous != UNSENT)
             {
