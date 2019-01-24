@@ -5,14 +5,10 @@
         <rtps>
             <builtin>
                 <leaseDuration>
-                    <durationbyval>
-                        <seconds>3</seconds>
-                    </durationbyval>
+                    <sec>3</sec>
                 </leaseDuration>
                 <leaseAnnouncement>
-                    <durationbyval>
-                        <seconds>1</seconds>
-                    </durationbyval>
+                    <sec>1</sec>
                 </leaseAnnouncement>
             </builtin>
         </rtps>
