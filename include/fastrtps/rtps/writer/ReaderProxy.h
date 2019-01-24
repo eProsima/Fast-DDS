@@ -60,9 +60,11 @@ public:
 
     void destroy_timers();
 
-    void addChange(const ChangeForReader_t&);
+    void add_change(
+            const ChangeForReader_t& change,
+            bool restart_nack_supression);
 
-    size_t countChangesForReader() const;
+    bool has_changes() const;
 
     bool change_is_acked(const SequenceNumber_t& sequence_number) const;
 
@@ -82,7 +84,7 @@ public:
 
     /**
     * Applies the given function object to every unsent change.
-    * @param seqNumSet Vector of sequenceNumbers
+    * @param f Function to apply
     */
     template <class UnaryFunction>
     void for_each_unsent_change(UnaryFunction f) const
@@ -103,7 +105,8 @@ public:
      */
     void set_change_to_status(
             const SequenceNumber_t& seq_num, 
-            ChangeForReaderStatus_t status);
+            ChangeForReaderStatus_t status,
+            bool restart_nack_supression);
 
     bool mark_fragment_as_sent_for_change(
             const CacheChange_t* change, 
@@ -118,14 +121,13 @@ public:
             ChangeForReaderStatus_t previous, 
             ChangeForReaderStatus_t next);
 
-    //void setNotValid(const CacheChange_t* change);
-    void setNotValid(CacheChange_t* change);
+    void change_has_been_removed(const SequenceNumber_t& sequence_number);
 
     /*!
      * @brief Returns there is some UNACKNOWLEDGED change.
      * @return There is some UNACKNOWLEDGED change.
      */
-    bool thereIsUnacknowledged() const;
+    bool has_unacknowledged() const;
 
     //!Attributes of the Remote Reader
     RemoteReaderAttributes m_att;
@@ -133,32 +135,15 @@ public:
     //!Pointer to the associated StatefulWriter.
     StatefulWriter* mp_SFW;
 
-    /**
-     * Return the minimum change in a vector of CacheChange_t.
-     * @param Changes Pointer to a vector of CacheChange_t.
-     * @param changeForReader Pointer to the CacheChange_t.
-     * @return True if correct.
-     */
-    bool minChange(
-            std::vector<ChangeForReader_t*>* Changes, 
-            ChangeForReader_t* changeForReader);
-
-    /*!
-     * @brief Returns the last NACKFRAG count.
-     * @return Last NACKFRAG count.
-     */
-    uint32_t getLastNackfragCount() const
+    bool check_and_set_acknack_count(uint32_t acknack_count)
     {
-        return lastNackfragCount_;
-    }
+        if (last_acknack_count_ < acknack_count)
+        {
+            last_acknack_count_ = acknack_count;
+            return true;
+        }
 
-    /*!
-     * @brief Sets the last NACKFRAG count.
-     * @param lastNackfragCount New value for last NACKFRAG count.
-     */
-    void setLastNackfragCount(uint32_t lastNackfragCount)
-    {
-        lastNackfragCount_ = lastNackfragCount;
+        return false;
     }
 
     bool process_nack_frag(
@@ -166,13 +151,6 @@ public:
             uint32_t nack_count,
             const SequenceNumber_t& sequence_number,
             const FragmentNumberSet_t& fragments_state);
-
-    //! Timed Event to manage the Acknack response delay.
-    NackResponseDelay* mp_nackResponse;
-    //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
-    NackSupressionDuration* mp_nackSupression;
-    //! Last ack/nack count
-    uint32_t m_lastAcknackCount;
 
     /**
      * Filter a CacheChange_t, in this version always returns true.
@@ -186,17 +164,27 @@ public:
 
     SequenceNumber_t get_low_mark() const
     {
-        return changesFromRLowMark_;
+        return changes_low_mark_;
     }
+
+    void update_nack_response_interval(const Duration_t& interval);
+
+    void update_nack_supression_interval(const Duration_t& interval);
+
+private:
 
     //!Set of the changes and its state.
     std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
-
-private:
+    //! Timed Event to manage the Acknack response delay.
+    NackResponseDelay* nack_response_event_;
+    //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
+    NackSupressionDuration* nack_supression_event_;
+    //! Last ack/nack count
+    uint32_t last_acknack_count_;
     //! Last  NACKFRAG count.
-    uint32_t lastNackfragCount_;
+    uint32_t last_nackfrag_count_;
 
-    SequenceNumber_t changesFromRLowMark_;
+    SequenceNumber_t changes_low_mark_;
 
     /*!
      * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.

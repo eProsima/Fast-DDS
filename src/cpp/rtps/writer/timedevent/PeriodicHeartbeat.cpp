@@ -68,7 +68,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
             for (std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
                 it != mp_SFW->matchedReadersEnd(); ++it)
             {
-                if ((*it)->thereIsUnacknowledged())
+                if ((*it)->has_unacknowledged())
                 {
                     // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
                     mp_SFW->send_heartbeat_to_nts(**it, false);
@@ -89,7 +89,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
                 {
                     if (!unacked_changes)
                     {
-                        if ((*it)->thereIsUnacknowledged())
+                        if ((*it)->has_unacknowledged())
                         {
                             unacked_changes = true;
                         }

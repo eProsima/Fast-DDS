@@ -136,13 +136,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 }
 
                 changeForReader.setRelevance(it->rtps_is_relevant(change));
-                it->addChange(changeForReader);
+                it->add_change(changeForReader, true);
                 expectsInlineQos |= it->m_att.expectsInlineQos;
-
-                if (it->mp_nackSupression != nullptr) // It is reliable 
-                {
-                    it->mp_nackSupression->restart_timer();
-                }
 
                 if (m_separateSendingEnabled)
                 {
@@ -191,7 +186,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 }
 
                 changeForReader.setRelevance(it->rtps_is_relevant(change));
-                it->addChange(changeForReader);
+                it->add_change(changeForReader, false);
             }
         }
     }
@@ -208,13 +203,15 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
 bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
+    SequenceNumber_t sequence_number = a_change->sequenceNumber;
+
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    logInfo(RTPS_WRITER,"Change "<< a_change->sequenceNumber << " to be removed.");
+    logInfo(RTPS_WRITER,"Change "<< sequence_number << " to be removed.");
 
     // Invalidate CacheChange pointer in ReaderProxies.
     for(ReaderProxy* it : matched_readers)
     {
-        it->setNotValid(a_change);
+        it->change_has_been_removed(sequence_number);
     }
 
     std::unique_lock<std::mutex> may_lock(may_remove_change_mutex_);
@@ -258,14 +255,12 @@ void StatefulWriter::send_any_unsent_changes()
                     {
                         if (is_reliable)
                         {
-                            remoteReader->set_change_to_status(seqNum, UNDERWAY);
+                            remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
                             activateHeartbeatPeriod = true;
-                            assert(remoteReader->mp_nackSupression != nullptr);
-                            remoteReader->mp_nackSupression->restart_timer();
                         }
                         else
                         {
-                            remoteReader->set_change_to_status(seqNum, ACKNOWLEDGED);
+                            remoteReader->set_change_to_status(seqNum, ACKNOWLEDGED, false);
                         }
                     }
                     else
@@ -279,7 +274,7 @@ void StatefulWriter::send_any_unsent_changes()
                     {
                         irrelevant.emplace(seqNum);
                     }
-                    remoteReader->set_change_to_status(seqNum, UNDERWAY); //TODO(Ricardo) Review
+                    remoteReader->set_change_to_status(seqNum, UNDERWAY, false); //TODO(Ricardo) Review
                 } // Relevance
             };
             remoteReader->for_each_unsent_change(unsent_change_process);
@@ -308,13 +303,13 @@ void StatefulWriter::send_any_unsent_changes()
                     }
                     else // Change status to UNACKNOWLEDGED
                     {
-                        remoteReader->set_change_to_status(unsentChange->getSequenceNumber(), UNACKNOWLEDGED);
+                        remoteReader->set_change_to_status(unsentChange->getSequenceNumber(), UNACKNOWLEDGED, false);
                     }
                 }
                 else
                 {
                     notRelevantChanges.add_sequence_number(unsentChange->getSequenceNumber(), remoteReader);
-                    remoteReader->set_change_to_status(unsentChange->getSequenceNumber(), UNDERWAY); //TODO(Ricardo) Review
+                    remoteReader->set_change_to_status(unsentChange->getSequenceNumber(), UNDERWAY, false); //TODO(Ricardo) Review
                 }
             };
 
@@ -365,18 +360,17 @@ void StatefulWriter::send_any_unsent_changes()
                             if (remoteReader->m_att.endpoint.reliabilityKind == RELIABLE)
                             {
                                 activateHeartbeatPeriod = true;
-                                assert(remoteReader->mp_nackSupression != nullptr);
+                                assert(remoteReader->nack_supression_event_ != nullptr);
                                 if (allFragmentsSent)
                                 {
-                                    remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY);
-                                    remoteReader->mp_nackSupression->restart_timer();
+                                    remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
                                 }
                             }
                             else
                             {
                                 if (allFragmentsSent)
                                 {
-                                    remoteReader->set_change_to_status(changeToSend.sequenceNumber, ACKNOWLEDGED);
+                                    remoteReader->set_change_to_status(changeToSend.sequenceNumber, ACKNOWLEDGED, false);
                                 }
                             }
                         }
@@ -397,14 +391,12 @@ void StatefulWriter::send_any_unsent_changes()
                         {
                             if (remoteReader->m_att.endpoint.reliabilityKind == RELIABLE)
                             {
-                                remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY);
+                                remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
                                 activateHeartbeatPeriod = true;
-                                assert(remoteReader->mp_nackSupression != nullptr);
-                                remoteReader->mp_nackSupression->restart_timer();
                             }
                             else
                             {
-                                remoteReader->set_change_to_status(changeToSend.sequenceNumber, ACKNOWLEDGED);
+                                remoteReader->set_change_to_status(changeToSend.sequenceNumber, ACKNOWLEDGED, false);
                             }
                         }
                     }
@@ -526,7 +518,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
                 changeForReader.setRelevance(false);
                 not_relevant_changes.insert(current_seq);
                 changeForReader.setStatus(UNACKNOWLEDGED);
-                rp->addChange(changeForReader);
+                rp->add_change(changeForReader, false);
                 ++current_seq;
             }
 
@@ -545,7 +537,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             }
 
             changeForReader.setStatus(UNACKNOWLEDGED);
-            rp->addChange(changeForReader);
+            rp->add_change(changeForReader, false);
             ++current_seq;
         }
 
@@ -678,7 +670,7 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
     all_acked_ = std::none_of(matched_readers.begin(), matched_readers.end(),
         [](const ReaderProxy* reader)
         {
-            return reader->countChangesForReader() > 0;
+            return reader->has_changes();
         });
     lock.unlock();
 
@@ -698,7 +690,6 @@ void StatefulWriter::check_acked_status()
     bool all_acked = true;
     SequenceNumber_t min_low_mark;
 
-
     for(ReaderProxy* it : matched_readers)
     {
         SequenceNumber_t reader_low_mark = it->get_low_mark();
@@ -707,7 +698,7 @@ void StatefulWriter::check_acked_status()
             min_low_mark = reader_low_mark;
         }
 
-        if(it->countChangesForReader() > 0)
+        if(it->has_changes())
         {
             all_acked = false;
         }
@@ -819,16 +810,14 @@ void StatefulWriter::updateTimes(const WriterTimes& times)
     {
         for(ReaderProxy* it : matched_readers)
         {
-            if(it->mp_nackResponse != nullptr) // It is reliable
-                it->mp_nackResponse->update_interval(times.nackResponseDelay);
+            it->update_nack_response_interval(times.nackResponseDelay);
         }
     }
     if(m_times.nackSupressionDuration != times.nackSupressionDuration)
     {
         for (ReaderProxy* it : matched_readers)
         {
-            if(it->mp_nackSupression != nullptr) // It is reliable
-                it->mp_nackSupression->update_interval(times.nackSupressionDuration);
+            it->update_nack_supression_interval(times.nackSupressionDuration);
         }
     }
     m_times = times;
@@ -961,16 +950,14 @@ void StatefulWriter::process_acknack(
     {
         if(remote_reader->m_att.guid == reader_guid)
         {
-            if(remote_reader->m_lastAcknackCount < ack_count)
+            if(remote_reader->check_and_set_acknack_count(ack_count))
             {
-                remote_reader->m_lastAcknackCount = ack_count;
                 if(sn_set.base() != SequenceNumber_t(0, 0))
                 {
                     // Sequence numbers before Base are set as Acknowledged.
                     remote_reader->acked_changes_set(sn_set.base());
-                    if (remote_reader->requested_changes_set(sn_set) && remote_reader->mp_nackResponse != nullptr)
+                    if (remote_reader->requested_changes_set(sn_set))
                     {
-                        remote_reader->mp_nackResponse->restart_timer();
                     }
                     else if(!final_flag)
                     {
