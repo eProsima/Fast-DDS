@@ -681,7 +681,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg50 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg50 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg50 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.9);
@@ -691,7 +698,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg90 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg90 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg90 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.99);
@@ -701,7 +715,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg99 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg99 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg99 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.9999);
@@ -711,7 +732,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg9999 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg9999 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg9999 = NAN;
+                    }
                 }
             }
         }
@@ -742,7 +770,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop50 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop50 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop50 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(drops_.size() * 0.9);
@@ -752,7 +787,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop90 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop90 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop90 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(drops_.size() * 0.99);
@@ -762,7 +804,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop99 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop99 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop99 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(drops_.size() * 0.9999);
@@ -772,7 +821,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop9999 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop9999 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop9999 = NAN;
+                    }
                 }
             }
         }
