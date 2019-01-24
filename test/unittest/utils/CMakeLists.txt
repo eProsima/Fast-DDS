@@ -66,12 +66,5 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(BitmapRangeTests ${GTEST_LIBRARIES} ${MOCKS})
         add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
-
-        add_executable(TMutexTests ${TMUTEXTESTS_SOURCE})
-        target_compile_definitions(TMutexTests PRIVATE EPROSIMA_MUTEX_TEST FASTRTPS_NO_LIB)
-        target_include_directories(TMutexTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(TMutexTests ${GTEST_LIBRARIES})
-        add_gtest(TMutexTests SOURCES ${TMUTEXTESTS_SOURCE})
     endif()
 endif()

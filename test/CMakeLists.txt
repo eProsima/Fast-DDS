@@ -46,6 +46,9 @@ endif()
 # Performance tests
 ###############################################################################
 if(PERFORMANCE_TESTS)
-	add_subdirectory(performance)
+    add_subdirectory(performance)
 endif()
 
+if(UNIX)
+    add_subdirectory(realtime)
+endif()

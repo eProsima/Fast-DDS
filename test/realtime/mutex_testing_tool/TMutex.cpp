@@ -17,35 +17,31 @@
  *
  */
 
-#include <fastrtps/utils/Mutex.hpp>
+#include "TMutex.hpp"
 
-#if defined(EPROSIMA_MUTEX_TEST)
 #include <array>
-#include <typeinfo>
 #include <cassert>
-#endif
 
 using namespace eprosima::fastrtps;
 
-#if defined(EPROSIMA_MUTEX_TEST)
 namespace eprosima {
 namespace fastrtps {
 
 std::atomic<pid_t> g_tmutex_thread_pid(0);
+int (*g_origin_lock_func)(pthread_mutex_t*){nullptr};
 
 typedef struct
 {
-    int id;
-    void* mutex;
+    pthread_mutex_t* mutex;
     uint32_t count;
 
 } tmutex_record;
 
 constexpr size_t g_tmutex_records_max_length = 10;
-std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{{-1, nullptr, 0}}};
+std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{{nullptr, 0}}};
 int32_t g_tmutex_records_end = -1;
 
-int32_t tmutex_find_record(void* mutex)
+int32_t tmutex_find_record(pthread_mutex_t* mutex)
 {
     int32_t returned_position = -1;
 
@@ -68,7 +64,7 @@ void eprosima::fastrtps::tmutex_start_recording()
 {
     assert(0 == g_tmutex_thread_pid);
     g_tmutex_thread_pid = GET_PID();
-    g_tmutex_records = {{-1, nullptr, 0}};
+    g_tmutex_records = {{{nullptr, 0}}};
     g_tmutex_records_end = -1;
 }
 
@@ -78,7 +74,7 @@ void eprosima::fastrtps::tmutex_stop_recording()
     g_tmutex_thread_pid = 0;
 }
 
-void eprosima::fastrtps::tmutex_record_typed_mutex_(int mutex_type_id, void* mutex)
+void eprosima::fastrtps::tmutex_record_mutex_(pthread_mutex_t* mutex)
 {
     assert(0 < g_tmutex_thread_pid);
 
@@ -89,7 +85,6 @@ void eprosima::fastrtps::tmutex_record_typed_mutex_(int mutex_type_id, void* mut
     {
         assert(g_tmutex_records_max_length > g_tmutex_records_end + 1);
         position = ++g_tmutex_records_end;
-        g_tmutex_records[position].id = mutex_type_id;
         g_tmutex_records[position].mutex = mutex;
     }
 
@@ -102,7 +97,7 @@ size_t eprosima::fastrtps::tmutex_get_num_mutexes()
     return g_tmutex_records_end + 1;
 }
 
-void* eprosima::fastrtps::tmutex_get_mutex(const size_t index)
+pthread_mutex_t* eprosima::fastrtps::tmutex_get_mutex(const size_t index)
 {
     assert(index <= g_tmutex_records_end);
     return g_tmutex_records[index].mutex;
@@ -111,67 +106,15 @@ void* eprosima::fastrtps::tmutex_get_mutex(const size_t index)
 void eprosima::fastrtps::tmutex_lock_mutex(const size_t index)
 {
     assert(index <= g_tmutex_records_end);
-    switch (g_tmutex_records[index].id)
+
+    if(g_origin_lock_func != nullptr)
     {
-        case 1:
-        {
-            std::mutex* mutex = reinterpret_cast<std::mutex*>(g_tmutex_records[index].mutex);
-            mutex->lock();
-            break;
-        }
-        case 2:
-        {
-            std::recursive_mutex* mutex = reinterpret_cast<std::recursive_mutex*>(g_tmutex_records[index].mutex);
-            mutex->lock();
-            break;
-        }
-        case 3:
-        {
-            std::timed_mutex* mutex = reinterpret_cast<std::timed_mutex*>(g_tmutex_records[index].mutex);
-            mutex->lock();
-            break;
-        }
-        case 4:
-        {
-            std::recursive_timed_mutex* mutex =
-                reinterpret_cast<std::recursive_timed_mutex*>(g_tmutex_records[index].mutex);
-            mutex->lock();
-            break;
-        }
+        (*g_origin_lock_func)(g_tmutex_records[index].mutex);
     }
 }
 
 void eprosima::fastrtps::tmutex_unlock_mutex(const size_t index)
 {
     assert(index <= g_tmutex_records_end);
-    switch (g_tmutex_records[index].id)
-    {
-        case 1:
-        {
-            std::mutex* mutex = reinterpret_cast<std::mutex*>(g_tmutex_records[index].mutex);
-            mutex->unlock();
-            break;
-        }
-        case 2:
-        {
-            std::recursive_mutex* mutex = reinterpret_cast<std::recursive_mutex*>(g_tmutex_records[index].mutex);
-            mutex->unlock();
-            break;
-        }
-        case 3:
-        {
-            std::timed_mutex* mutex = reinterpret_cast<std::timed_mutex*>(g_tmutex_records[index].mutex);
-            mutex->unlock();
-            break;
-        }
-        case 4:
-        {
-            std::recursive_timed_mutex* mutex =
-                reinterpret_cast<std::recursive_timed_mutex*>(g_tmutex_records[index].mutex);
-            mutex->unlock();
-            break;
-        }
-    }
+    pthread_mutex_unlock(g_tmutex_records[index].mutex);
 }
-
-#endif
