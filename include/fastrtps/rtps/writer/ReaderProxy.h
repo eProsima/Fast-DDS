@@ -64,7 +64,7 @@ public:
 
     size_t countChangesForReader() const;
 
-    bool change_is_acked(const SequenceNumber_t& sequence_number);
+    bool change_is_acked(const SequenceNumber_t& sequence_number) const;
 
     /**
      * Mark all changes up to the one indicated by the seqNum as Acknowledged.
@@ -126,13 +126,6 @@ public:
      * @return There is some UNACKNOWLEDGED change.
      */
     bool thereIsUnacknowledged() const;
-
-    /**
-     * Get a vector of all unacked changes by this Reader.
-     * @param reqChanges Pointer to a vector of pointers.
-     * @return True if correct.
-     */
-    bool unacked_changes(std::vector<const ChangeForReader_t*>* reqChanges);
 
     //!Attributes of the Remote Reader
     RemoteReaderAttributes m_att;

@@ -111,7 +111,7 @@ size_t ReaderProxy::countChangesForReader() const
     return m_changesForReader.size();
 }
 
-bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number)
+bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number) const
 {
     if (sequence_number <= changesFromRLowMark_)
     {
