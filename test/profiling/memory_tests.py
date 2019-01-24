@@ -59,18 +59,20 @@ def start_test(command, pubsub, time, transport):
     # print("Command: " + py_command)
     p = subprocess.Popen(py_command, shell=True)
 
+transport = ""
+
+if len(sys.argv) >= 5:
+    transport = sys.argv[4]
+
 if len(sys.argv) >= 4:
     test_time = sys.argv[3]
 
 if len(sys.argv) >= 3:
     binaries = [sys.argv[2]]
 
-transport = ""
 for command in binaries:
     if len(sys.argv) >= 2:
         pubsub = sys.argv[1]
-        if len(sys.argv) >= 3:
-            transport = sys.argv[2]
         start_test(command, pubsub, test_time, transport)
     else:
         tpub = threading.Thread(target=start_test, args=(command, "publisher", test_time, transport))

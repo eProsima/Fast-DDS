@@ -811,7 +811,7 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
     printf("%11u,%15.2f,%14.2f,%13.2f,%14.2f,%14.2f,%14.2f,%16.2f,%14.2f \n",
         TS.received, TS.pDropStdev, TS.pDropMean, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
 
-    output_file_csv << TS.received << "," << TS.pAvgStdev << "," << TS.pAvgMean << "," << TS.m_minAvg <<
+    output_file_csv << TS.received << "," << TS.pAvgStdev << "," << TS.pAvgMean << "," << TS.m_minAvg << "," <<
         TS.pAvg50 << "," << TS.pAvg90 << "," << TS.pAvg99 << "," << TS.pAvg9999 << "," << TS.m_maxAvg << "," <<
         TS.pDropStdev << "," << TS.pDropMean << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
         "," << TS.pDrop99 << "," << TS.pDrop9999 << "," << TS.m_maxDrop << "," << std::endl;
