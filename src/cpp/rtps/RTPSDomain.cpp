@@ -58,11 +58,12 @@ void RTPSDomain::stopAll()
     eClock::my_sleep(100);
 }
 
-RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,
-        RTPSParticipantListener* listen)
+RTPSParticipant* RTPSDomain::createParticipant(const RTPSParticipantAttributes& attrs, RTPSParticipantListener* listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     logInfo(RTPS_PARTICIPANT,"");
+
+    RTPSParticipantAttributes PParam = attrs;
 
     if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod) //TODO CHeckear si puedo ser infinito
     {

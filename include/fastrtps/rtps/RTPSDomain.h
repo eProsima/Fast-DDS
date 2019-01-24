@@ -79,7 +79,7 @@ class RTPSDomain
      * @param plisten Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
      */
-    RTPS_DllAPI static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam, RTPSParticipantListener* plisten = nullptr);
+    RTPS_DllAPI static RTPSParticipant* createParticipant(const RTPSParticipantAttributes& attrs, RTPSParticipantListener* plisten = nullptr);
 
     /**
      * Create a RTPSWriter in a participant.
