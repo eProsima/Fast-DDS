@@ -243,15 +243,20 @@ public:
         collection_.assign(il.begin(), il.begin() + n);
     }
 
+    /**
+     * Wrappers to other basic vector methods.
+     * Please refer to https://en.cppreference.com/w/cpp/container/vector
+     */
+    ///@{
     iterator begin() noexcept { return collection_.begin(); }
     const_iterator begin() const noexcept { return collection_.begin(); }
     iterator end() noexcept { return collection_.end(); }
     const_iterator end() const noexcept { return collection_.end(); }
-
     size_type capacity() const noexcept { return collection_.capacity(); }
     size_type size() const noexcept { return collection_.size(); }
     bool empty() const noexcept { return collection_.empty(); }
     void clear() { collection_.clear(); }
+    ///@}
 
     /**
      * Const cast to underlying collection.
