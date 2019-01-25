@@ -23,5 +23,6 @@ target_link_libraries(mutex_testing_tool_preload PRIVATE mutex_testing_tool ${CM
 add_executable(TMutexTests TMutexTests.cpp)
 target_include_directories(TMutexTests PRIVATE ${GTEST_INCLUDE_DIRS})
 target_link_libraries(TMutexTests mutex_testing_tool ${GTEST_LIBRARIES})
+STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")
 add_gtest(TMutexTests SOURCES TMutexTests.cpp
-    ENVIRONMENTS "LD_PRELOAD=$<TARGET_FILE:mutex_testing_tool_preload>")
+    ENVIRONMENTS "LD_PRELOAD=${MUTEX_PRELOAD_LIBRARY_FILE}")
