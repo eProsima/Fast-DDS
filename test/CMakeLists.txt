@@ -49,6 +49,6 @@ if(PERFORMANCE_TESTS)
     add_subdirectory(performance)
 endif()
 
-if(UNIX AND !APPLE)
+if(UNIX AND NOT APPLE)
     add_subdirectory(realtime)
 endif()
