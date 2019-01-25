@@ -35,6 +35,8 @@ using namespace eprosima::fastrtps::types;
 
 class DynamicTypesTests: public ::testing::Test
 {
+    const std::string config_file_ = "types.xml";
+
     public:
         DynamicTypesTests()
         {
@@ -49,6 +51,11 @@ class DynamicTypesTests: public ::testing::Test
         {
             DynamicDataFactory::DeleteInstance();
             DynamicTypeBuilderFactory::DeleteInstance();
+        }
+
+        std::string config_file()
+        { 
+            return config_file_;
         }
 };
 
@@ -3703,7 +3710,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("EnumStruct");
@@ -3734,7 +3741,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("AliasStruct");
@@ -3768,7 +3775,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("AliasAliasStruct");
@@ -3803,7 +3810,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_BoolStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
@@ -3830,7 +3837,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_OctetStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("OctetStruct");
@@ -3857,7 +3864,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStruct");
@@ -3884,7 +3891,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongStruct");
@@ -3911,7 +3918,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongLongStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongLongStruct");
@@ -3938,7 +3945,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UShortStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
@@ -3965,7 +3972,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
@@ -3992,7 +3999,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongLongStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
@@ -4019,7 +4026,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_FloatStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
@@ -4046,7 +4053,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_DoubleStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
@@ -4073,7 +4080,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongDoubleStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongDoubleStruct");
@@ -4100,7 +4107,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_CharStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
@@ -4127,7 +4134,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
@@ -4154,7 +4161,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
@@ -4181,7 +4188,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
@@ -4208,7 +4215,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
@@ -4235,7 +4242,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeWStringStruct");
@@ -4262,7 +4269,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStringStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
@@ -4289,7 +4296,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
@@ -4316,7 +4323,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasString");
@@ -4346,7 +4353,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasWString");
@@ -4376,7 +4383,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArraytStruct");
@@ -4406,7 +4413,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayStruct");
@@ -4436,7 +4443,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
@@ -4501,7 +4508,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
@@ -4527,7 +4534,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
@@ -4555,7 +4562,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
@@ -4581,7 +4588,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
@@ -4610,7 +4617,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
@@ -4637,7 +4644,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
@@ -4669,7 +4676,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
@@ -4701,7 +4708,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
@@ -4738,7 +4745,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
@@ -4787,7 +4794,7 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
@@ -4820,7 +4827,7 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
     using namespace xmlparser;
     using namespace types;
 
-    XMLP_ret ret = XMLProfileManager::loadXMLFile("types.xml");
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType *pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
