@@ -180,6 +180,8 @@ namespace eprosima
 
                 SequenceNumber_t next_sequence_number() const;
 
+                bool send_periodic_heartbeat();
+
                 /*!
                  * @brief Sends a heartbeat to a remote reader.
                  * @remarks This function is non thread-safe.
