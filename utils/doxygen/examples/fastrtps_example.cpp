@@ -240,5 +240,3 @@ MyListener listen;
 ParticipantAttributes patt;
 RTPSParticipant* p = RTPSDomain::createRTPSParticipant(patt,(RTPSParticipantListener*)&listen);
 //! [ex_RTPSParticipantCreation]
-
-

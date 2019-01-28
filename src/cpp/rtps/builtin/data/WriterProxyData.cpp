@@ -546,6 +546,7 @@ void WriterProxyData::clear()
     m_isAlive = true;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
+    m_topicDiscoveryKind = NO_CHECK;
 }
 
 void WriterProxyData::copy(WriterProxyData* wdata)
@@ -564,11 +565,9 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
     m_topicDiscoveryKind = wdata->m_topicDiscoveryKind;
-    if (m_topicDiscoveryKind != NO_CHECK)
-    {
-        m_type_id = wdata->m_type_id;
-        m_type = wdata->m_type;
-    }
+    m_type_id = wdata->m_type_id;
+    m_type = wdata->m_type;
+    m_type_information = wdata->m_type_information;
 }
 
 

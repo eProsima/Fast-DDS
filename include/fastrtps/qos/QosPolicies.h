@@ -961,7 +961,7 @@ class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
     friend class ParameterList;
 public:
     std::vector<DataRepresentationId_t> m_value;
-    RTPS_DllAPI DataRepresentationQosPolicy() {};
+    RTPS_DllAPI DataRepresentationQosPolicy() : Parameter_t(PID_DATA_REPRESENTATION, 0), QosPolicy(false) {};
     virtual RTPS_DllAPI ~DataRepresentationQosPolicy() {};
 
     /**
@@ -1004,7 +1004,8 @@ public:
     bool m_prevent_type_widening;
     bool m_force_type_validation;
 
-    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
+    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy() : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 9),
+            QosPolicy(false)
     {
         m_kind = ALLOW_TYPE_COERCION;
         m_ignore_sequence_bounds = true;
@@ -1127,6 +1128,19 @@ public:
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+
+    RTPS_DllAPI TypeIdV1& operator=(const TypeIdentifier& type_id)
+    {
+        delete m_type_identifier;
+        m_type_identifier = new TypeIdentifier();
+        *m_type_identifier = type_id;
+        return *this;
+    }
+
+    RTPS_DllAPI const TypeIdentifier* get() const
+    {
+        return m_type_identifier;
+    }
 };
 
 /**
@@ -1191,6 +1205,19 @@ public:
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+
+    RTPS_DllAPI TypeObjectV1& operator=(const TypeObject& type_object)
+    {
+        delete m_type_object;
+        m_type_object = new TypeObject();
+        *m_type_object = type_object;
+        return *this;
+    }
+
+    RTPS_DllAPI const TypeObject* get() const
+    {
+        return m_type_object;
+    }
 };
 
 /**
@@ -1202,7 +1229,7 @@ namespace XTypes
 class TypeInformation : private Parameter_t, public QosPolicy
 {
 public:
-    RTPS_DllAPI TypeInformation() : Parameter_t(PID_TYPE_OBJECTV1, 0), QosPolicy(false)
+    RTPS_DllAPI TypeInformation() : Parameter_t(PID_TYPE_INFORMATION, 0), QosPolicy(false)
     {
         //m_type_information = new eprosima::fastrtps::TypeInformation();
         m_type_information = nullptr;
@@ -1212,9 +1239,17 @@ public:
     RTPS_DllAPI TypeInformation(const TypeInformation& type)
          : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
     {
-        m_type_information = new eprosima::fastrtps::TypeInformation();
-        *m_type_information = *type.m_type_information;
-        m_is_assigned = true;
+        if (type.m_type_information != nullptr)
+        {
+            m_type_information = new eprosima::fastrtps::TypeInformation();
+            *m_type_information = *type.m_type_information;
+            m_is_assigned = true;
+        }
+        else
+        {
+            m_type_information = nullptr;
+            m_is_assigned = false;
+        }
     }
 
     RTPS_DllAPI TypeInformation(TypeInformation&& type)
@@ -1232,9 +1267,18 @@ public:
         m_sendAlways = type.m_sendAlways;
 
         delete m_type_information;
-        m_type_information = new eprosima::fastrtps::TypeInformation();
-        *m_type_information = *type.m_type_information;
-        m_is_assigned = true;
+
+        if (type.m_type_information != nullptr)
+        {
+            m_type_information = new eprosima::fastrtps::TypeInformation();
+            *m_type_information = *type.m_type_information;
+            m_is_assigned = true;
+        }
+        else
+        {
+            m_type_information = nullptr;
+            m_is_assigned = false;
+        }
 
         return *this;
     }

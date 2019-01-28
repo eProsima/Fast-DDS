@@ -732,13 +732,26 @@ bool EDP::checkTypeValidation(const WriterProxyData* wdata, const ReaderProxyDat
             rdata->m_qos.type_information.get()->complete().typeid_with_size().type_id(),
             rdata->m_qos.m_typeConsistency, wdata->m_qos.m_typeConsistency);
     }
-    else if (wdata->m_qos.type.m_type_object != nullptr && rdata->m_qos.type.m_type_object != nullptr
-        && wdata->m_qos.type.m_type_object->_d() != static_cast<uint8_t>(0x00)
-        && rdata->m_qos.type.m_type_object->_d() != static_cast<uint8_t>(0x00))
+    else if (wdata->m_qos.type_id.m_type_identifier != nullptr && rdata->m_qos.type_id.m_type_identifier != nullptr
+        && wdata->m_qos.type_id.m_type_identifier->_d() != static_cast<uint8_t>(0x00)
+        && rdata->m_qos.type_id.m_type_identifier->_d() != static_cast<uint8_t>(0x00))
     {
-        // Both provide TypeObject
-        return rdata->m_qos.type.m_type_object->consistent(*wdata->m_qos.type.m_type_object,
-            rdata->m_qos.m_typeConsistency, wdata->m_qos.m_typeConsistency);
+        // Both provide TypeIdentifier
+        if (rdata->m_qos.type_id.m_type_identifier->consistent(*wdata->m_qos.type_id.m_type_identifier,
+            rdata->m_qos.m_typeConsistency, wdata->m_qos.m_typeConsistency))
+        {
+            // TypeIdentifier are equal...
+            if (wdata->m_qos.type.m_type_object != nullptr && rdata->m_qos.type.m_type_object != nullptr
+                && wdata->m_qos.type.m_type_object->_d() != static_cast<uint8_t>(0x00)
+                && rdata->m_qos.type.m_type_object->_d() != static_cast<uint8_t>(0x00))
+            {
+                // Both provide TypeObject
+                return rdata->m_qos.type.m_type_object->consistent(*wdata->m_qos.type.m_type_object,
+                    rdata->m_qos.m_typeConsistency, wdata->m_qos.m_typeConsistency);
+            }
+            return true;
+        }
+        return false;
     }
     else if (wdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION
             || rdata->m_qos.m_typeConsistency.m_kind == DISALLOW_TYPE_COERCION

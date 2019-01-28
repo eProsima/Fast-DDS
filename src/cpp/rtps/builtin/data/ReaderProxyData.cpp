@@ -552,11 +552,9 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
     m_isAlive = rdata->m_isAlive;
     m_topicKind = rdata->m_topicKind;
     m_topicDiscoveryKind = rdata->m_topicDiscoveryKind;
-    if (m_topicDiscoveryKind != NO_CHECK)
-    {
-        m_type_id = rdata->m_type_id;
-        m_type = rdata->m_type;
-    }
+    m_type_id = rdata->m_type_id;
+    m_type = rdata->m_type;
+    m_type_information = rdata->m_type_information;
 }
 
 RemoteReaderAttributes ReaderProxyData::toRemoteReaderAttributes() const

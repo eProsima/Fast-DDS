@@ -18,7 +18,6 @@
 #include "idl/TypesTypeObject.h"
 #include "idl/WideEnumTypeObject.h"
 #include <gtest/gtest.h>
-#include <tinyxml2.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
