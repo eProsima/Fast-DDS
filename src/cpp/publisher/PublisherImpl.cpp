@@ -35,8 +35,11 @@
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 
-PublisherImpl::PublisherImpl(ParticipantImpl* p, TopicDataType*pdatatype,
-        const PublisherAttributes& att, PublisherListener* listen ):
+PublisherImpl::PublisherImpl(
+        ParticipantImpl* p,
+        TopicDataType* pdatatype,
+        const PublisherAttributes& att,
+        PublisherListener* listen ):
     mp_participant(p),
     mp_writer(nullptr),
     mp_type(pdatatype),
@@ -71,12 +74,17 @@ PublisherImpl::~PublisherImpl()
 
 
 
-bool PublisherImpl::create_new_change(ChangeKind_t changeKind, void* data)
+bool PublisherImpl::create_new_change(
+        ChangeKind_t changeKind,
+        void* data)
 {
     return create_new_change_with_params(changeKind, data, WriteParams::WRITE_PARAM_DEFAULT);
 }
 
-bool PublisherImpl::create_new_change_with_params(ChangeKind_t changeKind, void* data, WriteParams &wparams)
+bool PublisherImpl::create_new_change_with_params(
+        ChangeKind_t changeKind,
+        void* data,
+        WriteParams& wparams)
 {
 
     /// Preconditions
@@ -280,13 +288,17 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
     return updated;
 }
 
-void PublisherImpl::PublisherWriterListener::onWriterMatched(RTPSWriter* /*writer*/,MatchingInfo& info)
+void PublisherImpl::PublisherWriterListener::onWriterMatched(
+        RTPSWriter* /*writer*/,
+        MatchingInfo& info)
 {
     if(mp_publisherImpl->mp_listener!=nullptr)
         mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);
 }
 
-void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(RTPSWriter* /*writer*/, CacheChange_t* ch)
+void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
+        RTPSWriter* /*writer*/,
+        CacheChange_t* ch)
 {
     if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
     {

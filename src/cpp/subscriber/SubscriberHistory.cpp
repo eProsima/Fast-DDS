@@ -36,17 +36,18 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
     return c1->sequenceNumber < c2->sequenceNumber;
 }
 
-SubscriberHistory::SubscriberHistory(SubscriberImpl* simpl,
-                                     uint32_t payloadMaxSize,
-                                     const HistoryQosPolicy& history,
-                                     const ResourceLimitsQosPolicy& resource,
-                                     MemoryManagementPolicy_t mempolicy):
-    ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,resource.allocated_samples,resource.max_samples + 1)),
-    m_unreadCacheCount(0),
-    m_historyQos(history),
-    m_resourceLimitsQos(resource),
-    mp_subImpl(simpl),
-    mp_getKeyObject(nullptr)
+SubscriberHistory::SubscriberHistory(
+        SubscriberImpl* simpl,
+        uint32_t payloadMaxSize,
+        const HistoryQosPolicy& history,
+        const ResourceLimitsQosPolicy& resource,
+        MemoryManagementPolicy_t mempolicy)
+    : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,resource.allocated_samples,resource.max_samples + 1))
+    , m_unreadCacheCount(0)
+    , m_historyQos(history)
+    , m_resourceLimitsQos(resource)
+    , mp_subImpl(simpl)
+    , mp_getKeyObject(nullptr)
 {
     if (mp_subImpl->getType()->m_isGetKeyDefined)
     {
