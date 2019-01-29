@@ -681,7 +681,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg50 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg50 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg50 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.9);
@@ -691,7 +698,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg90 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg90 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg90 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.99);
@@ -701,7 +715,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg99 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg99 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg99 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(avgs_.size() * 0.9999);
@@ -711,7 +732,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pAvg9999 = NAN;
+                    if (avgs_.size() == 1)
+                    {
+                        TS.pAvg9999 = *avgs_.begin();
+                    }
+                    else
+                    {
+                        TS.pAvg9999 = NAN;
+                    }
                 }
             }
         }
@@ -742,7 +770,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop50 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop50 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop50 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(drops_.size() * 0.9);
@@ -752,7 +787,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop90 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop90 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop90 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(drops_.size() * 0.99);
@@ -762,7 +804,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop99 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop99 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop99 = NAN;
+                    }
                 }
 
                 elem = static_cast<size_t>(drops_.size() * 0.9999);
@@ -772,7 +821,14 @@ void VideoTestSubscriber::analyzeTimes()
                 }
                 else
                 {
-                    TS.pDrop9999 = NAN;
+                    if (drops_.size() == 1)
+                    {
+                        TS.pDrop9999 = *drops_.begin();
+                    }
+                    else
+                    {
+                        TS.pDrop9999 = NAN;
+                    }
                 }
             }
         }
@@ -785,7 +841,9 @@ void VideoTestSubscriber::analyzeTimes()
 void VideoTestSubscriber::printStat(TimeStats& TS)
 {
     std::ofstream outFile;
+    std::ofstream outMeanFile;
     std::stringstream output_file_csv;
+    std::stringstream output_mean_csv;
     std::string str_reliable = "besteffort";
     if (m_bReliable)
     {
@@ -795,6 +853,8 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
     output_file_csv << "Samples, Avg stdev, Avg Mean, min Avg, Avg 50 %%, Avg 90 %%, Avg 99 %%, \
         Avg 99.99%%, Avg max, Drop stdev, Drop Mean, min Drop, Drop 50 %%, Drop 90 %%, Drop 99 %%, \
         Drop 99.99%%, Drop max" << std::endl;
+
+    output_mean_csv << "Avg Mean" << std::endl;
 
     printf("Statistics for video test \n");
     printf("    Samples,  Avg stdev,   Avg Mean,    min Avg,    Avg 50%%,    Avg 90%%,    Avg 99%%,   Avg 99.99%%,    Avg max\n");
@@ -807,16 +867,20 @@ void VideoTestSubscriber::printStat(TimeStats& TS)
     printf("%11u,%15.2f,%14.2f,%13.2f,%14.2f,%14.2f,%14.2f,%16.2f,%14.2f \n",
         TS.received, TS.pDropStdev, TS.pDropMean, TS.m_minDrop, TS.pDrop50, TS.pDrop90, TS.pDrop99, TS.pDrop9999, TS.m_maxDrop);
 
-    output_file_csv << TS.received << "," << TS.pAvgStdev << "," << TS.pAvgMean << "," << TS.m_minAvg <<
+    output_file_csv << TS.received << "," << TS.pAvgStdev << "," << TS.pAvgMean << "," << TS.m_minAvg << "," <<
         TS.pAvg50 << "," << TS.pAvg90 << "," << TS.pAvg99 << "," << TS.pAvg9999 << "," << TS.m_maxAvg << "," <<
         TS.pDropStdev << "," << TS.pDropMean << "," << TS.m_minDrop << "," << TS.pDrop50 << "," << TS.pDrop90 <<
         "," << TS.pDrop99 << "," << TS.pDrop9999 << "," << TS.m_maxDrop << "," << std::endl;
+
+    output_mean_csv << TS.pAvgMean << "," << std::endl;
 
     if (m_bExportCsv)
     {
         if (m_sExportPrefix.length() > 0)
         {
             outFile.open(m_sExportPrefix + ".csv");
+            outMeanFile.open(m_sExportPrefix + "_Mean.csv");
+            outMeanFile << output_mean_csv.str();
         }
         else
         {

@@ -24,11 +24,11 @@ test_time = "10"
 if not valgrind:
     valgrind = "valgrind"
 
-def start_test(command, pubsub, time):
+def start_test(command, pubsub, time, transport):
     os.system("mkdir -p output")
 
-    valgrind_command_rel = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_rel.out"]
-    valgrind_command_be = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_be.out"]
+    valgrind_command_rel = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_" + transport + "_rel.out"]
+    valgrind_command_be = [valgrind, "--tool=massif", "--stacks=yes", "--detailed-freq=1", "--max-snapshots=1000", "--massif-out-file=./output/consumption_" + pubsub + "_" + transport + "_be.out"]
 
     options = ["--time=" + time]
 
@@ -45,7 +45,7 @@ def start_test(command, pubsub, time):
 
     proc.communicate()
 
-    py_command = "python3 ./memory_analysis.py ./output/consumption_" + pubsub + "_be.out ./output/MemoryTest_" + pubsub + "_be.csv"
+    py_command = "python3 ./memory_analysis.py ./output/consumption_" + pubsub + "_" + transport + "_be.out ./output/MemoryTest_" + pubsub + "_" + transport + "_be.csv"
     p = subprocess.Popen(py_command, shell=True)
 
     # Reliable
@@ -55,9 +55,14 @@ def start_test(command, pubsub, time):
 
     proc.communicate()
 
-    py_command = "python3 ./memory_analysis.py ./output/consumption_" + pubsub + "_rel.out ./output/MemoryTest_" + pubsub + "_rel.csv"
+    py_command = "python3 ./memory_analysis.py ./output/consumption_" + pubsub + "_" + transport + "_rel.out ./output/MemoryTest_" + pubsub + "_" + transport + "_rel.csv"
     # print("Command: " + py_command)
     p = subprocess.Popen(py_command, shell=True)
+
+transport = ""
+
+if len(sys.argv) >= 5:
+    transport = sys.argv[4]
 
 if len(sys.argv) >= 4:
     test_time = sys.argv[3]
@@ -68,11 +73,11 @@ if len(sys.argv) >= 3:
 for command in binaries:
     if len(sys.argv) >= 2:
         pubsub = sys.argv[1]
-        start_test(command, pubsub, test_time)
+        start_test(command, pubsub, test_time, transport)
     else:
-        tpub = threading.Thread(target=start_test, args=(command, "publisher", test_time))
+        tpub = threading.Thread(target=start_test, args=(command, "publisher", test_time, transport))
         tpub.start()
-        tsub = threading.Thread(target=start_test, args=(command, "subscriber", test_time))
+        tsub = threading.Thread(target=start_test, args=(command, "subscriber", test_time, transport))
         tsub.start()
 
 quit()
