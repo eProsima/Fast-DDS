@@ -42,6 +42,8 @@ namespace fastrtps {
  * @tparam _Ty                 Element type.
  * @tparam _KeepOrderEnabler   Indicates if element order should be kept when removing items,
  *                             defaults to std::false_type.
+ * @tparam _LimitsConfig       Type defining the resource limits configuration,
+ *                             defaults to ResourceLimitedContainerConfig
  * @tparam _Alloc              Allocator to use on the underlying collection type, defaults to std::allocator<_Ty>.
  * @tparam _Collection         Type used to store the collection of items, defaults to std::vector<_Ty, _Alloc>.
  *
@@ -50,12 +52,14 @@ namespace fastrtps {
 template <
     typename _Ty, 
     typename _KeepOrderEnabler = std::false_type,
+    typename _LimitsConfig = ResourceLimitedContainerConfig,
     typename _Alloc = std::allocator<_Ty>, 
     typename _Collection = std::vector<_Ty, _Alloc> >
 class ResourceLimitedVector
 {
 public:
 
+    using configuration_type = _LimitsConfig;
     using collection_type = _Collection;
     using value_type = _Ty;
     using allocator_type = _Alloc;
@@ -83,7 +87,7 @@ public:
      * @param alloc   Allocator object. Forwarded to collection constructor.
      */
     ResourceLimitedVector(
-            ResourceLimitedContainerConfig cfg = {}, 
+            configuration_type cfg = configuration_type(),
             const allocator_type& alloc = allocator_type())
         : configuration_(cfg)
         , collection_(alloc)
@@ -140,14 +144,11 @@ public:
             return nullptr;
         }
 
-        // Keep record of insertion position
-        size_type previous_size = collection_.size();
-
         // Construct new element at the end of the collection
         collection_.emplace_back(args...);
 
         // Return pointer to newly created element
-        return &collection_[previous_size];
+        return &collection_.back();
     }
 
     /**
@@ -163,7 +164,12 @@ public:
     bool remove(const value_type& val)
     {
         iterator it = std::find(collection_.begin(), collection_.end(), val);
-        return remove(it);
+        if (it != collection_.end())
+        {
+            do_remove(it);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -185,7 +191,12 @@ public:
     bool remove_if(UnaryPredicate pred)
     {
         iterator it = std::find_if(collection_.begin(), collection_.end(), pred);
-        return remove(it);
+        if (it != collection_.end())
+        {
+            do_remove(it);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -268,7 +279,7 @@ public:
     operator const collection_type& () const noexcept { return collection_; }
 
 private:
-    ResourceLimitedContainerConfig configuration_;
+    configuration_type configuration_;
     collection_type collection_;
 
     /**
@@ -302,28 +313,38 @@ private:
         return true;
     }
 
-    bool remove(iterator it)
-    {
-        if (it != collection_.end())
-        {
-            do_remove(it);
-            return true;
-        }
-
-        return false;
-    }
-
+    /**
+     * Remove element.
+     *
+     * Removes the element pointed to by it.
+     * All iterators may become invalidated if this method returns true.
+     * This version doesn't keep the order of insertion, optimizing the number of copies performed.
+     *
+     * @param it   Iterator pointing to the item to be removed.
+     */
     template <typename Enabler = _KeepOrderEnabler>
     typename std::enable_if<!Enabler::value, void>::type do_remove(iterator it)
     {
         // Copy last element into the element being removed
-        if (collection_.size() > 1)
+        if (it != --collection_.end())
+        {
             *it = collection_.back();
+        }
 
         // Then drop last element
         collection_.pop_back();
     }
 
+    /**
+     * Remove element.
+     *
+     * Removes the element pointed to by it.
+     * All iterators may become invalidated if this method returns true.
+     * This version keeps the order of insertion, so when removing an item different from the last one,
+     * part of the collection will be copied.
+     *
+     * @param it   Iterator pointing to the item to be removed.
+     */
     template <typename Enabler = _KeepOrderEnabler>
     typename std::enable_if<Enabler::value, void>::type do_remove(iterator it)
     { 
