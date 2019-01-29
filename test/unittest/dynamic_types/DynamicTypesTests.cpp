@@ -53,7 +53,7 @@ class DynamicTypesTests: public ::testing::Test
             DynamicTypeBuilderFactory::DeleteInstance();
         }
 
-        std::string config_file()
+        const std::string& config_file()
         { 
             return config_file_;
         }
