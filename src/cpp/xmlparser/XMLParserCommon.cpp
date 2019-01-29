@@ -293,6 +293,34 @@ const char* USE_DEFAULT = "use_default";
 const char* CONSUMER = "consumer";
 const char* CLASS = "class";
 
+// TLS Config
+const char* TLS = "tls";
+const char* TLS_PASSWORD = "password";
+const char* TLS_OPTIONS = "options";
+const char* TLS_CERT_CHAIN_FILE = "cert_chain_file";
+const char* TLS_PRIVATE_KEY_FILE = "private_key_file";
+const char* TLS_TMP_DH_FILE = "tmp_dh_file";
+const char* TLS_VERIFY_FILE = "verify_file";
+const char* TLS_VERIFY_MODE = "verify_mode";
+
+// TLS Options
+const char* TLS_OPTION = "option";
+const char* TLS_DEFAULT_WORKAROUNDS = "DEFAULT_WORKAROUNDS";
+const char* TLS_NO_COMPRESSION = "NO_COMPRESSION";
+const char* TLS_NO_SSLV2 = "NO_SSLV2";
+const char* TLS_NO_SSLV3 = "NO_SSLV3";
+const char* TLS_NO_TLSV1 = "NO_TLSV1";
+const char* TLS_NO_TLSV1_1 = "NO_TLSV1_1";
+const char* TLS_NO_TLSV1_2 = "NO_TLSV1_2";
+const char* TLS_NO_TLSV1_3 = "NO_TLSV1_3";
+const char* TLS_SINGLE_DH_USE = "SINGLE_DH_USE";
+
+// TLS Verify Mode
+const char* TLS_VERIFY_NONE = "VERIFY_NONE";
+const char* TLS_VERIFY_PEER = "VERIFY_PEER";
+const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT = "VERIFY_FAIL_IF_NO_PEER_CERT";
+const char* TLS_VERIFY_CLIENT_ONCE = "VERIFY_CLIENT_ONCE";
+
 } /* xmlparser */
 } /* namespace */
 } /* namespace eprosima */

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds>
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>Test</transport_id>
+                <type>TCPv4</type>
+                <tls>
+                    <password>Password</password>
+                    <private_key_file>Key_file.pem</private_key_file>
+                    <cert_chain_file>Chain.pem</cert_chain_file>
+                    <tmp_dh_file>DH.pem</tmp_dh_file>
+                    <verify_file>verify.pem</verify_file>
+                    <verify_mode>VERIFY_PEER</verify_mode>
+                    <options>
+                        <option>NO_TLSV1</option>
+                        <option>NO_TLSV1_1</option>
+                    </options>
+                </tls>
+            </transport_descriptor>
+        </transport_descriptors>
+    </profiles>
+</dds>

@@ -43,6 +43,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_node_file_append.xml
             ${CMAKE_CURRENT_BINARY_DIR}/log_node_file_append.xml
             COPYONLY)
+            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tls_config.xml
+                ${CMAKE_CURRENT_BINARY_DIR}/tls_config.xml
+                COPYONLY)
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp

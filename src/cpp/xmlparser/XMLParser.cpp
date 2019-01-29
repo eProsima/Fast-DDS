@@ -261,6 +261,8 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
@@ -460,7 +462,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
             strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
             strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
-            strcmp(name, ENABLE_TCP_NODELAY) == 0)
+            strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0)
         {
             // Parsed outside of this method
         }
@@ -490,12 +492,15 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                 </xs:sequence>
                 <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
-    std::shared_ptr<rtps::TCPTransportDescriptor> pTCPDesc = std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(p_transport);
+    std::shared_ptr<rtps::TCPTransportDescriptor> pTCPDesc =
+        std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(p_transport);
     if (pTCPDesc != nullptr)
     {
         tinyxml2::XMLElement *p_aux0 = nullptr;
@@ -579,6 +584,13 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
                     return XMLP_ret::XML_ERROR;
                 }
             }
+            else if (strcmp(name, TLS) == 0)
+            {
+                if (XMLP_ret::XML_OK != parse_tls_config(p_aux0, p_transport))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
             else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, TRANSPORT_ID) == 0 ||
                 strcmp(name, TYPE) == 0 || strcmp(name, SEND_BUFFER_SIZE) == 0 ||
                 strcmp(name, RECEIVE_BUFFER_SIZE) == 0 || strcmp(name, TTL) == 0 ||
@@ -602,6 +614,232 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
 
     return ret;
 }
+
+XMLP_ret XMLParser::parse_tls_config(
+    tinyxml2::XMLElement* p_root,
+    sp_transport_t tcp_transport)
+{
+    /*
+        XSD:
+        <xs:simpleType name="tlsOptionsType">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="DEFAULT_WORKAROUNDS"/>
+                <xs:enumeration value="NO_COMPRESSION"/>
+                <xs:enumeration value="NO_SSLV2"/>
+                <xs:enumeration value="NO_SSLV3"/>
+                <xs:enumeration value="NO_TLSV1"/>
+                <xs:enumeration value="NO_TLSV1_1"/>
+                <xs:enumeration value="NO_TLSV1_2"/>
+                <xs:enumeration value="NO_TLSV1_3"/>
+                <xs:enumeration value="SINGLE_DH_USE"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:complexType name="tlsOptionsVectorType">
+            <xs:sequence>
+                <xs:element name="option" type="tlsOptionsType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:simpleType name="tlsVerifyModeType">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="VERIFY_NONE"/>
+                <xs:enumeration value="VERIFY_PEER"/>
+                <xs:enumeration value="VERIFY_FAIL_IF_NO_PEER_CERT"/>
+                <xs:enumeration value="VERIFY_CLIENT_ONCE"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:complexType name="tlsConfigType">
+            <xs:all minOccurs="0">
+                <xs:element name="password" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="options" type="tlsOptionsVectorType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="cert_chain_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="tmp_dh_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="verify_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="verify_mode" type="tlsVerifyModeType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+
+        XML Example:
+        <tls>
+            <password>Contraseña</password>
+            <private_key_file>Key_file.pem</private_key_file>
+            <cert_chain_file>Chain.pem</cert_chain_file>
+            <tmp_dh_file>DH.pem</tmp_dh_file>
+            <verify_file>verify.pem</verify_file>
+            <verify_mode>VERIFY_PEER</verify_mode>
+            <options>
+                <option>NO_TLSV1</option>
+                <option>NO_TLSV1_1</option>
+            </options>
+        </tls>
+   */
+    using TCPDescriptor = std::shared_ptr<rtps::TCPTransportDescriptor>;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using TLSOption = TCPTransportDescriptor::TLSConfig::TLSOptions;
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+
+    TCPDescriptor pTCPDesc = std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(tcp_transport);
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        const std::string config = p_aux0->Value();
+        if (config.compare(TLS_PASSWORD) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.password, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_PRIVATE_KEY_FILE) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.private_key_file, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_CERT_CHAIN_FILE) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.cert_chain_file, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_TMP_DH_FILE) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.tmp_dh_file, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_VERIFY_FILE) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.verify_file, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_VERIFY_MODE) == 0)
+        {
+            std::string verify_mode;
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &verify_mode, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+            else
+            {
+                if (verify_mode.compare(TLS_VERIFY_NONE) == 0)
+                {
+                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_NONE;
+                }
+                else if (verify_mode.compare(TLS_VERIFY_PEER) == 0)
+                {
+                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+                }
+                else if (verify_mode.compare(TLS_VERIFY_FAIL_IF_NO_PEER_CERT) == 0)
+                {
+                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+                }
+                else if (verify_mode.compare(TLS_VERIFY_CLIENT_ONCE) == 0)
+                {
+                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_CLIENT_ONCE;
+                }
+                else
+                {
+                    logError(XMLPARSER, "Error parsing TLS configuration verify_mode unrecognized "
+                        << verify_mode << ".");
+                    ret = XMLP_ret::XML_ERROR;
+                }
+            }
+        }
+        else if (config.compare(TLS_OPTIONS) == 0)
+        {
+            tinyxml2::XMLElement *p_option = p_aux0->FirstChildElement(TLS_OPTION);
+            while (p_option != nullptr)
+            {
+                std::string option;
+
+                if (XMLP_ret::XML_OK != getXMLString(p_option, &option, 0))
+                {
+                    ret = XMLP_ret::XML_ERROR;
+                }
+                else
+                {
+                    if (option.compare(TLS_DEFAULT_WORKAROUNDS) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::DEFAULT_WORKAROUNDS);
+                    }
+                    else if (option.compare(TLS_NO_COMPRESSION) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::NO_COMPRESSION);
+                    }
+                    else if (option.compare(TLS_NO_SSLV2) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::NO_SSLV2);
+                    }
+                    else if (option.compare(TLS_NO_SSLV3) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::NO_SSLV3);
+                    }
+                    else if (option.compare(TLS_NO_TLSV1) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1);
+                    }
+                    else if (option.compare(TLS_NO_TLSV1_1) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_1);
+                    }
+                    else if (option.compare(TLS_NO_TLSV1_2) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_2);
+                    }
+                    else if (option.compare(TLS_NO_TLSV1_3) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_3);
+                    }
+                    else if (option.compare(TLS_SINGLE_DH_USE) == 0)
+                    {
+                        pTCPDesc->tls_config.add_option(TLSOption::SINGLE_DH_USE);
+                    }
+                    else
+                    {
+                        logError(XMLPARSER, "Error parsing TLS configuration option unrecognized "
+                            << option << ".");
+                        ret = XMLP_ret::XML_ERROR;
+                    }
+                }
+
+                if (ret == XMLP_ret::XML_ERROR)
+                {
+                    // Break while loop
+                    break;
+                }
+
+                p_option = p_option->NextSiblingElement(TLS_OPTION);
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Error parsing TLS configuration: Field " << config << " not recognized.");
+            ret = XMLP_ret::XML_ERROR;
+        }
+
+        // Stop parsing on error
+        if (ret == XMLP_ret::XML_ERROR)
+        {
+            logError(XMLPARSER, "Error parsing TLS configuration's field '" << config << "'.");
+            break;
+        }
+    }
+
+    return ret;
+}
+
 
 XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
 {
@@ -812,7 +1050,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
         </xs:complexType>
 
         <xs:complexType name="enum">
-            <xs:attribute ref="name" use="required"/>
+            <xs:attribute name="name" use="required"/>
             <xs:sequence>
                 <xs:element name="enumerator" type="enumeratorType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>

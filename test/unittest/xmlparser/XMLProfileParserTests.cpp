@@ -16,6 +16,7 @@
 #include <fastrtps/log/FileConsumer.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
@@ -556,6 +557,48 @@ TEST_F(XMLProfileParserTests, file_and_default)
 {
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
+}
+
+TEST_F(XMLProfileParserTests, tls_config)
+{
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("tls_config.xml"));
+
+    xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
+
+    using TCPDescriptor = std::shared_ptr<TCPTransportDescriptor>;
+    TCPDescriptor descriptor = std::dynamic_pointer_cast<TCPTransportDescriptor>(transport);
+
+    /*
+    <tls>
+        <password>Password</password>
+        <private_key_file>Key_file.pem</private_key_file>
+        <cert_chain_file>Chain.pem</cert_chain_file>
+        <tmp_dh_file>DH.pem</tmp_dh_file>
+        <verify_file>verify.pem</verify_file>
+        <verify_mode>VERIFY_PEER</verify_mode>
+        <options>
+            <option>NO_TLSV1</option>
+            <option>NO_TLSV1_1</option>
+        </options>
+    </tls>
+    */
+
+    EXPECT_EQ("Password", descriptor->tls_config.password);
+    EXPECT_EQ("Key_file.pem", descriptor->tls_config.private_key_file);
+    EXPECT_EQ("Chain.pem", descriptor->tls_config.cert_chain_file);
+    EXPECT_EQ("DH.pem", descriptor->tls_config.tmp_dh_file);
+    EXPECT_EQ("verify.pem", descriptor->tls_config.verify_file);
+    EXPECT_EQ(TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER, descriptor->tls_config.verify_mode);
+    EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
+    EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
 }
 
 int main(int argc, char **argv)

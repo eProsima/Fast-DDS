@@ -81,6 +81,8 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , calculate_crc(true)
     , check_crc(true)
 {
+    this->tls_config.options = 0x0;
+    this->tls_config.verify_mode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_NONE;
 }
 
 TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
@@ -97,6 +99,8 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , calculate_crc(t.calculate_crc)
     , check_crc(t.check_crc)
 {
+    this->tls_config.options = t.tls_config.options;
+    this->tls_config.verify_mode = t.tls_config.verify_mode;
 }
 
 TCPTransportInterface::TCPTransportInterface()

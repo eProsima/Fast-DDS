@@ -49,6 +49,47 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="tlsOptionsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DEFAULT_WORKAROUNDS"/>
+            <xs:enumeration value="NO_COMPRESSION"/>
+            <xs:enumeration value="NO_SSLV2"/>
+            <xs:enumeration value="NO_SSLV3"/>
+            <xs:enumeration value="NO_TLSV1"/>
+            <xs:enumeration value="NO_TLSV1_1"/>
+            <xs:enumeration value="NO_TLSV1_2"/>
+            <xs:enumeration value="NO_TLSV1_3"/>
+            <xs:enumeration value="SINGLE_DH_USE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="tlsOptionsVectorType">
+        <xs:sequence>
+            <xs:element name="option" type="tlsOptionsType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="tlsVerifyModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VERIFY_NONE"/>
+            <xs:enumeration value="VERIFY_PEER"/>
+            <xs:enumeration value="VERIFY_FAIL_IF_NO_PEER_CERT"/>
+            <xs:enumeration value="VERIFY_CLIENT_ONCE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="tlsConfigType">
+        <xs:all minOccurs="0">
+            <xs:element name="password" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="options" type="tlsOptionsVectorType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="cert_chain_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tmp_dh_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_mode" type="tlsVerifyModeType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
     <xs:simpleType name="octetVectorType">
         <xs:restriction base="xs:string"/><!-- std::vector<octet> -->
     </xs:simpleType>
@@ -579,6 +620,7 @@
 			<xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -676,33 +718,6 @@
 
     <!-- Complex Types -->
 
-    <xs:complexType name="arrayDcl">
-        <xs:attribute name="name" type="string" use="optional"/>
-        <xs:attribute name="type" type="allTypes" use="required"/>
-        <xs:attribute name="dimensions" type="string" use="optional"/>
-    </xs:complexType>
-
-    <xs:complexType name="sequenceDcl">
-        <xs:attribute name="name" type="string" use="optional"/>
-        <xs:attribute name="type" type="allTypes" use="required"/>
-        <xs:attribute name="length" type="xs:unsignedInt" use="optional"/>
-    </xs:complexType>
-
-    <xs:complexType name="memberDcl">
-        <xs:attribute name="name" type="string" use="optional"/>
-        <xs:attribute name="type" type="allTypes" use="required"/>
-        <xs:attribute name="key" type="boolType" use="optional" default="false"/>
-    </xs:complexType>
-
-    <xs:complexType name="structDcl">
-        <xs:sequence>
-            <xs:choice maxOccurs="unbounded">
-                <xs:element name="member" type="memberDcl" minOccurs="1"/>
-            </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="name" type="string" use="required"/>
-    </xs:complexType>
-
     <xs:complexType name="caseDcl">
         <xs:sequence>
             <xs:choice minOccurs="1" maxOccurs="unbounded">
@@ -710,16 +725,6 @@
             </xs:choice>
             <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="unionDcl">
-        <xs:sequence>
-            <xs:element name="discriminator" type="string" minOccurs="1"/>
-            <xs:sequence maxOccurs="unbounded">
-                <xs:element name="case" type="caseDcl" minOccurs="1"/>
-            </xs:sequence>
-        </xs:sequence>
-        <xs:attribute name="name" type="string" use="required"/>
     </xs:complexType>
 
     <!-- Aux declarations -->
@@ -756,21 +761,22 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- Log entry point -->
+    <!-- Log entry point TODO - Review Log parser and XSD
     <xs:element name="log">
-      <xs:complexType>
-        <xs:boolean name="use_default"/>
-        <xs:sequence>
-          <xs:element maxOccurs="consumer">
-            <xs:complexType>
-              <xs:element name="class" type="string" minOccurs="1" maxOccurs="1"/>
-              <xs:sequence>
-                <xs:element name="propertyType"/>
-              </xs:sequence>
-            </xs:complexType>
-        </xs:sequence>
-      </xs:complexType>
-    </xs:element>
+        <xs:complexType>
+            <xs:element name="use_default" type="boolType" minOccurs="0"/>
+            <xs:sequence>
+                <xs:element maxOccurs="consumer">
+                    <xs:complexType>
+                    <xs:element name="class" type="string" minOccurs="1" maxOccurs="1"/>
+                    <xs:sequence>
+                        <xs:element name="propertyType"/>
+                    </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element> -->
 
     <!-- Dynamic Types -->
     <xs:element name="types">
@@ -796,16 +802,7 @@
                 <xs:element name="member" type="memberDcl" minOccurs="1"/>
             </xs:choice>
         </xs:sequence>
-        <xs:attribute name="name" type="string" use="required"/>
-    </xs:complexType>
-
-    <xs:complexType name="caseDcl">
-        <xs:sequence>
-            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="caseValue" type="string" minOccurs="1" maxOccurs="unbounded"/>
-            </xs:choice>
-            <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
+        <xs:attribute name="name" type="stringType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="unionDcl">
@@ -815,11 +812,11 @@
                 <xs:element name="case" type="caseDcl" minOccurs="1"/>
             </xs:sequence>
         </xs:sequence>
-        <xs:attribute name="name" type="identifierName" use="required"/>
+        <xs:attribute name="name" type="stringType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="typedefDcl">
-        <xs:attribute name="name" type="identifierName" use="required"/>
+        <xs:attribute name="name" type="stringType" use="required"/>
         <xs:attribute name="type" type="string" use="required"/>
         <xs:attribute name="key_type" type="string" use="optional"/>
         <xs:attribute name="arrayDimensions" type="string" use="optional"/>
@@ -833,31 +830,23 @@
         <xs:attribute name="value" type="stringType" use="optional"/>
     </xs:complexType>
 
-    <xs:complexType name="enum">
-        <xs:attribute ref="name" use="required"/>
+    <xs:complexType name="enumDcl">
         <xs:sequence>
             <xs:element name="enumerator" type="enumeratorType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:attribute name="name" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="memberDcl">
+        <xs:sequence>
+            <xs:element name="member" type="memberDcl" minOccurs="0"/>
+        </xs:sequence>
         <xs:attribute name="name" type="string" use="required"/>
         <xs:attribute name="type" type="string" use="required"/>
         <xs:attribute name="arrayDimensions" type="string" use="optional"/>
         <xs:attribute name="nonBasic" type="string" use="optional"/>
         <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
         <xs:attribute name="mapMaxLength" type="string" use="optional"/>
-        <xs:sequence>
-            <xs:element name="member" type="memberDcl" minOccurs="0"/>
-        </xs:sequence>
     </xs:complexType>
-
-
-
-
-
-
-
-
 
 </xs:schema>
