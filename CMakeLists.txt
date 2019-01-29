@@ -92,7 +92,7 @@ set(${PROJECT_NAME}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} library provides
 
 message(STATUS "Configuring ${PROJECT_NAME_LARGE}")
 message(STATUS "Version: ${PROJECT_VERSION}")
-message(STATUS "To change de version modify the file configure.ac")
+message(STATUS "To change the version modify the file configure.ac")
 
 ###############################################################################
 # Generation of windows installers.
