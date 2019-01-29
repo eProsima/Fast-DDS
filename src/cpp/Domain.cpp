@@ -53,7 +53,6 @@ bool Domain::default_xml_profiles_loaded = false;
 Domain::Domain()
 {
     // TODO Auto-generated constructor stub
-
 }
 
 Domain::~Domain()
@@ -138,7 +137,9 @@ bool Domain::removeSubscriber(Subscriber* sub)
     return false;
 }
 
-Participant* Domain::createParticipant(const std::string &participant_profile, ParticipantListener* listen)
+Participant* Domain::createParticipant(
+        const std::string& participant_profile,
+        ParticipantListener* listen)
 {
     if (false == default_xml_profiles_loaded)
     {
@@ -156,11 +157,13 @@ Participant* Domain::createParticipant(const std::string &participant_profile, P
     return createParticipant(participant_att, listen);
 }
 
-Participant* Domain::createParticipant(ParticipantAttributes& att,ParticipantListener* listen)
+Participant* Domain::createParticipant(
+        const eprosima::fastrtps::ParticipantAttributes& att,
+        ParticipantListener* listen)
 {
     Participant* pubsubpar = new Participant();
     ParticipantImpl* pspartimpl = new ParticipantImpl(att,pubsubpar,listen);
-    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps,&pspartimpl->m_rtps_listener);
+    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &pspartimpl->m_rtps_listener);
 
     if(part == nullptr)
     {
@@ -192,7 +195,10 @@ void Domain::getDefaultParticipantAttributes(ParticipantAttributes& participant_
     return XMLProfileManager::getDefaultParticipantAttributes(participant_attributes);
 }
 
-Publisher* Domain::createPublisher(Participant *part, const std::string &publisher_profile, PublisherListener *listen)
+Publisher* Domain::createPublisher(
+        Participant* part,
+        const std::string& publisher_profile,
+        PublisherListener* listen)
 {
     PublisherAttributes publisher_att;
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_att))
@@ -204,7 +210,10 @@ Publisher* Domain::createPublisher(Participant *part, const std::string &publish
     return createPublisher(part, publisher_att, listen);
 }
 
-Publisher* Domain::createPublisher(Participant *part, PublisherAttributes &att, PublisherListener *listen)
+Publisher* Domain::createPublisher(
+        Participant* part,
+        const PublisherAttributes& att,
+        PublisherListener* listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
@@ -240,7 +249,10 @@ void Domain::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_att
     return XMLProfileManager::getDefaultSubscriberAttributes(subscriber_attributes);
 }
 
-Subscriber* Domain::createSubscriber(Participant *part, const std::string &subscriber_profile, SubscriberListener *listen)
+Subscriber* Domain::createSubscriber(
+        Participant* part,
+        const std::string& subscriber_profile,
+        SubscriberListener* listen)
 {
     SubscriberAttributes subscriber_att;
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_att))
@@ -252,7 +264,10 @@ Subscriber* Domain::createSubscriber(Participant *part, const std::string &subsc
     return createSubscriber(part, subscriber_att, listen);
 }
 
-Subscriber* Domain::createSubscriber(Participant *part, SubscriberAttributes &att, SubscriberListener *listen)
+Subscriber* Domain::createSubscriber(
+        Participant* part,
+        const SubscriberAttributes& att,
+        SubscriberListener* listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
@@ -265,7 +280,10 @@ Subscriber* Domain::createSubscriber(Participant *part, SubscriberAttributes &at
     return nullptr;
 }
 
-bool Domain::getRegisteredType(Participant* part, const char* typeName, TopicDataType** type)
+bool Domain::getRegisteredType(
+        Participant* part,
+        const char* typeName,
+        TopicDataType** type)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end();++it)
@@ -278,7 +296,9 @@ bool Domain::getRegisteredType(Participant* part, const char* typeName, TopicDat
     return false;
 }
 
-bool Domain::registerType(Participant* part, TopicDataType* type)
+bool Domain::registerType(
+        Participant* part,
+        TopicDataType* type)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     //TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
@@ -293,7 +313,9 @@ bool Domain::registerType(Participant* part, TopicDataType* type)
     return false;
 }
 
-bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* type)
+bool Domain::registerDynamicType(
+        Participant* part,
+        types::DynamicPubSubType* type)
 {
     using namespace eprosima::fastrtps::types;
     TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
@@ -333,7 +355,9 @@ bool Domain::registerDynamicType(Participant* part, types::DynamicPubSubType* ty
     return registerType(part, type);
 }
 
-bool Domain::unregisterType(Participant* part, const char* typeName)
+bool Domain::unregisterType(
+        Participant* part,
+        const char* typeName)
 {
     //TODO El registro debería hacerse de manera que no tengamos un objeto del usuario sino que tengamos un objeto TopicDataTYpe propio para que no
     //haya problemas si el usuario lo destruye antes de tiempo.
@@ -348,7 +372,7 @@ bool Domain::unregisterType(Participant* part, const char* typeName)
     return true;
 }
 
-bool Domain::loadXMLProfilesFile(const std::string &xml_profile_file)
+bool Domain::loadXMLProfilesFile(const std::string& xml_profile_file)
 {
     if (false == default_xml_profiles_loaded)
     {
