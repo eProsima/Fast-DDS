@@ -105,9 +105,8 @@ void ReaderProxy::add_change(
         bool restart_nack_supression)
 {
     assert(change.getSequenceNumber() > changes_low_mark_);
-    assert(m_changesForReader.rbegin() != m_changesForReader.rend() ?
-        change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber() :
-        true);
+    assert(m_changesForReader.empty() ? true :
+        change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber());
 
     if (restart_nack_supression && nack_supression_event_ != nullptr)
     {
@@ -122,11 +121,6 @@ void ReaderProxy::add_change(
     }
 
     m_changesForReader.insert(change);
-    //TODO (Ricardo) Remove this functionality from here. It is not his place.
-    if (change.getStatus() == UNSENT)
-    {
-        AsyncWriterThread::wakeUp(mp_SFW);
-    }
 }
 
 bool ReaderProxy::has_changes() const
@@ -225,7 +219,7 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
     return isSomeoneWasSetRequested;
 }
 
-void ReaderProxy::set_change_to_status(
+bool ReaderProxy::set_change_to_status(
         const SequenceNumber_t& seq_num, 
         ChangeForReaderStatus_t status,
         bool restart_nack_supression)
@@ -237,11 +231,11 @@ void ReaderProxy::set_change_to_status(
 
     if (seq_num <= changes_low_mark_)
     {
-        return;
+        return false;
     }
 
     auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
-    bool mustWakeUpAsyncThread = false;
+    bool change_was_modified = false;
 
     if (it != m_changesForReader.end())
     {
@@ -249,67 +243,65 @@ void ReaderProxy::set_change_to_status(
         {
             m_changesForReader.erase(it);
             changes_low_mark_ = seq_num;
+            change_was_modified = true;
         }
         else
         {
-            ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
-            newch.setStatus(status);
-            if (status == UNSENT)
+            if (it->getStatus() != status)
             {
-                mustWakeUpAsyncThread = true;
+                ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
+                newch.setStatus(status);
+                change_was_modified = true;
             }
         }
     }
 
-    if (mustWakeUpAsyncThread)
-    {
-        AsyncWriterThread::wakeUp(mp_SFW);
-    }
+    return change_was_modified;
 }
 
-bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, FragmentNumber_t fragment)
+bool ReaderProxy::mark_fragment_as_sent_for_change(
+    const SequenceNumber_t& seq_num, 
+    FragmentNumber_t fragment,
+    bool& was_last_fragment)
 {
-    if (change->sequenceNumber <= changes_low_mark_)
+    was_last_fragment = false;
+
+    if (seq_num <= changes_low_mark_)
     {
         return false;
     }
 
-    bool allFragmentsSent = false;
-    auto it = m_changesForReader.find(ChangeForReader_t(change->sequenceNumber));
-
-    bool mustWakeUpAsyncThread = false;
+    bool change_found = false;
+    auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
 
     if (it != m_changesForReader.end())
     {
+        change_found = true;
         ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
         newch.markFragmentsAsSent(fragment);
-        if (newch.getUnsentFragments().empty())
-        {
-            allFragmentsSent = true;
-        }
-        else
-        {
-            mustWakeUpAsyncThread = true;
-        }
+        was_last_fragment = newch.getUnsentFragments().empty();
     }
 
-    if (mustWakeUpAsyncThread)
-    {
-        AsyncWriterThread::wakeUp(mp_SFW);
-    }
+    return change_found;
 
-    return allFragmentsSent;
 }
 
-void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
+bool ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
-    bool mustWakeUpAsyncThread = false;
+    if (previous == next)
+    {
+        return false;
+    }
+
+    bool at_least_one_modified = false;
 
     auto it = m_changesForReader.begin();
     while (it != m_changesForReader.end())
     {
         if (it->getStatus() == previous)
         {
+            at_least_one_modified = true;
+
             if (next == ACKNOWLEDGED && it == m_changesForReader.begin())
             {
                 changes_low_mark_ = it->getSequenceNumber();
@@ -317,23 +309,14 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
                 continue;
             }
 
-
             // Note: we can perform this cast as we are not touching the sorting field (seq_num)
             const_cast<ChangeForReader_t&>(*it).setStatus(next);
-            if (next == UNSENT && previous != UNSENT)
-            {
-                mustWakeUpAsyncThread = true;
-            }
-
         }
 
         ++it;
     }
 
-    if (mustWakeUpAsyncThread)
-    {
-        AsyncWriterThread::wakeUp(mp_SFW);
-    }
+    return at_least_one_modified;
 }
 
 void ReaderProxy::change_has_been_removed(const SequenceNumber_t& sequence_number)

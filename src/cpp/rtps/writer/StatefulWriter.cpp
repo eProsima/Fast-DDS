@@ -190,6 +190,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 changeForReader.setRelevance(it->rtps_is_relevant(change));
                 it->add_change(changeForReader, false);
             }
+
+            if (m_pushMode)
+            {
+                AsyncWriterThread::wakeUp(this);
+            }
         }
     }
     else
@@ -355,26 +360,38 @@ void StatefulWriter::send_any_unsent_changes()
                         mp_RTPSParticipant->network_factory().ShrinkLocatorLists(locatorLists),
                         expectsInlineQos))
                     {
+                        bool must_wake_up_async_thread = false;
                         for (auto remoteReader : changeToSend.remoteReaders)
                         {
-                            bool allFragmentsSent = remoteReader->mark_fragment_as_sent_for_change(changeToSend.cacheChange, changeToSend.fragmentNumber);
+                            bool allFragmentsSent = false;
+                            if (remoteReader->mark_fragment_as_sent_for_change(
+                                changeToSend.sequenceNumber,
+                                changeToSend.fragmentNumber,
+                                allFragmentsSent))
+                            {
+                                must_wake_up_async_thread |= !allFragmentsSent;
+                                if (remoteReader->m_att.endpoint.reliabilityKind == RELIABLE)
+                                {
+                                    activateHeartbeatPeriod = true;
+                                    assert(remoteReader->nack_supression_event_ != nullptr);
+                                    if (allFragmentsSent)
+                                    {
+                                        remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (allFragmentsSent)
+                                    {
+                                        remoteReader->set_change_to_status(changeToSend.sequenceNumber, ACKNOWLEDGED, false);
+                                    }
+                                }
+                            }
+                        }
 
-                            if (remoteReader->m_att.endpoint.reliabilityKind == RELIABLE)
-                            {
-                                activateHeartbeatPeriod = true;
-                                assert(remoteReader->nack_supression_event_ != nullptr);
-                                if (allFragmentsSent)
-                                {
-                                    remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
-                                }
-                            }
-                            else
-                            {
-                                if (allFragmentsSent)
-                                {
-                                    remoteReader->set_change_to_status(changeToSend.sequenceNumber, ACKNOWLEDGED, false);
-                                }
-                            }
+                        if (must_wake_up_async_thread)
+                        {
+                            AsyncWriterThread::wakeUp(this);
                         }
                     }
                     else
@@ -961,7 +978,10 @@ void StatefulWriter::perform_nack_response(const GUID_t& reader_guid)
     {
         if (remote_reader->m_att.guid == reader_guid)
         {
-            remote_reader->convert_status_on_all_changes(REQUESTED, UNSENT);
+            if (remote_reader->convert_status_on_all_changes(REQUESTED, UNSENT))
+            {
+                AsyncWriterThread::wakeUp(this);
+            }
             return;
         }
     }

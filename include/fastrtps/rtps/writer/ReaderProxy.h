@@ -100,24 +100,35 @@ public:
 
     /*!
      * @brief Sets a change to a particular status (if present in the ReaderProxy)
-     * @param change change to search and set.
+     * @param seq_num Sequence number of the change to update.
      * @param status Status to apply.
+     * @param restart_nack_supression Whether nack supression event should be restarted or not.
+     * @return true when a status has changed, false otherwise.
      */
-    void set_change_to_status(
+    bool set_change_to_status(
             const SequenceNumber_t& seq_num, 
             ChangeForReaderStatus_t status,
             bool restart_nack_supression);
 
+    /**
+     * @brief Mark a particular fragment as sent.
+     * @param[in]  seq_num Sequence number of the change to update.
+     * @param[in]  fragment Fragment number to mark as sent.
+     * @param[out] was_last_fragment Indicates if the fragment was the last one pending.
+     * @return true when the change was found, false otherwise.
+     */
     bool mark_fragment_as_sent_for_change(
-            const CacheChange_t* change, 
-            FragmentNumber_t fragment);
+            const SequenceNumber_t& seq_num,
+            FragmentNumber_t fragment,
+            bool& was_last_fragment);
 
     /*
      * Converts all changes with a given status to a different status.
      * @param previous Status to change.
      * @param next Status to adopt.
+     * @return true when at least one change has been modified, false otherwise.
      */
-    void convert_status_on_all_changes(
+    bool convert_status_on_all_changes(
             ChangeForReaderStatus_t previous, 
             ChangeForReaderStatus_t next);
 
