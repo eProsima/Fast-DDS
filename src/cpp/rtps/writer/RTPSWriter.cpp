@@ -31,22 +31,27 @@ namespace fastrtps {
 namespace rtps {
 
 
-RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes& att, WriterHistory* hist, WriterListener* listen) :
-    Endpoint(impl, guid, att.endpoint),
-    m_pushMode(true),
-    m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.bytesPerPeriod ?
+RTPSWriter::RTPSWriter(
+        RTPSParticipantImpl* impl, 
+        const GUID_t& guid, 
+        const WriterAttributes& att, 
+        WriterHistory* hist, 
+        WriterListener* listen) 
+    : Endpoint(impl, guid, att.endpoint)
+    , m_pushMode(true)
+    , m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.bytesPerPeriod ?
         att.throughputController.bytesPerPeriod > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
         impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
         att.throughputController.bytesPerPeriod :
         impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
         impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-        impl->getMaxMessageSize(), impl->getGuid().guidPrefix),
-    m_livelinessAsserted(false),
-    mp_history(hist),
-    mp_listener(listen),
-    is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true),
-    m_separateSendingEnabled(false),
-    all_remote_readers_(att.matched_readers_allocation)
+        impl->getMaxMessageSize(), impl->getGuid().guidPrefix)
+    , m_livelinessAsserted(false)
+    , mp_history(hist)
+    , mp_listener(listen)
+    , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
+    , m_separateSendingEnabled(false)
+    , all_remote_readers_(att.matched_readers_allocation)
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif

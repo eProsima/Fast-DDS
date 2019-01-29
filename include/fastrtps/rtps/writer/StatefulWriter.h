@@ -53,7 +53,12 @@ namespace eprosima
 
                 protected:
                 //!Constructor
-                StatefulWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
+                StatefulWriter(
+                        RTPSParticipantImpl*,
+                        const GUID_t& guid,
+                        const WriterAttributes& att,
+                        WriterHistory* hist,
+                        WriterListener* listen=nullptr);
                 private:
                 //!Count of the sent heartbeats.
                 Count_t m_heartbeatCount;
@@ -119,7 +124,8 @@ namespace eprosima
                 * Remove the change with the minimum SequenceNumber
                 * @return True if removed.
                 */
-                bool try_remove_change(std::chrono::microseconds& microseconds,
+                bool try_remove_change(
+                        std::chrono::microseconds& microseconds,
                         std::unique_lock<std::recursive_mutex>& lock) override;
 
                 /**
@@ -192,8 +198,11 @@ namespace eprosima
 
                 void perform_nack_supression(const GUID_t& reader_guid);
 
-                void process_acknack(const GUID_t reader_guid, uint32_t ack_count,
-                        const SequenceNumberSet_t& sn_set, bool final_flag);
+                void process_acknack(
+                        const GUID_t reader_guid, 
+                        uint32_t ack_count,
+                        const SequenceNumberSet_t& sn_set, 
+                        bool final_flag);
 
                 private:
 

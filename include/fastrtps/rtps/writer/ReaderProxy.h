@@ -49,14 +49,14 @@ public:
 
     /**
      * Constructor.
-     * @param rdata RemoteWriterAttributes to use in the creation.
+     * @param reader_attributes RemoteReaderAttributes of the reader for which to keep state.
      * @param times WriterTimes to use in the ReaderProxy.
-     * @param SW Pointer to the StatefulWriter.
+     * @param writer Pointer to the StatefulWriter creating the reader proxy.
      */
     ReaderProxy(
-            const RemoteReaderAttributes& rdata, 
+            const RemoteReaderAttributes& reader_attributes, 
             const WriterTimes& times, 
-            StatefulWriter* SW);
+            StatefulWriter* writer);
 
     void destroy_timers();
 
@@ -66,21 +66,21 @@ public:
 
     bool has_changes() const;
 
-    bool change_is_acked(const SequenceNumber_t& sequence_number) const;
+    bool change_is_acked(const SequenceNumber_t& seq_num) const;
 
     /**
-     * Mark all changes up to the one indicated by the seqNum as Acknowledged.
-     * If seqNum == 30, changes 1-29 are marked as ack.
-     * @param seqNum Pointer to the seqNum
+     * Mark all changes up to the one indicated by seq_num as Acknowledged.
+     * For instance, when seq_num is 30, changes 1-29 are marked as acknowledged.
+     * @param seq_num Sequence number of the first change not to be marked as acknowledged.
      */
-    void acked_changes_set(const SequenceNumber_t& seqNum);
+    void acked_changes_set(const SequenceNumber_t& seq_num);
 
     /**
      * Mark all changes in the vector as requested.
-     * @param seqNumSet Vector of sequenceNumbers
-     * @return False if any change was set REQUESTED.
+     * @param seq_num_set Bitmap of sequence numbers.
+     * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
-    bool requested_changes_set(const SequenceNumberSet_t& seqNumSet);
+    bool requested_changes_set(const SequenceNumberSet_t& seq_num_set);
 
     /**
     * Applies the given function object to every unsent change.
@@ -113,13 +113,13 @@ public:
     /**
      * @brief Mark a particular fragment as sent.
      * @param[in]  seq_num Sequence number of the change to update.
-     * @param[in]  fragment Fragment number to mark as sent.
+     * @param[in]  frag_num Fragment number to mark as sent.
      * @param[out] was_last_fragment Indicates if the fragment was the last one pending.
      * @return true when the change was found, false otherwise.
      */
     bool mark_fragment_as_sent_for_change(
             const SequenceNumber_t& seq_num,
-            FragmentNumber_t fragment,
+            FragmentNumber_t frag_num,
             bool& was_last_fragment);
 
     /*
@@ -132,7 +132,7 @@ public:
             ChangeForReaderStatus_t previous, 
             ChangeForReaderStatus_t next);
 
-    void change_has_been_removed(const SequenceNumber_t& sequence_number);
+    void change_has_been_removed(const SequenceNumber_t& seq_num);
 
     /*!
      * @brief Returns there is some UNACKNOWLEDGED change.
@@ -140,11 +140,30 @@ public:
      */
     bool has_unacknowledged() const;
 
-    //!Attributes of the Remote Reader
-    RemoteReaderAttributes m_att;
+    inline const GUID_t& guid() const
+    {
+        return reader_attributes_.guid;
+    }
 
-    //!Pointer to the associated StatefulWriter.
-    StatefulWriter* mp_SFW;
+    inline DurabilityKind_t durability_kind() const
+    {
+        return reader_attributes_.endpoint.durabilityKind;
+    }
+
+    inline bool expects_inline_qos() const
+    {
+        return reader_attributes_.expectsInlineQos;
+    }
+
+    inline bool is_reliable() const
+    {
+        return reader_attributes_.endpoint.reliabilityKind == RELIABLE;
+    }
+
+    inline const LocatorList_t& remote_locators() const
+    {
+        return reader_attributes_.endpoint.remoteLocatorList;
+    }
 
     bool check_and_set_acknack_count(uint32_t acknack_count)
     {
@@ -160,7 +179,7 @@ public:
     bool process_nack_frag(
             const GUID_t& reader_guid, 
             uint32_t nack_count,
-            const SequenceNumber_t& sequence_number,
+            const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t& fragments_state);
 
     /**
@@ -184,6 +203,10 @@ public:
 
 private:
 
+    //!Attributes of the Remote Reader
+    RemoteReaderAttributes reader_attributes_;
+    //!Pointer to the associated StatefulWriter.
+    StatefulWriter* writer_;
     //!Set of the changes and its state.
     std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
     //! Timed Event to manage the Acknack response delay.
@@ -199,12 +222,12 @@ private:
 
     /*!
      * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.
+     * @param[in] seq_num Sequence number to be paired with the requested fragments.
      * @param[in] frag_set set containing the requested fragments to be sent.
-     * @param[in] sequence_number Sequence number to be paired with the requested fragments.
      * @return True if there is at least one requested fragment. False in other case.
      */
     bool requested_fragment_set(
-            const SequenceNumber_t& sequence_number, 
+            const SequenceNumber_t& seq_num, 
             const FragmentNumberSet_t& frag_set);
 
 };

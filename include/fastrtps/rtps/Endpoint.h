@@ -47,7 +47,10 @@ class Endpoint
     friend class RTPSParticipantImpl;
 
 protected:
-    Endpoint(RTPSParticipantImpl* pimpl,GUID_t& guid,EndpointAttributes& att);
+    Endpoint(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const EndpointAttributes& att);
     virtual ~Endpoint();
 
 public:

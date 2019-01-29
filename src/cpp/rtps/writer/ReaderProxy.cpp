@@ -38,31 +38,30 @@ namespace rtps {
 
 
 ReaderProxy::ReaderProxy(
-        const RemoteReaderAttributes& rdata, 
+        const RemoteReaderAttributes& reader_attributes,
         const WriterTimes& times, 
-        StatefulWriter* SW) 
-    : m_att(rdata)
-    , mp_SFW(SW)
+        StatefulWriter* writer) 
+    : reader_attributes_(reader_attributes)
+    , writer_(writer)
     , nack_response_event_(nullptr)
     , nack_supression_event_(nullptr)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    if (rdata.endpoint.reliabilityKind == RELIABLE)
+    if (reader_attributes.endpoint.reliabilityKind == RELIABLE)
     {
-        nack_response_event_ = new NackResponseDelay(mp_SFW, rdata.guid, 
+        nack_response_event_ = new NackResponseDelay(writer_, reader_attributes_.guid,
             TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
-        nack_supression_event_ = new NackSupressionDuration(mp_SFW, rdata.guid, 
+        nack_supression_event_ = new NackSupressionDuration(writer_, reader_attributes_.guid,
             TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
     }
 
     // Use remoteLocatorList as joint unicast + multicast locators
-    m_att.endpoint.remoteLocatorList.assign(m_att.endpoint.unicastLocatorList);
-    m_att.endpoint.remoteLocatorList.push_back(m_att.endpoint.multicastLocatorList);
+    reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
+    reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
 
     logInfo(RTPS_WRITER, "Reader Proxy created");
 }
-
 
 ReaderProxy::~ReaderProxy()
 {
@@ -128,26 +127,26 @@ bool ReaderProxy::has_changes() const
     return !m_changesForReader.empty();
 }
 
-bool ReaderProxy::change_is_acked(const SequenceNumber_t& sequence_number) const
+bool ReaderProxy::change_is_acked(const SequenceNumber_t& seq_num) const
 {
-    if (sequence_number <= changes_low_mark_)
+    if (seq_num <= changes_low_mark_)
     {
         return true;
     }
 
-    auto chit = m_changesForReader.find(ChangeForReader_t(sequence_number));
+    auto chit = m_changesForReader.find(ChangeForReader_t(seq_num));
     assert(chit != m_changesForReader.end());
 
     return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
 }
 
-void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
+void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
 {
-    SequenceNumber_t future_low_mark = seqNum;
+    SequenceNumber_t future_low_mark = seq_num;
 
-    if (seqNum > changes_low_mark_)
+    if (seq_num > changes_low_mark_)
     {
-        auto chit = m_changesForReader.find(seqNum);
+        auto chit = m_changesForReader.find(seq_num);
         m_changesForReader.erase(m_changesForReader.begin(), chit);
     }
     else
@@ -155,10 +154,10 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
         // Special case. Currently only used on Builtin StatefulWriters
         // after losing lease duration.
 
-        SequenceNumber_t current_sequence = seqNum;
-        if (seqNum < mp_SFW->get_seq_num_min())
+        SequenceNumber_t current_sequence = seq_num;
+        if (seq_num < writer_->get_seq_num_min())
         {
-            current_sequence = mp_SFW->get_seq_num_min();
+            current_sequence = writer_->get_seq_num_min();
         }
         future_low_mark = current_sequence;
 
@@ -166,7 +165,7 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
         {
             CacheChange_t* change = nullptr;
 
-            if (mp_SFW->mp_history->get_change(current_sequence, mp_SFW->getGuid(), &change))
+            if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
             {
                 ChangeForReader_t cr(change);
                 cr.setStatus(UNACKNOWLEDGED);
@@ -185,14 +184,13 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seqNum)
     changes_low_mark_ = future_low_mark - 1;
 }
 
-bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
+bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
 {
     bool isSomeoneWasSetRequested = false;
 
-    seqNumSet.for_each([&](SequenceNumber_t sit)
+    seq_num_set.for_each([&](SequenceNumber_t sit)
     {
         auto chit = m_changesForReader.find(ChangeForReader_t(sit));
-
         if (chit != m_changesForReader.end())
         {
             ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*chit);
@@ -204,15 +202,15 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seqNumSet)
 
     if (isSomeoneWasSetRequested)
     {
-        logInfo(RTPS_WRITER, "Requested Changes: " << seqNumSet);
+        logInfo(RTPS_WRITER, "Requested Changes: " << seq_num_set);
         if (nack_response_event_ != nullptr)
         {
             nack_response_event_->restart_timer();
         }
     }
-    else if (!seqNumSet.empty())
+    else if (!seq_num_set.empty())
     {
-        logWarning(RTPS_WRITER, "Requested Changes: " << seqNumSet
+        logWarning(RTPS_WRITER, "Requested Changes: " << seq_num_set
             << " not found (low mark: " << changes_low_mark_ << ")");
     }
 
@@ -260,9 +258,9 @@ bool ReaderProxy::set_change_to_status(
 }
 
 bool ReaderProxy::mark_fragment_as_sent_for_change(
-    const SequenceNumber_t& seq_num, 
-    FragmentNumber_t fragment,
-    bool& was_last_fragment)
+        const SequenceNumber_t& seq_num, 
+        FragmentNumber_t frag_num,
+        bool& was_last_fragment)
 {
     was_last_fragment = false;
 
@@ -278,7 +276,7 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
     {
         change_found = true;
         ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
-        newch.markFragmentsAsSent(fragment);
+        newch.markFragmentsAsSent(frag_num);
         was_last_fragment = newch.getUnsentFragments().empty();
     }
 
@@ -286,7 +284,9 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
 
 }
 
-bool ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
+bool ReaderProxy::convert_status_on_all_changes(
+        ChangeForReaderStatus_t previous, 
+        ChangeForReaderStatus_t next)
 {
     if (previous == next)
     {
@@ -319,15 +319,15 @@ bool ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
     return at_least_one_modified;
 }
 
-void ReaderProxy::change_has_been_removed(const SequenceNumber_t& sequence_number)
+void ReaderProxy::change_has_been_removed(const SequenceNumber_t& seq_num)
 {
     // Check sequence number is in the container, because it was not clean up.
-    if (m_changesForReader.empty() || sequence_number < m_changesForReader.begin()->getSequenceNumber())
+    if (m_changesForReader.empty() || seq_num < m_changesForReader.begin()->getSequenceNumber())
     {
         return;
     }
 
-    auto chit = m_changesForReader.find(ChangeForReader_t(sequence_number));
+    auto chit = m_changesForReader.find(ChangeForReader_t(seq_num));
 
     // Element must be in the container. In other case, bug.
     assert(chit != m_changesForReader.end());
@@ -368,20 +368,22 @@ bool ReaderProxy::has_unacknowledged() const
     return false;
 }
 
-bool change_min(const ChangeForReader_t* ch1, const ChangeForReader_t* ch2)
+bool change_min(
+        const ChangeForReader_t* ch1, 
+        const ChangeForReader_t* ch2)
 {
     return ch1->getSequenceNumber() < ch2->getSequenceNumber();
 }
 
 bool ReaderProxy::requested_fragment_set(
-        const SequenceNumber_t& sequence_number, 
+        const SequenceNumber_t& seq_num, 
         const FragmentNumberSet_t& frag_set)
 {
     // Locate the outbound change referenced by the NACK_FRAG
     auto changeIter = std::find_if(m_changesForReader.begin(), m_changesForReader.end(),
-        [sequence_number](const ChangeForReader_t& change)
+        [seq_num](const ChangeForReader_t& change)
     {
-        return change.getSequenceNumber() == sequence_number;
+        return change.getSequenceNumber() == seq_num;
     });
     if (changeIter == m_changesForReader.end())
     {
@@ -403,16 +405,16 @@ bool ReaderProxy::requested_fragment_set(
 bool ReaderProxy::process_nack_frag(
         const GUID_t& reader_guid, 
         uint32_t nack_count,
-        const SequenceNumber_t& sequence_number,
+        const SequenceNumber_t& seq_num,
         const FragmentNumberSet_t& fragments_state)
 {
-    if (m_att.guid == reader_guid)
+    if (reader_attributes_.guid == reader_guid)
     {
         if (last_nackfrag_count_ < nack_count)
         {
             last_nackfrag_count_ = nack_count;
             // TODO Not doing Acknowledged.
-            if (requested_fragment_set(sequence_number, fragments_state))
+            if (requested_fragment_set(seq_num, fragments_state))
             {
                 nack_response_event_->restart_timer();
             }

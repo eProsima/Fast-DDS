@@ -48,7 +48,12 @@ class RTPSWriter : public Endpoint
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
     protected:
-    RTPSWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
+    RTPSWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            WriterHistory* hist,
+            WriterListener* listen=nullptr);
     virtual ~RTPSWriter();
 
     public:
