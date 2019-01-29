@@ -28,4 +28,5 @@ add_gtest(TMutexTests SOURCES TMutexTests.cpp
     ENVIRONMENTS
     "LD_LIBRARY_PATH=$<TARGET_FILE_DIR:mutex_testing_tool_preload>"
     "LD_PRELOAD=$<TARGET_FILE_NAME:mutex_testing_tool_preload>"
+    LABELS "NoMemoryCheck"
     )
