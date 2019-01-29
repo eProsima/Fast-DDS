@@ -72,7 +72,9 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @param unknown_missing_changes_up_to Number of missing changes before this one
          * @return
          */
-        bool received_change(rtps::CacheChange_t* change, size_t unknown_missing_changes_up_to);
+        bool received_change(
+            rtps::CacheChange_t* change,
+            size_t unknown_missing_changes_up_to);
 
         /** @name Read or take data methods.
          * Methods to read or take data from the History.

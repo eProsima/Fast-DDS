@@ -186,7 +186,11 @@ void RTPSDomain::removeRTPSParticipant_nts(std::vector<RTPSDomain::t_p_RTPSParti
     m_RTPSParticipants.erase(it);
 }
 
-RTPSWriter* RTPSDomain::createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen)
+RTPSWriter* RTPSDomain::createRTPSWriter(
+        RTPSParticipant* p,
+        WriterAttributes& watt,
+        WriterHistory* hist,
+        WriterListener* listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
@@ -220,8 +224,11 @@ bool RTPSDomain::removeRTPSWriter(RTPSWriter* writer)
     return false;
 }
 
-RTPSReader* RTPSDomain::createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt,
-        ReaderHistory* rhist, ReaderListener* rlisten)
+RTPSReader* RTPSDomain::createRTPSReader(
+        RTPSParticipant* p,
+        ReaderAttributes& ratt,
+        ReaderHistory* rhist,
+        ReaderListener* rlisten)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)

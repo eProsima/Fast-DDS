@@ -39,25 +39,25 @@ PublisherImpl::PublisherImpl(
         ParticipantImpl* p,
         TopicDataType* pdatatype,
         const PublisherAttributes& att,
-        PublisherListener* listen ):
-    mp_participant(p),
-    mp_writer(nullptr),
-    mp_type(pdatatype),
-    m_att(att),
+        PublisherListener* listen )
+    : mp_participant(p)
+    , mp_writer(nullptr)
+    , mp_type(pdatatype)
+    , m_att(att)
 #pragma warning (disable : 4355 )
-    m_history(this, pdatatype->m_typeSize
+    , m_history(this, pdatatype->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
             + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
 #endif
-            , att.topic.historyQos, att.topic.resourceLimitsQos, att.historyMemoryPolicy),
-    mp_listener(listen),
+            , att.topic.historyQos, att.topic.resourceLimitsQos, att.historyMemoryPolicy)
+    , mp_listener(listen)
 #pragma warning (disable : 4355 )
-    m_writerListener(this),
-    mp_userPublisher(nullptr),
-    mp_rtpsParticipant(nullptr),
-    high_mark_for_frag_(0)
+    , m_writerListener(this)
+    , mp_userPublisher(nullptr)
+    , mp_rtpsParticipant(nullptr)
+    , high_mark_for_frag_(0)
 {
 }
 

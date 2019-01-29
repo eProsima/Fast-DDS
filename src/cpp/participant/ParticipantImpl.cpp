@@ -50,13 +50,13 @@ using namespace eprosima::fastrtps::rtps;
 ParticipantImpl::ParticipantImpl(
         const ParticipantAttributes& patt,
         Participant* pspart,
-        ParticipantListener* listen):
-    m_att(patt),
-    mp_rtpsParticipant(nullptr),
-    mp_participant(pspart),
-    mp_listener(listen),
+        ParticipantListener* listen)
+    : m_att(patt)
+    , mp_rtpsParticipant(nullptr)
+    , mp_participant(pspart)
+    , mp_listener(listen)
 #pragma warning (disable : 4355 )
-    m_rtps_listener(this)
+    , m_rtps_listener(this)
     {
         mp_participant->mp_impl = this;
     }

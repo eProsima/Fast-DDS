@@ -63,7 +63,9 @@ SubscriberHistory::~SubscriberHistory()
     }
 }
 
-bool SubscriberHistory::received_change(CacheChange_t* a_change, size_t unknown_missing_changes_up_to)
+bool SubscriberHistory::received_change(
+        CacheChange_t* a_change,
+        size_t unknown_missing_changes_up_to)
 {
 
     if (mp_reader == nullptr || mp_mutex == nullptr)
