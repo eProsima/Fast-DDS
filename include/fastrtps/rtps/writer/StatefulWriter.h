@@ -197,13 +197,21 @@ namespace eprosima
 
                 private:
 
-                void send_heartbeat_piggyback_nts_(RTPSMessageGroup& message_group);
+                void send_heartbeat_piggyback_nts_(
+                    RTPSMessageGroup& message_group,
+                    uint32_t& last_bytes_processed);
 
-                void send_heartbeat_piggyback_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators, 
-                        RTPSMessageGroup& message_group);
+                void send_heartbeat_piggyback_nts_(
+                    const std::vector<GUID_t>& remote_readers, 
+                    const LocatorList_t& locators, 
+                    RTPSMessageGroup& message_group,
+                    uint32_t& last_bytes_processed);
 
-                void send_heartbeat_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators,
-                        RTPSMessageGroup& message_group, bool final = false);
+                void send_heartbeat_nts_(
+                    const std::vector<GUID_t>& remote_readers, 
+                    const LocatorList_t& locators,
+                    RTPSMessageGroup& message_group, 
+                    bool final);
 
                 void check_acked_status();
 

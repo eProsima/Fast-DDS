@@ -148,7 +148,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                     {
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                     }
-                    send_heartbeat_piggyback_nts_(guids, it->m_att.endpoint.remoteLocatorList, group);
+                    uint32_t last_processed = 0;
+                    send_heartbeat_piggyback_nts_(guids, it->m_att.endpoint.remoteLocatorList, group, last_processed);
                 }
             }
 
@@ -161,7 +162,8 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 }
 
                 // Heartbeat piggyback.
-                send_heartbeat_piggyback_nts_(group);
+                uint32_t last_processed = 0;
+                send_heartbeat_piggyback_nts_(group, last_processed);
             }
 
             this->mp_periodicHB->restart_timer();
@@ -407,23 +409,7 @@ void StatefulWriter::send_any_unsent_changes()
                 }
 
                 // Heartbeat piggyback.
-                if (!disableHeartbeatPiggyback_)
-                {
-                    if (mp_history->isFull())
-                    {
-                        send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group);
-                    }
-                    else
-                    {
-                        currentUsageSendBufferSize_ -= group.get_current_bytes_processed() - lastBytesProcessed;
-                        lastBytesProcessed = group.get_current_bytes_processed();
-
-                        if (currentUsageSendBufferSize_ < 0)
-                        {
-                            send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group);
-                        }
-                    }
-                }
+                send_heartbeat_piggyback_nts_(group, lastBytesProcessed);
             }
 
             for (auto pair : notRelevantChanges.elements())
@@ -835,11 +821,11 @@ SequenceNumber_t StatefulWriter::next_sequence_number() const
 
 bool StatefulWriter::send_periodic_heartbeat()
 {
-    bool unacked_changes = false;
+    std::lock_guard<std::recursive_mutex> guardW(*mp_mutex);
 
+    bool unacked_changes = false;
     if (m_separateSendingEnabled)
     {
-        std::lock_guard<std::recursive_mutex> guardW(*mp_mutex);
 
         for (ReaderProxy* it : matched_readers)
         {
@@ -854,40 +840,29 @@ bool StatefulWriter::send_periodic_heartbeat()
     else
     {
         SequenceNumber_t firstSeq, lastSeq;
-        Count_t heartbeatCount = 0;
 
-        {//BEGIN PROTECTION
-            std::lock_guard<std::recursive_mutex> guardW(*mp_mutex);
-            firstSeq = get_seq_num_min();
-            lastSeq = get_seq_num_max();
+        firstSeq = get_seq_num_min();
+        lastSeq = get_seq_num_max();
 
-            if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
-            {
-                return false;
-            }
-            else
-            {
-                assert(firstSeq <= lastSeq);
+        if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
+        {
+            return false;
+        }
+        else
+        {
+            assert(firstSeq <= lastSeq);
 
-                unacked_changes = std::any_of(matched_readers.begin(), matched_readers.end(),
-                    [](const ReaderProxy* reader)
-                    {
-                        return reader->has_unacknowledged();
-                    });
-
-                if (unacked_changes)
+            unacked_changes = std::any_of(matched_readers.begin(), matched_readers.end(),
+                [](const ReaderProxy* reader)
                 {
-                    incrementHBCount();
-                    heartbeatCount = getHeartbeatCount();
+                    return reader->has_unacknowledged();
+                });
 
-                    // TODO(Ricardo) Use StatefulWriter::send_heartbeat_to_nts.
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                        mAllShrinkedLocatorList, all_remote_readers_);
-
-                    // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-                    group.add_heartbeat(all_remote_readers_, firstSeq, lastSeq, heartbeatCount, false, false, mAllShrinkedLocatorList);
-                    logInfo(RTPS_WRITER, mp_SFW->getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
-                }
+            if (unacked_changes)
+            {
+                RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+                    mAllShrinkedLocatorList, all_remote_readers_);
+                send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group, false);
             }
         }
     }
@@ -895,7 +870,9 @@ bool StatefulWriter::send_periodic_heartbeat()
     return unacked_changes;
 }
 
-void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final)
+void StatefulWriter::send_heartbeat_to_nts(
+    ReaderProxy& remoteReaderProxy, 
+    bool final)
 {
     std::vector<GUID_t> tmp_guids(1, remoteReaderProxy.m_att.guid);
     const LocatorList_t& locators = remoteReaderProxy.m_att.endpoint.remoteLocatorList;
@@ -905,8 +882,11 @@ void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool 
     send_heartbeat_nts_(tmp_guids, locators, group, final);
 }
 
-void StatefulWriter::send_heartbeat_nts_(const std::vector<GUID_t>& remote_readers, const LocatorList_t &locators,
-        RTPSMessageGroup& message_group, bool final)
+void StatefulWriter::send_heartbeat_nts_(
+    const std::vector<GUID_t>& remote_readers, 
+    const LocatorList_t& locators,
+    RTPSMessageGroup& message_group, 
+    bool final)
 {
     SequenceNumber_t firstSeq = get_seq_num_min();
     SequenceNumber_t lastSeq = get_seq_num_max();
@@ -941,31 +921,36 @@ void StatefulWriter::send_heartbeat_nts_(const std::vector<GUID_t>& remote_reade
     logInfo(RTPS_WRITER, getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq <<")" );
 }
 
-void StatefulWriter::send_heartbeat_piggyback_nts_(const std::vector<GUID_t>& remote_readers, 
-    const LocatorList_t &locators,
-    RTPSMessageGroup& message_group)
+void StatefulWriter::send_heartbeat_piggyback_nts_(
+    const std::vector<GUID_t>& remote_readers, 
+    const LocatorList_t& locators,
+    RTPSMessageGroup& message_group,
+    uint32_t& last_bytes_processed)
 {
     if (!disableHeartbeatPiggyback_)
     {
         if (mp_history->isFull())
         {
-            send_heartbeat_nts_(remote_readers, locators, message_group);
+            send_heartbeat_nts_(remote_readers, locators, message_group, false);
         }
         else
         {
-            currentUsageSendBufferSize_ -= message_group.get_current_bytes_processed();
-
+            uint32_t current_bytes = message_group.get_current_bytes_processed();
+            currentUsageSendBufferSize_ -= current_bytes - last_bytes_processed;
+            last_bytes_processed = current_bytes;
             if (currentUsageSendBufferSize_ < 0)
             {
-                send_heartbeat_nts_(remote_readers, locators, message_group);
+                send_heartbeat_nts_(remote_readers, locators, message_group, false);
             }
         }
     }
 }
 
-void StatefulWriter::send_heartbeat_piggyback_nts_(RTPSMessageGroup& message_group)
+void StatefulWriter::send_heartbeat_piggyback_nts_(
+    RTPSMessageGroup& message_group,
+    uint32_t& last_bytes_processed)
 {
-    send_heartbeat_piggyback_nts_(all_remote_readers_, mAllShrinkedLocatorList, message_group);
+    send_heartbeat_piggyback_nts_(all_remote_readers_, mAllShrinkedLocatorList, message_group, last_bytes_processed);
 }
 
 void StatefulWriter::perform_nack_response(const GUID_t& reader_guid)
