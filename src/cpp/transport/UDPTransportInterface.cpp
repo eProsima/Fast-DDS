@@ -276,13 +276,16 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
             eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
 
+            // Outbounding first interface with already created socket.
+            if(!locNames.empty())
+            {
+                SetSocketOutbountInterface(unicastSocket, (*locNames.begin()).name);
+            }
+
             // If more than one interface, then create sockets for outbounding multicast.
             if (locNames.size() > 1)
             {
                 auto locIt = locNames.begin();
-
-                // Outbounding first interface with already created socket.
-                SetSocketOutbountInterface(unicastSocket, (*locIt).name);
                 mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
 
                 // Create other socket for outbounding rest of interfaces.
