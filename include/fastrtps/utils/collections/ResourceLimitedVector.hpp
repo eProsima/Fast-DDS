@@ -261,11 +261,25 @@ public:
     ///@{
     iterator begin() noexcept { return collection_.begin(); }
     const_iterator begin() const noexcept { return collection_.begin(); }
+    const_iterator cbegin() const noexcept { return collection_.cbegin(); }
+
     iterator end() noexcept { return collection_.end(); }
     const_iterator end() const noexcept { return collection_.end(); }
-    size_type capacity() const noexcept { return collection_.capacity(); }
-    size_type size() const noexcept { return collection_.size(); }
+    const_iterator cend() const noexcept { return collection_.cend(); }
+
+    reverse_iterator rbegin() noexcept { return collection_.rbegin(); }
+    const_reverse_iterator rbegin() const noexcept { return collection_.rbegin(); }
+    const_reverse_iterator crbegin() const noexcept { return collection_.crbegin(); }
+
+    reverse_iterator rend() noexcept { return collection_.rend(); }
+    const_reverse_iterator rend() const noexcept { return collection_.rend(); }
+    const_reverse_iterator crend() const noexcept { return collection_.crend(); }
+
     bool empty() const noexcept { return collection_.empty(); }
+    size_type size() const noexcept { return collection_.size(); }
+    size_type capacity() const noexcept { return collection_.capacity(); }
+    size_type max_size() const noexcept { return std::min(configuration_.maximum, collection_.max_size()); }
+
     void clear() { collection_.clear(); }
     ///@}
 
@@ -328,7 +342,7 @@ private:
         // Copy last element into the element being removed
         if (it != --collection_.end())
         {
-            *it = collection_.back();
+            *it = std::move(collection_.back());
         }
 
         // Then drop last element
