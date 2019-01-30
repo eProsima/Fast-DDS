@@ -242,7 +242,7 @@
         </struct>
     </type>
     <type>
-        <struct name="UnionUnionUnionStruct">
+        <struct name="UnionUnionStruct">
             <member name="my_union" type="nonBasic" nonBasicTypeName="UnionUnion"/>
         </struct>
     </type>

@@ -79,7 +79,9 @@ class RTPSDomain
      * @param plisten Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
      */
-    RTPS_DllAPI static RTPSParticipant* createParticipant(RTPSParticipantAttributes& PParam, RTPSParticipantListener* plisten = nullptr);
+    RTPS_DllAPI static RTPSParticipant* createParticipant(
+        const RTPSParticipantAttributes& attrs,
+        RTPSParticipantListener* plisten = nullptr);
 
     /**
      * Create a RTPSWriter in a participant.
@@ -89,7 +91,12 @@ class RTPSDomain
      * @param listen Pointer to the WriterListener.
      * @return Pointer to the created RTPSWriter.
      */
-    RTPS_DllAPI static RTPSWriter* createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen = nullptr);
+    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+        RTPSParticipant* p,
+        WriterAttributes& watt,
+        WriterHistory* hist,
+        WriterListener* listen = nullptr);
+
     /**
      * Remove a RTPSWriter.
      * @param writer Pointer to the writer you want to remove.
@@ -105,7 +112,12 @@ class RTPSDomain
      * @param listen Pointer to the ReaderListener.
      * @return Pointer to the created RTPSReader.
      */
-    RTPS_DllAPI static RTPSReader* createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt, ReaderHistory* hist, ReaderListener* listen = nullptr);
+    RTPS_DllAPI static RTPSReader* createRTPSReader(
+        RTPSParticipant* p,
+        ReaderAttributes& ratt,
+        ReaderHistory* hist,
+        ReaderListener* listen = nullptr);
+
     /**
      * Remove a RTPSReader.
      * @param reader Pointer to the reader you want to remove.

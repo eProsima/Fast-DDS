@@ -51,8 +51,12 @@ class PublisherHistory:public rtps::WriterHistory
          * @param history QOS of the associated History.
          * @param resource ResourceLimits for the History.
          */
-        PublisherHistory(PublisherImpl* pimpl,uint32_t payloadMax,
-                HistoryQosPolicy& history,ResourceLimitsQosPolicy& resource, rtps::MemoryManagementPolicy_t mempolicy);
+        PublisherHistory(
+            PublisherImpl* pimpl,
+            uint32_t payloadMax,
+            const HistoryQosPolicy& history,
+            const ResourceLimitsQosPolicy& resource,
+            rtps::MemoryManagementPolicy_t mempolicy);
 
         virtual ~PublisherHistory();
 

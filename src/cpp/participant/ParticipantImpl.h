@@ -63,7 +63,10 @@ class ParticipantImpl
     typedef std::vector<t_p_SubscriberPair> t_v_SubscriberPairs;
 
     private:
-    ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen = nullptr);
+    ParticipantImpl(
+        const ParticipantAttributes& patt,
+        Participant* pspart,
+        ParticipantListener* listen = nullptr);
     virtual ~ParticipantImpl();
 
     public:
@@ -88,7 +91,9 @@ class ParticipantImpl
      * @param listen Pointer to the listener.
      * @return Pointer to the created Publisher.
      */
-    Publisher* createPublisher(PublisherAttributes& att, PublisherListener* listen=nullptr);
+    Publisher* createPublisher(
+        const PublisherAttributes& att,
+        PublisherListener* listen=nullptr);
 
     /**
      * Create a Subscriber in this Participant.
@@ -96,7 +101,9 @@ class ParticipantImpl
      * @param listen Pointer to the listener.
      * @return Pointer to the created Subscriber.
      */
-    Subscriber* createSubscriber(SubscriberAttributes& att, SubscriberListener* listen=nullptr);
+    Subscriber* createSubscriber(
+        const SubscriberAttributes& att,
+        SubscriberListener* listen=nullptr);
 
     /**
      * Remove a Publisher from this participant.
@@ -138,12 +145,18 @@ class ParticipantImpl
      * @param kind EndpointKind (WRITER or READER)
      * @return True if correctly found and activated.
      */
-    bool newRemoteEndpointDiscovered(const rtps::GUID_t& partguid, uint16_t userId,
-            rtps::EndpointKind_t kind);
+    bool newRemoteEndpointDiscovered(
+        const rtps::GUID_t& partguid,
+        uint16_t userId,
+        rtps::EndpointKind_t kind);
 
-    bool get_remote_writer_info(const rtps::GUID_t& writerGuid, rtps::WriterProxyData& returnedInfo);
+    bool get_remote_writer_info(
+        const rtps::GUID_t& writerGuid,
+        rtps::WriterProxyData& returnedInfo);
 
-    bool get_remote_reader_info(const rtps::GUID_t& readerGuid, rtps::ReaderProxyData& returnedInfo);
+    bool get_remote_reader_info(
+        const rtps::GUID_t& readerGuid,
+        rtps::ReaderProxyData& returnedInfo);
 
     private:
     //!Participant Attributes

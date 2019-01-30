@@ -47,13 +47,16 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-ParticipantImpl::ParticipantImpl(ParticipantAttributes& patt,Participant* pspart,ParticipantListener* listen):
-    m_att(patt),
-    mp_rtpsParticipant(nullptr),
-    mp_participant(pspart),
-    mp_listener(listen),
+ParticipantImpl::ParticipantImpl(
+        const ParticipantAttributes& patt,
+        Participant* pspart,
+        ParticipantListener* listen)
+    : m_att(patt)
+    , mp_rtpsParticipant(nullptr)
+    , mp_participant(pspart)
+    , mp_listener(listen)
 #pragma warning (disable : 4355 )
-    m_rtps_listener(this)
+    , m_rtps_listener(this)
     {
         mp_participant->mp_impl = this;
     }
@@ -111,7 +114,8 @@ const GUID_t& ParticipantImpl::getGuid() const
     return this->mp_rtpsParticipant->getGuid();
 }
 
-Publisher* ParticipantImpl::createPublisher(PublisherAttributes& att,
+Publisher* ParticipantImpl::createPublisher(
+        const PublisherAttributes& att,
         PublisherListener* listen)
 {
     logInfo(PARTICIPANT,"CREATING PUBLISHER IN TOPIC: "<<att.topic.getTopicName());
@@ -231,7 +235,8 @@ std::vector<std::string> ParticipantImpl::getParticipantNames() const {
     return mp_rtpsParticipant->getParticipantNames();
 }
 
-Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
+Subscriber* ParticipantImpl::createSubscriber(
+        const SubscriberAttributes& att,
         SubscriberListener* listen)
 {
     logInfo(PARTICIPANT,"CREATING SUBSCRIBER IN TOPIC: "<<att.topic.getTopicName())
@@ -338,7 +343,9 @@ Subscriber* ParticipantImpl::createSubscriber(SubscriberAttributes& att,
 }
 
 
-bool ParticipantImpl::getRegisteredType(const char* typeName, TopicDataType** type)
+bool ParticipantImpl::getRegisteredType(
+        const char* typeName,
+        TopicDataType** type)
 {
     for(std::vector<TopicDataType*>::iterator it=m_types.begin();
             it!=m_types.end();++it)
@@ -422,7 +429,8 @@ bool ParticipantImpl::unregisterType(const char* typeName)
 
 
 
-void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(RTPSParticipant*,
+void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
+        RTPSParticipant*,
         rtps::ParticipantDiscoveryInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener!=nullptr)
@@ -432,7 +440,8 @@ void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(RTPSPart
 }
 
 #if HAVE_SECURITY
-void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(RTPSParticipant*,
+void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(
+        RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener != nullptr)
@@ -442,7 +451,8 @@ void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(RTP
 }
 #endif
 
-void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(RTPSParticipant*,
+void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
+        RTPSParticipant*,
         rtps::ReaderDiscoveryInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener!=nullptr)
@@ -451,7 +461,8 @@ void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(RTPSParticipa
     }
 }
 
-void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(RTPSParticipant*,
+void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
+        RTPSParticipant*,
         rtps::WriterDiscoveryInfo&& info)
 {
     if(this->mp_participantimpl->mp_listener!=nullptr)
@@ -460,7 +471,9 @@ void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(RTPSParticipa
     }
 }
 
-bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
+bool ParticipantImpl::newRemoteEndpointDiscovered(
+        const GUID_t& partguid,
+        uint16_t endpointId,
         EndpointKind_t kind)
 {
     if (kind == WRITER)
@@ -469,12 +482,16 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16
         return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
 }
 
-bool ParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
+bool ParticipantImpl::get_remote_writer_info(
+        const GUID_t& writerGuid,
+        WriterProxyData& returnedInfo)
 {
     return mp_rtpsParticipant->get_remote_writer_info(writerGuid, returnedInfo);
 }
 
-bool ParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
+bool ParticipantImpl::get_remote_reader_info(
+        const GUID_t& readerGuid,
+        ReaderProxyData& returnedInfo)
 {
     return mp_rtpsParticipant->get_remote_reader_info(readerGuid, returnedInfo);
 }

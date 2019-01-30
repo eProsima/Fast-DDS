@@ -56,8 +56,12 @@ public:
 	* @param attr
 	* @param listen
 	*/
-	SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
-			SubscriberAttributes& attr,SubscriberListener* listen = nullptr);
+    SubscriberImpl(
+        ParticipantImpl* p,
+        TopicDataType* ptype,
+        const SubscriberAttributes& attr,
+        SubscriberListener* listen = nullptr);
+
 	virtual ~SubscriberImpl();
 
 	/**

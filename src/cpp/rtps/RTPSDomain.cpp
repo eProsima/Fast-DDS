@@ -58,11 +58,14 @@ void RTPSDomain::stopAll()
     eClock::my_sleep(100);
 }
 
-RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam,
+RTPSParticipant* RTPSDomain::createParticipant(
+        const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     logInfo(RTPS_PARTICIPANT,"");
+
+    RTPSParticipantAttributes PParam = attrs;
 
     if(PParam.builtin.leaseDuration < c_TimeInfinite && PParam.builtin.leaseDuration <= PParam.builtin.leaseDuration_announcementperiod) //TODO CHeckear si puedo ser infinito
     {
@@ -74,7 +77,9 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
     {
         ID = getNewId();
         while(m_RTPSParticipantIDs.insert(ID).second == false)
+        {
             ID = getNewId();
+        }
     }
     else
     {
@@ -122,14 +127,14 @@ RTPSParticipant* RTPSDomain::createParticipant(RTPSParticipantAttributes& PParam
             PParam.builtin.initialPeersList.push_back(local);
         }
     }
-    guidP.value[4] = ((octet*)&pid)[0];
-    guidP.value[5] = ((octet*)&pid)[1];
-    guidP.value[6] = ((octet*)&pid)[2];
-    guidP.value[7] = ((octet*)&pid)[3];
-    guidP.value[8] = ((octet*)&ID)[0];
-    guidP.value[9] = ((octet*)&ID)[1];
-    guidP.value[10] = ((octet*)&ID)[2];
-    guidP.value[11] = ((octet*)&ID)[3];
+    guidP.value[4] = octet(pid);
+    guidP.value[5] = octet(pid >> 8);
+    guidP.value[6] = octet(pid >> 16);
+    guidP.value[7] = octet(pid >> 24);
+    guidP.value[8] = octet(ID);
+    guidP.value[9] = octet(ID >> 8);
+    guidP.value[10] = octet(ID >> 16);
+    guidP.value[11] = octet(ID >> 24);
 
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
@@ -181,7 +186,11 @@ void RTPSDomain::removeRTPSParticipant_nts(std::vector<RTPSDomain::t_p_RTPSParti
     m_RTPSParticipants.erase(it);
 }
 
-RTPSWriter* RTPSDomain::createRTPSWriter(RTPSParticipant* p, WriterAttributes& watt, WriterHistory* hist, WriterListener* listen)
+RTPSWriter* RTPSDomain::createRTPSWriter(
+        RTPSParticipant* p,
+        WriterAttributes& watt,
+        WriterHistory* hist,
+        WriterListener* listen)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)
@@ -215,8 +224,11 @@ bool RTPSDomain::removeRTPSWriter(RTPSWriter* writer)
     return false;
 }
 
-RTPSReader* RTPSDomain::createRTPSReader(RTPSParticipant* p, ReaderAttributes& ratt,
-        ReaderHistory* rhist, ReaderListener* rlisten)
+RTPSReader* RTPSDomain::createRTPSReader(
+        RTPSParticipant* p,
+        ReaderAttributes& ratt,
+        ReaderHistory* rhist,
+        ReaderListener* rlisten)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for(auto it= m_RTPSParticipants.begin();it!=m_RTPSParticipants.end();++it)

@@ -73,7 +73,7 @@ jar {
     }
 }
 
-compileJava.dependsOn buildIDLParser
+compileJava.dependsOn buildIDLParser,copyResources
 compileJava {
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
