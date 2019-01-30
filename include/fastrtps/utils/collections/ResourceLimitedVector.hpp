@@ -259,6 +259,16 @@ public:
      * Please refer to https://en.cppreference.com/w/cpp/container/vector
      */
     ///@{
+    reference at(size_type pos) { return collection_.at(pos); }
+    const_reference at(size_type pos) const { return collection_.at(pos); }
+    reference operator[](size_type pos) { return collection_[pos]; }
+    const_reference operator[](size_type pos) const { return collection_[pos]; }
+
+    reference front() { return collection_.front(); }
+    const_reference front() const { return collection_.front(); }
+    reference back() { return collection_.back(); }
+    const_reference back() const { return collection_.back(); }
+
     iterator begin() noexcept { return collection_.begin(); }
     const_iterator begin() const noexcept { return collection_.begin(); }
     const_iterator cbegin() const noexcept { return collection_.cbegin(); }
