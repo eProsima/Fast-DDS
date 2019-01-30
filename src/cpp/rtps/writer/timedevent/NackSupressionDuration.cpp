@@ -59,7 +59,7 @@ void NackSupressionDuration::event(
 
     if(code == EVENT_SUCCESS)
     {
-        logInfo(RTPS_WRITER, "Changing underway to unacked for Reader: " << reader_guid);
+        logInfo(RTPS_WRITER, "Changing underway to unacked for Reader: " << reader_guid_);
         writer_->perform_nack_supression(reader_guid_);
     }
     else if(code == EVENT_ABORT)

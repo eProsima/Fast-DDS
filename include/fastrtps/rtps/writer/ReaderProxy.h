@@ -160,6 +160,11 @@ public:
         return reader_attributes_.endpoint.reliabilityKind == RELIABLE;
     }
 
+    inline const RemoteReaderAttributes& reader_attributes() const
+    {
+        return reader_attributes_;
+    }
+
     inline const LocatorList_t& remote_locators() const
     {
         return reader_attributes_.endpoint.remoteLocatorList;

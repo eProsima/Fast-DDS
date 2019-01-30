@@ -379,7 +379,6 @@ void StatefulWriter::send_any_unsent_changes()
                                 if (remoteReader->is_reliable())
                                 {
                                     activateHeartbeatPeriod = true;
-                                    assert(remoteReader->nack_supression_event_ != nullptr);
                                     if (allFragmentsSent)
                                     {
                                         remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
@@ -577,8 +576,8 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     matched_readers.push_back(rp);
 
     logInfo(RTPS_WRITER, "Reader Proxy "<< rp->guid()<< " added to " << this->m_guid.entityId << " with "
-            <<rp->reader_attributes_.endpoint.unicastLocatorList.size()<<"(u)-"
-            <<rp->reader_attributes_.endpoint.multicastLocatorList.size()<<"(m) locators");
+            <<rp->reader_attributes().endpoint.unicastLocatorList.size()<<"(u)-"
+            <<rp->reader_attributes().endpoint.multicastLocatorList.size()<<"(m) locators");
 
     return true;
 }

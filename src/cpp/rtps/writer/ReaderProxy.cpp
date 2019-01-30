@@ -222,8 +222,9 @@ bool ReaderProxy::set_change_to_status(
         ChangeForReaderStatus_t status,
         bool restart_nack_supression)
 {
-    if (restart_nack_supression && nack_supression_event_ != nullptr)
+    if (restart_nack_supression && is_reliable())
     {
+        assert(nack_supression_event_ != nullptr);
         nack_supression_event_->restart_timer();
     }
 
