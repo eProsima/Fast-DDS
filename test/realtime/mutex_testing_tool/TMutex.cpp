@@ -34,7 +34,6 @@ typedef struct
 {
     pthread_mutex_t* mutex;
     uint32_t count;
-
 } tmutex_record;
 
 constexpr size_t g_tmutex_records_max_length = 10;
