@@ -28,14 +28,14 @@
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <mutex>
-
 #include <cassert>
+#include <algorithm>
 
+#include "../history/HistoryAttributesExtension.hpp"
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
 
 ReaderProxy::ReaderProxy(
         const RemoteReaderAttributes& reader_attributes,
@@ -43,6 +43,7 @@ ReaderProxy::ReaderProxy(
         StatefulWriter* writer) 
     : reader_attributes_(reader_attributes)
     , writer_(writer)
+    , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_response_event_(nullptr)
     , nack_supression_event_(nullptr)
     , last_acknack_count_(0)
@@ -104,8 +105,8 @@ void ReaderProxy::add_change(
         bool restart_nack_supression)
 {
     assert(change.getSequenceNumber() > changes_low_mark_);
-    assert(m_changesForReader.empty() ? true :
-        change.getSequenceNumber() > m_changesForReader.rbegin()->getSequenceNumber());
+    assert(changes_for_reader_.empty() ? true :
+        change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
 
     if (restart_nack_supression && nack_supression_event_ != nullptr)
     {
@@ -113,29 +114,42 @@ void ReaderProxy::add_change(
     }
 
     // For best effort readers, changes are acked when being sent
-    if (m_changesForReader.empty() && change.getStatus() == ACKNOWLEDGED)
+    if (changes_for_reader_.empty() && change.getStatus() == ACKNOWLEDGED)
     {
         changes_low_mark_ = change.getSequenceNumber();
         return;
     }
 
-    m_changesForReader.insert(change);
+    if (changes_for_reader_.push_back(change) == nullptr)
+    {
+        // This should never happen
+        assert(false);
+        logError(RTPS_WRITER, "Error adding change " << change.getSequenceNumber() << " to reader proxy " << \
+            reader_attributes_.guid);
+    }
 }
 
 bool ReaderProxy::has_changes() const
 {
-    return !m_changesForReader.empty();
+    return !changes_for_reader_.empty();
 }
 
 bool ReaderProxy::change_is_acked(const SequenceNumber_t& seq_num) const
 {
-    if (seq_num <= changes_low_mark_)
+    if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
     {
         return true;
     }
 
-    auto chit = m_changesForReader.find(ChangeForReader_t(seq_num));
-    assert(chit != m_changesForReader.end());
+    assert(changes_for_reader_.back().getSequenceNumber() >= seq_num);
+    ChangeConstIterator chit = find_change(seq_num);
+    if (chit == changes_for_reader_.end())
+    {
+        // There is a hole in changes_for_reader_
+        // This means a change was removed.
+        // The case is equivalent to the !chit->isRelevant() code below
+        return true;
+    }
 
     return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
 }
@@ -146,8 +160,8 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
 
     if (seq_num > changes_low_mark_)
     {
-        auto chit = m_changesForReader.find(seq_num);
-        m_changesForReader.erase(m_changesForReader.begin(), chit);
+        ChangeIterator chit = find_change(seq_num);
+        changes_for_reader_.erase(changes_for_reader_.begin(), chit);
     }
     else
     {
@@ -155,29 +169,43 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
         // after losing lease duration.
 
         SequenceNumber_t current_sequence = seq_num;
-        if (seq_num < writer_->get_seq_num_min())
+        SequenceNumber_t min_sequence = writer_->get_seq_num_min();
+        if (seq_num < min_sequence)
         {
-            current_sequence = writer_->get_seq_num_min();
+            current_sequence = min_sequence;
         }
         future_low_mark = current_sequence;
 
+        bool should_sort = false;
         for (; current_sequence <= changes_low_mark_; ++current_sequence)
         {
-            CacheChange_t* change = nullptr;
+            // Skip all consecutive changes already in the collection
+            ChangeConstIterator it = find_change(current_sequence);
+            while( it != changes_for_reader_.end() && 
+                current_sequence <= changes_low_mark_ &&
+                it->getSequenceNumber() == current_sequence)
+            {
+                ++current_sequence;
+                ++it;
+            }
 
-            if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+            if (current_sequence <= changes_low_mark_)
             {
-                ChangeForReader_t cr(change);
-                cr.setStatus(UNACKNOWLEDGED);
-                m_changesForReader.insert(cr);
+                CacheChange_t* change = nullptr;
+                if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                {
+                    should_sort = true;
+                    ChangeForReader_t cr(change);
+                    cr.setStatus(UNACKNOWLEDGED);
+                    changes_for_reader_.push_back(cr);
+                }
             }
-            else
-            {
-                ChangeForReader_t cr(current_sequence);
-                cr.setStatus(UNACKNOWLEDGED);
-                cr.notValid();
-                m_changesForReader.insert(cr);
-            }
+        }
+
+        // Keep changes sorted by sequence number
+        if (should_sort)
+        {
+            std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
         }
     }
 
@@ -190,12 +218,11 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
 
     seq_num_set.for_each([&](SequenceNumber_t sit)
     {
-        auto chit = m_changesForReader.find(ChangeForReader_t(sit));
-        if (chit != m_changesForReader.end())
+        ChangeIterator chit = find_change(sit);
+        if (chit != changes_for_reader_.end())
         {
-            ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*chit);
-            newch.setStatus(REQUESTED);
-            newch.markAllFragmentsAsUnsent();
+            chit->setStatus(REQUESTED);
+            chit->markAllFragmentsAsUnsent();
             isSomeoneWasSetRequested = true;
         }
     });
@@ -233,28 +260,37 @@ bool ReaderProxy::set_change_to_status(
         return false;
     }
 
-    auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
+    auto it = find_change(seq_num);
     bool change_was_modified = false;
 
-    if (it != m_changesForReader.end())
+    // If the change following the low mark is acknowledged, low mark is advanced.
+    // Note that this could be the first change in the collection or a hole if the
+    // first unacknowledged change is irrelevant.
+    if (status == ACKNOWLEDGED && seq_num == changes_low_mark_ + 1)
     {
-        if (status == ACKNOWLEDGED && it == m_changesForReader.begin())
+        changes_low_mark_ = seq_num;
+        change_was_modified = true;
+    }
+
+    if (it != changes_for_reader_.end())
+    {
+        if (status == ACKNOWLEDGED && changes_low_mark_ == seq_num)
         {
-            m_changesForReader.erase(it);
-            changes_low_mark_ = seq_num;
-            change_was_modified = true;
+            // Erase the first change when it is acknowledged
+            assert(it == changes_for_reader_.begin());
+            changes_for_reader_.erase(it);
         }
         else
         {
+            // Otherwise change status
             if (it->getStatus() != status)
             {
-                ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
-                newch.setStatus(status);
+                it->setStatus(status);
                 change_was_modified = true;
             }
         }
     }
-
+    
     return change_was_modified;
 }
 
@@ -271,50 +307,46 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
     }
 
     bool change_found = false;
-    auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
+    auto it = find_change(seq_num);
 
-    if (it != m_changesForReader.end())
+    if (it != changes_for_reader_.end())
     {
         change_found = true;
-        ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*it);
-        newch.markFragmentsAsSent(frag_num);
-        was_last_fragment = newch.getUnsentFragments().empty();
+        it->markFragmentsAsSent(frag_num);
+        was_last_fragment = it->getUnsentFragments().empty();
     }
 
     return change_found;
 
 }
 
+bool ReaderProxy::perform_nack_supression()
+{
+    return convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
+}
+
+bool ReaderProxy::perform_acknack_response()
+{
+    return convert_status_on_all_changes(REQUESTED, UNSENT);
+}
+
 bool ReaderProxy::convert_status_on_all_changes(
         ChangeForReaderStatus_t previous, 
         ChangeForReaderStatus_t next)
 {
-    if (previous == next)
-    {
-        return false;
-    }
+    assert(previous != next);
+
+    // NOTE: This is only called for REQUESTED=>UNSENT (acknack response) or 
+    //       UNDERWAY=>UNACKNOWLEDGED (nack supression)
 
     bool at_least_one_modified = false;
-
-    auto it = m_changesForReader.begin();
-    while (it != m_changesForReader.end())
+    for(ChangeForReader_t& change : changes_for_reader_)
     {
-        if (it->getStatus() == previous)
+        if (change.getStatus() == previous)
         {
             at_least_one_modified = true;
-
-            if (next == ACKNOWLEDGED && it == m_changesForReader.begin())
-            {
-                changes_low_mark_ = it->getSequenceNumber();
-                it = m_changesForReader.erase(it);
-                continue;
-            }
-
-            // Note: we can perform this cast as we are not touching the sorting field (seq_num)
-            const_cast<ChangeForReader_t&>(*it).setStatus(next);
+            change.setStatus(next);
         }
-
-        ++it;
     }
 
     return at_least_one_modified;
@@ -323,44 +355,21 @@ bool ReaderProxy::convert_status_on_all_changes(
 void ReaderProxy::change_has_been_removed(const SequenceNumber_t& seq_num)
 {
     // Check sequence number is in the container, because it was not clean up.
-    if (m_changesForReader.empty() || seq_num < m_changesForReader.begin()->getSequenceNumber())
+    if (changes_for_reader_.empty() || seq_num < changes_for_reader_.begin()->getSequenceNumber())
     {
         return;
     }
 
-    auto chit = m_changesForReader.find(ChangeForReader_t(seq_num));
-
-    // Element must be in the container. In other case, bug.
-    assert(chit != m_changesForReader.end());
-
-    // Note: we can perform this cast as we are not touching the sorting field (seq_num)
-    auto & newch = const_cast<ChangeForReader_t&>(*chit);
-
-    if (chit == m_changesForReader.begin())
-    {
-        assert(chit->getStatus() != ACKNOWLEDGED);
-
-        // if it is the first element, set state to unacknowledge because from now reader has to confirm
-        // it will not be expecting it.
-        newch.setStatus(UNACKNOWLEDGED);
-    }
-    else
-    {
-        // In case its state is not ACKNOWLEDGED, set it to UNACKNOWLEDGE because from now reader has to confirm
-        // it will not be expecting it.
-        if (newch.getStatus() != ACKNOWLEDGED)
-        {
-            newch.setStatus(UNACKNOWLEDGED);
-        }
-    }
-    newch.notValid();
+    // Element may not be in the container when marked as irrelevant.
+    auto chit = find_change(seq_num);
+    changes_for_reader_.erase(chit);
 }
 
 bool ReaderProxy::has_unacknowledged() const
 {
-    for (const ChangeForReader_t& it : m_changesForReader)
+    for (const ChangeForReader_t& it : changes_for_reader_)
     {
-        if (it.getStatus() == UNACKNOWLEDGED)
+        if (it.isRelevant() && it.getStatus() == UNACKNOWLEDGED)
         {
             return true;
         }
@@ -369,35 +378,23 @@ bool ReaderProxy::has_unacknowledged() const
     return false;
 }
 
-bool change_min(
-        const ChangeForReader_t* ch1, 
-        const ChangeForReader_t* ch2)
-{
-    return ch1->getSequenceNumber() < ch2->getSequenceNumber();
-}
-
 bool ReaderProxy::requested_fragment_set(
         const SequenceNumber_t& seq_num, 
         const FragmentNumberSet_t& frag_set)
 {
     // Locate the outbound change referenced by the NACK_FRAG
-    auto changeIter = std::find_if(m_changesForReader.begin(), m_changesForReader.end(),
-        [seq_num](const ChangeForReader_t& change)
-    {
-        return change.getSequenceNumber() == seq_num;
-    });
-    if (changeIter == m_changesForReader.end())
+    ChangeIterator changeIter = find_change(seq_num);
+    if (changeIter == changes_for_reader_.end())
     {
         return false;
     }
 
-    ChangeForReader_t& newch = const_cast<ChangeForReader_t&>(*changeIter);
-    newch.markFragmentsAsUnsent(frag_set);
+    changeIter->markFragmentsAsUnsent(frag_set);
 
     // If it was UNSENT, we shouldn't switch back to REQUESTED to prevent stalling.
-    if (newch.getStatus() != UNSENT)
+    if (changeIter->getStatus() != UNSENT)
     {
-        newch.setStatus(REQUESTED);
+        changeIter->setStatus(REQUESTED);
     }
 
     return true;
@@ -425,6 +422,35 @@ bool ReaderProxy::process_nack_frag(
     }
 
     return false;
+}
+
+static bool change_less_than_sequence(
+    const ChangeForReader_t& change,
+    const SequenceNumber_t& seq_num)
+{
+    return change.getSequenceNumber() < seq_num;
+}
+
+ReaderProxy::ChangeIterator ReaderProxy::find_change(const SequenceNumber_t& seq_num)
+{
+    ReaderProxy::ChangeIterator it;
+    ReaderProxy::ChangeIterator end = changes_for_reader_.end();
+    it = std::lower_bound(changes_for_reader_.begin(), end, seq_num, change_less_than_sequence);
+    
+    return it == end 
+        ? it 
+        : it->getSequenceNumber() == seq_num ? it : end;
+}
+
+ReaderProxy::ChangeConstIterator ReaderProxy::find_change(const SequenceNumber_t& seq_num) const
+{
+    ReaderProxy::ChangeConstIterator it;
+    ReaderProxy::ChangeConstIterator end = changes_for_reader_.end();
+    it = std::lower_bound(changes_for_reader_.begin(), end, seq_num, change_less_than_sequence);
+
+    return it == end
+        ? it
+        : it->getSequenceNumber() == seq_num ? it : end;
 }
 
 }   // namespace rtps

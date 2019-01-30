@@ -27,6 +27,7 @@
 #include "../common/CacheChange.h"
 #include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 
 #include <set>
 
@@ -60,12 +61,26 @@ public:
 
     void destroy_timers();
 
+    /**
+     * Called when a change is added to the writer's history.
+     * @param change Information regarding the change added.
+     * @param restart_nack_supression Whether nack-supression event should be restarted.
+     */
     void add_change(
             const ChangeForReader_t& change,
             bool restart_nack_supression);
 
+    /**
+     * Check if there are changes pending for this reader.
+     * @return true when there are pending changes, false otherwise.
+     */
     bool has_changes() const;
 
+    /**
+     * Check if a specific change has been already acknowledged for this reader.
+     * @param seq_num Sequence number of the change to be checked.
+     * @return true when the change is irrelevant or has been already acknowledged, false otherwise.
+     */
     bool change_is_acked(const SequenceNumber_t& seq_num) const;
 
     /**
@@ -84,16 +99,28 @@ public:
 
     /**
     * Applies the given function object to every unsent change.
-    * @param f Function to apply
+    * @param f Function to apply. 
+    *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
+    *          The second argument may be nullptr for irrelevant changes.
     */
-    template <class UnaryFunction>
-    void for_each_unsent_change(UnaryFunction f) const
+    template <class BinaryFunction>
+    void for_each_unsent_change(BinaryFunction f) const
     {
-        for (auto &change_for_reader : m_changesForReader)
+        if (!changes_for_reader_.empty())
+        {
+            SequenceNumber_t first_seq = changes_for_reader_.begin()->getSequenceNumber();
+            for (SequenceNumber_t seq = changes_low_mark_ + 1; seq < first_seq; ++seq)
+            {
+                f(seq, nullptr);
+            }
+        }
+
+        // TODO(Miguel C.): Should we consider holes as irrelevant ?
+        for (const ChangeForReader_t& change_for_reader : changes_for_reader_)
         {
             if (change_for_reader.getStatus() == UNSENT)
             {
-                f(&change_for_reader);
+                f(change_for_reader.getSequenceNumber(), &change_for_reader);
             }
         }
     }
@@ -122,16 +149,22 @@ public:
             FragmentNumber_t frag_num,
             bool& was_last_fragment);
 
-    /*
-     * Converts all changes with a given status to a different status.
-     * @param previous Status to change.
-     * @param next Status to adopt.
-     * @return true when at least one change has been modified, false otherwise.
+    /**
+     * Turns all UNDERWAY changes into UNACKNOWLEDGED.
+     * @return true if at least one change changed its status, false otherwise.
      */
-    bool convert_status_on_all_changes(
-            ChangeForReaderStatus_t previous, 
-            ChangeForReaderStatus_t next);
+    bool perform_nack_supression();
 
+    /**
+     * Turns all REQUESTED changes into UNSENT.
+     * @return true if at least one change changed its status, false otherwise.
+     */
+    bool perform_acknack_response();
+
+    /**
+     * Call this to inform a change was removed from history.
+     * @param seq_num Sequence number of the removed change.
+     */
     void change_has_been_removed(const SequenceNumber_t& seq_num);
 
     /*!
@@ -140,36 +173,65 @@ public:
      */
     bool has_unacknowledged() const;
 
+    /**
+     * Get the GUID of the reader represented by this proxy.
+     * @return the GUID of the reader represented by this proxy.
+     */
     inline const GUID_t& guid() const
     {
         return reader_attributes_.guid;
     }
 
+    /**
+     * Get the durability of the reader represented by this proxy.
+     * @return the durability of the reader represented by this proxy.
+     */
     inline DurabilityKind_t durability_kind() const
     {
         return reader_attributes_.endpoint.durabilityKind;
     }
 
+    /**
+     * Check if the reader represented by this proxy expexts inline QOS to be received.
+     * @return true if the reader represented by this proxy expexts inline QOS to be received.
+     */
     inline bool expects_inline_qos() const
     {
         return reader_attributes_.expectsInlineQos;
     }
 
+    /**
+     * Check if the reader represented by this proxy is reliable.
+     * @return true if the reader represented by this proxy is reliable.
+     */
     inline bool is_reliable() const
     {
         return reader_attributes_.endpoint.reliabilityKind == RELIABLE;
     }
 
+    /**
+     * Get the attributes of the reader represented by this proxy.
+     * @return the attributes of the reader represented by this proxy.
+     */
     inline const RemoteReaderAttributes& reader_attributes() const
     {
         return reader_attributes_;
     }
 
+    /**
+     * Get the locators that should be used to send data to the reader represented by this proxy.
+     * @return the locators that should be used to send data to the reader represented by this proxy.
+     */
     inline const LocatorList_t& remote_locators() const
     {
         return reader_attributes_.endpoint.remoteLocatorList;
     }
 
+    /**
+     * Called when an ACKNACK is received to set a new value for the count of the last received ACKNACK.
+     * @param acknack_count The count of the received ACKNACK.
+     * @return true if internal count changed (i.e. new ACKNACK is accepted)
+     */
     bool check_and_set_acknack_count(uint32_t acknack_count)
     {
         if (last_acknack_count_ < acknack_count)
@@ -181,6 +243,13 @@ public:
         return false;
     }
 
+    /**
+     * Process an incoming NACKFRAG submessage.
+     * @param reader_guid Destination guid of the submessage.
+     * @param nack_count Counter field of the submessage.
+     * @param seq_num Sequence number field of the submessage.
+     * @param fragments_state Bitmap indicating the requested fragments.
+     */
     bool process_nack_frag(
             const GUID_t& reader_guid, 
             uint32_t nack_count,
@@ -190,20 +259,32 @@ public:
     /**
      * Filter a CacheChange_t, in this version always returns true.
      * @param change
-     * @return
+     * @return true if the change is relevant, false otherwise.
      */
     inline bool rtps_is_relevant(CacheChange_t* change)
     {
         (void)change; return true;
     };
 
-    SequenceNumber_t get_low_mark() const
+    /**
+     * Get the highest fully acknowledged sequence number.
+     * @return the highest fully acknowledged sequence number.
+     */
+    SequenceNumber_t changes_low_mark() const
     {
         return changes_low_mark_;
     }
 
+    /**
+     * Change the interval of nack-response event.
+     * @param interval Time from acknack reception to data sending.
+     */
     void update_nack_response_interval(const Duration_t& interval);
 
+    /**
+     * Change the interval of nack-supression event.
+     * @param interval Time from data sending to acknack processing.
+     */
     void update_nack_supression_interval(const Duration_t& interval);
 
 private:
@@ -213,7 +294,7 @@ private:
     //!Pointer to the associated StatefulWriter.
     StatefulWriter* writer_;
     //!Set of the changes and its state.
-    std::set<ChangeForReader_t, ChangeForReaderCmp> m_changesForReader;
+    ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
     //! Timed Event to manage the Acknack response delay.
     NackResponseDelay* nack_response_event_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
@@ -225,6 +306,19 @@ private:
 
     SequenceNumber_t changes_low_mark_;
 
+    using ChangeIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::iterator;
+    using ChangeConstIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::const_iterator;
+
+    /*
+     * Converts all changes with a given status to a different status.
+     * @param previous Status to change.
+     * @param next Status to adopt.
+     * @return true when at least one change has been modified, false otherwise.
+     */
+    bool convert_status_on_all_changes(
+            ChangeForReaderStatus_t previous, 
+            ChangeForReaderStatus_t next);
+
     /*!
      * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.
      * @param[in] seq_num Sequence number to be paired with the requested fragments.
@@ -235,6 +329,19 @@ private:
             const SequenceNumber_t& seq_num, 
             const FragmentNumberSet_t& frag_set);
 
+    /**
+     * @brief Find a change with the specified sequence number.
+     * @param seq_num Sequence number to find.
+     * @return Iterator pointing to the change, changes_for_reader_.end() if not found. 
+     */
+    ChangeIterator find_change(const SequenceNumber_t& seq_num);
+
+    /**
+     * @brief Find a change with the specified sequence number.
+     * @param seq_num Sequence number to find.
+     * @return Iterator pointing to the change, changes_for_reader_.end() if not found.
+     */
+    ChangeConstIterator find_change(const SequenceNumber_t& seq_num) const;
 };
 
 } /* namespace rtps */

@@ -257,11 +257,9 @@ void StatefulWriter::send_any_unsent_changes()
 
             // Loop all changes
             bool is_reliable = remoteReader->is_reliable();
-            auto unsent_change_process = [&](const ChangeForReader_t* unsentChange)
+            auto unsent_change_process = [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
             {
-                SequenceNumber_t seqNum = unsentChange->getSequenceNumber();
-
-                if (unsentChange->isRelevant() && unsentChange->isValid())
+                if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                 {
                     // As we checked we are not async, we know we cannot have fragments
                     if (group.add_data(*(unsentChange->getChange()), guids, locators, remoteReader->expects_inline_qos()))
@@ -306,9 +304,9 @@ void StatefulWriter::send_any_unsent_changes()
 
         for (auto remoteReader : matched_readers)
         {
-            auto unsent_change_process = [&](const ChangeForReader_t* unsentChange)
+            auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
             {
-                if (unsentChange->isRelevant() && unsentChange->isValid())
+                if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                 {
                     if (m_pushMode)
                     {
@@ -316,13 +314,13 @@ void StatefulWriter::send_any_unsent_changes()
                     }
                     else // Change status to UNACKNOWLEDGED
                     {
-                        remoteReader->set_change_to_status(unsentChange->getSequenceNumber(), UNACKNOWLEDGED, false);
+                        remoteReader->set_change_to_status(seq_num, UNACKNOWLEDGED, false);
                     }
                 }
                 else
                 {
-                    notRelevantChanges.add_sequence_number(unsentChange->getSequenceNumber(), remoteReader);
-                    remoteReader->set_change_to_status(unsentChange->getSequenceNumber(), UNDERWAY, false); //TODO(Ricardo) Review
+                    notRelevantChanges.add_sequence_number(seq_num, remoteReader);
+                    remoteReader->set_change_to_status(seq_num, UNDERWAY, false); //TODO(Ricardo) Review
                 }
             };
 
@@ -520,16 +518,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
                 cit != mp_history->changesEnd(); ++cit)
         {
-            while((*cit)->sequenceNumber != current_seq)
-            {
-                ChangeForReader_t changeForReader(current_seq);
-                changeForReader.setRelevance(false);
-                not_relevant_changes.insert(current_seq);
-                changeForReader.setStatus(UNACKNOWLEDGED);
-                rp->add_change(changeForReader, false);
-                ++current_seq;
-            }
-
             ChangeForReader_t changeForReader(*cit);
 
             if(rp->durability_kind() >= TRANSIENT_LOCAL && this->getAttributes().durabilityKind >= TRANSIENT_LOCAL)
@@ -700,7 +688,7 @@ void StatefulWriter::check_acked_status()
 
     for(ReaderProxy* it : matched_readers)
     {
-        SequenceNumber_t reader_low_mark = it->get_low_mark();
+        SequenceNumber_t reader_low_mark = it->changes_low_mark();
         if(min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
         {
             min_low_mark = reader_low_mark;
@@ -762,7 +750,7 @@ bool StatefulWriter::try_remove_change(std::chrono::microseconds& microseconds,
 
     for(ReaderProxy* it : matched_readers)
     {
-        SequenceNumber_t reader_low_mark = it->get_low_mark();
+        SequenceNumber_t reader_low_mark = it->changes_low_mark();
         if (min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
         {
             min_low_mark = reader_low_mark;
@@ -983,7 +971,7 @@ void StatefulWriter::perform_nack_response(const GUID_t& reader_guid)
     {
         if (remote_reader->guid() == reader_guid)
         {
-            if (remote_reader->convert_status_on_all_changes(REQUESTED, UNSENT))
+            if (remote_reader->perform_acknack_response())
             {
                 AsyncWriterThread::wakeUp(this);
             }
@@ -1000,11 +988,8 @@ void StatefulWriter::perform_nack_supression(const GUID_t& reader_guid)
     {
         if (remote_reader->guid() == reader_guid)
         {
-            if (remote_reader->is_reliable())
-            {
-                remote_reader->convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
-                mp_periodicHB->restart_timer();
-            }
+            remote_reader->perform_nack_supression();
+            mp_periodicHB->restart_timer();
             return;
         }
     }

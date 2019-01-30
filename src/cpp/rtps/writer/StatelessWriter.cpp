@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "../flowcontrol/FlowController.h"
+#include "../history/HistoryAttributesExtension.hpp"
 #include "RTPSWriterCollector.h"
 
 #include <algorithm>
@@ -35,19 +36,6 @@
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
-
-static ResourceLimitedContainerConfig resource_limits_from_history(const HistoryAttributes& history_attributes)
-{
-    return 
-    { 
-        history_attributes.initialReservedCaches > 0 ? 
-            static_cast<size_t>(history_attributes.initialReservedCaches) : 0,
-        history_attributes.maximumReservedCaches > 0 ? 
-            static_cast<size_t>(history_attributes.maximumReservedCaches) : std::numeric_limits<size_t>::max(),
-        1u
-    };
-}
-
 
 StatelessWriter::StatelessWriter(
         RTPSParticipantImpl* participant,
