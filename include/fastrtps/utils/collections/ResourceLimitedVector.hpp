@@ -281,6 +281,9 @@ public:
     size_type max_size() const noexcept { return std::min(configuration_.maximum, collection_.max_size()); }
 
     void clear() { collection_.clear(); }
+    iterator erase(const_iterator pos) { return collection_.erase(pos); }
+    iterator erase(const_iterator first, const_iterator last) { return collection_.erase(first, last); }
+    void pop_back() { collection_.pop_back(); }
     ///@}
 
     /**
