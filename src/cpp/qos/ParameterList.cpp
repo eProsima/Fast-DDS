@@ -98,9 +98,6 @@ bool ParameterList::updateCacheChangeFromInlineQos(CacheChange_t& change, CDRMes
 bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function<bool(const Parameter_t*)> processor,
     bool use_encapsulation, uint32_t& qos_size)
 {
-    assert(msg != nullptr);
-    assert(plist != nullptr);
-
     bool is_sentinel = false;
     bool valid = true;
     ParameterId_t pid;
