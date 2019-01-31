@@ -90,6 +90,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
                     info_IP info;
                     info.type = family == AF_INET ? IP4 : IP6;
                     info.name = std::string(buf);
+                    info.dev = std::string(aa->AdapterName);
 
                     // Currently not supported interfaces that not support multicast.
                     if(aa->Flags & 0x0010)
