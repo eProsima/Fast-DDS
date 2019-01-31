@@ -16,6 +16,7 @@
 #define UDP_CHANNEL_RESOURCE_INFO_
 
 #include <fastrtps/transport/ChannelResource.h>
+#include <asio.hpp>
 
 namespace eprosima{
 namespace fastrtps{
@@ -73,7 +74,11 @@ class UDPChannelResource : public ChannelResource
 {
 public:
     UDPChannelResource(eProsimaUDPSocket& socket);
-    UDPChannelResource(eProsimaUDPSocket& socket, uint32_t maxMsgSize);
+
+    UDPChannelResource(
+        eProsimaUDPSocket& socket,
+        uint32_t maxMsgSize);
+
     UDPChannelResource(UDPChannelResource&& channelResource);
     virtual ~UDPChannelResource();
 
@@ -99,37 +104,37 @@ public:
     }
 
 #if defined(ASIO_HAS_MOVE)
-    inline eProsimaUDPSocket* getSocket()
+    inline eProsimaUDPSocket* socket()
 #else
-    inline eProsimaUDPSocket getSocket()
+    inline eProsimaUDPSocket socket()
 #endif
     {
         return getSocketPtr(socket_);
     }
 
-    inline void SetInterface(const std::string& sInterface)
+    inline void interface(const std::string& interface)
     {
-        interface_ = sInterface;
+        interface_ = interface;
     }
 
-    inline const std::string& GetInterface() const
+    inline const std::string& interface() const
     {
         return interface_;
     }
 
-    inline void SetMessageReceiver(TransportReceiverInterface* receiver)
+    inline void message_receiver(TransportReceiverInterface* receiver)
     {
-        mMsgReceiver = receiver;
+        message_receiver_ = receiver;
     }
 
-    inline TransportReceiverInterface* GetMessageReceiver()
+    inline TransportReceiverInterface* message_receiver()
     {
-        return mMsgReceiver;
+        return message_receiver_;
     }
 
 private:
 
-    TransportReceiverInterface* mMsgReceiver; //Associated Readers/Writers inside of MessageReceiver
+    TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
     std::string interface_;

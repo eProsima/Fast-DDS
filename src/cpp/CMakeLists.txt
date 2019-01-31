@@ -79,6 +79,11 @@ set(${PROJECT_NAME}_source_files
     transport/ChannelResource.cpp
     transport/UDPChannelResource.cpp
     transport/TCPChannelResource.cpp
+    transport/TCPChannelResourceBasic.cpp
+    transport/TCPChannelResourceSecure.cpp
+    transport/TCPAcceptor.cpp
+    transport/TCPAcceptorBasic.cpp
+    transport/TCPAcceptorSecure.cpp
     transport/UDPv4Transport.cpp
     transport/TCPTransportInterface.cpp
     transport/UDPTransportInterface.cpp

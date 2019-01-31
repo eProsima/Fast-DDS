@@ -20,52 +20,52 @@ namespace fastrtps {
 namespace rtps {
 
 ChannelResource::ChannelResource()
-    : m_rec_msg()
-    , mAlive(true)
-    , mThread(nullptr)
+    : message_buffer_()
+    , alive_(true)
+    , thread_(nullptr)
 {
-    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
+    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
 }
 
 ChannelResource::ChannelResource(ChannelResource&& channelResource)
-    : m_rec_msg(std::move(channelResource.m_rec_msg))
-    , mThread(channelResource.mThread)
+    : message_buffer_(std::move(channelResource.message_buffer_))
+    , thread_(channelResource.thread_)
 {
-    bool b = channelResource.mAlive;
-    mAlive = b;
-    channelResource.mThread = nullptr;
-    //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
-    //m_rec_msg = std::move(channelResource.m_rec_msg);
+    bool b = channelResource.alive_;
+    alive_ = b;
+    channelResource.thread_ = nullptr;
+    //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
+    //message_buffer_ = std::move(channelResource.message_buffer_);
 }
 
 ChannelResource::ChannelResource(uint32_t rec_buffer_size)
-    : m_rec_msg(rec_buffer_size)
-    , mAlive(true)
-    , mThread(nullptr)
+    : message_buffer_(rec_buffer_size)
+    , alive_(true)
+    , thread_(nullptr)
 {
-    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
+    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
 }
 
 ChannelResource::~ChannelResource()
 {
-    Clear();
+    clear();
 }
 
-void ChannelResource::Clear()
+void ChannelResource::clear()
 {
-    mAlive = false;
-    if (mThread != nullptr)
+    alive_ = false;
+    if (thread_ != nullptr)
     {
-        mThread->join();
-        delete mThread;
-        mThread = nullptr;
+        thread_->join();
+        delete thread_;
+        thread_ = nullptr;
     }
 }
 
-std::thread* ChannelResource::ReleaseThread()
+std::thread* ChannelResource::release_thread()
 {
-    std::thread* outThread = mThread;
-    mThread = nullptr;
+    std::thread* outThread = thread_;
+    thread_ = nullptr;
     return outThread;
 }
 

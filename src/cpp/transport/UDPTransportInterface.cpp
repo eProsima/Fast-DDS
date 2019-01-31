@@ -89,23 +89,23 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
     // be used in the ReleaseInputChannel call later.
     for (UDPChannelResource* channel_resource : channel_resources)
     {
-        if (channel_resource->IsAlive())
+        if (channel_resource->alive())
         {
-            addresses[channel_resource] = channel_resource->getSocket()->local_endpoint().address();
+            addresses[channel_resource] = channel_resource->socket()->local_endpoint().address();
         }
         else
         {
             addresses[channel_resource] = asio::ip::address();
         }
-        channel_resource->Disable();
+        channel_resource->disable();
     }
 
     // Then we release the channels
     for (UDPChannelResource* channel : channel_resources)
     {
         ReleaseInputChannel(locator, addresses[channel]);
-        channel->getSocket()->cancel();
-        channel->getSocket()->close();
+        channel->socket()->cancel();
+        channel->socket()->close();
         delete channel;
     }
 
@@ -120,8 +120,8 @@ bool UDPTransportInterface::CloseOutputChannel(const Locator_t& locator)
 
     for (auto& socket : mOutputSockets)
     {
-        socket->getSocket()->cancel();
-        socket->getSocket()->close();
+        socket->socket()->cancel();
+        socket->socket()->close();
 
         delete socket;
     }
@@ -251,11 +251,11 @@ UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(const std:
 {
     eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface, IPLocator::getPhysicalPort(locator), is_multicast);
     UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
-    pChannelResource->SetMessageReceiver(receiver);
-    pChannelResource->SetInterface(sInterface);
+    pChannelResource->message_receiver(receiver);
+    pChannelResource->interface(sInterface);
     std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
         pChannelResource, locator);
-    pChannelResource->SetThread(newThread);
+    pChannelResource->thread(newThread);
     return pChannelResource;
 }
 
@@ -380,17 +380,17 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
 {
     Locator_t remoteLocator;
 
-    while (pChannelResource->IsAlive())
+    while (pChannelResource->alive())
     {
         // Blocking receive.
-        auto& msg = pChannelResource->GetMessageBuffer();
+        auto& msg = pChannelResource->message_buffer();
         if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, remoteLocator))
         {
             continue;
         }
 
         // Processes the data through the CDR Message interface.
-        auto receiver = pChannelResource->GetMessageReceiver();
+        auto receiver = pChannelResource->message_receiver();
         if (receiver != nullptr)
         {
             receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remoteLocator);
@@ -409,7 +409,7 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
     {
         ip::udp::endpoint senderEndpoint;
 
-        size_t bytes = pChannelResource->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
+        size_t bytes = pChannelResource->socket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
         receiveBufferSize = static_cast<uint32_t>(bytes);
         if (receiveBufferSize > 0)
         {
@@ -508,7 +508,7 @@ bool UDPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
     for (auto& socket : mOutputSockets)
     {
         if (is_multicast_remote_address || !socket->only_multicast_purpose())
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket->getSocket()));
+            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket->socket()));
     }
 
     return success;
@@ -517,7 +517,7 @@ bool UDPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
 bool UDPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
 {
     UDPChannelResource *udpSocket = dynamic_cast<UDPChannelResource*>(pChannelResource);
-    return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->getSocket()));
+    return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->socket()));
 }
 
 bool UDPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize,

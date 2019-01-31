@@ -34,7 +34,15 @@ class MockTCPv4Transport : public TCPv4Transport
     virtual bool OpenOutputChannel(const Locator_t& locator) override
     {
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
-        TCPChannelResource *channel = new TCPChannelResource(this, nullptr, mService, physicalLocator, 0);
+        TCPChannelResource *channel;
+        if (mConfiguration_.apply_security)
+        {
+            channel = new TCPChannelResourceSecure(this, nullptr, mService, ssl_context_, physicalLocator, 0);
+        }
+        else
+        {
+            channel = new TCPChannelResourceBasic(this, nullptr, mService, physicalLocator, 0);
+        }
         mChannelResources[physicalLocator] = channel;
         return true;
     }

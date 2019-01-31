@@ -290,7 +290,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
             auto& channelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
             for (UDPChannelResource* channelResource : channelResources)
             {
-                if (channelResource->GetInterface() == locatorAddressStr)
+                if (channelResource->interface() == locatorAddressStr)
                 {
                     found = true;
                     break;
@@ -310,7 +310,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
                     // Join group on all whitelisted interfaces
                     for (auto& ip : mInterfaceWhiteList)
                     {
-                        pChannelResource->getSocket()->set_option(ip::multicast::join_group(locatorAddress, ip));
+                        pChannelResource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip));
                     }
                 }
                 catch (asio::system_error const& e)
@@ -329,7 +329,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
             auto& channelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
             for (UDPChannelResource* channelResource : channelResources)
             {
-                if (channelResource->GetInterface() == s_IPv4AddressAny)
+                if (channelResource->interface() == s_IPv4AddressAny)
                 {
                     std::vector<IPFinder::info_IP> locNames;
                     GetIP4sUniqueInterfaces(locNames, true);
@@ -338,7 +338,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
                         auto ip = asio::ip::address_v4::from_string(infoIP.name);
                         try
                         {
-                            channelResource->getSocket()->set_option(ip::multicast::join_group(locatorAddress, ip));
+                            channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip));
                         }
                         catch (std::system_error& ex)
                         {
@@ -349,10 +349,10 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
                 }
                 else
                 {
-                    auto ip = asio::ip::address_v4::from_string(channelResource->GetInterface());
+                    auto ip = asio::ip::address_v4::from_string(channelResource->interface());
                     try
                     {
-                        channelResource->getSocket()->set_option(ip::multicast::join_group(locatorAddress, ip));
+                        channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip));
                     }
                     catch (std::system_error& ex)
                     {

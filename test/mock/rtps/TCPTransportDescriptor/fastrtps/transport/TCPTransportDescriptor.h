@@ -31,6 +31,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
     {
         enum TLSOptions : uint32_t
         {
+            NONE                    = 0,      // 0000 0000 0000
             DEFAULT_WORKAROUNDS     = 1 << 0, // 0000 0000 0001
             NO_COMPRESSION          = 1 << 1, // 0000 0000 0010
             NO_SSLV2                = 1 << 2, // 0000 0000 0100
@@ -44,6 +45,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 
         enum TLSVerifyMode : uint8_t
         {
+            UNUSED                      = 0,      // 0000 0000
             VERIFY_NONE                 = 1 << 0, // 0000 0001
             VERIFY_PEER                 = 1 << 1, // 0000 0010
             VERIFY_FAIL_IF_NO_PEER_CERT = 1 << 2, // 0000 0100
@@ -63,9 +65,50 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             options |= option;
         }
 
-        bool get_option(const TLSOptions option)
+        bool get_option(const TLSOptions option) const
         {
             return options & option;
+        }
+
+        TLSConfig()
+            : options(TCPTransportDescriptor::TLSConfig::TLSOptions::NONE)
+            , verify_mode(TCPTransportDescriptor::TLSConfig::TLSVerifyMode::UNUSED)
+        {
+        }
+
+        TLSConfig(const TLSConfig& t)
+            : password(t.password)
+            , options(t.options)
+            , cert_chain_file(t.cert_chain_file)
+            , private_key_file(t.private_key_file)
+            , tmp_dh_file(t.tmp_dh_file)
+            , verify_file(t.verify_file)
+            , verify_mode(t.verify_mode)
+        {
+        }
+
+        TLSConfig(TLSConfig&& t)
+            : password(std::move(t.password))
+            , options(std::move(t.options))
+            , cert_chain_file(std::move(t.cert_chain_file))
+            , private_key_file(std::move(t.private_key_file))
+            , tmp_dh_file(std::move(t.tmp_dh_file))
+            , verify_file(std::move(t.verify_file))
+            , verify_mode(std::move(t.verify_mode))
+        {
+        }
+
+        TLSConfig& operator=(const TLSConfig& t)
+        {
+            password = t.password;
+            options = t.options;
+            cert_chain_file = t.cert_chain_file;
+            private_key_file = t.private_key_file;
+            tmp_dh_file = t.tmp_dh_file;
+            verify_file = t.verify_file;
+            verify_mode = t.verify_mode;
+
+            return *this;
         }
     };
 
@@ -75,23 +118,18 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
     uint16_t max_logical_port;
     uint16_t logical_port_range;
     uint16_t logical_port_increment;
-    uint16_t metadata_logical_port;
     uint32_t tcp_negotiation_timeout;
     bool enable_tcp_nodelay;
     bool wait_for_tcp_negotiation;
     bool calculate_crc;
     bool check_crc;
+    bool apply_security;
 
     TLSConfig tls_config;
 
     void add_listener_port(uint16_t port)
     {
         listening_ports.push_back(port);
-    }
-
-    void set_metadata_logical_port(uint16_t port)
-    {
-        metadata_logical_port = port;
     }
 
     RTPS_DllAPI TCPTransportDescriptor()

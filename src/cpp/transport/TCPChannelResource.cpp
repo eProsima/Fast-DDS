@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <asio.hpp>
 #include <fastrtps/transport/TCPChannelResource.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -36,97 +35,76 @@ static uint16_t GetBaseAutoPort(uint16_t currentPort)
     uint16_t part = static_cast<uint16_t>(aux % 250);
     part = part / 2;
 
-    //std::cout << "GetBaseAutoPort(" << currentPort << "): Domain = " << domain << " & Part = " << part << std::endl;
     return 7411 + (domain * 250); // And participant 0
 }
 
-TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, const Locator_t& locator, uint32_t maxMsgSize)
+TCPChannelResource::TCPChannelResource(
+    TCPTransportInterface* parent,
+    RTCPMessageManager* rtcpManager,
+    const Locator_t& locator,
+    uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
-    , mParent (parent)
-    , mRTCPManager(rtcpManager)
-    , mLocator(locator)
-    , m_inputSocket(false)
-    , mWaitingForKeepAlive(false)
-    , mRTCPThread(nullptr)
-    , mService(service)
-    , mSocket(createTCPSocket(service))
-    , mConnectionStatus(eConnectionStatus::eDisconnected)
+    , parent_ (parent)
+    , rtcp_manager_(rtcpManager)
+    , locator_(locator)
+    , input_socket_(false)
+    , waiting_for_keep_alive_(false)
+    , rtcp_thread_(nullptr)
+    , connection_status_(eConnectionStatus::eDisconnected)
 {
 }
 
-TCPChannelResource::TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, eProsimaTCPSocketRef socket, uint32_t maxMsgSize)
+TCPChannelResource::TCPChannelResource(
+    TCPTransportInterface* parent,
+    RTCPMessageManager* rtcpManager,
+    uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
-    , mParent(parent)
-    , mRTCPManager(rtcpManager)
-    , mLocator()
-    , m_inputSocket(true)
-    , mWaitingForKeepAlive(false)
-    , mRTCPThread(nullptr)
-    , mService(service)
-    , mSocket(moveSocket(socket))
-    , mConnectionStatus(eConnectionStatus::eWaitingForBind)
+    , parent_(parent)
+    , rtcp_manager_(rtcpManager)
+    , locator_()
+    , input_socket_(true)
+    , waiting_for_keep_alive_(false)
+    , rtcp_thread_(nullptr)
+    , connection_status_(eConnectionStatus::eWaitingForBind)
 {
 }
 
 TCPChannelResource::~TCPChannelResource()
 {
-    if (mRTCPThread != nullptr)
+    if (rtcp_thread_ != nullptr)
     {
-        mRTCPThread->join();
-        delete(mRTCPThread);
-        mRTCPThread = nullptr;
+        rtcp_thread_->join();
+        delete(rtcp_thread_);
+        rtcp_thread_ = nullptr;
     }
 }
 
-void TCPChannelResource::Disable()
+void TCPChannelResource::disable()
 {
-    ChannelResource::Disable();
+    ChannelResource::disable();
 
-    Disconnect();
+    disconnect();
 }
 
-void TCPChannelResource::Connect()
+ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)
 {
-    std::unique_lock<std::mutex> scoped(mStatusMutex);
-    if (mConnectionStatus == eConnectionStatus::eDisconnected)
+    std::unique_lock<std::mutex> scoped(status_mutex_);
+    if (connection_status_ == TCPChannelResource::eConnectionStatus::eWaitingForBind)
     {
-        mConnectionStatus = eConnectionStatus::eConnecting;
-        auto type = mParent->GetProtocolType();
-        auto endpoint = mParent->GenerateLocalEndpoint(mLocator, IPLocator::getPhysicalPort(mLocator));
-        try
-        {
-            mSocket.open(type);
-            mSocket.async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, mParent,
-                mLocator, std::placeholders::_1));
-        }
-        catch(const std::system_error &error)
-        {
-            logError(RTCP, "Openning socket " << error.what());
-        }
-    }
-}
-
-ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
-{
-    std::unique_lock<std::mutex> scoped(mStatusMutex);
-    if (mConnectionStatus == TCPChannelResource::eConnectionStatus::eWaitingForBind)
-    {
-        mLocator = locator;
-        TCPChannelResource* oldChannel = mParent->BindSocket(mLocator, this);
+        locator_ = locator;
+        TCPChannelResource* oldChannel = parent_->BindSocket(locator_, this);
         if (oldChannel != nullptr)
         {
-            CopyPendingPortsFrom(oldChannel);
-            mParent->DeleteSocket(oldChannel);
+            copy_pending_ports_from(oldChannel);
+            parent_->DeleteSocket(oldChannel);
             //delete oldChannel;
         }
 
-        mConnectionStatus = eConnectionStatus::eEstablished;
+        connection_status_ = eConnectionStatus::eEstablished;
         logInfo(RTPC_MSG, "Connection Stablished");
         return RETCODE_OK;
     }
-    else if (mConnectionStatus == eConnectionStatus::eEstablished)
+    else if (connection_status_ == eConnectionStatus::eEstablished)
     {
         return RETCODE_EXISTING_CONNECTION;
     }
@@ -134,200 +112,156 @@ ResponseCode TCPChannelResource::ProcessBindRequest(const Locator_t& locator)
     return RETCODE_SERVER_ERROR;
 }
 
-void TCPChannelResource::InputPortClosed(uint16_t port)
+void TCPChannelResource::input_port_closed(uint16_t port)
 {
-    if (IsConnectionEstablished())
+    if (connection_established())
     {
-        mRTCPManager->sendLogicalPortIsClosedRequest(this, port);
+        rtcp_manager_->sendLogicalPortIsClosedRequest(this, port);
     }
 }
 
-void TCPChannelResource::SetAllPortsAsPending()
+void TCPChannelResource::set_all_ports_pending()
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    mPendingLogicalOutputPorts.insert(mPendingLogicalOutputPorts.end(),
-        mLogicalOutputPorts.begin(),
-        mLogicalOutputPorts.end());
-    mLogicalOutputPorts.clear();
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    pending_logical_output_ports_.insert(pending_logical_output_ports_.end(),
+        logical_output_ports_.begin(),
+        logical_output_ports_.end());
+    logical_output_ports_.clear();
 }
 
-void TCPChannelResource::CopyPendingPortsFrom(TCPChannelResource* from)
+void TCPChannelResource::copy_pending_ports_from(TCPChannelResource* from)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    std::unique_lock<std::recursive_mutex> fromLock(from->mPendingLogicalMutex);
-    mPendingLogicalOutputPorts.insert(mPendingLogicalOutputPorts.end(),
-        from->mPendingLogicalOutputPorts.begin(),
-        from->mPendingLogicalOutputPorts.end());
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::unique_lock<std::recursive_mutex> fromLock(from->pending_logical_mutex_);
+    pending_logical_output_ports_.insert(pending_logical_output_ports_.end(),
+        from->pending_logical_output_ports_.begin(),
+        from->pending_logical_output_ports_.end());
 }
 
-void TCPChannelResource::Disconnect()
+bool TCPChannelResource::is_logical_port_opened(uint16_t port)
 {
-    if (ChangeStatus(eConnectionStatus::eDisconnected))
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end();
+}
+
+bool TCPChannelResource::is_logical_port_added(uint16_t port)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end()
+        || std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
+        != pending_logical_output_ports_.end();
+}
+
+bool TCPChannelResource::wait_until_port_is_open_or_connection_is_closed(uint16_t port)
+{
+    std::unique_lock<std::mutex> scoped(status_mutex_);
+    bool bConnected = alive_ && connection_status_ == eConnectionStatus::eEstablished;
+    while (bConnected && !is_logical_port_opened(port))
     {
-        try
-        {
-            asio::error_code ec;
-            mSocket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-            mSocket.cancel();
-
-          // This method was added on the version 1.12.0
-#if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-            mSocket.release();
-#endif
-        }
-        catch (std::exception&)
-        {
-            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-        }
-        mSocket.close();
-    }
-}
-
-bool TCPChannelResource::IsLogicalPortOpened(uint16_t port)
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end();
-}
-
-bool TCPChannelResource::IsLogicalPortAdded(uint16_t port)
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    return std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) != mLogicalOutputPorts.end()
-        || std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
-        != mPendingLogicalOutputPorts.end();
-}
-
-bool TCPChannelResource::WaitUntilPortIsOpenOrConnectionIsClosed(uint16_t port)
-{
-    std::unique_lock<std::mutex> scoped(mStatusMutex);
-    bool bConnected = mAlive && mConnectionStatus == eConnectionStatus::eEstablished;
-    while (bConnected && !IsLogicalPortOpened(port))
-    {
-        mNegotiationCondition.wait(scoped);
-        bConnected = mAlive && mConnectionStatus == eConnectionStatus::eEstablished;
+        negotiation_condition_.wait(scoped);
+        bConnected = alive_ && connection_status_ == eConnectionStatus::eEstablished;
     }
     return bConnected;
 }
 
-std::thread* TCPChannelResource::ReleaseRTCPThread()
+std::thread* TCPChannelResource::release_rtcp_thread()
 {
-    std::thread* outThread = mRTCPThread;
-    mRTCPThread = nullptr;
+    std::thread* outThread = rtcp_thread_;
+    rtcp_thread_ = nullptr;
     return outThread;
 }
 
-void TCPChannelResource::fillLogicalPorts(std::vector<Locator_t>& outVector)
+void TCPChannelResource::add_logical_port(uint16_t port)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    Locator_t temp = mLocator;
-    for (uint16_t port : mPendingLogicalOutputPorts)
-    {
-        IPLocator::setLogicalPort(temp, port);
-        outVector.emplace_back(temp);
-    }
-    for (uint16_t port : mLogicalOutputPorts)
-    {
-        IPLocator::setLogicalPort(temp, port);
-        outVector.emplace_back(temp);
-    }
-}
-
-uint32_t TCPChannelResource::GetMsgSize() const
-{
-    return m_rec_msg.max_size;
-}
-
-void TCPChannelResource::AddLogicalPort(uint16_t port)
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     // Already opened?
-    if (std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port) == mLogicalOutputPorts.end())
+    if (std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) == logical_output_ports_.end())
     {
         if (port == 0)
         {
             logError(RTPS, "Trying to open logical port 0.");
         } // But let's continue...
 
-        if (std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port)
-                == mPendingLogicalOutputPorts.end()) // Check isn't enqueued already
+        if (std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
+                == pending_logical_output_ports_.end()) // Check isn't enqueued already
         {
-            mPendingLogicalOutputPorts.emplace_back(port);
-            if (IsConnectionEstablished())
+            pending_logical_output_ports_.emplace_back(port);
+            if (connection_established())
             {
-                TCPTransactionId id = mRTCPManager->sendOpenLogicalPortRequest(this, port);
-                mNegotiatingLogicalPorts[id] = port;
+                TCPTransactionId id = rtcp_manager_->sendOpenLogicalPortRequest(this, port);
+                negotiating_logical_ports_[id] = port;
             }
         }
     }
 }
 
-void TCPChannelResource::SendPendingOpenLogicalPorts()
+void TCPChannelResource::send_pending_open_logical_ports()
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    if (!mPendingLogicalOutputPorts.empty())
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    if (!pending_logical_output_ports_.empty())
     {
-        for (uint16_t port : mPendingLogicalOutputPorts)
+        for (uint16_t port : pending_logical_output_ports_)
         {
-            TCPTransactionId id = mRTCPManager->sendOpenLogicalPortRequest(this, port);
-            mNegotiatingLogicalPorts[id] = port;
+            TCPTransactionId id = rtcp_manager_->sendOpenLogicalPortRequest(this, port);
+            negotiating_logical_ports_[id] = port;
             eClock::my_sleep(100);
         }
     }
 }
 
-void TCPChannelResource::AddLogicalPortResponse(const TCPTransactionId &id, bool success)
+void TCPChannelResource::add_logical_port_response(const TCPTransactionId &id, bool success)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    auto it = mNegotiatingLogicalPorts.find(id);
-    if (it != mNegotiatingLogicalPorts.end())
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    auto it = negotiating_logical_ports_.find(id);
+    if (it != negotiating_logical_ports_.end())
     {
         uint16_t port = it->second;
-        auto portIt = std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port);
-        mNegotiatingLogicalPorts.erase(it);
-        if (portIt != mPendingLogicalOutputPorts.end())
+        auto portIt = std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port);
+        negotiating_logical_ports_.erase(it);
+        if (portIt != pending_logical_output_ports_.end())
         {
-            mPendingLogicalOutputPorts.erase(portIt);
+            pending_logical_output_ports_.erase(portIt);
             if (success)
             {
-                mLogicalOutputPorts.push_back(port);
-                mNegotiationCondition.notify_all();
+                logical_output_ports_.push_back(port);
+                negotiation_condition_.notify_all();
                 logInfo(RTCP, "OpenedLogicalPort " << port);
             }
             else
             {
-                PrepareAndSendCheckLogicalPortsRequest(port);
+                prepare_send_check_logical_ports_req(port);
             }
         }
         else
         {
-            logWarning(RTCP, "Received AddLogicalPortResponse for port " << port \
+            logWarning(RTCP, "Received add_logical_port_response for port " << port
                 << ", but it wasn't found in pending list.");
         }
     }
     else
     {
-        logWarning(RTCP, "Received AddLogicalPortResponse, but the transaction id wasn't registered (maybe removed" <<\
-            " while negotiating?).");
+        logWarning(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered " <<
+            "(maybe removed" << " while negotiating?).");
     }
 }
 
-void TCPChannelResource::PrepareAndSendCheckLogicalPortsRequest(uint16_t closedPort)
+void TCPChannelResource::prepare_send_check_logical_ports_req(uint16_t closedPort)
 {
     std::vector<uint16_t> candidatePorts;
     uint16_t base_port = GetBaseAutoPort(closedPort); // The first failed port
-    uint16_t max_port = closedPort + mParent->GetMaxLogicalPort();
+    uint16_t max_port = closedPort + parent_->GetMaxLogicalPort();
 
     for (uint16_t p = base_port;
-        p <= closedPort + (mParent->GetLogicalPortRange()
-            * mParent->GetLogicalPortIncrement());
-        p += mParent->GetLogicalPortIncrement())
+        p <= closedPort + (parent_->GetLogicalPortRange()
+            * parent_->GetLogicalPortIncrement());
+        p += parent_->GetLogicalPortIncrement())
     {
         // Don't add ports just tested and already pendings
         if (p <= max_port && p != closedPort)
         {
-            std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-            auto pendingIt = std::find(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), p);
-            if (pendingIt == mPendingLogicalOutputPorts.end())
+            std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+            auto pendingIt = std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), p);
+            if (pendingIt == pending_logical_output_ports_.end())
             {
                 candidatePorts.emplace_back(p);
             }
@@ -340,55 +274,55 @@ void TCPChannelResource::PrepareAndSendCheckLogicalPortsRequest(uint16_t closedP
     }
     else
     {
-        TCPTransactionId id = mRTCPManager->sendCheckLogicalPortsRequest(this, candidatePorts);
-        mLastCheckedLogicalPort[id] = candidatePorts.back();
+        TCPTransactionId id = rtcp_manager_->sendCheckLogicalPortsRequest(this, candidatePorts);
+        last_checked_logical_port_[id] = candidatePorts.back();
     }
 }
 
-void TCPChannelResource::ProcessCheckLogicalPortsResponse(const TCPTransactionId &transactionId,
+void TCPChannelResource::process_check_logical_ports_response(const TCPTransactionId &transactionId,
         const std::vector<uint16_t> &availablePorts)
 {
-    auto it = mLastCheckedLogicalPort.find(transactionId);
-    if (it != mLastCheckedLogicalPort.end())
+    auto it = last_checked_logical_port_.find(transactionId);
+    if (it != last_checked_logical_port_.end())
     {
         uint16_t lastPort = it->second;
-        mLastCheckedLogicalPort.erase(it);
+        last_checked_logical_port_.erase(it);
         if (availablePorts.empty())
         {
-            PrepareAndSendCheckLogicalPortsRequest(lastPort);
+            prepare_send_check_logical_ports_req(lastPort);
         }
         else
         {
-            AddLogicalPort(availablePorts.front());
+            add_logical_port(availablePorts.front());
         }
     }
     else
     {
-        logWarning(RTCP, "Received ProcessCheckLogicalPortsResponse without sending a Request.");
+        logWarning(RTCP, "Received process_check_logical_ports_response without sending a Request.");
     }
 }
 
-void TCPChannelResource::SetLogicalPortPending(uint16_t port)
+void TCPChannelResource::set_logical_port_pending(uint16_t port)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    auto it = std::find(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port);
-    if (it != mLogicalOutputPorts.end())
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    auto it = std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port);
+    if (it != logical_output_ports_.end())
     {
-        mPendingLogicalOutputPorts.push_back(port);
-        mLogicalOutputPorts.erase(it);
+        pending_logical_output_ports_.push_back(port);
+        logical_output_ports_.erase(it);
     }
 }
 
-bool TCPChannelResource::RemoveLogicalPort(uint16_t port)
+bool TCPChannelResource::remove_logical_port(uint16_t port)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mPendingLogicalMutex);
-    if (!IsLogicalPortAdded(port))
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    if (!is_logical_port_added(port))
         return false;
 
-    auto it = std::remove(mLogicalOutputPorts.begin(), mLogicalOutputPorts.end(), port);
-    mLogicalOutputPorts.erase(it, mLogicalOutputPorts.end());
-    it = std::remove(mPendingLogicalOutputPorts.begin(), mPendingLogicalOutputPorts.end(), port);
-    mPendingLogicalOutputPorts.erase(it, mPendingLogicalOutputPorts.end());
+    auto it = std::remove(logical_output_ports_.begin(), logical_output_ports_.end(), port);
+    logical_output_ports_.erase(it, logical_output_ports_.end());
+    it = std::remove(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port);
+    pending_logical_output_ports_.erase(it, pending_logical_output_ports_.end());
     return true;
 }
 

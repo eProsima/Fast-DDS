@@ -683,6 +683,7 @@ XMLP_ret XMLParser::parse_tls_config(
     XMLP_ret ret = XMLP_ret::XML_OK;
 
     TCPDescriptor pTCPDesc = std::dynamic_pointer_cast<rtps::TCPTransportDescriptor>(tcp_transport);
+    pTCPDesc->apply_security = true;
 
     tinyxml2::XMLElement *p_aux0 = nullptr;
 

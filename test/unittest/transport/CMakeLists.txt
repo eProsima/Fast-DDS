@@ -75,6 +75,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceSecure.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorSecure.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/test_RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
@@ -104,6 +109,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceSecure.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorSecure.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/CleanTCPSocketsEvent.cpp
@@ -176,7 +186,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
                 ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-            target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
+            target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS} OpenSSL::SSL OpenSSL::Crypto)
             if(MSVC OR MSVC_IDE)
                 target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr iphlpapi Shlwapi)
             else()
@@ -211,7 +221,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
+        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS} OpenSSL::SSL OpenSSL::Crypto)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr iphlpapi Shlwapi)
         else()

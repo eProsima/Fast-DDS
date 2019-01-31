@@ -58,7 +58,7 @@ ResponseCode test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelRe
     }
     else
     {
-        if (!pChannelResource->IsConnectionEstablished())
+        if (!pChannelResource->connection_established())
         {
             sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
         }

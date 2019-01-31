@@ -19,9 +19,14 @@
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
-#include <fastrtps/transport/TCPChannelResource.h>
+#include <fastrtps/transport/TCPChannelResourceBasic.h>
+#include <fastrtps/transport/TCPChannelResourceSecure.h>
+#include <fastrtps/transport/TCPAcceptorBasic.h>
+#include <fastrtps/transport/TCPAcceptorSecure.h>
+
 
 #include <asio.hpp>
+#include <asio/ssl.hpp>
 #include <thread>
 #include <vector>
 #include <map>
@@ -34,46 +39,6 @@ namespace rtps{
 class RTCPMessageManager;
 class CleanTCPSocketsEvent;
 class TCPChannelResource;
-class TCPTransportInterface;
-
-class TCPAcceptor
-{
-public:
-    asio::ip::tcp::acceptor mAcceptor;
-    Locator_t mLocator;
-    eProsimaTCPSocket mSocket;
-    asio::ip::tcp::endpoint mEndPoint;
-    std::vector<Locator_t> mPendingOutLocators;
-
-    /**
-    * Constructor
-    * @param io_service Reference to the ASIO service.
-    * @param parent Pointer to the transport that is going to manage the acceptor.
-    * @param locator Locator with the information about where to accept connections.
-    */
-    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
-
-    /**
-    * Constructor
-    * @param io_service Reference to the ASIO service.
-    * @param sInterface Network interface to bind the socket
-    * @param locator Locator with the information about where to accept connections.
-    */
-    TCPAcceptor(asio::io_service& io_service, const std::string& sInterface, const Locator_t& locator);
-
-    /**
-    * Destructor
-    */
-    ~TCPAcceptor()
-    {
-        try { asio::error_code ec; mSocket.cancel(ec); }
-        catch (...) {}
-        mSocket.close();
-    }
-
-    //! Method to start the accepting process.
-    void Accept(TCPTransportInterface* parent, asio::io_service&);
-};
 
 /**
  * This is a default TCP Interface implementation.
@@ -209,7 +174,13 @@ public:
     virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
     //! Callback called each time that an incomming connection is accepted.
-    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
+    void SocketAccepted(TCPAcceptorBasic* acceptor, const asio::error_code& error);
+
+    //! Callback called each time that an incomming connection is accepted (secure).
+    void SecureSocketAccepted(
+        TCPAcceptorSecure* acceptor,
+        asio::ip::tcp::socket&& socket,
+        const asio::error_code& error);
 
     //! Callback called each time that an outgoing connection is established.
     void SocketConnected(Locator_t locator, const asio::error_code& error);
@@ -244,6 +215,10 @@ public:
 
     void DeleteSocket(TCPChannelResource *channelResource);
 
+    virtual const TCPTransportDescriptor* GetConfiguration() const = 0;
+
+    virtual TCPTransportDescriptor* GetConfiguration() = 0;
+
 private:
 
     class ReceiverInUseCV
@@ -260,6 +235,7 @@ protected:
     std::vector<IPFinder::info_IP> mCurrentInterfaces;
     int32_t mTransportKind;
     asio::io_service mService;
+    asio::ssl::context ssl_context_;
     std::shared_ptr<std::thread> ioServiceThread;
     RTCPMessageManager* mRTCPMessageManager;
     mutable std::mutex mSocketsMapMutex;
@@ -305,9 +281,6 @@ protected:
 
     //! Adds the logical port of the given locator to send an Open Logical Port request.
     bool EnqueueLogicalOutputPort(const Locator_t& locator);
-
-    virtual const TCPTransportDescriptor* GetConfiguration() const = 0;
-    virtual TCPTransportDescriptor* GetConfiguration() = 0;
 
     virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) const = 0;
 

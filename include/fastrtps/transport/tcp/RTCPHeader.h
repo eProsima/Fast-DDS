@@ -41,6 +41,11 @@ struct TCPHeader
         return (const octet*)this;
     }
 
+    octet* getAddress()
+    {
+        return (octet*)this;
+    }
+
     /*!
      * @brief This function returns the maximum serialized size of an object
      * depending on the buffer alignment.

@@ -102,14 +102,14 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
         {
             try
             {
-                it->second->getSocket()->cancel();
-                it->second->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
+                it->second->cancel();
+                it->second->shutdown(asio::ip::tcp::socket::shutdown_both);
             }
             catch (std::exception&)
             {
                 // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
             }
-            it->second->getSocket()->close();
+            it->second->close();
         }
 
         return true;
@@ -130,7 +130,7 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
             if (test_TCPv4Transport_CloseSocketConnection)
             {
                 test_TCPv4Transport_CloseSocketConnection = false;
-                pChannelResource->Disable();
+                pChannelResource->disable();
                 CloseOutputChannel(localLocator);
                 return true;
             }
@@ -147,14 +147,14 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
         {
             try
             {
-                it->second->getSocket()->cancel();
-                it->second->getSocket()->shutdown(asio::ip::tcp::socket::shutdown_both);
+                it->second->cancel();
+                it->second->shutdown(asio::ip::tcp::socket::shutdown_both);
             }
             catch (std::exception&)
             {
                 // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
             }
-            it->second->getSocket()->close();
+            it->second->close();
         }
         return true;
     }
