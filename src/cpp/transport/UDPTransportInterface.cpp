@@ -451,8 +451,27 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 
             // We then send to the address of the input locator
             auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
 
+#ifdef WIN32
+            {
+                asio::error_code ec;
+                socket_base::message_flags flags = 0;
+
+                socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
+
+                if ( ec.value() == WSAENETUNREACH )
+                {
+                    logInfo(RTPS_MSG_OUT, "Windows doesn't support sending messages to its own interfaces. Already known issue.");
+                }
+                else
+                {
+                    asio::detail::throw_error(ec, "send_to");
+                }
+            }
+#else
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+#endif // WIN32
+            
             socket.close();
         }
         else
