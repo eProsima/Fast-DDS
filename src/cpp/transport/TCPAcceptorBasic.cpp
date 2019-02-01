@@ -27,7 +27,7 @@ TCPAcceptorBasic::TCPAcceptorBasic(
     : TCPAcceptor(io_service, parent, locator)
     , socket(tcp_basic::createTCPSocket(io_service))
 {
-    endpoint = asio::ip::tcp::endpoint(parent->GenerateProtocol(), IPLocator::getPhysicalPort(locator));
+    endpoint = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator));
 }
 
 TCPAcceptorBasic::TCPAcceptorBasic(

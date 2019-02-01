@@ -50,11 +50,11 @@ SenderResource::SenderResource(TransportInterface& transport, Locator_t& locator
         {
             if (pChannelResource == nullptr)
             {
-                return transport.Send(data, dataSize, locator, destination);
+                return transport.send(data, dataSize, locator, destination);
             }
             else
             {
-                return transport.Send(data, dataSize, locator, destination, pChannelResource);
+                return transport.send(data, dataSize, locator, destination, pChannelResource);
             }
         };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool

@@ -80,7 +80,7 @@ public:
     virtual bool IsLocatorSupported(const Locator_t&) const = 0;
 
     //! Must report whether the given locator is allowed by this transport.
-    virtual bool IsLocatorAllowed(const Locator_t&) const = 0;
+    virtual bool is_locator_allowed(const Locator_t&) const = 0;
 
     //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
     virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
@@ -88,9 +88,12 @@ public:
     //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
     //! any resources that are needed for said channel.
     virtual bool OpenOutputChannel(const Locator_t&) = 0;
+
     virtual bool OpenExtraOutputChannel(const Locator_t&) = 0;
 
-    virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) = 0;
+    virtual bool OpenInputChannel(
+        const Locator_t&,
+        TransportReceiverInterface*, uint32_t) = 0;
 
     /**
     * Must close the channel that maps to/from the given locator.
@@ -108,18 +111,27 @@ public:
 
     //! Must report whether two locators map to the same internal channel.
     virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
+
     //! Must report whether two locators map to the same internal channel.
     virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
+
     /**
      * Must execute a blocking send, through the outbound channel that maps to the localLocator, targeted to the
-     * remote address defined by remoteLocator. Must be threadsafe between channels, but not necessarily
+     * remote address defined by remote_locator. Must be threadsafe between channels, but not necessarily
      * within the same channel.
      */
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
+    virtual bool send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        const Locator_t& localLocator,
+        const Locator_t& remote_locator) = 0;
 
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource* pChannelResource) = 0;
-
-    //virtual ChannelResource* FindSocket(const Locator_t& remoteLocator) = 0;
+    virtual bool send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        const Locator_t& localLocator,
+        const Locator_t& remote_locator,
+        ChannelResource* p_channel_resource) = 0;
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
@@ -131,27 +143,40 @@ public:
 
     virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
 
-    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+    virtual bool getDefaultMetatrafficMulticastLocators(
+        LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const = 0;
 
-    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+    virtual bool getDefaultMetatrafficUnicastLocators(
+        LocatorList_t &locators,
         uint32_t metatraffic_unicast_port) const = 0;
 
-    virtual bool getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const = 0;
+    virtual bool getDefaultUnicastLocators(
+        LocatorList_t &locators,
+        uint32_t unicast_port) const = 0;
 
-    virtual bool fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const = 0;
+    virtual bool fillMetatrafficMulticastLocator(
+        Locator_t &locator,
+        uint32_t metatraffic_multicast_port) const = 0;
 
-    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const = 0;
+    virtual bool fillMetatrafficUnicastLocator(
+        Locator_t &locator,
+        uint32_t metatraffic_unicast_port) const = 0;
 
-    virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
+    virtual bool configureInitialPeerLocator(
+        Locator_t &locator,
+        const PortParameters &port_params,
+        uint32_t domainId,
         LocatorList_t& list) const = 0;
 
-    virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
+    virtual bool fillUnicastLocator(
+        Locator_t &locator,
+        uint32_t well_known_port) const = 0;
 
     /**
      * Shutdown method to close the connections of the transports.
     */
-    virtual void Shutdown() {};
+    virtual void shutdown() {};
 };
 
 } // namespace rtps

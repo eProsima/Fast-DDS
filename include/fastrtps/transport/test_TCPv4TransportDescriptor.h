@@ -27,7 +27,7 @@ typedef struct test_TCPv4TransportDescriptor : public TCPv4TransportDescriptor
 
    std::vector<uint16_t> logicalPortsBlocked;
    uint8_t invalidCRCsPercentage;
-   uint8_t mCloseSocketOnSendPercentage;
+   uint8_t close_socket_on_send_percentage_;
    uint8_t invalidTransactionPercentage;
 
    // Test shim parameters

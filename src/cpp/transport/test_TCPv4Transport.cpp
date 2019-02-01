@@ -27,32 +27,32 @@ namespace rtps{
 
 test_TCPv4Transport::test_TCPv4Transport(const test_TCPv4TransportDescriptor& descriptor)
     : TCPv4Transport(descriptor)
-    , mInvalidCRCsPercentage(descriptor.invalidCRCsPercentage)
-    , mCloseSocketOnSendPercentage(descriptor.mCloseSocketOnSendPercentage)
-    , mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage)
-    , mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData)
-    , mDropPublicationBuiltinTopicData(descriptor.dropPublicationBuiltinTopicData)
-    , mDropSubscriptionBuiltinTopicData(descriptor.dropSubscriptionBuiltinTopicData)
-    , mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage)
-    , mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage)
-    , mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage)
-    , mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop)
-    , mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
-    {
-        test_TCPv4Transport_DropLog.clear();
-        test_TCPv4Transport_DropLogLength = descriptor.dropLogLength;
-        srand(static_cast<unsigned>(time(NULL)));
+    , invalid_crcs_percentage_(descriptor.invalidCRCsPercentage)
+    , close_socket_on_send_percentage_(descriptor.close_socket_on_send_percentage_)
+    , drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage)
+    , drop_participant_builtin_topic_data_(descriptor.dropParticipantBuiltinTopicData)
+    , drop_publication_builtin_topic_data_(descriptor.dropPublicationBuiltinTopicData)
+    , drop_subscription_builtin_topic_data_(descriptor.dropSubscriptionBuiltinTopicData)
+    , drop_data_frag_messages_percentage_(descriptor.dropDataFragMessagesPercentage)
+    , drop_heartbeat_messages_percentage_(descriptor.dropHeartbeatMessagesPercentage)
+    , drop_ack_nack_messages_percentage_(descriptor.dropAckNackMessagesPercentage)
+    , sequence_number_data_messages_to_drop_(descriptor.sequenceNumberDataMessagesToDrop)
+    , percentage_of_messages_to_drop_(descriptor.percentageOfMessagesToDrop)
+{
+    g_test_TCPv4Transport_DropLog.clear();
+    g_test_TCPv4Transport_DropLogLength = descriptor.dropLogLength;
+    srand(static_cast<unsigned>(time(NULL)));
 
-        mRTCPMessageManager = new test_RTCPMessageManager(this);
-        test_RTCPMessageManager* pMgr = ((test_RTCPMessageManager*)mRTCPMessageManager);
-        pMgr->SetInvalidTransactionPercentage(descriptor.invalidTransactionPercentage);
-        pMgr->SetLogicalPortsBlocked(descriptor.logicalPortsBlocked);
-    }
+    rtcp_message_manager_ = new test_RTCPMessageManager(this);
+    test_RTCPMessageManager* pMgr = ((test_RTCPMessageManager*)rtcp_message_manager_);
+    pMgr->SetInvalidTransactionPercentage(descriptor.invalidTransactionPercentage);
+    pMgr->SetLogicalPortsBlocked(descriptor.logicalPortsBlocked);
+}
 
 test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
     : TCPv4TransportDescriptor()
     , invalidCRCsPercentage(0)
-    , mCloseSocketOnSendPercentage(0)
+    , close_socket_on_send_percentage_(0)
     , invalidTransactionPercentage(0)
     , dropDataMessagesPercentage(0)
     , dropParticipantBuiltinTopicData(false)
@@ -64,41 +64,45 @@ test_TCPv4TransportDescriptor::test_TCPv4TransportDescriptor()
     , percentageOfMessagesToDrop(0)
     , sequenceNumberDataMessagesToDrop()
     , dropLogLength(0)
-    {
-    }
+{
+}
 
 TransportInterface* test_TCPv4TransportDescriptor::create_transport() const
 {
     return new test_TCPv4Transport(*this);
 }
 
-bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
+bool test_TCPv4Transport::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        const Locator_t& local_locator,
+        const Locator_t& remote_locator)
 {
-    if (mCloseSocketOnSendPercentage <= (rand() % 100))
+    if (close_socket_on_send_percentage_ <= (rand() % 100))
     {
-        if (PacketShouldDrop(sendBuffer, sendBufferSize))
+        if (packet_should_drop(send_buffer, send_buffer_size))
         {
-            LogDrop(sendBuffer, sendBufferSize);
+            log_drop(send_buffer, send_buffer_size);
             return true;
         }
         else
         {
-            if (test_TCPv4Transport_CloseSocketConnection)
+            if (g_test_TCPv4Transport_CloseSocketConnection)
             {
-                test_TCPv4Transport_CloseSocketConnection = false;
-                CloseOutputChannel(localLocator);
+                g_test_TCPv4Transport_CloseSocketConnection = false;
+                CloseOutputChannel(local_locator);
                 return true;
             }
             else
             {
-                return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
+                return TCPv4Transport::send(send_buffer, send_buffer_size, local_locator, remote_locator);
             }
         }
     }
     else
     {
-        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(localLocator));
-        if (it != mChannelResources.end())
+        auto it = channel_resources_.find(IPLocator::toPhysicalLocator(local_locator));
+        if (it != channel_resources_.end())
         {
             try
             {
@@ -116,34 +120,39 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
 }
 
-bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
+bool test_TCPv4Transport::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        const Locator_t& local_locator,
+        const Locator_t& remote_locator,
+        ChannelResource *p_channel_resource)
 {
-    if (mCloseSocketOnSendPercentage <= (rand() % 100))
+    if (close_socket_on_send_percentage_ <= (rand() % 100))
     {
-        if (PacketShouldDrop(sendBuffer, sendBufferSize))
+        if (packet_should_drop(send_buffer, send_buffer_size))
         {
-            LogDrop(sendBuffer, sendBufferSize);
+            log_drop(send_buffer, send_buffer_size);
             return true;
         }
         else
         {
-            if (test_TCPv4Transport_CloseSocketConnection)
+            if (g_test_TCPv4Transport_CloseSocketConnection)
             {
-                test_TCPv4Transport_CloseSocketConnection = false;
-                pChannelResource->disable();
-                CloseOutputChannel(localLocator);
+                g_test_TCPv4Transport_CloseSocketConnection = false;
+                p_channel_resource->disable();
+                CloseOutputChannel(local_locator);
                 return true;
             }
             else
             {
-                return TCPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, pChannelResource);
+                return TCPv4Transport::send(send_buffer, send_buffer_size, local_locator, remote_locator, p_channel_resource);
             }
         }
     }
     else
     {
-        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(localLocator));
-        if (it != mChannelResources.end())
+        auto it = channel_resources_.find(IPLocator::toPhysicalLocator(local_locator));
+        if (it != channel_resources_.end())
         {
             try
             {
@@ -160,9 +169,12 @@ bool test_TCPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
     }
 }
 
-void test_TCPv4Transport::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size)
+void test_TCPv4Transport::calculate_crc(
+        TCPHeader &header,
+        const octet *data,
+        uint32_t size)
 {
-    if (mInvalidCRCsPercentage <= (rand() % 100))
+    if (invalid_crcs_percentage_ <= (rand() % 100))
     {
         uint32_t crc(0);
         for (uint32_t i = 0; i < size; ++i)
@@ -176,7 +188,9 @@ void test_TCPv4Transport::CalculateCRC(TCPHeader &header, const octet *data, uin
     }
 }
 
-static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
+static bool ReadSubmessageHeader(
+        CDRMessage_t& msg,
+        SubmessageHeader_t& smh)
 {
     if (msg.length - msg.pos < 4)
         return false;
@@ -206,16 +220,18 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
     return true;
 }
 
-bool test_TCPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize)
+bool test_TCPv4Transport::packet_should_drop(
+        const octet* send_buffer,
+        uint32_t send_buffer_size)
 {
-    if(test_TCPv4Transport_ShutdownAllNetwork)
+    if(g_test_TCPv4Transport_ShutdownAllNetwork)
     {
         return true;
     }
 
-    CDRMessage_t cdrMessage(sendBufferSize);;
-    memcpy(cdrMessage.buffer, sendBuffer, sendBufferSize);
-    cdrMessage.length = sendBufferSize;
+    CDRMessage_t cdrMessage(send_buffer_size);;
+    memcpy(cdrMessage.buffer, send_buffer, send_buffer_size);
+    cdrMessage.length = send_buffer_size;
 
     if(cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
         return false;
@@ -249,18 +265,18 @@ bool test_TCPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
                 CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
 
-                if((!mDropParticipantBuiltinTopicData && writer_id == c_EntityId_SPDPWriter) ||
-                        (!mDropPublicationBuiltinTopicData && writer_id == c_EntityId_SEDPPubWriter) ||
-                        (!mDropSubscriptionBuiltinTopicData && writer_id == c_EntityId_SEDPSubWriter))
+                if((!drop_participant_builtin_topic_data_ && writer_id == c_EntityId_SPDPWriter) ||
+                        (!drop_publication_builtin_topic_data_ && writer_id == c_EntityId_SEDPPubWriter) ||
+                        (!drop_subscription_builtin_topic_data_ && writer_id == c_EntityId_SEDPSubWriter))
                     return false;
 
-                if(mDropDataMessagesPercentage > (rand()%100))
+                if(drop_data_messages_percentage_ > (rand()%100))
                     return true;
 
                 break;
 
             case ACKNACK:
-                if(mDropAckNackMessagesPercentage > (rand()%100))
+                if(drop_ack_nack_messages_percentage_ > (rand()%100))
                     return true;
 
                 break;
@@ -270,13 +286,13 @@ bool test_TCPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
                 CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
                 CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
-                if(mDropHeartbeatMessagesPercentage > (rand()%100))
+                if(drop_heartbeat_messages_percentage_ > (rand()%100))
                     return true;
 
                 break;
 
             case DATA_FRAG:
-                if(mDropDataFragMessagesPercentage  > (rand()%100))
+                if(drop_data_frag_messages_percentage_  > (rand()%100))
                     return true;
 
                 break;
@@ -291,36 +307,38 @@ bool test_TCPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
         }
 
         if(sequence_number != SequenceNumber_t::unknown() &&
-                find(mSequenceNumberDataMessagesToDrop.begin(),
-                    mSequenceNumberDataMessagesToDrop.end(),
-                    sequence_number) != mSequenceNumberDataMessagesToDrop.end())
+                find(sequence_number_data_messages_to_drop_.begin(),
+                    sequence_number_data_messages_to_drop_.end(),
+                    sequence_number) != sequence_number_data_messages_to_drop_.end())
             return true;
 
         cdrMessage.pos += cdrSubMessageHeader.submessageLength;
     }
 
-    if(RandomChanceDrop())
+    if(random_chance_drop())
         return true;
 
     return false;
 }
 
-bool test_TCPv4Transport::LogDrop(const octet* buffer, uint32_t size)
+bool test_TCPv4Transport::log_drop(
+        const octet* buffer,
+        uint32_t size)
 {
-    if (test_TCPv4Transport_DropLog.size() < test_TCPv4Transport_DropLogLength)
+    if (g_test_TCPv4Transport_DropLog.size() < g_test_TCPv4Transport_DropLogLength)
     {
         vector<octet> message;
         message.assign(buffer, buffer + size);
-        test_TCPv4Transport_DropLog.push_back(message);
+        g_test_TCPv4Transport_DropLog.push_back(message);
         return true;
     }
 
     return false;
 }
 
-bool test_TCPv4Transport::RandomChanceDrop()
+bool test_TCPv4Transport::random_chance_drop()
 {
-    return mPercentageOfMessagesToDrop > (rand()%100);
+    return percentage_of_messages_to_drop_ > (rand()%100);
 }
 
 } // namespace rtps

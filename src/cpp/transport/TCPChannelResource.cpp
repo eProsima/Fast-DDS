@@ -82,7 +82,6 @@ TCPChannelResource::~TCPChannelResource()
 void TCPChannelResource::disable()
 {
     ChannelResource::disable();
-
     disconnect();
 }
 

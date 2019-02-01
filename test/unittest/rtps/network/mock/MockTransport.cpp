@@ -70,7 +70,7 @@ bool MockTransport::IsLocatorSupported(const Locator_t& locator) const
     return locator.kind == mockSupportedKind;
 }
 
-bool MockTransport::IsLocatorAllowed(const Locator_t& /*locator*/) const
+bool MockTransport::is_locator_allowed(const Locator_t& /*locator*/) const
 {
     return true;
 }
@@ -97,7 +97,7 @@ bool MockTransport::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) co
     return true;
 }
 
-bool MockTransport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
+bool MockTransport::send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
 {
     std::vector<octet> sendVector;
     sendVector.assign(sendBuffer,sendBuffer + sendBufferSize);

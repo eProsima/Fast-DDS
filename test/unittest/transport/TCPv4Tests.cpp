@@ -219,14 +219,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             while (!sent)
             {
-                sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
-            //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
         };
 
         senderThread.reset(new std::thread(sendThreadFunction));
@@ -257,7 +257,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-    ASSERT_FALSE(transportUnderTest.Send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
+    ASSERT_FALSE(transportUnderTest.send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
 TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -266,16 +266,16 @@ TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     TCPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
-    Locator_t remoteLocator;
-    remoteLocator.kind = LOCATOR_KIND_TCPv4;
-    remoteLocator.port = g_default_port;
-    IPLocator::setIPv4(remoteLocator, 222,222,222,222);
+    Locator_t remote_locator;
+    remote_locator.kind = LOCATOR_KIND_TCPv4;
+    remote_locator.port = g_default_port;
+    IPLocator::setIPv4(remote_locator, 222,222,222,222);
 
     // When
-    Locator_t mainLocalLocator = transportUnderTest.RemoteToMainLocal(remoteLocator);
+    Locator_t mainLocalLocator = transportUnderTest.RemoteToMainLocal(remote_locator);
 
-    ASSERT_EQ(mainLocalLocator.port, remoteLocator.port);
-    ASSERT_EQ(mainLocalLocator.kind, remoteLocator.kind);
+    ASSERT_EQ(mainLocalLocator.port, remote_locator.port);
+    ASSERT_EQ(mainLocalLocator.kind, remote_locator.kind);
     ASSERT_EQ(IPLocator::toIPv4string(mainLocalLocator), s_IPv4AddressAny);
 }
 
@@ -314,7 +314,7 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     Locator_t wrongLocator(outputChannelLocator);
     IPLocator::setIPv4(wrongLocator, 111,111,111,111);
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
+    ASSERT_FALSE(transportUnderTest.send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
 }
 
 TEST_F(TCPv4Tests, send_to_blocked_interface)
@@ -334,7 +334,7 @@ TEST_F(TCPv4Tests, send_to_blocked_interface)
     Locator_t wrongLocator(outputChannelLocator);
     IPLocator::setIPv4(wrongLocator, 111, 111, 111, 111);
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(transportUnderTest.Send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
+    ASSERT_FALSE(transportUnderTest.send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
 }
 
 #ifndef __APPLE__
@@ -402,14 +402,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                 bool bFinish(false);
                 auto sendThreadFunction = [&]()
                 {
-                    bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                    bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                     while (!bFinish && !sent)
                     {
-                        sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                        sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_TRUE(sent);
-                    //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
                 };
 
                 senderThread.reset(new std::thread(sendThreadFunction));
@@ -473,14 +473,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
         bool bFinish(false);
         auto sendThreadFunction = [&]()
         {
-            bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             while (!bFinish && !sent)
             {
-                sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
-            //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
         };
 
         senderThread.reset(new std::thread(sendThreadFunction));
@@ -556,14 +556,14 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                 bool bFinished(false);
                 auto sendThreadFunction = [&]()
                 {
-                    bool sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                    bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                     while (!bFinished && !sent)
                     {
-                        sent = sendTransportUnderTest.Send(message, 5, outputLocator, inputLocator);
+                        sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_FALSE(sent);
-                    //EXPECT_TRUE(transportUnderTest.Send(message, 5, outputLocator, inputLocator));
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
                 };
 
                 senderThread.reset(new std::thread(sendThreadFunction));

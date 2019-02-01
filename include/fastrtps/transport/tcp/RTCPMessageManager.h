@@ -48,60 +48,60 @@ public:
     /** @name Send RTCP Message Methods.
     * These methods create RTPS messages for different types
     */
-    TCPTransactionId sendConnectionRequest(TCPChannelResource *pChannelResource);
+    TCPTransactionId sendConnectionRequest(TCPChannelResource *p_channel_resource);
 
-    TCPTransactionId sendOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+    TCPTransactionId sendOpenLogicalPortRequest(TCPChannelResource *p_channel_resource,
         OpenLogicalPortRequest_t &request);
 
-    TCPTransactionId sendOpenLogicalPortRequest(TCPChannelResource *pChannelResource, uint16_t port);
+    TCPTransactionId sendOpenLogicalPortRequest(TCPChannelResource *p_channel_resource, uint16_t port);
 
-    TCPTransactionId sendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource,
+    TCPTransactionId sendCheckLogicalPortsRequest(TCPChannelResource *p_channel_resource,
         CheckLogicalPortsRequest_t &request);
 
-    TCPTransactionId sendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource, std::vector<uint16_t> &ports);
+    TCPTransactionId sendCheckLogicalPortsRequest(TCPChannelResource *p_channel_resource, std::vector<uint16_t> &ports);
 
-    TCPTransactionId sendKeepAliveRequest(TCPChannelResource *pChannelResource, KeepAliveRequest_t &request);
+    TCPTransactionId sendKeepAliveRequest(TCPChannelResource *p_channel_resource, KeepAliveRequest_t &request);
 
-    TCPTransactionId sendKeepAliveRequest(TCPChannelResource *pChannelResource);
+    TCPTransactionId sendKeepAliveRequest(TCPChannelResource *p_channel_resource);
 
-    TCPTransactionId sendLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource,
+    TCPTransactionId sendLogicalPortIsClosedRequest(TCPChannelResource *p_channel_resource,
         LogicalPortIsClosedRequest_t &request);
 
-    TCPTransactionId sendLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource, uint16_t port);
+    TCPTransactionId sendLogicalPortIsClosedRequest(TCPChannelResource *p_channel_resource, uint16_t port);
 
-    TCPTransactionId sendUnbindConnectionRequest(TCPChannelResource *pChannelResource);
+    TCPTransactionId sendUnbindConnectionRequest(TCPChannelResource *p_channel_resource);
 
     /** @name Process RTCP Message Methods.
     * These methods create RTPS messages for different types
     */
-    ResponseCode processBindConnectionRequest(TCPChannelResource *pChannelResource, const ConnectionRequest_t &request,
+    ResponseCode processBindConnectionRequest(TCPChannelResource *p_channel_resource, const ConnectionRequest_t &request,
         const TCPTransactionId &transactionId, Locator_t &localLocator);
 
-    virtual ResponseCode processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+    virtual ResponseCode processOpenLogicalPortRequest(TCPChannelResource *p_channel_resource,
         const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId);
 
-    void processCheckLogicalPortsRequest(TCPChannelResource *pChannelResource,
+    void processCheckLogicalPortsRequest(TCPChannelResource *p_channel_resource,
         const CheckLogicalPortsRequest_t &request, const TCPTransactionId &transactionId);
 
-    ResponseCode processKeepAliveRequest(TCPChannelResource *pChannelResource, const KeepAliveRequest_t &request,
+    ResponseCode processKeepAliveRequest(TCPChannelResource *p_channel_resource, const KeepAliveRequest_t &request,
         const TCPTransactionId &transactionId);
 
-    void processLogicalPortIsClosedRequest(TCPChannelResource *pChannelResource,
+    void processLogicalPortIsClosedRequest(TCPChannelResource *p_channel_resource,
         const LogicalPortIsClosedRequest_t &request, const TCPTransactionId &transactionId);
 
-    ResponseCode processBindConnectionResponse(TCPChannelResource *pChannelResource,
+    ResponseCode processBindConnectionResponse(TCPChannelResource *p_channel_resource,
         const BindConnectionResponse_t &response, const TCPTransactionId &transactionId);
 
-    ResponseCode processCheckLogicalPortsResponse(TCPChannelResource *pChannelResource,
+    ResponseCode processCheckLogicalPortsResponse(TCPChannelResource *p_channel_resource,
         const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
 
-    ResponseCode processOpenLogicalPortResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
-        const TCPTransactionId &transactionId, Locator_t &remoteLocator);
+    ResponseCode processOpenLogicalPortResponse(TCPChannelResource *p_channel_resource, ResponseCode respCode,
+        const TCPTransactionId &transactionId, Locator_t &remote_locator);
 
-    ResponseCode processKeepAliveResponse(TCPChannelResource *pChannelResource, ResponseCode respCode,
+    ResponseCode processKeepAliveResponse(TCPChannelResource *p_channel_resource, ResponseCode respCode,
         const TCPTransactionId &transactionId);
 
-    ResponseCode processRTCPMessage(TCPChannelResource *ChannelResource, octet* receiveBuffer, size_t receivedSize);
+    ResponseCode processRTCPMessage(TCPChannelResource *ChannelResource, octet* receive_buffer, size_t receivedSize);
 
     static uint32_t& addToCRC(uint32_t &crc, octet data);
 
@@ -145,11 +145,11 @@ protected:
         }
     }
 
-    //void prepareAndSendCheckLogicalPortsRequest(TCPChannelResource *pChannelResource);
+    //void prepareAndSendCheckLogicalPortsRequest(TCPChannelResource *p_channel_resource);
 
-    size_t sendMessage(TCPChannelResource *pChannelResource, const CDRMessage_t &msg) const;
+    size_t sendMessage(TCPChannelResource *p_channel_resource, const CDRMessage_t &msg) const;
 
-    bool sendData(TCPChannelResource *pChannelResource, TCPCPMKind kind, const TCPTransactionId &transactionId,
+    bool sendData(TCPChannelResource *p_channel_resource, TCPCPMKind kind, const TCPTransactionId &transactionId,
         const SerializedPayload_t *payload = nullptr, const ResponseCode respCode = RETCODE_VOID);
 
     void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, TCPControlMsgHeader &retCtrlHeader,

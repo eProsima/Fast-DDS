@@ -36,10 +36,10 @@ public:
      * @param data Pointer to the received data.
      * @param size Number of bytes received.
      * @param localLocator Locator identifying the local endpoint.
-     * @param remoteLocator Locator identifying the remote endpoint.
+     * @param remote_locator Locator identifying the remote endpoint.
      */
     virtual void OnDataReceived(const octet* data, const uint32_t size,
-        const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
+        const Locator_t& localLocator, const Locator_t& remote_locator) = 0;
 };
 
 } // namespace rtps

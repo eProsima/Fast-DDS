@@ -28,33 +28,33 @@ class MockTCPv4Transport : public TCPv4Transport
 
     MockTCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     {
-        mConfiguration_ = descriptor;
+        configuration_ = descriptor;
     }
 
     virtual bool OpenOutputChannel(const Locator_t& locator) override
     {
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
         TCPChannelResource *channel;
-        if (mConfiguration_.apply_security)
+        if (configuration_.apply_security)
         {
-            channel = new TCPChannelResourceSecure(this, nullptr, mService, ssl_context_, physicalLocator, 0);
+            channel = new TCPChannelResourceSecure(this, nullptr, io_service_, ssl_context_, physicalLocator, 0);
         }
         else
         {
-            channel = new TCPChannelResourceBasic(this, nullptr, mService, physicalLocator, 0);
+            channel = new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0);
         }
-        mChannelResources[physicalLocator] = channel;
+        channel_resources_[physicalLocator] = channel;
         return true;
     }
 
     virtual bool CloseOutputChannel(const Locator_t& locator) override
     {
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
-        auto it = mChannelResources.find(physicalLocator);
-        if (it != mChannelResources.end())
+        auto it = channel_resources_.find(physicalLocator);
+        if (it != channel_resources_.end())
         {
             delete it->second;
-            mChannelResources.erase(it);
+            channel_resources_.erase(it);
         }
         return true;
     }

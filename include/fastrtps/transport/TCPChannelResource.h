@@ -142,12 +142,15 @@ public:
         asio::error_code& ec) = 0;
 
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
+
     virtual asio::ip::tcp::endpoint local_endpoint() const = 0;
 
     virtual void set_options(const TCPTransportDescriptor* options) = 0;
 
     virtual void cancel() = 0;
+
     virtual void close() = 0;
+
     virtual void shutdown(asio::socket_base::shutdown_type what) = 0;
 
     bool wait_until_port_is_open_or_connection_is_closed(uint16_t port);
@@ -185,6 +188,7 @@ protected:
     }
 
     void add_logical_port_response(const TCPTransactionId &id, bool success);
+
     void process_check_logical_ports_response(const TCPTransactionId &transactionId,
         const std::vector<uint16_t> &availablePorts);
 
@@ -194,11 +198,15 @@ protected:
 
 private:
     void prepare_send_check_logical_ports_req(uint16_t closedPort);
+
     void send_pending_open_logical_ports();
+
     void copy_pending_ports_from(TCPChannelResource* from);
+
     void set_all_ports_pending();
 
     TCPChannelResource(const TCPChannelResource&) = delete;
+
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;
 };
 

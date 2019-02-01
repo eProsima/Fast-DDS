@@ -24,10 +24,10 @@ TCPAcceptor::TCPAcceptor(
     asio::io_service& io_service,
     TCPTransportInterface* parent,
     const Locator_t& locator)
-    : acceptor(io_service, parent->GenerateEndpoint(IPLocator::getPhysicalPort(locator)))
+    : acceptor(io_service, parent->generate_endpoint(IPLocator::getPhysicalPort(locator)))
     , locator(locator)
 {
-    endpoint = asio::ip::tcp::endpoint(parent->GenerateProtocol(), IPLocator::getPhysicalPort(locator));
+    endpoint = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator));
 }
 
 TCPAcceptor::TCPAcceptor(

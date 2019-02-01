@@ -52,6 +52,14 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
 
 TCPChannelResourceBasic::~TCPChannelResourceBasic()
 {
+    // Take both mutexes to avoid the situation where
+    // A checked alive and was true
+    // A took mutex
+    // B disables the channel resource
+    // B destroy us
+    // A tries to perform an operation causing calling a virtual method (our parent still lives).
+    std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
+    std::unique_lock<std::recursive_mutex> write_lock(read_mutex());
 }
 
 void TCPChannelResourceBasic::connect()
@@ -60,8 +68,8 @@ void TCPChannelResourceBasic::connect()
     if (connection_status_ == eConnectionStatus::eDisconnected)
     {
         connection_status_ = eConnectionStatus::eConnecting;
-        asio::ip::tcp type = parent_->GetProtocolType();
-        ip::tcp::endpoint endpoint = parent_->GenerateLocalEndpoint(locator_, IPLocator::getPhysicalPort(locator_));
+        asio::ip::tcp type = parent_->get_protocol_type();
+        ip::tcp::endpoint endpoint = parent_->generate_local_endpoint(locator_, IPLocator::getPhysicalPort(locator_));
         try
         {
             socket_.open(type);

@@ -48,28 +48,28 @@ TCPTransactionId test_RTCPMessageManager::getTransactionId()
     return TCPTransactionId();
 }
 
-ResponseCode test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *pChannelResource,
+ResponseCode test_RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *p_channel_resource,
     const OpenLogicalPortRequest_t &request, const TCPTransactionId &transactionId)
 {
     if (std::find(mLogicalPortsBlocked.begin(), mLogicalPortsBlocked.end(), request.logicalPort()) !=
         mLogicalPortsBlocked.end())
     {
-        sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
+        sendData(p_channel_resource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
     }
     else
     {
-        if (!pChannelResource->connection_established())
+        if (!p_channel_resource->connection_established())
         {
-            sendData(pChannelResource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
+            sendData(p_channel_resource, CHECK_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_SERVER_ERROR);
         }
-        else if (!mTransport->IsInputPortOpen(request.logicalPort()))
+        else if (!mTransport->is_input_port_open(request.logicalPort()))
         {
             //logInfo(RTCP, "OpenLogicalPortRequest [FAILED]: " << request.logicalPort());
-            sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
+            sendData(p_channel_resource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_INVALID_PORT);
         }
         else
         {
-            sendData(pChannelResource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
+            sendData(p_channel_resource, OPEN_LOGICAL_PORT_RESPONSE, transactionId, nullptr, RETCODE_OK);
         }
     }
     return RETCODE_OK;

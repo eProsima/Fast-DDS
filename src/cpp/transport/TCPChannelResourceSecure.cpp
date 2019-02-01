@@ -61,7 +61,7 @@ TCPChannelResourceSecure::~TCPChannelResourceSecure()
 
 void TCPChannelResourceSecure::apply_tls_config()
 {
-    const TCPTransportDescriptor* descriptor = parent_->GetConfiguration();
+    const TCPTransportDescriptor* descriptor = parent_->configuration();
     if (descriptor->apply_security)
     {
         const TCPTransportDescriptor::TLSConfig* config = &descriptor->tls_config;
@@ -156,7 +156,7 @@ void TCPChannelResourceSecure::connect()
     if (connection_status_ == eConnectionStatus::eDisconnected)
     {
         connection_status_ = eConnectionStatus::eConnecting;
-        ip::tcp::endpoint endpoint = parent_->GenerateLocalEndpoint(locator_, IPLocator::getPhysicalPort(locator_));
+        ip::tcp::endpoint endpoint = parent_->generate_local_endpoint(locator_, IPLocator::getPhysicalPort(locator_));
         try
         {
             secure_socket_->lowest_layer().async_connect(endpoint,
@@ -306,7 +306,7 @@ void TCPChannelResourceSecure::shutdown(asio::socket_base::shutdown_type what)
 
 std::string TCPChannelResourceSecure::get_password() const
 {
-    return parent_->GetConfiguration()->tls_config.password;
+    return parent_->configuration()->tls_config.password;
 }
 
 } // namespace rtps
