@@ -221,9 +221,12 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
         ChangeIterator chit = find_change(sit);
         if (chit != changes_for_reader_.end())
         {
-            chit->setStatus(REQUESTED);
-            chit->markAllFragmentsAsUnsent();
-            isSomeoneWasSetRequested = true;
+            if (chit->getStatus() == UNACKNOWLEDGED)
+            {
+                chit->setStatus(REQUESTED);
+                chit->markAllFragmentsAsUnsent();
+                isSomeoneWasSetRequested = true;
+            }
         }
     });
 

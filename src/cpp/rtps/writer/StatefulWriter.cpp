@@ -995,42 +995,75 @@ void StatefulWriter::perform_nack_supression(const GUID_t& reader_guid)
     }
 }
 
-void StatefulWriter::process_acknack(
-        const GUID_t reader_guid, 
+bool StatefulWriter::process_acknack(
+        const GUID_t& writer_guid, 
+        const GUID_t& reader_guid, 
         uint32_t ack_count,
         const SequenceNumberSet_t& sn_set, 
-        bool final_flag)
+        bool final_flag,
+        bool &result)
 {
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
-
-    for(auto remote_reader : matched_readers)
+    result = (m_guid == writer_guid);
+    if (result)
     {
-        if(remote_reader->guid() == reader_guid)
+        for (auto remote_reader : matched_readers)
         {
-            if(remote_reader->check_and_set_acknack_count(ack_count))
+            if (remote_reader->guid() == reader_guid)
             {
-                if(sn_set.base() != SequenceNumber_t(0, 0))
+                if (remote_reader->check_and_set_acknack_count(ack_count))
                 {
-                    // Sequence numbers before Base are set as Acknowledged.
-                    remote_reader->acked_changes_set(sn_set.base());
-                    if (remote_reader->requested_changes_set(sn_set))
+                    if (sn_set.base() != SequenceNumber_t(0, 0))
                     {
+                        // Sequence numbers before Base are set as Acknowledged.
+                        remote_reader->acked_changes_set(sn_set.base());
+                        if (remote_reader->requested_changes_set(sn_set))
+                        {
+                        }
+                        else if (!final_flag)
+                        {
+                            mp_periodicHB->restart_timer();
+                        }
                     }
-                    else if(!final_flag)
+                    else if (sn_set.empty() && !final_flag)
                     {
-                        mp_periodicHB->restart_timer();
+                        send_heartbeat_to_nts(*remote_reader, true);
                     }
-                }
-                else if(sn_set.empty() && !final_flag)
-                {
-                    send_heartbeat_to_nts(*remote_reader, true);
-                }
 
-                // Check if all CacheChange are acknowledge, because a user could be waiting
-                // for this, of if VOLATILE should be removed CacheChanges
-                check_acked_status();
+                    // Check if all CacheChange are acknowledge, because a user could be waiting
+                    // for this, of if VOLATILE should be removed CacheChanges
+                    check_acked_status();
+                }
+                break;
             }
-            break;
         }
     }
+
+    return result;
+}
+
+bool StatefulWriter::process_nack_frag(
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
+        uint32_t ack_count,
+        const SequenceNumber_t& seq_num,
+        const FragmentNumberSet_t fragments_state,
+        bool& result)
+{
+    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    result = false;
+    if (m_guid == writer_guid)
+    {
+        result = true;
+        for (auto remote_reader : matched_readers)
+        {
+            if (remote_reader->guid() == reader_guid)
+            {
+                remote_reader->process_nack_frag(reader_guid, ack_count, seq_num, fragments_state);
+                break;
+            }
+        }
+    }
+
+    return result;
 }

@@ -190,6 +190,56 @@ class RTPSWriter : public Endpoint
      */
     bool get_separate_sending () const { return m_separateSendingEnabled; }
 
+    /**
+     * Process an incoming ACKNACK submessage.
+     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
+     * @param reader_guid[in]      GUID of the reader originating the submessage.
+     * @param ack_count[in]        Count field of the submessage.
+     * @param sn_set[in]           Sequence number bitmap field of the submessage.
+     * @param final_flag[in]       Final flag field of the submessage.
+     * @param result[out]          true if the writer could process the submessage. 
+     *                             Only valid when returned value is true.
+     * @return true when the submessage was destinated to this writer, false otherwise.
+     */
+    virtual bool process_acknack(
+            const GUID_t& writer_guid, 
+            const GUID_t& reader_guid,
+            uint32_t ack_count,
+            const SequenceNumberSet_t& sn_set,
+            bool final_flag,
+            bool &result)
+    {
+        (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
+
+        result = false;
+        return writer_guid == m_guid;
+    }
+
+    /**
+     * Process an incoming NACKFRAG submessage.
+     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
+     * @param reader_guid[in]      GUID of the reader originating the submessage.
+     * @param ack_count[in]        Count field of the submessage.
+     * @param seq_num[in]          Sequence number field of the submessage.
+     * @param fragments_state[in]  Fragment number bitmap field of the submessage.
+     * @param result[out]          true if the writer could process the submessage. 
+     *                             Only valid when returned value is true.
+     * @return true when the submessage was destinated to this writer, false otherwise.
+     */
+    virtual bool process_nack_frag(
+            const GUID_t& writer_guid, 
+            const GUID_t& reader_guid,
+            uint32_t ack_count, 
+            const SequenceNumber_t& seq_num, 
+            const FragmentNumberSet_t fragments_state, 
+            bool& result)
+    {
+        (void)reader_guid; (void)ack_count; (void)seq_num; (void)fragments_state;
+
+        result = false;
+        return writer_guid == m_guid;
+    }
+
     protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
