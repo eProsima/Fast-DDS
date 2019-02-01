@@ -279,7 +279,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
             // Outbounding first interface with already created socket.
             if(!locNames.empty())
             {
-                SetSocketOutbountInterface(unicastSocket, (*locNames.begin()).name);
+                SetSocketOutboundInterface(unicastSocket, (*locNames.begin()).name);
             }
 
             // If more than one interface, then create sockets for outbounding multicast.
@@ -293,7 +293,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
                 {
                     uint16_t new_port = 0;
                     eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint((*locIt).name, new_port), new_port);
-                    SetSocketOutbountInterface(multicastSocket, (*locIt).name);
+                    SetSocketOutboundInterface(multicastSocket, (*locIt).name);
 
                     UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
                     mSocket->only_multicast_purpose(true);
@@ -318,7 +318,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
                 if (IsInterfaceAllowed(infoIP.name))
                 {
                     eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint(infoIP.name, port), port);
-                    SetSocketOutbountInterface(unicastSocket, infoIP.name);
+                    SetSocketOutboundInterface(unicastSocket, infoIP.name);
                     if (!firstInterface)
                     {
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
@@ -451,8 +451,27 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 
             // We then send to the address of the input locator
             auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
 
+#ifdef WIN32
+            {
+                asio::error_code ec;
+                socket_base::message_flags flags = 0;
+
+                socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
+
+                if ( ec.value() == WSAENETUNREACH )
+                {
+                    logInfo(RTPS_MSG_OUT, "Windows doesn't support sending messages to its own interfaces. Already known issue.");
+                }
+                else
+                {
+                    asio::detail::throw_error(ec, "send_to");
+                }
+            }
+#else
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+#endif // WIN32
+            
             socket.close();
         }
         else
