@@ -17,6 +17,7 @@
 
 #include "./SocketTransportDescriptor.h"
 #include <fastrtps/fastrtps_dll.h>
+#include <iostream>
 
 namespace eprosima{
 namespace fastrtps{
@@ -68,7 +69,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 
         bool get_option(const TLSOptions option) const
         {
-            return options & option;
+            return (options & option) == option;
         }
 
         TLSConfig()

@@ -26,6 +26,24 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         include_directories(${ASIO_INCLUDE_DIR})
 
+        # Copy certs
+        if(SECURITY)
+            configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
+                ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
+            configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainpubcert.pem
+                ${CMAKE_CURRENT_BINARY_DIR}/mainpubcert.pem COPYONLY)
+            configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainpubkey.pem
+                ${CMAKE_CURRENT_BINARY_DIR}/mainpubkey.pem COPYONLY)
+            configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainsubcert.pem
+                ${CMAKE_CURRENT_BINARY_DIR}/mainsubcert.pem COPYONLY)
+            configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainsubkey.pem
+                ${CMAKE_CURRENT_BINARY_DIR}/mainsubkey.pem COPYONLY)
+            #configure_file(${PROJECT_SOURCE_DIR}/test/certs/governance_helloworld_all_enable.smime
+            #    ${CMAKE_CURRENT_BINARY_DIR}/governance_helloworld_all_enable.smime COPYONLY)
+            #configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld.smime
+            #    ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld.smime COPYONLY)
+        endif()
+
         set(UDPV4TESTS_SOURCE
             UDPv4Tests.cpp
             mock/MockReceiverResource.cpp

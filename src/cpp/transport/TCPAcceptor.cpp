@@ -26,6 +26,7 @@ TCPAcceptor::TCPAcceptor(
         const Locator_t& locator)
     : acceptor_(io_service, parent->generate_endpoint(IPLocator::getPhysicalPort(locator)))
     , locator_(locator)
+    , io_service_(&io_service)
 {
     endpoint_ = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator_));
 }
@@ -37,6 +38,7 @@ TCPAcceptor::TCPAcceptor(
     : acceptor_(io_service, asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
         IPLocator::getPhysicalPort(locator)))
     , locator_(locator)
+    , io_service_(&io_service)
 {
     endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
         IPLocator::getPhysicalPort(locator_));

@@ -311,7 +311,8 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             {
                 if (configuration()->apply_security)
                 {
-                    newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, sInterface, locator);
+                    newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, sInterface, locator,
+                        configuration());
                 }
                 else
                 {
@@ -625,10 +626,21 @@ void TCPTransportInterface::close_tcp_socket(TCPChannelResource *p_channel_resou
             {
                 if (!p_channel_resource->input_socket())
                 {
-                    newChannel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_, physicalLocator,
-                        configuration()->maxMessageSize);
-                    p_channel_resource->set_all_ports_pending();
-                    newChannel->copy_pending_ports_from(p_channel_resource);
+                    if (configuration()->apply_security)
+                    {
+                        newChannel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_,
+                            physicalLocator, configuration()->maxMessageSize);
+                        p_channel_resource->set_all_ports_pending();
+                        newChannel->copy_pending_ports_from(p_channel_resource);
+                    }
+                    else
+                    {
+                        newChannel = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
+                            ssl_context_, physicalLocator, configuration()->maxMessageSize);
+                        p_channel_resource->set_all_ports_pending();
+                        newChannel->copy_pending_ports_from(p_channel_resource);
+                    }
+
                 }
                 channel_resources_.erase(it);
             }
@@ -666,11 +678,22 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
         {
             // Create output channel
             // TODO - Puede eliminarse directamente?
-            tcp_basic::eProsimaTCPSocket socket = tcp_basic::createTCPSocket(io_service_);
-            channel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_, physicalLocator,
-                configuration()->maxMessageSize);
-            channel_resources_[physicalLocator] = channel;
-            channel->connect();
+            if (configuration()->apply_security)
+            {
+                tcp_secure::eProsimaTCPSocket socket = tcp_secure::createTCPSocket(io_service_, ssl_context_);
+                channel = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_, ssl_context_,
+                    physicalLocator, configuration()->maxMessageSize);
+                channel_resources_[physicalLocator] = channel;
+                channel->connect();
+            }
+            else
+            {
+                tcp_basic::eProsimaTCPSocket socket = tcp_basic::createTCPSocket(io_service_);
+                channel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_, physicalLocator,
+                    configuration()->maxMessageSize);
+                channel_resources_[physicalLocator] = channel;
+                channel->connect();
+            }
         }
 
         success = true;
@@ -1117,8 +1140,8 @@ bool TCPTransportInterface::send(
     }
     else if (send_retry_active_)
     {
-        logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
-            << IPLocator::getLogicalPort(remote_locator));
+        //logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
+        //    << IPLocator::getLogicalPort(remote_locator));
         return false;
     }
     else
@@ -1307,8 +1330,8 @@ void TCPTransportInterface::SecureSocketAccepted(
         if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
         {
             // Store the new connection.
-            TCPChannelResource *p_channel_resource = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
-                ssl_context_, std::move(socket), configuration()->maxMessageSize);
+            TCPChannelResource *p_channel_resource = new TCPChannelResourceSecure(this, rtcp_message_manager_,
+                io_service_, ssl_context_, std::move(socket), configuration()->maxMessageSize);
 
             p_channel_resource->set_options(configuration());
 
@@ -1341,6 +1364,7 @@ void TCPTransportInterface::SecureSocketAccepted(
     else
     {
         logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+        logError(RTCP, " Accepting connection failed (error: " << error.message() << ")");
         eClock::my_sleep(200); // Wait a little to accept again.
     }
 
@@ -1406,6 +1430,10 @@ void TCPTransportInterface::SocketConnected(
             {
                 // Wait a little before try again to avoid exhaust file descriptors in some systems
                 eClock::my_sleep(200);
+            }
+            else
+            {
+                logError(RTCP_TLS, error.message());
             }
             close_tcp_socket(outputSocket);
         }

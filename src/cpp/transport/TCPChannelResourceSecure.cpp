@@ -37,6 +37,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
 {
     apply_tls_config();
     secure_socket_ = createTCPSocket(service, ssl_context_);
+    set_tls_verify_mode(parent->configuration());
 }
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
@@ -53,6 +54,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
 {
     apply_tls_config();
     secure_socket_ = createTCPSocket(std::move(socket), ssl_context_);
+    set_tls_verify_mode(parent->configuration());
 }
 
 TCPChannelResourceSecure::~TCPChannelResourceSecure()
@@ -168,9 +170,15 @@ void TCPChannelResourceSecure::connect()
                         secure_socket_->async_handshake(ssl::stream_base::client,
                             [this](const std::error_code& error)
                             {
+                                logError(TLS_CLIENT, error.message());
                                 parent_->SocketConnected(locator_, error);
                             });
                     }
+                    else
+                    {
+                        logError(RTCP_TLS, error.message());
+                    }
+
                 });
         }
         catch(const std::system_error &error)
@@ -187,19 +195,20 @@ void TCPChannelResourceSecure::disconnect()
         try
         {
             asio::error_code ec;
-            secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-            secure_socket_->lowest_layer().cancel();
+            secure_socket_->shutdown();
+            //secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+            //secure_socket_->lowest_layer().cancel();
 
           // This method was added on the version 1.12.0
 #if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-            secure_socket_->lowest_layer().release();
+            //secure_socket_->lowest_layer().release();
 #endif
         }
         catch (std::exception&)
         {
             // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
         }
-        secure_socket_->lowest_layer().close();
+        //secure_socket_->lowest_layer().close();
     }
 }
 
@@ -261,6 +270,18 @@ void TCPChannelResourceSecure::set_options(const TCPTransportDescriptor* options
     secure_socket_->lowest_layer().set_option(socket_base::receive_buffer_size(options->receiveBufferSize));
     secure_socket_->lowest_layer().set_option(socket_base::send_buffer_size(options->sendBufferSize));
     secure_socket_->lowest_layer().set_option(ip::tcp::no_delay(options->enable_tcp_nodelay));
+}
+
+void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor* options)
+{
+    secure_socket_->set_verify_mode(ssl::verify_peer);
+    secure_socket_->set_verify_callback([](
+            bool preverified,
+            ssl::verify_context& ctx) -> bool
+    {
+        return true;
+    });
+    return;
 
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
 
@@ -291,17 +312,17 @@ void TCPChannelResourceSecure::set_options(const TCPTransportDescriptor* options
 
 void TCPChannelResourceSecure::cancel()
 {
-    secure_socket_->lowest_layer().cancel();
+    //secure_socket_->lowest_layer().cancel();
 }
 
 void TCPChannelResourceSecure::close()
 {
-    secure_socket_->lowest_layer().close();
+    //secure_socket_->lowest_layer().close();
 }
 
 void TCPChannelResourceSecure::shutdown(asio::socket_base::shutdown_type what)
 {
-    secure_socket_->lowest_layer().shutdown(what);
+    secure_socket_->shutdown();
 }
 
 std::string TCPChannelResourceSecure::get_password() const

@@ -31,6 +31,7 @@ protected:
     Locator_t locator_;
     asio::ip::tcp::endpoint endpoint_;
     std::vector<Locator_t> pending_out_locators_;
+    asio::io_service* io_service_;
 
 public:
     TCPAcceptor(

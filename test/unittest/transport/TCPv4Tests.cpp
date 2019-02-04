@@ -422,7 +422,127 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
         }
     }
 }
+TEST_F(TCPv4Tests, send_and_receive_between_secure_ports)
+{
+    // Log::SetVerbosity(Log::Kind::Info);
+    // std::regex filter("RTCP(?!_SEQ)");
+    // Log::SetCategoryFilter(filter);
 
+    /*
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+
+    reader.history_depth(10).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        property_policy(sub_property_policy).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                    "builtin.PKI-DH"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+    */
+
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.password = "test";
+    //recvDescriptor.tls_config.password = "testkey";
+    //recvDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
+    //recvDescriptor.tls_config.private_key_file = "mainsubkey.pem";
+    //recvDescriptor.tls_config.tmp_dh_file = "";
+    //recvDescriptor.tls_config.verify_file = "ca.pem";
+    //recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    recvDescriptor.tls_config.cert_chain_file = "server.pem";
+    recvDescriptor.tls_config.private_key_file = "server.pem";
+    recvDescriptor.tls_config.tmp_dh_file = "dh2048.pem";
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    //recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    //recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    //sendDescriptor.tls_config.password = "testkey";
+    sendDescriptor.tls_config.password = "test";
+    //sendDescriptor.tls_config.cert_chain_file = "server.pem";
+    //sendDescriptor.tls_config.private_key_file = "server.pem";
+    //sendDescriptor.tls_config.tmp_dh_file = "dh2048.pem";
+    sendDescriptor.tls_config.verify_file = "ca.pem";
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    //sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    //sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    //sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    //sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    //sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
+        {
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+            while (!sent)
+            {
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            EXPECT_TRUE(sent);
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+}
 
 TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 {
