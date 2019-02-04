@@ -47,7 +47,6 @@ public:
      */
     NackResponseDelay(
             StatefulWriter* writer,
-            const GUID_t& reader_guid,
             double interval_in_ms);
 
     virtual ~NackResponseDelay();
@@ -61,6 +60,11 @@ public:
     void event(
             EventCode code, 
             const char* msg = nullptr) override;
+
+    inline void reader_guid(const GUID_t guid)
+    {
+        reader_guid_ = guid;
+    }
 
 private:
 

@@ -82,7 +82,7 @@ StatefulWriter::~StatefulWriter()
 
     for (ReaderProxy* remote_reader : matched_readers)
     {
-        remote_reader->destroy_timers();
+        remote_reader->stop();
     }
 
     if (mp_periodicHB != nullptr)
@@ -503,7 +503,8 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     rdata.endpoint.unicastLocatorList =
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({rdata.endpoint.unicastLocatorList});
 
-    ReaderProxy* rp = new ReaderProxy(rdata, m_times, this);
+    ReaderProxy* rp = new ReaderProxy(m_times, this);
+    rp->start(rdata);
     std::set<SequenceNumber_t> not_relevant_changes;
 
     SequenceNumber_t current_seq = get_seq_num_min();
@@ -603,6 +604,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 
     if(rproxy != nullptr)
     {
+        rproxy->stop();
         delete rproxy;
 
         check_acked_status();

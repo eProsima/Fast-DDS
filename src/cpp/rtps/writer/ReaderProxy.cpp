@@ -38,66 +38,67 @@ namespace fastrtps {
 namespace rtps {
 
 ReaderProxy::ReaderProxy(
-        const RemoteReaderAttributes& reader_attributes,
         const WriterTimes& times, 
         StatefulWriter* writer) 
-    : reader_attributes_(reader_attributes)
+    : is_active_(false)
+    , reader_attributes_()
     , writer_(writer)
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_response_event_(nullptr)
     , nack_supression_event_(nullptr)
+    , timers_enabled_(false)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    if (reader_attributes.endpoint.reliabilityKind == RELIABLE)
-    {
-        nack_response_event_ = new NackResponseDelay(writer_, reader_attributes_.guid,
-            TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
-        nack_supression_event_ = new NackSupressionDuration(writer_, reader_attributes_.guid,
-            TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
-    }
-
-    // Use remoteLocatorList as joint unicast + multicast locators
-    reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
-    reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
-
-    logInfo(RTPS_WRITER, "Reader Proxy created");
+    nack_response_event_ = std::make_shared<NackResponseDelay>(writer_,
+        TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
+    nack_supression_event_ = std::make_shared <NackSupressionDuration>(writer_,
+        TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 }
 
 ReaderProxy::~ReaderProxy()
 {
-    destroy_timers();
 }
 
-void ReaderProxy::destroy_timers()
+void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
 {
-    if (nack_response_event_ != nullptr)
-    {
-        delete(nack_response_event_);
-        nack_response_event_ = nullptr;
-    }
+    is_active_ = true;
+    reader_attributes_ = reader_attributes;
 
-    if (nack_supression_event_ != nullptr)
+    reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
+    reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
+
+    nack_response_event_->reader_guid(reader_attributes_.guid);
+    nack_supression_event_->reader_guid(reader_attributes_.guid);
+    timers_enabled_ = (reader_attributes_.endpoint.reliabilityKind == RELIABLE);
+
+    logInfo(RTPS_WRITER, "Reader Proxy started");
+}
+
+void ReaderProxy::stop()
+{
+    is_active_ = false;
+    reader_attributes_.guid = c_Guid_Unknown;
+    disable_timers();
+}
+
+void ReaderProxy::disable_timers()
+{
+    if (timers_enabled_.exchange(false))
     {
-        delete(nack_supression_event_);
-        nack_supression_event_ = nullptr;
+        nack_response_event_->cancel_timer();
+        nack_supression_event_->cancel_timer();
     }
 }
 
 void ReaderProxy::update_nack_response_interval(const Duration_t& interval)
 {
-    if (nack_response_event_ != nullptr)
-    {
-        nack_response_event_->update_interval(interval);
-    }
+    nack_response_event_->update_interval(interval);
 }
 
 void ReaderProxy::update_nack_supression_interval(const Duration_t& interval)
 {
-    if (nack_supression_event_ != nullptr)
-    {
-        nack_supression_event_->update_interval(interval);
-    }
+    nack_supression_event_->update_interval(interval);
 }
 
 void ReaderProxy::add_change(
@@ -108,7 +109,7 @@ void ReaderProxy::add_change(
     assert(changes_for_reader_.empty() ? true :
         change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
 
-    if (restart_nack_supression && nack_supression_event_ != nullptr)
+    if (restart_nack_supression && timers_enabled_)
     {
         nack_supression_event_->restart_timer();
     }
@@ -233,7 +234,7 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
     if (isSomeoneWasSetRequested)
     {
         logInfo(RTPS_WRITER, "Requested Changes: " << seq_num_set);
-        if (nack_response_event_ != nullptr)
+        if (timers_enabled_)
         {
             nack_response_event_->restart_timer();
         }
@@ -254,7 +255,7 @@ bool ReaderProxy::set_change_to_status(
 {
     if (restart_nack_supression && is_reliable())
     {
-        assert(nack_supression_event_ != nullptr);
+        assert(timers_enabled_);
         nack_supression_event_->restart_timer();
     }
 

@@ -50,16 +50,23 @@ public:
 
     /**
      * Constructor.
-     * @param reader_attributes RemoteReaderAttributes of the reader for which to keep state.
      * @param times WriterTimes to use in the ReaderProxy.
      * @param writer Pointer to the StatefulWriter creating the reader proxy.
      */
     ReaderProxy(
-            const RemoteReaderAttributes& reader_attributes, 
             const WriterTimes& times, 
             StatefulWriter* writer);
 
-    void destroy_timers();
+    /**
+     * Activate this proxy associating it to a remote reader.
+     * @param reader_attributes RemoteReaderAttributes of the reader for which to keep state.
+     */
+    void start(const RemoteReaderAttributes& reader_attributes);
+
+    /**
+     * Disable this proxy.
+     */
+    void stop();
 
     /**
      * Called when a change is added to the writer's history.
@@ -289,6 +296,8 @@ public:
 
 private:
 
+    //!Is this proxy active? I.e. does it have a remote reader associated?
+    bool is_active_;
     //!Attributes of the Remote Reader
     RemoteReaderAttributes reader_attributes_;
     //!Pointer to the associated StatefulWriter.
@@ -296,9 +305,11 @@ private:
     //!Set of the changes and its state.
     ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
     //! Timed Event to manage the Acknack response delay.
-    NackResponseDelay* nack_response_event_;
+    std::shared_ptr<NackResponseDelay> nack_response_event_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
-    NackSupressionDuration* nack_supression_event_;
+    std::shared_ptr<NackSupressionDuration> nack_supression_event_;
+    //! Are timed events enabled?
+    std::atomic_bool timers_enabled_;
     //! Last ack/nack count
     uint32_t last_acknack_count_;
     //! Last  NACKFRAG count.
@@ -308,6 +319,8 @@ private:
 
     using ChangeIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::iterator;
     using ChangeConstIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::const_iterator;
+
+    void disable_timers();
 
     /*
      * Converts all changes with a given status to a different status.

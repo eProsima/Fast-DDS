@@ -47,7 +47,6 @@ public:
      */
     NackSupressionDuration(
             StatefulWriter* writer,
-            const GUID_t& reader_guid,
             double interval_in_ms);
 
     virtual ~NackSupressionDuration();
@@ -61,6 +60,14 @@ public:
     void event(
             EventCode code, 
             const char* msg = nullptr) override;
+
+    /**
+     * Set a new reader guid value
+     */
+    inline void reader_guid(const GUID_t guid)
+    {
+        reader_guid_ = guid;
+    }
 
 private:
 

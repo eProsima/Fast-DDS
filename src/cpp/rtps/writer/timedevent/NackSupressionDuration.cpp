@@ -39,14 +39,13 @@ NackSupressionDuration::~NackSupressionDuration()
 
 NackSupressionDuration::NackSupressionDuration(
         StatefulWriter* writer,
-        const GUID_t& reader_guid,
         double interval_in_ms)
     : TimedEvent(
             writer->getRTPSParticipant()->getEventResource().getIOService(),
             writer->getRTPSParticipant()->getEventResource().getThread(), 
             interval_in_ms)
     , writer_(writer)
-    , reader_guid_(reader_guid)
+    , reader_guid_()
 {
 }
 
