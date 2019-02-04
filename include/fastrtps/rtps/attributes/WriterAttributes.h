@@ -25,6 +25,8 @@
 #include "EndpointAttributes.h"
 #include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
 
+#include <functional>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -133,7 +135,7 @@ class  RemoteReaderAttributes
 
         }
 
-        auto compare_guid_function() const
+        std::function<bool(const RemoteReaderAttributes&)> compare_guid_function() const
         {
             return [this](const RemoteReaderAttributes& rhs)
             {

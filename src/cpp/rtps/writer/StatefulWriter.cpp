@@ -688,7 +688,7 @@ bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
     }
 
     return std::all_of(matched_readers_.begin(), matched_readers_.end(),
-        [this, change](const ReaderProxy* reader)
+        [change](const ReaderProxy* reader)
         {
             return reader->change_is_acked(change->sequenceNumber);
         });
