@@ -27,11 +27,11 @@ namespace rtps {
 using namespace tcp_basic;
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
-    TCPTransportInterface* parent,
-    RTCPMessageManager* rtcpManager,
-    asio::io_service& service,
-    const Locator_t& locator,
-    uint32_t maxMsgSize)
+        TCPTransportInterface* parent,
+        RTCPMessageManager* rtcpManager,
+        asio::io_service& service,
+        const Locator_t& locator,
+        uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
     , service_(service)
     , socket_(createTCPSocket(service))
@@ -39,11 +39,11 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
 }
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
-    TCPTransportInterface* parent,
-    RTCPMessageManager* rtcpManager,
-    asio::io_service& service,
-    eProsimaTCPSocketRef socket,
-    uint32_t maxMsgSize)
+        TCPTransportInterface* parent,
+        RTCPMessageManager* rtcpManager,
+        asio::io_service& service,
+        eProsimaTCPSocketRef socket,
+        uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, maxMsgSize)
     , service_(service)
     , socket_(moveSocket(socket))
@@ -107,27 +107,27 @@ void TCPChannelResourceBasic::disconnect()
 }
 
 uint32_t TCPChannelResourceBasic::read(
-    octet* buffer,
-    uint32_t buffer_capacity,
-    std::size_t size)
+        octet* buffer,
+        uint32_t buffer_capacity,
+        std::size_t size)
 {
     return static_cast<uint32_t>(asio::read(socket_, asio::buffer(buffer, buffer_capacity), transfer_exactly(size)));
 }
 
 uint32_t TCPChannelResourceBasic::read(
-    octet* buffer,
-    uint32_t buffer_capacity,
-    std::size_t size,
-    asio::error_code& ec)
+        octet* buffer,
+        uint32_t buffer_capacity,
+        std::size_t size,
+        asio::error_code& ec)
 {
     return static_cast<uint32_t>(asio::read(socket_, asio::buffer(buffer, buffer_capacity),
         transfer_exactly(size), ec));
 }
 
 uint32_t TCPChannelResourceBasic::send(
-    const octet* data,
-    size_t size,
-    asio::error_code& ec)
+        const octet* data,
+        size_t size,
+        asio::error_code& ec)
 {
     return socket_.send(asio::buffer(data, size), 0, ec);
 }

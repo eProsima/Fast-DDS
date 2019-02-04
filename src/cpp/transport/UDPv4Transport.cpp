@@ -32,7 +32,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+static void get_ipv4s(
+        std::vector<IPFinder::info_IP>& locNames,
+        bool return_loopback = false)
 {
     IPFinder::getIPs(&locNames, return_loopback);
     auto new_end = remove_if(locNames.begin(),
@@ -45,9 +47,11 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopba
     });
 }
 
-static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+static void get_ipv4s_unique_interfaces(
+        std::vector<IPFinder::info_IP>& locNames,
+        bool return_loopback = false)
 {
-    GetIP4s(locNames, return_loopback);
+    get_ipv4s(locNames, return_loopback);
     std::sort(locNames.begin(), locNames.end(),
             [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
     auto new_end = std::unique(locNames.begin(), locNames.end(),
@@ -55,7 +59,7 @@ static void GetIP4sUniqueInterfaces(std::vector<IPFinder::info_IP>& locNames, bo
     locNames.erase(new_end, locNames.end());
 }
 
-static asio::ip::address_v4::bytes_type locatorToNative(const Locator_t& locator)
+static asio::ip::address_v4::bytes_type locator_to_native(const Locator_t& locator)
 {
     if (IPLocator::hasWan(locator))
     {
@@ -108,8 +112,9 @@ UDPv4Transport::~UDPv4Transport()
     clean();
 }
 
-bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
-    uint32_t metatraffic_multicast_port) const
+bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(
+        LocatorList_t &locators,
+        uint32_t metatraffic_multicast_port) const
 {
     Locator_t locator;
     locator.kind = LOCATOR_KIND_UDPv4;
@@ -119,8 +124,9 @@ bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(LocatorList_t &locat
     return true;
 }
 
-bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
-    uint32_t metatraffic_unicast_port) const
+bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(
+        LocatorList_t &locators,
+        uint32_t metatraffic_unicast_port) const
 {
     if (interface_whitelist_.empty())
     {
@@ -145,7 +151,9 @@ bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(LocatorList_t &locator
     return true;
 }
 
-bool UDPv4Transport::getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const
+bool UDPv4Transport::getDefaultUnicastLocators(
+        LocatorList_t &locators,
+        uint32_t unicast_port) const
 {
     if (interface_whitelist_.empty())
     {
@@ -176,17 +184,23 @@ void UDPv4Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
     defaultList.push_back(locator);
 }
 
-bool UDPv4Transport::compare_locator_ip(const Locator_t& lh, const Locator_t& rh) const
+bool UDPv4Transport::compare_locator_ip(
+        const Locator_t& lh,
+        const Locator_t& rh) const
 {
     return IPLocator::compareAddress(lh, rh);
 }
 
-bool UDPv4Transport::compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const
+bool UDPv4Transport::compare_locator_ip_and_port(
+        const Locator_t& lh,
+        const Locator_t& rh) const
 {
     return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
-void UDPv4Transport::endpoint_to_locator(ip::udp::endpoint& endpoint, Locator_t& locator)
+void UDPv4Transport::endpoint_to_locator(
+        ip::udp::endpoint& endpoint,
+        Locator_t& locator)
 {
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v4().to_bytes();
@@ -209,14 +223,18 @@ asio::ip::udp::endpoint UDPv4Transport::GenerateAnyAddressEndpoint(uint16_t port
     return ip::udp::endpoint(ip::address_v4::any(), port);
 }
 
-ip::udp::endpoint UDPv4Transport::generate_endpoint(const Locator_t& loc, uint16_t port)
+ip::udp::endpoint UDPv4Transport::generate_endpoint(
+        const Locator_t& loc,
+        uint16_t port)
 {
     asio::ip::address_v4::bytes_type remoteAddress;
     IPLocator::copyIPv4(loc, remoteAddress.data());
     return ip::udp::endpoint(asio::ip::address_v4(remoteAddress), port);
 }
 
-ip::udp::endpoint UDPv4Transport::generate_endpoint(const std::string& sIp, uint16_t port)
+ip::udp::endpoint UDPv4Transport::generate_endpoint(
+        const std::string& sIp,
+        uint16_t port)
 {
     return asio::ip::udp::endpoint(ip::address_v4::from_string(sIp), port);
 }
@@ -226,9 +244,11 @@ ip::udp::endpoint UDPv4Transport::generate_endpoint(uint16_t port)
     return asio::ip::udp::endpoint(asio::ip::udp::v4(), port);
 }
 
-ip::udp::endpoint UDPv4Transport::generate_local_endpoint(const Locator_t& loc, uint16_t port)
+ip::udp::endpoint UDPv4Transport::generate_local_endpoint(
+        const Locator_t& loc,
+        uint16_t port)
 {
-    return ip::udp::endpoint(asio::ip::address_v4(locatorToNative(loc)), port);
+    return ip::udp::endpoint(asio::ip::address_v4(locator_to_native(loc)), port);
 }
 
 asio::ip::udp UDPv4Transport::generate_protocol() const
@@ -236,12 +256,17 @@ asio::ip::udp UDPv4Transport::generate_protocol() const
     return ip::udp::v4();
 }
 
-void UDPv4Transport::get_ips(std::vector<IPFinder::info_IP>& locNames, bool return_loopback)
+void UDPv4Transport::get_ips(
+        std::vector<IPFinder::info_IP>& locNames,
+        bool return_loopback)
 {
-    GetIP4s(locNames, return_loopback);
+    get_ipv4s(locNames, return_loopback);
 }
 
-eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast)
+eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
+        const std::string& sIp,
+        uint16_t port,
+        bool is_multicast)
 {
     eProsimaUDPSocket socket = createUDPSocket(io_service_);
     getSocketPtr(socket)->open(generate_protocol());
@@ -263,8 +288,10 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(const std::string& sIp,
     return socket;
 }
 
-bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
-    uint32_t maxMsgSize)
+bool UDPv4Transport::OpenInputChannel(
+        const Locator_t& locator,
+        TransportReceiverInterface* receiver,
+        uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!IsLocatorSupported(locator))
@@ -332,7 +359,7 @@ bool UDPv4Transport::OpenInputChannel(const Locator_t& locator, TransportReceive
                 if (channelResource->interface() == s_IPv4AddressAny)
                 {
                     std::vector<IPFinder::info_IP> locNames;
-                    GetIP4sUniqueInterfaces(locNames, true);
+                    get_ipv4s_unique_interfaces(locNames, true);
                     for (const auto& infoIP : locNames)
                     {
                         auto ip = asio::ip::address_v4::from_string(infoIP.name);
@@ -426,7 +453,7 @@ LocatorList_t UDPv4Transport::NormalizeLocator(const Locator_t& locator)
     if (IPLocator::isAny(locator))
     {
         std::vector<IPFinder::info_IP> locNames;
-        GetIP4s(locNames);
+        get_ipv4s(locNames);
         for (const auto& infoIP : locNames)
         {
             auto ip = asio::ip::address_v4::from_string(infoIP.name);
@@ -478,7 +505,9 @@ void UDPv4Transport::set_send_buffer_size(uint32_t size)
     configuration_.sendBufferSize = size;
 }
 
-void UDPv4Transport::SetSocketOutboundInterface(eProsimaUDPSocket& socket, const std::string& sIp)
+void UDPv4Transport::SetSocketOutboundInterface(
+        eProsimaUDPSocket& socket,
+        const std::string& sIp)
 {
 	getSocketPtr(socket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string(sIp)));
 }

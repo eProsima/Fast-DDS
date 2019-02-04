@@ -21,33 +21,33 @@ namespace fastrtps{
 namespace rtps{
 
 TCPAcceptorBasic::TCPAcceptorBasic(
-    asio::io_service& io_service,
-    TCPTransportInterface* parent,
-    const Locator_t& locator)
+        asio::io_service& io_service,
+        TCPTransportInterface* parent,
+        const Locator_t& locator)
     : TCPAcceptor(io_service, parent, locator)
-    , socket(tcp_basic::createTCPSocket(io_service))
+    , socket_(tcp_basic::createTCPSocket(io_service))
 {
-    endpoint = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator));
+    endpoint_ = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator_));
 }
 
 TCPAcceptorBasic::TCPAcceptorBasic(
-    asio::io_service& io_service,
-    const std::string& interface,
-    const Locator_t& locator)
+        asio::io_service& io_service,
+        const std::string& interface,
+        const Locator_t& locator)
     : TCPAcceptor(io_service, interface, locator)
-    , socket(tcp_basic::createTCPSocket(io_service))
+    , socket_(tcp_basic::createTCPSocket(io_service))
 {
-    endpoint = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
-        IPLocator::getPhysicalPort(locator));
+    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
+        IPLocator::getPhysicalPort(locator_));
 }
 
-void TCPAcceptorBasic::Accept(
-    TCPTransportInterface* parent,
-    asio::io_service& io_service)
+void TCPAcceptorBasic::accept(
+        TCPTransportInterface* parent,
+        asio::io_service& io_service)
 {
-    socket = tcp_basic::createTCPSocket(io_service);
+    socket_ = tcp_basic::createTCPSocket(io_service);
 
-    acceptor.async_accept(tcp_basic::getTCPSocketRef(socket), endpoint,
+    acceptor_.async_accept(tcp_basic::getTCPSocketRef(socket_), endpoint_,
         std::bind(&TCPTransportInterface::SocketAccepted,
         parent, this, std::placeholders::_1));
 }

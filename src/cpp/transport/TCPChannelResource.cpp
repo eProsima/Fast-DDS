@@ -39,10 +39,10 @@ static uint16_t GetBaseAutoPort(uint16_t currentPort)
 }
 
 TCPChannelResource::TCPChannelResource(
-    TCPTransportInterface* parent,
-    RTCPMessageManager* rtcpManager,
-    const Locator_t& locator,
-    uint32_t maxMsgSize)
+        TCPTransportInterface* parent,
+        RTCPMessageManager* rtcpManager,
+        const Locator_t& locator,
+        uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
     , parent_ (parent)
     , rtcp_manager_(rtcpManager)
@@ -55,9 +55,9 @@ TCPChannelResource::TCPChannelResource(
 }
 
 TCPChannelResource::TCPChannelResource(
-    TCPTransportInterface* parent,
-    RTCPMessageManager* rtcpManager,
-    uint32_t maxMsgSize)
+        TCPTransportInterface* parent,
+        RTCPMessageManager* rtcpManager,
+        uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
     , parent_(parent)
     , rtcp_manager_(rtcpManager)
@@ -208,7 +208,9 @@ void TCPChannelResource::send_pending_open_logical_ports()
     }
 }
 
-void TCPChannelResource::add_logical_port_response(const TCPTransactionId &id, bool success)
+void TCPChannelResource::add_logical_port_response(
+        const TCPTransactionId &id,
+        bool success)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     auto it = negotiating_logical_ports_.find(id);
@@ -278,7 +280,8 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(uint16_t closedPor
     }
 }
 
-void TCPChannelResource::process_check_logical_ports_response(const TCPTransactionId &transactionId,
+void TCPChannelResource::process_check_logical_ports_response(
+        const TCPTransactionId &transactionId,
         const std::vector<uint16_t> &availablePorts)
 {
     auto it = last_checked_logical_port_.find(transactionId);

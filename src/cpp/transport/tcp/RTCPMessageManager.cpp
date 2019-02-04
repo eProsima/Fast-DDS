@@ -35,7 +35,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-static void endpoint_to_locator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator)
+static void endpoint_to_locator(
+        const asio::ip::tcp::endpoint& endpoint,
+        Locator_t& locator)
 {
     if (endpoint.protocol() == asio::ip::tcp::v4())
     {
@@ -52,7 +54,10 @@ static void endpoint_to_locator(const asio::ip::tcp::endpoint& endpoint, Locator
     IPLocator::setPhysicalPort(locator, endpoint.port());
 }
 
-static void readSerializedPayload(SerializedPayload_t &payload, const octet* data, size_t size)
+static void readSerializedPayload(
+        SerializedPayload_t &payload,
+        const octet* data,
+        size_t size)
 {
     payload.reserve(static_cast<uint32_t>(size));
     memcpy(&payload.encapsulation, data, 2);
@@ -65,7 +70,9 @@ RTCPMessageManager::~RTCPMessageManager()
 {
 }
 
-size_t RTCPMessageManager::sendMessage(TCPChannelResource *p_channel_resource, const CDRMessage_t &msg) const
+size_t RTCPMessageManager::sendMessage(
+        TCPChannelResource *p_channel_resource,
+        const CDRMessage_t &msg) const
 {
     size_t send = mTransport->send(p_channel_resource, msg.buffer, msg.length);
     if (send != msg.length)
@@ -76,8 +83,12 @@ size_t RTCPMessageManager::sendMessage(TCPChannelResource *p_channel_resource, c
     return send;
 }
 
-bool RTCPMessageManager::sendData(TCPChannelResource *p_channel_resource, TCPCPMKind kind,
-        const TCPTransactionId &transaction_id, const SerializedPayload_t *payload, const ResponseCode respCode)
+bool RTCPMessageManager::sendData(
+        TCPChannelResource *p_channel_resource,
+        TCPCPMKind kind,
+        const TCPTransactionId &transaction_id,
+        const SerializedPayload_t *payload,
+        const ResponseCode respCode)
 {
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
@@ -103,7 +114,9 @@ bool RTCPMessageManager::sendData(TCPChannelResource *p_channel_resource, TCPCPM
     return sendMessage(p_channel_resource, msg) > 0;
 }
 
-uint32_t& RTCPMessageManager::addToCRC(uint32_t &crc, octet data)
+uint32_t& RTCPMessageManager::addToCRC(
+        uint32_t &crc,
+        octet data)
 {
     static uint32_t max = 0xffffffff;
     if (crc + data < crc)
@@ -117,9 +130,13 @@ uint32_t& RTCPMessageManager::addToCRC(uint32_t &crc, octet data)
     return crc;
 }
 
-void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &transaction_id,
-    TCPControlMsgHeader &retCtrlHeader, TCPHeader &header, const SerializedPayload_t *payload,
-    const ResponseCode *respCode)
+void RTCPMessageManager::fillHeaders(
+        TCPCPMKind kind,
+        const TCPTransactionId &transaction_id,
+        TCPControlMsgHeader &retCtrlHeader,
+        TCPHeader &header,
+        const SerializedPayload_t *payload,
+        const ResponseCode *respCode)
 {
     retCtrlHeader.kind(kind);
     retCtrlHeader.length() = static_cast<uint16_t>(TCPControlMsgHeader::size());
@@ -264,14 +281,17 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(TCPChannelResource *p
     return id;
 }
 
-TCPTransactionId RTCPMessageManager::sendOpenLogicalPortRequest(TCPChannelResource *p_channel_resource, uint16_t port)
+TCPTransactionId RTCPMessageManager::sendOpenLogicalPortRequest(
+        TCPChannelResource *p_channel_resource,
+        uint16_t port)
 {
     OpenLogicalPortRequest_t request;
     request.logicalPort(port);
     return sendOpenLogicalPortRequest(p_channel_resource, request);
 }
 
-TCPTransactionId RTCPMessageManager::sendOpenLogicalPortRequest(TCPChannelResource *p_channel_resource,
+TCPTransactionId RTCPMessageManager::sendOpenLogicalPortRequest(
+        TCPChannelResource *p_channel_resource,
         OpenLogicalPortRequest_t &request)
 {
     SerializedPayload_t payload(static_cast<uint32_t>(OpenLogicalPortRequest_t::getBufferCdrSerializedSize(request)));
@@ -282,7 +302,8 @@ TCPTransactionId RTCPMessageManager::sendOpenLogicalPortRequest(TCPChannelResour
     return id;
 }
 
-TCPTransactionId RTCPMessageManager::sendCheckLogicalPortsRequest(TCPChannelResource *p_channel_resource,
+TCPTransactionId RTCPMessageManager::sendCheckLogicalPortsRequest(
+        TCPChannelResource *p_channel_resource,
         std::vector<uint16_t> &ports)
 {
     CheckLogicalPortsRequest_t request;
@@ -290,7 +311,8 @@ TCPTransactionId RTCPMessageManager::sendCheckLogicalPortsRequest(TCPChannelReso
     return sendCheckLogicalPortsRequest(p_channel_resource, request);
 }
 
-TCPTransactionId RTCPMessageManager::sendCheckLogicalPortsRequest(TCPChannelResource *p_channel_resource,
+TCPTransactionId RTCPMessageManager::sendCheckLogicalPortsRequest(
+        TCPChannelResource *p_channel_resource,
         CheckLogicalPortsRequest_t &request)
 {
     SerializedPayload_t payload(static_cast<uint32_t>(CheckLogicalPortsRequest_t::getBufferCdrSerializedSize(request)));
@@ -301,7 +323,8 @@ TCPTransactionId RTCPMessageManager::sendCheckLogicalPortsRequest(TCPChannelReso
     return id;
 }
 
-TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(TCPChannelResource *p_channel_resource,
+TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(
+        TCPChannelResource *p_channel_resource,
         KeepAliveRequest_t &request)
 {
     SerializedPayload_t payload(static_cast<uint32_t>(KeepAliveRequest_t::getBufferCdrSerializedSize(request)));
@@ -319,8 +342,9 @@ TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(TCPChannelResource *p_
     return sendKeepAliveRequest(p_channel_resource, request);
 }
 
-TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(TCPChannelResource *p_channel_resource,
-    LogicalPortIsClosedRequest_t &request)
+TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(
+        TCPChannelResource *p_channel_resource,
+        LogicalPortIsClosedRequest_t &request)
 {
     SerializedPayload_t payload(static_cast<uint32_t>(
         LogicalPortIsClosedRequest_t::getBufferCdrSerializedSize(request)));
@@ -332,7 +356,9 @@ TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(TCPChannelRe
     return id;
 }
 
-TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(TCPChannelResource *p_channel_resource, uint16_t port)
+TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(
+        TCPChannelResource *p_channel_resource,
+        uint16_t port)
 {
     LogicalPortIsClosedRequest_t request;
     request.logicalPort(port);
@@ -347,8 +373,11 @@ TCPTransactionId RTCPMessageManager::sendUnbindConnectionRequest(TCPChannelResou
     return id;
 }
 
-ResponseCode RTCPMessageManager::processBindConnectionRequest(TCPChannelResource *p_channel_resource,
-        const ConnectionRequest_t &request, const TCPTransactionId &transaction_id, Locator_t &localLocator)
+ResponseCode RTCPMessageManager::processBindConnectionRequest(
+        TCPChannelResource *p_channel_resource,
+        const ConnectionRequest_t &request,
+        const TCPTransactionId &transaction_id,
+        Locator_t &localLocator)
 {
     BindConnectionResponse_t response;
 
@@ -385,8 +414,10 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(TCPChannelResource
     return RETCODE_OK;
 }
 
-ResponseCode RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResource *p_channel_resource,
-    const OpenLogicalPortRequest_t &request, const TCPTransactionId &transaction_id)
+ResponseCode RTCPMessageManager::processOpenLogicalPortRequest(
+        TCPChannelResource *p_channel_resource,
+        const OpenLogicalPortRequest_t &request,
+        const TCPTransactionId &transaction_id)
 {
     if (!p_channel_resource->connection_established())
     {
@@ -405,8 +436,10 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortRequest(TCPChannelResourc
     return RETCODE_OK;
 }
 
-void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *p_channel_resource,
-    const CheckLogicalPortsRequest_t &request, const TCPTransactionId &transaction_id)
+void RTCPMessageManager::processCheckLogicalPortsRequest(
+        TCPChannelResource *p_channel_resource,
+        const CheckLogicalPortsRequest_t &request,
+        const TCPTransactionId &transaction_id)
 {
     CheckLogicalPortsResponse_t response;
     if (!p_channel_resource->connection_established())
@@ -442,8 +475,10 @@ void RTCPMessageManager::processCheckLogicalPortsRequest(TCPChannelResource *p_c
     }
 }
 
-ResponseCode RTCPMessageManager::processKeepAliveRequest(TCPChannelResource *p_channel_resource,
-        const KeepAliveRequest_t &request, const TCPTransactionId &transaction_id)
+ResponseCode RTCPMessageManager::processKeepAliveRequest(
+        TCPChannelResource *p_channel_resource,
+        const KeepAliveRequest_t &request,
+        const TCPTransactionId &transaction_id)
 {
     if (!p_channel_resource->connection_established())
     {
@@ -461,8 +496,10 @@ ResponseCode RTCPMessageManager::processKeepAliveRequest(TCPChannelResource *p_c
     return RETCODE_OK;
 }
 
-void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPChannelResource* p_channel_resource,
-        const LogicalPortIsClosedRequest_t &request, const TCPTransactionId & transaction_id)
+void RTCPMessageManager::processLogicalPortIsClosedRequest(
+        TCPChannelResource* p_channel_resource,
+        const LogicalPortIsClosedRequest_t &request,
+        const TCPTransactionId & transaction_id)
 {
     if (!p_channel_resource->connection_established())
     {
@@ -474,8 +511,10 @@ void RTCPMessageManager::processLogicalPortIsClosedRequest(TCPChannelResource* p
     }
 }
 
-ResponseCode RTCPMessageManager::processBindConnectionResponse(TCPChannelResource *p_channel_resource,
-        const BindConnectionResponse_t &/*response*/, const TCPTransactionId &transaction_id)
+ResponseCode RTCPMessageManager::processBindConnectionResponse(
+        TCPChannelResource *p_channel_resource,
+        const BindConnectionResponse_t &/*response*/,
+        const TCPTransactionId &transaction_id)
 {
     if (findTransactionId(transaction_id))
     {
@@ -492,8 +531,10 @@ ResponseCode RTCPMessageManager::processBindConnectionResponse(TCPChannelResourc
     }
 }
 
-ResponseCode RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelResource *p_channel_resource,
-        const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transaction_id)
+ResponseCode RTCPMessageManager::processCheckLogicalPortsResponse(
+        TCPChannelResource *p_channel_resource,
+        const CheckLogicalPortsResponse_t &response,
+        const TCPTransactionId &transaction_id)
 {
     if (findTransactionId(transaction_id))
     {
@@ -508,8 +549,11 @@ ResponseCode RTCPMessageManager::processCheckLogicalPortsResponse(TCPChannelReso
     }
 }
 
-ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResource *p_channel_resource,
-        ResponseCode respCode, const TCPTransactionId &transaction_id, Locator_t &/*remote_locator*/)
+ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
+        TCPChannelResource *p_channel_resource,
+        ResponseCode respCode,
+        const TCPTransactionId &transaction_id,
+        Locator_t &/*remote_locator*/)
 {
     if (findTransactionId(transaction_id))
     {
@@ -539,8 +583,10 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(TCPChannelResour
     return RETCODE_OK;
 }
 
-ResponseCode RTCPMessageManager::processKeepAliveResponse(TCPChannelResource *p_channel_resource,
-        ResponseCode respCode, const TCPTransactionId &transaction_id)
+ResponseCode RTCPMessageManager::processKeepAliveResponse(
+        TCPChannelResource *p_channel_resource,
+        ResponseCode respCode,
+        const TCPTransactionId &transaction_id)
 {
     if (findTransactionId(transaction_id))
     {
@@ -563,7 +609,9 @@ ResponseCode RTCPMessageManager::processKeepAliveResponse(TCPChannelResource *p_
     return RETCODE_OK;
 }
 
-ResponseCode RTCPMessageManager::processRTCPMessage(TCPChannelResource *p_channel_resource, octet* receive_buffer,
+ResponseCode RTCPMessageManager::processRTCPMessage(
+        TCPChannelResource *p_channel_resource,
+        octet* receive_buffer,
         size_t receivedSize)
 {
     ResponseCode responseCode(RETCODE_OK);

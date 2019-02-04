@@ -21,36 +21,36 @@ namespace fastrtps{
 namespace rtps{
 
 TCPAcceptorSecure::TCPAcceptorSecure(
-    asio::io_service& io_service,
-    asio::ssl::context& ssl_context,
-    TCPTransportInterface* parent,
-    const Locator_t& locator)
+        asio::io_service& io_service,
+        asio::ssl::context& ssl_context,
+        TCPTransportInterface* parent,
+        const Locator_t& locator)
     : TCPAcceptor(io_service, parent, locator)
 {
     secure_socket_ = tcp_secure::createTCPSocket(io_service, ssl_context);
 }
 
 TCPAcceptorSecure::TCPAcceptorSecure(
-    asio::io_service& io_service,
-    asio::ssl::context& ssl_context,
-    const std::string& interface,
-    const Locator_t& locator)
+        asio::io_service& io_service,
+        asio::ssl::context& ssl_context,
+        const std::string& interface,
+        const Locator_t& locator)
     : TCPAcceptor(io_service, interface, locator)
 {
     secure_socket_ = tcp_secure::createTCPSocket(io_service, ssl_context);
 }
 
-void TCPAcceptorSecure::Accept(
-    TCPTransportInterface* parent,
-    asio::io_service& io_service,
-    asio::ssl::context& ssl_context)
+void TCPAcceptorSecure::accept(
+        TCPTransportInterface* parent,
+        asio::io_service& io_service,
+        asio::ssl::context& ssl_context)
 {
     secure_socket_ = tcp_secure::createTCPSocket(io_service, ssl_context);
 
     //acceptor.async_accept(secure_socket_, endpoint,
     //    std::bind(&TCPTransportInterface::SocketAccepted,
     //    parent, this, std::placeholders::_1));
-    acceptor.async_accept(
+    acceptor_.async_accept(
         [this, parent](const std::error_code& error, asio::ip::tcp::socket socket)
         {
             parent->SecureSocketAccepted(this, std::move(socket), error);

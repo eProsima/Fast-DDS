@@ -170,7 +170,9 @@ void TCPTransportInterface::clean()
     delete rtcp_message_manager_;
 }
 
-TCPChannelResource* TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResource *p_channel_resource)
+TCPChannelResource* TCPTransportInterface::BindSocket(
+        const Locator_t& locator,
+        TCPChannelResource *p_channel_resource)
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     if (IsLocatorSupported(locator))
@@ -233,7 +235,10 @@ void TCPTransportInterface::DeleteSocket(TCPChannelResource *channelResource)
     }
 }
 
-bool TCPTransportInterface::check_crc(const TCPHeader &header, const octet *data, uint32_t size) const
+bool TCPTransportInterface::check_crc(
+        const TCPHeader &header,
+        const octet *data,
+        uint32_t size) const
 {
     uint32_t crc(0);
     for (uint32_t i = 0; i < size; ++i)
@@ -243,7 +248,10 @@ bool TCPTransportInterface::check_crc(const TCPHeader &header, const octet *data
     return crc == header.crc;
 }
 
-void TCPTransportInterface::calculate_crc(TCPHeader &header, const octet *data, uint32_t size) const
+void TCPTransportInterface::calculate_crc(
+        TCPHeader &header,
+        const octet *data,
+        uint32_t size) const
 {
     uint32_t crc(0);
     for (uint32_t i = 0; i < size; ++i)
@@ -289,11 +297,11 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 
             if (configuration()->apply_security)
             {
-                static_cast<TCPAcceptorSecure*>(newAcceptor)->Accept(this, io_service_, ssl_context_);
+                static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this, io_service_, ssl_context_);
             }
             else
             {
-                static_cast<TCPAcceptorBasic*>(newAcceptor)->Accept(this, io_service_);
+                static_cast<TCPAcceptorBasic*>(newAcceptor)->accept(this, io_service_);
             }
         }
         else
@@ -327,11 +335,11 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 
                 if (configuration()->apply_security)
                 {
-                    static_cast<TCPAcceptorSecure*>(newAcceptor)->Accept(this, io_service_, ssl_context_);
+                    static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this, io_service_, ssl_context_);
                 }
                 else
                 {
-                    static_cast<TCPAcceptorBasic*>(newAcceptor)->Accept(this, io_service_);
+                    static_cast<TCPAcceptorBasic*>(newAcceptor)->accept(this, io_service_);
                 }
             }
         }
@@ -364,7 +372,10 @@ bool TCPTransportInterface::enqueue_logical_output_port(const Locator_t& locator
     return false;
 }
 
-void TCPTransportInterface::fill_rtcp_header(TCPHeader& header, const octet* send_buffer, uint32_t send_buffer_size,
+void TCPTransportInterface::fill_rtcp_header(
+        TCPHeader& header,
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
         uint16_t logical_port) const
 {
     header.length = send_buffer_size + static_cast<uint32_t>(TCPHeader::size());
@@ -420,12 +431,16 @@ bool TCPTransportInterface::is_tcp_input_socket(const Locator_t& locator) const
     return false;
 }
 
-bool TCPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool TCPTransportInterface::DoInputLocatorsMatch(
+        const Locator_t& left,
+        const Locator_t& right) const
 {
     return IPLocator::getPhysicalPort(left) ==  IPLocator::getPhysicalPort(right);
 }
 
-bool TCPTransportInterface::DoOutputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool TCPTransportInterface::DoOutputLocatorsMatch(
+        const Locator_t& left,
+        const Locator_t& right) const
 {
     return compare_locator_ip_and_port(left, right);
 }
@@ -670,8 +685,10 @@ bool TCPTransportInterface::OpenExtraOutputChannel(const Locator_t& locator)
     return OpenOutputChannel(locator);
 }
 
-bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
-    uint32_t /*maxMsgSize*/)
+bool TCPTransportInterface::OpenInputChannel(
+        const Locator_t& locator,
+        TransportReceiverInterface* receiver,
+        uint32_t /*maxMsgSize*/)
 {
     bool success = false;
     if (IsLocatorSupported(locator))
@@ -779,8 +796,12 @@ void TCPTransportInterface::perform_listen_operation(TCPChannelResource *p_chann
     logInfo(RTCP, "End PerformListenOperation " << p_channel_resource->locator());
 }
 
-bool TCPTransportInterface::read_body(octet* receive_buffer, uint32_t receive_buffer_capacity,
-    uint32_t* bytes_received, TCPChannelResource *p_channel_resource, std::size_t body_size)
+bool TCPTransportInterface::read_body(
+        octet* receive_buffer,
+        uint32_t receive_buffer_capacity,
+        uint32_t* bytes_received,
+        TCPChannelResource *p_channel_resource,
+        std::size_t body_size)
 {
     //*bytes_received = static_cast<uint32_t>(read(*p_channel_resource->socket(),
     //    asio::buffer(receive_buffer, receive_buffer_capacity), transfer_exactly(body_size)));
@@ -802,8 +823,12 @@ bool TCPTransportInterface::read_body(octet* receive_buffer, uint32_t receive_bu
 * TCP Header is transparent to the caller, so receive_buffer
 * doesn't include it.
 * */
-bool TCPTransportInterface::Receive(TCPChannelResource *p_channel_resource, octet* receive_buffer,
-    uint32_t receive_buffer_capacity, uint32_t& receive_buffer_size, Locator_t& remote_locator)
+bool TCPTransportInterface::Receive(
+        TCPChannelResource *p_channel_resource,
+        octet* receive_buffer,
+        uint32_t receive_buffer_capacity,
+        uint32_t& receive_buffer_size,
+        Locator_t& remote_locator)
 {
     bool success = false;
 
@@ -869,8 +894,8 @@ bool TCPTransportInterface::Receive(TCPChannelResource *p_channel_resource, octe
                     else
                     {
                         logInfo(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logical_port);
-                        success = read_body(receive_buffer, receive_buffer_capacity, &receive_buffer_size, p_channel_resource,
-                            body_size);
+                        success = read_body(receive_buffer, receive_buffer_capacity, &receive_buffer_size,
+                            p_channel_resource, body_size);
                         //logInfo(RTCP_MSG_IN, " Received [read_body]");
 
                         if (configuration()->check_crc && !check_crc(tcp_header, receive_buffer, receive_buffer_size))
@@ -883,7 +908,9 @@ bool TCPTransportInterface::Receive(TCPChannelResource *p_channel_resource, octe
                             //logInfo(RTCP_MSG_IN, " Receive [RTCP Control]  (" << receive_buffer_size+bytes_received
                             // << " bytes): " << receive_buffer_size << " bytes.");
                             ResponseCode responseCode =
-                                rtcp_message_manager_->processRTCPMessage(p_channel_resource, receive_buffer, body_size);
+                                rtcp_message_manager_->processRTCPMessage(
+                                    p_channel_resource, receive_buffer, body_size);
+
                             if (responseCode != RETCODE_OK)
                             {
                                 switch (responseCode)
@@ -939,8 +966,10 @@ bool TCPTransportInterface::Receive(TCPChannelResource *p_channel_resource, octe
     return success;
 }
 
-size_t TCPTransportInterface::send(TCPChannelResource* p_channel_resource, const octet* data,
-    size_t size, eSocketErrorCodes& errorCode) const
+size_t TCPTransportInterface::send(
+        TCPChannelResource* p_channel_resource,
+        const octet* data,
+        size_t size, eSocketErrorCodes& errorCode) const
 {
     size_t bytesSent = 0;
     try
@@ -987,15 +1016,21 @@ size_t TCPTransportInterface::send(TCPChannelResource* p_channel_resource, const
     return bytesSent;
 }
 
-size_t TCPTransportInterface::send(TCPChannelResource *p_channel_resource, const octet *data, size_t size) const
+size_t TCPTransportInterface::send(
+        TCPChannelResource *p_channel_resource,
+        const octet *data,
+        size_t size) const
 {
     eSocketErrorCodes error;
     return send(p_channel_resource, data, size, error);
 }
 
 
-bool TCPTransportInterface::send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& localLocator,
-    const Locator_t& remote_locator)
+bool TCPTransportInterface::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        const Locator_t& localLocator,
+        const Locator_t& remote_locator)
 {
     /*
     logInfo(RTCP, " SEND [RTPS Data] to locator " << IPLocator::getPhysicalPort(remote_locator) << ":" << \
@@ -1034,8 +1069,12 @@ bool TCPTransportInterface::send(const octet* send_buffer, uint32_t send_buffer_
     return result;
 }
 
-bool TCPTransportInterface::send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& /*localLocator*/,
-    const Locator_t& remote_locator, ChannelResource *p_channel_resource)
+bool TCPTransportInterface::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        const Locator_t& /*localLocator*/,
+        const Locator_t& remote_locator,
+        ChannelResource *p_channel_resource)
 {
     TCPChannelResource* tcpChannelResource = dynamic_cast<TCPChannelResource*>(p_channel_resource);
     if (tcpChannelResource != nullptr && tcpChannelResource->connection_established())
@@ -1089,8 +1128,11 @@ bool TCPTransportInterface::send(const octet* send_buffer, uint32_t send_buffer_
     }
 }
 
-bool TCPTransportInterface::send_through_socket(const octet* send_buffer, uint32_t send_buffer_size,
-    const Locator_t& remote_locator, TCPChannelResource *socket)
+bool TCPTransportInterface::send_through_socket(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        const Locator_t& remote_locator,
+        TCPChannelResource *socket)
 {
     auto destinationEndpoint = generate_endpoint(remote_locator, IPLocator::getPhysicalPort(remote_locator));
 
@@ -1159,7 +1201,9 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
     return result;
 }
 
-void TCPTransportInterface::SocketAccepted(TCPAcceptorBasic* acceptor, const asio::error_code& error)
+void TCPTransportInterface::SocketAccepted(
+        TCPAcceptorBasic* acceptor,
+        const asio::error_code& error)
 {
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -1175,13 +1219,13 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptorBasic* acceptor, const asi
     if (!error.value())
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator)) != socket_Acceptors_.end())
+        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
         {
 #if defined(ASIO_HAS_MOVE)
-            tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(std::move(acceptor->socket));
+            tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(std::move(acceptor->socket()));
 #else
-            tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(acceptor->socket);
-            acceptor->socket = nullptr;
+            tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(acceptor->socket());
+            acceptor->socket(nullptr);
 #endif
 
             //tcp_basic::getSocketPtr(unicastSocket)->set_option(
@@ -1205,7 +1249,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptorBasic* acceptor, const asi
                 this, p_channel_resource));
 
 
-            logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->locator)
+            logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->locator())
                 << ", remote: " << p_channel_resource->remote_endpoint().port()
                 << ") IP: " << p_channel_resource->remote_endpoint().address());
 
@@ -1220,7 +1264,7 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptorBasic* acceptor, const asi
         else
         {
             logError(RTPC, "Incomming connection from unknown Acceptor: "
-                << IPLocator::getPhysicalPort(acceptor->locator));
+                << IPLocator::getPhysicalPort(acceptor->locator()));
             return;
         }
     }
@@ -1234,17 +1278,17 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptorBasic* acceptor, const asi
     {
         // Accept new connections for the same port. Could be not found when exiting.
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator)) != socket_Acceptors_.end())
+        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
         {
-            acceptor->Accept(this, io_service_);
+            acceptor->accept(this, io_service_);
         }
     }
 }
 
 void TCPTransportInterface::SecureSocketAccepted(
-    TCPAcceptorSecure* acceptor,
-    asio::ip::tcp::socket&& socket,
-    const asio::error_code& error)
+        TCPAcceptorSecure* acceptor,
+        asio::ip::tcp::socket&& socket,
+        const asio::error_code& error)
 {
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -1260,7 +1304,7 @@ void TCPTransportInterface::SecureSocketAccepted(
     if (!error.value())
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator)) != socket_Acceptors_.end())
+        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
         {
             // Store the new connection.
             TCPChannelResource *p_channel_resource = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
@@ -1275,7 +1319,7 @@ void TCPTransportInterface::SecureSocketAccepted(
                 this, p_channel_resource));
 
 
-            logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->locator)
+            logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->locator())
                 << ", remote: " << p_channel_resource->remote_endpoint().port()
                 << ") IP: " << p_channel_resource->remote_endpoint().address());
 
@@ -1290,7 +1334,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         else
         {
             logError(RTPC, "Incomming connection from unknown Acceptor: "
-                << IPLocator::getPhysicalPort(acceptor->locator));
+                << IPLocator::getPhysicalPort(acceptor->locator()));
             return;
         }
     }
@@ -1304,14 +1348,16 @@ void TCPTransportInterface::SecureSocketAccepted(
     {
         // Accept new connections for the same port. Could be not found when exiting.
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator)) != socket_Acceptors_.end())
+        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
         {
-            acceptor->Accept(this, io_service_, ssl_context_);
+            acceptor->accept(this, io_service_, ssl_context_);
         }
     }
 }
 
-void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error_code& error)
+void TCPTransportInterface::SocketConnected(
+        Locator_t locator,
+        const asio::error_code& error)
 {
     TCPChannelResource* outputSocket = nullptr;
     {
@@ -1376,7 +1422,9 @@ void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
     }
 }
 
-bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(LocatorList_t &, uint32_t ) const
+bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(
+        LocatorList_t &,
+        uint32_t ) const
 {
     // TCP doesn't have multicast support
     return true;
@@ -1393,7 +1441,9 @@ bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(LocatorList_t &
     return true;
 }
 
-bool TCPTransportInterface::getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const
+bool TCPTransportInterface::getDefaultUnicastLocators(
+        LocatorList_t &locators,
+        uint32_t unicast_port) const
 {
     Locator_t locator;
     locator.kind = transport_kind_;
@@ -1403,13 +1453,16 @@ bool TCPTransportInterface::getDefaultUnicastLocators(LocatorList_t &locators, u
     return true;
 }
 
-bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &, uint32_t) const
+bool TCPTransportInterface::fillMetatrafficMulticastLocator(
+        Locator_t &,
+        uint32_t) const
 {
     // TCP doesn't have multicast support
     return true;
 }
 
-bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
+bool TCPTransportInterface::fillMetatrafficUnicastLocator(
+        Locator_t &locator,
         uint32_t metatraffic_unicast_port) const
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
@@ -1438,8 +1491,11 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
     return true;
 }
 
-bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params,
-        uint32_t domainId, LocatorList_t& list) const
+bool TCPTransportInterface::configureInitialPeerLocator(
+        Locator_t &locator,
+        const PortParameters &port_params,
+        uint32_t domainId,
+        LocatorList_t& list) const
 {
     if(IPLocator::getPhysicalPort(locator) == 0)
     {
@@ -1476,7 +1532,9 @@ bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
     return true;
 }
 
-bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
+bool TCPTransportInterface::fillUnicastLocator(
+        Locator_t &locator,
+        uint32_t well_known_port) const
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {

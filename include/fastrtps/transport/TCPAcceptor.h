@@ -26,12 +26,13 @@ class TCPTransportInterface;
 
 class TCPAcceptor
 {
-public:
-    asio::ip::tcp::acceptor acceptor;
-    Locator_t locator;
-    asio::ip::tcp::endpoint endpoint;
-    std::vector<Locator_t> pending_out_locators;
+protected:
+    asio::ip::tcp::acceptor acceptor_;
+    Locator_t locator_;
+    asio::ip::tcp::endpoint endpoint_;
+    std::vector<Locator_t> pending_out_locators_;
 
+public:
     TCPAcceptor(
         asio::io_service& io_service,
         TCPTransportInterface* parent,
@@ -41,6 +42,16 @@ public:
         asio::io_service& io_service,
         const std::string& interface,
         const Locator_t& locator);
+
+    Locator_t locator() const
+    {
+        return locator_;
+    }
+
+    Locator_t& locator()
+    {
+        return locator_;
+    }
 };
 
 

@@ -24,9 +24,9 @@ namespace rtps{
 
 class TCPAcceptorBasic : public TCPAcceptor
 {
-public:
-    tcp_basic::eProsimaTCPSocket socket;
+    tcp_basic::eProsimaTCPSocket socket_;
 
+public:
     /**
     * Constructor
     * @param io_service Reference to the ASIO service.
@@ -54,13 +54,25 @@ public:
     */
     ~TCPAcceptorBasic()
     {
-        try { asio::error_code ec; socket.cancel(ec); }
+        try { asio::error_code ec; socket_.cancel(ec); }
         catch (...) {}
-        socket.close();
+        socket_.close();
     }
 
     //! Method to start the accepting process.
-    void Accept(TCPTransportInterface* parent, asio::io_service&);
+    void accept(TCPTransportInterface* parent, asio::io_service&);
+
+    tcp_basic::eProsimaTCPSocket socket()
+    {
+        return tcp_basic::moveSocket(socket_);
+    }
+
+#if !defined ASIO_HAS_MOVE
+    void socket(tcp_basic::eProsimaTCPSocket socket)
+    {
+        socket_ = tcp_basic::moveSocket(socket);
+    }
+#endif
 };
 
 

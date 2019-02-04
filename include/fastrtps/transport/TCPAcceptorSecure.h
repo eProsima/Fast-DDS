@@ -25,9 +25,9 @@ namespace rtps{
 
 class TCPAcceptorSecure : public TCPAcceptor
 {
-public:
     tcp_secure::eProsimaTCPSocket secure_socket_;
 
+public:
     /**
     * Constructor
     * @param io_service Reference to the ASIO service.
@@ -65,7 +65,7 @@ public:
     }
 
     //! Method to start the accepting process.
-    void Accept(TCPTransportInterface* parent, asio::io_service&, asio::ssl::context&);
+    void accept(TCPTransportInterface* parent, asio::io_service&, asio::ssl::context&);
 };
 
 

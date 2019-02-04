@@ -25,12 +25,12 @@ using namespace tcp_secure;
 using namespace asio;
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
-    TCPTransportInterface* parent,
-    RTCPMessageManager* rtcpManager,
-    asio::io_service& service,
-    asio::ssl::context& ssl_context,
-    const Locator_t& locator,
-    uint32_t maxMsgSize)
+        TCPTransportInterface* parent,
+        RTCPMessageManager* rtcpManager,
+        asio::io_service& service,
+        asio::ssl::context& ssl_context,
+        const Locator_t& locator,
+        uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
@@ -40,12 +40,12 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
 }
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
-    TCPTransportInterface* parent,
-    RTCPMessageManager* rtcpManager,
-    asio::io_service& service,
-    asio::ssl::context& ssl_context,
-    asio::ip::tcp::socket&& socket,
-    uint32_t maxMsgSize)
+        TCPTransportInterface* parent,
+        RTCPMessageManager* rtcpManager,
+        asio::io_service& service,
+        asio::ssl::context& ssl_context,
+        asio::ip::tcp::socket&& socket,
+        uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
@@ -204,9 +204,9 @@ void TCPChannelResourceSecure::disconnect()
 }
 
 uint32_t TCPChannelResourceSecure::read(
-    octet* buffer,
-    uint32_t buffer_capacity,
-    std::size_t size)
+        octet* buffer,
+        uint32_t buffer_capacity,
+        std::size_t size)
 {
     size_t rec = 0;
 
@@ -218,10 +218,10 @@ uint32_t TCPChannelResourceSecure::read(
 }
 
 uint32_t TCPChannelResourceSecure::read(
-    octet* buffer,
-    uint32_t buffer_capacity,
-    std::size_t size,
-    asio::error_code& ec)
+        octet* buffer,
+        uint32_t buffer_capacity,
+        std::size_t size,
+        asio::error_code& ec)
 {
     size_t rec = 0;
     while (rec < size && !ec)
@@ -232,9 +232,9 @@ uint32_t TCPChannelResourceSecure::read(
 }
 
 uint32_t TCPChannelResourceSecure::send(
-    const octet* data,
-    size_t size,
-    asio::error_code& ec)
+        const octet* data,
+        size_t size,
+        asio::error_code& ec)
 {
     size_t sent = 0;
 

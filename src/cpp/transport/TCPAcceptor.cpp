@@ -21,25 +21,25 @@ namespace fastrtps{
 namespace rtps{
 
 TCPAcceptor::TCPAcceptor(
-    asio::io_service& io_service,
-    TCPTransportInterface* parent,
-    const Locator_t& locator)
-    : acceptor(io_service, parent->generate_endpoint(IPLocator::getPhysicalPort(locator)))
-    , locator(locator)
+        asio::io_service& io_service,
+        TCPTransportInterface* parent,
+        const Locator_t& locator)
+    : acceptor_(io_service, parent->generate_endpoint(IPLocator::getPhysicalPort(locator)))
+    , locator_(locator)
 {
-    endpoint = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator));
+    endpoint_ = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator_));
 }
 
 TCPAcceptor::TCPAcceptor(
-    asio::io_service& io_service,
-    const std::string& interface,
-    const Locator_t& locator)
-    : acceptor(io_service, asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
+        asio::io_service& io_service,
+        const std::string& interface,
+        const Locator_t& locator)
+    : acceptor_(io_service, asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
         IPLocator::getPhysicalPort(locator)))
-    , locator(locator)
+    , locator_(locator)
 {
-    endpoint = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
-        IPLocator::getPhysicalPort(locator));
+    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
+        IPLocator::getPhysicalPort(locator_));
 }
 
 } // namespace rtps

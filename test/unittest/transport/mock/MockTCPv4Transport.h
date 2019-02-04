@@ -24,7 +24,7 @@ namespace rtps{
 
 class MockTCPv4Transport : public TCPv4Transport
 {
-    public:
+public:
 
     MockTCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     {
