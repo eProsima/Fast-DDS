@@ -24,4 +24,6 @@
 
 extern "C" int pthread_mutex_lock(pthread_mutex_t* mutex);
 
+extern "C" int pthread_mutex_timedlock(pthread_mutex_t* mutex, const struct timespec* abs_timeout);
+
 #endif // __TEST_REALTIME_MUTEX_HPP__

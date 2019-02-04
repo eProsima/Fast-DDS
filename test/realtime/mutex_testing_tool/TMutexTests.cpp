@@ -75,6 +75,9 @@ TEST(TMutexTests, lock_mutexes)
 
     tmutex_stop_recording();
 
+    ASSERT_TRUE(4 == tmutex_get_num_lock_type());
+    ASSERT_TRUE(0 == tmutex_get_num_timedlock_type());
+
     for (size_t count = 0; count < tmutex_get_num_mutexes(); ++count)
     {
         tmutex_lock_mutex(count);
@@ -119,13 +122,16 @@ TEST(TMutexTests, lock_timed_mutexes)
 
     tmutex_start_recording();
 
-    mutex_1.lock();
-    mutex_2.lock();
+    mutex_1.try_lock_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+    mutex_2.try_lock_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
 
     mutex_2.unlock();
     mutex_1.unlock();
 
     tmutex_stop_recording();
+
+    ASSERT_TRUE(0 == tmutex_get_num_lock_type());
+    ASSERT_TRUE(2 == tmutex_get_num_timedlock_type());
 
     for (size_t count = 0; count < tmutex_get_num_mutexes(); ++count)
     {

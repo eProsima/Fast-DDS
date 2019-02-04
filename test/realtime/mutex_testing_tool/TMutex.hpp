@@ -37,11 +37,20 @@ using pid_t = int;
 namespace eprosima {
 namespace fastrtps {
 
+enum LockType : int32_t
+{
+    LOCK = 0,
+    TIMED_LOCK = 1
+};
+
 //! Stores the thread pid whose mutexes will be recorded.
 extern std::atomic<pid_t> g_tmutex_thread_pid;
 
 //! Store the original pthread_mutex_lock function
-extern int (*g_origin_lock_func)(pthread_mutex_t*); 
+extern int (*g_origin_lock_func)(pthread_mutex_t*);
+
+//! Store the original pthread_mutex_timedlock function
+extern int (*g_origin_timedlock_func)(pthread_mutex_t*, const struct timespec*);
 
 /*!
  * @brief Records all mutexes used by the thread that calls this function.
@@ -55,9 +64,10 @@ void tmutex_stop_recording();
 
 /*!
  * @brief If recording process is active then the mutex will be recorded.
+ * @param[in] type Type of the lock used by the mutex.
  * @param[in] mutex Pointer of the mutex to be recorded.
  */
-void tmutex_record_mutex_(pthread_mutex_t* mutex);
+void tmutex_record_mutex_(LockType type, pthread_mutex_t* mutex);
 
 /*!
  * @brief Gets the pointer of the selected recorded mutex.
@@ -83,6 +93,18 @@ void tmutex_unlock_mutex(size_t index);
  * @return Number of mutex recorded.
  */
 size_t tmutex_get_num_mutexes();
+
+/*!
+ * @brief Returns the number of mutex using a normal lock.
+ * @return Number of mutex.
+ */
+size_t tmutex_get_num_lock_type();
+
+/*!
+ * @brief Returns the number of mutex using a timed lock.
+ * @return Number of mutex.
+ */
+size_t tmutex_get_num_timedlock_type();
 
 } //namespace fastrtps
 } //namespace eprosima

@@ -20,6 +20,7 @@
 #include "TMutex.hpp"
 
 #include <array>
+#include <algorithm>
 #include <cassert>
 
 using namespace eprosima::fastrtps;
@@ -29,15 +30,17 @@ namespace fastrtps {
 
 std::atomic<pid_t> g_tmutex_thread_pid(0);
 int (*g_origin_lock_func)(pthread_mutex_t*){nullptr};
+int (*g_origin_timedlock_func)(pthread_mutex_t*, const struct timespec*){nullptr};
 
 typedef struct
 {
+    LockType type;
     pthread_mutex_t* mutex;
     uint32_t count;
 } tmutex_record;
 
 constexpr size_t g_tmutex_records_max_length = 10;
-std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{{nullptr, 0}}};
+std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{{LockType::LOCK, nullptr, 0}}};
 int32_t g_tmutex_records_end = -1;
 
 int32_t tmutex_find_record(pthread_mutex_t* mutex)
@@ -63,7 +66,7 @@ void eprosima::fastrtps::tmutex_start_recording()
 {
     assert(0 == g_tmutex_thread_pid);
     g_tmutex_thread_pid = GET_PID();
-    g_tmutex_records = {{{nullptr, 0}}};
+    g_tmutex_records = {{{LockType::LOCK, nullptr, 0}}};
     g_tmutex_records_end = -1;
 }
 
@@ -73,7 +76,7 @@ void eprosima::fastrtps::tmutex_stop_recording()
     g_tmutex_thread_pid = 0;
 }
 
-void eprosima::fastrtps::tmutex_record_mutex_(pthread_mutex_t* mutex)
+void eprosima::fastrtps::tmutex_record_mutex_(LockType type, pthread_mutex_t* mutex)
 {
     assert(0 < g_tmutex_thread_pid);
 
@@ -84,7 +87,12 @@ void eprosima::fastrtps::tmutex_record_mutex_(pthread_mutex_t* mutex)
     {
         assert(g_tmutex_records_max_length > g_tmutex_records_end + 1);
         position = ++g_tmutex_records_end;
+        g_tmutex_records[position].type = type;
         g_tmutex_records[position].mutex = mutex;
+    }
+    else if (g_tmutex_records[position].type != LockType::LOCK)
+    {
+        g_tmutex_records[position].type = type;
     }
 
     ++g_tmutex_records[position].count;
@@ -94,6 +102,44 @@ size_t eprosima::fastrtps::tmutex_get_num_mutexes()
 {
     assert(0 == g_tmutex_thread_pid);
     return g_tmutex_records_end + 1;
+}
+
+size_t eprosima::fastrtps::tmutex_get_num_lock_type()
+{
+    size_t counter = 0;
+
+    if(-1 < g_tmutex_records_end)
+    {
+        std::for_each(g_tmutex_records.begin(), g_tmutex_records.begin() + g_tmutex_records_end + 1,
+                [&](const tmutex_record& record)
+                {
+                    if(record.type == LockType::LOCK)
+                    {
+                        ++counter;
+                    }
+                });
+    }
+
+    return counter;
+}
+
+size_t eprosima::fastrtps::tmutex_get_num_timedlock_type()
+{
+    size_t counter = 0;
+
+    if(-1 < g_tmutex_records_end)
+    {
+        std::for_each(g_tmutex_records.begin(), g_tmutex_records.begin() + g_tmutex_records_end + 1,
+                [&](const tmutex_record& record)
+                {
+                    if(record.type == LockType::TIMED_LOCK)
+                    {
+                        ++counter;
+                    }
+                });
+    }
+
+    return counter;
 }
 
 pthread_mutex_t* eprosima::fastrtps::tmutex_get_mutex(const size_t index)
