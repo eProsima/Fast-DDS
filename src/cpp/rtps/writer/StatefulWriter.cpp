@@ -55,6 +55,8 @@ StatefulWriter::StatefulWriter(
     : RTPSWriter(pimpl, guid, att, hist, listen)
     , mp_periodicHB(nullptr)
     , m_times(att.times)
+    , matched_readers_(att.matched_readers_allocation)
+    , matched_readers_pool_(att.matched_readers_allocation)
     , all_acked_(false)
     , may_remove_change_(0)
     , disableHeartbeatPiggyback_(att.disableHeartbeatPiggyback)
@@ -71,6 +73,11 @@ StatefulWriter::StatefulWriter(
     else
         m_HBReaderEntityId = c_EntityId_Unknown;
     mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
+
+    for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)
+    {
+        matched_readers_pool_.push_back(new ReaderProxy(m_times, this));
+    }
 }
 
 
@@ -80,18 +87,24 @@ StatefulWriter::~StatefulWriter()
 
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
-    for (ReaderProxy* remote_reader : matched_readers)
+    // Stop all active proxies and pass them to the pool
+    while (!matched_readers_.empty())
     {
+        ReaderProxy* remote_reader = matched_readers_.back();
+        matched_readers_.pop_back();
         remote_reader->stop();
+        matched_readers_pool_.push_back(remote_reader);
     }
 
+    // Destroy heartbeat event
     if (mp_periodicHB != nullptr)
     {
         delete(mp_periodicHB);
         mp_periodicHB = nullptr;
     }
 
-    for (ReaderProxy* remote_reader : matched_readers)
+    // Delete all proxies in the pool
+    for (ReaderProxy* remote_reader : matched_readers_pool_)
     {
         delete(remote_reader);
     }
@@ -112,7 +125,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
     //TODO Think about when set liveliness assertion when writer is asynchronous.
     this->setLivelinessAsserted(true);
 
-    if(!matched_readers.empty())
+    if(!matched_readers_.empty())
     {
         if(!isAsync())
         {
@@ -120,7 +133,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
             bool expectsInlineQos = false;
             std::vector<GUID_t> guids(1);
 
-            for(ReaderProxy* it : matched_readers)
+            for(ReaderProxy* it : matched_readers_)
             {
                 ChangeForReader_t changeForReader(change);
 
@@ -180,7 +193,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
         }
         else
         {
-            for(ReaderProxy* it : matched_readers)
+            for(ReaderProxy* it : matched_readers_)
             {
                 ChangeForReader_t changeForReader(change);
 
@@ -222,7 +235,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
     logInfo(RTPS_WRITER,"Change "<< sequence_number << " to be removed.");
 
     // Invalidate CacheChange pointer in ReaderProxies.
-    for(ReaderProxy* it : matched_readers)
+    for(ReaderProxy* it : matched_readers_)
     {
         it->change_has_been_removed(sequence_number);
     }
@@ -245,7 +258,7 @@ void StatefulWriter::send_any_unsent_changes()
     {
         std::vector<GUID_t> guids(1);
 
-        for (auto remoteReader : matched_readers)
+        for (auto remoteReader : matched_readers_)
         {
             // For possible GAP
             std::set<SequenceNumber_t> irrelevant;
@@ -302,7 +315,7 @@ void StatefulWriter::send_any_unsent_changes()
         RTPSWriterCollector<ReaderProxy*> relevantChanges;
         StatefulWriterOrganizer notRelevantChanges;
 
-        for (auto remoteReader : matched_readers)
+        for (auto remoteReader : matched_readers_)
         {
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
             {
@@ -479,7 +492,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     std::vector<LocatorList_t> allLocatorLists;
 
     // Check if it is already matched.
-    for(ReaderProxy* it : matched_readers)
+    for(ReaderProxy* it : matched_readers_)
     {
         if(it->guid() == rdata.guid)
         {
@@ -488,6 +501,28 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         }
 
         allLocatorLists.push_back(it->remote_locators());
+    }
+
+    // Get a reader proxy from the inactive pool (or create a new one if necessary and allowed)
+    ReaderProxy* rp = nullptr;
+    if (matched_readers_pool_.empty())
+    {
+        size_t max_readers = matched_readers_pool_.max_size();
+        if (matched_readers_.size() + matched_readers_pool_.size() < max_readers)
+        {
+            rp = new ReaderProxy(m_times, this);
+        }
+        else
+        {
+            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
+                ") reached for writer " << m_guid << endl);
+            return false;
+        }
+    }
+    else
+    {
+        rp = matched_readers_pool_.back();
+        matched_readers_pool_.pop_back();
     }
 
     // Add info of new datareader.
@@ -503,7 +538,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     rdata.endpoint.unicastLocatorList =
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({rdata.endpoint.unicastLocatorList});
 
-    ReaderProxy* rp = new ReaderProxy(m_times, this);
     rp->start(rdata);
     std::set<SequenceNumber_t> not_relevant_changes;
 
@@ -562,7 +596,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         send_heartbeat_to_nts(*rp, false);
     }
 
-    matched_readers.push_back(rp);
+    matched_readers_.push_back(rp);
 
     logInfo(RTPS_WRITER, "Reader Proxy "<< rp->guid()<< " added to " << this->m_guid.entityId << " with "
             <<rp->reader_attributes().endpoint.unicastLocatorList.size()<<"(u)-"
@@ -578,14 +612,14 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 
     std::vector<LocatorList_t> allLocatorLists;
 
-    auto it = matched_readers.begin();
-    while(it != matched_readers.end())
+    auto it = matched_readers_.begin();
+    while(it != matched_readers_.end())
     {
         if((*it)->guid() == rdata.guid)
         {
             logInfo(RTPS_WRITER, "Reader Proxy removed: " << (*it)->guid());
             rproxy = std::move(*it);
-            it = matched_readers.erase(it);
+            it = matched_readers_.erase(it);
 
             continue;
         }
@@ -597,7 +631,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
     all_remote_readers_.remove(rdata.guid);
     update_cached_info_nts(allLocatorLists);
 
-    if(matched_readers.size()==0)
+    if(matched_readers_.size()==0)
         this->mp_periodicHB->cancel_timer();
 
     lock.unlock();
@@ -605,7 +639,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
     if(rproxy != nullptr)
     {
         rproxy->stop();
-        delete rproxy;
+        matched_readers_pool_.push_back(rproxy);
 
         check_acked_status();
 
@@ -619,7 +653,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 bool StatefulWriter::matched_reader_is_matched(const RemoteReaderAttributes& rdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(ReaderProxy* it : matched_readers)
+    for(ReaderProxy* it : matched_readers_)
     {
         if(it->guid() == rdata.guid)
         {
@@ -632,7 +666,7 @@ bool StatefulWriter::matched_reader_is_matched(const RemoteReaderAttributes& rda
 bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(ReaderProxy* it : matched_readers)
+    for(ReaderProxy* it : matched_readers_)
     {
         if(it->guid() == readerGuid)
         {
@@ -653,7 +687,7 @@ bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
         return false;
     }
 
-    return std::all_of(matched_readers.begin(), matched_readers.end(),
+    return std::all_of(matched_readers_.begin(), matched_readers_.end(),
         [this, change](const ReaderProxy* reader)
         {
             return reader->change_is_acked(change->sequenceNumber);
@@ -665,7 +699,7 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
     std::unique_lock<std::mutex> all_acked_lock(all_acked_mutex_);
 
-    all_acked_ = std::none_of(matched_readers.begin(), matched_readers.end(),
+    all_acked_ = std::none_of(matched_readers_.begin(), matched_readers_.end(),
         [](const ReaderProxy* reader)
         {
             return reader->has_changes();
@@ -688,7 +722,7 @@ void StatefulWriter::check_acked_status()
     bool all_acked = true;
     SequenceNumber_t min_low_mark;
 
-    for(ReaderProxy* it : matched_readers)
+    for(ReaderProxy* it : matched_readers_)
     {
         SequenceNumber_t reader_low_mark = it->changes_low_mark();
         if(min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
@@ -750,7 +784,7 @@ bool StatefulWriter::try_remove_change(std::chrono::microseconds& microseconds,
 
     SequenceNumber_t min_low_mark;
 
-    for(ReaderProxy* it : matched_readers)
+    for(ReaderProxy* it : matched_readers_)
     {
         SequenceNumber_t reader_low_mark = it->changes_low_mark();
         if (min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
@@ -806,14 +840,22 @@ void StatefulWriter::updateTimes(const WriterTimes& times)
     }
     if(m_times.nackResponseDelay != times.nackResponseDelay)
     {
-        for(ReaderProxy* it : matched_readers)
+        for (ReaderProxy* it : matched_readers_)
+        {
+            it->update_nack_response_interval(times.nackResponseDelay);
+        }
+        for (ReaderProxy* it : matched_readers_pool_)
         {
             it->update_nack_response_interval(times.nackResponseDelay);
         }
     }
     if(m_times.nackSupressionDuration != times.nackSupressionDuration)
     {
-        for (ReaderProxy* it : matched_readers)
+        for (ReaderProxy* it : matched_readers_)
+        {
+            it->update_nack_supression_interval(times.nackSupressionDuration);
+        }
+        for (ReaderProxy* it : matched_readers_pool_)
         {
             it->update_nack_supression_interval(times.nackSupressionDuration);
         }
@@ -839,7 +881,7 @@ bool StatefulWriter::send_periodic_heartbeat()
     if (m_separateSendingEnabled)
     {
 
-        for (ReaderProxy* it : matched_readers)
+        for (ReaderProxy* it : matched_readers_)
         {
             if (it->has_unacknowledged())
             {
@@ -864,7 +906,7 @@ bool StatefulWriter::send_periodic_heartbeat()
         {
             assert(firstSeq <= lastSeq);
 
-            unacked_changes = std::any_of(matched_readers.begin(), matched_readers.end(),
+            unacked_changes = std::any_of(matched_readers_.begin(), matched_readers_.end(),
                 [](const ReaderProxy* reader)
                 {
                     return reader->has_unacknowledged();
@@ -969,7 +1011,7 @@ void StatefulWriter::perform_nack_response(const GUID_t& reader_guid)
 {
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    for (auto remote_reader : matched_readers)
+    for (auto remote_reader : matched_readers_)
     {
         if (remote_reader->guid() == reader_guid)
         {
@@ -986,7 +1028,7 @@ void StatefulWriter::perform_nack_supression(const GUID_t& reader_guid)
 {
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    for (auto remote_reader : matched_readers)
+    for (auto remote_reader : matched_readers_)
     {
         if (remote_reader->guid() == reader_guid)
         {
@@ -1009,7 +1051,7 @@ bool StatefulWriter::process_acknack(
     result = (m_guid == writer_guid);
     if (result)
     {
-        for (auto remote_reader : matched_readers)
+        for (auto remote_reader : matched_readers_)
         {
             if (remote_reader->guid() == reader_guid)
             {
@@ -1057,7 +1099,7 @@ bool StatefulWriter::process_nack_frag(
     if (m_guid == writer_guid)
     {
         result = true;
-        for (auto remote_reader : matched_readers)
+        for (auto remote_reader : matched_readers_)
         {
             if (remote_reader->guid() == reader_guid)
             {

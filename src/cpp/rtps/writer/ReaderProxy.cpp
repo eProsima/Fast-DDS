@@ -54,6 +54,8 @@ ReaderProxy::ReaderProxy(
         TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
     nack_supression_event_ = std::make_shared <NackSupressionDuration>(writer_,
         TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+
+    stop();
 }
 
 ReaderProxy::~ReaderProxy()
@@ -80,6 +82,11 @@ void ReaderProxy::stop()
     is_active_ = false;
     reader_attributes_.guid = c_Guid_Unknown;
     disable_timers();
+
+    changes_for_reader_.clear();
+    last_acknack_count_ = 0;
+    last_nackfrag_count_ = 0;
+    changes_low_mark_ = SequenceNumber_t();
 }
 
 void ReaderProxy::disable_timers()

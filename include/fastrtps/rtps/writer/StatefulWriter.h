@@ -23,6 +23,7 @@
 
 #include "RTPSWriter.h"
 #include "timedevent/PeriodicHeartbeat.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 #include <condition_variable>
 #include <mutex>
 
@@ -65,8 +66,10 @@ private:
     //!WriterTimes
     WriterTimes m_times;
 
-    //! Vector containin all the associated ReaderProxies.
-    std::vector<ReaderProxy*> matched_readers;
+    //! Vector containing all the active ReaderProxies.
+    ResourceLimitedVector<ReaderProxy*> matched_readers_;
+    //! Vector containing all the inactive, ready for reuse, ReaderProxies.
+    ResourceLimitedVector<ReaderProxy*> matched_readers_pool_;
     //!EntityId used to send the HB.(only for builtin types performance)
     EntityId_t m_HBReaderEntityId;
     // TODO Join this mutex when main mutex would not be recursive.
@@ -182,7 +185,7 @@ public:
      */
     inline size_t getMatchedReadersSize() const
     {
-        return matched_readers.size();
+        return matched_readers_.size();
     }
 
     /**
