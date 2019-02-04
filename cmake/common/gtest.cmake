@@ -76,7 +76,7 @@ endmacro()
 
 macro(add_gtest test)
     # Parse arguments
-    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES)
+    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES LABELS)
     cmake_parse_arguments(GTEST "" "" "${multiValueArgs}" ${ARGN})
 
     if(GTEST_INDIVIDUAL)
@@ -114,6 +114,10 @@ macro(add_gtest test)
                 foreach(property ${GTEST_ENVIRONMENTS})
                     set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
+
+                # Add labels
+                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+
             endforeach()
         endforeach()
     else()
@@ -140,5 +144,8 @@ macro(add_gtest test)
         foreach(property ${GTEST_ENVIRONMENTS})
             set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "${property}")
         endforeach()
+
+        # Add labels
+        set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")
     endif()
 endmacro()

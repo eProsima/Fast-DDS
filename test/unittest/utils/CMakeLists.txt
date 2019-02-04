@@ -34,6 +34,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(BITMAPRANGETESTS_SOURCE
             BitmapRangeTests.cpp)
 
+        set(TMUTEXTESTS_SOURCE
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/Mutex.cpp
+            TMutexTests.cpp)
+
         include_directories(mock/)
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
