@@ -32,7 +32,7 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& interfaces)
             interfaces.end(),
             [](IPFinder::info_IP ip){return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;});
     interfaces.erase(new_end, interfaces.end());
-    std::for_each(interfaces.begin(), interfaces.end(), [](auto&& loc)
+    std::for_each(interfaces.begin(), interfaces.end(), [](IPFinder::info_IP& loc)
     {
         loc.locator.kind = LOCATOR_KIND_UDPv4;
     });
