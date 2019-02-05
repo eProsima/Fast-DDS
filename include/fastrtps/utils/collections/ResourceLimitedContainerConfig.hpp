@@ -33,9 +33,6 @@ namespace fastrtps {
 struct ResourceLimitedContainerConfig
 {
 
-#if defined(_MSC_VER) && _MSC_VER <= 1900
-
-    // Initializer list construction won't work on MSVS 2015 if you have struct fields initializers
     ResourceLimitedContainerConfig(
             size_t ini = 0, 
             size_t max = std::numeric_limits<size_t>::max(),
@@ -45,12 +42,6 @@ struct ResourceLimitedContainerConfig
         , increment(inc)
     {
     }
-
-    // MSVS 2015 is not able to treat our static inline methods as constexpr
-    #define ___CONSTEXPR___
-#else
-    #define ___CONSTEXPR___ constexpr
-#endif
 
     //! Number of elements to be preallocated in the collection.
     size_t initial = 0;
@@ -64,10 +55,9 @@ struct ResourceLimitedContainerConfig
      * @param size Number of elements to allocate.
      * @return Resource limits configuration.
      */
-    inline static ___CONSTEXPR___
-    ResourceLimitedContainerConfig fixed_size_configuration(size_t size)
+    inline static ResourceLimitedContainerConfig fixed_size_configuration(size_t size)
     {
-        return { size, size, 0 };
+        return ResourceLimitedContainerConfig(size, size, 0u);
     }
 
     /**
@@ -75,10 +65,9 @@ struct ResourceLimitedContainerConfig
      * @param increment Number of new elements to allocate when increasing the capacity of the collection.
      * @return Resource limits configuration.
      */
-    inline static ___CONSTEXPR___
-    ResourceLimitedContainerConfig dynamic_allocation_configuration(size_t increment = 1u)
+    inline static ResourceLimitedContainerConfig dynamic_allocation_configuration(size_t increment = 1u)
     {
-        return { 0, std::numeric_limits<size_t>::max(), increment ? increment : 1u };
+        return ResourceLimitedContainerConfig(0u, std::numeric_limits<size_t>::max(), increment ? increment : 1u);
     }
 
 };
