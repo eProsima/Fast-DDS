@@ -226,12 +226,12 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
 
     if (m_topicDiscoveryKind != NO_CHECK)
     {
-        if (m_type_id.m_type_identifier->_d() != 0)
+        if (m_type_id.m_type_identifier._d() != 0)
         {
             if (!m_type_id.addToCDRMessage(msg)) return false;
         }
 
-        if (m_type.m_type_object->_d() != 0)
+        if (m_type.m_type_object._d() != 0)
         {
             if (!m_type.addToCDRMessage(msg)) return false;
         }
@@ -444,7 +444,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 assert(p != nullptr);
                 m_type_id = *p;
                 m_topicDiscoveryKind = MINIMAL;
-                if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
+                if (m_type_id.m_type_identifier._d() == EK_COMPLETE)
                 {
                     m_topicDiscoveryKind = COMPLETE;
                 }
@@ -456,7 +456,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 assert(p != nullptr);
                 m_type = *p;
                 m_topicDiscoveryKind = MINIMAL;
-                if (m_type.m_type_object->_d() == EK_COMPLETE)
+                if (m_type.m_type_object._d() == EK_COMPLETE)
                 {
                     m_topicDiscoveryKind = COMPLETE;
                 }

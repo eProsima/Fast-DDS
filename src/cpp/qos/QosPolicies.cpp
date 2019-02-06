@@ -255,7 +255,7 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeIdentifier::getCdrSerializedSize(*m_type_identifier) + 4;
+    size_t size = TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -265,7 +265,7 @@ bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 
     ser.serialize_encapsulation();
 
-    m_type_identifier->serialize(ser);
+    m_type_identifier.serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
 
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
@@ -291,7 +291,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
     try
     {
-        m_type_identifier->deserialize(deser);
+        m_type_identifier.deserialize(deser);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
@@ -303,7 +303,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
 bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeObject::getCdrSerializedSize(*m_type_object) + 4;
+    size_t size = TypeObject::getCdrSerializedSize(m_type_object) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -313,7 +313,7 @@ bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 
     ser.serialize_encapsulation();
 
-    m_type_object->serialize(ser);
+    m_type_object.serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
 
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
@@ -339,7 +339,7 @@ bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
     try
     {
-        m_type_object->deserialize(deser);
+        m_type_object.deserialize(deser);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
