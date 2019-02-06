@@ -217,6 +217,10 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLHistoryQosPolicy(tinyxml2::XMLElement* elem, HistoryQosPolicy& historyQos, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLResourceLimitsQos(tinyxml2::XMLElement* elem, ResourceLimitsQosPolicy& resourceLimitsQos,
                                                         uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLContainerAllocationConfig(
+        tinyxml2::XMLElement* elem, 
+        ResourceLimitedContainerConfig& resourceLimitsQos,
+        uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret
     getXMLThroughputController(tinyxml2::XMLElement* elem, rtps::ThroughputControllerDescriptor& throughputController, uint8_t ident);

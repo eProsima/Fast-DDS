@@ -2113,6 +2113,12 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
                 return XMLP_ret::XML_ERROR;
             publisher_node.get()->setEntityID(static_cast<uint8_t>(i));
         }
+        else if (strcmp(name, MATCHED_SUBSCRIBERS_ALLOCATION) == 0)
+        {
+            // matchedReadersAllocation - containerAllocationConfigType
+            if(XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, publisher_node.get()->matched_subscriber_allocation, ident))
+                return XMLP_ret::XML_ERROR;
+        }
         else
         {
             logError(XMLPARSER, "Invalid element found into 'publisherProfileType'. Name: " << name);
