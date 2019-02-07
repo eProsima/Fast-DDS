@@ -37,7 +37,7 @@ public:
     HelloWorldSubscriber();
     virtual ~HelloWorldSubscriber();
     //!Initialize the subscriber
-    bool init(const std::string &wan_ip, unsigned short port);
+    bool init(const std::string &wan_ip, unsigned short port, bool use_tls);
     //!RUN the subscriber
     void run();
     //!Run the subscriber until number samples have been recevied.

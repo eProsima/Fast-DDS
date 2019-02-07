@@ -38,7 +38,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 {
 }
 
-bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
+bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port, bool use_tls)
 {
     stop = false;
     m_Hello.index(0);
@@ -54,24 +54,18 @@ bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 
-    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
-    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
-    descriptor->apply_security = true;
-    descriptor->tls_config.password = "test";
-    //descriptor->tls_config.password = "testkey";
-    //descriptor->tls_config.cert_chain_file = "mainsubcert.pem";
-    //descriptor->tls_config.private_key_file = "mainsubkey.pem";
-    //descriptor->tls_config.tmp_dh_file = "";
-    //descriptor->tls_config.verify_file = "ca.pem";
-    //descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
-    descriptor->tls_config.cert_chain_file = "server.pem";
-    descriptor->tls_config.private_key_file = "server.pem";
-    descriptor->tls_config.tmp_dh_file = "dh2048.pem";
-    descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
-    descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
-    //descriptor->tls_config.add_option(TLSOptions::NO_COMPRESSION);
-    descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
-    //descriptor->tls_config.add_option(TLSOptions::NO_SSLV3);
+    if (use_tls)
+    {
+        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+        descriptor->apply_security = true;
+        descriptor->tls_config.password = "test";
+        descriptor->tls_config.cert_chain_file = "server.pem";
+        descriptor->tls_config.private_key_file = "server.pem";
+        descriptor->tls_config.tmp_dh_file = "dh2048.pem";
+        descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+        descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+        descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
+    }
 
     descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;

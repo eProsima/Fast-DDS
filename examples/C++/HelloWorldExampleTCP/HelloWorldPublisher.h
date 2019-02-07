@@ -34,7 +34,7 @@ public:
     HelloWorldPublisher();
     virtual ~HelloWorldPublisher();
     //!Initialize
-    bool init(const std::string &wan_ip, unsigned short port);
+    bool init(const std::string &wan_ip, unsigned short port, bool use_tls);
     //!Publish a sample
     bool publish(bool waitForListener = true);
     //!Run for number samples
