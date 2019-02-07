@@ -271,6 +271,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
+    EXPECT_EQ(publisher_atts.matched_subscriber_allocation, ResourceLimitedContainerConfig::fixed_size_configuration(10u));
 }
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
@@ -338,6 +339,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
+    EXPECT_EQ(publisher_atts.matched_subscriber_allocation, ResourceLimitedContainerConfig::fixed_size_configuration(10u));
 }
 
 TEST_F(XMLProfileParserTests, XMLParserSubscriber)

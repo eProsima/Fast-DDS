@@ -69,8 +69,17 @@ struct ResourceLimitedContainerConfig
     {
         return ResourceLimitedContainerConfig(0u, std::numeric_limits<size_t>::max(), increment ? increment : 1u);
     }
-
 };
+
+inline bool operator == (
+        const ResourceLimitedContainerConfig& lhs, 
+        const ResourceLimitedContainerConfig& rhs)
+{
+    return
+        lhs.maximum == rhs.maximum &&
+        lhs.initial == rhs.initial &&
+        lhs.increment == rhs.increment;
+}
 
 }  // namespace fastrtps
 }  // namespace eprosima
