@@ -35,7 +35,6 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     , service_(service)
     , ssl_context_(ssl_context)
 {
-    apply_tls_config();
     secure_socket_ = createTCPSocket(service, ssl_context_);
     set_tls_verify_mode(parent->configuration());
 }
@@ -45,141 +44,67 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
         RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
-        asio::ip::tcp::socket&& socket,
+        tcp_secure::eProsimaTCPSocket socket,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
-    //, secure_socket_(moveSocket(socket))
+    , secure_socket_(socket)
 {
-    apply_tls_config();
-    secure_socket_ = createTCPSocket(std::move(socket), ssl_context_);
-    set_tls_verify_mode(parent->configuration());
+    //set_tls_verify_mode(parent->configuration());
 }
 
 TCPChannelResourceSecure::~TCPChannelResourceSecure()
 {
-}
-
-void TCPChannelResourceSecure::apply_tls_config()
-{
-    const TCPTransportDescriptor* descriptor = parent_->configuration();
-    if (descriptor->apply_security)
-    {
-        const TCPTransportDescriptor::TLSConfig* config = &descriptor->tls_config;
-        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
-
-        /*
-        uint32_t options;
-        */
-
-        if (!config->password.empty())
-        {
-            ssl_context_.set_password_callback(std::bind(&TCPChannelResourceSecure::get_password, this));
-        }
-
-        if (!config->verify_file.empty())
-        {
-            ssl_context_.load_verify_file(config->verify_file);
-        }
-
-        if (!config->cert_chain_file.empty())
-        {
-            ssl_context_.use_certificate_chain_file(config->cert_chain_file);
-        }
-
-        if (!config->private_key_file.empty())
-        {
-            ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
-        }
-
-        if (!config->tmp_dh_file.empty())
-        {
-            ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
-        }
-
-        if (config->options != TLSOptions::NONE)
-        {
-            uint32_t options = 0;
-
-            if (config->get_option(TLSOptions::DEFAULT_WORKAROUNDS))
-            {
-                options |= ssl::context::default_workarounds;
-            }
-
-            if (config->get_option(TLSOptions::NO_COMPRESSION))
-            {
-                options |= ssl::context::no_compression;
-            }
-
-            if (config->get_option(TLSOptions::NO_SSLV2))
-            {
-                options |= ssl::context::no_sslv2;
-            }
-
-            if (config->get_option(TLSOptions::NO_SSLV3))
-            {
-                options |= ssl::context::no_sslv3;
-            }
-
-            if (config->get_option(TLSOptions::NO_TLSV1))
-            {
-                options |= ssl::context::no_tlsv1;
-            }
-
-            if (config->get_option(TLSOptions::NO_TLSV1_1))
-            {
-                options |= ssl::context::no_tlsv1_1;
-            }
-
-            if (config->get_option(TLSOptions::NO_TLSV1_2))
-            {
-                options |= ssl::context::no_tlsv1_2;
-            }
-
-            // if (config->get_option(TLSOptions::NO_TLSV1_3))
-            // {
-            //     options |= ssl::context::no_tlsv1_3; // Asio needs to be updated
-            // }
-
-            if (config->get_option(TLSOptions::SINGLE_DH_USE))
-            {
-                options |= ssl::context::single_dh_use;
-            }
-
-            ssl_context_.set_options(options);
-        }
-    }
+    // Take both mutexes to avoid the situation where
+    // A checked alive and was true
+    // A took mutex
+    // B disables the channel resource
+    // B destroy us
+    // A tries to perform an operation causing calling a virtual method (our parent still lives).
+    std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
+    std::unique_lock<std::recursive_mutex> write_lock(write_mutex());
 }
 
 void TCPChannelResourceSecure::connect()
 {
+    using asio::ip::tcp;
     std::unique_lock<std::mutex> scoped(status_mutex_);
     if (connection_status_ == eConnectionStatus::eDisconnected)
     {
         connection_status_ = eConnectionStatus::eConnecting;
-        ip::tcp::endpoint endpoint = parent_->generate_local_endpoint(locator_, IPLocator::getPhysicalPort(locator_));
         try
         {
-            secure_socket_->lowest_layer().async_connect(endpoint,
-                [this](const std::error_code& error)
-                {
-                    // handshake as client and call TCPTransportInterface::SocketConnected
-                    if (!error)
-                    {
-                        secure_socket_->async_handshake(ssl::stream_base::client,
-                            [this](const std::error_code& error)
-                            {
-                                logError(TLS_CLIENT, error.message());
-                                parent_->SocketConnected(locator_, error);
-                            });
-                    }
-                    else
-                    {
-                        logError(RTCP_TLS, error.message());
-                    }
+            tcp::resolver resolver(service_);
+            auto endpoints = resolver.resolve(IPLocator::toIPv4string(locator_),
+                std::to_string(IPLocator::getPhysicalPort(locator_)));
 
-                });
+            asio::async_connect(secure_socket_->lowest_layer(), endpoints,
+                [this](const std::error_code& error,
+                    const tcp::endpoint& /*endpoint*/)
+            {
+                if (!error)
+                {
+                    secure_socket_->async_handshake(ssl::stream_base::client,
+                        [this](const std::error_code& error)
+                    {
+                        if (!error)
+                        {
+                            logInfo(RTCP_TLS, "Handshake sucessfull");
+                            parent_->SocketConnected(locator_, error);
+                        }
+                        else
+                        {
+                            logError(RTCP_TLS, "Handshake failed: " << error.message());
+                        }
+                    });
+                }
+                else
+                {
+                    //logError(RTCP_TLS, "Connect failed: " << error.message());
+                    parent_->SocketConnected(locator_, error); // Manages errors and retries
+                }
+            });
         }
         catch(const std::system_error &error)
         {
@@ -196,19 +121,19 @@ void TCPChannelResourceSecure::disconnect()
         {
             asio::error_code ec;
             secure_socket_->shutdown();
-            //secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-            //secure_socket_->lowest_layer().cancel();
+            secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+            secure_socket_->lowest_layer().cancel();
 
           // This method was added on the version 1.12.0
 #if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-            //secure_socket_->lowest_layer().release();
+            secure_socket_->lowest_layer().release();
 #endif
         }
         catch (std::exception&)
         {
             // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
         }
-        //secure_socket_->lowest_layer().close();
+        secure_socket_->lowest_layer().close();
     }
 }
 
@@ -219,7 +144,7 @@ uint32_t TCPChannelResourceSecure::read(
 {
     size_t rec = 0;
 
-    while (rec < size)
+    while (rec < size && alive())
     {
         rec += secure_socket_->read_some(asio::buffer(buffer, buffer_capacity));
     }
@@ -233,7 +158,8 @@ uint32_t TCPChannelResourceSecure::read(
         asio::error_code& ec)
 {
     size_t rec = 0;
-    while (rec < size && !ec)
+
+    while (rec < size && !ec && alive())
     {
         rec += secure_socket_->read_some(asio::buffer(buffer, buffer_capacity), ec);
     }
@@ -247,7 +173,7 @@ uint32_t TCPChannelResourceSecure::send(
 {
     size_t sent = 0;
 
-    while (sent < size && !ec)
+    while (sent < size && !ec && alive())
     {
         sent += secure_socket_->write_some(asio::buffer(data, size), ec);
     }
@@ -274,15 +200,6 @@ void TCPChannelResourceSecure::set_options(const TCPTransportDescriptor* options
 
 void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor* options)
 {
-    secure_socket_->set_verify_mode(ssl::verify_peer);
-    secure_socket_->set_verify_callback([](
-            bool preverified,
-            ssl::verify_context& ctx) -> bool
-    {
-        return true;
-    });
-    return;
-
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
 
     if (options->apply_security)
@@ -312,22 +229,17 @@ void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor*
 
 void TCPChannelResourceSecure::cancel()
 {
-    //secure_socket_->lowest_layer().cancel();
+    secure_socket_->lowest_layer().cancel();
 }
 
 void TCPChannelResourceSecure::close()
 {
-    //secure_socket_->lowest_layer().close();
+    secure_socket_->lowest_layer().close();
 }
 
-void TCPChannelResourceSecure::shutdown(asio::socket_base::shutdown_type what)
+void TCPChannelResourceSecure::shutdown(asio::socket_base::shutdown_type)
 {
     secure_socket_->shutdown();
-}
-
-std::string TCPChannelResourceSecure::get_password() const
-{
-    return parent_->configuration()->tls_config.password;
 }
 
 } // namespace rtps

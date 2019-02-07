@@ -125,7 +125,7 @@ void TCPTransportInterface::clean()
     // Collect all the existing sockets to delete them outside of the mutex.
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        for (auto it = socket_Acceptors_.begin(); it != socket_Acceptors_.end(); ++it)
+        for (auto it = socket_acceptors_.begin(); it != socket_acceptors_.end(); ++it)
         {
             for (TCPAcceptor* acceptorIt : it->second)
             {
@@ -133,7 +133,7 @@ void TCPTransportInterface::clean()
                 delete acceptorIt;
             }
         }
-        socket_Acceptors_.clear();
+        socket_acceptors_.clear();
 
         for (auto it = channel_resources_.begin(); it != channel_resources_.end(); ++it)
         {
@@ -281,15 +281,15 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             }
 
             uint16_t port = IPLocator::getPhysicalPort(locator);
-            if (socket_Acceptors_.find(port) != socket_Acceptors_.end())
+            if (socket_acceptors_.find(port) != socket_acceptors_.end())
             {
                 std::vector<TCPAcceptor*> vAcceptors{ newAcceptor };
-                socket_Acceptors_.insert(std::make_pair(port, vAcceptors));
+                socket_acceptors_.insert(std::make_pair(port, vAcceptors));
             }
-            else if (std::find(socket_Acceptors_[port].begin(), socket_Acceptors_[port].end(),
-                    newAcceptor) == socket_Acceptors_[port].end())
+            else if (std::find(socket_acceptors_[port].begin(), socket_acceptors_[port].end(),
+                    newAcceptor) == socket_acceptors_[port].end())
             {
-                socket_Acceptors_[port].push_back(newAcceptor);
+                socket_acceptors_[port].push_back(newAcceptor);
             }
 
             logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
@@ -311,8 +311,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             {
                 if (configuration()->apply_security)
                 {
-                    newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, sInterface, locator,
-                        configuration());
+                    newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, sInterface, locator);
                 }
                 else
                 {
@@ -320,15 +319,15 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
                 }
 
                 uint16_t port = IPLocator::getPhysicalPort(locator);
-                if (socket_Acceptors_.find(port) != socket_Acceptors_.end())
+                if (socket_acceptors_.find(port) != socket_acceptors_.end())
                 {
                     std::vector<TCPAcceptor*> vAcceptors{ newAcceptor };
-                    socket_Acceptors_.insert(std::make_pair(port, vAcceptors));
+                    socket_acceptors_.insert(std::make_pair(port, vAcceptors));
                 }
-                else if (std::find(socket_Acceptors_[port].begin(), socket_Acceptors_[port].end(),
-                        newAcceptor) == socket_Acceptors_[port].end())
+                else if (std::find(socket_acceptors_[port].begin(), socket_acceptors_[port].end(),
+                        newAcceptor) == socket_acceptors_[port].end())
                 {
-                    socket_Acceptors_[port].push_back(newAcceptor);
+                    socket_acceptors_[port].push_back(newAcceptor);
                 }
 
                 logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
@@ -448,6 +447,7 @@ bool TCPTransportInterface::DoOutputLocatorsMatch(
 
 bool TCPTransportInterface::init()
 {
+    apply_tls_config();
     if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
     {
         // Check system buffer sizes.
@@ -628,15 +628,15 @@ void TCPTransportInterface::close_tcp_socket(TCPChannelResource *p_channel_resou
                 {
                     if (configuration()->apply_security)
                     {
-                        newChannel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_,
-                            physicalLocator, configuration()->maxMessageSize);
+                        newChannel = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
+                            ssl_context_, physicalLocator, configuration()->maxMessageSize);
                         p_channel_resource->set_all_ports_pending();
                         newChannel->copy_pending_ports_from(p_channel_resource);
                     }
                     else
                     {
-                        newChannel = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
-                            ssl_context_, physicalLocator, configuration()->maxMessageSize);
+                        newChannel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_,
+                            physicalLocator, configuration()->maxMessageSize);
                         p_channel_resource->set_all_ports_pending();
                         newChannel->copy_pending_ports_from(p_channel_resource);
                     }
@@ -833,7 +833,7 @@ bool TCPTransportInterface::read_body(
 
     if (*bytes_received != body_size)
     {
-        logError(RTCP, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::size() << ")");
+        logError(RTCP, "Bad RTCP body size: " << bytes_received << "(expected: " << TCPHeader::size() << ")");
         return false;
     }
 
@@ -1126,7 +1126,8 @@ bool TCPTransportInterface::send(
 
                     if (success)
                     {
-                        success = send_through_socket(send_buffer, send_buffer_size, remote_locator, tcpChannelResource);
+                        success = send_through_socket(send_buffer, send_buffer_size, remote_locator,
+                            tcpChannelResource);
                     }
                 }
             }
@@ -1140,8 +1141,6 @@ bool TCPTransportInterface::send(
     }
     else if (send_retry_active_)
     {
-        //logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
-        //    << IPLocator::getLogicalPort(remote_locator));
         return false;
     }
     else
@@ -1242,7 +1241,7 @@ void TCPTransportInterface::SocketAccepted(
     if (!error.value())
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
+        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_acceptors_.end())
         {
 #if defined(ASIO_HAS_MOVE)
             tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(std::move(acceptor->socket()));
@@ -1301,7 +1300,7 @@ void TCPTransportInterface::SocketAccepted(
     {
         // Accept new connections for the same port. Could be not found when exiting.
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
+        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_acceptors_.end())
         {
             acceptor->accept(this, io_service_);
         }
@@ -1310,16 +1309,16 @@ void TCPTransportInterface::SocketAccepted(
 
 void TCPTransportInterface::SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
-        asio::ip::tcp::socket&& socket,
+        tcp_secure::eProsimaTCPSocket socket,
         const asio::error_code& error)
 {
+    if (error.value() != eSocketErrorCodes::eConnectionAborted) // When aborted, ignore all, we are being closed.
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
         if (std::find(deleted_acceptors_.begin(), deleted_acceptors_.end(), acceptor) != deleted_acceptors_.end())
         {
-            //std::cout << "Acceptor called on delete" << std::endl;
             // SocketAccepted was called by asio after the acceptor was deleted. By must abort any operation.
-            logWarning(RTCP, "Acceptor called on delete");
+            logError(RTCP, "Acceptor called on delete");
             return;
         }
     }
@@ -1327,14 +1326,13 @@ void TCPTransportInterface::SecureSocketAccepted(
     if (!error.value())
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
+        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_acceptors_.end())
         {
             // Store the new connection.
             TCPChannelResource *p_channel_resource = new TCPChannelResourceSecure(this, rtcp_message_manager_,
-                io_service_, ssl_context_, std::move(socket), configuration()->maxMessageSize);
+                io_service_, ssl_context_, socket, configuration()->maxMessageSize);
 
             p_channel_resource->set_options(configuration());
-
             unbound_channel_resources_.push_back(p_channel_resource);
             p_channel_resource->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
                 p_channel_resource));
@@ -1364,7 +1362,6 @@ void TCPTransportInterface::SecureSocketAccepted(
     else
     {
         logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
-        logError(RTCP, " Accepting connection failed (error: " << error.message() << ")");
         eClock::my_sleep(200); // Wait a little to accept again.
     }
 
@@ -1372,7 +1369,7 @@ void TCPTransportInterface::SecureSocketAccepted(
     {
         // Accept new connections for the same port. Could be not found when exiting.
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_Acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_Acceptors_.end())
+        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_acceptors_.end())
         {
             acceptor->accept(this, io_service_, ssl_context_);
         }
@@ -1593,6 +1590,100 @@ bool TCPTransportInterface::fillUnicastLocator(
 void TCPTransportInterface::shutdown()
 {
     send_retry_active_ = false;
+}
+
+void TCPTransportInterface::apply_tls_config()
+{
+    const TCPTransportDescriptor* descriptor = configuration();
+    if (descriptor->apply_security)
+    {
+        const TCPTransportDescriptor::TLSConfig* config = &descriptor->tls_config;
+        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+
+        if (!config->password.empty())
+        {
+            ssl_context_.set_password_callback(std::bind(&TCPTransportInterface::get_password, this));
+        }
+
+        if (!config->verify_file.empty())
+        {
+            ssl_context_.load_verify_file(config->verify_file);
+        }
+
+        if (!config->cert_chain_file.empty())
+        {
+            ssl_context_.use_certificate_chain_file(config->cert_chain_file);
+        }
+
+        if (!config->private_key_file.empty())
+        {
+            ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
+        }
+
+        if (!config->tmp_dh_file.empty())
+        {
+            ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
+        }
+
+        if (config->options != TLSOptions::NONE)
+        {
+            uint32_t options = 0;
+
+            if (config->get_option(TLSOptions::DEFAULT_WORKAROUNDS))
+            {
+                options |= ssl::context::default_workarounds;
+            }
+
+            if (config->get_option(TLSOptions::NO_COMPRESSION))
+            {
+                options |= ssl::context::no_compression;
+            }
+
+            if (config->get_option(TLSOptions::NO_SSLV2))
+            {
+                options |= ssl::context::no_sslv2;
+            }
+
+            if (config->get_option(TLSOptions::NO_SSLV3))
+            {
+                options |= ssl::context::no_sslv3;
+            }
+
+            if (config->get_option(TLSOptions::NO_TLSV1))
+            {
+                options |= ssl::context::no_tlsv1;
+            }
+
+            if (config->get_option(TLSOptions::NO_TLSV1_1))
+            {
+                options |= ssl::context::no_tlsv1_1;
+            }
+
+            if (config->get_option(TLSOptions::NO_TLSV1_2))
+            {
+                options |= ssl::context::no_tlsv1_2;
+            }
+
+#if ASIO_VERSION >= 106900 // no_tlsv1_3 added in asio 1.69
+            if (config->get_option(TLSOptions::NO_TLSV1_3))
+            {
+                options |= ssl::context::no_tlsv1_3;
+            }
+#endif
+
+            if (config->get_option(TLSOptions::SINGLE_DH_USE))
+            {
+                options |= ssl::context::single_dh_use;
+            }
+
+            ssl_context_.set_options(options);
+        }
+    }
+}
+
+std::string TCPTransportInterface::get_password() const
+{
+    return configuration()->tls_config.password;
 }
 
 

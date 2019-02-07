@@ -75,7 +75,7 @@ protected:
     mutable std::mutex sockets_map_mutex_;
     std::atomic<bool> send_retry_active_;
 
-    std::map<uint16_t, std::vector<TCPAcceptor*>> socket_Acceptors_; // The Key is the "Physical Port"
+    std::map<uint16_t, std::vector<TCPAcceptor*>> socket_acceptors_; // The Key is the "Physical Port"
     std::vector<TCPAcceptor*> deleted_acceptors_;
     std::map<Locator_t, TCPChannelResource*> channel_resources_; // The key is the "Physical locator"
     std::vector<TCPChannelResource*> unbound_channel_resources_; // Needed to avoid memory leaks if client doesn't bound
@@ -185,6 +185,16 @@ protected:
      * Shutdown method to close the connections of the transports.
     */
     virtual void shutdown() override;
+
+    /**
+     * Applies TLS configuration to ssl_context
+     */
+    void apply_tls_config();
+
+    /**
+     * Aux method to retrieve cert password as a callback
+     */
+    std::string get_password() const;
 
 public:
     friend class RTCPMessageManager;
@@ -336,7 +346,7 @@ public:
     //! Callback called each time that an incomming connection is accepted (secure).
     void SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
-        asio::ip::tcp::socket&& socket,
+        tcp_secure::eProsimaTCPSocket socket,
         const asio::error_code& error);
 
     //! Callback called each time that an outgoing connection is established.

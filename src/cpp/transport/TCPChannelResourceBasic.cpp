@@ -59,7 +59,7 @@ TCPChannelResourceBasic::~TCPChannelResourceBasic()
     // B destroy us
     // A tries to perform an operation causing calling a virtual method (our parent still lives).
     std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
-    std::unique_lock<std::recursive_mutex> write_lock(read_mutex());
+    std::unique_lock<std::recursive_mutex> write_lock(write_mutex());
 }
 
 void TCPChannelResourceBasic::connect()

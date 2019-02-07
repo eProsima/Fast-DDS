@@ -109,6 +109,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
         )
 
         set(TCPV6TESTS_SOURCE
@@ -141,6 +142,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
         )
 
         set(TEST_UDPV4TESTS_SOURCE

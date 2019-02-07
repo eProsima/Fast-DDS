@@ -424,35 +424,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 }
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports)
 {
-    // Log::SetVerbosity(Log::Kind::Info);
-    // std::regex filter("RTCP(?!_SEQ)");
-    // Log::SetCategoryFilter(filter);
-
-    /*
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                    "builtin.PKI-DH"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + std::string(certs_path) + "/mainsubcert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://" + std::string(certs_path) + "/mainsubkey.pem"));
-
-    reader.history_depth(10).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                    "builtin.PKI-DH"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-                    "file://" + std::string(certs_path) + "/maincacert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-                    "file://" + std::string(certs_path) + "/mainpubcert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-                    "file://" + std::string(certs_path) + "/mainpubkey.pem"));
-    */
+    Log::SetVerbosity(Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;

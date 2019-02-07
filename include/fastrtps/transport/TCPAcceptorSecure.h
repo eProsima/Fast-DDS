@@ -25,15 +25,7 @@ namespace rtps{
 
 class TCPAcceptorSecure : public TCPAcceptor
 {
-    tcp_secure::eProsimaTCPSocket secure_socket_;
     asio::ssl::context& ssl_context_;
-    std::string tls_password_;
-
-    void apply_tls_config(const TCPTransportDescriptor* descriptor);
-
-    void set_options(const TCPTransportDescriptor* options);
-
-    std::string get_password() const;
 
 public:
     /**
@@ -60,18 +52,15 @@ public:
         asio::io_service& io_service,
         asio::ssl::context& ssl_context,
         const std::string& interface,
-        const Locator_t& locator,
-        const TCPTransportDescriptor* descriptor);
+        const Locator_t& locator);
 
     /**
     * Destructor
     */
     ~TCPAcceptorSecure()
     {
-        //try { asio::error_code ec; secure_socket_->lowest_layer().cancel(ec); }
-        //catch (...) {}
-        //secure_socket_->lowest_layer().close();
-        secure_socket_->shutdown();
+        acceptor_.cancel();
+        acceptor_.close();
     }
 
     //! Method to start the accepting process.

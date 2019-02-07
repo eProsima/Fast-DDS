@@ -21,7 +21,6 @@
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
@@ -63,6 +62,23 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
 
     PParam.rtps.useBuiltinTransports = false;
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    descriptor->apply_security = true;
+    //descriptor->tls_config.password = "testkey";
+    descriptor->tls_config.password = "test";
+    //descriptor->tls_config.cert_chain_file = "server.pem";
+    //descriptor->tls_config.private_key_file = "server.pem";
+    //descriptor->tls_config.tmp_dh_file = "dh2048.pem";
+    descriptor->tls_config.verify_file = "ca.pem";
+    descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    //descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    //descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    //descriptor->tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    //descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
+    //descriptor->tls_config.add_option(TLSOptions::NO_SSLV3);
+
     descriptor->wait_for_tcp_negotiation = false;
     PParam.rtps.userTransports.push_back(descriptor);
 

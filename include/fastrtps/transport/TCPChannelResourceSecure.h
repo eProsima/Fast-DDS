@@ -35,7 +35,7 @@ namespace tcp_secure{
 
     inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket socket)
     {
-        return socket;
+        return std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>>(socket);
     }
 
     inline eProsimaTCPSocket createTCPSocket(
@@ -80,7 +80,8 @@ public:
         RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
-        asio::ip::tcp::socket&& socket,
+        tcp_secure::eProsimaTCPSocket socket,
+        //asio::ssl::stream<asio::ip::tcp::socket>* socket,
         uint32_t maxMsgSize);
 
     virtual ~TCPChannelResourceSecure();
@@ -120,10 +121,6 @@ public:
     {
         return tcp_secure::getSocketPtr(secure_socket_);
     }
-
-protected:
-    void apply_tls_config();
-    std::string get_password() const;
 
 private:
     TCPChannelResourceSecure(const TCPChannelResource&) = delete;
