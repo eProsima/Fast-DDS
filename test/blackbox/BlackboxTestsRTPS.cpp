@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "RTPSAsSocketReader.hpp"
+#include "RTPSAsSocketWriter.hpp"
+#include "RTPSWithRegistrationReader.hpp"
+#include "RTPSWithRegistrationWriter.hpp"
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 BLACKBOXTEST(BlackBox, RTPSAsNonReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);

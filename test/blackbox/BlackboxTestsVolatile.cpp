@@ -12,6 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "RTPSAsSocketReader.hpp"
+#include "RTPSAsSocketWriter.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+#include "ReqRepAsReliableHelloWorldRequester.hpp"
+#include "ReqRepAsReliableHelloWorldReplier.hpp"
+
 // Test created to check bug #3020 (Github ros2/demos #238)
 BLACKBOXTEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 {

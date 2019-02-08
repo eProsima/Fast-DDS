@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+
+#include <fastrtps/log/Log.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 BLACKBOXTEST(BlackBox, PubSubAsNonReliableData300kb)
 {
     // Mutes an expected error

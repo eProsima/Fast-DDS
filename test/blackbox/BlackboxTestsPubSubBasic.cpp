@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+#include "ReqRepAsReliableHelloWorldRequester.hpp"
+#include "ReqRepAsReliableHelloWorldReplier.hpp"
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 BLACKBOXTEST(BlackBox, PubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);

@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+
+#include <fastrtps/transport/test_UDPv4Transport.h>
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 BLACKBOXTEST(BlackBox, ParticipantRemoval)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -267,15 +277,13 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    uint32_t port = get_port();
-
     Locator_t loc_initial_peer, loc_default_unicast;
     LocatorList_t reader_initial_peers;
     IPLocator::setIPv4(loc_initial_peer, 127, 0, 0, 1);
-    loc_initial_peer.port = static_cast<uint16_t>(port);
+    loc_initial_peer.port = static_cast<uint16_t>(global_port);
     reader_initial_peers.push_back(loc_initial_peer);
     LocatorList_t reader_default_unicast_locator;
-    loc_default_unicast.port = static_cast<uint16_t>(port + 1);
+    loc_default_unicast.port = static_cast<uint16_t>(global_port + 1);
     reader_default_unicast_locator.push_back(loc_default_unicast);
 
     reader.metatraffic_unicast_locator_list(reader_default_unicast_locator).
@@ -285,10 +293,10 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
     ASSERT_TRUE(reader.isInitialized());
 
     LocatorList_t writer_initial_peers;
-    loc_initial_peer.port = static_cast<uint16_t>(port + 1);
+    loc_initial_peer.port = static_cast<uint16_t>(global_port + 1);
     writer_initial_peers.push_back(loc_initial_peer);
     LocatorList_t writer_default_unicast_locator;
-    loc_default_unicast.port = static_cast<uint16_t>(port);
+    loc_default_unicast.port = static_cast<uint16_t>(global_port);
     writer_default_unicast_locator.push_back(loc_default_unicast);
 
     writer.metatraffic_unicast_locator_list(writer_default_unicast_locator).

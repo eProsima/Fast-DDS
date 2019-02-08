@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "../BlackboxTests.hpp"
+
 template<>
 void default_receive_print(const HelloWorld& hello)
 {

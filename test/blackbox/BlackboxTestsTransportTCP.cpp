@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "TCPReqRepHelloWorldRequester.hpp"
+#include "TCPReqRepHelloWorldReplier.hpp"
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 // TCP and Domain management with logical ports tests
 BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
 {

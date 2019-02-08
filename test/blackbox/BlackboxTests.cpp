@@ -27,13 +27,7 @@
 #include "PubSubWriterReader.hpp"
 
 #include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/log/Log.h>
 
 #include <thread>
 #include <memory>
@@ -43,7 +37,20 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-#include "BlackboxTestsUtils.hpp"
+uint16_t global_port = 0;
+
+uint16_t get_port()
+{
+    uint16_t port = static_cast<uint16_t>(GET_PID());
+
+    if (5000 > port)
+    {
+        port += 5000;
+    }
+
+    std::cout << "Generating port " << port << std::endl;
+    return port;
+}
 
 class BlackboxEnvironment : public ::testing::Environment
 {
@@ -64,31 +71,13 @@ class BlackboxEnvironment : public ::testing::Environment
         }
 };
 
-#include "BlackboxTestsRTPS.hpp"
-#include "BlackboxTestsPubSub.hpp"
-#include "BlackboxTestsDiscovery.hpp"
-#include "BlackboxTestsPersistence.hpp"
-
-#if HAVE_SECURITY
-#include "BlackboxTestsSecurity.hpp"
-#endif
-
-#include "BlackboxTestsTransportUDP.hpp"
-#include "BlackboxTestsTransportTCP.hpp"
-
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
 
 #if HAVE_SECURITY
-    certs_path = std::getenv("CERTS_PATH");
-
-    if(certs_path == nullptr)
-    {
-        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
-        exit(-1);
-    }
+    blackbox_security_init();
 #endif
 
     return RUN_ALL_TESTS();

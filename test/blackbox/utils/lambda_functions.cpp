@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "../BlackboxTests.hpp"
+
 const std::function<void(const HelloWorld&)>  default_helloworld_print = [](const HelloWorld& hello)
 {
     std::cout << hello.index() << " ";

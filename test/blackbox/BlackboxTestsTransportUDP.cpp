@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+
+#include <fastrtps/transport/UDPv4Transport.h>
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 BLACKBOXTEST(BlackBox, UDPv4TransportWrongConfig)
 {
     {

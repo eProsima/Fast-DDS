@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/****** Auxiliary data generators *******/
+#include "../BlackboxTests.hpp"
+
 std::list<HelloWorld> default_helloworld_data_generator(size_t max)
 {
     uint16_t index = 1;

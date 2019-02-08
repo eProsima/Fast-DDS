@@ -12,6 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#if HAVE_SECURITY
+
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+#include "PubSubWriterReader.hpp"
+
+#include <fastrtps/transport/test_UDPv4Transport.h>
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 static const char* certs_path = nullptr;
 
 BLACKBOXTEST(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
@@ -2779,3 +2792,16 @@ BLACKBOXTEST(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
+
+void blackbox_security_init()
+{
+    certs_path = std::getenv("CERTS_PATH");
+
+    if (certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        exit(-1);
+    }
+}
+
+#endif

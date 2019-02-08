@@ -97,10 +97,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ###############################################################################
         # Unit tests
         ###############################################################################
-        file(GLOB BLACKBOXTESTS_TEST_INCLUDED "BlackboxTests*.hpp")
-        set(BLACKBOXTESTS_TEST_SOURCE BlackboxTests.cpp
-            NetworkConf.cpp
-            )
+        file(GLOB BLACKBOXTESTS_TEST_SOURCE "BlackboxTests*.cpp")
         set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
@@ -110,6 +107,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/Data64kbType.cpp
             types/Data1mb.cpp
             types/Data1mbType.cpp
+            
+            utils/data_generators.cpp
+            utils/lambda_functions.cpp
+            utils/print_functions.cpp
+            
             ReqRepHelloWorldRequester.cpp
             ReqRepHelloWorldReplier.cpp
             TCPReqRepHelloWorldRequester.cpp
@@ -136,8 +138,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             PREALLOCATED_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_PreallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_PreallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem
-            SOURCES ${BLACKBOXTESTS_TEST_SOURCE} ${BLACKBOXTESTS_TEST_INCLUDED}
+        add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
@@ -150,8 +151,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_ReallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_ReallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem
-            SOURCES ${BLACKBOXTESTS_TEST_SOURCE} ${BLACKBOXTESTS_TEST_INCLUDED}
+        add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
@@ -164,8 +164,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_DynMem PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests_DynMem fastrtps fastcdr ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests_DynMem DynMem
-            SOURCES ${BLACKBOXTESTS_TEST_SOURCE} ${BLACKBOXTESTS_TEST_INCLUDED}
+        add_blackbox_gtest(BlackboxTests_DynMem DynMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"

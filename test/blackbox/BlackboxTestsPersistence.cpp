@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "RTPSAsSocketReader.hpp"
+#include "RTPSAsSocketWriter.hpp"
+#include "RTPSWithRegistrationReader.hpp"
+#include "RTPSWithRegistrationWriter.hpp"
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 class EVALUATOR(BlackBoxPersistence, MEMORY_MODE_STRING) : public ::testing::Test
 {
 public:

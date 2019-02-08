@@ -12,6 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
+
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+
 // Test created to check bug #1568 (Github #34)
 BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 {
