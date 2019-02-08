@@ -51,7 +51,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     , ssl_context_(ssl_context)
     , secure_socket_(socket)
 {
-    //set_tls_verify_mode(parent->configuration());
+    set_tls_verify_mode(parent->configuration());
 }
 
 TCPChannelResourceSecure::~TCPChannelResourceSecure()
@@ -69,6 +69,7 @@ TCPChannelResourceSecure::~TCPChannelResourceSecure()
 void TCPChannelResourceSecure::connect()
 {
     using asio::ip::tcp;
+    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
     std::unique_lock<std::mutex> scoped(status_mutex_);
     if (connection_status_ == eConnectionStatus::eDisconnected)
     {
@@ -85,7 +86,12 @@ void TCPChannelResourceSecure::connect()
             {
                 if (!error)
                 {
-                    secure_socket_->async_handshake(ssl::stream_base::client,
+                    ssl::stream_base::handshake_type role = ssl::stream_base::client;
+                    if (parent_->configuration()->tls_config.handshake_role == TLSHSRole::SERVER)
+                    {
+                        role = ssl::stream_base::server;
+                    }
+                    secure_socket_->async_handshake(role,
                         [this](const std::error_code& error)
                     {
                         if (!error)

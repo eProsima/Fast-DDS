@@ -320,6 +320,19 @@ extern const char* TLS_PRIVATE_KEY_FILE;
 extern const char* TLS_TMP_DH_FILE;
 extern const char* TLS_VERIFY_FILE;
 extern const char* TLS_VERIFY_MODE;
+extern const char* TLS_VERIFY_PATHS;
+extern const char* TLS_DEFAULT_VERIFY_PATH;
+extern const char* TLS_VERIFY_DEPTH;
+extern const char* TLS_RSA_PRIVATE_KEY_FILE;
+extern const char* TLS_HANDSHAKE_ROLE;
+
+// TLS HandShake Role
+extern const char* TLS_HANDSHAKE_ROLE_DEFAULT;
+extern const char* TLS_HANDSHAKE_ROLE_CLIENT;
+extern const char* TLS_HANDSHAKE_ROLE_SERVER;
+
+// TLS Verify Paths
+extern const char* TLS_VERIFY_PATH;
 
 // TLS Options
 extern const char* TLS_OPTION;

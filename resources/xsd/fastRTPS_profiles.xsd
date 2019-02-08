@@ -69,12 +69,26 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="tlsVerifyPathVectorType">
+        <xs:sequence>
+            <xs:element name="verify_path" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:simpleType name="tlsVerifyModeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="VERIFY_NONE"/>
             <xs:enumeration value="VERIFY_PEER"/>
             <xs:enumeration value="VERIFY_FAIL_IF_NO_PEER_CERT"/>
             <xs:enumeration value="VERIFY_CLIENT_ONCE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="tlsHandShakeRole">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DEFAULT"/>
+            <xs:enumeration value="CLIENT"/>
+            <xs:enumeration value="SERVER"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -87,6 +101,11 @@
             <xs:element name="tmp_dh_file" type="stringType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="verify_file" type="stringType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="verify_mode" type="tlsVerifyModeType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_paths" type="tlsVerifyPathVectorType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="default_verify_path" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_depth" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rsa_private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="handshake_role" type="tlsHandShakeRole" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

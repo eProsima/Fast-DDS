@@ -1597,6 +1597,12 @@ void TCPTransportInterface::apply_tls_config()
     const TCPTransportDescriptor* descriptor = configuration();
     if (descriptor->apply_security)
     {
+        ssl_context_.set_verify_callback([](bool preverified, ssl::verify_context&)
+        {
+            logError(TLS_VERIFY, "Preverified: " << preverified);
+            return preverified;
+        });
+
         const TCPTransportDescriptor::TLSConfig* config = &descriptor->tls_config;
         using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
 
@@ -1623,6 +1629,29 @@ void TCPTransportInterface::apply_tls_config()
         if (!config->tmp_dh_file.empty())
         {
             ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
+        }
+
+        if (!config->verify_paths.empty())
+        {
+            for (const std::string& path : config->verify_paths)
+            {
+                ssl_context_.add_verify_path(path);
+            }
+        }
+
+        if (config->default_verify_path)
+        {
+            ssl_context_.set_default_verify_paths();
+        }
+
+        if (config->verify_depth >= 0)
+        {
+            ssl_context_.set_verify_depth(config->verify_depth);
+        }
+
+        if (!config->rsa_private_key_file.empty())
+        {
+            ssl_context_.use_private_key_file(config->rsa_private_key_file, ssl::context::pem);
         }
 
         if (config->options != TLSOptions::NONE)

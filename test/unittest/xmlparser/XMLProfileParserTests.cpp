@@ -586,6 +586,7 @@ TEST_F(XMLProfileParserTests, tls_config)
 
     EXPECT_EQ("Password", descriptor->tls_config.password);
     EXPECT_EQ("Key_file.pem", descriptor->tls_config.private_key_file);
+    EXPECT_EQ("RSA_file.pem", descriptor->tls_config.rsa_private_key_file);
     EXPECT_EQ("Chain.pem", descriptor->tls_config.cert_chain_file);
     EXPECT_EQ("DH.pem", descriptor->tls_config.tmp_dh_file);
     EXPECT_EQ("verify.pem", descriptor->tls_config.verify_file);
@@ -599,6 +600,15 @@ TEST_F(XMLProfileParserTests, tls_config)
     EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
     EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
     EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
+
+    EXPECT_EQ(descriptor->tls_config.verify_paths.size(), 3);
+    EXPECT_EQ(descriptor->tls_config.verify_paths[0], "Path1");
+    EXPECT_EQ(descriptor->tls_config.verify_paths[1], "Path2");
+    EXPECT_EQ(descriptor->tls_config.verify_paths[2], "Path3");
+    EXPECT_EQ(descriptor->tls_config.verify_depth, 55);
+    EXPECT_TRUE(descriptor->tls_config.default_verify_path);
+
+    EXPECT_EQ(descriptor->tls_config.handshake_role, TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
 }
 
 int main(int argc, char **argv)

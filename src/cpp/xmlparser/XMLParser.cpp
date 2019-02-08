@@ -659,6 +659,10 @@ XMLP_ret XMLParser::parse_tls_config(
                 <xs:element name="tmp_dh_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="verify_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="verify_mode" type="tlsVerifyModeType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="verify_paths" type="tlsVerifyPathVectorType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="default_verify_path" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="verify_depth" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="rsa_private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
 
@@ -679,6 +683,7 @@ XMLP_ret XMLParser::parse_tls_config(
     using TCPDescriptor = std::shared_ptr<rtps::TCPTransportDescriptor>;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
     using TLSOption = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSHandShakeMode = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
 
     XMLP_ret ret = XMLP_ret::XML_OK;
 
@@ -723,6 +728,81 @@ XMLP_ret XMLParser::parse_tls_config(
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.verify_file, 0))
             {
                 ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_VERIFY_PATHS) == 0)
+        {
+            tinyxml2::XMLElement *p_path = p_aux0->FirstChildElement(TLS_VERIFY_PATH);
+            while (p_path != nullptr)
+            {
+                std::string path;
+
+                if (XMLP_ret::XML_OK != getXMLString(p_path, &path, 0))
+                {
+                    ret = XMLP_ret::XML_ERROR;
+                }
+                else
+                {
+                    pTCPDesc->tls_config.verify_paths.push_back(path);
+                }
+
+                if (ret == XMLP_ret::XML_ERROR)
+                {
+                    // Break while loop
+                    break;
+                }
+
+                p_path = p_path->NextSiblingElement(TLS_VERIFY_PATH);
+            }
+        }
+        else if (config.compare(TLS_VERIFY_DEPTH) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &pTCPDesc->tls_config.verify_depth, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_DEFAULT_VERIFY_PATH) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pTCPDesc->tls_config.default_verify_path, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_RSA_PRIVATE_KEY_FILE) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &pTCPDesc->tls_config.rsa_private_key_file, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (config.compare(TLS_HANDSHAKE_ROLE) == 0)
+        {
+            std::string handshake_mode;
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &handshake_mode, 0))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
+            else
+            {
+                if (handshake_mode.compare(TLS_HANDSHAKE_ROLE_DEFAULT) == 0)
+                {
+                    pTCPDesc->tls_config.handshake_role = TLSHandShakeMode::DEFAULT;
+                }
+                else if (handshake_mode.compare(TLS_HANDSHAKE_ROLE_SERVER) == 0)
+                {
+                    pTCPDesc->tls_config.handshake_role = TLSHandShakeMode::SERVER;
+                }
+                else if (handshake_mode.compare(TLS_HANDSHAKE_ROLE_CLIENT) == 0)
+                {
+                    pTCPDesc->tls_config.handshake_role = TLSHandShakeMode::CLIENT;
+                }
+                else
+                {
+                    logError(XMLPARSER, "Error parsing TLS configuration handshake_mode unrecognized "
+                        << handshake_mode << ".");
+                    ret = XMLP_ret::XML_ERROR;
+                }
             }
         }
         else if (config.compare(TLS_VERIFY_MODE) == 0)

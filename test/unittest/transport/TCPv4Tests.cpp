@@ -422,7 +422,8 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
         }
     }
 }
-TEST_F(TCPv4Tests, send_and_receive_between_secure_ports)
+
+TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 {
     Log::SetVerbosity(Log::Kind::Info);
 
@@ -433,12 +434,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports)
     recvDescriptor.add_listener_port(g_default_port);
     recvDescriptor.apply_security = true;
     recvDescriptor.tls_config.password = "test";
-    //recvDescriptor.tls_config.password = "testkey";
-    //recvDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
-    //recvDescriptor.tls_config.private_key_file = "mainsubkey.pem";
-    //recvDescriptor.tls_config.tmp_dh_file = "";
-    //recvDescriptor.tls_config.verify_file = "ca.pem";
-    //recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
     recvDescriptor.tls_config.cert_chain_file = "server.pem";
     recvDescriptor.tls_config.private_key_file = "server.pem";
     recvDescriptor.tls_config.tmp_dh_file = "dh2048.pem";
@@ -452,18 +447,9 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports)
 
     TCPv4TransportDescriptor sendDescriptor;
     sendDescriptor.apply_security = true;
-    //sendDescriptor.tls_config.password = "testkey";
-    sendDescriptor.tls_config.password = "test";
-    //sendDescriptor.tls_config.cert_chain_file = "server.pem";
-    //sendDescriptor.tls_config.private_key_file = "server.pem";
-    //sendDescriptor.tls_config.tmp_dh_file = "dh2048.pem";
+    //sendDescriptor.tls_config.password = "test";
     sendDescriptor.tls_config.verify_file = "ca.pem";
     sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
-    //sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
-    //sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
-    //sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
-    //sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
-    //sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
     TCPv4Transport sendTransportUnderTest(sendDescriptor);
     sendTransportUnderTest.init();
 
@@ -505,6 +491,530 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports)
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+}
+
+TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
+{
+    Log::SetVerbosity(Log::Kind::Info);
+
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.handshake_role = TLSHSRole::CLIENT;
+    recvDescriptor.tls_config.password = "test";
+    recvDescriptor.tls_config.verify_file = "ca.pem";
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.handshake_role = TLSHSRole::SERVER;
+    sendDescriptor.tls_config.password = "test";
+    sendDescriptor.tls_config.cert_chain_file = "server.pem";
+    sendDescriptor.tls_config.private_key_file = "server.pem";
+    sendDescriptor.tls_config.tmp_dh_file = "dh2048.pem";
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
+        {
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+            while (!sent)
+            {
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            EXPECT_TRUE(sent);
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+}
+
+TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
+{
+    Log::SetVerbosity(Log::Kind::Info);
+
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.password = "testkey";
+    recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    recvDescriptor.tls_config.verify_file = "maincacert.pem";
+     // Server doesn't accept clients without certs
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.password = "testkey";
+    sendDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
+    sendDescriptor.tls_config.private_key_file = "mainsubkey.pem";
+    sendDescriptor.tls_config.verify_file = "maincacert.pem";
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
+        {
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+            while (!sent)
+            {
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            EXPECT_TRUE(sent);
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+}
+
+TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
+{
+    Log::SetVerbosity(Log::Kind::Info);
+
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.password = "testkey";
+    recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    recvDescriptor.tls_config.verify_file = "ca.pem"; // This CA doesn't know about these certificates
+     // Server doesn't accept clients without certs
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.password = "testkey";
+    sendDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
+    sendDescriptor.tls_config.private_key_file = "mainsubkey.pem";
+    sendDescriptor.tls_config.verify_file = "ca.pem"; // This CA doesn't know about these certificates
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
+        {
+            ASSERT_TRUE(false);
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+            int count = 0;
+            while (!sent && count < 30)
+            {
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                ++count;
+            }
+            EXPECT_FALSE(sent);
+            sem.post();
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+}
+
+TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
+{
+    Log::SetVerbosity(Log::Kind::Info);
+
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.handshake_role = TLSHSRole::CLIENT;
+    //recvDescriptor.tls_config.password = "testkey";
+    //recvDescriptor.tls_config.password = "test";
+    //recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    //recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    recvDescriptor.tls_config.verify_file = "maincacert.pem"; // This CA only know about mainsub certificates
+    //recvDescriptor.tls_config.verify_file = "ca.pem";
+    // Server doesn't accept clients without certs
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.handshake_role = TLSHSRole::SERVER;
+    sendDescriptor.tls_config.password = "testkey";
+    sendDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
+    sendDescriptor.tls_config.private_key_file = "mainsubkey.pem";
+    //sendDescriptor.tls_config.password = "test";
+    //sendDescriptor.tls_config.cert_chain_file = "server.pem";
+    //sendDescriptor.tls_config.private_key_file = "server.pem";
+    //sendDescriptor.tls_config.verify_file = "maincacert.pem";
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
+        {
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+            while (!sent)
+            {
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            EXPECT_TRUE(sent);
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
+}
+
+TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
+{
+    Log::SetVerbosity(Log::Kind::Info);
+
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port + 1);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.handshake_role = TLSHSRole::CLIENT;
+    //recvDescriptor.tls_config.password = "testkey";
+    //recvDescriptor.tls_config.password = "test";
+    //recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    //recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    recvDescriptor.tls_config.verify_file = "maincacert.pem"; // This CA only know about mainsub certificates
+    //recvDescriptor.tls_config.verify_file = "ca.pem";
+    // Server doesn't accept clients without certs
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port + 1;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port + 1;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    TCPv4TransportDescriptor sendDescriptor2;
+    sendDescriptor2.apply_security = true;
+    sendDescriptor2.tls_config.handshake_role = TLSHSRole::SERVER;
+    sendDescriptor2.tls_config.password = "test";
+    sendDescriptor2.tls_config.cert_chain_file = "server.pem";
+    sendDescriptor2.tls_config.private_key_file = "server.pem";
+    //sendDescriptor2.tls_config.password = "testkey";
+    //sendDescriptor2.tls_config.cert_chain_file = "mainsubcert.pem";
+    //sendDescriptor2.tls_config.private_key_file = "mainsubkey.pem";
+    sendDescriptor2.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor2.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    TCPv4Transport sendTransportUnderTest2(sendDescriptor2);
+    sendTransportUnderTest2.init();
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest2.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
+        {
+            EXPECT_FALSE(true); // Should not receive
+            sem.post();
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest2.send(message, 5, outputLocator, inputLocator);
+            int count = 0;
+            while (!sent && count < 30)
+            {
+                sent = sendTransportUnderTest2.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                ++count;
+            }
+            EXPECT_FALSE(sent);
+            sem.post();
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest2.CloseOutputChannel(outputLocator));
+}
+
+TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
+{
+    Log::SetVerbosity(Log::Kind::Info);
+
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.password = "testkey";
+    recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+     // Server doesn't accept clients without certs
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.verify_file = "ca.pem"; // This CA doesn't know about these certificates
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    {
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
+
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
+        {
+            ASSERT_TRUE(false);
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
+
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+            int count = 0;
+            while (!sent && count < 30)
+            {
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                ++count;
+            }
+            EXPECT_FALSE(sent);
+            sem.post();
             //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
         };
 

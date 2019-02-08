@@ -54,6 +54,13 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             VERIFY_CLIENT_ONCE          = 1 << 3  // 0000 1000
         };
 
+        enum TLSHandShakeRole : uint8_t
+        {
+            DEFAULT                     = 0,      // 0000 0000
+            CLIENT                      = 1 << 0, // 0000 0001
+            SERVER                      = 1 << 1  // 0000 0010
+        };
+
         std::string password;
         uint32_t options;
         std::string cert_chain_file;
@@ -61,6 +68,11 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         std::string tmp_dh_file;
         std::string verify_file;
         TLSVerifyMode verify_mode;
+        std::vector<std::string> verify_paths;
+        bool default_verify_path = false; // don't invoque
+        int32_t verify_depth = -1; // don't override
+        std::string rsa_private_key_file;
+        TLSHandShakeRole handshake_role;
 
         void add_option(const TLSOptions option)
         {
@@ -75,6 +87,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         TLSConfig()
             : options(TCPTransportDescriptor::TLSConfig::TLSOptions::NONE)
             , verify_mode(TCPTransportDescriptor::TLSConfig::TLSVerifyMode::UNUSED)
+            , handshake_role(DEFAULT)
         {
         }
 
@@ -86,6 +99,11 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             , tmp_dh_file(t.tmp_dh_file)
             , verify_file(t.verify_file)
             , verify_mode(t.verify_mode)
+            , verify_paths(t.verify_paths)
+            , default_verify_path(t.default_verify_path)
+            , verify_depth(t.verify_depth)
+            , rsa_private_key_file(t.rsa_private_key_file)
+            , handshake_role(t.handshake_role)
         {
         }
 
@@ -97,6 +115,11 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             , tmp_dh_file(std::move(t.tmp_dh_file))
             , verify_file(std::move(t.verify_file))
             , verify_mode(std::move(t.verify_mode))
+            , verify_paths(std::move(t.verify_paths))
+            , default_verify_path(std::move(t.default_verify_path))
+            , verify_depth(std::move(t.verify_depth))
+            , rsa_private_key_file(std::move(t.rsa_private_key_file))
+            , handshake_role(std::move(t.handshake_role))
         {
         }
 
@@ -109,6 +132,11 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             tmp_dh_file = t.tmp_dh_file;
             verify_file = t.verify_file;
             verify_mode = t.verify_mode;
+            verify_paths = t.verify_paths;
+            default_verify_path = t.default_verify_path;
+            verify_depth = t.verify_depth;
+            rsa_private_key_file = t.rsa_private_key_file;
+            handshake_role = t.handshake_role;
 
             return *this;
         }

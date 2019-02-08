@@ -302,6 +302,19 @@ const char* TLS_PRIVATE_KEY_FILE = "private_key_file";
 const char* TLS_TMP_DH_FILE = "tmp_dh_file";
 const char* TLS_VERIFY_FILE = "verify_file";
 const char* TLS_VERIFY_MODE = "verify_mode";
+const char* TLS_VERIFY_PATHS = "verify_paths";
+const char* TLS_DEFAULT_VERIFY_PATH = "default_verify_path";
+const char* TLS_VERIFY_DEPTH = "verify_depth";
+const char* TLS_RSA_PRIVATE_KEY_FILE = "rsa_private_key_file";
+const char* TLS_HANDSHAKE_ROLE = "handshake_role";
+
+// TLS HandShake Role
+const char* TLS_HANDSHAKE_ROLE_DEFAULT = "DEFAULT";
+const char* TLS_HANDSHAKE_ROLE_CLIENT = "CLIENT";
+const char* TLS_HANDSHAKE_ROLE_SERVER = "SERVER";
+
+// TLS Verify Paths
+const char* TLS_VERIFY_PATH = "verify_path";
 
 // TLS Options
 const char* TLS_OPTION = "option";

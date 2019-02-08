@@ -51,6 +51,7 @@ void TCPAcceptorSecure::accept(
         << ":" << acceptor_.local_endpoint().port());
 
     using asio::ip::tcp;
+    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
     try
     {
         acceptor_.async_accept(
@@ -59,7 +60,12 @@ void TCPAcceptorSecure::accept(
                 tcp_secure::eProsimaTCPSocket socket_ptr = tcp_secure::createTCPSocket(std::move(socket), ssl_context);
                 if (!error)
                 {
-                    socket_ptr->async_handshake(ssl::stream_base::server,
+                    ssl::stream_base::handshake_type role = ssl::stream_base::server;
+                    if (parent->configuration()->tls_config.handshake_role == TLSHSRole::CLIENT)
+                    {
+                        role = ssl::stream_base::client;
+                    }
+                    socket_ptr->async_handshake(role,
                         [this, parent, socket_ptr](const std::error_code& error)
                         {
                             logInfo(RTCP_TLS, "Handshake sucessfull");

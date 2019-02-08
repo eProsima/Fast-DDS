@@ -292,12 +292,23 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
                 for (++locIt; locIt != locNames.end(); ++locIt)
                 {
                     uint16_t new_port = 0;
-                    eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(generate_endpoint((*locIt).name, new_port), new_port);
-                    SetSocketOutboundInterface(multicastSocket, (*locIt).name);
+                    try
+                    {
+                        eProsimaUDPSocket multicastSocket =
+                            OpenAndBindUnicastOutputSocket(generate_endpoint((*locIt).name, new_port), new_port);
+                        SetSocketOutboundInterface(multicastSocket, (*locIt).name);
 
-                    UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
-                    mSocket->only_multicast_purpose(true);
-                    mOutputSockets.push_back(mSocket);
+                        UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
+                        mSocket->only_multicast_purpose(true);
+                        mOutputSockets.push_back(mSocket);
+                    }
+                    catch(asio::system_error const& e)
+                    {
+                        (void)e;
+                        logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface "
+                            << (*locIt).name << " (skipping) with msg: " << e.what());
+                    }
+
                 }
             }
             else
@@ -317,7 +328,8 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
             {
                 if (is_interface_allowed(infoIP.name))
                 {
-                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(generate_endpoint(infoIP.name, port), port);
+                    eProsimaUDPSocket unicastSocket =
+                        OpenAndBindUnicastOutputSocket(generate_endpoint(infoIP.name, port), port);
                     SetSocketOutboundInterface(unicastSocket, infoIP.name);
                     if (!firstInterface)
                     {
@@ -332,7 +344,8 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
+        logError(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
+            << " with msg: " << e.what());
         for (auto& socket : mOutputSockets)
         {
             delete socket;
@@ -344,7 +357,9 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
     return true;
 }
 
-eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(const ip::udp::endpoint& endpoint, uint16_t& port)
+eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
+        const ip::udp::endpoint& endpoint,
+        uint16_t& port)
 {
     eProsimaUDPSocket socket = createUDPSocket(io_service_);
     getSocketPtr(socket)->open(generate_protocol());
