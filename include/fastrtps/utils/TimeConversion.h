@@ -20,8 +20,10 @@
 #ifndef TIMECONVERSION_H_
 #define TIMECONVERSION_H_
 
-#include <cstdint>
+#include <stdint.h>
 #include "../rtps/common/Time_t.h"
+
+using namespace std;
 
 namespace eprosima {
 namespace fastrtps{

@@ -73,9 +73,10 @@ endmacro()
 
 macro(check_endianness)
     # Test endianness
-    include(TestBigEndian)
-    test_big_endian(BIG_ENDIAN)
-    set(__BIG_ENDIAN__ ${BIG_ENDIAN})
+    #include(TestBigEndian)
+    #test_big_endian(BIG_ENDIAN)
+    #set(__BIG_ENDIAN__ ${BIG_ENDIAN})
+    set(__BIG_ENDIAN__ 0)
 endmacro()
 
 macro(check_msvc_arch)

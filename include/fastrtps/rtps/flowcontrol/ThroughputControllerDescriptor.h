@@ -16,7 +16,7 @@
 #define THROUGHPUT_CONTROLLER_DESCRIPTOR_H
 
 #include <fastrtps/fastrtps_dll.h>
-#include <cstdint>
+#include <stdint.h>
 
 namespace eprosima{
 namespace fastrtps{

@@ -17,6 +17,7 @@
  *
  */
 #include <cmath>
+#include <math.h>
 #include <iostream>
 #include <fastrtps/utils/eClock.h>
 using namespace eprosima::fastrtps::rtps;
@@ -83,6 +84,7 @@ uint64_t eClock::intervalEnd()
 
 #else //UNIX VERSION
 #include <unistd.h>
+#include <time.h>
 
 bool eClock::setTimeNow(Time_t* tnow)
 {
@@ -92,11 +94,22 @@ bool eClock::setTimeNow(Time_t* tnow)
 	return true;
 }
 
+#ifdef __VXWORKS__
+void eClock::my_sleep(uint32_t milliseconds)
+{
+    struct timespec ts;
+    ts.tv_sec = milliseconds / 1000;
+    ts.tv_nsec = (milliseconds % 1000) * 1000000;
+    nanosleep(&ts, NULL);
+    return;
+}
+#else
 void eClock::my_sleep(uint32_t milliseconds)
 {
 	usleep(milliseconds*1000);
 	return;
 }
+#endif
 
 void eClock::intervalStart()
 {

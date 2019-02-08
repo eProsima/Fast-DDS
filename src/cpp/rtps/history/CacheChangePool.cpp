@@ -23,6 +23,7 @@
 
 #include <mutex>
 
+#include <math.h>
 #include <cassert>
 
 

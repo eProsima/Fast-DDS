@@ -26,7 +26,7 @@ namespace security {
 
 enum class ProtectionKind
 {
-    NONE,
+    NO_PROTECTION,
     SIGN,
     ENCRYPT,
     SIGN_WITH_ORIGIN_AUTHENTICATION,

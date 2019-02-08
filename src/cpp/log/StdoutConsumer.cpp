@@ -26,7 +26,7 @@ void StdoutConsumer::PrintHeader(const Log::Entry& entry) const
     localtime_s(&ltime, &now_c);
     std::cout << C_B_WHITE << std::put_time(&ltime, "%F %T")
 #else
-    std::cout << C_B_WHITE << std::put_time(localtime(&now_c), "%F %T")
+    std::cout << C_B_WHITE << ctime(&now_c)
 #endif
        << "." << std::setw(3) << std::setfill('0') <<  ms << " ";
     switch (entry.kind)

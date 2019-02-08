@@ -174,7 +174,7 @@ void TimedEventImpl::event(const std::error_code& ec, const std::shared_ptr<Time
     // Check bad preconditions
     assert(!(ret && scode == TimerState::DESTROYED));
 
-    if(scode != TimerState::WAITING || !ret || ec == asio::error::operation_aborted)
+    if(scode != TimerState::WAITING || !ret || ec == static_cast<asio::error_code>(asio::error::operation_aborted))
     {
         // If autodestruction is TimedEvent::ALLWAYS, delete the event.
         if(scode != TimerState::DESTROYED && state.get()->autodestruction_ == TimedEvent::ALLWAYS)

@@ -260,7 +260,7 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
             {
                 if(strcmp(text, ProtectionKindNone_str) == 0)
                 {
-                    rule.discovery_protection_kind = ProtectionKind::NONE;
+                    rule.discovery_protection_kind = ProtectionKind::NO_PROTECTION;
                 }
                 else if(strcmp(text, ProtectionKindSign_str) == 0)
                 {
@@ -315,7 +315,7 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
             {
                 if(strcmp(text, ProtectionKindNone_str) == 0)
                 {
-                    rule.liveliness_protection_kind = ProtectionKind::NONE;
+                    rule.liveliness_protection_kind = ProtectionKind::NO_PROTECTION;
                 }
                 else if(strcmp(text, ProtectionKindSign_str) == 0)
                 {
@@ -370,7 +370,7 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
             {
                 if(strcmp(text, ProtectionKindNone_str) == 0)
                 {
-                    rule.rtps_protection_kind = ProtectionKind::NONE;
+                    rule.rtps_protection_kind = ProtectionKind::NO_PROTECTION;
                 }
                 else if(strcmp(text, ProtectionKindSign_str) == 0)
                 {
@@ -625,7 +625,7 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
             {
                 if(strcmp(text, ProtectionKindNone_str) == 0)
                 {
-                    rule.metadata_protection_kind = ProtectionKind::NONE;
+                    rule.metadata_protection_kind = ProtectionKind::NO_PROTECTION;
                 }
                 else if(strcmp(text, ProtectionKindSign_str) == 0)
                 {
@@ -680,7 +680,7 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
             {
                 if(strcmp(text, ProtectionKindNone_str) == 0)
                 {
-                    rule.data_protection_kind = ProtectionKind::NONE;
+                    rule.data_protection_kind = ProtectionKind::NO_PROTECTION;
                 }
                 else if(strcmp(text, ProtectionKindSign_str) == 0)
                 {

@@ -848,7 +848,7 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
             }
             catch (const asio::error_code& code)
             {
-                if ((code == asio::error::eof) || (code == asio::error::connection_reset))
+                if ((code.value() == asio::error::eof) || (code.value() == asio::error::connection_reset))
                 {
                     // Close the channel
                     logInfo(RTCP_MSG_IN, "ASIO [RECEIVE]: " << code.message());

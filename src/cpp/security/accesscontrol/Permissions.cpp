@@ -562,7 +562,7 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
 
 static void process_protection_kind(const ProtectionKind kind, bool& protected_flag, bool& encrypted_flag, bool& orig_auth_flag)
 {
-    protected_flag = kind != ProtectionKind::NONE;
+    protected_flag = kind != ProtectionKind::NO_PROTECTION;
     encrypted_flag = (kind == ProtectionKind::ENCRYPT) || (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
     orig_auth_flag = (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
         (kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
@@ -659,7 +659,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
 
                         reader_attributes.is_submessage_protected =
                             writer_attributes.is_submessage_protected =
-                            (topic_rule.metadata_protection_kind != ProtectionKind::NONE);
+                            (topic_rule.metadata_protection_kind != ProtectionKind::NO_PROTECTION);
 
                         plugin_attributes.is_payload_encrypted =
                             reader_attributes.is_key_protected =
@@ -667,7 +667,7 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                             (topic_rule.data_protection_kind == ProtectionKind::ENCRYPT);
                         reader_attributes.is_payload_protected =
                             writer_attributes.is_payload_protected =
-                                (topic_rule.data_protection_kind != ProtectionKind::NONE);
+                                (topic_rule.data_protection_kind != ProtectionKind::NO_PROTECTION);
 
                         reader_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
                         writer_attributes.plugin_endpoint_attributes = plugin_attributes.mask();

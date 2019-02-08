@@ -102,7 +102,7 @@ void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
     auto refresh = [throwawayTimer, this, sizeToRestore]
         (const asio::error_code& error)
         {
-            if ((error != asio::error::operation_aborted) &&
+            if ((error != static_cast<asio::error_code>(asio::error::operation_aborted)) &&
                     FlowController::IsListening(this))
             {
                 std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);

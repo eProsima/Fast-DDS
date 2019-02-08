@@ -19,7 +19,7 @@
 
 #include <fastrtps/utils/StringMatching.h>
 
-#if defined(__cplusplus_winrt)
+#if defined(__cplusplus_winrt) || defined(__VXWORKS__)
 #include <algorithm>
 #include <regex>
 #elif defined(_WIN32)
@@ -41,7 +41,7 @@ StringMatching::~StringMatching() {
 	// TODO Auto-generated destructor stub
 }
 
-#if defined(__cplusplus_winrt)
+#if defined(__cplusplus_winrt) || defined(__VXWORKS__)
 void replace_all(std::string & subject, const std::string & search, const std::string & replace) {
 	size_t pos = 0;
 	while ((pos = subject.find(search, pos)) != std::string::npos) {
