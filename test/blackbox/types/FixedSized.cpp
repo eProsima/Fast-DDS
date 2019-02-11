@@ -79,7 +79,7 @@ size_t FixedSized::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t FixedSized::getCdrSerializedSize(const FixedSized& data, size_t current_alignment)
+size_t FixedSized::getCdrSerializedSize(const FixedSized& /*data*/, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
             
