@@ -68,7 +68,6 @@ void TCPAcceptorSecure::accept(
                     socket_ptr->async_handshake(role,
                         [this, parent, socket_ptr](const std::error_code& error)
                         {
-                            logInfo(RTCP_TLS, "Handshake sucessfull");
                             parent->SecureSocketAccepted(this, socket_ptr, error);
                         });
                 }

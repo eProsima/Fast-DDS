@@ -91,12 +91,12 @@ void TCPChannelResourceSecure::connect()
                     {
                         role = ssl::stream_base::server;
                     }
+
                     secure_socket_->async_handshake(role,
                         [this](const std::error_code& error)
                     {
                         if (!error)
                         {
-                            logInfo(RTCP_TLS, "Handshake sucessfull");
                             parent_->SocketConnected(locator_, error);
                         }
                         else
@@ -212,23 +212,24 @@ void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor*
     {
         if (options->tls_config.verify_mode != TLSVerifyMode::UNUSED)
         {
-            switch (options->tls_config.verify_mode)
+            ssl::verify_mode vm = 0x00;
+            if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_NONE))
             {
-                case TLSVerifyMode::VERIFY_NONE:
-                    secure_socket_->set_verify_mode(ssl::verify_none);
-                    break;
-                case TLSVerifyMode::VERIFY_PEER:
-                    secure_socket_->set_verify_mode(ssl::verify_peer);
-                    break;
-                case TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT:
-                    secure_socket_->set_verify_mode(ssl::verify_fail_if_no_peer_cert);
-                    break;
-                case TLSVerifyMode::VERIFY_CLIENT_ONCE:
-                    secure_socket_->set_verify_mode(ssl::verify_client_once);
-                    break;
-                default:
-                    break;
+                vm |= ssl::verify_peer;
             }
+            else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_PEER))
+            {
+                vm |= ssl::verify_peer;
+            }
+            else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT))
+            {
+                vm |= ssl::verify_peer;
+            }
+            else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_CLIENT_ONCE))
+            {
+                vm |= ssl::verify_peer;
+            }
+            secure_socket_->set_verify_mode(vm);
         }
     }
 }

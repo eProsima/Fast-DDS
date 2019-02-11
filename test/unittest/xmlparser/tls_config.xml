@@ -12,7 +12,9 @@
                     <cert_chain_file>Chain.pem</cert_chain_file>
                     <tmp_dh_file>DH.pem</tmp_dh_file>
                     <verify_file>verify.pem</verify_file>
-                    <verify_mode>VERIFY_PEER</verify_mode>
+                    <verify_mode>
+                        <verify>VERIFY_PEER</verify>
+                    </verify_mode>
                     <options>
                         <option>NO_TLSV1</option>
                         <option>NO_TLSV1_1</option>

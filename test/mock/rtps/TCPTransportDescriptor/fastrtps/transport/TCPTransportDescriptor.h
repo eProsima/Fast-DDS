@@ -65,12 +65,22 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         std::string private_key_file;
         std::string tmp_dh_file;
         std::string verify_file;
-        TLSVerifyMode verify_mode;
+        uint8_t verify_mode;
         std::vector<std::string> verify_paths;
         bool default_verify_path = false; // don't invoque
         int32_t verify_depth = -1; // don't override
         std::string rsa_private_key_file;
         TLSHandShakeRole handshake_role;
+
+        void add_verify_mode(const TLSVerifyMode verify)
+        {
+            verify_mode |= verify;
+        }
+
+        bool get_verify_mode(const TLSVerifyMode verify) const
+        {
+            return (verify_mode & verify) == verify;
+        }
 
         void add_option(const TLSOptions option)
         {

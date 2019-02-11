@@ -650,6 +650,12 @@ XMLP_ret XMLParser::parse_tls_config(
             </xs:restriction>
         </xs:simpleType>
 
+        <xs:complexType name="tlsVerifyModeVectorType">
+            <xs:sequence>
+                <xs:element name="verify" type="tlsVerifyModeType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
         <xs:complexType name="tlsConfigType">
             <xs:all minOccurs="0">
                 <xs:element name="password" type="stringType" minOccurs="0" maxOccurs="1"/>
@@ -658,7 +664,7 @@ XMLP_ret XMLParser::parse_tls_config(
                 <xs:element name="private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="tmp_dh_file" type="stringType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="verify_file" type="stringType" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="verify_mode" type="tlsVerifyModeType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="verify_mode" type="tlsVerifyModeVectorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="verify_paths" type="tlsVerifyPathVectorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="default_verify_path" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="verify_depth" type="xs:int" minOccurs="0" maxOccurs="1"/>
@@ -673,7 +679,9 @@ XMLP_ret XMLParser::parse_tls_config(
             <cert_chain_file>Chain.pem</cert_chain_file>
             <tmp_dh_file>DH.pem</tmp_dh_file>
             <verify_file>verify.pem</verify_file>
-            <verify_mode>VERIFY_PEER</verify_mode>
+            <verify_mode>
+                <verify>VERIFY_PEER</verify>
+            </verify_mode>
             <options>
                 <option>NO_TLSV1</option>
                 <option>NO_TLSV1_1</option>
@@ -807,35 +815,48 @@ XMLP_ret XMLParser::parse_tls_config(
         }
         else if (config.compare(TLS_VERIFY_MODE) == 0)
         {
-            std::string verify_mode;
-            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &verify_mode, 0))
+            tinyxml2::XMLElement *p_verify = p_aux0->FirstChildElement(TLS_VERIFY);
+            while (p_verify != nullptr)
             {
-                ret = XMLP_ret::XML_ERROR;
-            }
-            else
-            {
-                if (verify_mode.compare(TLS_VERIFY_NONE) == 0)
+                std::string verify_mode;
+
+                if (XMLP_ret::XML_OK != getXMLString(p_verify, &verify_mode, 0))
                 {
-                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_NONE;
-                }
-                else if (verify_mode.compare(TLS_VERIFY_PEER) == 0)
-                {
-                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
-                }
-                else if (verify_mode.compare(TLS_VERIFY_FAIL_IF_NO_PEER_CERT) == 0)
-                {
-                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
-                }
-                else if (verify_mode.compare(TLS_VERIFY_CLIENT_ONCE) == 0)
-                {
-                    pTCPDesc->tls_config.verify_mode = TLSVerifyMode::VERIFY_CLIENT_ONCE;
+                    ret = XMLP_ret::XML_ERROR;
                 }
                 else
                 {
-                    logError(XMLPARSER, "Error parsing TLS configuration verify_mode unrecognized "
-                        << verify_mode << ".");
-                    ret = XMLP_ret::XML_ERROR;
+                    if (verify_mode.compare(TLS_VERIFY_NONE) == 0)
+                    {
+                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_NONE);
+                    }
+                    else if (verify_mode.compare(TLS_VERIFY_PEER) == 0)
+                    {
+                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_PEER);
+                    }
+                    else if (verify_mode.compare(TLS_VERIFY_FAIL_IF_NO_PEER_CERT) == 0)
+                    {
+                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT);
+                    }
+                    else if (verify_mode.compare(TLS_VERIFY_CLIENT_ONCE) == 0)
+                    {
+                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_CLIENT_ONCE);
+                    }
+                    else
+                    {
+                        logError(XMLPARSER, "Error parsing TLS configuration verify_mode unrecognized "
+                            << verify_mode << ".");
+                        ret = XMLP_ret::XML_ERROR;
+                    }
                 }
+
+                if (ret == XMLP_ret::XML_ERROR)
+                {
+                    // Break while loop
+                    break;
+                }
+
+                p_verify = p_verify->NextSiblingElement(TLS_VERIFY);
             }
         }
         else if (config.compare(TLS_OPTIONS) == 0)

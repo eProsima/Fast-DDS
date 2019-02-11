@@ -331,8 +331,9 @@ extern const char* TLS_HANDSHAKE_ROLE_DEFAULT;
 extern const char* TLS_HANDSHAKE_ROLE_CLIENT;
 extern const char* TLS_HANDSHAKE_ROLE_SERVER;
 
-// TLS Verify Paths
+// TLS Verify Stuff
 extern const char* TLS_VERIFY_PATH;
+extern const char* TLS_VERIFY;
 
 // TLS Options
 extern const char* TLS_OPTION;

@@ -313,8 +313,9 @@ const char* TLS_HANDSHAKE_ROLE_DEFAULT = "DEFAULT";
 const char* TLS_HANDSHAKE_ROLE_CLIENT = "CLIENT";
 const char* TLS_HANDSHAKE_ROLE_SERVER = "SERVER";
 
-// TLS Verify Paths
+// TLS Verify Stuff
 const char* TLS_VERIFY_PATH = "verify_path";
+const char* TLS_VERIFY = "verify";
 
 // TLS Options
 const char* TLS_OPTION = "option";

@@ -1597,9 +1597,8 @@ void TCPTransportInterface::apply_tls_config()
     const TCPTransportDescriptor* descriptor = configuration();
     if (descriptor->apply_security)
     {
-        ssl_context_.set_verify_callback([](bool preverified, ssl::verify_context&)
+        ssl_context_.set_verify_callback([descriptor](bool preverified, ssl::verify_context&)
         {
-            logError(TLS_VERIFY, "Preverified: " << preverified);
             return preverified;
         });
 

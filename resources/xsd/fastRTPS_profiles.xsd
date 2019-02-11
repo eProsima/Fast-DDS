@@ -84,6 +84,12 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:complexType name="tlsVerifyModeVectorType">
+        <xs:sequence>
+            <xs:element name="verify" type="tlsVerifyModeType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:simpleType name="tlsHandShakeRole">
         <xs:restriction base="xs:string">
             <xs:enumeration value="DEFAULT"/>
@@ -100,7 +106,7 @@
             <xs:element name="private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="tmp_dh_file" type="stringType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="verify_file" type="stringType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="verify_mode" type="tlsVerifyModeType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_mode" type="tlsVerifyModeVectorType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="verify_paths" type="tlsVerifyPathVectorType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="default_verify_path" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
             <xs:element name="verify_depth" type="xs:int" minOccurs="0" maxOccurs="1"/>
