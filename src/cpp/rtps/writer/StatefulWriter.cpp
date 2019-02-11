@@ -741,21 +741,18 @@ void StatefulWriter::check_acked_status()
         // Inform of samples acked.
         if(mp_listener != nullptr)
         {
-            std::vector<CacheChange_t*> all_acked_changes;
             for(SequenceNumber_t current_seq = get_seq_num_min(); current_seq <= min_low_mark; ++current_seq)
             {
-                for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
-                        cit != mp_history->changesEnd(); ++cit)
-                {
-                    if((*cit)->sequenceNumber == current_seq)
+                std::vector<CacheChange_t*>::iterator history_end = mp_history->changesEnd();
+                std::vector<CacheChange_t*>::iterator cit = std::find_if(mp_history->changesBegin(), history_end,
+                    [current_seq](const CacheChange_t* change)
                     {
-                        all_acked_changes.push_back(*cit);
-                    }
+                        return change->sequenceNumber == current_seq;
+                    });
+                if(cit != history_end)
+                {
+                    mp_listener->onWriterChangeReceivedByAll(this, *cit);
                 }
-            }
-            for(auto cit = all_acked_changes.begin(); cit != all_acked_changes.end(); ++cit)
-            {
-                mp_listener->onWriterChangeReceivedByAll(this, *cit);
             }
         }
 
