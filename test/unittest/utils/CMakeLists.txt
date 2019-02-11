@@ -34,9 +34,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(BITMAPRANGETESTS_SOURCE
             BitmapRangeTests.cpp)
 
-        set(TMUTEXTESTS_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/Mutex.cpp
-            TMutexTests.cpp)
+        set(RESOURCELIMITEDVECTORTESTS_SOURCE
+            ResourceLimitedVectorTests.cpp)
 
         include_directories(mock/)
 
@@ -66,5 +65,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(BitmapRangeTests ${GTEST_LIBRARIES} ${MOCKS})
         add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
+
+
+        add_executable(ResourceLimitedVectorTests ${RESOURCELIMITEDVECTORTESTS_SOURCE})
+        target_compile_definitions(ResourceLimitedVectorTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(ResourceLimitedVectorTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(ResourceLimitedVectorTests ${GTEST_LIBRARIES} ${MOCKS})
+        add_gtest(ResourceLimitedVectorTests SOURCES ${RESOURCELIMITEDVECTORTESTS_SOURCE})
     endif()
 endif()
