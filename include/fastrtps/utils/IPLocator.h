@@ -63,6 +63,10 @@ class IPLocator
         RTPS_DllAPI static std::string toIPv6string(const Locator_t &locator);
         RTPS_DllAPI static bool copyIPv6(const Locator_t &locator, unsigned char* dest);
 
+        // Abstract from IPv4 and IPv6
+        RTPS_DllAPI static bool ip(Locator_t &locator, const std::string &ip);
+        RTPS_DllAPI static std::string ip_to_string(const Locator_t &locator);
+
         // TCP
         RTPS_DllAPI static bool setLogicalPort(Locator_t &locator, uint16_t port);
         RTPS_DllAPI static uint16_t getLogicalPort(const Locator_t &locator);

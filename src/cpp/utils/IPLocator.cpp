@@ -295,6 +295,37 @@ bool IPLocator::copyIPv6(const Locator_t &locator, unsigned char* dest)
     return true;
 }
 
+// Abstract from IPv4 and IPv6
+bool IPLocator::ip(Locator_t &locator, const std::string &ip)
+{
+    if (locator.kind == LOCATOR_KIND_TCPv4 ||
+        locator.kind == LOCATOR_KIND_UDPv4)
+    {
+        return setIPv4(locator, ip);
+    }
+    else if (locator.kind == LOCATOR_KIND_TCPv6 ||
+            locator.kind == LOCATOR_KIND_UDPv6)
+    {
+        return setIPv6(locator, ip);
+    }
+    return false;
+}
+
+std::string IPLocator::ip_to_string(const Locator_t &locator)
+{
+    if (locator.kind == LOCATOR_KIND_TCPv4 ||
+        locator.kind == LOCATOR_KIND_UDPv4)
+    {
+        return toIPv4string(locator);
+    }
+    else if (locator.kind == LOCATOR_KIND_TCPv6 ||
+            locator.kind == LOCATOR_KIND_UDPv6)
+    {
+        return toIPv6string(locator);
+    }
+    return "";
+}
+
 // TCP
 bool IPLocator::setLogicalPort(Locator_t &locator, uint16_t port)
 {

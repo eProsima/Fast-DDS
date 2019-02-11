@@ -53,6 +53,7 @@
 #if HAVE_SECURITY
 extern void blackbox_security_init();
 #endif
+extern void tls_init();
 
 extern uint16_t global_port;
 

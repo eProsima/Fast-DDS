@@ -59,7 +59,7 @@ TCPReqRepHelloWorldReplier::~TCPReqRepHelloWorldReplier()
 }
 
 void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t listeningPort,
-        uint32_t maxInitialPeer)
+        uint32_t maxInitialPeer, const char* certs_path)
 {
     ParticipantAttributes pattr;
     pattr.rtps.builtin.domainId = domainId;
@@ -83,6 +83,23 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t 
         descriptor->maxInitialPeersRange = maxInitialPeer;
     }
     descriptor->add_listener_port(listeningPort);
+
+    if (certs_path != nullptr)
+    {
+        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+        using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+        descriptor->apply_security = true;
+        descriptor->tls_config.password = "testkey";
+        descriptor->tls_config.cert_chain_file = std::string(certs_path) + "/mainsubcert.pem";
+        descriptor->tls_config.private_key_file = std::string(certs_path) + "/mainsubkey.pem";
+        descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+        descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+        descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+        descriptor->tls_config.add_option(TLSOptions::NO_COMPRESSION);
+        descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
+        descriptor->tls_config.add_option(TLSOptions::NO_SSLV3);
+    }
+
     pattr.rtps.userTransports.push_back(descriptor);
 
     participant_ = Domain::createParticipant(pattr);

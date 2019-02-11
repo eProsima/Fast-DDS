@@ -77,7 +77,7 @@ void TCPChannelResourceSecure::connect()
         try
         {
             tcp::resolver resolver(service_);
-            auto endpoints = resolver.resolve(IPLocator::toIPv4string(locator_),
+            auto endpoints = resolver.resolve(IPLocator::ip_to_string(locator_),
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
