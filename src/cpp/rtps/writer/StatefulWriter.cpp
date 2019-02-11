@@ -258,7 +258,7 @@ void StatefulWriter::send_any_unsent_changes()
     {
         std::vector<GUID_t> guids(1);
 
-        for (auto remoteReader : matched_readers_)
+        for (ReaderProxy* remoteReader : matched_readers_)
         {
             // For possible GAP
             std::set<SequenceNumber_t> irrelevant;
@@ -315,7 +315,7 @@ void StatefulWriter::send_any_unsent_changes()
         RTPSWriterCollector<ReaderProxy*> relevantChanges;
         StatefulWriterOrganizer notRelevantChanges;
 
-        for (auto remoteReader : matched_readers_)
+        for (ReaderProxy* remoteReader : matched_readers_)
         {
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
             {
@@ -343,11 +343,11 @@ void StatefulWriter::send_any_unsent_changes()
         if (m_pushMode)
         {
             // Clear all relevant changes through the local controllers first
-            for (auto& controller : m_controllers)
+            for (std::unique_ptr<FlowController>& controller : m_controllers)
                 (*controller)(relevantChanges);
 
             // Clear all relevant changes through the parent controllers
-            for (auto& controller : mp_RTPSParticipant->getFlowControllers())
+            for (std::unique_ptr<FlowController>& controller : mp_RTPSParticipant->getFlowControllers())
                 (*controller)(relevantChanges);
 
             RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
@@ -378,7 +378,7 @@ void StatefulWriter::send_any_unsent_changes()
                         expectsInlineQos))
                     {
                         bool must_wake_up_async_thread = false;
-                        for (auto remoteReader : changeToSend.remoteReaders)
+                        for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
                         {
                             bool allFragmentsSent = false;
                             if (remoteReader->mark_fragment_as_sent_for_change(
@@ -422,7 +422,7 @@ void StatefulWriter::send_any_unsent_changes()
                         mp_RTPSParticipant->network_factory().ShrinkLocatorLists(locatorLists),
                         expectsInlineQos))
                     {
-                        for (auto remoteReader : changeToSend.remoteReaders)
+                        for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
                         {
                             if (remoteReader->is_reliable())
                             {
@@ -445,12 +445,12 @@ void StatefulWriter::send_any_unsent_changes()
                 send_heartbeat_piggyback_nts_(group, lastBytesProcessed);
             }
 
-            for (auto pair : notRelevantChanges.elements())
+            for (std::pair<std::vector<ReaderProxy*>, std::set<SequenceNumber_t>> pair : notRelevantChanges.elements())
             {
                 std::vector<GUID_t> remote_readers;
                 std::vector<LocatorList_t> locatorLists;
 
-                for (auto remoteReader : pair.first)
+                for (const ReaderProxy* remoteReader : pair.first)
                 {
                     remote_readers.push_back(remoteReader->guid());
                     locatorLists.push_back(remoteReader->remote_locators());
@@ -612,7 +612,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
 
     std::vector<LocatorList_t> allLocatorLists;
 
-    auto it = matched_readers_.begin();
+    ReaderProxyIterator it = matched_readers_.begin();
     while(it != matched_readers_.end())
     {
         if((*it)->guid() == rdata.guid)
@@ -722,7 +722,7 @@ void StatefulWriter::check_acked_status()
     bool all_acked = true;
     SequenceNumber_t min_low_mark;
 
-    for(ReaderProxy* it : matched_readers_)
+    for(const ReaderProxy* it : matched_readers_)
     {
         SequenceNumber_t reader_low_mark = it->changes_low_mark();
         if(min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
@@ -1011,7 +1011,7 @@ void StatefulWriter::perform_nack_response(const GUID_t& reader_guid)
 {
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    for (auto remote_reader : matched_readers_)
+    for (ReaderProxy* remote_reader : matched_readers_)
     {
         if (remote_reader->guid() == reader_guid)
         {
@@ -1028,7 +1028,7 @@ void StatefulWriter::perform_nack_supression(const GUID_t& reader_guid)
 {
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    for (auto remote_reader : matched_readers_)
+    for (ReaderProxy* remote_reader : matched_readers_)
     {
         if (remote_reader->guid() == reader_guid)
         {
@@ -1051,7 +1051,7 @@ bool StatefulWriter::process_acknack(
     result = (m_guid == writer_guid);
     if (result)
     {
-        for (auto remote_reader : matched_readers_)
+        for (ReaderProxy* remote_reader : matched_readers_)
         {
             if (remote_reader->guid() == reader_guid)
             {
@@ -1099,7 +1099,7 @@ bool StatefulWriter::process_nack_frag(
     if (m_guid == writer_guid)
     {
         result = true;
-        for (auto remote_reader : matched_readers_)
+        for (ReaderProxy* remote_reader : matched_readers_)
         {
             if (remote_reader->guid() == reader_guid)
             {

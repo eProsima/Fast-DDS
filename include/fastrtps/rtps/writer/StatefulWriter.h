@@ -47,10 +47,6 @@ public:
     //!Destructor
     virtual ~StatefulWriter();
 
-    //!Timed Event to manage the periodic HB to the Reader.
-    // TODO Change to public because a bug. Refactor.
-    PeriodicHeartbeat* mp_periodicHB;
-
 protected:
     //!Constructor
     StatefulWriter(
@@ -61,6 +57,8 @@ protected:
             WriterListener* listen = nullptr);
 
 private:
+    //!Timed Event to manage the periodic HB to the Reader.
+    PeriodicHeartbeat* mp_periodicHB;
     //!Count of the sent heartbeats.
     Count_t m_heartbeatCount;
     //!WriterTimes
@@ -70,6 +68,10 @@ private:
     ResourceLimitedVector<ReaderProxy*> matched_readers_;
     //! Vector containing all the inactive, ready for reuse, ReaderProxies.
     ResourceLimitedVector<ReaderProxy*> matched_readers_pool_;
+
+    using ReaderProxyIterator = ResourceLimitedVector<ReaderProxy*>::iterator;
+    using ReaderProxyConstIterator = ResourceLimitedVector<ReaderProxy*>::const_iterator;
+
     //!EntityId used to send the HB.(only for builtin types performance)
     EntityId_t m_HBReaderEntityId;
     // TODO Join this mutex when main mutex would not be recursive.
