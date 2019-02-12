@@ -23,6 +23,8 @@
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
 #include "EndpointAttributes.h"
+#include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -80,6 +82,9 @@ class  ReaderAttributes
 
         //!Indicates if the reader expects Inline qos, default value 0.
         bool expectsInlineQos;
+
+        //! Define the allocation behaviour for matched-writer-dependent collections.
+        ResourceLimitedContainerConfig matched_writers_allocation;
 };
 
 /**
