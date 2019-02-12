@@ -295,6 +295,11 @@
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
             <userDefinedID>13</userDefinedID>
             <entityID>31</entityID>
+            <matchedPublishersAllocation>
+                <initial>10</initial>
+                <maximum>20</maximum>
+                <increment>2</increment>
+            </matchedPublishersAllocation>
         </subscriber>
 
     </profiles>
