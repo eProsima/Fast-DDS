@@ -30,21 +30,25 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
-        ReaderAttributes& att,ReaderHistory* hist,ReaderListener* rlisten):
-    Endpoint(pimpl,guid,att.endpoint),
-    mp_history(hist),
-    mp_listener(rlisten),
-    m_acceptMessagesToUnknownReaders(true),
-    m_acceptMessagesFromUnkownWriters(true),
-    m_expectsInlineQos(att.expectsInlineQos),
-    fragmentedChangePitStop_(nullptr)
-    {
-        mp_history->mp_reader = this;
-        mp_history->mp_mutex = mp_mutex;
-        fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
-        logInfo(RTPS_READER,"RTPSReader created correctly");
-    }
+RTPSReader::RTPSReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        ReaderHistory* hist,
+        ReaderListener* rlisten)
+    : Endpoint(pimpl,guid,att.endpoint)
+    , mp_history(hist)
+    , mp_listener(rlisten)
+    , m_acceptMessagesToUnknownReaders(true)
+    , m_acceptMessagesFromUnkownWriters(true)
+    , m_expectsInlineQos(att.expectsInlineQos)
+    , fragmentedChangePitStop_(nullptr)
+{
+    mp_history->mp_reader = this;
+    mp_history->mp_mutex = mp_mutex;
+    fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
+    logInfo(RTPS_READER,"RTPSReader created correctly");
+}
 
 RTPSReader::~RTPSReader()
 {
@@ -54,7 +58,7 @@ RTPSReader::~RTPSReader()
     mp_history->mp_mutex = nullptr;
 }
 
-bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
+bool RTPSReader::acceptMsgDirectedTo(const EntityId_t& entityId) const
 {
     if(entityId == m_guid.entityId)
         return true;
@@ -64,7 +68,9 @@ bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
         return false;
 }
 
-bool RTPSReader::reserveCache(CacheChange_t** change, uint32_t dataCdrSerializedSize)
+bool RTPSReader::reserveCache(
+        CacheChange_t** change, 
+        uint32_t dataCdrSerializedSize)
 {
     return mp_history->reserve_Cache(change, dataCdrSerializedSize);
 }
@@ -74,7 +80,7 @@ void RTPSReader::releaseCache(CacheChange_t* change)
     return mp_history->release_Cache(change);
 }
 
-ReaderListener* RTPSReader::getListener()
+ReaderListener* RTPSReader::getListener() const
 {
     return mp_listener;
 }
@@ -85,8 +91,9 @@ bool RTPSReader::setListener(ReaderListener *target)
     return true;
 }
 
-CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(const SequenceNumber_t& sequence_number,
-        const GUID_t& writer_guid)
+CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(
+        const SequenceNumber_t& sequence_number,
+        const GUID_t& writer_guid) const
 {
     return fragmentedChangePitStop_->find(sequence_number, writer_guid);
 }
@@ -112,7 +119,9 @@ void RTPSReader::remove_persistence_guid(const RemoteWriterAttributes& wdata)
     }
 }
 
-SequenceNumber_t RTPSReader::update_last_notified(const GUID_t& guid, const SequenceNumber_t& seq)
+SequenceNumber_t RTPSReader::update_last_notified(
+        const GUID_t& guid, 
+        const SequenceNumber_t& seq)
 {
     SequenceNumber_t ret_val;
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
@@ -157,11 +166,13 @@ SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid) const
     return ret_val;
 }
 
-void RTPSReader::set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq)
+void RTPSReader::set_last_notified(
+        const GUID_t& peristence_guid, 
+        const SequenceNumber_t& seq)
 {
     history_record_[peristence_guid] = seq;
 }
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

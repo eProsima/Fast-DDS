@@ -43,49 +43,52 @@ using namespace eprosima::fastrtps::rtps;
 StatefulReader::~StatefulReader()
 {
     logInfo(RTPS_READER,"StatefulReader destructor.";);
-    for(std::vector<WriterProxy*>::iterator it = matched_writers.begin();
-            it!=matched_writers.end();++it)
+    for(WriterProxy* writer : matched_writers)
     {
-        delete(*it);
+        delete(writer);
     }
 }
 
 
 
-StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-    RTPSReader(pimpl,guid,att,hist, listen),
-    m_acknackCount(0),
-    m_nackfragCount(0),
-    m_times(att.times)
+StatefulReader::StatefulReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        ReaderHistory* hist,
+        ReaderListener* listen)
+    : RTPSReader(pimpl,guid,att,hist, listen)
+    , m_acknackCount(0)
+    , m_nackfragCount(0)
+    , m_times(att.times)
 {
 }
 
 
-bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
-            it!=matched_writers.end();++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        if(it->m_att.guid == wdata.guid)
         {
             logInfo(RTPS_READER,"Attempting to add existing writer");
             return false;
         }
     }
 
-    getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
+    RemoteWriterAttributes att(wdata);
+    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
 
 
-    wdata.endpoint.unicastLocatorList =
-        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({wdata.endpoint.unicastLocatorList});
-    WriterProxy* wp = new WriterProxy(wdata, this);
+    att.endpoint.unicastLocatorList =
+        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({att.endpoint.unicastLocatorList});
+    WriterProxy* wp = new WriterProxy(att, this);
 
     wp->mp_initialAcknack->restart_timer();
 
-    add_persistence_guid(wdata);
-    wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+    add_persistence_guid(att);
+    wp->loaded_from_storage_nts(get_last_notified(att.guid));
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
@@ -123,7 +126,9 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata, bool deleteWP)
+bool StatefulReader::matched_writer_remove(
+        const RemoteWriterAttributes& wdata, 
+        bool deleteWP)
 {
     WriterProxy *wproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
@@ -155,12 +160,12 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata, 
     return false;
 }
 
-bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        if(it->m_att.guid == wdata.guid)
         {
             return true;
         }
@@ -168,8 +173,9 @@ bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wda
     return false;
 }
 
-
-bool StatefulReader::matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP)
+bool StatefulReader::matched_writer_lookup(
+        const GUID_t& writerGUID, 
+        WriterProxy** WP)
 {
     assert(WP);
 
@@ -189,15 +195,15 @@ bool StatefulReader::matched_writer_lookup(const GUID_t& writerGUID, WriterProxy
     return returnedValue;
 }
 
-bool StatefulReader::findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP)
+bool StatefulReader::findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP) const
 {
     assert(WP);
 
-    for(std::vector<WriterProxy*>::iterator it = matched_writers.begin(); it != matched_writers.end(); ++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == writerGUID)
+        if(it->m_att.guid == writerGUID)
         {
-            *WP = *it;
+            *WP = it;
             return true;
         }
     }
@@ -278,7 +284,10 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
-bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
+bool StatefulReader::processDataFragMsg(
+        CacheChange_t* incomingChange, 
+        uint32_t sampleSize, 
+        uint32_t fragmentStartingNum)
 {
     WriterProxy *pWP = nullptr;
 
@@ -349,8 +358,13 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
     return true;
 }
 
-bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag)
+bool StatefulReader::processHeartbeatMsg(
+        const GUID_t& writerGUID, 
+        uint32_t hbCount, 
+        const SequenceNumber_t& firstSN,
+        const SequenceNumber_t& lastSN, 
+        bool finalFlag, 
+        bool livelinessFlag)
 {
     WriterProxy *pWP = nullptr;
 
@@ -398,7 +412,10 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
     return true;
 }
 
-bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList)
+bool StatefulReader::processGapMsg(
+        const GUID_t& writerGUID, 
+        const SequenceNumber_t& gapStart, 
+        const SequenceNumberSet_t& gapList)
 {
     WriterProxy *pWP = nullptr;
 
@@ -425,16 +442,17 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
     return true;
 }
 
-bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
+bool StatefulReader::acceptMsgFrom(
+        const GUID_t& writerId, 
+        WriterProxy **wp) const
 {
     assert(wp != nullptr);
 
-    for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
-            it!=matched_writers.end();++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == writerId)
+        if(it->m_att.guid == writerId)
         {
-            *wp = *it;
+            *wp = it;
             return true;
         }
     }
@@ -442,7 +460,9 @@ bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
     return false;
 }
 
-bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterProxy* wp)
+bool StatefulReader::change_removed_by_history(
+        CacheChange_t* a_change, 
+        WriterProxy* wp)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -458,7 +478,9 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
     return false;
 }
 
-bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
+bool StatefulReader::change_received(
+        CacheChange_t* a_change, 
+        WriterProxy* prox)
 {
     //First look for WriterProxy in case is not provided
     if(prox == nullptr)
@@ -528,7 +550,9 @@ void StatefulReader::NotifyChanges(WriterProxy* prox)
     }
 }
 
-bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
+bool StatefulReader::nextUntakenCache(
+        CacheChange_t** change,
+        WriterProxy** wpout)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> toremove;
@@ -585,7 +609,9 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
 }
 
 // TODO Porque elimina aqui y no cuando hay unpairing
-bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
+bool StatefulReader::nextUnreadCache(
+        CacheChange_t** change,
+        WriterProxy** wpout)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     std::vector<CacheChange_t*> toremove;
