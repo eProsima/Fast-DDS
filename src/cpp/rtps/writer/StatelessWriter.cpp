@@ -89,7 +89,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* cptr)
                     guids.at(0) = it->guid;
                     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
                         it->endpoint.unicastLocatorList, guids);
-                    
+
                     if (!group.add_data(*cptr, guids, it->endpoint.unicastLocatorList, false))
                     {
                         logError(RTPS_WRITER, "Error sending change " << cptr->sequenceNumber);

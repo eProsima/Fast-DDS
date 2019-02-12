@@ -21,7 +21,6 @@
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
@@ -35,13 +34,11 @@ using namespace eprosima::fastrtps::rtps;
 
 
 ReaderProxy::ReaderProxy(const RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
-    m_att(rdata), mp_SFW(SW),
-    mp_nackResponse(nullptr), mp_nackSupression(nullptr), m_lastAcknackCount(0),
+    m_att(rdata), mp_SFW(SW), mp_nackSupression(nullptr), m_lastAcknackCount(0),
     mp_mutex(new std::recursive_mutex()), lastNackfragCount_(0)
 {
     if(rdata.endpoint.reliabilityKind == RELIABLE)
     {
-        mp_nackResponse = new NackResponseDelay(this,TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
         mp_nackSupression = new NackSupressionDuration(this,TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
     }
 
@@ -61,12 +58,6 @@ ReaderProxy::~ReaderProxy()
 
 void ReaderProxy::destroy_timers()
 {
-    if(mp_nackResponse != nullptr)
-    {
-        delete(mp_nackResponse);
-        mp_nackResponse = nullptr;
-    }
-
     if(mp_nackSupression != nullptr)
     {
         delete(mp_nackSupression);
@@ -169,7 +160,7 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
     {
         auto chit = m_changesForReader.find(ChangeForReader_t(*sit));
 
-        if(chit != m_changesForReader.end())
+        if(chit != m_changesForReader.end() && UNACKNOWLEDGED == chit->getStatus())
         {
             ChangeForReader_t newch(*chit);
             newch.setStatus(REQUESTED);
@@ -227,7 +218,9 @@ std::vector<const ChangeForReader_t*> ReaderProxy::get_requested_changes() const
 void ReaderProxy::set_change_to_status(const SequenceNumber_t& seq_num, ChangeForReaderStatus_t status)
 {
     if(seq_num <= changesFromRLowMark_)
+    {
         return;
+    }
 
     auto it = m_changesForReader.find(ChangeForReader_t(seq_num));
     bool mustWakeUpAsyncThread = false;
@@ -278,13 +271,17 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(const CacheChange_t* change, 
     }
 
     if (mustWakeUpAsyncThread)
+    {
         AsyncWriterThread::wakeUp(mp_SFW);
+    }
 
     return allFragmentsSent;
 }
 
 void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous, ChangeForReaderStatus_t next)
 {
+    assert(previous > next);
+
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     bool mustWakeUpAsyncThread = false;
 
@@ -303,8 +300,10 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
             {
                 // Note: we can perform this cast as we are not touching the sorting field (seq_num)
                 const_cast<ChangeForReader_t&>(*it).setStatus(next);
-                if (next == UNSENT && previous != UNSENT)
+                if (next == UNSENT)
+                {
                     mustWakeUpAsyncThread = true;
+                }
             }
         }
 
@@ -312,7 +311,9 @@ void ReaderProxy::convert_status_on_all_changes(ChangeForReaderStatus_t previous
     }
 
     if (mustWakeUpAsyncThread)
+    {
         AsyncWriterThread::wakeUp(mp_SFW);
+    }
 }
 
 //TODO(Ricardo)

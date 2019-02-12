@@ -45,9 +45,10 @@ class  WriterTimes
 public:
     WriterTimes()
     {
-        initialHeartbeatDelay.fraction = 200*1000*1000;
+        initialHeartbeatDelay.fraction = 50*1000*1000;
         heartbeatPeriod.seconds = 3;
-        nackResponseDelay.fraction = 20*1000*1000;
+        nackResponseDelay.fraction = 400*1000*1000;
+        nackSupressionDuration.fraction = 50*1000*1000;
     }
 
     virtual ~WriterTimes() {}

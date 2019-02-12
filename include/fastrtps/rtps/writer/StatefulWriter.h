@@ -33,6 +33,7 @@ namespace eprosima
         namespace rtps
         {
             class ReaderProxy;
+            class NackResponseDelay;
 
             /**
              * Class StatefulWriter, specialization of RTPSWriter that maintains information of each matched Reader.
@@ -74,6 +75,10 @@ namespace eprosima
                 unsigned int may_remove_change_;
 
                 public:
+
+                //! Timed Event to manage the Acknack response delay.
+                NackResponseDelay* nack_response_event_;
+
                 /**
                  * Add a specific change to all ReaderLocators.
                  * @param p Pointer to the change.

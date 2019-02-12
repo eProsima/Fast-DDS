@@ -105,8 +105,8 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 this->mp_SPDP->m_participantProxies.push_back(pdata);
                 lock.unlock();
 
-                mp_SPDP->assignRemoteEndpoints(&participant_data);
                 mp_SPDP->announceParticipantState(false);
+                mp_SPDP->assignRemoteEndpoints(&participant_data);
             }
             else
             {

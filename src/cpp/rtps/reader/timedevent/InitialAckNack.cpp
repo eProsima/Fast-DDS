@@ -51,7 +51,10 @@ InitialAckNack::InitialAckNack(WriterProxy* wp, double interval):
     m_destination_locators(wp->m_att.endpoint.unicastLocatorList),
     m_remote_endpoints(1, wp->m_att.guid)
 {
-    m_destination_locators.push_back(wp->m_att.endpoint.multicastLocatorList);
+    if(m_destination_locators.empty())
+    {
+        m_destination_locators.push_back(wp->m_att.endpoint.multicastLocatorList);
+    }
 }
 
 void InitialAckNack::event(EventCode code, const char* msg)

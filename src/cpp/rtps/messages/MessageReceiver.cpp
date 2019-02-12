@@ -1043,7 +1043,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
                             // TODO Not doing Acknowledged.
                             if((*rit)->requested_fragment_set(writerSN, fnState))
                             {
-                                (*rit)->mp_nackResponse->restart_timer();
+                                SF->nack_response_event_->restart_timer();
                             }
                         }
                         break;

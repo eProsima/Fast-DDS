@@ -79,7 +79,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
         else
         {
             Count_t heartbeatCount = 0;
-            LocatorList_t locList;
+            std::vector<LocatorList_t> locList;
             std::vector<GUID_t> remote_readers;
 
             {//BEGIN PROTECTION
@@ -94,8 +94,7 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
                             unacked_changes = true;
                         }
                     }
-                    locList.push_back((*it)->m_att.endpoint.unicastLocatorList);
-                    locList.push_back((*it)->m_att.endpoint.multicastLocatorList);
+                    locList.push_back((*it)->m_att.endpoint.remoteLocatorList);
                     remote_readers.push_back((*it)->m_att.guid);
                 }
 
@@ -126,9 +125,10 @@ void PeriodicHeartbeat::event(EventCode code, const char* msg)
                 RTPSMessageGroup group(mp_SFW->getRTPSParticipant(), mp_SFW, RTPSMessageGroup::WRITER, m_cdrmessages);
 
                 // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-                group.add_heartbeat(remote_readers,
-                    firstSeq, lastSeq, heartbeatCount, false, false, locList);
-                logInfo(RTPS_WRITER, mp_SFW->getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq << ")");
+                group.add_heartbeat(remote_readers, firstSeq, lastSeq, heartbeatCount, false, false,
+                        mp_SFW->getRTPSParticipant()->network_factory().ShrinkLocatorLists(locList));
+                logInfo(RTPS_WRITER, mp_SFW->getGuid().entityId << " Sending Heartbeat (" << firstSeq
+                        << " - " << lastSeq << ")");
             }
         }
 

@@ -362,6 +362,9 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
 
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
+            // If it is the first heartbeat message, we can try to cancel initial ack.
+            pWP->mp_initialAcknack->cancel_timer();
+
             pWP->m_lastHeartbeatCount = hbCount;
             pWP->lost_changes_update(firstSN);
             fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
