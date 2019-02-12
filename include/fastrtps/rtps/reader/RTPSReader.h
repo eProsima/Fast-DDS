@@ -18,8 +18,8 @@
 
 
 
-#ifndef RTPSREADER_H_
-#define RTPSREADER_H_
+#ifndef FASTRTPS_RTPS_READER_RTPSREADER_H_
+#define FASTRTPS_RTPS_READER_RTPSREADER_H_
 
 
 #include "../Endpoint.h"
@@ -28,16 +28,15 @@
 
 #include <map>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 // Forward declarations
 class ReaderListener;
 class ReaderHistory;
 struct CacheChange_t;
 class WriterProxy;
-struct SequenceNumber_t;
 class FragmentedChangePitStop;
 
 /**
@@ -55,10 +54,10 @@ protected:
 
     RTPSReader(
             RTPSParticipantImpl*,
-            GUID_t& guid,
-            ReaderAttributes& att,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
             ReaderHistory* hist,
-            ReaderListener* listen=nullptr);
+            ReaderListener* listen = nullptr);
 
     virtual ~RTPSReader();
 
@@ -69,7 +68,7 @@ public:
      * @param wdata Attributes of the writer to add.
      * @return True if correctly added.
      */
-    RTPS_DllAPI virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
+    RTPS_DllAPI virtual bool matched_writer_add(const RemoteWriterAttributes& wdata) = 0;
 
     /**
      * Remove a writer represented by its attributes from the matched writers.
@@ -83,12 +82,12 @@ public:
      * @param wdata Pointer to the WriterProxyData object
      * @return True if it is matched.
      */
-    RTPS_DllAPI virtual bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) = 0;
+    RTPS_DllAPI virtual bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) const = 0;
 
     /**
      * Returns true if the reader accepts a message directed to entityId.
      */
-    RTPS_DllAPI bool acceptMsgDirectedTo(EntityId_t& entityId);
+    RTPS_DllAPI bool acceptMsgDirectedTo(const EntityId_t& entityId) const;
 
     /**
      * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -96,7 +95,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processDataMsg(CacheChange_t *change) = 0;
+    RTPS_DllAPI virtual bool processDataMsg(CacheChange_t* change) = 0;
 
     /**
      * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -106,17 +105,28 @@ public:
      * @param fragmentStartingNum Starting number of this particular fragment.
      * @return true if the reader accepts message.
      */
-    RTPS_DllAPI virtual bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum) = 0;
+    RTPS_DllAPI virtual bool processDataFragMsg(
+            CacheChange_t* change, 
+            uint32_t sampleSize, 
+            uint32_t fragmentStartingNum) = 0;
 
     /**
      * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
      *
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag) = 0;
+    RTPS_DllAPI virtual bool processHeartbeatMsg(
+            const GUID_t& writerGUID, 
+            uint32_t hbCount, 
+            const SequenceNumber_t& firstSN,
+            const SequenceNumber_t& lastSN, 
+            bool finalFlag, 
+            bool livelinessFlag) = 0;
 
-    RTPS_DllAPI virtual bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList) = 0;
+    RTPS_DllAPI virtual bool processGapMsg(
+            const GUID_t& writerGUID, 
+            const SequenceNumber_t& gapStart, 
+            const SequenceNumberSet_t& gapList) = 0;
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -124,13 +134,15 @@ public:
      * @param prox Pointer to the WriterProxy.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI virtual bool change_removed_by_history(CacheChange_t* change, WriterProxy* prox = nullptr) = 0;
+    RTPS_DllAPI virtual bool change_removed_by_history(
+            CacheChange_t* change, 
+            WriterProxy* prox = nullptr) = 0;
 
     /**
      * Get the associated listener, secondary attached Listener in case it is of coumpound type
      * @return Pointer to the associated reader listener.
      */
-    RTPS_DllAPI ReaderListener* getListener();
+    RTPS_DllAPI ReaderListener* getListener() const;
 
     /**
      * Switch the ReaderListener kind for the Reader.
@@ -147,7 +159,9 @@ public:
      * @param change Pointer to pointer to the Cache.
      * @return True if correctly reserved.
      */
-    RTPS_DllAPI bool reserveCache(CacheChange_t** change, uint32_t dataCdrSerializedSize);
+    RTPS_DllAPI bool reserveCache(
+            CacheChange_t** change, 
+            uint32_t dataCdrSerializedSize);
 
     /**
      * Release a cacheChange.
@@ -160,7 +174,9 @@ public:
      * @param wp Pointer to pointer to the WriterProxy
      * @return True if read.
      */
-    RTPS_DllAPI virtual bool nextUnreadCache(CacheChange_t** change, WriterProxy** wp) = 0;
+    RTPS_DllAPI virtual bool nextUnreadCache(
+            CacheChange_t** change, 
+            WriterProxy** wp) = 0;
 
     /**
      * Get the next CacheChange_t from the history to take.
@@ -168,14 +184,23 @@ public:
      * @param wp Pointer to pointer to the WriterProxy.
      * @return True if read.
      */
-    RTPS_DllAPI virtual bool nextUntakenCache(CacheChange_t** change, WriterProxy** wp) = 0;
+    RTPS_DllAPI virtual bool nextUntakenCache(
+            CacheChange_t** change, 
+            WriterProxy** wp) = 0;
 
     /**
      * @return True if the reader expects Inline QOS.
      */
-    RTPS_DllAPI inline bool expectsInlineQos(){ return m_expectsInlineQos; };
+    RTPS_DllAPI inline bool expectsInlineQos()
+    {
+        return m_expectsInlineQos;
+    }
+    
     //! Returns a pointer to the associated History.
-    RTPS_DllAPI inline ReaderHistory* getHistory() {return mp_history;};
+    RTPS_DllAPI inline ReaderHistory* getHistory()
+    {
+        return mp_history;
+    };
 
     /*!
      * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
@@ -186,21 +211,20 @@ public:
      */
     CacheChange_t* findCacheInFragmentedCachePitStop(
             const SequenceNumber_t& sequence_number,
-            const GUID_t& writer_guid);
+            const GUID_t& writer_guid) const;
 
     /*!
      * @brief Returns there is a clean state with all Writers.
      * It occurs when the Reader received all samples sent by Writers. In other words,
      * its WriterProxies are up to date.
      * @return There is a clean state with all Writers.
-    */
+     */
     virtual bool isInCleanState() = 0;
 
 protected:
-
-    void setTrustedWriter(EntityId_t writer)
+    void setTrustedWriter(const EntityId_t& writer)
     {
-        m_acceptMessagesFromUnkownWriters=false;
+        m_acceptMessagesFromUnkownWriters = false;
         m_trustedWriterEntityId = writer;
     }
 
@@ -231,7 +255,9 @@ protected:
     * @return Previous value of last notified sequence number for input guid
     * @remarks Takes persistence_guid into consideration
     */
-    SequenceNumber_t update_last_notified(const GUID_t& guid, const SequenceNumber_t& seq);
+    SequenceNumber_t update_last_notified(
+            const GUID_t& guid,
+            const SequenceNumber_t& seq);
 
     /*!
     * @brief Set the last notified sequence for a persistence guid
@@ -239,7 +265,9 @@ protected:
     * @param seq Sequence number to set for input guid
     * @remarks Persistent readers will write to DB
     */
-    virtual void set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq);
+    virtual void set_last_notified(
+            const GUID_t& peristence_guid,
+            const SequenceNumber_t& seq);
 
     //!ReaderHistory
     ReaderHistory* mp_history;
@@ -273,4 +301,4 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /* RTPSREADER_H_ */
+#endif /* FASTRTPS_RTPS_READER_RTPSREADER_H_ */

@@ -42,45 +42,42 @@ StatelessReader::~StatelessReader()
 
 StatelessReader::StatelessReader(
         RTPSParticipantImpl* pimpl,
-        GUID_t& guid,
-        ReaderAttributes& att,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(
-          pimpl,
-          guid,
-          att,
-          hist,
-          listen)
+    : RTPSReader(pimpl, guid, att, hist, listen)
 {
 }
 
-bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
+bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    for(auto it = matched_writers_.begin();it!=matched_writers_.end();++it)
     {
         if((*it).guid == wdata.guid)
             return false;
     }
 
-    getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
+    RemoteWriterAttributes att(wdata);
+    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
 
-    logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
-    m_matched_writers.push_back(wdata);
-    add_persistence_guid(wdata);
+    logInfo(RTPS_READER,"Writer " << att.guid << " added to "<<m_guid.entityId);
+    matched_writers_.push_back(att);
+    add_persistence_guid(att);
     m_acceptMessagesFromUnkownWriters = false;
     return true;
 }
+
 bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    for(auto it = matched_writers_.begin();it!=matched_writers_.end();++it)
     {
         if((*it).guid == wdata.guid)
         {
             logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
-            m_matched_writers.erase(it);
+            matched_writers_.erase(it);
             remove_persistence_guid(wdata);
             return true;
         }
@@ -88,12 +85,12 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
+bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    for(const RemoteWriterAttributes& it : matched_writers_)
     {
-        if((*it).guid == wdata.guid)
+        if(it.guid == wdata.guid)
         {
             return true;
         }
@@ -123,14 +120,18 @@ bool StatelessReader::change_received(CacheChange_t* change)
     return false;
 }
 
-bool StatelessReader::nextUntakenCache(CacheChange_t** change, WriterProxy** /*wpout*/)
+bool StatelessReader::nextUntakenCache(
+        CacheChange_t** change, 
+        WriterProxy** /*wpout*/)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     return mp_history->get_min_change(change);
 }
 
 
-bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpout*/)
+bool StatelessReader::nextUnreadCache(
+        CacheChange_t** change,
+        WriterProxy** /*wpout*/)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     //m_reader_cache.sortCacheChangesBySeqNum();
@@ -226,7 +227,10 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
-bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
+bool StatelessReader::processDataFragMsg(
+        CacheChange_t* incomingChange, 
+        uint32_t sampleSize, 
+        uint32_t fragmentStartingNum)
 {
     assert(incomingChange);
 
@@ -294,10 +298,10 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 }
 
 bool StatelessReader::processHeartbeatMsg(
-        GUID_t& /*writerGUID*/,
+        const GUID_t& /*writerGUID*/,
         uint32_t /*hbCount*/,
-        SequenceNumber_t& /*firstSN*/,
-        SequenceNumber_t& /*lastSN*/,
+        const SequenceNumber_t& /*firstSN*/,
+        const SequenceNumber_t& /*lastSN*/,
         bool /*finalFlag*/,
         bool /*livelinessFlag*/)
 {
@@ -305,14 +309,14 @@ bool StatelessReader::processHeartbeatMsg(
 }
 
 bool StatelessReader::processGapMsg(
-        GUID_t& /*writerGUID*/,
-        SequenceNumber_t& /*gapStart*/,
-        SequenceNumberSet_t& /*gapList*/)
+        const GUID_t& /*writerGUID*/,
+        const SequenceNumber_t& /*gapStart*/,
+        const SequenceNumberSet_t& /*gapList*/)
 {
     return true;
 }
 
-bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
+bool StatelessReader::acceptMsgFrom(const GUID_t& writerId)
 {
     if(this->m_acceptMessagesFromUnkownWriters)
     {
@@ -325,7 +329,7 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
             return true;
         }
 
-        for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+        for(auto it = matched_writers_.begin();it!=matched_writers_.end();++it)
         {
             if((*it).guid == writerId)
             {
@@ -337,7 +341,9 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
     return false;
 }
 
-bool StatelessReader::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
+bool StatelessReader::thereIsUpperRecordOf(
+        const GUID_t& guid, 
+        const SequenceNumber_t& seq)
 {
     return get_last_notified(guid) >= seq;
 }

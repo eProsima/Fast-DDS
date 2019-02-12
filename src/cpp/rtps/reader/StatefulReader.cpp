@@ -41,56 +41,49 @@ using namespace eprosima::fastrtps::rtps;
 StatefulReader::~StatefulReader()
 {
     logInfo(RTPS_READER,"StatefulReader destructor.";);
-    for(std::vector<WriterProxy*>::iterator it = matched_writers.begin();
-            it!=matched_writers.end();++it)
+    for(WriterProxy* writer : matched_writers)
     {
-        delete(*it);
+        delete(writer);
     }
 }
 
 StatefulReader::StatefulReader(
         RTPSParticipantImpl* pimpl,
-        GUID_t& guid,
-        ReaderAttributes& att,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(
-          pimpl,
-          guid,
-          att,
-          hist,
-          listen)
+    : RTPSReader(pimpl,guid,att,hist, listen)
     , m_acknackCount(0)
     , m_nackfragCount(0)
     , m_times(att.times)
-    , disable_positive_acks_(att.disable_positive_acks)
 {
 }
 
-bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
-            it!=matched_writers.end();++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        if(it->m_att.guid == wdata.guid)
         {
             logInfo(RTPS_READER,"Attempting to add existing writer");
             return false;
         }
     }
 
-    getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
+    RemoteWriterAttributes att(wdata);
+    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
 
 
-    wdata.endpoint.unicastLocatorList =
-        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({wdata.endpoint.unicastLocatorList});
-    WriterProxy* wp = new WriterProxy(wdata, this);
+    att.endpoint.unicastLocatorList =
+        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({att.endpoint.unicastLocatorList});
+    WriterProxy* wp = new WriterProxy(att, this);
 
     wp->mp_initialAcknack->restart_timer();
 
-    add_persistence_guid(wdata);
-    wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+    add_persistence_guid(att);
+    wp->loaded_from_storage_nts(get_last_notified(att.guid));
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
@@ -162,19 +155,18 @@ bool StatefulReader::matched_writer_remove(
     return false;
 }
 
-bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        if(it->m_att.guid == wdata.guid)
         {
             return true;
         }
     }
     return false;
 }
-
 
 bool StatefulReader::matched_writer_lookup(
         const GUID_t& writerGUID,
@@ -200,15 +192,15 @@ bool StatefulReader::matched_writer_lookup(
 
 bool StatefulReader::findWriterProxy(
         const GUID_t& writerGUID,
-        WriterProxy** WP)
+        WriterProxy** WP) const
 {
     assert(WP);
 
-    for(std::vector<WriterProxy*>::iterator it = matched_writers.begin(); it != matched_writers.end(); ++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == writerGUID)
+        if(it->m_att.guid == writerGUID)
         {
-            *WP = *it;
+            *WP = it;
             return true;
         }
     }
@@ -290,7 +282,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 }
 
 bool StatefulReader::processDataFragMsg(
-        CacheChange_t *incomingChange,
+        CacheChange_t* incomingChange,
         uint32_t sampleSize,
         uint32_t fragmentStartingNum)
 {
@@ -364,10 +356,10 @@ bool StatefulReader::processDataFragMsg(
 }
 
 bool StatefulReader::processHeartbeatMsg(
-        GUID_t &writerGUID,
+        const GUID_t& writerGUID,
         uint32_t hbCount,
-        SequenceNumber_t &firstSN,
-        SequenceNumber_t &lastSN,
+        const SequenceNumber_t& firstSN,
+        const SequenceNumber_t& lastSN,
         bool finalFlag,
         bool livelinessFlag)
 {
@@ -430,9 +422,9 @@ bool StatefulReader::processHeartbeatMsg(
 }
 
 bool StatefulReader::processGapMsg(
-        GUID_t &writerGUID,
-        SequenceNumber_t &gapStart,
-        SequenceNumberSet_t &gapList)
+        const GUID_t& writerGUID,
+        const SequenceNumber_t& gapStart,
+        const SequenceNumberSet_t& gapList)
 {
     WriterProxy *pWP = nullptr;
 
@@ -464,17 +456,16 @@ bool StatefulReader::processGapMsg(
 }
 
 bool StatefulReader::acceptMsgFrom(
-        GUID_t &writerId,
-        WriterProxy **wp)
+        const GUID_t& writerId,
+        WriterProxy **wp) const
 {
     assert(wp != nullptr);
 
-    for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
-            it!=matched_writers.end();++it)
+    for(WriterProxy* it : matched_writers)
     {
-        if((*it)->m_att.guid == writerId)
+        if(it->m_att.guid == writerId)
         {
-            *wp = *it;
+            *wp = it;
             return true;
         }
     }

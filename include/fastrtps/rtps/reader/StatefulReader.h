@@ -16,8 +16,9 @@
  * @file StatefulReader.h
  */
 
-#ifndef STATEFULREADER_H_
-#define STATEFULREADER_H_
+#ifndef FASTRTPS_RTPS_READER_STATEFULREADER_H_
+#define FASTRTPS_RTPS_READER_STATEFULREADER_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSReader.h"
@@ -43,8 +44,13 @@ class StatefulReader:public RTPSReader
 
     protected:
 
-        StatefulReader(RTPSParticipantImpl*,GUID_t& guid,
-                ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
+        StatefulReader(
+                RTPSParticipantImpl*,
+                const GUID_t& guid,
+                const ReaderAttributes& att,
+                ReaderHistory* hist,
+                ReaderListener* listen = nullptr);
+
     public:
 
         /**
@@ -52,7 +58,7 @@ class StatefulReader:public RTPSReader
          * @param wdata Pointer to the WPD object to add.
          * @return True if correctly added.
          */
-        bool matched_writer_add(RemoteWriterAttributes& wdata) override;
+        bool matched_writer_add(const RemoteWriterAttributes& wdata) override;
 
         /**
          * Remove a WriterProxyData from the matached writers.
@@ -60,7 +66,9 @@ class StatefulReader:public RTPSReader
          * @param deleteWP If the Reader has to delete the associated WP object or not.
          * @return True if correct.
          */
-        bool matched_writer_remove(const RemoteWriterAttributes& wdata,bool deleteWP);
+        bool matched_writer_remove(
+                const RemoteWriterAttributes& wdata,
+                bool deleteWP);
 
         /**
          * Remove a WriterProxyData from the matached writers.
@@ -74,7 +82,7 @@ class StatefulReader:public RTPSReader
          * @param wdata Pointer to the WriterProxyData object
          * @return True if it is matched.
          */
-        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) override;
+        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) const override;
 
         /**
          * Look for a specific WriterProxy.
@@ -82,14 +90,16 @@ class StatefulReader:public RTPSReader
          * @param WP Pointer to pointer to a WriterProxy.
          * @return True if found.
          */
-        bool matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP);
+        bool matched_writer_lookup(
+                const GUID_t& writerGUID, 
+                WriterProxy** WP);
 
         /**
          * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
          * @param change Pointer to the CacheChange_t.
          * @return true if the reader accepts messages.
          */
-        bool processDataMsg(CacheChange_t *change) override;
+        bool processDataMsg(CacheChange_t* change) override;
 
         /**
          * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -99,7 +109,7 @@ class StatefulReader:public RTPSReader
          * @return true if the reader accepts messages.
          */
         bool processDataFragMsg(
-                CacheChange_t *change,
+                CacheChange_t* change,
                 uint32_t sampleSize,
                 uint32_t fragmentStartingNum) override;
 
@@ -109,17 +119,17 @@ class StatefulReader:public RTPSReader
          * @return true if the reader accepts messages.
          */
         bool processHeartbeatMsg(
-                GUID_t &writerGUID,
+                const GUID_t& writerGUID,
                 uint32_t hbCount,
-                SequenceNumber_t &firstSN,
-                SequenceNumber_t &lastSN,
+                const SequenceNumber_t& firstSN,
+                const SequenceNumber_t& lastSN,
                 bool finalFlag,
                 bool livelinessFlag) override;
 
         bool processGapMsg(
-                GUID_t &writerGUID,
-                SequenceNumber_t &gapStart,
-                SequenceNumberSet_t &gapList) override;
+                const GUID_t& writerGUID,
+                const SequenceNumber_t& gapStart,
+                const SequenceNumberSet_t& gapList) override;
 
         /**
          * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -128,7 +138,7 @@ class StatefulReader:public RTPSReader
          * @return True if correctly removed.
          */
         bool change_removed_by_history(
-                CacheChange_t* change ,
+                CacheChange_t* change,
                 WriterProxy* prox = nullptr) override;
 
         /**
@@ -139,13 +149,18 @@ class StatefulReader:public RTPSReader
          * @param lock mutex protecting the StatefulReader.
          * @return True if added.
          */
-        bool change_received(CacheChange_t* a_change, WriterProxy* prox);
+        bool change_received(
+                CacheChange_t* a_change, 
+                WriterProxy* prox);
 
         /**
          * Get the RTPS participant
          * @return Associated RTPS participant
          */
-        inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
+        inline RTPSParticipantImpl* getRTPSParticipant() const 
+        {
+            return mp_RTPSParticipant;
+        }
 
         /**
          * Read the next unread CacheChange_t from the history
@@ -155,7 +170,7 @@ class StatefulReader:public RTPSReader
          */
         bool nextUnreadCache(
                 CacheChange_t** change,
-                WriterProxy** wpout=nullptr) override;
+                WriterProxy** wpout = nullptr) override;
 
         /**
          * Take the next CacheChange_t from the history;
@@ -165,8 +180,7 @@ class StatefulReader:public RTPSReader
          */
         bool nextUntakenCache(
                 CacheChange_t** change,
-                WriterProxy** wpout=nullptr) override;
-
+                WriterProxy** wpout = nullptr) override;
 
         /**
          * Update the times parameters of the Reader.
@@ -174,17 +188,24 @@ class StatefulReader:public RTPSReader
          * @return True if correctly updated.
          */
         bool updateTimes(const ReaderTimes& times);
+
         /**
          *
          * @return Reference to the ReaderTimes.
          */
-        inline ReaderTimes& getTimes(){return m_times;};
+        inline ReaderTimes& getTimes()
+        {
+            return m_times;
+        }
 
         /**
          * Get the number of matched writers
          * @return Number of matched writers
          */
-        inline size_t getMatchedWritersSize() const { return matched_writers.size(); }
+        inline size_t getMatchedWritersSize() const 
+        { 
+            return matched_writers.size(); 
+        }
 
         /*!
          * @brief Returns there is a clean state with all Writers.
@@ -201,12 +222,16 @@ class StatefulReader:public RTPSReader
 
     private:
 
-        bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp);
+        bool acceptMsgFrom(
+                const GUID_t& entityGUID,
+                WriterProxy** wp) const;
 
         /*!
          * @remarks Nn thread-safe.
          */
-        bool findWriterProxy(const GUID_t& writerGUID, WriterProxy** wp);
+        bool findWriterProxy(
+                const GUID_t& writerGUID, 
+                WriterProxy** wp) const;
 
         void NotifyChanges(WriterProxy* wp);
 
@@ -218,8 +243,10 @@ class StatefulReader:public RTPSReader
         bool disable_positive_acks_;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
-#endif /* STATEFULREADER_H_ */
+
+#endif /* FASTRTPS_RTPS_READER_STATEFULREADER_H_ */
