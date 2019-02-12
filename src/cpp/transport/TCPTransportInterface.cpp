@@ -283,7 +283,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 #if TLS_FOUND
             if (configuration()->apply_security)
             {
-                newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, this, locator);
+                newAcceptor = new TCPAcceptorSecure(io_service_, this, locator);
             }
             else
             {
@@ -329,7 +329,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 #if TLS_FOUND
                 if (configuration()->apply_security)
                 {
-                    newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, sInterface, locator);
+                    newAcceptor = new TCPAcceptorSecure(io_service_, sInterface, locator);
                 }
                 else
                 {
@@ -1283,7 +1283,7 @@ void TCPTransportInterface::SocketAccepted(
         if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_acceptors_.end())
         {
 #if defined(ASIO_HAS_MOVE)
-            tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(std::move(acceptor->socket()));
+            tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(acceptor->socket());
 #else
             tcp_basic::eProsimaTCPSocket unicastSocket = tcp_basic::eProsimaTCPSocket(acceptor->socket());
             acceptor->socket(nullptr);
@@ -1298,7 +1298,7 @@ void TCPTransportInterface::SocketAccepted(
 
 
             // Store the new connection.
-            TCPChannelResource *p_channel_resource = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_,
+            TCPChannelResource *p_channel_resource = new TCPChannelResourceBasic(this, rtcp_message_manager_,
                 unicastSocket, configuration()->maxMessageSize);
 
             p_channel_resource->set_options(configuration());
@@ -1639,7 +1639,7 @@ void TCPTransportInterface::apply_tls_config()
     const TCPTransportDescriptor* descriptor = configuration();
     if (descriptor->apply_security)
     {
-        ssl_context_.set_verify_callback([descriptor](bool preverified, ssl::verify_context&)
+        ssl_context_.set_verify_callback([](bool preverified, ssl::verify_context&)
         {
             return preverified;
         });

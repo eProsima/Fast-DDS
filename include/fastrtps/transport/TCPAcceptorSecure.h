@@ -25,8 +25,6 @@ namespace rtps{
 
 class TCPAcceptorSecure : public TCPAcceptor
 {
-    asio::ssl::context& ssl_context_;
-
 public:
     /**
     * Constructor
@@ -37,7 +35,6 @@ public:
     */
     TCPAcceptorSecure(
         asio::io_service& io_service,
-        asio::ssl::context& ssl_context,
         TCPTransportInterface* parent,
         const Locator_t& locator);
 
@@ -50,7 +47,6 @@ public:
     */
     TCPAcceptorSecure(
         asio::io_service& io_service,
-        asio::ssl::context& ssl_context,
         const std::string& interface,
         const Locator_t& locator);
 

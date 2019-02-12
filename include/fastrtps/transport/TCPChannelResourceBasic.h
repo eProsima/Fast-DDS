@@ -76,7 +76,6 @@ namespace tcp_basic{
 
 class TCPChannelResourceBasic : public TCPChannelResource
 {
-    asio::io_service& service_;
     tcp_basic::eProsimaTCPSocket socket_;
 
 public:
@@ -92,7 +91,6 @@ public:
     TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         RTCPMessageManager* rtcpManager,
-        asio::io_service& service,
         tcp_basic::eProsimaTCPSocketRef socket,
         uint32_t maxMsgSize);
 

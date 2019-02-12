@@ -33,7 +33,6 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
         const Locator_t& locator,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
-    , service_(service)
     , socket_(createTCPSocket(service))
 {
 }
@@ -41,11 +40,9 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         RTCPMessageManager* rtcpManager,
-        asio::io_service& service,
         eProsimaTCPSocketRef socket,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, maxMsgSize)
-    , service_(service)
     , socket_(moveSocket(socket))
 {
 }

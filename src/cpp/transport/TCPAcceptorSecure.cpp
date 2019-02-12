@@ -24,27 +24,23 @@ using namespace asio;
 
 TCPAcceptorSecure::TCPAcceptorSecure(
         io_service& io_service,
-        ssl::context& ssl_context,
         TCPTransportInterface* parent,
         const Locator_t& locator)
     : TCPAcceptor(io_service, parent, locator)
-    , ssl_context_(ssl_context)
 {
 }
 
 TCPAcceptorSecure::TCPAcceptorSecure(
         io_service& io_service,
-        ssl::context& ssl_context,
         const std::string& interface,
         const Locator_t& locator)
     : TCPAcceptor(io_service, interface, locator)
-    , ssl_context_(ssl_context)
 {
 }
 
 void TCPAcceptorSecure::accept(
         TCPTransportInterface* parent,
-        io_service& io_service,
+        io_service&,
         ssl::context& ssl_context)
 {
     logInfo(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
@@ -55,7 +51,7 @@ void TCPAcceptorSecure::accept(
     try
     {
         acceptor_.async_accept(
-            [this, parent, &io_service, &ssl_context](const std::error_code& error, tcp::socket socket)
+            [this, parent, &ssl_context](const std::error_code& error, tcp::socket socket)
             {
                 tcp_secure::eProsimaTCPSocket socket_ptr = tcp_secure::createTCPSocket(std::move(socket), ssl_context);
                 if (!error)
@@ -73,8 +69,6 @@ void TCPAcceptorSecure::accept(
                 }
                 else
                 {
-                    //logError(RTCP_TLS, "Error accepting: " << error.message());
-                    //accept(parent, io_service, ssl_context);
                     parent->SecureSocketAccepted(this, socket_ptr, error); // This method manages errors too.
                 }
             });
