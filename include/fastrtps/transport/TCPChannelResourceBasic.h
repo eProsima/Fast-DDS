@@ -25,10 +25,10 @@ namespace rtps{
 namespace tcp_basic{
 #if defined(ASIO_HAS_MOVE)
     // Typedefs
-	typedef asio::ip::tcp::socket eProsimaTCPSocket;
+    typedef asio::ip::tcp::socket eProsimaTCPSocket;
     typedef eProsimaTCPSocket& eProsimaTCPSocketRef;
 
-	inline eProsimaTCPSocket* getSocketPtr(eProsimaTCPSocket& socket)
+    inline eProsimaTCPSocket* getSocketPtr(eProsimaTCPSocket& socket)
     {
         return &socket;
     }
@@ -43,13 +43,13 @@ namespace tcp_basic{
         return asio::ip::tcp::socket(io_service);
     }
 
-	inline eProsimaTCPSocket& getTCPSocketRef(eProsimaTCPSocket& socket)
-	{
-		return socket;
-	}
+    inline eProsimaTCPSocket& getTCPSocketRef(eProsimaTCPSocket& socket)
+    {
+        return socket;
+    }
 #else
     // Typedefs
-	typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
+    typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
     typedef eProsimaTCPSocket eProsimaTCPSocketRef;
 
     inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket socket)
@@ -67,7 +67,7 @@ namespace tcp_basic{
         return std::make_shared<asio::ip::tcp::socket>(io_service);
     }
 
-	inline asio::ip::tcp::socket& getTCPSocketRef(eProsimaTCPSocket socket)
+    inline asio::ip::tcp::socket& getTCPSocketRef(eProsimaTCPSocket socket)
     {
         return *socket;
     }

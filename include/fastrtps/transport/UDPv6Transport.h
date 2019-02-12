@@ -74,7 +74,7 @@ public:
 protected:
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
-	UDPv6Transport();
+    UDPv6Transport();
     UDPv6TransportDescriptor configuration_;
 
     virtual bool compare_locator_ip(const Locator_t& lh, const Locator_t& rh) const override;

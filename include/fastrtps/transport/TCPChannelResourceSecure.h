@@ -25,7 +25,7 @@ namespace rtps{
 
 namespace tcp_secure{
     // Typedefs
-	typedef std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> eProsimaTCPSocket;
+    typedef std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> eProsimaTCPSocket;
     typedef eProsimaTCPSocket eProsimaTCPSocketRef;
 
     inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket socket)
@@ -52,7 +52,7 @@ namespace tcp_secure{
         return std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(std::move(socket), ssl_context);
     }
 
-	inline asio::ssl::stream<asio::ip::tcp::socket>& getTCPSocketRef(eProsimaTCPSocket socket)
+    inline asio::ssl::stream<asio::ip::tcp::socket>& getTCPSocketRef(eProsimaTCPSocket socket)
     {
         return *socket;
     }

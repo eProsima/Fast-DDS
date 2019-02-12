@@ -77,7 +77,7 @@ public:
 
     bool remove_logical_port(uint16_t port);
 
-	virtual void disable() override;
+    virtual void disable() override;
 
     std::recursive_mutex& read_mutex()
     {
@@ -101,7 +101,7 @@ public:
         return input_socket_;
     }
 
-	bool is_logical_port_opened(uint16_t port);
+    bool is_logical_port_opened(uint16_t port);
 
     bool is_logical_port_added(uint16_t port);
 
@@ -176,15 +176,15 @@ protected:
         std::unique_lock<std::mutex> scoped(status_mutex_);
         if (connection_status_ != s)
         {
-        	connection_status_ = s;
-	        if (connection_status_ == eEstablished)
-	        {
-	            send_pending_open_logical_ports();
-	        }
+            connection_status_ = s;
+            if (connection_status_ == eEstablished)
+            {
+                send_pending_open_logical_ports();
+            }
             negotiation_condition_.notify_all();
-	        return true;
-	    }
-	    return false;
+            return true;
+        }
+        return false;
     }
 
     void add_logical_port_response(const TCPTransactionId &id, bool success);
