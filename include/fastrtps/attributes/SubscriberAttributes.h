@@ -78,6 +78,7 @@ public:
     //!Underlying History memory policy
     rtps::MemoryManagementPolicy_t historyMemoryPolicy;
     rtps::PropertyPolicy properties;
+    ResourceLimitedContainerConfig matched_publisher_allocation;
 
     /**
      * Get the user defined ID

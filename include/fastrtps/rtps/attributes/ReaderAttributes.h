@@ -23,6 +23,8 @@
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
 #include "EndpointAttributes.h"
+#include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -87,6 +89,9 @@ class  ReaderAttributes
 
         //! Disable positive ACKs
         bool disable_positive_acks;
+
+        //! Define the allocation behaviour for matched-writer-dependent collections.
+        ResourceLimitedContainerConfig matched_writers_allocation;
 };
 
 /**
