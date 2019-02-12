@@ -35,6 +35,7 @@ public:
     {
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
         TCPChannelResource *channel;
+#if TLS_FOUND
         if (configuration_.apply_security)
         {
             channel = new TCPChannelResourceSecure(this, nullptr, io_service_, ssl_context_, physicalLocator, 0);
@@ -43,6 +44,9 @@ public:
         {
             channel = new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0);
         }
+#else
+        channel = new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0);
+#endif
         channel_resources_[physicalLocator] = channel;
         return true;
     }

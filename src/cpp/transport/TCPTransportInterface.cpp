@@ -16,8 +16,6 @@
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
 #include <utility>
-#include <asio.hpp>
-#include <asio/ssl.hpp>
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/log/Log.h>
@@ -25,9 +23,11 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 #include <fastrtps/transport/TCPChannelResourceBasic.h>
-#include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPAcceptorBasic.h>
+#if TLS_FOUND
+#include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPAcceptorSecure.h>
+#endif
 
 using namespace std;
 using namespace asio;
@@ -99,6 +99,7 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator=(const TCPTransportDesc
     return *this;
 }
 
+#if TLS_FOUND
 TCPTransportInterface::TCPTransportInterface()
     : ssl_context_(asio::ssl::context::sslv23)
     , rtcp_message_manager_(nullptr)
@@ -106,6 +107,14 @@ TCPTransportInterface::TCPTransportInterface()
     , clean_sockets_pool_timer_(nullptr)
 {
 }
+#else
+TCPTransportInterface::TCPTransportInterface()
+    : rtcp_message_manager_(nullptr)
+    , send_retry_active_(true)
+    , clean_sockets_pool_timer_(nullptr)
+{
+}
+#endif
 
 TCPTransportInterface::~TCPTransportInterface()
 {
@@ -271,6 +280,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 
         if (is_interface_whitelist_empty())
         {
+#if TLS_FOUND
             if (configuration()->apply_security)
             {
                 newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, this, locator);
@@ -279,6 +289,9 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             {
                 newAcceptor = new TCPAcceptorBasic(io_service_, this, locator);
             }
+#else
+            newAcceptor = new TCPAcceptorBasic(io_service_, this, locator);
+#endif
 
             uint16_t port = IPLocator::getPhysicalPort(locator);
             if (socket_acceptors_.find(port) != socket_acceptors_.end())
@@ -295,6 +308,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
                 << IPLocator::getLogicalPort(locator) << ")");
 
+#if TLS_FOUND
             if (configuration()->apply_security)
             {
                 static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this, io_service_, ssl_context_);
@@ -303,12 +317,16 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             {
                 static_cast<TCPAcceptorBasic*>(newAcceptor)->accept(this, io_service_);
             }
+#else
+            static_cast<TCPAcceptorBasic*>(newAcceptor)->accept(this, io_service_);
+#endif
         }
         else
         {
             std::vector<std::string> vInterfaces = get_binding_interfaces_list();
             for (std::string& sInterface : vInterfaces)
             {
+#if TLS_FOUND
                 if (configuration()->apply_security)
                 {
                     newAcceptor = new TCPAcceptorSecure(io_service_, ssl_context_, sInterface, locator);
@@ -317,6 +335,9 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
                 {
                     newAcceptor = new TCPAcceptorBasic(io_service_, sInterface, locator);
                 }
+#else
+                newAcceptor = new TCPAcceptorBasic(io_service_, sInterface, locator);
+#endif
 
                 uint16_t port = IPLocator::getPhysicalPort(locator);
                 if (socket_acceptors_.find(port) != socket_acceptors_.end())
@@ -333,6 +354,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
                 logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
                     << IPLocator::getLogicalPort(locator) << ")");
 
+#if TLS_FOUND
                 if (configuration()->apply_security)
                 {
                     static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this, io_service_, ssl_context_);
@@ -341,6 +363,9 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
                 {
                     static_cast<TCPAcceptorBasic*>(newAcceptor)->accept(this, io_service_);
                 }
+#else
+                static_cast<TCPAcceptorBasic*>(newAcceptor)->accept(this, io_service_);
+#endif
             }
         }
     }
@@ -626,6 +651,7 @@ void TCPTransportInterface::close_tcp_socket(TCPChannelResource *p_channel_resou
             {
                 if (!p_channel_resource->input_socket())
                 {
+#if TLS_FOUND
                     if (configuration()->apply_security)
                     {
                         newChannel = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
@@ -640,6 +666,12 @@ void TCPTransportInterface::close_tcp_socket(TCPChannelResource *p_channel_resou
                         p_channel_resource->set_all_ports_pending();
                         newChannel->copy_pending_ports_from(p_channel_resource);
                     }
+#else
+                    newChannel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_,
+                        physicalLocator, configuration()->maxMessageSize);
+                    p_channel_resource->set_all_ports_pending();
+                    newChannel->copy_pending_ports_from(p_channel_resource);
+#endif
 
                 }
                 channel_resources_.erase(it);
@@ -677,7 +709,7 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
         else
         {
             // Create output channel
-            // TODO - Puede eliminarse directamente?
+#if TLS_FOUND
             if (configuration()->apply_security)
             {
                 tcp_secure::eProsimaTCPSocket socket = tcp_secure::createTCPSocket(io_service_, ssl_context_);
@@ -694,6 +726,13 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
                 channel_resources_[physicalLocator] = channel;
                 channel->connect();
             }
+#else
+            tcp_basic::eProsimaTCPSocket socket = tcp_basic::createTCPSocket(io_service_);
+            channel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_, physicalLocator,
+                configuration()->maxMessageSize);
+            channel_resources_[physicalLocator] = channel;
+            channel->connect();
+#endif
         }
 
         success = true;
@@ -1307,6 +1346,7 @@ void TCPTransportInterface::SocketAccepted(
     }
 }
 
+#if TLS_FOUND
 void TCPTransportInterface::SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
         tcp_secure::eProsimaTCPSocket socket,
@@ -1375,6 +1415,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         }
     }
 }
+#endif
 
 void TCPTransportInterface::SocketConnected(
         Locator_t locator,
@@ -1594,6 +1635,7 @@ void TCPTransportInterface::shutdown()
 
 void TCPTransportInterface::apply_tls_config()
 {
+#if TLS_FOUND
     const TCPTransportDescriptor* descriptor = configuration();
     if (descriptor->apply_security)
     {
@@ -1707,6 +1749,7 @@ void TCPTransportInterface::apply_tls_config()
             ssl_context_.set_options(options);
         }
     }
+#endif
 }
 
 std::string TCPTransportInterface::get_password() const

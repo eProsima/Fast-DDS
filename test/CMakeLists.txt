@@ -26,10 +26,10 @@ endif()
 if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
     file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE)
 
-	add_subdirectory(blackbox)
-	add_subdirectory(communication)
+    add_subdirectory(blackbox)
+    add_subdirectory(communication)
 
-	add_subdirectory(unittest)
+    add_subdirectory(unittest)
 endif()
 
 ###############################################################################
@@ -46,6 +46,5 @@ endif()
 # Performance tests
 ###############################################################################
 if(PERFORMANCE_TESTS)
-	add_subdirectory(performance)
+    add_subdirectory(performance)
 endif()
-

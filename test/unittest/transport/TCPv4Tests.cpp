@@ -423,6 +423,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
     }
 }
 
+#if TLS_FOUND
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 {
     Log::SetVerbosity(Log::Kind::Info);
@@ -1031,6 +1032,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
     }
     ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
+#endif //TLS_FOUND
 
 TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 {

@@ -20,13 +20,17 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
 #include <fastrtps/transport/TCPChannelResourceBasic.h>
-#include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPAcceptorBasic.h>
+#if TLS_FOUND
 #include <fastrtps/transport/TCPAcceptorSecure.h>
+#include <asio/ssl.hpp>
+#endif
 
 
 #include <asio.hpp>
+#if TLS_FOUND
 #include <asio/ssl.hpp>
+#endif
 #include <thread>
 #include <vector>
 #include <map>
@@ -69,7 +73,9 @@ protected:
     std::vector<IPFinder::info_IP> current_interfaces_;
     int32_t transport_kind_;
     asio::io_service io_service_;
+#if TLS_FOUND
     asio::ssl::context ssl_context_;
+#endif
     std::shared_ptr<std::thread> io_service_thread_;
     RTCPMessageManager* rtcp_message_manager_;
     mutable std::mutex sockets_map_mutex_;
@@ -343,11 +349,13 @@ public:
         TCPAcceptorBasic* acceptor,
         const asio::error_code& error);
 
+#if TLS_FOUND
     //! Callback called each time that an incomming connection is accepted (secure).
     void SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
         tcp_secure::eProsimaTCPSocket socket,
         const asio::error_code& error);
+#endif
 
     //! Callback called each time that an outgoing connection is established.
     void SocketConnected(
