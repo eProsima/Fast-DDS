@@ -149,7 +149,6 @@ bool ReaderProxy::change_is_acked(const SequenceNumber_t& seq_num) const
         return true;
     }
 
-    assert(changes_for_reader_.back().getSequenceNumber() >= seq_num);
     ChangeConstIterator chit = find_change(seq_num);
     if (chit == changes_for_reader_.end())
     {

@@ -106,28 +106,50 @@ public:
 
     /**
     * Applies the given function object to every unsent change.
+    * @param max_seq Maximum sequence number to be considered.
     * @param f Function to apply. 
     *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
     *          The second argument may be nullptr for irrelevant changes.
     */
     template <class BinaryFunction>
-    void for_each_unsent_change(BinaryFunction f) const
+    void for_each_unsent_change(
+            const SequenceNumber_t& max_seq, 
+            BinaryFunction f) const
     {
         if (!changes_for_reader_.empty())
         {
-            SequenceNumber_t first_seq = changes_for_reader_.begin()->getSequenceNumber();
-            for (SequenceNumber_t seq = changes_low_mark_ + 1; seq < first_seq; ++seq)
+            SequenceNumber_t current_seq = changes_low_mark_ + 1;
+            ChangeConstIterator it = changes_for_reader_.begin();
+            while (it != changes_for_reader_.end())
             {
-                f(seq, nullptr);
+                // Holes before this change are informed as irrelevant.
+                SequenceNumber_t change_seq = it->getSequenceNumber();
+                for(; current_seq < change_seq; ++current_seq)
+                { 
+                    f(current_seq, nullptr);
+                }
+
+                // We then inform of this change if it is unsent, and go to the next one.
+                if (it->getStatus() == UNSENT)
+                {
+                    f(current_seq, &(*it));
+                }
+                ++current_seq;
+                ++it;
+            }
+
+            // After the last change has been checked, there may be a hole at the end.
+            for (++current_seq; current_seq < max_seq; ++current_seq)
+            {
+                f(current_seq, nullptr);
             }
         }
-
-        // TODO(Miguel C.): Should we consider holes as irrelevant ?
-        for (const ChangeForReader_t& change_for_reader : changes_for_reader_)
+        else
         {
-            if (change_for_reader.getStatus() == UNSENT)
+            // This may be entered if all changes where removed before being acknowledged.
+            for (SequenceNumber_t seq = changes_low_mark_ + 1; seq < max_seq; ++seq)
             {
-                f(change_for_reader.getSequenceNumber(), &change_for_reader);
+                f(seq, nullptr);
             }
         }
     }

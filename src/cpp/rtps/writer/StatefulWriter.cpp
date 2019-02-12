@@ -252,6 +252,7 @@ void StatefulWriter::send_any_unsent_changes()
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     bool activateHeartbeatPeriod = false;
+    SequenceNumber_t max_sequence = mp_history->next_sequence_number();
 
     // Separate sending for asynchronous writers
     if (m_pushMode && m_separateSendingEnabled && isAsync())
@@ -301,7 +302,7 @@ void StatefulWriter::send_any_unsent_changes()
                     remoteReader->set_change_to_status(seqNum, UNDERWAY, false); //TODO(Ricardo) Review
                 } // Relevance
             };
-            remoteReader->for_each_unsent_change(unsent_change_process);
+            remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
 
             if (!irrelevant.empty())
             {
@@ -333,11 +334,10 @@ void StatefulWriter::send_any_unsent_changes()
                 else
                 {
                     notRelevantChanges.add_sequence_number(seq_num, remoteReader);
-                    remoteReader->set_change_to_status(seq_num, UNDERWAY, false); //TODO(Ricardo) Review
                 }
             };
 
-            remoteReader->for_each_unsent_change(unsent_change_process);
+            remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
         }
 
         if (m_pushMode)
@@ -687,6 +687,7 @@ bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
         return false;
     }
 
+    assert(mp_history->next_sequence_number() > change->sequenceNumber);
     return std::all_of(matched_readers_.begin(), matched_readers_.end(),
         [change](const ReaderProxy* reader)
         {
