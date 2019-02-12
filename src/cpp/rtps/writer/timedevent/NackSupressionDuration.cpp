@@ -20,7 +20,6 @@
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include "../../participant/RTPSParticipantImpl.h"
 #include <mutex>

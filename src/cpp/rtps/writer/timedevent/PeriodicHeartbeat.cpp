@@ -21,7 +21,6 @@
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/ReaderProxy.h>
 
 #include "../../participant/RTPSParticipantImpl.h"
 
