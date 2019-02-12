@@ -106,7 +106,7 @@ public:
 
     /**
     * Applies the given function object to every unsent change.
-    * @param max_seq Maximum sequence number to be considered.
+    * @param max_seq Maximum sequence number to be considered without including it.
     * @param f Function to apply. 
     *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
     *          The second argument may be nullptr for irrelevant changes.
@@ -139,7 +139,7 @@ public:
             }
 
             // After the last change has been checked, there may be a hole at the end.
-            for (++current_seq; current_seq < max_seq; ++current_seq)
+            for (; current_seq < max_seq; ++current_seq)
             {
                 f(current_seq, nullptr);
             }
