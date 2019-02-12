@@ -23,6 +23,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSReader.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 
 #include <mutex>
 #include <map>
@@ -182,7 +183,7 @@ private:
 
     //!List of GUID_t os matched writers.
     //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
-    std::vector<RemoteWriterAttributes> matched_writers_;
+    ResourceLimitedVector<RemoteWriterAttributes> matched_writers_;
 };
 
 } /* namespace rtps */

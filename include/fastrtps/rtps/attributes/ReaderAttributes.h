@@ -17,18 +17,19 @@
  *
  */
 
-#ifndef READERATTRIBUTES_H_
-#define READERATTRIBUTES_H_
+#ifndef FASTRTPS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
+#define FASTRTPS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
 
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
 #include "EndpointAttributes.h"
 #include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+#include <functional>
 
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 /**
  * Class ReaderTimes, defining the times associated with the Reliable Readers events.
@@ -61,11 +62,12 @@ public:
  * Class ReaderAttributes, to define the attributes of a RTPSReader.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class  ReaderAttributes
+class ReaderAttributes
 {
     public:
 
-        ReaderAttributes() : expectsInlineQos(false)
+        ReaderAttributes() 
+            : expectsInlineQos(false)
         {
             endpoint.endpointKind = READER;
             endpoint.durabilityKind = VOLATILE;
@@ -94,21 +96,32 @@ class  ReaderAttributes
 class  RemoteWriterAttributes
 {
     public:
-        RemoteWriterAttributes() : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
-        is_eprosima_endpoint(true)
+        RemoteWriterAttributes() 
+            : livelinessLeaseDuration(c_TimeInfinite)
+            , ownershipStrength(0)
+            , is_eprosima_endpoint(true)
         {
             endpoint.endpointKind = WRITER;
         }
 
-        RemoteWriterAttributes(const VendorId_t& vendor_id) : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
-        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
+        RemoteWriterAttributes(const VendorId_t& vendor_id) 
+            : livelinessLeaseDuration(c_TimeInfinite)
+            , ownershipStrength(0)
+            , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
         {
             endpoint.endpointKind = WRITER;
         }
 
         virtual ~RemoteWriterAttributes()
         {
+        }
 
+        std::function<bool(const RemoteWriterAttributes&)> compare_guid_function() const
+        {
+            return [this](const RemoteWriterAttributes& rhs)
+            {
+                return this->guid == rhs.guid;
+            };
         }
 
         //!Attributes of the associated endpoint.
@@ -125,9 +138,9 @@ class  RemoteWriterAttributes
 
         bool is_eprosima_endpoint;
 };
-}
-}
-}
 
+} /* namespace rtps */
+} /* namespace fastrtps */
+} /* namespace eprosima */
 
-#endif /* WRITERATTRIBUTES_H_ */
+#endif /* FASTRTPS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_ */

@@ -30,14 +30,14 @@
 
 #include <cassert>
 
-#define IDSTRING "(ID:"<< std::this_thread::get_id() <<") "<<
+#define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 using namespace eprosima::fastrtps::rtps;
 
 
 StatelessReader::~StatelessReader()
 {
-    logInfo(RTPS_READER,"Removing reader "<<this->getGuid());
+    logInfo(RTPS_READER, "Removing reader " << this->getGuid());
 }
 
 StatelessReader::StatelessReader(
@@ -47,6 +47,7 @@ StatelessReader::StatelessReader(
         ReaderHistory* hist,
         ReaderListener* listen)
     : RTPSReader(pimpl, guid, att, hist, listen)
+    , matched_writers_(att.matched_writers_allocation)
 {
 }
 
@@ -55,49 +56,48 @@ StatelessReader::StatelessReader(
 bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(auto it = matched_writers_.begin();it!=matched_writers_.end();++it)
+    for(const RemoteWriterAttributes& writer : matched_writers_)
     {
-        if((*it).guid == wdata.guid)
+        if (writer.guid == wdata.guid)
+        {
+            logWarning(RTPS_READER, "Attempting to add existing writer");
             return false;
+        }
     }
 
     RemoteWriterAttributes att(wdata);
     getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
 
-    logInfo(RTPS_READER,"Writer " << att.guid << " added to "<<m_guid.entityId);
-    matched_writers_.push_back(att);
-    add_persistence_guid(att);
-    m_acceptMessagesFromUnkownWriters = false;
-    return true;
+    logInfo(RTPS_READER, "Writer " << att.guid << " added to " << m_guid.entityId);
+    if (matched_writers_.push_back(att) != nullptr)
+    {
+        add_persistence_guid(att);
+        m_acceptMessagesFromUnkownWriters = false;
+        return true;
+    }
+
+    logWarning(RTPS_READER, "No space to add writer " << att.guid << " to reader " << m_guid.entityId);
+    return false;
 }
 
 bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(auto it = matched_writers_.begin();it!=matched_writers_.end();++it)
+
+    bool found = matched_writers_.remove_if(wdata.compare_guid_function());
+    if (found)
     {
-        if((*it).guid == wdata.guid)
-        {
-            logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
-            matched_writers_.erase(it);
-            remove_persistence_guid(wdata);
-            return true;
-        }
+        logInfo(RTPS_READER, "Writer " << wdata.guid << " removed from " << m_guid.entityId);
+        remove_persistence_guid(wdata);
     }
-    return false;
+
+    return found;
 }
 
 bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(const RemoteWriterAttributes& it : matched_writers_)
-    {
-        if(it.guid == wdata.guid)
-        {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(matched_writers_.begin(), matched_writers_.end(), wdata.compare_guid_function());
 }
 
 bool StatelessReader::change_received(CacheChange_t* change)
@@ -111,7 +111,7 @@ bool StatelessReader::change_received(CacheChange_t* change)
             update_last_notified(change->writerGUID, change->sequenceNumber);
             if(getListener() != nullptr)
             {
-                getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
+                getListener()->onNewCacheChangeAdded(this, change);
             }
 
             mp_history->postSemaphore();
@@ -136,7 +136,6 @@ bool StatelessReader::nextUnreadCache(
         WriterProxy** /*wpout*/)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    //m_reader_cache.sortCacheChangesBySeqNum();
     bool found = false;
     std::vector<CacheChange_t*>::iterator it;
     //TODO PROTEGER ACCESO A HISTORIA AQUI??? YO CREO QUE NO, YA ESTA EL READER PROTEGIDO
@@ -154,7 +153,7 @@ bool StatelessReader::nextUnreadCache(
         *change = *it;
         return true;
     }
-    logInfo(RTPS_READER,"No Unread elements left");
+    logInfo(RTPS_READER, "No Unread elements left");
     return false;
 }
 
@@ -174,11 +173,13 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID))
     {
-        logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
+        logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: "
+            << getGuid().entityId);
 
         CacheChange_t* change_to_add;
 
-        if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+        //Reserve a new cache from the corresponding cache pool
+        if(reserveCache(&change_to_add, change->serializedPayload.length))
         {
 #if HAVE_SECURITY
             if(getAttributes().security_attributes().is_payload_protected)
@@ -197,8 +198,9 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 #endif
                 if (!change_to_add->copy(change))
                 {
-                    logWarning(RTPS_MSG_IN,IDSTRING"Problem copying CacheChange, received data is: " << change->serializedPayload.length
-                            << " bytes and max size in reader " << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
+                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: " 
+                        << change->serializedPayload.length << " bytes and max size in reader " 
+                        << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
                     releaseCache(change_to_add);
                     return false;
                 }
@@ -208,14 +210,13 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         }
         else
         {
-            logError(RTPS_MSG_IN,IDSTRING"Problem reserving CacheChange in reader: " << getGuid().entityId);
+            logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << getGuid().entityId);
             return false;
         }
 
         if(!change_received(change_to_add))
         {
-            logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "
-                    <<change_to_add->sequenceNumber);
+            logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
             releaseCache(change_to_add);
 
             if(getGuid().entityId == c_EntityId_SPDPReader)
@@ -323,21 +324,16 @@ bool StatelessReader::acceptMsgFrom(const GUID_t& writerId)
     {
         return true;
     }
-    else
+    else if (writerId.entityId == this->m_trustedWriterEntityId)
     {
-        if(writerId.entityId == this->m_trustedWriterEntityId)
-            return true;
-
-        for(auto it = matched_writers_.begin();it!=matched_writers_.end();++it)
-        {
-            if((*it).guid == writerId)
-            {
-                return true;
-            }
-        }
+        return true;
     }
 
-    return false;
+    return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
+        [writerId](const RemoteWriterAttributes& writer)
+        {
+            return writer.guid == writerId;
+        });
 }
 
 bool StatelessReader::thereIsUpperRecordOf(
