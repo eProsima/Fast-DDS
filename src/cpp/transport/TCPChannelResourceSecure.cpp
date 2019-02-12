@@ -154,7 +154,7 @@ uint32_t TCPChannelResourceSecure::read(
     {
         rec += secure_socket_->read_some(asio::buffer(buffer, buffer_capacity));
     }
-    return rec;
+    return static_cast<uint32_t>(rec);
 }
 
 uint32_t TCPChannelResourceSecure::read(
@@ -169,7 +169,7 @@ uint32_t TCPChannelResourceSecure::read(
     {
         rec += secure_socket_->read_some(asio::buffer(buffer, buffer_capacity), ec);
     }
-    return rec;
+    return static_cast<uint32_t>(rec);
 }
 
 uint32_t TCPChannelResourceSecure::send(
@@ -184,7 +184,7 @@ uint32_t TCPChannelResourceSecure::send(
         sent += secure_socket_->write_some(asio::buffer(data, size), ec);
     }
 
-    return sent;
+    return static_cast<uint32_t>(sent);
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceSecure::remote_endpoint() const

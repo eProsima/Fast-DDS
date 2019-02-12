@@ -918,7 +918,7 @@ bool TCPTransportInterface::Receive(
                 //    transfer_exactly(TCPHeader::getSize()), ec);
 
                 size_t bytes_received = p_channel_resource->read(tcp_header.address(),
-                    TCPHeader::size(), TCPHeader::size(), ec);
+                    static_cast<uint32_t>(TCPHeader::size()), TCPHeader::size(), ec);
 
                 remote_locator = p_channel_resource->locator();
 

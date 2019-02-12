@@ -114,9 +114,9 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
 
 void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
         Subscriber*,
-        MatchingInfo& info)
+        MatchingInfo& matching_info)
 {
-    if (info.status == MATCHED_MATCHING)
+    if (matching_info.status == MATCHED_MATCHING)
     {
         n_matched++;
         //logError(HW, "Matched");

@@ -126,7 +126,7 @@ uint32_t TCPChannelResourceBasic::send(
         size_t size,
         asio::error_code& ec)
 {
-    return socket_.send(asio::buffer(data, size), 0, ec);
+    return static_cast<uint32_t>(socket_.send(asio::buffer(data, size), 0, ec));
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint() const
