@@ -93,6 +93,7 @@ const char* HIST_MEM_POLICY = "historyMemoryPolicy";
 const char* USER_DEF_ID = "userDefinedID";
 const char* ENTITY_ID = "entityID";
 const char* MATCHED_SUBSCRIBERS_ALLOCATION = "matchedSubscribersAllocation";
+const char* MATCHED_PUBLISHERS_ALLOCATION = "matchedPublishersAllocation";
 
 ///
 const char* PROPERTIES = "properties";

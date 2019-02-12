@@ -110,6 +110,7 @@ extern const char* HIST_MEM_POLICY;
 extern const char* USER_DEF_ID;
 extern const char* ENTITY_ID;
 extern const char* MATCHED_SUBSCRIBERS_ALLOCATION;
+extern const char* MATCHED_PUBLISHERS_ALLOCATION;
 
 ///
 extern const char* PROPERTIES;
