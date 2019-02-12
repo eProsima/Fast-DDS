@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016-2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@
 
 struct Arg: public option::Arg
 {
-    static void printError(const char* msg1, const option::Option& opt, const char* msg2)
+    static void print_error(const char* msg1, const option::Option& opt, const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
@@ -40,7 +40,7 @@ struct Arg: public option::Arg
 
     static option::ArgStatus Unknown(const option::Option& option, bool msg)
     {
-        if (msg) printError("Unknown option '", option, "'\n");
+        if (msg) print_error("Unknown option '", option, "'\n");
         return option::ARG_ILLEGAL;
     }
 
@@ -49,7 +49,7 @@ struct Arg: public option::Arg
         if (option.arg != 0 && option.arg[0] != 0)
         return option::ARG_OK;
 
-        if (msg) printError("Option '", option, "' requires an argument\n");
+        if (msg) print_error("Option '", option, "' requires an argument\n");
         return option::ARG_ILLEGAL;
     }
 
@@ -66,7 +66,7 @@ struct Arg: public option::Arg
 
         if (msg)
         {
-            printError("Option '", option, "' requires a numeric argument\n");
+            print_error("Option '", option, "' requires a numeric argument\n");
         }
         return option::ARG_ILLEGAL;
     }
@@ -79,7 +79,7 @@ struct Arg: public option::Arg
         }
         if (msg)
         {
-            printError("Option '", option, "' requires a numeric argument\n");
+            print_error("Option '", option, "' requires a numeric argument\n");
         }
         return option::ARG_ILLEGAL;
     }
