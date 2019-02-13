@@ -109,6 +109,7 @@ extern const char* HIST_MEM_POLICY;
 //extern const char* PROPERTIES_POLICY;
 extern const char* USER_DEF_ID;
 extern const char* ENTITY_ID;
+extern const char* MATCHED_SUBSCRIBERS_ALLOCATION;
 
 ///
 extern const char* PROPERTIES;
@@ -310,6 +311,11 @@ extern const char* MEMBER;
 extern const char* USE_DEFAULT;
 extern const char* CONSUMER;
 extern const char* CLASS;
+
+// Allocation config
+extern const char* INITIAL;
+extern const char* MAXIMUM;
+extern const char* INCREMENT;
 
 } /* xmlparser */
 } /* namespace */

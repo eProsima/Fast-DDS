@@ -556,11 +556,7 @@ bool PDPSimple::createSPDPEndpoints()
         mp_SPDPWriter = dynamic_cast<StatelessWriter*>(wout);
         if (mp_SPDPWriter != nullptr)
         {
-            for (LocatorListIterator lit = mp_builtin->m_initialPeersList.begin();
-                lit != mp_builtin->m_initialPeersList.end(); ++lit)
-            {
-                mp_SPDPWriter->add_locator(*lit);
-            }
+            mp_SPDPWriter->set_fixed_locators(mp_builtin->m_initialPeersList);
 
             RemoteReaderAttributes rratt;
             for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)

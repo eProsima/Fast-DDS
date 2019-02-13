@@ -92,6 +92,7 @@ const char* HIST_MEM_POLICY = "historyMemoryPolicy";
 //const char* PROPERTIES_POLICY = "propertiesPolicy";
 const char* USER_DEF_ID = "userDefinedID";
 const char* ENTITY_ID = "entityID";
+const char* MATCHED_SUBSCRIBERS_ALLOCATION = "matchedSubscribersAllocation";
 
 ///
 const char* PROPERTIES = "properties";
@@ -292,6 +293,11 @@ const char* MEMBER = "member";
 const char* USE_DEFAULT = "use_default";
 const char* CONSUMER = "consumer";
 const char* CLASS = "class";
+
+// Allocation config
+const char* INITIAL = "initial";
+const char* MAXIMUM = "maximum";
+const char* INCREMENT = "increment";
 
 } /* xmlparser */
 } /* namespace */

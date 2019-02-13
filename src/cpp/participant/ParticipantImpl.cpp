@@ -189,6 +189,7 @@ Publisher* ParticipantImpl::createPublisher(
         watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     }
     watt.times = att.times;
+    watt.matched_readers_allocation = att.matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions

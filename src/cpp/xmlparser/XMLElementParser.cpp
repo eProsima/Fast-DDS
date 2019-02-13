@@ -485,6 +485,75 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(tinyxml2::XMLElement *elem,
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLContainerAllocationConfig(
+        tinyxml2::XMLElement *elem,
+        ResourceLimitedContainerConfig &allocation_config,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="containerAllocationConfigType">
+            <xs:all minOccurs="0">
+                <xs:element name="initial" type="uint32Type" minOccurs="0"/>
+                <xs:element name="maximum" type="uint32Type" minOccurs="0"/>
+                <xs:element name="increment" type="uint32Type" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    // First set default values
+    allocation_config = ResourceLimitedContainerConfig();
+
+    // Then parse XML
+    uint32_t aux_value;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, INITIAL) == 0)
+        {
+            // initial - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+                return XMLP_ret::XML_ERROR;
+            allocation_config.initial = static_cast<size_t>(aux_value);
+        }
+        else if (strcmp(name, MAXIMUM) == 0)
+        {
+            // maximum - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+                return XMLP_ret::XML_ERROR;
+            allocation_config.maximum = (aux_value == 0u) ? 
+                std::numeric_limits<size_t>::max() : static_cast<size_t>(aux_value);
+        }
+        else if (strcmp(name, INCREMENT) == 0)
+        {
+            // increment - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+                return XMLP_ret::XML_ERROR;
+            allocation_config.increment = static_cast<size_t>(aux_value);
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'containerAllocationConfigType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    // Check results
+    if (allocation_config.initial > allocation_config.maximum)
+    {
+        logError(XMLPARSER, "Parsing 'containerAllocationConfigType': Field 'initial' cannot be greater than 'maximum'.");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if((allocation_config.increment == 0) && (allocation_config.initial != allocation_config.maximum))
+    {
+        logError(XMLPARSER, "Parsing 'containerAllocationConfigType': Field 'increment' cannot be zero.");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQosPolicy &historyQos, uint8_t ident)
 {
     /*

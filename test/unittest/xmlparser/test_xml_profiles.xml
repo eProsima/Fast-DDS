@@ -198,6 +198,11 @@
         <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         <userDefinedID>67</userDefinedID>
         <entityID>87</entityID>
+        <matchedSubscribersAllocation>
+            <initial>10</initial>
+            <maximum>10</maximum>
+            <increment>0</increment>
+        </matchedSubscribersAllocation>
     </publisher>
 
     <subscriber profile_name="test_subscriber_profile" is_default_profile="true">

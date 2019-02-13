@@ -235,6 +235,14 @@
         </xs:all>
     </xs:complexType>
 
+    <xs:complexType name="containerAllocationConfigType">
+        <xs:all minOccurs="0">
+            <xs:element name="initial" type="uint32Type" minOccurs="0"/>
+            <xs:element name="maximum" type="uint32Type" minOccurs="0"/>
+            <xs:element name="increment" type="uint32Type" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
     <xs:simpleType name="historyQosKindType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="KEEP_LAST"/>
@@ -525,6 +533,7 @@
             <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
             <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
             <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            <xs:element name="matchedSubscribersAllocation" type="containerAllocationConfigType" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="profile_name" type="stringType" use="required"/>
     </xs:complexType>
