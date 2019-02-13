@@ -58,7 +58,7 @@ class NackResponseDelay:public TimedEvent
 
     private:
 
-        //!Associated reader proxy
+        //!Associated writer
         StatefulWriter* writer_;
 };
 }
