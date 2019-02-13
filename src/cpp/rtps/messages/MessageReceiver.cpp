@@ -208,15 +208,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
         if(!readSubmessageHeader(submessage, &submsgh))
             return;
 
-        if(submessage->pos + submsgh.submessageLength > submessage->length)
-        {
-            logWarning(RTPS_MSG_IN,IDSTRING"SubMsg of invalid length ("<<submsgh.submessageLength
-                    << ") with current msg position/length (" << submessage->pos << "/" << submessage->length << ")");
-            return;
-        }
-        submsgh.submsgLengthLarger = (submsgh.submessageLength == 0)
-            ? submessage->length - submessage->pos //THIS IS THE LAST SUBMESSAGE
-            : submsgh.submessageLength;
         valid = true;
         count++;
         switch(submsgh.submessageId)
@@ -225,7 +216,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submsgLengthLarger;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg ignored, DST is another RTPSParticipant");
                     }
                     else
@@ -238,7 +229,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
             case DATA_FRAG:
                 if (this->destGuidPrefix != participantGuidPrefix)
                 {
-                    submessage->pos += submsgh.submsgLengthLarger;
+                    submessage->pos += submsgh.submessageLength;
                     logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg ignored, DST is another RTPSParticipant");
                 }
                 else
@@ -251,7 +242,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submsgLengthLarger;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -265,7 +256,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submsgLengthLarger;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -279,7 +270,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if (this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submsgLengthLarger;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -293,7 +284,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submsgLengthLarger;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"HB Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -307,7 +298,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if (this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submsgLengthLarger;
+                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"HBFrag Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -319,7 +310,7 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 }
             case PAD:
                 logWarning(RTPS_MSG_IN,IDSTRING"PAD messages not yet implemented, ignoring");
-                submessage->pos += submsgh.submsgLengthLarger; //IGNORE AND CONTINUE
+                submessage->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
                 break;
             case INFO_DST:
                 logInfo(RTPS_MSG_IN,IDSTRING"InfoDST message received, processing...");
@@ -340,11 +331,11 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
             case INFO_REPLY_IP4:
                 break;
             default:
-                submessage->pos += submsgh.submsgLengthLarger; //ID NOT KNOWN. IGNORE AND CONTINUE
+                submessage->pos += submsgh.submessageLength; //ID NOT KNOWN. IGNORE AND CONTINUE
                 break;
         }
 
-        if(!valid || submsgh.submessageLength == 0)
+        if(!valid || submsgh.is_last)
         {
             break;
         }
@@ -397,7 +388,27 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t
     smh->flags = msg->buffer[msg->pos];msg->pos++;
     //Set endianness of message
     msg->msg_endian = smh->flags & BIT(0) ? LITTLEEND : BIGEND;
-    CDRMessage::readUInt16(msg,&smh->submessageLength);
+    uint16_t length = 0;
+    CDRMessage::readUInt16(msg,&length);
+    if (msg->pos + length > msg->length)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING"SubMsg of invalid length (" << length
+            << ") with current msg position/length (" << msg->pos << "/" << msg->length << ")");
+        return false;
+    }
+
+    if ( (length == 0) && (smh->submessageId != INFO_TS) && (smh->submessageId != PAD) )
+    {
+        // THIS IS THE LAST SUBMESSAGE
+        smh->submessageLength = msg->length - msg->pos;
+        smh->is_last = true;
+    }
+    else
+    {
+        smh->submessageLength = length;
+        smh->is_last = false;
+    }
+
     return true;
 }
 
@@ -406,7 +417,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     std::lock_guard<std::mutex> guard(mtx);
 
     //READ and PROCESS
-    if(smh->submsgLengthLarger < RTPSMESSAGE_DATA_MIN_LENGTH)
+    if(smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
     {
         logInfo(RTPS_MSG_IN,IDSTRING"Too short submessage received, ignoring");
         return false;
@@ -512,7 +523,7 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     if(dataFlag || keyFlag)
     {
         uint32_t payload_size;
-        payload_size = smh->submsgLengthLarger - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
+        payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE+octetsToInlineQos+inlineQosSize);
 
         if(dataFlag)
         {
@@ -581,7 +592,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     std::lock_guard<std::mutex> guard(mtx);
 
     //READ and PROCESS
-    if (smh->submsgLengthLarger < RTPSMESSAGE_DATA_MIN_LENGTH)
+    if (smh->submessageLength < RTPSMESSAGE_DATA_MIN_LENGTH)
     {
         logInfo(RTPS_MSG_IN, IDSTRING"Too short submessage received, ignoring");
         return false;
@@ -695,7 +706,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
     }
 
     uint32_t payload_size;
-    payload_size = smh->submsgLengthLarger - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
+    payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
 
     // Validations??? XXX TODO
 
@@ -942,7 +953,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(CDRMessage_t* msg,SubmessageHeader_t* 
         msg->msg_endian = LITTLEEND;
     else
         msg->msg_endian = BIGEND;
-    if(smh->submessageLength == 20 || smh->submessageLength==0)
+    if(smh->submessageLength == 20)
     {
         //AVOID FIRST 4 BYTES:
         msg->pos+=4;
