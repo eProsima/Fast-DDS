@@ -33,9 +33,16 @@
 using namespace eprosima::fastrtps::rtps;
 
 
-ReaderProxy::ReaderProxy(const RemoteReaderAttributes& rdata,const WriterTimes& times,StatefulWriter* SW) :
-    m_att(rdata), mp_SFW(SW), mp_nackSupression(nullptr), m_lastAcknackCount(0),
-    mp_mutex(new std::recursive_mutex()), lastNackfragCount_(0)
+ReaderProxy::ReaderProxy(
+        const RemoteReaderAttributes& rdata,
+        const WriterTimes& times,
+        StatefulWriter* SW)
+    : m_att(rdata)
+    , mp_SFW(SW)
+    , mp_nackSupression(nullptr)
+    , m_lastAcknackCount(0)
+    , mp_mutex(new std::recursive_mutex())
+    , lastNackfragCount_(0)
 {
     if(rdata.endpoint.reliabilityKind == RELIABLE)
     {
@@ -84,7 +91,9 @@ void ReaderProxy::addChange(const ChangeForReader_t& change)
     m_changesForReader.insert(change);
     //TODO (Ricardo) Remove this functionality from here. It is not his place.
     if (change.getStatus() == UNSENT)
+    {
         AsyncWriterThread::wakeUp(mp_SFW);
+    }
 }
 
 size_t ReaderProxy::countChangesForReader() const

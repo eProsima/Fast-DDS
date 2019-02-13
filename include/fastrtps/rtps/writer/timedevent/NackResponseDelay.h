@@ -44,7 +44,10 @@ class NackResponseDelay:public TimedEvent
          * @param[in] writer Writer which creates this event.
          * @param[in] interval_millisec Interval of the event in milliseconds.
          */
-        NackResponseDelay(StatefulWriter* writer, double interval_millisec);
+        NackResponseDelay(
+                StatefulWriter* writer,
+                double interval_millisec
+                );
 
         virtual ~NackResponseDelay();
 
@@ -54,7 +57,10 @@ class NackResponseDelay:public TimedEvent
          * @param code Code representing the status of the event
          * @param msg Message associated to the event
          */
-        void event(EventCode code, const char* msg= nullptr);
+        void event(
+                EventCode code,
+                const char* msg= nullptr
+                );
 
     private:
 

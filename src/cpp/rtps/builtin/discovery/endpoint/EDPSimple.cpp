@@ -42,6 +42,12 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+// Default configuration values for EDP entities.
+const Duration_t edp_heartbeat_period{1, 0}; // 1 second
+const Duration_t edp_nack_response_delay{0, 400*1000*1000}; // ~93 milliseconds
+const Duration_t edp_nack_supression_duration{0, 50*1000*1000}; // ~11 milliseconds
+const Duration_t edp_heartbeat_response_delay{0, 50*1000*1000}; // ~11 milliseconds
+
 
 EDPSimple::EDPSimple(PDPSimple* p,RTPSParticipantImpl* part):
     EDP(p,part),
@@ -153,9 +159,9 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        watt.times.heartbeatPeriod.seconds = 1;
-        watt.times.nackResponseDelay.fraction = 400*1000*1000;
-        watt.times.nackSupressionDuration.fraction = 50*1000*1000;
+        watt.times.heartbeatPeriod = edp_heartbeat_period;
+        watt.times.nackResponseDelay = edp_nack_response_delay;
+        watt.times.nackSupressionDuration = edp_nack_supression_duration;
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
@@ -183,7 +189,7 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.times.heartbeatResponseDelay.fraction = 50*1000*1000;
+        ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
         this->mp_subListen = new EDPSimpleSUBListener(this);
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_SubReader.second,mp_subListen,c_EntityId_SEDPSubReader,true);
         if(created)
@@ -214,7 +220,7 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.times.heartbeatResponseDelay.fraction = 50*1000*1000;
+        ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
         this->mp_pubListen = new EDPSimplePUBListener(this);
         created &=this->mp_RTPSParticipant->createReader(&raux,ratt,mp_PubReader.second,mp_pubListen,c_EntityId_SEDPPubReader,true);
         if(created)
@@ -242,9 +248,9 @@ bool EDPSimple::createSEDPEndpoints()
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        watt.times.heartbeatPeriod.seconds = 1;
-        watt.times.nackResponseDelay.fraction = 400*1000*1000;
-        watt.times.nackSupressionDuration.fraction = 50*1000*1000;
+        watt.times.heartbeatPeriod= edp_heartbeat_period;
+        watt.times.nackResponseDelay = edp_nack_response_delay;
+        watt.times.nackSupressionDuration = edp_nack_supression_duration;
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
@@ -293,9 +299,9 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        watt.times.heartbeatPeriod.seconds = 1;
-        watt.times.nackResponseDelay.fraction = 400*1000*1000;
-        watt.times.nackSupressionDuration.fraction = 50*1000*1000;
+        watt.times.heartbeatPeriod = edp_heartbeat_period;
+        watt.times.nackResponseDelay = edp_nack_response_delay;
+        watt.times.nackSupressionDuration = edp_nack_supression_duration;
         watt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
         watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (part_attr.is_discovery_protected)
@@ -334,7 +340,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.times.heartbeatResponseDelay.fraction = 50*1000*1000;
+        ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
         ratt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
         ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (part_attr.is_discovery_protected)
@@ -373,7 +379,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.times.heartbeatResponseDelay.fraction = 50*1000*1000;
+        ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
         ratt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
         ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (part_attr.is_discovery_protected)
@@ -408,9 +414,9 @@ bool EDPSimple::create_sedp_secure_endpoints()
         watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        watt.times.heartbeatPeriod.seconds = 1;
-        watt.times.nackResponseDelay.fraction = 400*1000*1000;
-        watt.times.nackSupressionDuration.fraction = 50*1000*1000;
+        watt.times.heartbeatPeriod = edp_heartbeat_period;
+        watt.times.nackResponseDelay = edp_nack_response_delay;
+        watt.times.nackSupressionDuration = edp_nack_supression_duration;
         watt.endpoint.security_attributes().is_submessage_protected = part_attr.is_discovery_protected;
         watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
         if (part_attr.is_discovery_protected)

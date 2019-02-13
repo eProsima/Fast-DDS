@@ -43,13 +43,18 @@ InitialAckNack::~InitialAckNack()
     destroy();
 }
 
-InitialAckNack::InitialAckNack(WriterProxy* wp, double interval):
-    TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
-            wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
-    m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix), wp_(wp),
-    m_destination_locators(wp->m_att.endpoint.unicastLocatorList),
-    m_remote_endpoints(1, wp->m_att.guid)
+InitialAckNack::InitialAckNack(
+        WriterProxy* wp,
+        double interval
+        )
+    : TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
+            wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
+    , m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
+            wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix)
+    , wp_(wp)
+    , m_destination_locators(wp->mp_SFR->getRTPSParticipant()->network_factory().
+            ShrinkLocatorLists({wp->m_att.endpoint.unicastLocatorList}))
+    , m_remote_endpoints(1, wp->m_att.guid)
 {
     if(m_destination_locators.empty())
     {
@@ -57,7 +62,10 @@ InitialAckNack::InitialAckNack(WriterProxy* wp, double interval):
     }
 }
 
-void InitialAckNack::event(EventCode code, const char* msg)
+void InitialAckNack::event(
+        EventCode code,
+        const char* msg
+        )
 {
 
     // Unused in release mode.

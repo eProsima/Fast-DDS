@@ -40,14 +40,20 @@ NackResponseDelay::~NackResponseDelay()
     destroy();
 }
 
-NackResponseDelay::NackResponseDelay(StatefulWriter* writer,double millisec):
-    TimedEvent(writer->getRTPSParticipant()->getEventResource().getIOService(),
-           writer->getRTPSParticipant()->getEventResource().getThread(), millisec),
-    writer_(writer)
+NackResponseDelay::NackResponseDelay(
+        StatefulWriter* writer,
+        double millisec
+        )
+    : TimedEvent(writer->getRTPSParticipant()->getEventResource().getIOService(),
+            writer->getRTPSParticipant()->getEventResource().getThread(), millisec)
+    , writer_(writer)
 {
 }
 
-void NackResponseDelay::event(EventCode code, const char* msg)
+void NackResponseDelay::event(
+        EventCode code,
+        const char* msg
+        )
 {
     // Unused in release mode.
     (void)msg;

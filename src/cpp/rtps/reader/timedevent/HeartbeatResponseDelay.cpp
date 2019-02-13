@@ -40,14 +40,18 @@ HeartbeatResponseDelay::~HeartbeatResponseDelay()
     destroy();
 }
 
-HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval):
-    TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
-            p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_WP(p_WP), m_cdrmessages(p_WP->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix),
-    m_destination_locators(mp_WP->mp_SFR->getRTPSParticipant()->network_factory().ShrinkLocatorLists(
-                {p_WP->m_att.endpoint.unicastLocatorList})),
-    m_remote_endpoints(1, p_WP->m_att.guid)
+HeartbeatResponseDelay::HeartbeatResponseDelay(
+        WriterProxy* p_WP,
+        double interval
+        )
+    : TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
+            p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
+    , mp_WP(p_WP)
+    , m_cdrmessages(p_WP->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
+            p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix)
+    , m_destination_locators(mp_WP->mp_SFR->getRTPSParticipant()->network_factory().
+            ShrinkLocatorLists({p_WP->m_att.endpoint.unicastLocatorList}))
+    , m_remote_endpoints(1, p_WP->m_att.guid)
 {
     if(m_destination_locators.empty())
     {
@@ -55,7 +59,10 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval
     }
 }
 
-void HeartbeatResponseDelay::event(EventCode code, const char* msg)
+void HeartbeatResponseDelay::event(
+        EventCode code,
+        const char* msg
+        )
 {
 
     // Unused in release mode.

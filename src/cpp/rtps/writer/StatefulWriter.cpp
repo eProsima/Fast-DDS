@@ -76,9 +76,10 @@ StatefulWriter::~StatefulWriter()
 
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
-    for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
-            it != matched_readers.end(); ++it)
+    for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it != matched_readers.end(); ++it)
+    {
         (*it)->destroy_timers();
+    }
 
     if(nack_response_event_ != nullptr)
     {
@@ -87,11 +88,14 @@ StatefulWriter::~StatefulWriter()
     }
 
     if(mp_periodicHB !=nullptr)
+    {
         delete(mp_periodicHB);
+    }
 
-    for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin();
-            it!=matched_readers.end();++it)
+    for(std::vector<ReaderProxy*>::iterator it = matched_readers.begin(); it!=matched_readers.end();++it)
+    {
         delete(*it);
+    }
 }
 
 /*
