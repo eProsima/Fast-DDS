@@ -42,8 +42,7 @@ NackResponseDelay::~NackResponseDelay()
 
 NackResponseDelay::NackResponseDelay(
         StatefulWriter* writer,
-        double millisec
-        )
+        double millisec)
     : TimedEvent(writer->getRTPSParticipant()->getEventResource().getIOService(),
             writer->getRTPSParticipant()->getEventResource().getThread(), millisec)
     , writer_(writer)
@@ -52,8 +51,7 @@ NackResponseDelay::NackResponseDelay(
 
 void NackResponseDelay::event(
         EventCode code,
-        const char* msg
-        )
+        const char* msg)
 {
     // Unused in release mode.
     (void)msg;

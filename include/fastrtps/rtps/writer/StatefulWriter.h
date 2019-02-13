@@ -53,8 +53,15 @@ namespace eprosima
                 PeriodicHeartbeat* mp_periodicHB;
 
                 protected:
+
                 //!Constructor
-                StatefulWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
+                StatefulWriter(
+                        RTPSParticipantImpl*,
+                        GUID_t& guid,
+                        WriterAttributes& att,
+                        WriterHistory* hist,
+                        WriterListener* listen=nullptr);
+
                 private:
                 //!Count of the sent heartbeats.
                 Count_t m_heartbeatCount;

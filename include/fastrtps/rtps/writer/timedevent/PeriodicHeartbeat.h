@@ -45,8 +45,7 @@ class PeriodicHeartbeat: public TimedEvent
          */
         PeriodicHeartbeat(
                 StatefulWriter* p_RP,
-                double interval
-                );
+                double interval);
 
         virtual ~PeriodicHeartbeat();
 
@@ -58,8 +57,7 @@ class PeriodicHeartbeat: public TimedEvent
          */
         void event(
                 EventCode code,
-                const char* msg= nullptr
-                );
+                const char* msg= nullptr);
 
         //!
         RTPSMessageGroup_t m_cdrmessages;

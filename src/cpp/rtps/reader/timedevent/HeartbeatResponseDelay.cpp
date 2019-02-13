@@ -42,8 +42,7 @@ HeartbeatResponseDelay::~HeartbeatResponseDelay()
 
 HeartbeatResponseDelay::HeartbeatResponseDelay(
         WriterProxy* p_WP,
-        double interval
-        )
+        double interval)
     : TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
             p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
     , mp_WP(p_WP)
@@ -61,8 +60,7 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(
 
 void HeartbeatResponseDelay::event(
         EventCode code,
-        const char* msg
-        )
+        const char* msg)
 {
 
     // Unused in release mode.

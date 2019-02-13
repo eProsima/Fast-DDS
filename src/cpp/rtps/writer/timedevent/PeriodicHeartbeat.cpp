@@ -44,8 +44,7 @@ PeriodicHeartbeat::~PeriodicHeartbeat()
 
 PeriodicHeartbeat::PeriodicHeartbeat(
         StatefulWriter* p_SFW,
-        double interval
-        )
+        double interval)
     : TimedEvent(p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
             p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval)
     , m_cdrmessages(p_SFW->getRTPSParticipant()->getMaxMessageSize(),
@@ -57,8 +56,7 @@ PeriodicHeartbeat::PeriodicHeartbeat(
 
 void PeriodicHeartbeat::event(
         EventCode code,
-        const char* msg
-        )
+        const char* msg)
 {
 
     // Unused in release mode.

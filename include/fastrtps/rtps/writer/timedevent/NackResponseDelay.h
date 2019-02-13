@@ -46,8 +46,7 @@ class NackResponseDelay:public TimedEvent
          */
         NackResponseDelay(
                 StatefulWriter* writer,
-                double interval_millisec
-                );
+                double interval_millisec);
 
         virtual ~NackResponseDelay();
 
@@ -59,8 +58,7 @@ class NackResponseDelay:public TimedEvent
          */
         void event(
                 EventCode code,
-                const char* msg= nullptr
-                );
+                const char* msg= nullptr);
 
     private:
 

@@ -49,8 +49,7 @@ class InitialAckNack: public TimedEvent
          */
         InitialAckNack(
                 WriterProxy* wp,
-                double interval
-                );
+                double interval);
 
         virtual ~InitialAckNack();
 
@@ -62,8 +61,7 @@ class InitialAckNack: public TimedEvent
          */
         void event(
                 EventCode code,
-                const char* msg= nullptr
-                );
+                const char* msg= nullptr);
 
         //!
         RTPSMessageGroup_t m_cdrmessages;

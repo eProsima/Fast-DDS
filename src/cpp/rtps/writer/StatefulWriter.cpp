@@ -46,15 +46,21 @@
 using namespace eprosima::fastrtps::rtps;
 
 
-StatefulWriter::StatefulWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        WriterAttributes& att,WriterHistory* hist,WriterListener* listen):
-    RTPSWriter(pimpl, guid, att, hist, listen),
-    mp_periodicHB(nullptr), m_times(att.times),
-    all_acked_(false), may_remove_change_(0),
-    nack_response_event_(nullptr),
-    disableHeartbeatPiggyback_(att.disableHeartbeatPiggyback),
-    sendBufferSize_(pimpl->get_min_network_send_buffer_size()),
-    currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
+StatefulWriter::StatefulWriter(
+        RTPSParticipantImpl* pimpl,
+        GUID_t& guid,
+        WriterAttributes& att,
+        WriterHistory* hist,
+        WriterListener* listen)
+    : RTPSWriter(pimpl, guid, att, hist, listen)
+    , mp_periodicHB(nullptr)
+    , m_times(att.times)
+    , all_acked_(false)
+    , may_remove_change_(0)
+    , nack_response_event_(nullptr)
+    , disableHeartbeatPiggyback_(att.disableHeartbeatPiggyback)
+    , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
+    , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
 {
     m_heartbeatCount = 0;
     if(guid.entityId == c_EntityId_SEDPPubWriter)

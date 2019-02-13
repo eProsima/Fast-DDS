@@ -46,8 +46,7 @@ class HeartbeatResponseDelay:public TimedEvent
              */
             HeartbeatResponseDelay(
                     WriterProxy* p_WP,
-                    double interval
-                    );
+                    double interval);
 
             /**
              * Method invoked when the event occurs
@@ -57,8 +56,7 @@ class HeartbeatResponseDelay:public TimedEvent
              */
             void event(
                     EventCode code,
-                    const char* msg= nullptr
-                    );
+                    const char* msg= nullptr);
 
             //!Pointer to the WriterProxy associated with this specific event.
             WriterProxy* mp_WP;

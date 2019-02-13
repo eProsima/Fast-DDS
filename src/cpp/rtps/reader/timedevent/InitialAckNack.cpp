@@ -45,8 +45,7 @@ InitialAckNack::~InitialAckNack()
 
 InitialAckNack::InitialAckNack(
         WriterProxy* wp,
-        double interval
-        )
+        double interval)
     : TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
             wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
     , m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
@@ -64,8 +63,7 @@ InitialAckNack::InitialAckNack(
 
 void InitialAckNack::event(
         EventCode code,
-        const char* msg
-        )
+        const char* msg)
 {
 
     // Unused in release mode.
