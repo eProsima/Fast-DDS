@@ -1358,7 +1358,26 @@ void TCPTransportInterface::SecureSocketAccepted(
         if (std::find(deleted_acceptors_.begin(), deleted_acceptors_.end(), acceptor) != deleted_acceptors_.end())
         {
             // SocketAccepted was called by asio after the acceptor was deleted. By must abort any operation.
-            logError(RTCP, "Acceptor called on delete");
+            logWarning(RTCP, "Acceptor called on delete");
+
+            // Dispose the socket
+            try
+            {
+                asio::error_code ec;
+                socket->shutdown();
+                socket->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+                socket->lowest_layer().cancel();
+
+            // This method was added on the version 1.12.0
+#if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
+                socket->lowest_layer().release();
+#endif
+            }
+            catch (std::exception&)
+            {
+                // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+            }
+            socket->lowest_layer().close();
             return;
         }
     }
