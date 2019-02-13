@@ -1352,7 +1352,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         tcp_secure::eProsimaTCPSocket socket,
         const asio::error_code& error)
 {
-    if (error.value() != eSocketErrorCodes::eConnectionAborted) // When aborted, ignore all, we are being closed.
+    //if (error.value() != eSocketErrorCodes::eConnectionAborted) // When aborted, ignore all, we are being closed.
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
         if (std::find(deleted_acceptors_.begin(), deleted_acceptors_.end(), acceptor) != deleted_acceptors_.end())
