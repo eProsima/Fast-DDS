@@ -125,7 +125,8 @@ WriterProxy::WriterProxy(
     //Create Events
     mp_writerProxyLiveliness =
         new WriterProxyLiveliness(
-            this,
+            reader,
+            m_att.guid,
             TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration));
     mp_heartbeatResponse =
         new HeartbeatResponseDelay(

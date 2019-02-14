@@ -196,6 +196,11 @@ public:
      */
     bool change_was_received(const SequenceNumber_t& seq_num) const;
 
+    inline void liveliness_expired()
+    {
+        mp_writerProxyLiveliness = nullptr;
+    }
+
 private:
 
     /*!

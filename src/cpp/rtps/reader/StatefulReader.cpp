@@ -126,37 +126,35 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatefulReader::matched_writer_remove(
-        const RemoteWriterAttributes& wdata, 
-        bool deleteWP)
+bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
 {
-    WriterProxy *wproxy = nullptr;
+    WriterProxy* wproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid(wdata.guid);
+    mp_history->remove_changes_with_guid(writer_guid);
 
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        if((*it)->m_att.guid == writer_guid)
         {
             logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
             wproxy = *it;
             matched_writers.erase(it);
-            remove_persistence_guid(wdata);
-            break;
+            remove_persistence_guid(wproxy->m_att);
+			if(mp_listener != nullptr)
+			{
+				MatchingInfo info(REMOVED_MATCHING, writer_guid);
+                mp_listener->onReaderMatched(this, info);
+			}
+
+            wproxy->liveliness_expired();
+			delete(wproxy);
+            return true;
         }
     }
 
-    lock.unlock();
-
-    if(wproxy != nullptr && deleteWP)
-    {
-        delete(wproxy);
-        return true;
-    }
-
-    logInfo(RTPS_READER,"Writer Proxy " << wdata.guid << " doesn't exist in reader "<<this->getGuid().entityId);
+    logInfo(RTPS_READER,"Writer Proxy " << writer_guid << " doesn't exist in reader "<<this->getGuid().entityId);
     return false;
 }
 

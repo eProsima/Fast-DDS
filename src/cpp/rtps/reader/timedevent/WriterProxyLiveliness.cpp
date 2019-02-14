@@ -35,12 +35,17 @@ namespace fastrtps{
 namespace rtps {
 
 
-WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* p_WP,double interval):
-TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
-p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
-mp_WP(p_WP)
+WriterProxyLiveliness::WriterProxyLiveliness(
+        StatefulReader* reader,
+        const GUID_t& writer_guid,
+        double interval)
+    : TimedEvent(
+        reader->getRTPSParticipant()->getEventResource().getIOService(),
+        reader->getRTPSParticipant()->getEventResource().getThread(),
+        interval, TimedEvent::ON_SUCCESS)
+    , reader_(reader)
+    , writer_guid_(writer_guid)
 {
-
 }
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
@@ -48,33 +53,18 @@ WriterProxyLiveliness::~WriterProxyLiveliness()
     destroy();
 }
 
-void WriterProxyLiveliness::event(EventCode code, const char* msg)
+void WriterProxyLiveliness::event(
+        EventCode code, 
+        const char* msg)
 {
 
     // Unused in release mode.
-    (void)msg;
+    (void) msg;
 
 	if(code == EVENT_SUCCESS)
-	{
-	
-		logInfo(RTPS_LIVELINESS,"Deleting Writer: "<<mp_WP->m_att.guid);
-//		if(!mp_WP->is_alive())
-//		{
-			//logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMilliSec()<< " ms");
-			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_att,false))
-			{
-				if(mp_WP->mp_SFR->getListener()!=nullptr)
-				{
-					MatchingInfo info(REMOVED_MATCHING,mp_WP->m_att.guid);
-					mp_WP->mp_SFR->getListener()->onReaderMatched((RTPSReader*)mp_WP->mp_SFR,info);
-				}
-			}
-
-			mp_WP->mp_writerProxyLiveliness = nullptr;
-			delete(mp_WP);
-//		}
-//		mp_WP->set_not_alive();
-//		this->restart_timer();
+    {
+        logInfo(RTPS_LIVELINESS, "Deleting Writer: " << writer_guid_);
+		reader_->liveliness_expired(writer_guid_);
 	}
 	else if(code == EVENT_ABORT)
 	{
