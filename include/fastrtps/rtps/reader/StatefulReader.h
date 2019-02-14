@@ -61,14 +61,11 @@ class StatefulReader:public RTPSReader
         bool matched_writer_add(const RemoteWriterAttributes& wdata) override;
 
         /**
-         * Remove a WriterProxyData from the matached writers.
-         * @param wdata Pointer to the WPD object.
-         * @param deleteWP If the Reader has to delete the associated WP object or not.
+         * Remove a WriterProxyData from the matached writers due to liveliness expiration.
+         * @param writer_guid GUID of the writer proxy for which livelines expired.
          * @return True if correct.
          */
-        bool matched_writer_remove(
-                const RemoteWriterAttributes& wdata,
-                bool deleteWP);
+        bool liveliness_expired(const GUID_t& writer_guid);
 
         /**
          * Remove a WriterProxyData from the matached writers.

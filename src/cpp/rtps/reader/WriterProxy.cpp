@@ -123,16 +123,20 @@ WriterProxy::WriterProxy(
 {
     changes_from_writer_.clear();
     //Create Events
-    mp_writerProxyLiveliness = new WriterProxyLiveliness(
-        this, TimeConv::Duration_t2MilliSecondsDouble(m_att.livelinessLeaseDuration));
-
-    mp_heartbeatResponse = new HeartbeatResponseDelay(
-        this, TimeConv::Duration_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
-
-    mp_initialAcknack = new InitialAckNack(
-        this, TimeConv::Duration_t2MilliSecondsDouble(mp_SFR->getTimes().initialAcknackDelay));
-
-    if(m_att.livelinessLeaseDuration < c_TimeInfinite)
+    mp_writerProxyLiveliness =
+        new WriterProxyLiveliness(
+            reader,
+            m_att.guid,
+            TimeConv::Duration_t2MilliSecondsDouble(m_att.livelinessLeaseDuration));
+    mp_heartbeatResponse =
+        new HeartbeatResponseDelay(
+            this,
+            TimeConv::Duration_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
+    mp_initialAcknack =
+        new InitialAckNack(
+            this,
+            TimeConv::Duration_t2MilliSecondsDouble(mp_SFR->getTimes().initialAcknackDelay));
+    if (m_att.livelinessLeaseDuration < c_TimeInfinite)
     {
         mp_writerProxyLiveliness->restart_timer();
     }

@@ -17,40 +17,59 @@
  *
  */
 
-#ifndef WRITERPROXYLIVELINESS_H_
-#define WRITERPROXYLIVELINESS_H_
+#ifndef FASTRTPS_RTPS_READER_TIMEDEVENT_WRITERPROXYLIVELINESS_H_
+#define FASTRTPS_RTPS_READER_TIMEDEVENT_WRITERPROXYLIVELINESS_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "../../resources/TimedEvent.h"
+#include "../../common/Guid.h"
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class WriterProxy;
+class StatefulReader;
 /**
  * Class WriterProxyLiveliness, timed event to check the liveliness of a writer each leaseDuration.
  *  @ingroup READER_MODULE
  */
-class WriterProxyLiveliness: public TimedEvent {
+class WriterProxyLiveliness: public TimedEvent 
+{
 public:
+
 	/**
-	* @param wp
-	* @param interval
-	*/
-	WriterProxyLiveliness(WriterProxy* wp,double interval);
+     * Construct a WriterProxyLiveliness event object.
+	 * @param reader StatefulReader creating this event.
+     * @param writer_guid GUID of the writer proxy for which this event is created.
+	 * @param interval Time in milliseconds to consider the writer as dead.
+	 */
+	WriterProxyLiveliness(
+            StatefulReader* reader,
+            const GUID_t& writer_guid,
+            double interval);
+
 	virtual ~WriterProxyLiveliness();
+
 	/**
-	* Method invoked when the event occurs
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
-	//!Pointer to the WriterProxy associated with this specific event.
-	WriterProxy* mp_WP;
+	 * Method invoked when the event occurs
+	 *
+	 * @param code Code representing the status of the event
+	 * @param msg Message associated to the event
+	 */
+	void event(
+            EventCode code, 
+            const char* msg = nullptr);
+
+private:
+
+	//!Pointer to the StatefulReader associated with this specific event.
+    StatefulReader* reader_;
+    //! GUID of the writer proxy associated with this specific event.
+    GUID_t writer_guid_;
 };
-}
+
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
-#endif /* WRITERPROXYLIVELINESS_H_ */
+#endif /* FASTRTPS_RTPS_READER_TIMEDEVENT_WRITERPROXYLIVELINESS_H_ */

@@ -24,13 +24,17 @@ namespace eprosima
         namespace rtps
         {
             // Forward declarations
-            class WriterProxy;
+            class StatefulReader;
+            struct GUID_t;
 
             class WriterProxyLiveliness
             {
                 public:
 
-                    WriterProxyLiveliness(WriterProxy* /*wp*/, double /*interval*/)
+                    WriterProxyLiveliness(
+                            StatefulReader* /*reader*/,
+                            const GUID_t& /*guid*/,
+                            double /*interval*/)
                     {
                     }
 
