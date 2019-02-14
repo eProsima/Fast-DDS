@@ -201,8 +201,8 @@ namespace eprosima
              */
             enum ChangeForReaderStatus_t{
                 UNSENT = 0,        //!< UNSENT
-                UNACKNOWLEDGED = 1,//!< UNACKNOWLEDGED
-                REQUESTED = 2,     //!< REQUESTED
+                REQUESTED = 1,     //!< REQUESTED
+                UNACKNOWLEDGED = 2,//!< UNACKNOWLEDGED
                 ACKNOWLEDGED = 3,  //!< ACKNOWLEDGED
                 UNDERWAY = 4       //!< UNDERWAY
             };

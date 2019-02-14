@@ -2055,9 +2055,6 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    // Wait heartbeat period of builtin endpoints
-    std::this_thread::sleep_for(std::chrono::seconds(4));
-
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
 
     writer.wait_reader_undiscovery();
@@ -5716,8 +5713,8 @@ BLACKBOXTEST(BlackBox, MulticastCommunicationOkReader)
 
     ASSERT_TRUE(readerMultiOk.isInitialized());
 
-    writer.wait_discovery(std::chrono::seconds(3));
-    readerMultiOk.wait_discovery(std::chrono::seconds(3));
+    writer.wait_discovery();
+    readerMultiOk.wait_discovery();
     ASSERT_TRUE(writer.is_matched());
     ASSERT_TRUE(readerMultiOk.is_matched());
 }

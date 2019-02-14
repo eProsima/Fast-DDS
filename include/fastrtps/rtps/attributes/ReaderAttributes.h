@@ -37,7 +37,7 @@ class ReaderTimes
 public:
     ReaderTimes()
     {
-        initialAcknackDelay.fraction = 200*1000*1000;
+        initialAcknackDelay.fraction = 300*1000*1000;
         heartbeatResponseDelay.fraction = 20*1000*1000;
     }
 

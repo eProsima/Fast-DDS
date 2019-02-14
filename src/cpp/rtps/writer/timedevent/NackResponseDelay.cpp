@@ -40,24 +40,31 @@ NackResponseDelay::~NackResponseDelay()
     destroy();
 }
 
-NackResponseDelay::NackResponseDelay(ReaderProxy* p_RP,double millisec):
-    TimedEvent(p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getIOService(),
-            p_RP->mp_SFW->getRTPSParticipant()->getEventResource().getThread(), millisec),
-    mp_RP(p_RP)
+NackResponseDelay::NackResponseDelay(
+        StatefulWriter* writer,
+        double millisec)
+    : TimedEvent(writer->getRTPSParticipant()->getEventResource().getIOService(),
+            writer->getRTPSParticipant()->getEventResource().getThread(), millisec)
+    , writer_(writer)
 {
 }
 
-void NackResponseDelay::event(EventCode code, const char* msg)
+void NackResponseDelay::event(
+        EventCode code,
+        const char* msg)
 {
-
     // Unused in release mode.
     (void)msg;
 
-    if(code == EVENT_SUCCESS)
+    if (code == EVENT_SUCCESS)
     {
         logInfo(RTPS_WRITER,"Responding to Acknack msg";);
-        std::lock_guard<std::recursive_mutex> guardW(*mp_RP->mp_SFW->getMutex());
-        std::lock_guard<std::recursive_mutex> guard(*mp_RP->mp_mutex);
-        mp_RP->convert_status_on_all_changes(REQUESTED, UNSENT);
+        std::lock_guard<std::recursive_mutex> guardW(*writer_->getMutex());
+        for (auto reader_proxy =  writer_->matchedReadersBegin(); reader_proxy != writer_->matchedReadersEnd();
+                ++reader_proxy)
+        {
+            std::lock_guard<std::recursive_mutex> guardR(*(*reader_proxy)->mp_mutex);
+            (*reader_proxy)->convert_status_on_all_changes(REQUESTED, UNSENT);
+        }
     }
 }
