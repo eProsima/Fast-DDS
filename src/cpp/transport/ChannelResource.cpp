@@ -43,6 +43,7 @@ ChannelResource::ChannelResource(uint32_t rec_buffer_size)
     , alive_(true)
     , thread_(nullptr)
 {
+    memset(message_buffer_.buffer, 0, rec_buffer_size);
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
 }
 

@@ -146,20 +146,6 @@ void TCPChannelResourceSecure::disconnect()
 uint32_t TCPChannelResourceSecure::read(
         octet* buffer,
         uint32_t buffer_capacity,
-        std::size_t size)
-{
-    size_t rec = 0;
-
-    while (rec < size && alive())
-    {
-        rec += secure_socket_->read_some(asio::buffer(buffer, buffer_capacity));
-    }
-    return static_cast<uint32_t>(rec);
-}
-
-uint32_t TCPChannelResourceSecure::read(
-        octet* buffer,
-        uint32_t buffer_capacity,
         std::size_t size,
         asio::error_code& ec)
 {

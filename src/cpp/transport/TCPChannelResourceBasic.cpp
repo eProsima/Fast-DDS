@@ -106,14 +106,6 @@ void TCPChannelResourceBasic::disconnect()
 uint32_t TCPChannelResourceBasic::read(
         octet* buffer,
         uint32_t buffer_capacity,
-        std::size_t size)
-{
-    return static_cast<uint32_t>(asio::read(socket_, asio::buffer(buffer, buffer_capacity), transfer_exactly(size)));
-}
-
-uint32_t TCPChannelResourceBasic::read(
-        octet* buffer,
-        uint32_t buffer_capacity,
         std::size_t size,
         asio::error_code& ec)
 {

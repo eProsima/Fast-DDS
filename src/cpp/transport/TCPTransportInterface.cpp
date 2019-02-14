@@ -867,10 +867,16 @@ bool TCPTransportInterface::read_body(
 {
     //*bytes_received = static_cast<uint32_t>(read(*p_channel_resource->socket(),
     //    asio::buffer(receive_buffer, receive_buffer_capacity), transfer_exactly(body_size)));
+    asio::error_code ec;
 
-    *bytes_received = p_channel_resource->read(receive_buffer, receive_buffer_capacity, body_size);
+    *bytes_received = p_channel_resource->read(receive_buffer, receive_buffer_capacity, body_size, ec);
 
-    if (*bytes_received != body_size)
+    if (ec)
+    {
+        logWarning(RTCP, "Error reading RTCP body: " << ec.message());
+        return false;
+    }
+    else if (*bytes_received != body_size)
     {
         logError(RTCP, "Bad RTCP body size: " << bytes_received << "(expected: " << TCPHeader::size() << ")");
         return false;
@@ -926,7 +932,7 @@ bool TCPTransportInterface::Receive(
                 {
                     if (bytes_received > 0)
                     {
-                        logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : "
+                        logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << " (expected: : "
                             << TCPHeader::size() << ")" << ec);
                     }
                     close_tcp_socket(p_channel_resource);
@@ -1349,6 +1355,7 @@ void TCPTransportInterface::SocketAccepted(
 #if TLS_FOUND
 void TCPTransportInterface::SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
+        Locator_t acceptor_locator, // The locator may be deleted while in this method. We want a copy of the locator.
         tcp_secure::eProsimaTCPSocket socket,
         const asio::error_code& error)
 {
@@ -1385,7 +1392,7 @@ void TCPTransportInterface::SecureSocketAccepted(
     if (!error.value())
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_acceptors_.end())
+        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor_locator)) != socket_acceptors_.end())
         {
             // Store the new connection.
             TCPChannelResource *p_channel_resource = new TCPChannelResourceSecure(this, rtcp_message_manager_,
@@ -1399,7 +1406,7 @@ void TCPTransportInterface::SecureSocketAccepted(
                 this, p_channel_resource));
 
 
-            logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->locator())
+            logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor_locator)
                 << ", remote: " << p_channel_resource->remote_endpoint().port()
                 << ") IP: " << p_channel_resource->remote_endpoint().address());
 
@@ -1407,14 +1414,14 @@ void TCPTransportInterface::SecureSocketAccepted(
             // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
             // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
             // std::cout << std::put_time(std::localtime(&now_c), "%F %T")
-            //     <<  "--> Accepted connection (physical local: " << acceptor->locator.get_physical_port()
+            //     <<  "--> Accepted connection (physical local: " << acceptor_locator.get_physical_port()
             //     << ", remote: " << p_channel_resource->socket()->remote_endpoint().port()
             //     << ") IP: " << p_channel_resource->socket()->remote_endpoint().address() << std::endl;
         }
         else
         {
             logError(RTPC, "Incomming connection from unknown Acceptor: "
-                << IPLocator::getPhysicalPort(acceptor->locator()));
+                << IPLocator::getPhysicalPort(acceptor_locator));
             return;
         }
     }
@@ -1428,7 +1435,7 @@ void TCPTransportInterface::SecureSocketAccepted(
     {
         // Accept new connections for the same port. Could be not found when exiting.
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor->locator())) != socket_acceptors_.end())
+        if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor_locator)) != socket_acceptors_.end())
         {
             acceptor->accept(this, io_service_, ssl_context_);
         }

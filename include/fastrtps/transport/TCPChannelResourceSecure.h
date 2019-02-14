@@ -93,11 +93,6 @@ public:
     uint32_t read(
         octet* buffer,
         uint32_t buffer_capacity,
-        std::size_t size) override;
-
-    uint32_t read(
-        octet* buffer,
-        uint32_t buffer_capacity,
         std::size_t size,
         asio::error_code& ec) override;
 
