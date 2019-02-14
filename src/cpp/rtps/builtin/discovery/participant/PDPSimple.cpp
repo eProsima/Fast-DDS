@@ -941,7 +941,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
                             WriterProxy* WP;
                             if(sfr->matched_writer_lookup((*wit)->guid(), &WP))
                             {
-                                WP->assertLiveliness();
+                                WP->assert_liveliness();
                                 continue;
                             }
                         }

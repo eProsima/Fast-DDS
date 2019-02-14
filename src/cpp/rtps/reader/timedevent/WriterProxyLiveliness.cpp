@@ -58,7 +58,7 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 	{
 	
 		logInfo(RTPS_LIVELINESS,"Deleting Writer: "<<mp_WP->m_att.guid);
-//		if(!mp_WP->isAlive())
+//		if(!mp_WP->is_alive())
 //		{
 			//logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMilliSec()<< " ms");
 			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_att,false))
@@ -73,7 +73,7 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 			mp_WP->mp_writerProxyLiveliness = nullptr;
 			delete(mp_WP);
 //		}
-//		mp_WP->setNotAlive();
+//		mp_WP->set_not_alive();
 //		this->restart_timer();
 	}
 	else if(code == EVENT_ABORT)
