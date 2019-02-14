@@ -940,68 +940,81 @@ bool TCPTransportInterface::Receive(
                 }
                 else
                 {
-                    size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::size());
-
-                    if (body_size > receive_buffer_capacity)
+                    // Check RTPC Header
+                    if (tcp_header.rtcp[0] != 'R'
+                        || tcp_header.rtcp[1] != 'T'
+                        || tcp_header.rtcp[2] != 'C'
+                        || tcp_header.rtcp[3] != 'P')
                     {
-                        logError(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                            << static_cast<uint32_t>(body_size) << " vs. " << receive_buffer_capacity << ". " <<
-                            "The full message will be dropped.");
+                        logError(RTCP_MSG_IN, "Bad RTCP header identifier, closing connection.");
+                        close_tcp_socket(p_channel_resource);
                         success = false;
-                        // Drop the message
-                        size_t to_read = body_size;
-                        size_t read_block = receive_buffer_capacity;
-                        uint32_t readed;
-                        while (read_block > 0)
-                        {
-                            read_body(receive_buffer, receive_buffer_capacity, &readed, p_channel_resource, read_block);
-                            to_read -= readed;
-                            read_block = (to_read >= receive_buffer_capacity) ? receive_buffer_capacity : to_read;
-                        }
                     }
                     else
                     {
-                        logInfo(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logical_port);
-                        success = read_body(receive_buffer, receive_buffer_capacity, &receive_buffer_size,
-                            p_channel_resource, body_size);
-                        //logInfo(RTCP_MSG_IN, " Received [read_body]");
+                        size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::size());
 
-                        if (configuration()->check_crc && !check_crc(tcp_header, receive_buffer, receive_buffer_size))
+                        if (body_size > receive_buffer_capacity)
                         {
-                            logWarning(RTCP_MSG_IN, "Bad TCP header CRC");
-                        }
-
-                        if (tcp_header.logical_port == 0)
-                        {
-                            //logInfo(RTCP_MSG_IN, " Receive [RTCP Control]  (" << receive_buffer_size+bytes_received
-                            // << " bytes): " << receive_buffer_size << " bytes.");
-                            ResponseCode responseCode =
-                                rtcp_message_manager_->processRTCPMessage(
-                                    p_channel_resource, receive_buffer, body_size);
-
-                            if (responseCode != RETCODE_OK)
-                            {
-                                switch (responseCode)
-                                {
-                                    case RETCODE_INCOMPATIBLE_VERSION:
-                                        {
-                                            CloseOutputChannel(p_channel_resource->locator());
-                                            break;
-                                        }
-                                    default: // Ignore
-                                        {
-                                            close_tcp_socket(p_channel_resource);
-                                            break;
-                                        }
-                                }
-                            }
+                            logError(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
+                                << static_cast<uint32_t>(body_size) << " vs. " << receive_buffer_capacity << ". " <<
+                                "The full message will be dropped.");
                             success = false;
+                            // Drop the message
+                            size_t to_read = body_size;
+                            size_t read_block = receive_buffer_capacity;
+                            uint32_t readed;
+                            while (read_block > 0)
+                            {
+                                read_body(receive_buffer, receive_buffer_capacity, &readed, p_channel_resource,
+                                    read_block);
+                                to_read -= readed;
+                                read_block = (to_read >= receive_buffer_capacity) ? receive_buffer_capacity : to_read;
+                            }
                         }
                         else
                         {
-                            IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
-                            logInfo(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
-                                << " - " << receive_buffer_size << " bytes.");
+                            logInfo(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logical_port);
+                            success = read_body(receive_buffer, receive_buffer_capacity, &receive_buffer_size,
+                                p_channel_resource, body_size);
+                            //logInfo(RTCP_MSG_IN, " Received [read_body]");
+
+                            if (configuration()->check_crc
+                                    && !check_crc(tcp_header, receive_buffer, receive_buffer_size))
+                            {
+                                logWarning(RTCP_MSG_IN, "Bad TCP header CRC");
+                            }
+
+                            if (tcp_header.logical_port == 0)
+                            {
+                                ResponseCode responseCode =
+                                    rtcp_message_manager_->processRTCPMessage(
+                                        p_channel_resource, receive_buffer, body_size);
+
+                                if (responseCode != RETCODE_OK)
+                                {
+                                    switch (responseCode)
+                                    {
+                                        case RETCODE_INCOMPATIBLE_VERSION:
+                                            {
+                                                CloseOutputChannel(p_channel_resource->locator());
+                                                break;
+                                            }
+                                        default: // Ignore
+                                            {
+                                                close_tcp_socket(p_channel_resource);
+                                                break;
+                                            }
+                                    }
+                                }
+                                success = false;
+                            }
+                            else
+                            {
+                                IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
+                                logInfo(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
+                                    << " - " << receive_buffer_size << " bytes.");
+                            }
                         }
                     }
                 }
