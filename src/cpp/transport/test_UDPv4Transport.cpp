@@ -93,13 +93,31 @@ bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize,
 
 static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
 {
-    if(msg.length - msg.pos < 4)
+    if (msg.length - msg.pos < 4)
         return false;
 
     smh.submessageId = msg.buffer[msg.pos]; msg.pos++;
     smh.flags = msg.buffer[msg.pos]; msg.pos++;
     msg.msg_endian = smh.flags & BIT(0) ? LITTLEEND : BIGEND;
-    CDRMessage::readUInt16(&msg, &smh.submessageLength);
+    uint16_t length = 0;
+    CDRMessage::readUInt16(&msg, &length);
+
+    if (msg.pos + length > msg.length)
+    {
+        return false;
+    }
+
+    if ( (length == 0) && (smh.submessageId != INFO_TS) && (smh.submessageId != PAD) )
+    {
+        // THIS IS THE LAST SUBMESSAGE
+        smh.submessageLength = msg.length - msg.pos;
+        smh.is_last = true;
+    }
+    else
+    {
+        smh.submessageLength = length;
+        smh.is_last = false;
+    }
     return true;
 }
 
