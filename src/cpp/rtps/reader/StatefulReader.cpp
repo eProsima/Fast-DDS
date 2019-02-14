@@ -262,7 +262,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             // because this function can unlock the StatefulReader timed_mutex.
             if(pWP != nullptr)
             {
-                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
+                pWP->assert_liveliness(); //Asser liveliness since you have received a DATA MESSAGE.
             }
 
             if(!change_received(change_to_add, pWP))
@@ -331,7 +331,7 @@ bool StatefulReader::processDataFragMsg(
             // because this function can unlock the StatefulReader mutex.
             if(pWP != nullptr)
             {
-                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
+                pWP->assert_liveliness(); //Asser liveliness since you have received a DATA MESSAGE.
             }
 
             if(change_completed != nullptr)
@@ -369,7 +369,7 @@ bool StatefulReader::processHeartbeatMsg(
 
     if(acceptMsgFrom(writerGUID, &pWP))
     {
-        std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
+        std::unique_lock<std::recursive_mutex> wpLock(*pWP->get_mutex());
 
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
@@ -387,7 +387,7 @@ bool StatefulReader::processHeartbeatMsg(
             {
                 if (disable_positive_acks_)
                 {
-                    if(pWP->areThereMissing())
+                    if(pWP->are_there_missing_changes())
                     {
                         pWP->mp_heartbeatResponse->restart_timer();
                     }
@@ -399,7 +399,7 @@ bool StatefulReader::processHeartbeatMsg(
             }
             else if(finalFlag && !livelinessFlag)
             {
-                if(pWP->areThereMissing())
+                if(pWP->are_there_missing_changes())
                 {
                     pWP->mp_heartbeatResponse->restart_timer();
                 }
@@ -408,7 +408,7 @@ bool StatefulReader::processHeartbeatMsg(
             //FIXME: livelinessFlag
             if(livelinessFlag )//TODOG && WP->m_att->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                pWP->assertLiveliness();
+                pWP->assert_liveliness();
             }
 
             wpLock.unlock();
@@ -432,7 +432,7 @@ bool StatefulReader::processGapMsg(
 
     if(acceptMsgFrom(writerGUID, &pWP))
     {
-        std::lock_guard<std::recursive_mutex> guardWriterProxy(*pWP->getMutex());
+        std::lock_guard<std::recursive_mutex> guardWriterProxy(*pWP->get_mutex());
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base() - 1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
@@ -481,7 +481,7 @@ bool StatefulReader::change_removed_by_history(
 
     if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
     {
-        wp->setNotValid(a_change->sequenceNumber);
+        wp->change_removed_from_history(a_change->sequenceNumber);
         return true;
     }
     else
@@ -505,7 +505,7 @@ bool StatefulReader::change_received(
         }
     }
 
-    std::unique_lock<std::recursive_mutex> writerProxyLock(*prox->getMutex());
+    std::unique_lock<std::recursive_mutex> writerProxyLock(*prox->get_mutex());
 
     size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
@@ -537,7 +537,7 @@ void StatefulReader::NotifyChanges(WriterProxy* prox)
 {
     GUID_t proxGUID = prox->m_att.guid;
     update_last_notified(proxGUID, prox->available_changes_max());
-    SequenceNumber_t nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+    SequenceNumber_t nextChangeToNotify = prox->next_cache_change_to_be_notified();
     while (nextChangeToNotify != SequenceNumber_t::unknown())
     {
         mp_history->postSemaphore();
@@ -559,7 +559,7 @@ void StatefulReader::NotifyChanges(WriterProxy* prox)
                 break;
         }
 
-        nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+        nextChangeToNotify = prox->next_cache_change_to_be_notified();
     }
 }
 
@@ -705,7 +705,7 @@ bool StatefulReader::isInCleanState()
 
     for (WriterProxy* wp : matched_writers)
     {
-        if (wp->numberOfChangeFromWriter() != 0)
+        if (wp->number_of_changes_from_writer() != 0)
         {
             cleanState = false;
             break;
