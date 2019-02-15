@@ -73,24 +73,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
         initial_peer_locator.kind = kind;
         IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
         initial_peer_locator.port = 5100;
-        IPLocator::setLogicalPort(initial_peer_locator, 7402);
-        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
-        IPLocator::setLogicalPort(initial_peer_locator, 7410);
-        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
-
-        Locator_t unicast_locator;
-        unicast_locator.kind = kind;
-        IPLocator::setIPv4(unicast_locator, "127.0.0.1");
-        unicast_locator.port = 5100;
-        IPLocator::setLogicalPort(unicast_locator, 7411);
-        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Subscriber's data channel
-
-        Locator_t meta_locator;
-        meta_locator.kind = kind;
-        IPLocator::setIPv4(meta_locator, "127.0.0.1");
-        meta_locator.port = 5100;
-        IPLocator::setLogicalPort(meta_locator, 7403);
-        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
+        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's channel
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
@@ -111,24 +94,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
         initial_peer_locator.kind = kind;
         IPLocator::setIPv6(initial_peer_locator, "::1");
         initial_peer_locator.port = 5100;
-        IPLocator::setLogicalPort(initial_peer_locator, 7402);
-        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
-        IPLocator::setLogicalPort(initial_peer_locator, 7410);
-        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
-
-        Locator_t unicast_locator;
-        unicast_locator.kind = kind;
-        IPLocator::setIPv6(unicast_locator, "::1");
-        unicast_locator.port = 5100;
-        IPLocator::setLogicalPort(unicast_locator, 7411);
-        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Subscriber's data channel
-
-        Locator_t meta_locator;
-        meta_locator.kind = kind;
-        IPLocator::setIPv6(meta_locator, "::1");
-        meta_locator.port = 5100;
-        IPLocator::setLogicalPort(meta_locator, 7403);
-        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
+        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's channel
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();

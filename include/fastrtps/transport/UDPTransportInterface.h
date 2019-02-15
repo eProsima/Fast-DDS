@@ -179,7 +179,7 @@ protected:
 
     virtual void SetReceiveBufferSize(uint32_t size) = 0;
     virtual void SetSendBufferSize(uint32_t size) = 0;
-    virtual void SetSocketOutbountInterface(eProsimaUDPSocket&, const std::string&) = 0;
+    virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) = 0;
 
     /*
         struct LocatorCompare {

@@ -78,7 +78,7 @@ class RTPSWriterCollector
         {
             if(change->getFragmentSize() > 0)
             {
-                optionalFragmentsNotSent.for_each([this, change, remoteReader](auto sn)
+                optionalFragmentsNotSent.for_each([this, change, remoteReader](FragmentNumber_t sn)
                 {
                     assert(sn <= change->getDataFragments()->size());
                     auto it = mItems_.emplace(change->sequenceNumber, sn, change);

@@ -32,6 +32,7 @@ namespace fastrtps {
 namespace rtps {
 
 class ReaderProxy;
+class NackResponseDelay;
 
 /**
  * Class StatefulWriter, specialization of RTPSWriter that maintains information of each matched Reader.
@@ -82,6 +83,8 @@ private:
     std::mutex may_remove_change_mutex_;
     std::condition_variable may_remove_change_cond_;
     unsigned int may_remove_change_;
+    //! Timed Event to manage the Acknack response delay.
+    NackResponseDelay* nack_response_event_;
 
 public:
 
@@ -208,7 +211,7 @@ public:
      */
     void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false);
 
-    void perform_nack_response(const GUID_t& reader_guid);
+    void perform_nack_response();
 
     void perform_nack_supression(const GUID_t& reader_guid);
 

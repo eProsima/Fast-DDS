@@ -23,7 +23,6 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/utils/TimeConversion.h>
 
@@ -43,15 +42,13 @@ ReaderProxy::ReaderProxy(
     : is_active_(false)
     , reader_attributes_()
     , writer_(writer)
+    , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
-    , nack_response_event_(nullptr)
     , nack_supression_event_(nullptr)
     , timers_enabled_(false)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    nack_response_event_ = std::make_shared<NackResponseDelay>(writer_,
-        TimeConv::Time_t2MilliSecondsDouble(times.nackResponseDelay));
     nack_supression_event_ = std::make_shared <NackSupressionDuration>(writer_,
         TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
@@ -66,11 +63,11 @@ void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
 {
     is_active_ = true;
     reader_attributes_ = reader_attributes;
+    guid_as_vector_.push_back(reader_attributes_.guid);
 
     reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
     reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
 
-    nack_response_event_->reader_guid(reader_attributes_.guid);
     nack_supression_event_->reader_guid(reader_attributes_.guid);
     timers_enabled_ = (reader_attributes_.endpoint.reliabilityKind == RELIABLE);
 
@@ -87,20 +84,15 @@ void ReaderProxy::stop()
     last_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
+    guid_as_vector_.clear();
 }
 
 void ReaderProxy::disable_timers()
 {
     if (timers_enabled_.exchange(false))
     {
-        nack_response_event_->cancel_timer();
         nack_supression_event_->cancel_timer();
     }
-}
-
-void ReaderProxy::update_nack_response_interval(const Duration_t& interval)
-{
-    nack_response_event_->update_interval(interval);
 }
 
 void ReaderProxy::update_nack_supression_interval(const Duration_t& interval)
@@ -226,24 +218,17 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
     seq_num_set.for_each([&](SequenceNumber_t sit)
     {
         ChangeIterator chit = find_change(sit);
-        if (chit != changes_for_reader_.end())
+        if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
         {
-            if (chit->getStatus() == UNACKNOWLEDGED)
-            {
-                chit->setStatus(REQUESTED);
-                chit->markAllFragmentsAsUnsent();
-                isSomeoneWasSetRequested = true;
-            }
+            chit->setStatus(REQUESTED);
+            chit->markAllFragmentsAsUnsent();
+            isSomeoneWasSetRequested = true;
         }
     });
 
     if (isSomeoneWasSetRequested)
     {
         logInfo(RTPS_WRITER, "Requested Changes: " << seq_num_set);
-        if (timers_enabled_)
-        {
-            nack_response_event_->restart_timer();
-        }
     }
     else if (!seq_num_set.empty())
     {
@@ -327,7 +312,6 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
     }
 
     return change_found;
-
 }
 
 bool ReaderProxy::perform_nack_supression()
@@ -344,7 +328,7 @@ bool ReaderProxy::convert_status_on_all_changes(
         ChangeForReaderStatus_t previous, 
         ChangeForReaderStatus_t next)
 {
-    assert(previous != next);
+    assert(previous > next);
 
     // NOTE: This is only called for REQUESTED=>UNSENT (acknack response) or 
     //       UNDERWAY=>UNACKNOWLEDGED (nack supression)
@@ -424,11 +408,9 @@ bool ReaderProxy::process_nack_frag(
             // TODO Not doing Acknowledged.
             if (requested_fragment_set(seq_num, fragments_state))
             {
-                nack_response_event_->restart_timer();
+                return true;
             }
         }
-
-        return true;
     }
 
     return false;

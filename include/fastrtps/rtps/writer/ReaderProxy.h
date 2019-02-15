@@ -36,7 +36,6 @@ namespace fastrtps {
 namespace rtps {
 
 class StatefulWriter;
-class NackResponseDelay;
 class NackSupressionDuration;
 
 /**
@@ -257,6 +256,27 @@ public:
     }
 
     /**
+     * Get the locators that should be used to send data to the reader represented by this proxy.
+     * @return the locators that should be used to send data to the reader represented by this proxy.
+     */
+    inline const LocatorList_t& remote_locators_shrinked() const
+    {
+        return reader_attributes_.endpoint.unicastLocatorList.empty() ?
+            reader_attributes_.endpoint.multicastLocatorList :
+            reader_attributes_.endpoint.unicastLocatorList;
+    }
+
+    /**
+     * Get the GUID of the reader represented to this proxy as a const reference to a vector
+     * of GUID_t object containing just that single GUID. It is used as a temporary workaround
+     * before the API of RTPSMessageGroup is changed.
+     */
+    inline const std::vector<GUID_t>& guid_as_vector() const
+    {
+        return guid_as_vector_;
+    }
+
+    /**
      * Called when an ACKNACK is received to set a new value for the count of the last received ACKNACK.
      * @param acknack_count The count of the received ACKNACK.
      * @return true if internal count changed (i.e. new ACKNACK is accepted)
@@ -278,6 +298,7 @@ public:
      * @param nack_count Counter field of the submessage.
      * @param seq_num Sequence number field of the submessage.
      * @param fragments_state Bitmap indicating the requested fragments.
+     * @return true if a change was modified, false otherwise.
      */
     bool process_nack_frag(
             const GUID_t& reader_guid, 
@@ -305,12 +326,6 @@ public:
     }
 
     /**
-     * Change the interval of nack-response event.
-     * @param interval Time from acknack reception to data sending.
-     */
-    void update_nack_response_interval(const Duration_t& interval);
-
-    /**
      * Change the interval of nack-supression event.
      * @param interval Time from data sending to acknack processing.
      */
@@ -324,10 +339,10 @@ private:
     RemoteReaderAttributes reader_attributes_;
     //!Pointer to the associated StatefulWriter.
     StatefulWriter* writer_;
+    //!To fool RTPSMessageGroup when using this proxy as single destination
+    ResourceLimitedVector<GUID_t> guid_as_vector_;
     //!Set of the changes and its state.
     ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
-    //! Timed Event to manage the Acknack response delay.
-    std::shared_ptr<NackResponseDelay> nack_response_event_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
     std::shared_ptr<NackSupressionDuration> nack_supression_event_;
     //! Are timed events enabled?

@@ -42,7 +42,6 @@ NackResponseDelay::NackResponseDelay(
             writer->getRTPSParticipant()->getEventResource().getThread(), 
             interval_in_ms)
     , writer_(writer)
-    , reader_guid_()
 {
 }
 
@@ -53,13 +52,12 @@ void NackResponseDelay::event(
     // Unused in release mode.
     (void)msg;
 
-    if(code == EVENT_SUCCESS)
+    if (code == EVENT_SUCCESS)
     {
-        logInfo(RTPS_WRITER, "Responding to Acknack msg";);
-        writer_->perform_nack_response(reader_guid_);
+        logInfo(RTPS_WRITER, "Responding to Acknack messages";);
+        writer_->perform_nack_response();
     }
 }
-
 
 } /* namespace rtps */
 } /* namespace fastrtps */

@@ -37,7 +37,7 @@ class ReaderTimes
 public:
     ReaderTimes()
     {
-        initialAcknackDelay.fraction = 200*1000*1000;
+        initialAcknackDelay.fraction = 300*1000*1000;
         heartbeatResponseDelay.fraction = 20*1000*1000;
     }
 
@@ -49,9 +49,9 @@ public:
                (this->heartbeatResponseDelay == b.heartbeatResponseDelay);
     }
 
-    //!Initial AckNack delay. Default value ~45ms.
+    //!Initial AckNack delay. Default value ~70ms.
     Duration_t initialAcknackDelay;
-    //!Delay to be applied when a hearbeat message is received, default value ~4.5ms.
+    //!Delay to be applied when a hearbeat message is received, default value ~5ms.
     Duration_t heartbeatResponseDelay;
 };
 

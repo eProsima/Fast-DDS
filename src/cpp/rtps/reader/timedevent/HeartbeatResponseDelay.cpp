@@ -40,18 +40,27 @@ HeartbeatResponseDelay::~HeartbeatResponseDelay()
     destroy();
 }
 
-HeartbeatResponseDelay::HeartbeatResponseDelay(WriterProxy* p_WP,double interval):
-    TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
-            p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_WP(p_WP), m_cdrmessages(p_WP->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix),
-    m_destination_locators(p_WP->m_att.endpoint.unicastLocatorList),
-    m_remote_endpoints(1, p_WP->m_att.guid)
+HeartbeatResponseDelay::HeartbeatResponseDelay(
+        WriterProxy* p_WP,
+        double interval)
+    : TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
+            p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
+    , mp_WP(p_WP)
+    , m_cdrmessages(p_WP->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
+            p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix)
+    , m_destination_locators(mp_WP->mp_SFR->getRTPSParticipant()->network_factory().
+            ShrinkLocatorLists({p_WP->m_att.endpoint.unicastLocatorList}))
+    , m_remote_endpoints(1, p_WP->m_att.guid)
 {
-    m_destination_locators.push_back(p_WP->m_att.endpoint.multicastLocatorList);
+    if(m_destination_locators.empty())
+    {
+        m_destination_locators.push_back(p_WP->m_att.endpoint.multicastLocatorList);
+    }
 }
 
-void HeartbeatResponseDelay::event(EventCode code, const char* msg)
+void HeartbeatResponseDelay::event(
+        EventCode code,
+        const char* msg)
 {
 
     // Unused in release mode.
@@ -68,8 +77,8 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
         // Stores missing changes but there is some fragments received.
         std::vector<CacheChange_t*> uncompleted_changes;
 
-        RTPSMessageGroup group(mp_WP->mp_SFR->getRTPSParticipant(), mp_WP->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
-            m_destination_locators, m_remote_endpoints);
+        RTPSMessageGroup group(mp_WP->mp_SFR->getRTPSParticipant(), mp_WP->mp_SFR, RTPSMessageGroup::READER,
+                m_cdrmessages, m_destination_locators, m_remote_endpoints);
 
         if(!missing_changes.empty() || !mp_WP->m_heartbeatFinalFlag)
         {
@@ -98,10 +107,7 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
             mp_WP->mp_SFR->m_acknackCount++;
             logInfo(RTPS_READER,"Sending ACKNACK: "<< sns;);
 
-            bool final = false;
-            if(sns.empty())
-                final = true;
-
+            bool final = sns.empty();
             group.add_acknack(m_remote_endpoints, sns, mp_WP->mp_SFR->m_acknackCount, final, m_destination_locators);
         }
 
@@ -141,7 +147,8 @@ void HeartbeatResponseDelay::event(EventCode code, const char* msg)
                 ++mp_WP->mp_SFR->m_nackfragCount;
                 logInfo(RTPS_READER,"Sending NACKFRAG for sample" << cit->sequenceNumber << ": "<< frag_sns;);
 
-                group.add_nackfrag(m_remote_endpoints, cit->sequenceNumber, frag_sns, mp_WP->mp_SFR->m_nackfragCount, m_destination_locators);
+                group.add_nackfrag(m_remote_endpoints, cit->sequenceNumber, frag_sns, mp_WP->mp_SFR->m_nackfragCount,
+                        m_destination_locators);
             }
         }
     }

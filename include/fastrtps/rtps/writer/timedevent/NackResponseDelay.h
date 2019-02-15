@@ -42,7 +42,6 @@ public:
      * Construct a NackResponseDelay event.
      *
      * @param writer           Pointer to the StatefulWriter creating this event
-     * @param reader_guid      GUID of the related reader proxy
      * @param interval_in_ms   Event interval in miliseconds
      */
     NackResponseDelay(
@@ -61,18 +60,10 @@ public:
             EventCode code, 
             const char* msg = nullptr) override;
 
-    inline void reader_guid(const GUID_t guid)
-    {
-        reader_guid_ = guid;
-    }
-
 private:
 
     //! Associated stateful writer
     StatefulWriter* writer_;
-
-    //! GUID of the reader proxy
-    GUID_t reader_guid_;
 };
 
 } /* namespace rtps */
