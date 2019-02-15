@@ -200,7 +200,7 @@ class RTPSMessageGroup
          */
         bool add_acknack(
                 const std::vector<GUID_t>& remote_writers,
-                SequenceNumberSet_t& SNSet,
+                const SequenceNumberSet_t& SNSet,
                 int32_t count,
                 bool finalFlag,
                 const LocatorList_t& locators);

@@ -27,7 +27,7 @@ bool RTPSMessageCreator::addMessageAcknack(
         const GuidPrefix_t& remoteGuidPrefix,
         const EntityId_t& readerId,
         const EntityId_t& writerId,
-        SequenceNumberSet_t& SNSet,
+        const SequenceNumberSet_t& SNSet,
         int32_t count,
         bool finalFlag)
 {
@@ -42,7 +42,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(
         CDRMessage_t* msg,
         const EntityId_t& readerId,
         const EntityId_t& writerId,
-        SequenceNumberSet_t& SNSet,
+        const SequenceNumberSet_t& SNSet,
         int32_t count,
         bool finalFlag)
 {

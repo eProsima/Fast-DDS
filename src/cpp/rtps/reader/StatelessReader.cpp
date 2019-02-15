@@ -92,7 +92,7 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     return found;
 }
 
-bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
+bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     return std::any_of(matched_writers_.begin(), matched_writers_.end(), wdata.compare_guid_function());

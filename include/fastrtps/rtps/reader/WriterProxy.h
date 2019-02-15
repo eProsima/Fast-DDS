@@ -26,6 +26,7 @@
 #include "../common/Locator.h"
 #include "../common/CacheChange.h"
 #include "../attributes/ReaderAttributes.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 
 #include<set>
 
@@ -38,10 +39,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSParticipantImpl;
 class StatefulReader;
 class HeartbeatResponseDelay;
 class WriterProxyLiveliness;
 class InitialAckNack;
+class RTPSMessageGroup_t;
 
 /**
  * Class WriterProxy that contains the state of each matched writer for a specific reader.
@@ -130,6 +133,23 @@ public:
      */
     size_t unknown_missing_changes_up_to(const SequenceNumber_t& seq_num) const;
 
+    /**
+     * Get the locators that should be used to send data to the writer represented by this proxy.
+     * @return the locators that should be used to send data to the writer represented by this proxy.
+     */
+    inline const LocatorList_t& remote_locators_shrinked() const
+    {
+        return m_att.endpoint.unicastLocatorList.empty() ?
+            m_att.endpoint.multicastLocatorList :
+            m_att.endpoint.unicastLocatorList;
+    }
+
+    /**
+     * Get the participant this proxy is part of.
+     * @return pointer to the participant of the StatefulReader that created this proxy.
+     */
+    RTPSParticipantImpl* get_participant() const;
+
     //! Pointer to associated StatefulReader.
     StatefulReader* mp_SFR;
     //! Parameters of the WriterProxy
@@ -196,6 +216,12 @@ public:
      */
     bool change_was_received(const SequenceNumber_t& seq_num) const;
 
+    /**
+     * Sends a preemptive acknack to the writer represented by this proxy.
+     * @param buffer Message buffer to use for serialization.
+     */
+    void perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const;
+
     inline void liveliness_expired()
     {
         mp_writerProxyLiveliness = nullptr;
@@ -235,6 +261,9 @@ private:
 
     //! Store last ChacheChange_t notified.
     SequenceNumber_t last_notified_;
+
+    //!To fool RTPSMessageGroup when using this proxy as single destination
+    ResourceLimitedVector<GUID_t> guid_as_vector_;
 
     void for_each_set_status_from(
             decltype(changes_from_writer_)::iterator first,

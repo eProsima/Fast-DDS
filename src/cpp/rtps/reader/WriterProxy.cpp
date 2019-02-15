@@ -29,6 +29,8 @@
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
 #include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
 
+#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -118,9 +120,10 @@ WriterProxy::WriterProxy(
     mp_initialAcknack(nullptr),
     m_heartbeatFinalFlag(false),
     is_alive_(true),
-    mutex_(new std::recursive_mutex())
-
+    mutex_(new std::recursive_mutex()),
+    guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
 {
+    guid_as_vector_.push_back(m_att.guid);
     changes_from_writer_.clear();
     //Create Events
     mp_writerProxyLiveliness =
@@ -485,6 +488,18 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     }
 
     return SequenceNumber_t::unknown();
+}
+
+void WriterProxy::perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const
+{
+    // Send initial NACK.
+    SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
+    mp_SFR->send_acknack(sns, buffer, remote_locators_shrinked(), guid_as_vector_, false);
+}
+
+RTPSParticipantImpl* WriterProxy::get_participant() const
+{
+    return mp_SFR->getRTPSParticipant();
 }
 
 } /* namespace rtps */

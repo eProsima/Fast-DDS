@@ -82,7 +82,7 @@ public:
      * @param wdata Pointer to the WriterProxyData object
      * @return True if it is matched.
      */
-    RTPS_DllAPI virtual bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) const = 0;
+    RTPS_DllAPI virtual bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) = 0;
 
     /**
      * Returns true if the reader accepts a message directed to entityId.

@@ -73,7 +73,7 @@ public:
      * @param wdata Pointer to the WriterProxyData object
      * @return True if it is matched.
      */
-    bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) const override;
+    bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) override;
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.

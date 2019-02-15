@@ -29,6 +29,7 @@ namespace fastrtps{
 namespace rtps {
 
 class WriterProxy;
+class RTPSMessageGroup_t;
 
 /**
  * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
@@ -79,7 +80,7 @@ class StatefulReader:public RTPSReader
          * @param wdata Pointer to the WriterProxyData object
          * @return True if it is matched.
          */
-        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) const override;
+        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) override;
 
         /**
          * Look for a specific WriterProxy.
@@ -211,6 +212,21 @@ class StatefulReader:public RTPSReader
          * @return There is a clean state with all Writers.
          */
         bool isInCleanState() override;
+
+        /**
+         * Sends an acknack message from this reader
+         * @param sns Sequence number bitmap with the acknack information.
+         * @param buffer Message buffer to use for serialization.
+         * @param locators List of destination locators.
+         * @param guids List of destination writer GUIDs.
+         * @param is_final Value for final flag.
+         */
+        void send_acknack(
+                const SequenceNumberSet_t& sns,
+                RTPSMessageGroup_t& buffer,
+                const LocatorList_t& locators,
+                const std::vector<GUID_t>& guids,
+                bool is_final);
 
         //! Acknack Count
         uint32_t m_acknackCount;

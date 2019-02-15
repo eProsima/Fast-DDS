@@ -141,9 +141,9 @@ class RTPSMessageCreator
                 SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count);
 
         static bool addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
-                const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
+                const EntityId_t& readerId,const EntityId_t& writerId,const SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
         static bool addSubmessageAcknack(CDRMessage_t* msg,
-                const EntityId_t& readerId,const EntityId_t& writerId,SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
+                const EntityId_t& readerId,const EntityId_t& writerId,const SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag);
 
         static bool addMessageNackFrag(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const GuidPrefix_t& remoteGuidPrefix,
                 const EntityId_t& readerId, const EntityId_t& writerId, SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count);

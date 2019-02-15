@@ -19,36 +19,33 @@
 
 #ifndef INITIALACKNACK_H_
 #define INITIALACKNACK_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <fastrtps/rtps/resources/TimedEvent.h>
-#include <fastrtps/rtps/common/CDRMessage_t.h>
-#include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 
 namespace eprosima {
-namespace fastrtps{
-namespace rtps{
+namespace fastrtps {
+namespace rtps {
 
-class RTPSParticipantImpl;
-class StatefulReader;
 class WriterProxy;
-
 
 /**
  * InitialAckNack class, controls the initial send operation of AckNack.
  * @ingroup WRITER_MODULE
  */
-class InitialAckNack: public TimedEvent
+class InitialAckNack : public TimedEvent
 {
     public:
 
         /**
-         *
-         * @param p_RP
-         * @param interval
+         * Constructs a InitialAckNack event object
+         * @param writer_proxy  Pointer to the writer proxy creating this event.
+         * @param interval      Interval in milliseconds of this event.
          */
         InitialAckNack(
-                WriterProxy* wp,
+                WriterProxy* writer_proxy,
                 double interval);
 
         virtual ~InitialAckNack();
@@ -64,17 +61,14 @@ class InitialAckNack: public TimedEvent
                 const char* msg= nullptr);
 
         //!
-        RTPSMessageGroup_t m_cdrmessages;
+        RTPSMessageGroup_t message_buffer_;
         //!
-        WriterProxy* wp_;
-        //!List of destination locators
-        LocatorList_t m_destination_locators;
-        //!List of destination endpoints
-        std::vector<GUID_t> m_remote_endpoints;
+        WriterProxy* writer_proxy_;
 };
 
-}
-}
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* INITIALACKNACK_H_ */
