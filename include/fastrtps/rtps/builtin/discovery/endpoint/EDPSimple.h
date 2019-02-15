@@ -23,6 +23,8 @@
 
 #include "EDP.h"
 
+#include <atomic>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -141,6 +143,16 @@ class EDPSimple : public EDP
     bool pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& local_writer,
                 const ReaderProxyData& remote_reader_data) override;
 #endif
+
+    /*!
+     * This method will try to remove already acked unregistered information.
+     */
+    void remove_unregistered_info_already_acked();
+
+    std::atomic_size_t unregistered_writer_info;
+    std::atomic_size_t unregistered_reader_info;
+    std::atomic_size_t unregistered_secure_writer_info;
+    std::atomic_size_t unregistered_secure_reader_info;
 
 };
 

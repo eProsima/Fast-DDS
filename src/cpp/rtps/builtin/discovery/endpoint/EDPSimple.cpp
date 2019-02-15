@@ -48,16 +48,21 @@ const Duration_t edp_nack_response_delay{0, 400*1000*1000}; // ~93 milliseconds
 const Duration_t edp_nack_supression_duration{0, 50*1000*1000}; // ~11 milliseconds
 const Duration_t edp_heartbeat_response_delay{0, 50*1000*1000}; // ~11 milliseconds
 
+const int32_t edp_initial_reserved_caches = 100;
 
-EDPSimple::EDPSimple(PDPSimple* p,RTPSParticipantImpl* part):
-    EDP(p,part),
-    mp_pubListen(nullptr),
-    mp_subListen(nullptr)
 
-    {
-        // TODO Auto-generated constructor stub
-
-    }
+EDPSimple::EDPSimple(
+        PDPSimple* p,
+        RTPSParticipantImpl* part)
+    : EDP(p, part)
+    , mp_pubListen(nullptr)
+    , mp_subListen(nullptr)
+    , unregistered_writer_info(0)
+    , unregistered_reader_info(0)
+    , unregistered_secure_writer_info(0)
+    , unregistered_secure_reader_info(0)
+{
+}
 
 EDPSimple::~EDPSimple()
 {
@@ -147,8 +152,7 @@ bool EDPSimple::createSEDPEndpoints()
     RTPSWriter* waux = nullptr;
     if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         mp_PubWriter.second = new WriterHistory(hatt);
@@ -176,12 +180,10 @@ bool EDPSimple::createSEDPEndpoints()
             delete(mp_PubWriter.second);
             mp_PubWriter.second = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         mp_SubReader.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -207,12 +209,10 @@ bool EDPSimple::createSEDPEndpoints()
     }
     if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         mp_PubReader.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -236,8 +236,7 @@ bool EDPSimple::createSEDPEndpoints()
             delete(mp_pubListen);
             mp_pubListen = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         mp_SubWriter.second = new WriterHistory(hatt);
@@ -287,8 +286,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
     if(m_discovery.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         sedp_builtin_publications_secure_writer_.second = new WriterHistory(hatt);
@@ -327,12 +325,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
             delete(sedp_builtin_publications_secure_writer_.second);
             sedp_builtin_publications_secure_writer_.second = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         sedp_builtin_subscriptions_secure_reader_.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -366,12 +362,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
     if(m_discovery.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         sedp_builtin_publications_secure_reader_.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -402,8 +396,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
             delete(sedp_builtin_publications_secure_reader_.second);
             sedp_builtin_publications_secure_reader_.second = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         sedp_builtin_subscriptions_secure_writer_.second = new WriterHistory(hatt);
@@ -570,11 +563,13 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_EDP,W->getGuid().entityId);
 
     auto* writer = &mp_PubWriter;
+    auto* unregistered_info = &unregistered_writer_info;
 
 #if HAVE_SECURITY
     if(W->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_publications_secure_writer_;
+        unregistered_info = &unregistered_secure_writer_info;
     }
 #endif
 
@@ -599,9 +594,13 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
 
             }
 
-            writer->second->add_change(change);
+            if(writer->second->add_change(change))
+            {
+                ++(*unregistered_info);
+            }
         }
     }
+
     return mp_PDP->removeWriterProxyData(W->getGuid());
 }
 
@@ -610,11 +609,13 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
     logInfo(RTPS_EDP,R->getGuid().entityId);
 
     auto* writer = &mp_SubWriter;
+    auto* unregistered_info = &unregistered_reader_info;
 
 #if HAVE_SECURITY
     if(R->getAttributes().security_attributes().is_discovery_protected)
     {
         writer = &sedp_builtin_subscriptions_secure_writer_;
+        unregistered_info = &unregistered_secure_reader_info;
     }
 #endif
 
@@ -623,7 +624,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
         InstanceHandle_t iH;
         iH = (R->getGuid());
         CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
-                NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
+                NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if(change != nullptr)
         {
             {
@@ -638,7 +639,10 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
                 }
             }
 
-            writer->second->add_change(change);
+            if(writer->second->add_change(change))
+            {
+                ++(*unregistered_info);
+            }
         }
     }
     return mp_PDP->removeReaderProxyData(R->getGuid());
@@ -648,7 +652,11 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 
 void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
+    // Try to remove old dispose endpoint info before connect with other participant.
+    remove_unregistered_info_already_acked();
+
     logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints");
+
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
@@ -1029,6 +1037,79 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(c
     return returned_value;
 }
 #endif
+
+void EDPSimple::remove_unregistered_info_already_acked()
+{
+    if(0 < unregistered_writer_info)
+    {
+        std::lock_guard<std::recursive_mutex> guard(*mp_PubWriter.second->getMutex());
+        // Remove already disposed local writer info.
+        for(auto ch = mp_PubWriter.second->changesBegin(); ch != mp_PubWriter.second->changesEnd(); ++ch)
+        {
+            if(ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == (*ch)->kind)
+            {
+                if(mp_PubWriter.first->is_acked_by_all(*ch) && mp_PubWriter.second->remove_change(*ch))
+                {
+                    --unregistered_writer_info;
+                }
+            }
+        }
+    }
+
+    if(0 < unregistered_reader_info)
+    {
+        std::lock_guard<std::recursive_mutex> guard(*mp_SubWriter.second->getMutex());
+        // Remove already disposed local reader info.
+        for(auto ch = mp_SubWriter.second->changesBegin(); ch != mp_SubWriter.second->changesEnd(); ++ch)
+        {
+            if(ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == (*ch)->kind)
+            {
+                if(mp_SubWriter.first->is_acked_by_all(*ch) && mp_SubWriter.second->remove_change(*ch))
+                {
+                    --unregistered_reader_info;
+                }
+            }
+        }
+    }
+
+#if HAVE_SECURITY
+    if(0 < unregistered_secure_writer_info)
+    {
+        std::lock_guard<std::recursive_mutex> guard(*sedp_builtin_publications_secure_writer_.second->getMutex());
+        // Remove already disposed local writer info.
+        for(auto ch = sedp_builtin_publications_secure_writer_.second->changesBegin();
+                ch != sedp_builtin_publications_secure_writer_.second->changesEnd(); ++ch)
+        {
+            if(ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == (*ch)->kind)
+            {
+                if(sedp_builtin_publications_secure_writer_.first->is_acked_by_all(*ch) &&
+                        sedp_builtin_publications_secure_writer_.second->remove_change(*ch))
+                {
+                    --unregistered_secure_writer_info;
+                }
+            }
+        }
+    }
+
+    if(0 < unregistered_secure_reader_info)
+    {
+        std::lock_guard<std::recursive_mutex> guard(*sedp_builtin_subscriptions_secure_writer_.second->getMutex());
+        // Remove already disposed local writer info.
+        for(auto ch = sedp_builtin_subscriptions_secure_writer_.second->changesBegin();
+                ch != sedp_builtin_subscriptions_secure_writer_.second->changesEnd(); ++ch)
+        {
+            if(ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED == (*ch)->kind)
+            {
+                if(sedp_builtin_subscriptions_secure_writer_.first->is_acked_by_all(*ch) &&
+                        sedp_builtin_subscriptions_secure_writer_.second->remove_change(*ch))
+                {
+                    --unregistered_secure_reader_info;
+                }
+            }
+        }
+    }
+#endif
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */
