@@ -41,7 +41,7 @@ public:
     /**
     * Constructor
     * @param io_service Reference to the ASIO service.
-    * @param sInterface Network interface to bind the socket
+    * @param interface Network interface to bind the socket
     * @param locator Locator with the information about where to accept connections.
     */
     TCPAcceptorBasic(

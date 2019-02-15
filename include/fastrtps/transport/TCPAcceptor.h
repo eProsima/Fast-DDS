@@ -44,7 +44,7 @@ public:
         const std::string& interface,
         const Locator_t& locator);
 
-    Locator_t locator() const
+    const Locator_t& locator() const
     {
         return locator_;
     }

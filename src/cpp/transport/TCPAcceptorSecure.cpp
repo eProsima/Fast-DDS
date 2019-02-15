@@ -49,7 +49,7 @@ void TCPAcceptorSecure::accept(
     using asio::ip::tcp;
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
 
-    // We are going to be called by the lambdas, but we may be alrade deleted. Save the locator so we will need it.
+    // We are going to be called by the lambdas, but we may be already deleted. Save the locator so we will need it.
     Locator_t locator = locator_;
     try
     {

@@ -144,33 +144,33 @@ public:
     virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
 
     virtual bool getDefaultMetatrafficMulticastLocators(
-        LocatorList_t &locators,
+        LocatorList_t& locators,
         uint32_t metatraffic_multicast_port) const = 0;
 
     virtual bool getDefaultMetatrafficUnicastLocators(
-        LocatorList_t &locators,
+        LocatorList_t& locators,
         uint32_t metatraffic_unicast_port) const = 0;
 
     virtual bool getDefaultUnicastLocators(
-        LocatorList_t &locators,
+        LocatorList_t& locators,
         uint32_t unicast_port) const = 0;
 
     virtual bool fillMetatrafficMulticastLocator(
-        Locator_t &locator,
+        Locator_t& locator,
         uint32_t metatraffic_multicast_port) const = 0;
 
     virtual bool fillMetatrafficUnicastLocator(
-        Locator_t &locator,
+        Locator_t& locator,
         uint32_t metatraffic_unicast_port) const = 0;
 
     virtual bool configureInitialPeerLocator(
-        Locator_t &locator,
+        Locator_t& locator,
         const PortParameters &port_params,
         uint32_t domainId,
         LocatorList_t& list) const = 0;
 
     virtual bool fillUnicastLocator(
-        Locator_t &locator,
+        Locator_t& locator,
         uint32_t well_known_port) const = 0;
 
     /**

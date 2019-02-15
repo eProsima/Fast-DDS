@@ -38,7 +38,7 @@ struct TCPHeader
 
     const octet* address() const
     {
-        return (const octet*)this;
+        return reinterpret_cast<const octet*>(this);
     }
 
     octet* address()

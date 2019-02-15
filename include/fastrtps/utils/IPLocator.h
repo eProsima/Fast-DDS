@@ -47,7 +47,7 @@ class IPLocator
 
         // IPv4
         RTPS_DllAPI static bool setIPv4(
-            Locator_t &locator,
+            Locator_t& locator,
             const unsigned char* addr);
 
         RTPS_DllAPI static bool setIPv4(
@@ -58,30 +58,30 @@ class IPLocator
             octet o4);
 
         RTPS_DllAPI static bool setIPv4(
-            Locator_t &locator,
-            const std::string &ipv4);
+            Locator_t& locator,
+            const std::string& ipv4);
 
         RTPS_DllAPI static bool setIPv4(
-            Locator_t &destlocator,
-            const Locator_t &origlocator);
+            Locator_t& destlocator,
+            const Locator_t& origlocator);
 
-        RTPS_DllAPI static const octet* getIPv4(const Locator_t &locator);
+        RTPS_DllAPI static const octet* getIPv4(const Locator_t& locator);
 
-        RTPS_DllAPI static bool hasIPv4(const Locator_t &locator);
+        RTPS_DllAPI static bool hasIPv4(const Locator_t& locator);
 
-        RTPS_DllAPI static std::string toIPv4string(const Locator_t &locator);
+        RTPS_DllAPI static std::string toIPv4string(const Locator_t& locator);
 
         RTPS_DllAPI static bool copyIPv4(
-            const Locator_t &locator,
+            const Locator_t& locator,
             unsigned char* dest);
 
         // IPv6
         RTPS_DllAPI static bool setIPv6(
-            Locator_t &locator,
+            Locator_t& locator,
             const unsigned char* addr);
 
         RTPS_DllAPI static bool setIPv6(
-            Locator_t &locator,
+            Locator_t& locator,
             uint16_t group0,
             uint16_t group1,
             uint16_t group2,
