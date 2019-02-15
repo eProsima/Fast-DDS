@@ -94,7 +94,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp

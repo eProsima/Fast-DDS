@@ -84,7 +84,6 @@ protected:
 
     /**
     * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @param locator Input locator.
     * @return Vector of interfaces in string format.
     */
     virtual std::vector<std::string> get_binding_interfaces_list() override;

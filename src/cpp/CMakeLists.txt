@@ -89,7 +89,6 @@ set(${PROJECT_NAME}_source_files
     transport/UDPv6Transport.cpp
     transport/TCPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
-    transport/test_TCPv4Transport.cpp
     transport/tcp/TCPControlMessage.cpp
     transport/tcp/RTCPMessageManager.cpp
     transport/tcp/test_RTCPMessageManager.cpp

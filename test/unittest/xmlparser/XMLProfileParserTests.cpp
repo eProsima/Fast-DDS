@@ -601,11 +601,11 @@ TEST_F(XMLProfileParserTests, tls_config)
     EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
     EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
 
-    EXPECT_EQ(descriptor->tls_config.verify_paths.size(), 3);
+    EXPECT_EQ(descriptor->tls_config.verify_paths.size(), static_cast<size_t>(3));
     EXPECT_EQ(descriptor->tls_config.verify_paths[0], "Path1");
     EXPECT_EQ(descriptor->tls_config.verify_paths[1], "Path2");
     EXPECT_EQ(descriptor->tls_config.verify_paths[2], "Path3");
-    EXPECT_EQ(descriptor->tls_config.verify_depth, 55);
+    EXPECT_EQ(descriptor->tls_config.verify_depth, static_cast<int32_t>(55));
     EXPECT_TRUE(descriptor->tls_config.default_verify_path);
 
     EXPECT_EQ(descriptor->tls_config.handshake_role, TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);

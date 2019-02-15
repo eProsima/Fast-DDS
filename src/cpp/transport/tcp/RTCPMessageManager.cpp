@@ -68,12 +68,18 @@ static void readSerializedPayload(
 
 RTCPMessageManager::~RTCPMessageManager()
 {
+    dispose();
 }
 
 size_t RTCPMessageManager::sendMessage(
         TCPChannelResource *p_channel_resource,
         const CDRMessage_t &msg) const
 {
+    if (!alive())
+    {
+        return 0;
+    }
+
     size_t send = mTransport->send(p_channel_resource, msg.buffer, msg.length);
     if (send != msg.length)
     {
@@ -90,6 +96,11 @@ bool RTCPMessageManager::sendData(
         const SerializedPayload_t *payload,
         const ResponseCode respCode)
 {
+    if (!alive())
+    {
+        return 0;
+    }
+
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
     CDRMessage_t msg;
@@ -172,7 +183,7 @@ void RTCPMessageManager::fillHeaders(
     // Finally, calculate the CRC
 
     uint32_t crc = 0;
-    if (mTransport->configuration()->calculate_crc)
+    if (alive() && mTransport->configuration()->calculate_crc)
     {
         octet* it = (octet*)&retCtrlHeader;
         for (size_t i = 0; i < TCPControlMsgHeader::size(); ++i)
@@ -276,7 +287,11 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(TCPChannelResource *p
 
     logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator));
     TCPTransactionId id = getTransactionId();
-    sendData(p_channel_resource, BIND_CONNECTION_REQUEST, id, &payload);
+    bool success = sendData(p_channel_resource, BIND_CONNECTION_REQUEST, id, &payload);
+    if (!success)
+    {
+        logError(RTCP, "Failed sending Connection Request");
+    }
     p_channel_resource->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBindResponse);
     return id;
 }
@@ -743,7 +758,10 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
     {
         //logInfo(RTCP_SEQ, "Receive [UNBIND_CONNECTION_REQUEST] Seq:" << controlHeader.transaction_id());
         logInfo(RTCP_MSG, "Receive [UNBIND_CONNECTION_REQUEST]");
-        mTransport->close_tcp_socket(p_channel_resource);
+        if (alive())
+        {
+            mTransport->close_tcp_socket(p_channel_resource);
+        }
         responseCode = RETCODE_OK;
     }
     break;

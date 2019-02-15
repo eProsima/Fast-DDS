@@ -41,12 +41,10 @@ public:
             channel = new TCPChannelResourceSecure(this, nullptr, io_service_, ssl_context_, physicalLocator, 0);
         }
         else
+#endif
         {
             channel = new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0);
         }
-#else
-        channel = new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0);
-#endif
         channel_resources_[physicalLocator] = channel;
         return true;
     }

@@ -29,7 +29,6 @@ public:
     /**
     * Constructor
     * @param io_service Reference to the ASIO service.
-    * @param ssl_context Reference to the ASIO ssl context.
     * @param parent Pointer to the transport that is going to manage the acceptor.
     * @param locator Locator with the information about where to accept connections.
     */
@@ -41,7 +40,6 @@ public:
     /**
     * Constructor
     * @param io_service Reference to the ASIO service.
-    * @param ssl_context Reference to the ASIO ssl context.
     * @param interface Network interface to bind the socket
     * @param locator Locator with the information about where to accept connections.
     */

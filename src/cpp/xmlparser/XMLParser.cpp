@@ -740,27 +740,37 @@ XMLP_ret XMLParser::parse_tls_config(
         }
         else if (config.compare(TLS_VERIFY_PATHS) == 0)
         {
-            tinyxml2::XMLElement *p_path = p_aux0->FirstChildElement(TLS_VERIFY_PATH);
+            tinyxml2::XMLElement *p_path = p_aux0->FirstChildElement();
+
             while (p_path != nullptr)
             {
-                std::string path;
-
-                if (XMLP_ret::XML_OK != getXMLString(p_path, &path, 0))
+                std::string type = p_path->Value();
+                if (type.compare(TLS_VERIFY_PATH) == 0)
                 {
-                    ret = XMLP_ret::XML_ERROR;
+                    std::string path;
+
+                    if (XMLP_ret::XML_OK != getXMLString(p_path, &path, 0))
+                    {
+                        ret = XMLP_ret::XML_ERROR;
+                    }
+                    else
+                    {
+                        pTCPDesc->tls_config.verify_paths.push_back(path);
+                    }
+
+                    if (ret == XMLP_ret::XML_ERROR)
+                    {
+                        // Break while loop
+                        break;
+                    }
+                    p_path = p_path->NextSiblingElement();
                 }
                 else
                 {
-                    pTCPDesc->tls_config.verify_paths.push_back(path);
-                }
-
-                if (ret == XMLP_ret::XML_ERROR)
-                {
-                    // Break while loop
+                    logError(XMLPARSER, "Unrecognized verify paths label: " << p_path->Value());
+                    ret = XMLP_ret::XML_ERROR;
                     break;
                 }
-
-                p_path = p_path->NextSiblingElement(TLS_VERIFY_PATH);
             }
         }
         else if (config.compare(TLS_VERIFY_DEPTH) == 0)
@@ -815,39 +825,49 @@ XMLP_ret XMLParser::parse_tls_config(
         }
         else if (config.compare(TLS_VERIFY_MODE) == 0)
         {
-            tinyxml2::XMLElement *p_verify = p_aux0->FirstChildElement(TLS_VERIFY);
+            tinyxml2::XMLElement *p_verify = p_aux0->FirstChildElement();
             while (p_verify != nullptr)
             {
-                std::string verify_mode;
+                std::string type = p_verify->Value();
+                if (type.compare(TLS_VERIFY) == 0)
+                {
+                    std::string verify_mode;
 
-                if (XMLP_ret::XML_OK != getXMLString(p_verify, &verify_mode, 0))
-                {
-                    ret = XMLP_ret::XML_ERROR;
-                }
-                else
-                {
-                    if (verify_mode.compare(TLS_VERIFY_NONE) == 0)
+                    if (XMLP_ret::XML_OK != getXMLString(p_verify, &verify_mode, 0))
                     {
-                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_NONE);
-                    }
-                    else if (verify_mode.compare(TLS_VERIFY_PEER) == 0)
-                    {
-                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_PEER);
-                    }
-                    else if (verify_mode.compare(TLS_VERIFY_FAIL_IF_NO_PEER_CERT) == 0)
-                    {
-                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT);
-                    }
-                    else if (verify_mode.compare(TLS_VERIFY_CLIENT_ONCE) == 0)
-                    {
-                        pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_CLIENT_ONCE);
+                        ret = XMLP_ret::XML_ERROR;
                     }
                     else
                     {
-                        logError(XMLPARSER, "Error parsing TLS configuration verify_mode unrecognized "
-                            << verify_mode << ".");
-                        ret = XMLP_ret::XML_ERROR;
+                        if (verify_mode.compare(TLS_VERIFY_NONE) == 0)
+                        {
+                            pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_NONE);
+                        }
+                        else if (verify_mode.compare(TLS_VERIFY_PEER) == 0)
+                        {
+                            pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_PEER);
+                        }
+                        else if (verify_mode.compare(TLS_VERIFY_FAIL_IF_NO_PEER_CERT) == 0)
+                        {
+                            pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT);
+                        }
+                        else if (verify_mode.compare(TLS_VERIFY_CLIENT_ONCE) == 0)
+                        {
+                            pTCPDesc->tls_config.add_verify_mode(TLSVerifyMode::VERIFY_CLIENT_ONCE);
+                        }
+                        else
+                        {
+                            logError(XMLPARSER, "Error parsing TLS configuration verify_mode unrecognized "
+                                << verify_mode << ".");
+                            ret = XMLP_ret::XML_ERROR;
+                        }
                     }
+                }
+                else
+                {
+                    logError(XMLPARSER, "Error parsing TLS configuration found unrecognized node "
+                        << type << ".");
+                    ret = XMLP_ret::XML_ERROR;
                 }
 
                 if (ret == XMLP_ret::XML_ERROR)
@@ -856,65 +876,76 @@ XMLP_ret XMLParser::parse_tls_config(
                     break;
                 }
 
-                p_verify = p_verify->NextSiblingElement(TLS_VERIFY);
+                p_verify = p_verify->NextSiblingElement();
             }
         }
         else if (config.compare(TLS_OPTIONS) == 0)
         {
-            tinyxml2::XMLElement *p_option = p_aux0->FirstChildElement(TLS_OPTION);
+            tinyxml2::XMLElement *p_option = p_aux0->FirstChildElement();
             while (p_option != nullptr)
             {
-                std::string option;
+                std::string type = p_option->Value();
+                if (type.compare(TLS_OPTION) == 0)
+                {
+                    std::string option;
 
-                if (XMLP_ret::XML_OK != getXMLString(p_option, &option, 0))
-                {
-                    ret = XMLP_ret::XML_ERROR;
-                }
-                else
-                {
-                    if (option.compare(TLS_DEFAULT_WORKAROUNDS) == 0)
+                    if (XMLP_ret::XML_OK != getXMLString(p_option, &option, 0))
                     {
-                        pTCPDesc->tls_config.add_option(TLSOption::DEFAULT_WORKAROUNDS);
-                    }
-                    else if (option.compare(TLS_NO_COMPRESSION) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::NO_COMPRESSION);
-                    }
-                    else if (option.compare(TLS_NO_SSLV2) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::NO_SSLV2);
-                    }
-                    else if (option.compare(TLS_NO_SSLV3) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::NO_SSLV3);
-                    }
-                    else if (option.compare(TLS_NO_TLSV1) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1);
-                    }
-                    else if (option.compare(TLS_NO_TLSV1_1) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_1);
-                    }
-                    else if (option.compare(TLS_NO_TLSV1_2) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_2);
-                    }
-                    else if (option.compare(TLS_NO_TLSV1_3) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_3);
-                    }
-                    else if (option.compare(TLS_SINGLE_DH_USE) == 0)
-                    {
-                        pTCPDesc->tls_config.add_option(TLSOption::SINGLE_DH_USE);
+                        ret = XMLP_ret::XML_ERROR;
                     }
                     else
                     {
-                        logError(XMLPARSER, "Error parsing TLS configuration option unrecognized "
-                            << option << ".");
-                        ret = XMLP_ret::XML_ERROR;
+                        if (option.compare(TLS_DEFAULT_WORKAROUNDS) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::DEFAULT_WORKAROUNDS);
+                        }
+                        else if (option.compare(TLS_NO_COMPRESSION) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::NO_COMPRESSION);
+                        }
+                        else if (option.compare(TLS_NO_SSLV2) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::NO_SSLV2);
+                        }
+                        else if (option.compare(TLS_NO_SSLV3) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::NO_SSLV3);
+                        }
+                        else if (option.compare(TLS_NO_TLSV1) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1);
+                        }
+                        else if (option.compare(TLS_NO_TLSV1_1) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_1);
+                        }
+                        else if (option.compare(TLS_NO_TLSV1_2) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_2);
+                        }
+                        else if (option.compare(TLS_NO_TLSV1_3) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::NO_TLSV1_3);
+                        }
+                        else if (option.compare(TLS_SINGLE_DH_USE) == 0)
+                        {
+                            pTCPDesc->tls_config.add_option(TLSOption::SINGLE_DH_USE);
+                        }
+                        else
+                        {
+                            logError(XMLPARSER, "Error parsing TLS configuration option unrecognized "
+                                << option << ".");
+                            ret = XMLP_ret::XML_ERROR;
+                        }
                     }
                 }
+                else
+                {
+                    logError(XMLPARSER, "Error parsing TLS options found unrecognized node "
+                        << type << ".");
+                    ret = XMLP_ret::XML_ERROR;
+                }
+
 
                 if (ret == XMLP_ret::XML_ERROR)
                 {
@@ -922,7 +953,7 @@ XMLP_ret XMLParser::parse_tls_config(
                     break;
                 }
 
-                p_option = p_option->NextSiblingElement(TLS_OPTION);
+                p_option = p_option->NextSiblingElement();
             }
         }
         else

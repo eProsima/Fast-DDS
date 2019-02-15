@@ -40,9 +40,10 @@ const ProtocolVersion_t c_rtcpProtocolVersion = {1, 0};
  */
 class RTCPMessageManager
 {
+    std::atomic<bool> alive_;
 public:
 
-    RTCPMessageManager(TCPTransportInterface* pTransport) : mTransport(pTransport) {}
+    RTCPMessageManager(TCPTransportInterface* pTransport) : alive_(true), mTransport(pTransport) {}
     virtual ~RTCPMessageManager();
 
     /** @name Send RTCP Message Methods.
@@ -105,6 +106,11 @@ public:
 
     static uint32_t& addToCRC(uint32_t &crc, octet data);
 
+    void dispose()
+    {
+        alive_ = false;
+    }
+
 protected:
     TCPTransportInterface* mTransport;
     std::set<TCPTransactionId> mUnconfirmedTransactions;
@@ -156,6 +162,11 @@ protected:
         TCPHeader &header, const SerializedPayload_t *payload = nullptr, const ResponseCode *respCode = nullptr);
 
     bool isCompatibleProtocol(const ProtocolVersion_t &protocol) const;
+
+    inline bool alive() const
+    {
+        return alive_;
+    }
 };
 } /* namespace rtps */
 } /* namespace fastrtps */

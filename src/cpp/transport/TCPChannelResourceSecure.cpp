@@ -102,6 +102,8 @@ void TCPChannelResourceSecure::connect()
                         else
                         {
                             logError(RTCP_TLS, "Handshake failed: " << error.message());
+                            eClock::my_sleep(5000); // Retry, but after a big while
+                            parent_->SocketConnected(locator_, error);
                         }
                     });
                 }
@@ -126,7 +128,8 @@ void TCPChannelResourceSecure::disconnect()
         try
         {
             asio::error_code ec;
-            secure_socket_->shutdown();
+            //secure_socket_->next_layer().cancel();
+            //secure_socket_->shutdown();
             secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
             secure_socket_->lowest_layer().cancel();
 
@@ -150,10 +153,12 @@ uint32_t TCPChannelResourceSecure::read(
         asio::error_code& ec)
 {
     size_t rec = 0;
+    size_t readed = static_cast<size_t>(-1);
 
-    while (rec < size && !ec && alive())
+    while (readed != 0 && rec < size && !ec && alive())
     {
-        rec += secure_socket_->read_some(asio::buffer(buffer, buffer_capacity), ec);
+        readed = secure_socket_->read_some(asio::buffer(buffer, buffer_capacity), ec);
+        rec += readed;
     }
     return static_cast<uint32_t>(rec);
 }
@@ -164,10 +169,12 @@ uint32_t TCPChannelResourceSecure::send(
         asio::error_code& ec)
 {
     size_t sent = 0;
+    size_t aux = static_cast<size_t>(-1);
 
-    while (sent < size && !ec && alive())
+    while (aux != 0 && sent < size && !ec && alive())
     {
-        sent += secure_socket_->write_some(asio::buffer(data, size), ec);
+        aux = secure_socket_->write_some(asio::buffer(data, size), ec);
+        sent += aux;
     }
 
     return static_cast<uint32_t>(sent);
@@ -201,7 +208,7 @@ void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor*
             ssl::verify_mode vm = 0x00;
             if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_NONE))
             {
-                vm |= ssl::verify_peer;
+                vm |= ssl::verify_none;
             }
             else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_PEER))
             {
@@ -209,11 +216,11 @@ void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor*
             }
             else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT))
             {
-                vm |= ssl::verify_peer;
+                vm |= ssl::verify_fail_if_no_peer_cert;
             }
             else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_CLIENT_ONCE))
             {
-                vm |= ssl::verify_peer;
+                vm |= ssl::verify_client_once;
             }
             secure_socket_->set_verify_mode(vm);
         }

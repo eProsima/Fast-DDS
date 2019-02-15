@@ -24,7 +24,7 @@ namespace rtps{
 
 SenderResource::SenderResource(
         TransportInterface& transport,
-        Locator_t& locator)
+        const Locator_t& locator)
     : mValid(false)
 //, m_pChannelResource(nullptr)
 {
