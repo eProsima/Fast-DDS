@@ -225,9 +225,6 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    // Wait heartbeat period of builtin endpoints
-    std::this_thread::sleep_for(std::chrono::seconds(4));
-
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
 
     writer.wait_reader_undiscovery();

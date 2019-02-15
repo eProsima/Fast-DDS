@@ -276,13 +276,16 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
             eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
 
+            // Outbounding first interface with already created socket.
+            if(!locNames.empty())
+            {
+                SetSocketOutboundInterface(unicastSocket, (*locNames.begin()).name);
+            }
+
             // If more than one interface, then create sockets for outbounding multicast.
             if (locNames.size() > 1)
             {
                 auto locIt = locNames.begin();
-
-                // Outbounding first interface with already created socket.
-                SetSocketOutbountInterface(unicastSocket, (*locIt).name);
                 mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
 
                 // Create other socket for outbounding rest of interfaces.
@@ -290,7 +293,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
                 {
                     uint16_t new_port = 0;
                     eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint((*locIt).name, new_port), new_port);
-                    SetSocketOutbountInterface(multicastSocket, (*locIt).name);
+                    SetSocketOutboundInterface(multicastSocket, (*locIt).name);
 
                     UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
                     mSocket->only_multicast_purpose(true);
@@ -315,7 +318,7 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
                 if (IsInterfaceAllowed(infoIP.name))
                 {
                     eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint(infoIP.name, port), port);
-                    SetSocketOutbountInterface(unicastSocket, infoIP.name);
+                    SetSocketOutboundInterface(unicastSocket, infoIP.name);
                     if (!firstInterface)
                     {
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
@@ -448,8 +451,13 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 
             // We then send to the address of the input locator
             auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
 
+            asio::error_code ec;
+            socket_base::message_flags flags = 0;
+
+            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
+            
             socket.close();
         }
         else

@@ -86,7 +86,7 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
         root.reset(new BaseNode{ NodeType::ROOT });
         tinyxml2::XMLElement* node = p_root->FirstChildElement();
         const char* tag = nullptr;
-        while (nullptr != node)
+        while ( (nullptr != node) && (ret == XMLP_ret::XML_OK))
         {
             if (nullptr != (tag = node->Value()))
             {

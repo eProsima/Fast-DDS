@@ -39,7 +39,6 @@ namespace eprosima
         {
 
             class StatefulWriter;
-            class NackResponseDelay;
             class NackSupressionDuration;
 
 
@@ -161,8 +160,6 @@ namespace eprosima
                  */
                 void setLastNackfragCount(uint32_t lastNackfragCount) { lastNackfragCount_ = lastNackfragCount; }
 
-                //! Timed Event to manage the Acknack response delay.
-                NackResponseDelay* mp_nackResponse;
                 //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
                 NackSupressionDuration* mp_nackSupression;
                 //! Last ack/nack count
