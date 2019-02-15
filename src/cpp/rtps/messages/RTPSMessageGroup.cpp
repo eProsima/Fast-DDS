@@ -685,7 +685,7 @@ bool RTPSMessageGroup::add_gap(std::set<SequenceNumber_t>& changesSeqNum,
     return true;
 }
 
-bool RTPSMessageGroup::add_acknack(const std::vector<GUID_t>& remote_writers, SequenceNumberSet_t& SNSet,
+bool RTPSMessageGroup::add_acknack(const std::vector<GUID_t>& remote_writers, const SequenceNumberSet_t& SNSet,
         int32_t count, bool finalFlag, const LocatorList_t& locators)
 {
     // A vector is used to avoid dynamic allocations, but only first item is used

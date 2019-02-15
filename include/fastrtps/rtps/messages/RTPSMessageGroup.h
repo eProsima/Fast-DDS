@@ -164,7 +164,7 @@ class RTPSMessageGroup
          * @param locators List of destination locators.
          * @return True when message was added to the group.
          */
-        bool add_acknack(const std::vector<GUID_t>& remote_writers, SequenceNumberSet_t& SNSet,
+        bool add_acknack(const std::vector<GUID_t>& remote_writers, const SequenceNumberSet_t& SNSet,
                 int32_t count, bool finalFlag, const LocatorList_t& locators);
 
         /**

@@ -699,3 +699,28 @@ bool StatefulReader::isInCleanState() const
 
     return cleanState;
 }
+
+void StatefulReader::send_acknack(
+        const SequenceNumberSet_t& sns,
+        RTPSMessageGroup_t& buffer,
+        const LocatorList_t& locators,
+        const std::vector<GUID_t>& guids,
+        bool is_final)
+{
+
+    Count_t acknackCount = 0;
+
+    {//BEGIN PROTECTION
+        std::lock_guard<std::recursive_mutex> guard_reader(*mp_mutex);
+        m_acknackCount++;
+        acknackCount = m_acknackCount;
+    }
+
+
+    logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
+
+    RTPSMessageGroup group(getRTPSParticipant(), this, RTPSMessageGroup::READER, buffer, locators, guids);
+
+    group.add_acknack(guids, sns, acknackCount, is_final, locators);
+
+}

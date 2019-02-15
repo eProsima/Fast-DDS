@@ -24,7 +24,7 @@ namespace rtps{
 bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
         const GuidPrefix_t& remoteGuidPrefix,
         const EntityId_t& readerId,const EntityId_t& writerId,
-        SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
+        const SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag){
     try
     {
         RTPSMessageCreator::addHeader(msg,guidprefix);
@@ -42,7 +42,7 @@ bool RTPSMessageCreator::addMessageAcknack(CDRMessage_t* msg,const GuidPrefix_t&
 
 bool RTPSMessageCreator::addSubmessageAcknack(CDRMessage_t* msg,
         const EntityId_t& readerId,const EntityId_t& writerId,
-        SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
+        const SequenceNumberSet_t& SNSet,int32_t count,bool finalFlag)
 {
     CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
     CDRMessage::initCDRMsg(&submsgElem);

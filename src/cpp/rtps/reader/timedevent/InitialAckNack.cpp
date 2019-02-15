@@ -35,8 +35,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps{
 
-// TODO(Ricardo) Maybe join initial heartbeat, ack and gap
-
 InitialAckNack::~InitialAckNack()
 {
     logInfo(RTPS_WRITER,"Destroying InitialAckNack");
@@ -44,21 +42,17 @@ InitialAckNack::~InitialAckNack()
 }
 
 InitialAckNack::InitialAckNack(
-        WriterProxy* wp,
+        WriterProxy* writer_proxy,
         double interval)
-    : TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
-            wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
-    , m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix)
-    , wp_(wp)
-    , m_destination_locators(wp->mp_SFR->getRTPSParticipant()->network_factory().
-            ShrinkLocatorLists({wp->m_att.endpoint.unicastLocatorList}))
-    , m_remote_endpoints(1, wp->m_att.guid)
+    : TimedEvent(
+            writer_proxy->get_participant()->getEventResource().getIOService(),
+            writer_proxy->get_participant()->getEventResource().getThread(),
+            interval)
+    , message_buffer_(
+            writer_proxy->get_participant()->getMaxMessageSize(),
+            writer_proxy->get_participant()->getGuid().guidPrefix)
+    , writer_proxy_(writer_proxy)
 {
-    if(m_destination_locators.empty())
-    {
-        m_destination_locators.push_back(wp->m_att.endpoint.multicastLocatorList);
-    }
 }
 
 void InitialAckNack::event(
@@ -71,23 +65,7 @@ void InitialAckNack::event(
 
     if(code == EVENT_SUCCESS)
     {
-        Count_t acknackCount = 0;
-
-        {//BEGIN PROTECTION
-            std::lock_guard<std::recursive_mutex> guard_reader(*wp_->mp_SFR->getMutex());
-            wp_->mp_SFR->m_acknackCount++;
-            acknackCount = wp_->mp_SFR->m_acknackCount;
-        }
-
-        // Send initial NACK.
-        SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-
-        logInfo(RTPS_READER,"Sending ACKNACK: "<< sns);
-
-        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
-            m_destination_locators, m_remote_endpoints);
-
-        group.add_acknack(m_remote_endpoints, sns, acknackCount, false, m_destination_locators);
+        writer_proxy_->perform_initial_ack_nack(message_buffer_);
     }
     else if(code == EVENT_ABORT)
     {
@@ -99,6 +77,6 @@ void InitialAckNack::event(
     }
 }
 
-}
-}
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

@@ -21,7 +21,9 @@
 
 namespace eprosima {
 namespace fastrtps {
-namespace rtps{
+namespace rtps {
+
+class RTPSMessageGroup_t;
 
 class StatefulReader : public RTPSReader
     {
@@ -38,7 +40,17 @@ class StatefulReader : public RTPSReader
 
             inline ReaderTimes& getTimes(){return times_;};
 
-        private:
+            void send_acknack(
+                    const SequenceNumberSet_t& /*sns*/,
+                    RTPSMessageGroup_t& /*buffer*/,
+                    const LocatorList_t& /*locators*/,
+                    const std::vector<GUID_t>& /*guids*/,
+                    bool /*is_final*/) 
+            {}
+
+            RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }
+
+    private:
 
             GUID_t guid_;
 
