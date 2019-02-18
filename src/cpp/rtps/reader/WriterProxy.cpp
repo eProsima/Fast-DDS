@@ -497,6 +497,11 @@ void WriterProxy::perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const
     mp_SFR->send_acknack(sns, buffer, remote_locators_shrinked(), guid_as_vector_, false);
 }
 
+void WriterProxy::perform_heartbeat_response(RTPSMessageGroup_t& buffer) const
+{
+    mp_SFR->send_acknack(this, buffer, remote_locators_shrinked(), guid_as_vector_, m_heartbeatFinalFlag);
+}
+
 RTPSParticipantImpl* WriterProxy::get_participant() const
 {
     return mp_SFR->getRTPSParticipant();
