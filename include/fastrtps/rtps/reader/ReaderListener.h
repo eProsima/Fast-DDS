@@ -37,16 +37,22 @@ class RTPS_DllAPI ReaderListener
 {
     public:
 
-        ReaderListener(){};
+        ReaderListener() = default;
 
-        virtual ~ReaderListener(){};
+        virtual ~ReaderListener() = default;
 
         /**
          * This method is invoked when a new reader matches
          * @param reader Matching reader
          * @param info Matching information of the reader
          */
-        virtual void onReaderMatched(RTPSReader* reader, MatchingInfo& info){(void)reader; (void)info;};
+        virtual void onReaderMatched(
+                RTPSReader* reader,
+                MatchingInfo& info)
+        {
+            (void)reader;
+            (void)info;
+        }
 
         /**
          * This method is called when a new CacheChange_t is added to the ReaderHistory.
@@ -56,7 +62,13 @@ class RTPS_DllAPI ReaderListener
          * To remove the data call the remove_change method of the ReaderHistory.
          * reader->getHistory()->remove_change((CacheChange_t*)change).
          */
-        virtual void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change){(void)reader; (void)change;};
+        virtual void onNewCacheChangeAdded(
+                RTPSReader* reader,
+                const CacheChange_t* const change)
+        {
+            (void)reader;
+            (void)change;
+        }
 };
 
 //Namespace enders
