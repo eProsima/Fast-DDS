@@ -33,6 +33,8 @@ class RTPSWriter;
 class RTPSReader;
 class EDPSimplePUBListener;
 class EDPSimpleSUBListener;
+class EDPSimpleWPUBListener;
+class EDPSimpleWSUBListener;
 class ReaderHistory;
 class WriterHistory;
 
@@ -79,8 +81,15 @@ class EDPSimple : public EDP
 
     //!Pointer to the ReaderListener associated with PubReader
     EDPSimplePUBListener* mp_pubListen;
+
     //!Pointer to the ReaderListener associated with SubReader
     EDPSimpleSUBListener* mp_subListen;
+
+    //!Pointer to the WriterListener associated with PubWriter
+    EDPSimpleWPUBListener* publications_writer_listener_;
+
+    //!Pointer to the WriterListener associated with SubWriter
+    EDPSimpleWSUBListener* subscriptions_writer_listener_;
 
     /**
      * Initialization method.

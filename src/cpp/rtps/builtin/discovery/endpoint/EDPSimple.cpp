@@ -48,16 +48,19 @@ const Duration_t edp_nack_response_delay{0, 400*1000*1000}; // ~93 milliseconds
 const Duration_t edp_nack_supression_duration{0, 50*1000*1000}; // ~11 milliseconds
 const Duration_t edp_heartbeat_response_delay{0, 50*1000*1000}; // ~11 milliseconds
 
+const int32_t edp_initial_reserved_caches = 100;
 
-EDPSimple::EDPSimple(PDPSimple* p,RTPSParticipantImpl* part):
-    EDP(p,part),
-    mp_pubListen(nullptr),
-    mp_subListen(nullptr)
 
-    {
-        // TODO Auto-generated constructor stub
-
-    }
+EDPSimple::EDPSimple(
+        PDPSimple* p,
+        RTPSParticipantImpl* part)
+    : EDP(p,part)
+    , mp_pubListen(nullptr)
+    , mp_subListen(nullptr)
+    , publications_writer_listener_(nullptr)
+    , subscriptions_writer_listener_(nullptr)
+{
+}
 
 EDPSimple::~EDPSimple()
 {
@@ -107,10 +110,26 @@ EDPSimple::~EDPSimple()
         this->mp_RTPSParticipant->deleteUserEndpoint(mp_SubWriter.first);
         delete(mp_SubWriter.second);
     }
+
     if(mp_pubListen!=nullptr)
+    {
         delete(mp_pubListen);
+    }
+
     if(mp_subListen !=nullptr)
+    {
         delete(mp_subListen);
+    }
+
+    if(nullptr != publications_writer_listener_)
+    {
+        delete(publications_writer_listener_);
+    }
+
+    if(nullptr != subscriptions_writer_listener_)
+    {
+        delete(subscriptions_writer_listener_);
+    }
 }
 
 
@@ -147,8 +166,7 @@ bool EDPSimple::createSEDPEndpoints()
     RTPSWriter* waux = nullptr;
     if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         mp_PubWriter.second = new WriterHistory(hatt);
@@ -165,7 +183,11 @@ bool EDPSimple::createSEDPEndpoints()
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
-        created &=this->mp_RTPSParticipant->createWriter(&waux,watt,mp_PubWriter.second,nullptr,c_EntityId_SEDPPubWriter,true);
+
+        publications_writer_listener_ = new EDPSimpleWPUBListener(this);
+        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, mp_PubWriter.second,
+                publications_writer_listener_, c_EntityId_SEDPPubWriter, true);
+
         if(created)
         {
             mp_PubWriter.first = dynamic_cast<StatefulWriter*>(waux);
@@ -176,12 +198,11 @@ bool EDPSimple::createSEDPEndpoints()
             delete(mp_PubWriter.second);
             mp_PubWriter.second = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         mp_SubReader.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -207,12 +228,10 @@ bool EDPSimple::createSEDPEndpoints()
     }
     if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         mp_PubReader.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -236,8 +255,8 @@ bool EDPSimple::createSEDPEndpoints()
             delete(mp_pubListen);
             mp_pubListen = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         mp_SubWriter.second = new WriterHistory(hatt);
@@ -254,8 +273,11 @@ bool EDPSimple::createSEDPEndpoints()
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
-        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, mp_SubWriter.second, nullptr,
-                c_EntityId_SEDPSubWriter, true);
+
+        subscriptions_writer_listener_ = new EDPSimpleWSUBListener(this);
+        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, mp_SubWriter.second,
+                subscriptions_writer_listener_, c_EntityId_SEDPSubWriter, true);
+
         if(created)
         {
             mp_SubWriter.first = dynamic_cast<StatefulWriter*>(waux);
@@ -287,8 +309,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
     if(m_discovery.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         sedp_builtin_publications_secure_writer_.second = new WriterHistory(hatt);
@@ -315,8 +336,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
+
         created &=this->mp_RTPSParticipant->createWriter(&waux, watt, sedp_builtin_publications_secure_writer_.second,
-                nullptr, sedp_builtin_publications_secure_writer, true);
+                publications_writer_listener_, sedp_builtin_publications_secure_writer, true);
+
         if(created)
         {
             sedp_builtin_publications_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
@@ -327,12 +350,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
             delete(sedp_builtin_publications_secure_writer_.second);
             sedp_builtin_publications_secure_writer_.second = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         sedp_builtin_subscriptions_secure_reader_.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -366,12 +387,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
     if(m_discovery.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 1000000;
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
         sedp_builtin_publications_secure_reader_.second = new ReaderHistory(hatt);
-        //Rparam.historyMaxSize = 100;
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
@@ -402,8 +421,8 @@ bool EDPSimple::create_sedp_secure_endpoints()
             delete(sedp_builtin_publications_secure_reader_.second);
             sedp_builtin_publications_secure_reader_.second = nullptr;
         }
-        hatt.initialReservedCaches = 100;
-        hatt.maximumReservedCaches = 5000;
+
+        hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
         hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
         sedp_builtin_subscriptions_secure_writer_.second = new WriterHistory(hatt);
@@ -429,8 +448,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
         if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
+
         created &=this->mp_RTPSParticipant->createWriter(&waux, watt, sedp_builtin_subscriptions_secure_writer_.second,
-                nullptr, sedp_builtin_subscriptions_secure_writer, true);
+                subscriptions_writer_listener_, sedp_builtin_subscriptions_secure_writer, true);
+
         if(created)
         {
             sedp_builtin_subscriptions_secure_writer_.first = dynamic_cast<StatefulWriter*>(waux);
