@@ -23,12 +23,15 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the coming
 release(s) of the product:
 
-* Realtime support.
+* QNX Support.
 
 ## Medium term
 
 The following list of features are planned to be addressed in the medium term, typically within the subsequent
 release(s) generated in the next **9 months** after next planned release:
+
+* Deadline QoS
+* Realtime support: Decrease dynamic memory allocations
 
 ## Long term
 
