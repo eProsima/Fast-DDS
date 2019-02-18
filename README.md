@@ -76,7 +76,3 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 ## Getting Help
 
 If you need support you can reach us by mail at `support@eProsima.com` or by phone at `+34 91 804 34 48`.
-
-## Roadmap
-
-* Realtime support
