@@ -52,7 +52,7 @@ public:
     /**
     * Destructor
     */
-    ~TCPAcceptorBasic()
+    virtual ~TCPAcceptorBasic()
     {
         try { asio::error_code ec; socket_.cancel(ec); }
         catch (...) {}

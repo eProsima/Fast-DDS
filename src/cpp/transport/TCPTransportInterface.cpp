@@ -118,10 +118,6 @@ TCPTransportInterface::TCPTransportInterface()
 
 TCPTransportInterface::~TCPTransportInterface()
 {
-    if (rtcp_message_manager_ != nullptr)
-    {
-        rtcp_message_manager_->dispose();
-    }
 }
 
 void TCPTransportInterface::clean()
@@ -180,6 +176,7 @@ void TCPTransportInterface::clean()
         io_service_thread_->join();
     }
 
+	rtcp_message_manager_->dispose();
     delete rtcp_message_manager_;
     rtcp_message_manager_ = nullptr;
 }

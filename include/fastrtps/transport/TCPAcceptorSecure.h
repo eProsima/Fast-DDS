@@ -51,7 +51,7 @@ public:
     /**
     * Destructor
     */
-    ~TCPAcceptorSecure()
+    virtual ~TCPAcceptorSecure()
     {
         acceptor_.cancel();
         acceptor_.close();

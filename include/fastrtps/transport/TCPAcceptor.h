@@ -53,6 +53,8 @@ public:
     {
         return locator_;
     }
+
+	virtual ~TCPAcceptor() = default;
 };
 
 
