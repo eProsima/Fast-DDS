@@ -80,37 +80,43 @@ void TCPChannelResourceSecure::connect()
             auto endpoints = resolver.resolve(IPLocator::ip_to_string(locator_),
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
+            Locator_t locator = locator_;
+            TCPTransportInterface* parent = parent_;
+            const tcp_secure::eProsimaTCPSocket& secure_socket = secure_socket_;
+
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
-                [this](const std::error_code& error,
+                [secure_socket, locator, parent](const std::error_code& error,
                     const tcp::endpoint& /*endpoint*/)
             {
                 if (!error)
                 {
                     ssl::stream_base::handshake_type role = ssl::stream_base::client;
-                    if (parent_->configuration()->tls_config.handshake_role == TLSHSRole::SERVER)
+                    if (parent->configuration()->tls_config.handshake_role == TLSHSRole::SERVER)
                     {
                         role = ssl::stream_base::server;
                     }
 
-                    secure_socket_->async_handshake(role,
-                        [this](const std::error_code& error)
+                    secure_socket->async_handshake(role,
+                        [locator, parent](const std::error_code& error)
                     {
                         if (!error)
                         {
-                            parent_->SocketConnected(locator_, error);
+                            logInfo(RTCP_TLS, "Connected: " << IPLocator::ip_to_string(locator) << ":"
+                                << IPLocator::getPhysicalPort(locator));
+                            parent->SocketConnected(locator, error);
                         }
                         else
                         {
                             logError(RTCP_TLS, "Handshake failed: " << error.message());
                             eClock::my_sleep(5000); // Retry, but after a big while
-                            parent_->SocketConnected(locator_, error);
+                            parent->SocketConnected(locator, error);
                         }
                     });
                 }
                 else
                 {
                     //logError(RTCP_TLS, "Connect failed: " << error.message());
-                    parent_->SocketConnected(locator_, error); // Manages errors and retries
+                    parent->SocketConnected(locator, error); // Manages errors and retries
                 }
             });
         }
