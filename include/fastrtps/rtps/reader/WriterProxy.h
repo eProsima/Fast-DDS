@@ -222,6 +222,12 @@ public:
      */
     void perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const;
 
+    /**
+     * Sends the necessary acknac and nackfrag messages to answer the last received heartbeat message.
+     * @param buffer Message buffer to use for serialization.
+     */
+    void perform_heartbeat_response(RTPSMessageGroup_t& buffer) const;
+
     inline void liveliness_expired()
     {
         mp_writerProxyLiveliness = nullptr;

@@ -214,7 +214,7 @@ class StatefulReader:public RTPSReader
         bool isInCleanState() const;
 
         /**
-         * Sends an acknack message from this reader
+         * Sends an acknack message from this reader.
          * @param sns Sequence number bitmap with the acknack information.
          * @param buffer Message buffer to use for serialization.
          * @param locators List of destination locators.
@@ -228,10 +228,20 @@ class StatefulReader:public RTPSReader
                 const std::vector<GUID_t>& guids,
                 bool is_final);
 
-        //! Acknack Count
-        uint32_t m_acknackCount;
-        //! NACKFRAG Count
-        uint32_t m_nackfragCount;
+        /**
+         * Sends an acknack message from this reader in response to a heartbeat.
+         * @param writer Pointer to the proxy representing the writer to send the acknack to.
+         * @param buffer Message buffer to use for serialization.
+         * @param locators List of destination locators.
+         * @param guids List of destination writer GUIDs.
+         * @param heartbeat_was_final Final flag of the last received heartbeat.
+         */
+        void send_acknack(
+                const WriterProxy* writer,
+                RTPSMessageGroup_t& buffer,
+                const LocatorList_t& locators,
+                const std::vector<GUID_t>& guids,
+                bool heartbeat_was_final);
 
     private:
 
@@ -248,10 +258,14 @@ class StatefulReader:public RTPSReader
 
         void NotifyChanges(WriterProxy* wp);
 
+        //! Acknack Count
+        uint32_t acknack_count_;
+        //! NACKFRAG Count
+        uint32_t nackfrag_count_;
         //!ReaderTimes of the StatefulReader.
-        ReaderTimes m_times;
+        ReaderTimes times_;
         //! Vector containing pointers to the matched writers.
-        std::vector<WriterProxy*> matched_writers;
+        std::vector<WriterProxy*> matched_writers_;
 };
 
 } /* namespace rtps */

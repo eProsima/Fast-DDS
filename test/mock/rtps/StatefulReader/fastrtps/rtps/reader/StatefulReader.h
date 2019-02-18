@@ -24,6 +24,7 @@ namespace fastrtps {
 namespace rtps {
 
 class RTPSMessageGroup_t;
+class WriterProxy;
 
 class StatefulReader : public RTPSReader
     {
@@ -46,6 +47,14 @@ class StatefulReader : public RTPSReader
                     const LocatorList_t& /*locators*/,
                     const std::vector<GUID_t>& /*guids*/,
                     bool /*is_final*/) 
+            {}
+
+            void send_acknack(
+                    const WriterProxy* /*writer*/,
+                    RTPSMessageGroup_t& /*buffer*/,
+                    const LocatorList_t& /*locators*/,
+                    const std::vector<GUID_t>& /*guids*/,
+                    bool /*heartbeat_was_final*/) 
             {}
 
             RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }

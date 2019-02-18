@@ -43,7 +43,7 @@ using namespace eprosima::fastrtps::rtps;
 StatefulReader::~StatefulReader()
 {
     logInfo(RTPS_READER,"StatefulReader destructor.";);
-    for(WriterProxy* writer : matched_writers)
+    for(WriterProxy* writer : matched_writers_)
     {
         delete(writer);
     }
@@ -58,9 +58,9 @@ StatefulReader::StatefulReader(
         ReaderHistory* hist,
         ReaderListener* listen)
     : RTPSReader(pimpl,guid,att,hist, listen)
-    , m_acknackCount(0)
-    , m_nackfragCount(0)
-    , m_times(att.times)
+    , acknack_count_(0)
+    , nackfrag_count_(0)
+    , times_(att.times)
 {
 }
 
@@ -68,7 +68,7 @@ StatefulReader::StatefulReader(
 bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(WriterProxy* it : matched_writers)
+    for(WriterProxy* it : matched_writers_)
     {
         if(it->m_att.guid == wdata.guid)
         {
@@ -89,7 +89,7 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 
     add_persistence_guid(att);
     wp->loaded_from_storage_nts(get_last_notified(att.guid));
-    matched_writers.push_back(wp);
+    matched_writers_.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
 }
@@ -102,13 +102,13 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     //Remove cachechanges belonging to the unmatched writer
     mp_history->remove_changes_with_guid(wdata.guid);
 
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+    for(std::vector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
     {
         if((*it)->m_att.guid == wdata.guid)
         {
             logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
             wproxy = *it;
-            matched_writers.erase(it);
+            matched_writers_.erase(it);
             remove_persistence_guid(wdata);
             break;
         }
@@ -134,13 +134,13 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
     //Remove cachechanges belonging to the unmatched writer
     mp_history->remove_changes_with_guid(writer_guid);
 
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+    for(std::vector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
     {
         if((*it)->m_att.guid == writer_guid)
         {
             logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
             wproxy = *it;
-            matched_writers.erase(it);
+            matched_writers_.erase(it);
             remove_persistence_guid(wproxy->m_att);
 			if(mp_listener != nullptr)
 			{
@@ -161,7 +161,7 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
 bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(WriterProxy* it : matched_writers)
+    for(WriterProxy* it : matched_writers_)
     {
         if(it->m_att.guid == wdata.guid)
         {
@@ -183,11 +183,11 @@ bool StatefulReader::matched_writer_lookup(
 
     if(returnedValue)
     {
-        logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+        logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers_.size());
     }
     else
     {
-        logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+        logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers_.size());
     }
 
     return returnedValue;
@@ -197,7 +197,7 @@ bool StatefulReader::findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP)
 {
     assert(WP);
 
-    for(WriterProxy* it : matched_writers)
+    for(WriterProxy* it : matched_writers_)
     {
         if(it->m_att.guid == writerGUID)
         {
@@ -446,7 +446,7 @@ bool StatefulReader::acceptMsgFrom(
 {
     assert(wp != nullptr);
 
-    for(WriterProxy* it : matched_writers)
+    for(WriterProxy* it : matched_writers_)
     {
         if(it->m_att.guid == writerId)
         {
@@ -671,13 +671,13 @@ bool StatefulReader::nextUnreadCache(
 bool StatefulReader::updateTimes(const ReaderTimes& ti)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)
+    if(times_.heartbeatResponseDelay != ti.heartbeatResponseDelay)
     {
-        m_times = ti;
-        for(std::vector<WriterProxy*>::iterator wit = this->matched_writers.begin();
-                wit!=this->matched_writers.end();++wit)
+        times_ = ti;
+        for(std::vector<WriterProxy*>::iterator wit = this->matched_writers_.begin();
+                wit!=this->matched_writers_.end();++wit)
         {
-            (*wit)->mp_heartbeatResponse->update_interval(m_times.heartbeatResponseDelay);
+            (*wit)->mp_heartbeatResponse->update_interval(times_.heartbeatResponseDelay);
         }
     }
     return true;
@@ -688,7 +688,7 @@ bool StatefulReader::isInCleanState() const
     bool cleanState = true;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    for (WriterProxy* wp : matched_writers)
+    for (WriterProxy* wp : matched_writers_)
     {
         if (wp->number_of_changes_from_writer() != 0)
         {
@@ -712,8 +712,8 @@ void StatefulReader::send_acknack(
 
     {//BEGIN PROTECTION
         std::lock_guard<std::recursive_mutex> guard_reader(*mp_mutex);
-        m_acknackCount++;
-        acknackCount = m_acknackCount;
+        acknack_count_++;
+        acknackCount = acknack_count_;
     }
 
 
@@ -723,4 +723,89 @@ void StatefulReader::send_acknack(
 
     group.add_acknack(guids, sns, acknackCount, is_final, locators);
 
+}
+
+void StatefulReader::send_acknack(
+        const WriterProxy* writer,
+        RTPSMessageGroup_t& buffer,
+        const LocatorList_t& locators,
+        const std::vector<GUID_t>& guids,
+        bool heartbeat_was_final)
+{
+    // Protect reader
+    std::lock_guard<std::recursive_mutex> guard(*getMutex());
+
+    const std::vector<ChangeFromWriter_t> missing_changes = writer->missing_changes();
+    // Stores missing changes but there is some fragments received.
+    std::vector<CacheChange_t*> uncompleted_changes;
+
+    RTPSMessageGroup group(getRTPSParticipant(), this, RTPSMessageGroup::READER,buffer, locators, guids);
+    if (!missing_changes.empty() || !heartbeat_was_final)
+    {
+        SequenceNumberSet_t sns(writer->available_changes_max() + 1);
+
+        for (auto ch : missing_changes)
+        {
+            // Check if the CacheChange_t is uncompleted.
+            CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(ch.getSequenceNumber(), guids.at(0));
+            if (uncomplete_change == nullptr)
+            {
+                if (!sns.add(ch.getSequenceNumber()))
+                {
+                    logInfo(RTPS_READER, "Sequence number " << ch.getSequenceNumber()
+                        << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base());
+                }
+            }
+            else
+            {
+                uncompleted_changes.push_back(uncomplete_change);
+            }
+        }
+
+        acknack_count_++;
+        logInfo(RTPS_READER, "Sending ACKNACK: " << sns;);
+
+        bool final = sns.empty();
+        group.add_acknack(guids, sns, acknack_count_, final, locators);
+    }
+
+    // Now generage NACK_FRAGS
+    if (!uncompleted_changes.empty())
+    {
+        for (auto cit : uncompleted_changes)
+        {
+            FragmentNumberSet_t frag_sns;
+
+            //  Search first fragment not present.
+            uint32_t frag_num = 0;
+            auto fit = cit->getDataFragments()->begin();
+            for (; fit != cit->getDataFragments()->end(); ++fit)
+            {
+                ++frag_num;
+                if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
+                    break;
+            }
+
+            // Never should happend.
+            assert(frag_num != 0);
+            assert(fit != cit->getDataFragments()->end());
+
+            // Store FragmentNumberSet_t base.
+            frag_sns.base(frag_num);
+
+            // Fill the FragmentNumberSet_t bitmap.
+            for (; fit != cit->getDataFragments()->end(); ++fit)
+            {
+                if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
+                    frag_sns.add(frag_num);
+
+                ++frag_num;
+            }
+
+            ++nackfrag_count_;
+            logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
+
+            group.add_nackfrag(guids, cit->sequenceNumber, frag_sns, nackfrag_count_, locators);
+        }
+    }
 }
