@@ -53,7 +53,9 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
          * @param reader
          * @param change
          */
-        void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change) override;
+        void onNewCacheChangeAdded(
+                RTPSReader* reader,
+                const CacheChange_t* const  change) override;
 
 
         /*!
@@ -62,7 +64,9 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
          * @param writer Pointer to the RTPSWriter.
          * @param change Pointer to the affected CacheChange_t.
          */
-        void onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change) override;
+        void onWriterChangeReceivedByAll(
+                RTPSWriter* writer,
+                CacheChange_t* change) override;
 
         /**
          * Compute the Key from a CacheChange_t
@@ -95,7 +99,9 @@ class EDPSimpleSUBListener : public ReaderListener, public WriterListener
          * @param reader
          * @param change
          */
-        void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change) override;
+        void onNewCacheChangeAdded(
+                RTPSReader* reader,
+                const CacheChange_t* const change) override;
 
         /*!
          * This method is called when all the readers matched with this Writer acknowledge that a cache 
@@ -103,7 +109,9 @@ class EDPSimpleSUBListener : public ReaderListener, public WriterListener
          * @param writer Pointer to the RTPSWriter.
          * @param change Pointer to the affected CacheChange_t.
          */
-        void onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change) override;
+        void onWriterChangeReceivedByAll(
+                RTPSWriter* writer,
+                CacheChange_t* change) override;
 
         /**
          * @param change
