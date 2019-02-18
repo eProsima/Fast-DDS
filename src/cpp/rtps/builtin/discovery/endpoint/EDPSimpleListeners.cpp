@@ -44,7 +44,7 @@ namespace rtps {
 void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
-    //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->mp_PubReader.first->getMutex());
+    //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->publications_reader_.first->getMutex());
     logInfo(RTPS_EDP,"");
     if(!computeKey(change))
     {
@@ -53,10 +53,10 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 
     ReaderHistory* reader_history =
 #if HAVE_SECURITY
-        reader == sedp_->sedp_builtin_publications_secure_reader_.first ?
-        sedp_->sedp_builtin_publications_secure_reader_.second :
+        reader == sedp_->publications_secure_reader_.first ?
+        sedp_->publications_secure_reader_.second :
 #endif
-        sedp_->mp_PubReader.second;
+        sedp_->publications_reader_.second;
 
     if(change->kind == ALIVE)
     {
@@ -120,7 +120,7 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
 void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
-    //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->mp_SubReader.first->getMutex());
+    //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->subscriptions_reader_.first->getMutex());
     logInfo(RTPS_EDP,"");
     if(!computeKey(change))
     {
@@ -129,10 +129,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 
     ReaderHistory* reader_history =
 #if HAVE_SECURITY
-        reader == sedp_->sedp_builtin_subscriptions_secure_reader_.first ?
-        sedp_->sedp_builtin_subscriptions_secure_reader_.second :
+        reader == sedp_->subscriptions_secure_reader_.first ?
+        sedp_->subscriptions_secure_reader_.second :
 #endif
-        sedp_->mp_SubReader.second;
+        sedp_->subscriptions_reader_.second;
 
     if(change->kind == ALIVE)
     {
@@ -183,7 +183,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     return;
 }
 
-void EDPSimpleWPUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPSimplePUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
 {
     (void)writer;
 
@@ -191,16 +191,16 @@ void EDPSimpleWPUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, Cach
     {
         WriterHistory* writer_history =
 #if HAVE_SECURITY
-            reader == sedp_->sedp_builtin_publications_secure_writer_.first ?
-            sedp_->sedp_builtin_publications_secure_writer_.second :
+            writer == sedp_->publications_secure_writer_.first ?
+            sedp_->publications_secure_writer_.second :
 #endif
-            sedp_->mp_PubWriter.second;
+            sedp_->publications_writer_.second;
 
         writer_history->remove_change(change);
     }
 }
 
-void EDPSimpleWSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPSimpleSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
 {
     (void)writer;
 
@@ -208,10 +208,10 @@ void EDPSimpleWSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, Cach
     {
         WriterHistory* writer_history =
 #if HAVE_SECURITY
-            reader == sedp_->sedp_builtin_subscriptions_secure_writer_.first ?
-            sedp_->sedp_builtin_subscriptions_secure_writer_.second :
+            writer == sedp_->subscriptions_secure_writer_.first ?
+            sedp_->subscriptions_secure_writer_.second :
 #endif
-            sedp_->mp_SubWriter.second;
+            sedp_->subscriptions_writer_.second;
 
         writer_history->remove_change(change);
     }

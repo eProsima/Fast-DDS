@@ -36,7 +36,7 @@ struct CacheChange_t;
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimplePUBListener : public ReaderListener
+class EDPSimplePUBListener : public ReaderListener, public WriterListener
 {
     public:
 
@@ -55,11 +55,22 @@ class EDPSimplePUBListener : public ReaderListener
          */
         void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change) override;
 
+
+        /*!
+         * This method is called when all the readers matched with this Writer acknowledge that a cache 
+         * change has been received.
+         * @param writer Pointer to the RTPSWriter.
+         * @param change Pointer to the affected CacheChange_t.
+         */
+        void onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change) override;
+
         /**
          * Compute the Key from a CacheChange_t
          * @param change Pointer to the change.
          */
         bool computeKey(CacheChange_t* change);
+
+    private:
 
         //!Pointer to the EDPSimple
         EDPSimple* sedp_;
@@ -69,7 +80,7 @@ class EDPSimplePUBListener : public ReaderListener
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimpleSUBListener : public ReaderListener
+class EDPSimpleSUBListener : public ReaderListener, public WriterListener
 {
     public:
 
@@ -84,70 +95,20 @@ class EDPSimpleSUBListener : public ReaderListener
          * @param reader
          * @param change
          */
-
         void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change) override;
+
+        /*!
+         * This method is called when all the readers matched with this Writer acknowledge that a cache 
+         * change has been received.
+         * @param writer Pointer to the RTPSWriter.
+         * @param change Pointer to the affected CacheChange_t.
+         */
+        void onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change) override;
+
         /**
          * @param change
          */
         bool computeKey(CacheChange_t* change);
-
-        //!Pointer to the EDPSimple
-        EDPSimple* sedp_;
-};
-
-/*!
- * Class EDPSimpleWPUBReaderListener, used to define the behavior when a CacheChange_t is acked by all.
- * @ingroup DISCOVERY_MODULE
- */
-class EDPSimpleWPUBListener : public WriterListener
-{
-    public:
-
-        /*!
-          Constructor
-         * @param sedp Pointer to the EDPSimple associated with this listener.
-         */
-        EDPSimpleWPUBListener(EDPSimple* sedp) : sedp_(sedp) {}
-
-        virtual ~EDPSimpleWPUBListener() {}
-
-        /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache 
-         * change has been received.
-         * @param writer Pointer to the RTPSWriter.
-         * @param change Pointer to the affected CacheChange_t.
-         */
-        void onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change) override;
-
-    private:
-
-        //!Pointer to the EDPSimple
-        EDPSimple* sedp_;
-};
-
-/*!
- * Class EDPSimpleWSUBReaderListener, used to define the behavior when a CacheChange_t is acked by all.
- * @ingroup DISCOVERY_MODULE
- */
-class EDPSimpleWSUBListener : public WriterListener
-{
-    public:
-
-        /*!
-          Constructor
-         * @param sedp Pointer to the EDPSimple associated with this listener.
-         */
-        EDPSimpleWSUBListener(EDPSimple* sedp) : sedp_(sedp) {}
-
-        virtual ~EDPSimpleWSUBListener() {}
-
-        /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache 
-         * change has been received.
-         * @param writer Pointer to the RTPSWriter.
-         * @param change Pointer to the affected CacheChange_t.
-         */
-        void onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change) override;
 
     private:
 
