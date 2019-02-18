@@ -491,8 +491,7 @@ bool PDPSimple::createSPDPEndpoints()
     //SPDP BUILTIN RTPSParticipant WRITER
     HistoryAttributes hatt;
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-    hatt.initialReservedCaches = 250;
-    hatt.maximumReservedCaches = 5000;
+    hatt.initialReservedCaches = 25;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     mp_SPDPReaderHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
@@ -531,7 +530,6 @@ bool PDPSimple::createSPDPEndpoints()
 
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
     hatt.initialReservedCaches = 20;
-    hatt.maximumReservedCaches = 100;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_SPDPWriterHistory = new WriterHistory(hatt);
     WriterAttributes watt;
