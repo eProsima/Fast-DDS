@@ -17,33 +17,31 @@
 
 #include <gmock/gmock.h>
 
-namespace eprosima
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+// Forward declarations
+class StatefulReader;
+struct GUID_t;
+
+class WriterProxyLiveliness
 {
-    namespace fastrtps
-    {
-        namespace rtps
+    public:
+
+        WriterProxyLiveliness(
+                StatefulReader* /*reader*/,
+                const GUID_t& /*guid*/,
+                double /*interval*/)
         {
-            // Forward declarations
-            class StatefulReader;
-            struct GUID_t;
+        }
 
-            class WriterProxyLiveliness
-            {
-                public:
+        MOCK_METHOD0(restart_timer, void());
+        MOCK_METHOD0(cancel_timer, void());
+};
 
-                    WriterProxyLiveliness(
-                            StatefulReader* /*reader*/,
-                            const GUID_t& /*guid*/,
-                            double /*interval*/)
-                    {
-                    }
-
-                    MOCK_METHOD0(restart_timer, void());
-
-                    MOCK_METHOD0(cancel_timer, void());
-            };
-        } //namespace rtps
-    } //namespace fastrtps
+} //namespace rtps
+} //namespace fastrtps
 } //namespace eprosima
 
 #endif // _RTPS_READER_TIMEDEVENT_WRITERPROXYLIVELINESS_H_

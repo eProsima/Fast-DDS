@@ -15,24 +15,27 @@
 #ifndef _RTPS_READER_TIMEDEVENT_INITIALACKNACK_H_
 #define _RTPS_READER_TIMEDEVENT_INITIALACKNACK_H_
 
-namespace eprosima
+#include <gmock/gmock.h>
+
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+// Forward declarations
+class WriterProxy;
+
+class InitialAckNack
 {
-    namespace fastrtps
-    {
-        namespace rtps
-        {
-            // Forward declarations
-            class WriterProxy;
+    public:
 
-            class InitialAckNack
-            {
-                public:
+        InitialAckNack(WriterProxy* /*wp*/,double /*interval*/) { }
 
-                    InitialAckNack(WriterProxy* /*wp*/,double /*interval*/)
-                    {
-                    }
-            };
-        } // namespace rtps
-    } // namespace fastrtps
+        MOCK_METHOD0(restart_timer, void());
+        MOCK_METHOD0(cancel_timer, void());
+};
+
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima
+
 #endif // _RTPS_READER_TIMEDEVENT_INITIALACKNACK_H_

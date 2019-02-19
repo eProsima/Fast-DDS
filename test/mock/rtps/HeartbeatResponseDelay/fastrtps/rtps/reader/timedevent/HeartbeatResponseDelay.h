@@ -15,24 +15,30 @@
 #ifndef _RTPS_READER_TIMEDEVENT_HEARTBEATRESPONSEDELAY_H_
 #define _RTPS_READER_TIMEDEVENT_HEARTBEATRESPONSEDELAY_H_
 
-namespace eprosima
+#include <gmock/gmock.h>
+
+#include <fastrtps/rtps/common/Time_t.h>
+
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+// Forward declarations
+class WriterProxy;
+
+class HeartbeatResponseDelay
 {
-    namespace fastrtps
-    {
-        namespace rtps
-        {
-            // Forward declarations
-            class WriterProxy;
+    public:
+                            
+        HeartbeatResponseDelay(WriterProxy* /*wp*/,double /*interval*/) { }
 
-            class HeartbeatResponseDelay
-            {
-                public:
+        MOCK_METHOD0(restart_timer, void());
+        MOCK_METHOD0(cancel_timer, void());
+        MOCK_METHOD1(update_interval, void(const Duration_t&));
+};
 
-                    HeartbeatResponseDelay(WriterProxy* /*wp*/,double /*interval*/)
-                    {
-                    }
-            };
-        } // namespace rtps
-    } // namespace fastrtps
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima
+
 #endif // _RTPS_READER_TIMEDEVENT_HEARTBEATRESPONSEDELAY_H_
