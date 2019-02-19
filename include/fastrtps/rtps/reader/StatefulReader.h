@@ -22,6 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSReader.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
+
 #include <mutex>
 
 namespace eprosima {
@@ -264,8 +266,10 @@ class StatefulReader:public RTPSReader
         uint32_t nackfrag_count_;
         //!ReaderTimes of the StatefulReader.
         ReaderTimes times_;
-        //! Vector containing pointers to the matched writers.
-        std::vector<WriterProxy*> matched_writers_;
+        //! Vector containing pointers to all the active WriterProxies.
+        ResourceLimitedVector<WriterProxy*> matched_writers_;
+        //! Vector containing pointers to all the inactive, ready for reuse, WriterProxies.
+        ResourceLimitedVector<WriterProxy*> matched_writers_pool_;
 };
 
 } /* namespace rtps */
