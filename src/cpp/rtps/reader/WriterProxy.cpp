@@ -39,12 +39,12 @@ namespace rtps {
  * @brief Auxiliary function to change status in a range.
  */
 void WriterProxy::for_each_set_status_from(
-        decltype(WriterProxy::changes_from_writer_)::iterator first,
-        decltype(WriterProxy::changes_from_writer_)::iterator last,
+        ChangeIterator first,
+        ChangeIterator last,
         ChangeFromWriterStatus_t status,
         ChangeFromWriterStatus_t new_status)
 {
-    auto it = first;
+    ChangeIterator it = first;
     while(it != last)
     {
         if(it->getStatus() == status)
@@ -58,13 +58,13 @@ void WriterProxy::for_each_set_status_from(
 }
 
 void WriterProxy::for_each_set_status_from_and_maybe_remove(
-        decltype(WriterProxy::changes_from_writer_)::iterator first,
-        decltype(WriterProxy::changes_from_writer_)::iterator last,
+        ChangeIterator first,
+        ChangeIterator last,
         ChangeFromWriterStatus_t status,
         ChangeFromWriterStatus_t or_status,
         ChangeFromWriterStatus_t new_status)
 {
-    auto it = first;
+    ChangeIterator it = first;
     while(it != last)
     {
         if(it->getStatus() == status || it->getStatus() == or_status)
@@ -159,7 +159,7 @@ void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
     // Check was not removed from container.
     if(seq_num > changes_from_writer_low_mark_)
     {
-        if(changes_from_writer_.size() == 0 || changes_from_writer_.rbegin()->getSequenceNumber() < seq_num)
+        if(changes_from_writer_.empty() || changes_from_writer_.rbegin()->getSequenceNumber() < seq_num)
         {
             // Set already values in container.
             for_each_set_status_from(changes_from_writer_.begin(), changes_from_writer_.end(),
@@ -178,7 +178,7 @@ void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
         else
         {
             // Find it. Must be there.
-            auto last_it = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
+            ChangeIterator last_it = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
             assert(last_it != changes_from_writer_.end());
             for_each_set_status_from(changes_from_writer_.begin(), ++last_it,
                     ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING);
@@ -234,7 +234,7 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
         else
         {
             // Find it. Must be there.
-            auto last_it = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
+            ChangeIterator last_it = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
             assert(last_it != changes_from_writer_.end());
             for_each_set_status_from_and_maybe_remove(changes_from_writer_.begin(), last_it,
                     ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING,
@@ -292,7 +292,7 @@ bool WriterProxy::received_change_set(
     // Else it has to be found and change state.
     else
     {
-        auto chit = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
+        ChangeIterator chit = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
 
         // Has to be in the container.
         assert(chit != changes_from_writer_.end());
@@ -328,7 +328,7 @@ SequenceNumberSet_t WriterProxy::missing_changes() const
     std::lock_guard<std::recursive_mutex> guard(mutex_);
     SequenceNumberSet_t sns(available_changes_max() + 1);
 
-    for(auto ch : changes_from_writer_)
+    for(const ChangeFromWriter_t& ch : changes_from_writer_)
     {
         if(ch.getStatus() == MISSING)
         {
@@ -355,7 +355,7 @@ bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
         return true;
     }
 
-    auto chit = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
+    ChangeIterator chit = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
     return (chit != changes_from_writer_.end() && chit->getStatus() == RECEIVED);
 }
 
@@ -386,7 +386,7 @@ void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
         return;
     }
 
-    auto chit = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
+    ChangeIterator chit = changes_from_writer_.find(ChangeFromWriter_t(seq_num));
 
     // Element must be in the container. In other case, bug.
     assert(chit != changes_from_writer_.end());
@@ -403,7 +403,7 @@ void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
 
 void WriterProxy::cleanup()
 {
-    auto chit = changes_from_writer_.begin();
+    ChangeIterator chit = changes_from_writer_.begin();
 
     while(chit != changes_from_writer_.end() &&
             (chit->getStatus() == RECEIVED || chit->getStatus() == LOST))
@@ -435,7 +435,7 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
 
     if(seq_num > changes_from_writer_low_mark_)
     {
-        for(auto ch = changes_from_writer_.begin(); ch != changes_from_writer_.end() && ch->getSequenceNumber() < seq_num; ++ch)
+        for(ChangeIterator ch = changes_from_writer_.begin(); ch != changes_from_writer_.end() && ch->getSequenceNumber() < seq_num; ++ch)
         {
             if (ch->getStatus() == ChangeFromWriterStatus_t::UNKNOWN ||
                 ch->getStatus() == ChangeFromWriterStatus_t::MISSING)
