@@ -69,8 +69,8 @@ void TCPChannelResourceBasic::connect()
         ip::tcp::endpoint endpoint = parent_->generate_local_endpoint(locator_, IPLocator::getPhysicalPort(locator_));
         try
         {
-            socket_.open(type);
-            socket_.async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, parent_,
+            socket_->open(type);
+            socket_->async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, parent_,
                 locator_, std::placeholders::_1));
         }
         catch(const std::system_error &error)
@@ -87,19 +87,19 @@ void TCPChannelResourceBasic::disconnect()
         try
         {
             asio::error_code ec;
-            socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-            socket_.cancel();
+            socket_->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+            socket_->cancel();
 
           // This method was added on the version 1.12.0
 #if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-            socket_.release();
+            socket_->release();
 #endif
         }
         catch (std::exception&)
         {
             // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
         }
-        socket_.close();
+        socket_->close();
     }
 }
 
@@ -109,7 +109,7 @@ uint32_t TCPChannelResourceBasic::read(
         std::size_t size,
         asio::error_code& ec)
 {
-    return static_cast<uint32_t>(asio::read(socket_, asio::buffer(buffer, buffer_capacity),
+    return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, buffer_capacity),
         transfer_exactly(size), ec));
 }
 
@@ -118,39 +118,39 @@ uint32_t TCPChannelResourceBasic::send(
         size_t size,
         asio::error_code& ec)
 {
-    return static_cast<uint32_t>(socket_.send(asio::buffer(data, size), 0, ec));
+    return static_cast<uint32_t>(socket_->send(asio::buffer(data, size), 0, ec));
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint() const
 {
-    return socket_.remote_endpoint();
+    return socket_->remote_endpoint();
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::local_endpoint() const
 {
-    return socket_.local_endpoint();
+    return socket_->local_endpoint();
 }
 
 void TCPChannelResourceBasic::set_options(const TCPTransportDescriptor* options)
 {
-    socket_.set_option(socket_base::receive_buffer_size(options->receiveBufferSize));
-    socket_.set_option(socket_base::send_buffer_size(options->sendBufferSize));
-    socket_.set_option(ip::tcp::no_delay(options->enable_tcp_nodelay));
+    socket_->set_option(socket_base::receive_buffer_size(options->receiveBufferSize));
+    socket_->set_option(socket_base::send_buffer_size(options->sendBufferSize));
+    socket_->set_option(ip::tcp::no_delay(options->enable_tcp_nodelay));
 }
 
 void TCPChannelResourceBasic::cancel()
 {
-    socket_.cancel();
+    socket_->cancel();
 }
 
 void TCPChannelResourceBasic::close()
 {
-    socket_.close();
+    socket_->close();
 }
 
 void TCPChannelResourceBasic::shutdown(asio::socket_base::shutdown_type what)
 {
-    socket_.shutdown(what);
+    socket_->shutdown(what);
 }
 
 } // namespace rtps

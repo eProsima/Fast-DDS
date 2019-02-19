@@ -347,6 +347,8 @@ public:
     //! Callback called each time that an incomming connection is accepted.
     void SocketAccepted(
         TCPAcceptorBasic* acceptor,
+        Locator_t acceptor_locator,
+        tcp_basic::eProsimaTCPSocket socket,
         const asio::error_code& error);
 
 #if TLS_FOUND

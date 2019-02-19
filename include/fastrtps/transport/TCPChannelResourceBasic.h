@@ -23,31 +23,6 @@ namespace fastrtps{
 namespace rtps{
 
 namespace tcp_basic{
-#if defined(ASIO_HAS_MOVE)
-    // Typedefs
-    typedef asio::ip::tcp::socket eProsimaTCPSocket;
-    typedef eProsimaTCPSocket& eProsimaTCPSocketRef;
-
-    inline eProsimaTCPSocket* getSocketPtr(eProsimaTCPSocket& socket)
-    {
-        return &socket;
-    }
-
-    inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket& socket)
-    {
-        return std::move(socket);
-    }
-
-    inline eProsimaTCPSocket createTCPSocket(asio::io_service& io_service)
-    {
-        return asio::ip::tcp::socket(io_service);
-    }
-
-    inline eProsimaTCPSocket& getTCPSocketRef(eProsimaTCPSocket& socket)
-    {
-        return socket;
-    }
-#else
     // Typedefs
     typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
     typedef eProsimaTCPSocket eProsimaTCPSocketRef;
@@ -67,11 +42,16 @@ namespace tcp_basic{
         return std::make_shared<asio::ip::tcp::socket>(io_service);
     }
 
+    inline eProsimaTCPSocket createTCPSocket(asio::ip::tcp::socket&& socket)
+    {
+        return std::make_shared<asio::ip::tcp::socket>(std::move(socket));
+    }
+
     inline asio::ip::tcp::socket& getTCPSocketRef(eProsimaTCPSocket socket)
     {
         return *socket;
     }
-#endif
+
 } // namespace tcp_basic
 
 class TCPChannelResourceBasic : public TCPChannelResource
@@ -120,11 +100,7 @@ public:
     void close() override;
     void shutdown(asio::socket_base::shutdown_type what) override;
 
-#if defined(ASIO_HAS_MOVE)
-    inline tcp_basic::eProsimaTCPSocket* socket()
-#else
     inline tcp_basic::eProsimaTCPSocket socket()
-#endif
     {
         return tcp_basic::getSocketPtr(socket_);
     }

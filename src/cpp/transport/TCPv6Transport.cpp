@@ -12,19 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/TCPv6Transport.h>
-#include <fastrtps/transport/tcp/RTCPMessageManager.h>
-#include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
 #include <utility>
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "asio.hpp"
-#include <fastrtps/rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 

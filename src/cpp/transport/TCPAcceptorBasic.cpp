@@ -25,7 +25,6 @@ TCPAcceptorBasic::TCPAcceptorBasic(
         TCPTransportInterface* parent,
         const Locator_t& locator)
     : TCPAcceptor(io_service, parent, locator)
-    , socket_(tcp_basic::createTCPSocket(io_service))
 {
     endpoint_ = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator_));
 }
@@ -35,7 +34,6 @@ TCPAcceptorBasic::TCPAcceptorBasic(
         const std::string& interface,
         const Locator_t& locator)
     : TCPAcceptor(io_service, interface, locator)
-    , socket_(tcp_basic::createTCPSocket(io_service))
 {
     endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
         IPLocator::getPhysicalPort(locator_));
@@ -43,13 +41,16 @@ TCPAcceptorBasic::TCPAcceptorBasic(
 
 void TCPAcceptorBasic::accept(
         TCPTransportInterface* parent,
-        asio::io_service& io_service)
+        asio::io_service&)
 {
-    socket_ = tcp_basic::createTCPSocket(io_service);
-
-    acceptor_.async_accept(tcp_basic::getTCPSocketRef(socket_), endpoint_,
-        std::bind(&TCPTransportInterface::SocketAccepted,
-        parent, this, std::placeholders::_1));
+    Locator_t locator = locator_;
+    using asio::ip::tcp;
+    acceptor_.async_accept(
+        [this, locator, parent](const std::error_code& error, tcp::socket socket)
+        {
+            tcp_basic::eProsimaTCPSocket socket_ptr = tcp_basic::createTCPSocket(std::move(socket));
+            parent->SocketAccepted(this, locator, socket_ptr, error);
+        });
 }
 
 } // namespace rtps
