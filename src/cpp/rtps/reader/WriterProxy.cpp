@@ -49,11 +49,8 @@ void WriterProxy::for_each_set_status_from(
     {
         if(it->getStatus() == status)
         {
-            ChangeFromWriter_t newch(*it);
-            newch.setStatus(new_status);
-
-            auto hint = changes_from_writer_.erase(it);
-            it = changes_from_writer_.insert(hint, newch);
+            ChangeFromWriter_t& ch = const_cast<ChangeFromWriter_t&>(*it);
+            ch.setStatus(new_status);
         }
 
         ++it;
@@ -74,11 +71,8 @@ void WriterProxy::for_each_set_status_from_and_maybe_remove(
         {
             if(it != changes_from_writer_.begin())
             {
-                ChangeFromWriter_t newch(*it);
-                newch.setStatus(new_status);
-
-                auto hint = changes_from_writer_.erase(it);
-                it = changes_from_writer_.insert(hint, newch);
+                ChangeFromWriter_t& ch = const_cast<ChangeFromWriter_t&>(*it);
+                ch.setStatus(new_status);
                 ++it;
                 continue;
             }
@@ -303,12 +297,9 @@ bool WriterProxy::received_change_set(
         {
             if(chit->getStatus() != RECEIVED)
             {
-                ChangeFromWriter_t newch(*chit);
-                newch.setStatus(RECEIVED);
-                newch.setRelevance(is_relevance);
-
-                auto hint = changes_from_writer_.erase(chit);
-                changes_from_writer_.insert(hint, newch);
+                ChangeFromWriter_t& ch = const_cast<ChangeFromWriter_t&>(*chit);
+                ch.setStatus(RECEIVED);
+                ch.setRelevance(is_relevance);
             }
             else
             {
@@ -402,11 +393,8 @@ void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
     // Cannot be in the beginning because process of cleanup
     assert(chit != changes_from_writer_.begin());
 
-    ChangeFromWriter_t newch(*chit);
-    newch.notValid();
-
-    auto hint = changes_from_writer_.erase(chit);
-    changes_from_writer_.insert(hint, newch);
+    ChangeFromWriter_t& ch = const_cast<ChangeFromWriter_t&>(*chit);
+    ch.notValid();
 }
 
 void WriterProxy::cleanup()
