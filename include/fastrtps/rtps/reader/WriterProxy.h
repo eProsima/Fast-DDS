@@ -287,9 +287,6 @@ private:
 
     void cleanup();
 
-    //Print Method for log purposes
-    void print_changes_fromWriter_test2();
-
     //! Pointer to associated StatefulReader.
     StatefulReader* reader_;
     //! Parameters of the WriterProxy

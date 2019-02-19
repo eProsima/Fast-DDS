@@ -186,8 +186,6 @@ void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
                     ChangeFromWriterStatus_t::UNKNOWN, ChangeFromWriterStatus_t::MISSING);
         }
     }
-
-    //print_changes_fromWriter_test2();
 }
 
 bool WriterProxy::maybe_add_changes_from_writer_up_to(
@@ -247,8 +245,6 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
             cleanup();
         }
     }
-
-    //print_changes_fromWriter_test2();
 }
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seq_num)
@@ -328,7 +324,6 @@ bool WriterProxy::received_change_set(
         }
     }
 
-    //print_changes_fromWriter_test2();
     return true;
 }
 
@@ -348,8 +343,6 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes() const
         }
     }
 
-
-    //print_changes_fromWriter_test2();
     return returnedValue;
 }
 
@@ -370,20 +363,6 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
 {
     std::lock_guard<std::recursive_mutex> guard(mutex_);
     return changes_from_writer_low_mark_;
-}
-
-void WriterProxy::print_changes_fromWriter_test2()
-{
-    std::stringstream sstream;
-    sstream << this->attributes_.guid.entityId<<": ";
-
-    for(auto it = changes_from_writer_.begin(); it != changes_from_writer_.end(); ++it)
-    {
-        sstream << it->getSequenceNumber() <<"("<<it->isRelevant()<<","<<it->getStatus()<<")-";
-    }
-
-    std::string auxstr = sstream.str();
-    logInfo(RTPS_READER,auxstr;);
 }
 
 void WriterProxy::assert_liveliness()
