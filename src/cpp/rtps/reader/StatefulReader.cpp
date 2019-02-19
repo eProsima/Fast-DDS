@@ -707,7 +707,7 @@ void StatefulReader::send_acknack(
     // Protect reader
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
-    const std::vector<ChangeFromWriter_t> missing_changes = writer->missing_changes();
+    SequenceNumberSet_t missing_changes = writer->missing_changes();
     // Stores missing changes but there is some fragments received.
     std::vector<CacheChange_t*> uncompleted_changes;
 
@@ -718,23 +718,25 @@ void StatefulReader::send_acknack(
         {
             SequenceNumberSet_t sns(writer->available_changes_max() + 1);
     
-            for (auto ch : missing_changes)
-            {
-                // Check if the CacheChange_t is uncompleted.
-                CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(ch.getSequenceNumber(), guids.at(0));
-                if (uncomplete_change == nullptr)
+            missing_changes.for_each(
+                [&](const SequenceNumber_t& seq)
                 {
-                    if (!sns.add(ch.getSequenceNumber()))
+                    // Check if the CacheChange_t is uncompleted.
+                    CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(seq, guids.at(0));
+                    if (uncomplete_change == nullptr)
                     {
-                        logInfo(RTPS_READER, "Sequence number " << ch.getSequenceNumber()
-                            << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base());
+                        if (!sns.add(seq))
+                        {
+                            logInfo(RTPS_READER, "Sequence number " << seq
+                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base());
+                        }
                     }
-                }
-                else
-                {
-                    uncompleted_changes.push_back(uncomplete_change);
-                }
-            }
+                    else
+                    {
+                        uncompleted_changes.push_back(uncomplete_change);
+                    }
+    
+                });
     
             acknack_count_++;
             logInfo(RTPS_READER, "Sending ACKNACK: " << sns;);

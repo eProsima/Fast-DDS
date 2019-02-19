@@ -120,10 +120,10 @@ public:
     bool are_there_missing_changes() const;
 
     /**
-     * The method returns a vector containing all missing changes.
-     * @return Vector of missing changes..
+     * The method returns a SequenceNumberSet_t containing the sequence number of all missing changes.
+     * @return Sequence number set of missing changes.
      */
-    const std::vector<ChangeFromWriter_t> missing_changes() const;
+    SequenceNumberSet_t missing_changes() const;
 
     /**
      * Get the number of missing changes up to a certain sequence number.
