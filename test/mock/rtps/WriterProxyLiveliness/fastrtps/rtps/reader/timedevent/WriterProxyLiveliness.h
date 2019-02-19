@@ -29,13 +29,11 @@ class WriterProxyLiveliness
 {
     public:
 
-        WriterProxyLiveliness(
-                StatefulReader* /*reader*/,
-                const GUID_t& /*guid*/,
-                double /*interval*/)
+        WriterProxyLiveliness(StatefulReader* /*reader*/)
         {
         }
 
+        MOCK_METHOD2(start, void(const GUID_t&, const Duration_t&));
         MOCK_METHOD0(restart_timer, void());
         MOCK_METHOD0(cancel_timer, void());
 };

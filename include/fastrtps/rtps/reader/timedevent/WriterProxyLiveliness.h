@@ -32,22 +32,26 @@ class StatefulReader;
  * Class WriterProxyLiveliness, timed event to check the liveliness of a writer each leaseDuration.
  *  @ingroup READER_MODULE
  */
-class WriterProxyLiveliness: public TimedEvent 
+class WriterProxyLiveliness : public TimedEvent 
 {
 public:
 
 	/**
      * Construct a WriterProxyLiveliness event object.
 	 * @param reader StatefulReader creating this event.
-     * @param writer_guid GUID of the writer proxy for which this event is created.
-	 * @param interval Time in milliseconds to consider the writer as dead.
 	 */
-	WriterProxyLiveliness(
-            StatefulReader* reader,
-            const GUID_t& writer_guid,
-            double interval);
+    WriterProxyLiveliness(StatefulReader* reader);
 
 	virtual ~WriterProxyLiveliness();
+
+    /**
+     * Starts this event for the specified writer.
+     * @param writer_guid GUID of the writer proxy for which the liveliness should be checked.
+     * @param interval Duration of the liveliness period.
+     */
+    void start(
+            const GUID_t& writer_guid,
+            const Duration_t& interval);
 
 	/**
 	 * Method invoked when the event occurs
