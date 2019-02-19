@@ -134,14 +134,41 @@ public:
     size_t unknown_missing_changes_up_to(const SequenceNumber_t& seq_num) const;
 
     /**
+     * Get the attributes of the writer represented by this proxy.
+     * @return const reference to the attributes of the writer represented by this proxy.
+     */
+    inline const RemoteWriterAttributes& attributes() const
+    {
+        return attributes_;
+    }
+
+    /**
+     * Get the GUID of the writer represented by this proxy.
+     * @return const reference to the GUID of the writer represented by this proxy.
+     */
+    inline const GUID_t& guid() const
+    {
+        return attributes_.guid;
+    }
+
+    /**
+     * Get the ownership strength of the writer represented by this proxy.
+     * @return ownership strength of the writer represented by this proxy.
+     */
+    inline uint16_t ownership_strength() const
+    {
+        return attributes_.ownershipStrength;
+    }
+
+    /**
      * Get the locators that should be used to send data to the writer represented by this proxy.
      * @return the locators that should be used to send data to the writer represented by this proxy.
      */
     inline const LocatorList_t& remote_locators_shrinked() const
     {
-        return m_att.endpoint.unicastLocatorList.empty() ?
-            m_att.endpoint.multicastLocatorList :
-            m_att.endpoint.unicastLocatorList;
+        return attributes_.endpoint.unicastLocatorList.empty() ?
+            attributes_.endpoint.multicastLocatorList :
+            attributes_.endpoint.unicastLocatorList;
     }
 
     /**
@@ -149,21 +176,6 @@ public:
      * @return pointer to the participant of the StatefulReader that created this proxy.
      */
     RTPSParticipantImpl* get_participant() const;
-
-    //! Pointer to associated StatefulReader.
-    StatefulReader* mp_SFR;
-    //! Parameters of the WriterProxy
-    RemoteWriterAttributes m_att;
-    //! LAst HEartbeatcount.
-    uint32_t m_lastHeartbeatCount;
-    //!Timed event to postpone the heartbeatResponse.
-    HeartbeatResponseDelay* mp_heartbeatResponse;
-    //!TO check the liveliness Status periodically.
-    WriterProxyLiveliness* mp_writerProxyLiveliness;
-    //! Timed event to send initial acknack.
-    InitialAckNack* mp_initialAcknack;
-    //!Indicates if the heartbeat has the final flag set.
-    bool m_heartbeatFinalFlag;
 
     /**
      * Check if the writer is alive
@@ -193,7 +205,7 @@ public:
      */
     inline std::recursive_mutex* get_mutex()
     {
-        return mutex_;
+        return &mutex_;
     }
 
     /*!
@@ -228,9 +240,31 @@ public:
      */
     void perform_heartbeat_response(RTPSMessageGroup_t& buffer) const;
 
+    /**
+     * Process an incoming heartbeat from the writer represented by this proxy.
+     * @param count Count field of the heartbeat message.
+     * @param first_seq First sequence field of the heartbeat message.
+     * @param last_seq Last sequence field of the heartbeat message.
+     * @param final_flag Final flag of the heartbeat message.
+     * @param liveliness_flag Liveliness flag of the heartbeat message.
+     * @return true if the message is processed, false if the message is ignored.
+     */
+    bool process_heartbeat(
+            uint32_t count,
+            const SequenceNumber_t& first_seq,
+            const SequenceNumber_t& last_seq,
+            bool final_flag,
+            bool liveliness_flag);
+
+    /**
+     * Set a new value for the interval of the heartbeat response event.
+     * @param interval New interval value.
+     */
+    void update_heartbeat_response_interval(const Duration_t& interval);
+
     inline void liveliness_expired()
     {
-        mp_writerProxyLiveliness = nullptr;
+        writer_proxy_liveliness_ = nullptr;
     }
 
 private:
@@ -253,21 +287,32 @@ private:
 
     void cleanup();
 
-    //!Is the writer alive
-    bool is_alive_;
     //Print Method for log purposes
     void print_changes_fromWriter_test2();
 
+    //! Pointer to associated StatefulReader.
+    StatefulReader* reader_;
+    //! Parameters of the WriterProxy
+    RemoteWriterAttributes attributes_;
+    //!Timed event to postpone the heartbeatResponse.
+    HeartbeatResponseDelay* heartbeat_response_;
+    //!To check the liveliness Status periodically.
+    WriterProxyLiveliness* writer_proxy_liveliness_;
+    //! Timed event to send initial acknack.
+    InitialAckNack* initial_acknack_;
+    //! Last Heartbeatcount.
+    uint32_t last_heartbeat_count_;
+    //!Indicates if the heartbeat has the final flag set.
+    bool heartbeat_final_flag_;
+    //!Is the writer alive
+    bool is_alive_;
     //!Mutex Pointer
-    std::recursive_mutex* mutex_;
-
+    mutable std::recursive_mutex mutex_;
     //!Vector containing the ChangeFromWriter_t objects.
     std::set<ChangeFromWriter_t, ChangeFromWriterCmp> changes_from_writer_;
     SequenceNumber_t changes_from_writer_low_mark_;
-
     //! Store last ChacheChange_t notified.
     SequenceNumber_t last_notified_;
-
     //!To fool RTPSMessageGroup when using this proxy as single destination
     ResourceLimitedVector<GUID_t> guid_as_vector_;
 

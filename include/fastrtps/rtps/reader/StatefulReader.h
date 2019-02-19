@@ -193,7 +193,7 @@ class StatefulReader:public RTPSReader
          */
         inline ReaderTimes& getTimes()
         {
-            return m_times;
+            return times_;
         }
 
         /**
@@ -202,7 +202,7 @@ class StatefulReader:public RTPSReader
          */
         inline size_t getMatchedWritersSize() const 
         { 
-            return matched_writers.size(); 
+            return matched_writers_.size(); 
         }
 
         /*!

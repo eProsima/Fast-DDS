@@ -306,7 +306,7 @@ bool SubscriberHistory::readNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
             info->sourceTimestamp = change->sourceTimestamp;
             if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                info->ownershipStrength = wp->ownership_strength();
             }
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
@@ -353,7 +353,7 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
             info->sourceTimestamp = change->sourceTimestamp;
             if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                info->ownershipStrength = wp->ownership_strength();
             }
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
@@ -399,7 +399,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
             info->sourceTimestamp = change->sourceTimestamp;
             if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                info->ownershipStrength = wp->ownership_strength();
             }
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
@@ -451,7 +451,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
             info->sourceTimestamp = change->sourceTimestamp;
             if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                info->ownershipStrength = wp->ownership_strength();
             }
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)

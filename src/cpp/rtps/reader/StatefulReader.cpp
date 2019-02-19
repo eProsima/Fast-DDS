@@ -70,7 +70,7 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->m_att.guid == wdata.guid)
+        if(it->guid() == wdata.guid)
         {
             logInfo(RTPS_READER,"Attempting to add existing writer");
             return false;
@@ -85,12 +85,10 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({att.endpoint.unicastLocatorList});
     WriterProxy* wp = new WriterProxy(att, this);
 
-    wp->mp_initialAcknack->restart_timer();
-
     add_persistence_guid(att);
     wp->loaded_from_storage_nts(get_last_notified(att.guid));
     matched_writers_.push_back(wp);
-    logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
+    logInfo(RTPS_READER,"Writer Proxy " <<wp->guid() <<" added to " <<m_guid.entityId);
     return true;
 }
 
@@ -104,9 +102,9 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
     for(std::vector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        if((*it)->guid() == wdata.guid)
         {
-            logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
+            logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->guid());
             wproxy = *it;
             matched_writers_.erase(it);
             remove_persistence_guid(wdata);
@@ -136,12 +134,12 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
 
     for(std::vector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
     {
-        if((*it)->m_att.guid == writer_guid)
+        if((*it)->guid() == writer_guid)
         {
-            logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
+            logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->guid());
             wproxy = *it;
             matched_writers_.erase(it);
-            remove_persistence_guid(wproxy->m_att);
+            remove_persistence_guid(wproxy->attributes());
 			if(mp_listener != nullptr)
 			{
 				MatchingInfo info(REMOVED_MATCHING, writer_guid);
@@ -163,7 +161,7 @@ bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wda
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->m_att.guid == wdata.guid)
+        if(it->guid() == wdata.guid)
         {
             return true;
         }
@@ -199,7 +197,7 @@ bool StatefulReader::findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP)
 
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->m_att.guid == writerGUID)
+        if(it->guid() == writerGUID)
         {
             *WP = it;
             return true;
@@ -364,46 +362,18 @@ bool StatefulReader::processHeartbeatMsg(
         bool finalFlag, 
         bool livelinessFlag)
 {
-    WriterProxy *pWP = nullptr;
+    WriterProxy *writer = nullptr;
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    if(acceptMsgFrom(writerGUID, &pWP))
+    if(acceptMsgFrom(writerGUID, &writer))
     {
-        std::unique_lock<std::recursive_mutex> wpLock(*pWP->get_mutex());
-
-        if(pWP->m_lastHeartbeatCount < hbCount)
+        if (writer->process_heartbeat(hbCount, firstSN, lastSN, finalFlag, livelinessFlag))
         {
-            // If it is the first heartbeat message, we can try to cancel initial ack.
-            pWP->mp_initialAcknack->cancel_timer();
-
-            pWP->m_lastHeartbeatCount = hbCount;
-            pWP->lost_changes_update(firstSN);
-            fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
-            pWP->missing_changes_update(lastSN);
-            pWP->m_heartbeatFinalFlag = finalFlag;
-
-            //Analyze wheter a acknack message is needed:
-            if(!finalFlag)
-            {
-                pWP->mp_heartbeatResponse->restart_timer();
-            }
-            else if(finalFlag && !livelinessFlag)
-            {
-                if(pWP->are_there_missing_changes())
-                    pWP->mp_heartbeatResponse->restart_timer();
-            }
-
-            //FIXME: livelinessFlag
-            if(livelinessFlag )//TODOG && WP->m_att->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-            {
-                pWP->assert_liveliness();
-            }
-
-            wpLock.unlock();
+            fragmentedChangePitStop_->try_to_remove_until(firstSN, writerGUID);
 
             // Maybe now we have to notify user from new CacheChanges.
-            NotifyChanges(pWP);
+            NotifyChanges(writer);
         }
     }
 
@@ -421,19 +391,20 @@ bool StatefulReader::processGapMsg(
 
     if(acceptMsgFrom(writerGUID, &pWP))
     {
+        // TODO (Miguel C): Refactor this inside WriterProxy
         std::lock_guard<std::recursive_mutex> guardWriterProxy(*pWP->get_mutex());
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base() - 1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
         {
             if(pWP->irrelevant_change_set(auxSN))
-                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->m_att.guid);
+                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->guid());
         }
 
         gapList.for_each([&](SequenceNumber_t it)
         {
             if(pWP->irrelevant_change_set(it))
-                fragmentedChangePitStop_->try_to_remove(it, pWP->m_att.guid);
+                fragmentedChangePitStop_->try_to_remove(it, pWP->guid());
         });
     }
 
@@ -448,7 +419,7 @@ bool StatefulReader::acceptMsgFrom(
 
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->m_att.guid == writerId)
+        if(it->guid() == writerId)
         {
             *wp = it;
             return true;
@@ -490,6 +461,7 @@ bool StatefulReader::change_received(
         }
     }
 
+    // TODO (Miguel C): Refactor this inside WriterProxy
     std::unique_lock<std::recursive_mutex> writerProxyLock(*prox->get_mutex());
 
     size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
@@ -498,7 +470,7 @@ bool StatefulReader::change_received(
     {
         bool ret = prox->received_change_set(a_change->sequenceNumber);
 
-        GUID_t proxGUID = prox->m_att.guid;
+        GUID_t proxGUID = prox->guid();
 
         // If KEEP_LAST and history full, make older changes as lost.
         CacheChange_t* aux_change = nullptr;
@@ -520,7 +492,7 @@ bool StatefulReader::change_received(
 
 void StatefulReader::NotifyChanges(WriterProxy* prox)
 {
-    GUID_t proxGUID = prox->m_att.guid;
+    GUID_t proxGUID = prox->guid();
     update_last_notified(proxGUID, prox->available_changes_max());
     SequenceNumber_t nextChangeToNotify = prox->next_cache_change_to_be_notified();
     while (nextChangeToNotify != SequenceNumber_t::unknown())
@@ -674,10 +646,9 @@ bool StatefulReader::updateTimes(const ReaderTimes& ti)
     if(times_.heartbeatResponseDelay != ti.heartbeatResponseDelay)
     {
         times_ = ti;
-        for(std::vector<WriterProxy*>::iterator wit = this->matched_writers_.begin();
-                wit!=this->matched_writers_.end();++wit)
+        for(WriterProxy* writer : matched_writers_)
         {
-            (*wit)->mp_heartbeatResponse->update_interval(times_.heartbeatResponseDelay);
+            writer->update_heartbeat_response_interval(times_.heartbeatResponseDelay);
         }
     }
     return true;

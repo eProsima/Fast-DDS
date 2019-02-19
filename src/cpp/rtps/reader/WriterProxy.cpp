@@ -96,54 +96,55 @@ void WriterProxy::for_each_set_status_from_and_maybe_remove(
 
 WriterProxy::~WriterProxy()
 {
-    if (mp_initialAcknack != nullptr)
+    if (initial_acknack_ != nullptr)
     {
-        delete(mp_initialAcknack);
+        delete(initial_acknack_);
     }
-    if (mp_writerProxyLiveliness != nullptr)
+    if (writer_proxy_liveliness_ != nullptr)
     {
-        delete(mp_writerProxyLiveliness);
+        delete(writer_proxy_liveliness_);
     }
 
-    delete(mp_heartbeatResponse);
-    delete(mutex_);
+    delete(heartbeat_response_);
 }
 
 WriterProxy::WriterProxy(
         const RemoteWriterAttributes& attributes,
-        StatefulReader* reader) :
-    mp_SFR(reader),
-    m_att(attributes),
-    m_lastHeartbeatCount(0),
-    mp_heartbeatResponse(nullptr),
-    mp_writerProxyLiveliness(nullptr),
-    mp_initialAcknack(nullptr),
-    m_heartbeatFinalFlag(false),
-    is_alive_(true),
-    mutex_(new std::recursive_mutex()),
-    guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
+        StatefulReader* reader)
+    : reader_(reader)
+    , attributes_(attributes)
+    , heartbeat_response_(nullptr)
+    , writer_proxy_liveliness_(nullptr)
+    , initial_acknack_(nullptr)
+    , last_heartbeat_count_(0)
+    , heartbeat_final_flag_(false)
+    , is_alive_(true)
+    , mutex_()
+    , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
 {
-    guid_as_vector_.push_back(m_att.guid);
+    guid_as_vector_.push_back(attributes_.guid);
     changes_from_writer_.clear();
     //Create Events
-    mp_writerProxyLiveliness =
+    writer_proxy_liveliness_ =
         new WriterProxyLiveliness(
             reader,
-            m_att.guid,
-            TimeConv::Time_t2MilliSecondsDouble(m_att.livelinessLeaseDuration));
-    mp_heartbeatResponse =
+            attributes_.guid,
+            TimeConv::Time_t2MilliSecondsDouble(attributes_.livelinessLeaseDuration));
+    heartbeat_response_ =
         new HeartbeatResponseDelay(
             this,
-            TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
-    mp_initialAcknack =
+            TimeConv::Time_t2MilliSecondsDouble(reader_->getTimes().heartbeatResponseDelay));
+    initial_acknack_ =
         new InitialAckNack(
             this,
-            TimeConv::Time_t2MilliSecondsDouble(mp_SFR->getTimes().initialAcknackDelay));
-    if (m_att.livelinessLeaseDuration < c_TimeInfinite)
+            TimeConv::Time_t2MilliSecondsDouble(reader_->getTimes().initialAcknackDelay));
+    if (attributes_.livelinessLeaseDuration < c_TimeInfinite)
     {
-        mp_writerProxyLiveliness->restart_timer();
+        writer_proxy_liveliness_->restart_timer();
     }
-    logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
+    initial_acknack_->restart_timer();
+
+    logInfo(RTPS_READER,"Writer Proxy created in reader: "<<reader_->getGuid().entityId);
 }
 
 void WriterProxy::loaded_from_storage_nts(const SequenceNumber_t& seq_num)
@@ -154,8 +155,8 @@ void WriterProxy::loaded_from_storage_nts(const SequenceNumber_t& seq_num)
 
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER,m_att.guid.entityId<<": changes up to seq_num: " << seq_num <<" missing.");
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    logInfo(RTPS_READER,attributes_.guid.entityId<<": changes up to seq_num: " << seq_num <<" missing.");
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check was not removed from container.
     if(seq_num > changes_from_writer_low_mark_)
@@ -221,8 +222,8 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(
 
 void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER,m_att.guid.entityId<<": up to seq_num: "<<seq_num);
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    logInfo(RTPS_READER,attributes_.guid.entityId<<": up to seq_num: "<<seq_num);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check was not removed from container.
     if(seq_num > changes_from_writer_low_mark_)
@@ -252,7 +253,7 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER, m_att.guid.entityId << ": seq_num: " << seq_num);
+    logInfo(RTPS_READER, attributes_.guid.entityId << ": seq_num: " << seq_num);
     return received_change_set(seq_num, true);
 }
 
@@ -265,7 +266,7 @@ bool WriterProxy::received_change_set(
         const SequenceNumber_t& seq_num,
         bool is_relevance)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
     if(seq_num <= changes_from_writer_low_mark_)
@@ -335,7 +336,7 @@ bool WriterProxy::received_change_set(
 const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes() const
 {
     std::vector<ChangeFromWriter_t> returnedValue;
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     for(auto ch : changes_from_writer_)
     {
@@ -354,7 +355,7 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes() const
 
 bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
 {
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     if (seq_num <= changes_from_writer_low_mark_)
     {
@@ -367,14 +368,14 @@ bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
 
 const SequenceNumber_t WriterProxy::available_changes_max() const
 {
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     return changes_from_writer_low_mark_;
 }
 
 void WriterProxy::print_changes_fromWriter_test2()
 {
     std::stringstream sstream;
-    sstream << this->m_att.guid.entityId<<": ";
+    sstream << this->attributes_.guid.entityId<<": ";
 
     for(auto it = changes_from_writer_.begin(); it != changes_from_writer_.end(); ++it)
     {
@@ -387,18 +388,18 @@ void WriterProxy::print_changes_fromWriter_test2()
 
 void WriterProxy::assert_liveliness()
 {
-    logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
+    logInfo(RTPS_READER,this->attributes_.guid.entityId << " Liveliness asserted");
 
-    //std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    //std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     is_alive_ = true;
-    this->mp_writerProxyLiveliness->cancel_timer();
-    this->mp_writerProxyLiveliness->restart_timer();
+    this->writer_proxy_liveliness_->cancel_timer();
+    this->writer_proxy_liveliness_->restart_timer();
 }
 
 void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check sequence number is in the container, because it was not clean up.
     if (seq_num <= changes_from_writer_low_mark_)
@@ -438,7 +439,7 @@ void WriterProxy::cleanup()
 
 bool WriterProxy::are_there_missing_changes() const
 {
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     for(const ChangeFromWriter_t& ch : changes_from_writer_)
     {
@@ -454,7 +455,7 @@ bool WriterProxy::are_there_missing_changes() const
 size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_num) const
 {
     size_t returnedValue = 0;
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     if(seq_num > changes_from_writer_low_mark_)
     {
@@ -473,13 +474,13 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
 
 size_t WriterProxy::number_of_changes_from_writer() const
 {
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     return changes_from_writer_.size();
 }
 
 SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
 {
-    std::lock_guard<std::recursive_mutex> guard(*mutex_);
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     if(last_notified_ < changes_from_writer_low_mark_)
     {
@@ -494,17 +495,66 @@ void WriterProxy::perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const
 {
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    mp_SFR->send_acknack(sns, buffer, remote_locators_shrinked(), guid_as_vector_, false);
+    reader_->send_acknack(sns, buffer, remote_locators_shrinked(), guid_as_vector_, false);
 }
 
 void WriterProxy::perform_heartbeat_response(RTPSMessageGroup_t& buffer) const
 {
-    mp_SFR->send_acknack(this, buffer, remote_locators_shrinked(), guid_as_vector_, m_heartbeatFinalFlag);
+    reader_->send_acknack(this, buffer, remote_locators_shrinked(), guid_as_vector_, heartbeat_final_flag_);
+}
+
+bool WriterProxy::process_heartbeat(
+        uint32_t count,
+        const SequenceNumber_t& first_seq,
+        const SequenceNumber_t& last_seq,
+        bool final_flag,
+        bool liveliness_flag)
+{
+    std::unique_lock<std::recursive_mutex> wpLock(mutex_);
+
+    if (last_heartbeat_count_ < count)
+    {
+        // If it is the first heartbeat message, we can try to cancel initial ack.
+        initial_acknack_->cancel_timer();
+
+        last_heartbeat_count_ = count;
+        lost_changes_update(first_seq);
+        missing_changes_update(last_seq);
+        heartbeat_final_flag_ = final_flag;
+
+        //Analyze wheter a acknack message is needed:
+        if (!final_flag)
+        {
+            heartbeat_response_->restart_timer();
+        }
+        else if (final_flag && !liveliness_flag)
+        {
+            if (are_there_missing_changes())
+            {
+                heartbeat_response_->restart_timer();
+            }
+        }
+
+        //FIXME: livelinessFlag
+        if (liveliness_flag)//TODOG && attributes_->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        {
+            assert_liveliness();
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+void WriterProxy::update_heartbeat_response_interval(const Duration_t& interval)
+{
+    heartbeat_response_->update_interval(interval);
 }
 
 RTPSParticipantImpl* WriterProxy::get_participant() const
 {
-    return mp_SFR->getRTPSParticipant();
+    return reader_->getRTPSParticipant();
 }
 
 } /* namespace rtps */
