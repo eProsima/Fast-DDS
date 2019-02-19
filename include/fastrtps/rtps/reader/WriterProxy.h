@@ -308,15 +308,17 @@ private:
     //!To fool RTPSMessageGroup when using this proxy as single destination
     ResourceLimitedVector<GUID_t> guid_as_vector_;
 
+    using ChangeIterator = decltype(changes_from_writer_)::iterator;
+
     void for_each_set_status_from(
-            decltype(changes_from_writer_)::iterator first,
-            decltype(changes_from_writer_)::iterator last,
+            ChangeIterator first,
+            ChangeIterator last,
             ChangeFromWriterStatus_t status,
             ChangeFromWriterStatus_t new_status);
 
     void for_each_set_status_from_and_maybe_remove(
-            decltype(changes_from_writer_)::iterator first,
-            decltype(changes_from_writer_)::iterator last,
+            ChangeIterator first,
+            ChangeIterator last,
             ChangeFromWriterStatus_t status,
             ChangeFromWriterStatus_t or_status,
             ChangeFromWriterStatus_t new_status);
