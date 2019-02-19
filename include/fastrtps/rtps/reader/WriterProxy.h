@@ -264,10 +264,6 @@ public:
      */
     void update_heartbeat_response_interval(const Duration_t& interval);
 
-    inline void liveliness_expired()
-    {
-    }
-
 private:
 
     /*!

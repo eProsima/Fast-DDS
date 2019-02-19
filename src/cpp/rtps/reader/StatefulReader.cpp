@@ -45,6 +45,10 @@ StatefulReader::~StatefulReader()
     {
         delete(writer);
     }
+    for (WriterProxy* writer : matched_writers_pool_)
+    {
+        delete(writer);
+    }
 }
 
 StatefulReader::StatefulReader(
@@ -57,7 +61,13 @@ StatefulReader::StatefulReader(
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
+    , matched_writers_(att.matched_writers_allocation)
+    , matched_writers_pool_(att.matched_writers_allocation)
 {
+    for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
+    {
+        matched_writers_pool_.push_back(new WriterProxy(this));
+    }
 }
 
 bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
@@ -72,13 +82,33 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
         }
     }
 
+    // Get a writer proxy from the inactive pool (or create a new one if necessary and allowed)
+    WriterProxy* wp = nullptr;
+    if (matched_writers_pool_.empty())
+    {
+        size_t max_readers = matched_writers_pool_.max_size();
+        if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
+        {
+            wp = new WriterProxy(this);
+        }
+        else
+        {
+            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
+                ") reached for writer " << m_guid << endl);
+            return false;
+        }
+    }
+    else
+    {
+        wp = matched_writers_pool_.back();
+        matched_writers_pool_.pop_back();
+    }
+
     RemoteWriterAttributes att(wdata);
     getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
 
-
     att.endpoint.unicastLocatorList =
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({att.endpoint.unicastLocatorList});
-    WriterProxy* wp = new WriterProxy(this);
     wp->start(att);
 
     add_persistence_guid(att);
@@ -113,7 +143,7 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     if(wproxy != nullptr)
     {
         wproxy->stop();
-        delete wproxy;
+        matched_writers_pool_.push_back(wproxy);
         return true;
     }
 
@@ -143,9 +173,8 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
                 mp_listener->onReaderMatched(this, info);
 			}
 
-            wproxy->liveliness_expired();
             wproxy->stop();
-			delete(wproxy);
+            matched_writers_pool_.push_back(wproxy);
             return true;
         }
     }
