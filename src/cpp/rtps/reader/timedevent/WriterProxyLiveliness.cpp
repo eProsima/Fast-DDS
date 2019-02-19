@@ -35,22 +35,28 @@ namespace fastrtps{
 namespace rtps {
 
 
-WriterProxyLiveliness::WriterProxyLiveliness(
-        StatefulReader* reader,
-        const GUID_t& writer_guid,
-        double interval)
+WriterProxyLiveliness::WriterProxyLiveliness(StatefulReader* reader)
     : TimedEvent(
         reader->getRTPSParticipant()->getEventResource().getIOService(),
-        reader->getRTPSParticipant()->getEventResource().getThread(),
-        interval, TimedEvent::ON_SUCCESS)
+        reader->getRTPSParticipant()->getEventResource().getThread(), 0)
     , reader_(reader)
-    , writer_guid_(writer_guid)
+    , writer_guid_()
 {
 }
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
 {
     destroy();
+}
+
+void WriterProxyLiveliness::start(
+        const GUID_t& writer_guid,
+        const Duration_t& interval)
+{
+    writer_guid_ = writer_guid;
+    update_interval(interval);
+    cancel_timer();
+    restart_timer();
 }
 
 void WriterProxyLiveliness::event(

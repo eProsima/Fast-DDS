@@ -60,12 +60,20 @@ public:
 
     /**
      * Constructor.
-     * @param attributes RemoteWriterAttributes.
      * @param reader Pointer to the StatefulReader creating this proxy.
      */
-    WriterProxy(
-            const RemoteWriterAttributes& attributes, 
-            StatefulReader* reader);
+    WriterProxy(StatefulReader* reader);
+
+    /**
+     * Activate this proxy associating it to a remote writer.
+     * @param attributes RemoteWriterAttributes of the writer for which to keep state.
+     */
+    void start(const RemoteWriterAttributes& attributes);
+
+    /**
+     * Disable this proxy.
+     */
+    void stop();
 
     /**
      * Set initial value for last acked sequence number.
@@ -192,14 +200,6 @@ public:
     void assert_liveliness();
 
     /**
-     * Set the writer as not alive
-     */
-    inline void set_not_alive()
-    {
-        is_alive_ = false;
-    }
-    
-    /**
      * Get the mutex
      * @return Associated mutex
      */
@@ -264,7 +264,6 @@ public:
 
     inline void liveliness_expired()
     {
-        writer_proxy_liveliness_ = nullptr;
     }
 
 private:

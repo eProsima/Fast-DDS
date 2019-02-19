@@ -83,7 +83,8 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 
     att.endpoint.unicastLocatorList =
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({att.endpoint.unicastLocatorList});
-    WriterProxy* wp = new WriterProxy(att, this);
+    WriterProxy* wp = new WriterProxy(this);
+    wp->start(att);
 
     add_persistence_guid(att);
     wp->loaded_from_storage_nts(get_last_notified(att.guid));
@@ -116,6 +117,7 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
     if(wproxy != nullptr)
     {
+        wproxy->stop();
         delete wproxy;
         return true;
     }
@@ -147,6 +149,7 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
 			}
 
             wproxy->liveliness_expired();
+            wproxy->stop();
 			delete(wproxy);
             return true;
         }
