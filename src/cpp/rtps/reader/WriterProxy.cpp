@@ -328,10 +328,10 @@ bool WriterProxy::received_change_set(
 }
 
 
-const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes() const
+SequenceNumberSet_t WriterProxy::missing_changes() const
 {
-    std::vector<ChangeFromWriter_t> returnedValue;
     std::lock_guard<std::recursive_mutex> guard(mutex_);
+    SequenceNumberSet_t sns(available_changes_max() + 1);
 
     for(auto ch : changes_from_writer_)
     {
@@ -339,11 +339,16 @@ const std::vector<ChangeFromWriter_t> WriterProxy::missing_changes() const
         {
             // If MISSING, then is relevant.
             assert(ch.isRelevant());
-            returnedValue.push_back(ch);
+            if(!sns.add(ch.getSequenceNumber()))
+            {
+                logInfo(RTPS_READER, "Sequence number " << ch.getSequenceNumber()
+                    << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base());
+                break;
+            }
         }
     }
 
-    return returnedValue;
+    return sns;
 }
 
 bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
