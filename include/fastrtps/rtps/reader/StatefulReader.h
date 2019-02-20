@@ -37,7 +37,7 @@ class RTPSMessageGroup_t;
  * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
  * @ingroup READER_MODULE
  */
-class StatefulReader:public RTPSReader
+class StatefulReader : public RTPSReader
 {
     public:
 

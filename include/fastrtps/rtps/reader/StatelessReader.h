@@ -165,7 +165,7 @@ public:
      * StatelessReader allways return true;
      * @return true
      */
-    bool isInCleanState()
+    bool isInCleanState() override
     { 
         return true;
     }
