@@ -164,6 +164,11 @@
                     <kind>BEST_EFFORT</kind>
                 </reliability>
             </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
         </subscriber>
 
         <subscriber profile_name="test_subscriber_profile_tl_re">
@@ -189,6 +194,11 @@
                     <kind>RELIABLE</kind>
                 </reliability>
             </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
         </subscriber>
 
         <subscriber profile_name="test_subscriber_profile_vo_be">
@@ -214,6 +224,11 @@
                     <kind>BEST_EFFORT</kind>
                 </reliability>
             </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
         </subscriber>
 
         <subscriber profile_name="test_subscriber_profile_vo_re">
@@ -239,6 +254,11 @@
                     <kind>RELIABLE</kind>
                 </reliability>
             </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
         </subscriber>
 
     </profiles>
