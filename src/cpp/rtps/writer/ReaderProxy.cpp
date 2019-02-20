@@ -187,11 +187,6 @@ bool ReaderProxy::requested_changes_set(std::vector<SequenceNumber_t>& seqNumSet
     {
         logInfo(RTPS_WRITER,"Requested Changes: " << seqNumSet);
     }
-    else if(!seqNumSet.empty())
-    {
-        logWarning(RTPS_WRITER,"Requested Changes: " << seqNumSet
-                   << " not found (low mark: " << changesFromRLowMark_ << ")");
-    }
 
     return isSomeoneWasSetRequested;
 }
