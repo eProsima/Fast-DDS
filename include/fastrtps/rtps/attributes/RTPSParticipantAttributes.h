@@ -100,6 +100,10 @@ class BuiltinAttributes{
          * The XML filename must be provided.
          */
         bool use_STATIC_EndpointDiscoveryProtocol;
+        /**
+         * If set to true, Discovery Server protocol would be implemented
+         */
+        bool use_SERVER_DiscoveryProtocol;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
@@ -132,6 +136,7 @@ class BuiltinAttributes{
             use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
+            use_SERVER_DiscoveryProtocol = false;
             m_staticEndpointXMLFilename = "";
             domainId = 0;
             leaseDuration.seconds = 130;
@@ -148,6 +153,7 @@ class BuiltinAttributes{
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
+                   (this->use_SERVER_DiscoveryProtocol == b.use_SERVER_DiscoveryProtocol) &&
                    (this->domainId == b.domainId) &&
                    (this->leaseDuration == b.leaseDuration) &&
                    (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
@@ -157,7 +163,8 @@ class BuiltinAttributes{
                    (this->initialPeersList == b.initialPeersList) &&
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
-                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename);
+                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
+                   (this->m_DiscoverServer == b.m_DiscoverServer);
         }
 
         /**
@@ -173,6 +180,8 @@ class BuiltinAttributes{
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
         std::string m_staticEndpointXMLFilename;
+        //! Discovery Server contact address, only needed if use_SERVER_DiscoveryProtocol=true
+        Locator_t m_DiscoverServer;
 };
 
 
