@@ -107,14 +107,11 @@ WriterProxy::WriterProxy(StatefulReader* reader)
 {
     //Create Events
     writer_proxy_liveliness_ = new WriterProxyLiveliness(reader);
-    heartbeat_response_ =
-        new HeartbeatResponseDelay(
-            this,
-            TimeConv::Time_t2MilliSecondsDouble(reader_->getTimes().heartbeatResponseDelay));
-    initial_acknack_ =
-        new InitialAckNack(
-            this,
-            TimeConv::Time_t2MilliSecondsDouble(reader_->getTimes().initialAcknackDelay));
+    heartbeat_response_ = new HeartbeatResponseDelay(reader_->getRTPSParticipant(), this);
+    initial_acknack_ = new InitialAckNack(reader_->getRTPSParticipant(), this);
+
+    heartbeat_response_->update_interval(reader_->getTimes().heartbeatResponseDelay);
+    initial_acknack_->update_interval(reader_->getTimes().initialAcknackDelay);
 
     stop();
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
@@ -526,11 +523,6 @@ bool WriterProxy::process_heartbeat(
 void WriterProxy::update_heartbeat_response_interval(const Duration_t& interval)
 {
     heartbeat_response_->update_interval(interval);
-}
-
-RTPSParticipantImpl* WriterProxy::get_participant() const
-{
-    return reader_->getRTPSParticipant();
 }
 
 } /* namespace rtps */

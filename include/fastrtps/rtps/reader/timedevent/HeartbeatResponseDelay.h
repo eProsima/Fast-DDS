@@ -30,6 +30,7 @@ namespace fastrtps{
 namespace rtps {
 
 class WriterProxy;
+class RTPSParticipantImpl;
 
 /**
  * Class HeartbeatResponseDelay, TimedEvent used to delay the response to a specific HB.
@@ -43,12 +44,12 @@ class HeartbeatResponseDelay : public TimedEvent
 
         /**
          * Constructs a HeartbeatResponseDelay event object
-         * @param writer_proxy  Pointer to the writer proxy creating this event.
-         * @param interval      Interval in milliseconds of this event.
+         * @param participant   Pointer to the participant creating this event.
+         * @param writer_proxy  Pointer to the writer this event should be associated to.
          */
         HeartbeatResponseDelay(
-                WriterProxy* writer_proxy,
-                double interval);
+                RTPSParticipantImpl* participant,
+                WriterProxy* writer_proxy);
 
         /**
          * Method invoked when the event occurs

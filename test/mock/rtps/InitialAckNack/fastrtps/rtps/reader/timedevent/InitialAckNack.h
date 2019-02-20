@@ -23,13 +23,15 @@ namespace rtps {
 
 // Forward declarations
 class WriterProxy;
+class RTPSParticipantImpl;
 
 class InitialAckNack
 {
     public:
 
-        InitialAckNack(WriterProxy* /*wp*/,double /*interval*/) { }
+        InitialAckNack(RTPSParticipantImpl* /*participant*/, WriterProxy* /*wp*/) { }
 
+        MOCK_METHOD1(update_interval, void(const Duration_t&));
         MOCK_METHOD0(restart_timer, void());
         MOCK_METHOD0(cancel_timer, void());
 };

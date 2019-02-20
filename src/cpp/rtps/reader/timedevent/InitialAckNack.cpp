@@ -42,15 +42,15 @@ InitialAckNack::~InitialAckNack()
 }
 
 InitialAckNack::InitialAckNack(
-        WriterProxy* writer_proxy,
-        double interval)
+        RTPSParticipantImpl* participant,
+        WriterProxy* writer_proxy)
     : TimedEvent(
-            writer_proxy->get_participant()->getEventResource().getIOService(),
-            writer_proxy->get_participant()->getEventResource().getThread(),
-            interval)
+            participant->getEventResource().getIOService(),
+            participant->getEventResource().getThread(),
+            0)
     , message_buffer_(
-            writer_proxy->get_participant()->getMaxMessageSize(),
-            writer_proxy->get_participant()->getGuid().guidPrefix)
+            participant->getMaxMessageSize(),
+            participant->getGuid().guidPrefix)
     , writer_proxy_(writer_proxy)
 {
 }

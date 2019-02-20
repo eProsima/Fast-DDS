@@ -180,12 +180,6 @@ public:
     }
 
     /**
-     * Get the participant this proxy is part of.
-     * @return pointer to the participant of the StatefulReader that created this proxy.
-     */
-    RTPSParticipantImpl* get_participant() const;
-
-    /**
      * Check if the writer is alive
      * @return true if the writer is alive
      */

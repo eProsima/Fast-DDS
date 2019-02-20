@@ -30,6 +30,7 @@ namespace fastrtps {
 namespace rtps {
 
 class WriterProxy;
+class RTPSParticipantImpl;
 
 /**
  * InitialAckNack class, controls the initial send operation of AckNack.
@@ -41,12 +42,12 @@ class InitialAckNack : public TimedEvent
 
         /**
          * Constructs a InitialAckNack event object
-         * @param writer_proxy  Pointer to the writer proxy creating this event.
-         * @param interval      Interval in milliseconds of this event.
+         * @param participant   Pointer to the participant creating this event.
+         * @param writer_proxy  Pointer to the writer this event should be associated to.
          */
         InitialAckNack(
-                WriterProxy* writer_proxy,
-                double interval);
+                RTPSParticipantImpl* participant,
+                WriterProxy* writer_proxy);
 
         virtual ~InitialAckNack();
 
