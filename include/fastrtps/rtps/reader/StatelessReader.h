@@ -163,7 +163,7 @@ public:
      * StatelessReader allways return true;
      * @return true
      */
-    bool isInCleanState() const 
+    bool isInCleanState() const override
     { 
         return true; 
     }

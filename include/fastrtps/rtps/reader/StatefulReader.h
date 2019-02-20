@@ -37,7 +37,7 @@ class RTPSMessageGroup_t;
  * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
  * @ingroup READER_MODULE
  */
-class StatefulReader:public RTPSReader
+class StatefulReader : public RTPSReader
 {
     public:
 
@@ -213,7 +213,7 @@ class StatefulReader:public RTPSReader
          * its WriterProxies are up to date.
          * @return There is a clean state with all Writers.
          */
-        bool isInCleanState() const;
+        bool isInCleanState() const override;
 
         /**
          * Sends an acknack message from this reader.
