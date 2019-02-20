@@ -25,12 +25,13 @@ namespace rtps {
 
 // Forward declarations
 class WriterProxy;
+class RTPSParticipantImpl;
 
 class HeartbeatResponseDelay
 {
     public:
                             
-        HeartbeatResponseDelay(WriterProxy* /*wp*/,double /*interval*/) { }
+        HeartbeatResponseDelay(RTPSParticipantImpl* /*participant*/, WriterProxy* /*wp*/) { }
 
         MOCK_METHOD0(restart_timer, void());
         MOCK_METHOD0(cancel_timer, void());
