@@ -795,7 +795,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
     {
         (*wit)->getMutex()->lock();
         GUID_t writerGUID = (*wit)->getGuid();
-        (*wit)->getMutex()->lock();
+        (*wit)->getMutex()->unlock();
 
         if(local_writer == writerGUID)
         {
