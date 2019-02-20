@@ -63,7 +63,7 @@ If you are on Windows, choose your version of Visual Studio:
 	
 If you want to compile the performance tests, you will need to add the argument `-DPERFORMANCE_TESTS=ON` when calling Cmake.
 
-## Documentation 
+## Documentation
 
 You can access the documentation online, which is hosted on [Read the Docs](http://eprosima-fast-rtps.readthedocs.io).
 
@@ -76,5 +76,3 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 ## Getting Help
 
 If you need support you can reach us by mail at `support@eProsima.com` or by phone at `+34 91 804 34 48`.
-
-
