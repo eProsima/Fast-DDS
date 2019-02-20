@@ -51,7 +51,6 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatelessReader.cpp
     rtps/reader/RTPSReader.cpp
     rtps/reader/FragmentedChangePitStop.cpp
-    rtps/messages/CDRMessagePool.cpp
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp

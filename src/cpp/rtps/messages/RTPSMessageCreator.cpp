@@ -21,7 +21,6 @@
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/utils/eClock.h>
-#include <fastrtps/rtps/messages/CDRMessagePool.h>
 
 #include <fastrtps/log/Log.h>
 
