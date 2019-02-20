@@ -23,13 +23,21 @@
 #include <atomic>
 
 #if defined(_WIN32)
+
 #define GET_PID _getpid
 using pid_t = int;
 #include <process.h>
+
 #else
-#define GET_PID getpid
-#include <sys/types.h>
+
 #include <unistd.h>
+#include <sys/syscall.h>
+#ifdef SYS_gettid
+#define GET_TID() syscall(SYS_gettid)
+#else
+#error "SYS_gettid unavailable on this system"
+#endif
+
 #endif //_WIN32
 
 #include <bits/pthreadtypes.h>

@@ -39,7 +39,7 @@ typedef struct
     uint32_t count;
 } tmutex_record;
 
-constexpr size_t g_tmutex_records_max_length = 10;
+constexpr size_t g_tmutex_records_max_length = 30;
 std::array<tmutex_record, g_tmutex_records_max_length>  g_tmutex_records{{{LockType::LOCK, nullptr, 0}}};
 int32_t g_tmutex_records_end = -1;
 
@@ -47,7 +47,7 @@ int32_t tmutex_find_record(pthread_mutex_t* mutex)
 {
     int32_t returned_position = -1;
 
-    for(int32_t position = 0; position < g_tmutex_records_end; ++position)
+    for(int32_t position = 0; position <= g_tmutex_records_end; ++position)
     {
         if (mutex == g_tmutex_records[position].mutex)
         {
@@ -65,7 +65,7 @@ int32_t tmutex_find_record(pthread_mutex_t* mutex)
 void eprosima::fastrtps::tmutex_start_recording()
 {
     assert(0 == g_tmutex_thread_pid);
-    g_tmutex_thread_pid = GET_PID();
+    g_tmutex_thread_pid = GET_TID();
     g_tmutex_records = {{{LockType::LOCK, nullptr, 0}}};
     g_tmutex_records_end = -1;
 }
@@ -85,7 +85,7 @@ void eprosima::fastrtps::tmutex_record_mutex_(LockType type, pthread_mutex_t* mu
 
     if (-1 >= position)
     {
-        assert(g_tmutex_records_max_length > g_tmutex_records_end + 1);
+        assert(g_tmutex_records_max_length > size_t(g_tmutex_records_end + 1));
         position = ++g_tmutex_records_end;
         g_tmutex_records[position].type = type;
         g_tmutex_records[position].mutex = mutex;
@@ -144,13 +144,13 @@ size_t eprosima::fastrtps::tmutex_get_num_timedlock_type()
 
 pthread_mutex_t* eprosima::fastrtps::tmutex_get_mutex(const size_t index)
 {
-    assert(index <= g_tmutex_records_end);
+    assert(index <= size_t(g_tmutex_records_end));
     return g_tmutex_records[index].mutex;
 }
 
 void eprosima::fastrtps::tmutex_lock_mutex(const size_t index)
 {
-    assert(index <= g_tmutex_records_end);
+    assert(index <= size_t(g_tmutex_records_end));
 
     if(g_origin_lock_func != nullptr)
     {
@@ -160,6 +160,6 @@ void eprosima::fastrtps::tmutex_lock_mutex(const size_t index)
 
 void eprosima::fastrtps::tmutex_unlock_mutex(const size_t index)
 {
-    assert(index <= g_tmutex_records_end);
+    assert(index <= size_t(g_tmutex_records_end));
     pthread_mutex_unlock(g_tmutex_records[index].mutex);
 }

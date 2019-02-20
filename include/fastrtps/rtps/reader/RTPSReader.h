@@ -186,7 +186,7 @@ namespace eprosima
                  * its WriterProxies are up to date.
                  * @return There is a clean state with all Writers.
                 */
-                virtual bool isInCleanState() const = 0;
+                virtual bool isInCleanState() = 0;
 
                 protected:
                 void setTrustedWriter(EntityId_t writer)
@@ -213,7 +213,7 @@ namespace eprosima
                 * @return Last notified sequence number for input guid
                 * @remarks Takes persistence_guid into consideration
                 */
-                SequenceNumber_t get_last_notified(const GUID_t& guid) const;
+                SequenceNumber_t get_last_notified(const GUID_t& guid);
 
                 /*!
                 * @brief Update the last notified sequence for a RTPS guid

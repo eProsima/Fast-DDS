@@ -24,8 +24,9 @@
 #include "common/Types.h"
 #include "common/Locator.h"
 #include "common/Guid.h"
-
 #include "attributes/EndpointAttributes.h"
+
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
@@ -46,14 +47,24 @@ class Endpoint
 {
     friend class RTPSParticipantImpl;
 
-protected:
+    protected:
+
     Endpoint(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
-            const EndpointAttributes& att);
-    virtual ~Endpoint();
+            const EndpointAttributes& att)
+        : mp_RTPSParticipant(pimpl)
+          , m_guid(guid)
+          , m_att(att)
+#if HAVE_SECURITY
+          ,supports_rtps_protection_(true)
+#endif
+    {
+    }
 
-public:
+    virtual ~Endpoint() = default;
+
+    public:
     /**
      * Get associated GUID
      * @return Associated GUID
@@ -64,7 +75,7 @@ public:
      * Get mutex
      * @return Associated Mutex
      */
-    RTPS_DllAPI inline std::recursive_mutex* getMutex() const { return mp_mutex; }
+    RTPS_DllAPI inline std::recursive_timed_mutex& getMutex() { return mp_mutex; }
 
     /**
      * Get associated attributes
@@ -76,17 +87,22 @@ public:
     bool supports_rtps_protection() { return supports_rtps_protection_; }
 #endif
 
-protected:
+    protected:
+
     //!Pointer to the RTPSParticipant containing this endpoint.
     RTPSParticipantImpl* mp_RTPSParticipant;
+
     //!Endpoint GUID
     const GUID_t m_guid;
+
     //!Endpoint Attributes
     EndpointAttributes m_att;
-    //!Endpoint Mutex
-    std::recursive_mutex* mp_mutex;
 
-private:
+    //!Endpoint Mutex
+    std::recursive_timed_mutex mp_mutex;
+
+    private:
+
     Endpoint& operator=(const Endpoint&) = delete;
 
 #if HAVE_SECURITY

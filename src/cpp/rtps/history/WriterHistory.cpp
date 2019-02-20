@@ -59,7 +59,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(a_change->writerGUID != mp_writer->getGuid())
     {
         logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
@@ -115,7 +115,7 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(a_change == nullptr)
     {
         logError(RTPS_HISTORY,"Pointer is not valid")
@@ -160,7 +160,7 @@ bool WriterHistory::remove_change(const SequenceNumber_t& sequence_number)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
             chit!=m_changes.end();++chit)
@@ -188,7 +188,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(const SequenceNumber_t& se
         return nullptr;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
             chit!=m_changes.end();++chit)
@@ -232,7 +232,7 @@ bool WriterHistory::remove_min_change()
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(m_changes.size() > 0 && remove_change_g(mp_minSeqCacheChange))
     {
         updateMaxMinSeqNum();

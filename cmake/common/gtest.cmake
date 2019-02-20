@@ -74,15 +74,28 @@ macro(check_gmock)
     endif()
 endmacro()
 
-macro(add_gtest test)
+macro(add_gtest)
     # Parse arguments
+    if("${ARGV0}" STREQUAL "NAME")
+        set(uniValueArgs NAME COMMAND)
+        unset(test)
+        unset(command)
+    else()
+        set(test "${ARGV0}")
+        set(command "${test}")
+    endif()
     set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES LABELS)
-    cmake_parse_arguments(GTEST "" "" "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(GTEST "" "${uniValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if(GTEST_NAME)
+        set(test ${GTEST_NAME})
+        set(command ${GTEST_COMMAND})
+    endif()
 
     if(GTEST_INDIVIDUAL)
         if(WIN32)
             set(WIN_PATH "$ENV{PATH}")
-            get_target_property(LINK_LIBRARIES_ ${test} LINK_LIBRARIES)
+            get_target_property(LINK_LIBRARIES_ ${command} LINK_LIBRARIES)
             if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
                 foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
                     if(TARGET ${LIBRARY_LINKED})
@@ -98,35 +111,34 @@ macro(add_gtest test)
 
         foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
             file(STRINGS ${GTEST_SOURCE_FILE} GTEST_NAMES REGEX ^TEST)
-            foreach(GTEST_NAME ${GTEST_NAMES})
-                string(REGEX REPLACE ["\) \(,"] ";" GTEST_NAME ${GTEST_NAME})
-                list(GET GTEST_NAME 1 GTEST_GROUP_NAME)
-                list(GET GTEST_NAME 3 GTEST_NAME)
-                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_NAME}
-                    COMMAND ${test}
-                    --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_NAME})
+            foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
+                list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
+                list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
+                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                    COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
 
                 # Add environment
                 if(WIN32)
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
 
                 # Add labels
-                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
 
             endforeach()
         endforeach()
     else()
-        add_test(NAME ${test} COMMAND ${test})
+        add_test(NAME ${test} COMMAND ${command})
 
         # Add environment
         if(WIN32)
             set(WIN_PATH "$ENV{PATH}")
-            get_target_property(LINK_LIBRARIES_ ${test} LINK_LIBRARIES)
+            get_target_property(LINK_LIBRARIES_ ${command} LINK_LIBRARIES)
             if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
                 foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
                     if(TARGET ${LIBRARY_LINKED})

@@ -111,9 +111,12 @@ class StatelessWriter : public RTPSWriter
     //!Reset the unsent changes.
     void unsent_changes_reset();
 
-    bool is_acked_by_all(const CacheChange_t* change) const override;
+    bool is_acked_by_all(const CacheChange_t* change) override;
 
-    bool try_remove_change(std::chrono::microseconds&, std::unique_lock<std::recursive_mutex>&) override { 
+    bool try_remove_change(
+            std::chrono::microseconds&, 
+            std::unique_lock<std::recursive_timed_mutex>&) override
+    {
         return remove_older_changes(1); 
     }
 

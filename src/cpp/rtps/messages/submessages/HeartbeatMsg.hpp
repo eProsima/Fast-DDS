@@ -21,10 +21,16 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg, const GuidPrefix_t& guidprefix,
-        const EntityId_t& readerId, const EntityId_t& writerId,
-        const SequenceNumber_t& firstSN, const SequenceNumber_t& lastSN,
-        Count_t count, bool isFinal, bool livelinessFlag)
+bool RTPSMessageCreator::addMessageHeartbeat(
+        CDRMessage_t* msg, 
+        const GuidPrefix_t& guidprefix,
+        const EntityId_t& readerId,
+        const EntityId_t& writerId,
+        const SequenceNumber_t& firstSN,
+        const SequenceNumber_t& lastSN,
+        Count_t count,
+        bool isFinal,
+        bool livelinessFlag)
 {
     try
     {
@@ -40,10 +46,17 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg, const GuidPrefix
     return true;
 }
 
-bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_t& guidprefix,
-        const GuidPrefix_t& remoteGuidprefix, const EntityId_t& readerId,const EntityId_t& writerId,
-        const SequenceNumber_t& firstSN, const SequenceNumber_t& lastSN,
-        Count_t count, bool isFinal, bool livelinessFlag)
+bool RTPSMessageCreator::addMessageHeartbeat(
+        CDRMessage_t* msg,
+        const GuidPrefix_t& guidprefix,
+        const GuidPrefix_t& remoteGuidprefix,
+        const EntityId_t& readerId,
+        const EntityId_t& writerId,
+        const SequenceNumber_t& firstSN,
+        const SequenceNumber_t& lastSN,
+        Count_t count,
+        bool isFinal, 
+        bool livelinessFlag)
 {
     try
     {
@@ -60,19 +73,24 @@ bool RTPSMessageCreator::addMessageHeartbeat(CDRMessage_t* msg,const GuidPrefix_
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg, const EntityId_t& readerId,
-        const EntityId_t& writerId, const SequenceNumber_t& firstSN, const SequenceNumber_t& lastSN,
-        Count_t count, bool isFinal, bool livelinessFlag)
+bool RTPSMessageCreator::addSubmessageHeartbeat(
+        CDRMessage_t* msg,
+        const EntityId_t& readerId,
+        const EntityId_t& writerId,
+        const SequenceNumber_t& firstSN,
+        const SequenceNumber_t& lastSN,
+        Count_t count,
+        bool isFinal,
+        bool livelinessFlag)
 {
-    CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
-    CDRMessage::initCDRMsg(&submsgElem);
-
     octet flags = 0x0;
+
+    Endianness_t old_endianess = msg->msg_endian;
 #if __BIG_ENDIAN__
-    submsgElem.msg_endian = BIGEND;
+    msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
-    submsgElem.msg_endian  = LITTLEEND;
+    msg->msg_endian = LITTLEEND;
 #endif
 
     if(isFinal)
@@ -80,25 +98,48 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(CDRMessage_t* msg, const EntityI
     if(livelinessFlag)
         flags = flags | BIT(2);
 
+    // Submessage header.
+    CDRMessage::addOctet(msg, HEARTBEAT);
+    CDRMessage::addOctet(msg, flags);
+    uint32_t submessage_size_pos = msg->pos;
+    uint16_t submessage_size = 0;
+    CDRMessage::addUInt16(msg, submessage_size);
+    uint32_t position_size_count_size = msg->pos;
 
-    CDRMessage::addEntityId(&submsgElem,&readerId);
-    CDRMessage::addEntityId(&submsgElem,&writerId);
+    CDRMessage::addEntityId(msg, &readerId);
+    CDRMessage::addEntityId(msg, &writerId);
     //Add Sequence Number
-    CDRMessage::addSequenceNumber(&submsgElem,&firstSN);
-    CDRMessage::addSequenceNumber(&submsgElem,&lastSN);
-    CDRMessage::addInt32(&submsgElem,(int32_t)count);
+    CDRMessage::addSequenceNumber(msg, &firstSN);
+    CDRMessage::addSequenceNumber(msg, &lastSN);
+    CDRMessage::addInt32(msg,(int32_t)count);
 
-    //Once the submessage elements are added, the header is created
-    RTPSMessageCreator::addSubmessageHeader(msg, HEARTBEAT, flags, (uint16_t)submsgElem.length);
-    //Append Submessage elements to msg
-    //Append Submessage elements to msg
-    CDRMessage::appendMsg(msg, &submsgElem);
-    g_pool_submsg.release_CDRMsg(submsgElem);
+    //TODO(Ricardo) Improve.
+    submessage_size = msg->pos - position_size_count_size;
+    octet* o= (octet*)&submessage_size;
+    if(msg->msg_endian == DEFAULT_ENDIAN)
+    {
+        msg->buffer[submessage_size_pos] = *(o);
+        msg->buffer[submessage_size_pos+1] = *(o+1);
+    }
+    else
+    {
+        msg->buffer[submessage_size_pos] = *(o+1);
+        msg->buffer[submessage_size_pos+1] = *(o);
+    }
+
+    msg->msg_endian = old_endianess;
+
     return true;
 }
 
-bool RTPSMessageCreator::addMessageHeartbeatFrag(CDRMessage_t* msg, const GuidPrefix_t& guidprefix, const EntityId_t& readerId, const EntityId_t& writerId,
-        SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count)
+bool RTPSMessageCreator::addMessageHeartbeatFrag(
+        CDRMessage_t* msg,
+        const GuidPrefix_t& guidprefix,
+        const EntityId_t& readerId,
+        const EntityId_t& writerId,
+        SequenceNumber_t& firstSN,
+        FragmentNumber_t& lastFN,
+        Count_t count)
 {
     try
     {
@@ -114,33 +155,54 @@ bool RTPSMessageCreator::addMessageHeartbeatFrag(CDRMessage_t* msg, const GuidPr
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageHeartbeatFrag(CDRMessage_t* msg, const EntityId_t& readerId,
-        const EntityId_t& writerId, SequenceNumber_t& firstSN, FragmentNumber_t& lastFN, Count_t count)
+bool RTPSMessageCreator::addSubmessageHeartbeatFrag(
+        CDRMessage_t* msg,
+        const EntityId_t& readerId,
+        const EntityId_t& writerId,
+        SequenceNumber_t& firstSN,
+        FragmentNumber_t& lastFN,
+        Count_t count)
 {
-    CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg();
-    CDRMessage::initCDRMsg(&submsgElem);
-
     octet flags = 0x0;
+    Endianness_t old_endianess = msg->msg_endian;
 #if __BIG_ENDIAN__
-    submsgElem.msg_endian = BIGEND;
+    msg->msg_endian = BIGEND;
 #else
     flags = flags | BIT(0);
-    submsgElem.msg_endian = LITTLEEND;
+    msg->msg_endian = LITTLEEND;
 #endif
 
-    CDRMessage::addEntityId(&submsgElem, &readerId);
-    CDRMessage::addEntityId(&submsgElem, &writerId);
-    //Add Sequence Number
-    CDRMessage::addSequenceNumber(&submsgElem, &firstSN);
-    CDRMessage::addUInt32(&submsgElem, (uint32_t)lastFN);
-    CDRMessage::addInt32(&submsgElem, (int32_t)count);
+    // Submessage header.
+    CDRMessage::addOctet(msg, HEARTBEAT_FRAG);
+    CDRMessage::addOctet(msg, flags);
+    uint32_t submessage_size_pos = msg->pos;
+    uint16_t submessage_size = 0;
+    CDRMessage::addUInt16(msg, submessage_size);
+    uint32_t position_size_count_size = msg->pos;
 
-    //Once the submessage elements are added, the header is created
-    RTPSMessageCreator::addSubmessageHeader(msg, HEARTBEAT_FRAG, flags, (uint16_t)submsgElem.length);
-    //Append Submessage elements to msg
-    //Append Submessage elements to msg
-    CDRMessage::appendMsg(msg, &submsgElem);
-    g_pool_submsg.release_CDRMsg(submsgElem);
+    CDRMessage::addEntityId(msg, &readerId);
+    CDRMessage::addEntityId(msg, &writerId);
+    //Add Sequence Number
+    CDRMessage::addSequenceNumber(msg, &firstSN);
+    CDRMessage::addUInt32(msg, (uint32_t)lastFN);
+    CDRMessage::addInt32(msg, (int32_t)count);
+
+    //TODO(Ricardo) Improve.
+    submessage_size = msg->pos - position_size_count_size;
+    octet* o= (octet*)&submessage_size;
+    if(msg->msg_endian == DEFAULT_ENDIAN)
+    {
+        msg->buffer[submessage_size_pos] = *(o);
+        msg->buffer[submessage_size_pos+1] = *(o+1);
+    }
+    else
+    {
+        msg->buffer[submessage_size_pos] = *(o+1);
+        msg->buffer[submessage_size_pos+1] = *(o);
+    }
+
+    msg->msg_endian = old_endianess;
+
     return true;
 }
 

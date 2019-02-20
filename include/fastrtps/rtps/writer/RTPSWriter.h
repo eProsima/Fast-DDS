@@ -97,9 +97,9 @@ class RTPSWriter : public Endpoint
     * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
     * @return True if acknowledged by all.
     */
-    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) const { return false; }
+    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) { return false; }
 
-    RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/){ return true; }
+    RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/) { return true; }
 
     /**
      * Update the Attributes of the Writer.
@@ -164,7 +164,9 @@ class RTPSWriter : public Endpoint
      */
     RTPS_DllAPI bool remove_older_changes(unsigned int max = 0);
 
-    virtual bool try_remove_change(std::chrono::microseconds& microseconds, std::unique_lock<std::recursive_mutex>& lock) = 0;
+    virtual bool try_remove_change(
+            std::chrono::microseconds& microseconds,
+            std::unique_lock<std::recursive_timed_mutex>& lock) = 0;
 
     /*
      * Adds a flow controller that will apply to this writer exclusively.

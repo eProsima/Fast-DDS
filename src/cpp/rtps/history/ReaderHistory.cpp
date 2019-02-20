@@ -67,7 +67,7 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && a_change->serializedPayload.length > m_att.payloadMaxSize)
     {
         logError(RTPS_HISTORY,
@@ -98,7 +98,7 @@ bool ReaderHistory::remove_change(CacheChange_t* a_change)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(a_change == nullptr)
     {
         logError(RTPS_HISTORY,"Pointer is not valid")
@@ -134,7 +134,7 @@ bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
     }
 
     {//Lock scope
-        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+        std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
         for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit!=m_changes.end();++chit)
         {
             bool matches = true;

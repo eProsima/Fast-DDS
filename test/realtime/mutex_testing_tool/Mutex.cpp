@@ -29,7 +29,7 @@ int pthread_mutex_lock(pthread_mutex_t* mutex)
 
     if (0 != pid)
     {
-        if (pid == GET_PID())
+        if (pid == GET_TID())
         {
             eprosima::fastrtps::tmutex_record_mutex_(eprosima::fastrtps::LockType::LOCK, mutex);
         }
@@ -49,7 +49,7 @@ int pthread_mutex_timedlock(pthread_mutex_t* mutex, const struct timespec* abs_t
 
     if (0 != pid)
     {
-        if (pid == GET_PID())
+        if (pid == GET_TID())
         {
             eprosima::fastrtps::tmutex_record_mutex_(eprosima::fastrtps::LockType::TIMED_LOCK, mutex);
         }

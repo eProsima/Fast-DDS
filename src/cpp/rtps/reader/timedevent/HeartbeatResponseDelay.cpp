@@ -71,7 +71,7 @@ void HeartbeatResponseDelay::event(
         logInfo(RTPS_READER,"");
 
         // Protect reader
-        std::lock_guard<std::recursive_mutex> guard(*mp_WP->mp_SFR->getMutex());
+        std::lock_guard<std::recursive_timed_mutex> guard(mp_WP->mp_SFR->getMutex());
 
         const std::vector<ChangeFromWriter_t> missing_changes = mp_WP->missing_changes();
         // Stores missing changes but there is some fragments received.

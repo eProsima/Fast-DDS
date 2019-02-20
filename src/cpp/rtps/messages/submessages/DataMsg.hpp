@@ -21,10 +21,17 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
-        GuidPrefix_t& guidprefix, const CacheChange_t* change,TopicKind_t topicKind,const EntityId_t& readerId,bool expectsInlineQos,InlineQosWriter* inlineQos)
+bool RTPSMessageCreator::addMessageData(
+        CDRMessage_t* msg,
+        GuidPrefix_t& guidprefix,
+        const CacheChange_t* change,
+        TopicKind_t topicKind,
+        const EntityId_t& readerId,
+        bool expectsInlineQos,
+        InlineQosWriter* inlineQos)
 {
-    try{
+    try
+    {
 
         RTPSMessageCreator::addHeader(msg,guidprefix);
 
@@ -40,29 +47,32 @@ bool RTPSMessageCreator::addMessageData(CDRMessage_t* msg,
 
             return false;
     }
+
     return true;
 }
 
-
-
-bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_t* change,
-        TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos, InlineQosWriter* inlineQos) {
-    CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)change->serializedPayload.length);
-    CDRMessage::initCDRMsg(&submsgElem);
-    //Create the two CDR msgs
-    //CDRMessage_t submsgElem;
+bool RTPSMessageCreator::addSubmessageData(
+        CDRMessage_t* msg,
+        const CacheChange_t* change,
+        TopicKind_t topicKind,
+        const EntityId_t& readerId,
+        bool expectsInlineQos,
+        InlineQosWriter* inlineQos)
+{
     octet flags = 0x0;
-#if __BIG_ENDIAN__
-    submsgElem.msg_endian = BIGEND;
-#else
-    flags = flags | BIT(0);
-    submsgElem.msg_endian = LITTLEEND;
-#endif
-
     //Find out flags
     bool dataFlag = false;
     bool keyFlag = false;
     bool inlineQosFlag = false;
+
+    Endianness_t old_endianess = msg->msg_endian;
+#if __BIG_ENDIAN__
+    msg->msg_endian = BIGEND;
+#else
+    flags = flags | BIT(0);
+    msg->msg_endian = LITTLEEND;
+#endif
+
     if(change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data!=NULL)
     {
         dataFlag = true;
@@ -110,20 +120,26 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
         status = status | BIT(1);
     }
 
-    // TODO Check, because I saw init the message two times (other on RTPSMessageGroup::prepareDataSubM)
-    CDRMessage::initCDRMsg(&submsgElem);
     bool added_no_error = true;
-    try{
-        //First we create the submsgElements:
+    try
+    {
+        // Submessage header.
+        CDRMessage::addOctet(msg, DATA);
+        CDRMessage::addOctet(msg, flags);
+        uint32_t submessage_size_pos = msg->pos;
+        uint16_t submessage_size = 0;
+        CDRMessage::addUInt16(msg, submessage_size);
+        uint32_t position_size_count_size = msg->pos;
+
         //extra flags. not in this version.
-        added_no_error &= CDRMessage::addUInt16(&submsgElem,0);
+        added_no_error &= CDRMessage::addUInt16(msg, 0);
         //octet to inline Qos is 12, may change in future versions
-        added_no_error &= CDRMessage::addUInt16(&submsgElem,RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
+        added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
         //Entity ids
-        added_no_error &= CDRMessage::addEntityId(&submsgElem,&readerId);
-        added_no_error &= CDRMessage::addEntityId(&submsgElem,&change->writerGUID.entityId);
+        added_no_error &= CDRMessage::addEntityId(msg, &readerId);
+        added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
         //Add Sequence Number
-        added_no_error &= CDRMessage::addSequenceNumber(&submsgElem,&change->sequenceNumber);
+        added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
         //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
 
 
@@ -131,46 +147,54 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
         {
             if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
             {
-                CDRMessage::addParameterSampleIdentity(&submsgElem, change->write_params.related_sample_identity());
+                CDRMessage::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
             }
 
             if(topicKind == WITH_KEY)
             {
                 //cout << "ADDDING PARAMETER KEY " << endl;
-                CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
+                CDRMessage::addParameterKey(msg, &change->instanceHandle);
             }
 
             if(change->kind != ALIVE)
-                CDRMessage::addParameterStatus(&submsgElem,status);
+            {
+                CDRMessage::addParameterStatus(msg, status);
+            }
 
             if (inlineQos != nullptr)
-                inlineQos->writeQosToCDRMessage(&submsgElem);
+            {
+                inlineQos->writeQosToCDRMessage(msg);
+            }
 
-            CDRMessage::addParameterSentinel(&submsgElem);
+            CDRMessage::addParameterSentinel(msg);
         }
 
         //Add Serialized Payload
         if(dataFlag)
-            added_no_error &= CDRMessage::addData(&submsgElem, change->serializedPayload.data, change->serializedPayload.length);
+            added_no_error &= CDRMessage::addData(msg, change->serializedPayload.data, change->serializedPayload.length);
 
         if(keyFlag)
         {
-            added_no_error &= CDRMessage::addOctet(&submsgElem,0); //ENCAPSULATION
-            if(submsgElem.msg_endian == BIGEND)
-                added_no_error &= CDRMessage::addOctet(&submsgElem,PL_CDR_BE); //ENCAPSULATION
+            added_no_error &= CDRMessage::addOctet(msg, 0); //ENCAPSULATION
+            if(msg->msg_endian == BIGEND)
+            {
+                added_no_error &= CDRMessage::addOctet(msg, PL_CDR_BE); //ENCAPSULATION
+            }
             else
-                added_no_error &= CDRMessage::addOctet(&submsgElem,PL_CDR_LE); //ENCAPSULATION
+            {
+                added_no_error &= CDRMessage::addOctet(msg, PL_CDR_LE); //ENCAPSULATION
+            }
 
-            added_no_error &= CDRMessage::addUInt16(&submsgElem,0); //ENCAPSULATION OPTIONS
-            added_no_error &= CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
-            added_no_error &= CDRMessage::addParameterStatus(&submsgElem,status);
-            added_no_error &= CDRMessage::addParameterSentinel(&submsgElem);
+            added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
+            added_no_error &= CDRMessage::addParameterKey(msg, &change->instanceHandle);
+            added_no_error &= CDRMessage::addParameterStatus(msg, status);
+            added_no_error &= CDRMessage::addParameterSentinel(msg);
         }
 
         // Align submessage to rtps alignment (4).
-        uint32_t align = (4 - submsgElem.pos % 4) & 3;
+        uint32_t align = (4 - msg->pos % 4) & 3;
         for(uint32_t count = 0; count < align; ++count)
-            added_no_error &= CDRMessage::addOctet(&submsgElem, 0);
+            added_no_error &= CDRMessage::addOctet(msg, 0);
 
         //if(align > 0)
         {
@@ -178,12 +202,22 @@ bool RTPSMessageCreator::addSubmessageData(CDRMessage_t* msg, const CacheChange_
             //submsgElem.length += align;
         }
 
-        //Once the submessage elements are added, the submessage header is created, assigning the correct size.
-        added_no_error &= RTPSMessageCreator::addSubmessageHeader(msg, DATA,flags, (uint16_t)submsgElem.length);
-        //Append Submessage elements to msg
 
-        added_no_error &= CDRMessage::appendMsg(msg, &submsgElem);
-        g_pool_submsg.release_CDRMsg(submsgElem);
+        //TODO(Ricardo) Improve.
+        submessage_size = msg->pos - position_size_count_size;
+        octet* o= (octet*)&submessage_size;
+        if(msg->msg_endian == DEFAULT_ENDIAN)
+        {
+            msg->buffer[submessage_size_pos] = *(o);
+            msg->buffer[submessage_size_pos+1] = *(o+1);
+        }
+        else
+        {
+            msg->buffer[submessage_size_pos] = *(o+1);
+            msg->buffer[submessage_size_pos+1] = *(o);
+        }
+
+        msg->msg_endian = old_endianess;
     }
     catch(int t){
         logError(RTPS_CDR_MSG,"Data SUBmessage not created"<<t<<endl)
@@ -234,25 +268,29 @@ bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& gui
 
 
 
-bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheChange_t* change, uint32_t fragment_number,
-        uint32_t sample_size, TopicKind_t topicKind, const EntityId_t& readerId, bool expectsInlineQos,
+bool RTPSMessageCreator::addSubmessageDataFrag(
+        CDRMessage_t* msg,
+        const CacheChange_t* change,
+        uint32_t fragment_number,
+        uint32_t sample_size,
+        TopicKind_t topicKind,
+        const EntityId_t& readerId,
+        bool expectsInlineQos,
         InlineQosWriter* inlineQos)
 {
-    CDRMessage_t& submsgElem = g_pool_submsg.reserve_CDRMsg((uint16_t)change->serializedPayload.length);
-    CDRMessage::initCDRMsg(&submsgElem);
-    //Create the two CDR msgs
-    //CDRMessage_t submsgElem;
     octet flags = 0x0;
-#if __BIG_ENDIAN__
-    submsgElem.msg_endian = BIGEND;
-#else
-    flags = flags | BIT(0);
-    submsgElem.msg_endian = LITTLEEND;
-#endif
-
     //Find out flags
     bool keyFlag = false;
     bool inlineQosFlag = false;
+
+    Endianness_t old_endianess = msg->msg_endian;
+#if __BIG_ENDIAN__
+    msg->msg_endian = BIGEND;
+#else
+    flags = flags | BIT(0);
+    msg->msg_endian = LITTLEEND;
+#endif
+
     if (change->kind == ALIVE && change->serializedPayload.length>0 && change->serializedPayload.data != NULL)
     {
         keyFlag = false;
@@ -298,60 +336,73 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
         status = status | BIT(1);
     }
 
-    // TODO Check, because I saw init the message two times (other on RTPSMessageGroup::prepareDataSubM)
-    CDRMessage::initCDRMsg(&submsgElem);
     bool added_no_error = true;
 
     try
     {
-        //First we create the submsgElements:
+        // Submessage header.
+        CDRMessage::addOctet(msg, DATA_FRAG);
+        CDRMessage::addOctet(msg, flags);
+        uint32_t submessage_size_pos = msg->pos;
+        uint16_t submessage_size = 0;
+        CDRMessage::addUInt16(msg, submessage_size);
+        uint32_t position_size_count_size = msg->pos;
+
         //extra flags. not in this version.
-        added_no_error &= CDRMessage::addUInt16(&submsgElem, 0);
+        added_no_error &= CDRMessage::addUInt16(msg, 0);
 
         //octet to inline Qos is 28, may change in future versions
-        added_no_error &= CDRMessage::addUInt16(&submsgElem, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
+        added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
 
         //Entity ids
-        added_no_error &= CDRMessage::addEntityId(&submsgElem, &readerId);
-        added_no_error &= CDRMessage::addEntityId(&submsgElem, &change->writerGUID.entityId);
+        added_no_error &= CDRMessage::addEntityId(msg, &readerId);
+        added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
 
         //Add Sequence Number
-        added_no_error &= CDRMessage::addSequenceNumber(&submsgElem, &change->sequenceNumber);
+        added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
 
         // Add fragment starting number
-        added_no_error &= CDRMessage::addUInt32(&submsgElem, fragment_number); // fragments start in 1
+        added_no_error &= CDRMessage::addUInt32(msg, fragment_number); // fragments start in 1
 
         // Add fragments in submessage
-        added_no_error &= CDRMessage::addUInt16(&submsgElem, 1); // we are sending one fragment
+        added_no_error &= CDRMessage::addUInt16(msg, 1); // we are sending one fragment
 
         // Add fragment size
-        added_no_error &= CDRMessage::addUInt16(&submsgElem, change->getFragmentSize());
+        added_no_error &= CDRMessage::addUInt16(msg, change->getFragmentSize());
 
         // Add total sample size
-        added_no_error &= CDRMessage::addUInt32(&submsgElem, sample_size); //TODO(Ricardo) Sample size in CacheChange
+        added_no_error &= CDRMessage::addUInt32(msg, sample_size); //TODO(Ricardo) Sample size in CacheChange
 
         //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
         if (inlineQosFlag) //inlineQoS
         {
             if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
-                CDRMessage::addParameterSampleIdentity(&submsgElem, change->write_params.related_sample_identity());
+            {
+                CDRMessage::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
+            }
 
             if(topicKind == WITH_KEY)
-                CDRMessage::addParameterKey(&submsgElem,&change->instanceHandle);
+            {
+                CDRMessage::addParameterKey(msg,&change->instanceHandle);
+            }
 
             if(change->kind != ALIVE)
-                CDRMessage::addParameterStatus(&submsgElem,status);
+            {
+                CDRMessage::addParameterStatus(msg,status);
+            }
 
             if (inlineQos != nullptr)
-                inlineQos->writeQosToCDRMessage(&submsgElem);
+            {
+                inlineQos->writeQosToCDRMessage(msg);
+            }
 
-            CDRMessage::addParameterSentinel(&submsgElem);
+            CDRMessage::addParameterSentinel(msg);
         }
 
         //Add Serialized Payload XXX TODO
         if (!keyFlag) // keyflag = 0 means that the serializedPayload SubmessageElement contains the serialized Data 
         {
-            added_no_error &= CDRMessage::addData(&submsgElem, change->serializedPayload.data,
+            added_no_error &= CDRMessage::addData(msg, change->serializedPayload.data,
                     change->serializedPayload.length);
         }
         else
@@ -368,22 +419,31 @@ bool RTPSMessageCreator::addSubmessageDataFrag(CDRMessage_t* msg, const CacheCha
                added_no_error &= CDRMessage::addParameterStatus(&submsgElem, status);
                added_no_error &= CDRMessage::addParameterSentinel(&submsgElem);
                */
+            msg->msg_endian = old_endianess;
             return false;
         }
 
         // TODO(Ricardo) This should be on cachechange.
         // Align submessage to rtps alignment (4).
-        uint32_t align = (4 - submsgElem.pos % 4) & 3;
+        uint32_t align = (4 - msg->pos % 4) & 3;
         for (uint32_t count = 0; count < align; ++count)
-            added_no_error &= CDRMessage::addOctet(&submsgElem, 0);
+            added_no_error &= CDRMessage::addOctet(msg, 0);
 
-        //Once the submessage elements are added, the submessage header is created, assigning the correct size.
-        added_no_error &= RTPSMessageCreator::addSubmessageHeader(msg, DATA_FRAG, flags, (uint16_t)submsgElem.length);
+        //TODO(Ricardo) Improve.
+        submessage_size = msg->pos - position_size_count_size;
+        octet* o= (octet*)&submessage_size;
+        if(msg->msg_endian == DEFAULT_ENDIAN)
+        {
+            msg->buffer[submessage_size_pos] = *(o);
+            msg->buffer[submessage_size_pos+1] = *(o+1);
+        }
+        else
+        {
+            msg->buffer[submessage_size_pos] = *(o+1);
+            msg->buffer[submessage_size_pos+1] = *(o);
+        }
 
-        //Append Submessage elements to msg
-        added_no_error &= CDRMessage::appendMsg(msg, &submsgElem);
-        g_pool_submsg.release_CDRMsg(submsgElem);
-
+        msg->msg_endian = old_endianess;
     }
     catch (int t){
         logError(RTPS_CDR_MSG, "Data SUBmessage not created" << t << endl)

@@ -74,7 +74,7 @@ void InitialAckNack::event(
         Count_t acknackCount = 0;
 
         {//BEGIN PROTECTION
-            std::lock_guard<std::recursive_mutex> guard_reader(*wp_->mp_SFR->getMutex());
+            std::lock_guard<std::recursive_timed_mutex> guard_reader(wp_->mp_SFR->getMutex());
             wp_->mp_SFR->m_acknackCount++;
             acknackCount = wp_->mp_SFR->m_acknackCount;
         }

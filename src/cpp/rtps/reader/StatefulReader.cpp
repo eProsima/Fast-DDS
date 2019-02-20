@@ -64,7 +64,7 @@ StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 
 bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
             it!=matched_writers.end();++it)
     {
@@ -94,7 +94,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
     WriterProxy *wproxy = nullptr;
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
     mp_history->remove_changes_with_guid(wdata.guid);
@@ -126,7 +126,7 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata, bool deleteWP)
 {
     WriterProxy *wproxy = nullptr;
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
     mp_history->remove_changes_with_guid(wdata.guid);
@@ -157,7 +157,7 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata, 
 
 bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
     {
         if((*it)->m_att.guid == wdata.guid)
@@ -173,7 +173,7 @@ bool StatefulReader::matched_writer_lookup(const GUID_t& writerGUID, WriterProxy
 {
     assert(WP);
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     bool returnedValue = findWriterProxy(writerGUID, WP);
 
@@ -210,7 +210,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
@@ -256,7 +256,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             }
 
             // Assertion has to be done before call change_received,
-            // because this function can unlock the StatefulReader mutex.
+            // because this function can unlock the StatefulReader timed_mutex.
             if(pWP != nullptr)
             {
                 pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
@@ -284,7 +284,7 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
 
     assert(incomingChange);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
     {
@@ -354,7 +354,7 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
 {
     WriterProxy *pWP = nullptr;
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     if(acceptMsgFrom(writerGUID, &pWP))
     {
@@ -402,7 +402,7 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
 {
     WriterProxy *pWP = nullptr;
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     if(acceptMsgFrom(writerGUID, &pWP))
     {
@@ -444,7 +444,7 @@ bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
 
 bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterProxy* wp)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
     {
@@ -530,7 +530,7 @@ void StatefulReader::NotifyChanges(WriterProxy* prox)
 
 bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     std::vector<CacheChange_t*> toremove;
     bool takeok = false;
     for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
@@ -587,7 +587,7 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
 // TODO Porque elimina aqui y no cuando hay unpairing
 bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     std::vector<CacheChange_t*> toremove;
     bool readok = false;
     for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
@@ -646,7 +646,7 @@ bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
 
 bool StatefulReader::updateTimes(const ReaderTimes& ti)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)
     {
         m_times = ti;
@@ -659,10 +659,10 @@ bool StatefulReader::updateTimes(const ReaderTimes& ti)
     return true;
 }
 
-bool StatefulReader::isInCleanState() const
+bool StatefulReader::isInCleanState()
 {
     bool cleanState = true;
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     for (WriterProxy* wp : matched_writers)
     {

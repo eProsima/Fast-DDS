@@ -133,7 +133,7 @@ public:
      */
     bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) override;
 
-    bool is_acked_by_all(const CacheChange_t* a_change) const override;
+    bool is_acked_by_all(const CacheChange_t* a_change) override;
 
     bool wait_for_all_acked(const Duration_t& max_wait) override;
 
@@ -143,7 +143,7 @@ public:
      */
     bool try_remove_change(
             std::chrono::microseconds& microseconds,
-            std::unique_lock<std::recursive_mutex>& lock) override;
+            std::unique_lock<std::recursive_timed_mutex>& lock) override;
 
     /**
      * Update the Attributes of the Writer.

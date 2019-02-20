@@ -726,9 +726,9 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
-        (*wit)->getMutex()->lock();
+        (*wit)->getMutex().lock();
         GUID_t writerGUID = (*wit)->getGuid();
-        (*wit)->getMutex()->unlock();
+        (*wit)->getMutex().unlock();
         ParticipantProxyData wpdata;
         WriterProxyData wdata;
         if(mp_PDP->lookupWriterProxyData(writerGUID, wdata, wpdata))
@@ -793,9 +793,9 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
-        (*wit)->getMutex()->lock();
+        (*wit)->getMutex().lock();
         GUID_t writerGUID = (*wit)->getGuid();
-        (*wit)->getMutex()->unlock();
+        (*wit)->getMutex().unlock();
 
         if(local_writer == writerGUID)
         {
@@ -845,9 +845,9 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(const GUID_t& l
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
-        (*wit)->getMutex()->lock();
+        (*wit)->getMutex().lock();
         GUID_t writerGUID = (*wit)->getGuid();
-        (*wit)->getMutex()->unlock();
+        (*wit)->getMutex().unlock();
 
         if(local_writer == writerGUID)
         {
@@ -886,9 +886,9 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         GUID_t readerGUID;
-        (*rit)->getMutex()->lock();
+        (*rit)->getMutex().lock();
         readerGUID = (*rit)->getGuid();
-        (*rit)->getMutex()->unlock();
+        (*rit)->getMutex().unlock();
         ParticipantProxyData rpdata;
         ReaderProxyData rdata;
         if(mp_PDP->lookupReaderProxyData(readerGUID, rdata, rpdata))
@@ -953,9 +953,9 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         GUID_t readerGUID;
-        (*rit)->getMutex()->lock();
+        (*rit)->getMutex().lock();
         readerGUID = (*rit)->getGuid();
-        (*rit)->getMutex()->unlock();
+        (*rit)->getMutex().unlock();
 
         if(local_reader == readerGUID)
         {
@@ -1005,9 +1005,9 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
     {
         GUID_t readerGUID;
-        (*rit)->getMutex()->lock();
+        (*rit)->getMutex().lock();
         readerGUID = (*rit)->getGuid();
-        (*rit)->getMutex()->unlock();
+        (*rit)->getMutex().unlock();
 
         if(local_reader == readerGUID)
         {

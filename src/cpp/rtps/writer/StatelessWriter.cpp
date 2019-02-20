@@ -93,7 +93,7 @@ bool StatelessWriter::has_builtin_guid()
 // TODO(Ricardo) Look for other functions
 void StatelessWriter::unsent_change_added_to_history(CacheChange_t* change)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     if (!mAllShrinkedLocatorList.empty())
     {
@@ -113,7 +113,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* change)
                     guids.at(0) = it.guid;
                     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
                         it.endpoint.unicastLocatorList, guids);
-                    
+
                     if (!group.add_data(*change, guids, it.endpoint.unicastLocatorList, it.expectsInlineQos))
                     {
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
@@ -154,7 +154,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* change)
 
 bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     unsent_changes_.remove_if(
         [change](ChangeForReader_t& cptr)
@@ -166,12 +166,12 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
     return true;
 }
 
-bool StatelessWriter::is_acked_by_all(const CacheChange_t* change) const
+bool StatelessWriter::is_acked_by_all(const CacheChange_t* change)
 {
     // Only asynchronous writers may have unacked (i.e. unsent changes)
     if (isAsync())
     {
-        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+        std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
         // Return false if change is pending to be sent
         auto it = std::find_if(unsent_changes_.begin(),
@@ -217,7 +217,7 @@ void StatelessWriter::update_unsent_changes(
 void StatelessWriter::send_any_unsent_changes()
 {
     //TODO(Mcc) Separate sending for asynchronous writers
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     ReaderLocator tmp;
     RTPSWriterCollector<ReaderLocator*> changesToSend;
@@ -288,7 +288,7 @@ void StatelessWriter::send_any_unsent_changes()
 
 bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attributes)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     std::vector<LocatorList_t> allLocatorLists;
     bool addGuid = !has_builtin_guid();
@@ -345,7 +345,7 @@ bool StatelessWriter::set_fixed_locators(const LocatorList_t& locator_list)
     }
 #endif
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     for (const Locator_t& input_locator : locator_list)
     {
@@ -368,7 +368,7 @@ void StatelessWriter::update_locators_nts()
 
 bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& reader_attributes)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     bool found = matched_readers_.remove_if(reader_attributes.compare_guid_function());
     if (found)
@@ -399,13 +399,13 @@ bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& reader
 
 bool StatelessWriter::matched_reader_is_matched(const RemoteReaderAttributes& reader_attributes)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     return std::any_of(matched_readers_.begin(), matched_readers_.end(), reader_attributes.compare_guid_function());
 }
 
 void StatelessWriter::unsent_changes_reset()
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
     unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
     AsyncWriterThread::wakeUp(this);
