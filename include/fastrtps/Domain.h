@@ -21,6 +21,7 @@
 #define DOMAIN_H_
 
 #include "attributes/ParticipantAttributes.h"
+#include <mutex>
 
 namespace eprosima{
 namespace fastrtps{
@@ -58,16 +59,18 @@ public:
      * @param listen ParticipantListener Pointer.
      * @return Participant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI static Participant* createParticipant(const std::string &participant_profile,
-                                                      ParticipantListener *listen = nullptr);
+    RTPS_DllAPI static Participant* createParticipant(
+        const std::string& participant_profile,
+        ParticipantListener* listen = nullptr);
     /**
      * Create a Participant.
      * @param att Participant Attributes.
      * @param listen ParticipantListener Pointer.
      * @return Participant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI static Participant* createParticipant(ParticipantAttributes &att,
-                                                      ParticipantListener *listen = nullptr);
+    RTPS_DllAPI static Participant* createParticipant(
+        const ParticipantAttributes& att,
+        ParticipantListener* listen = nullptr);
 
     RTPS_DllAPI static void getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes);
 
@@ -78,9 +81,10 @@ public:
      * @param listen Pointer to the PublisherListener.
      * @return Pointer to the created Publisher (nullptr if not created).
      */
-    RTPS_DllAPI static Publisher* createPublisher(Participant *part,
-                                                  const std::string &publisher_profile,
-                                                  PublisherListener *listen = nullptr);
+    RTPS_DllAPI static Publisher* createPublisher(
+        Participant* part,
+        const std::string& publisher_profile,
+        PublisherListener* listen = nullptr);
 
     /**
      * Create a Publisher in a Participant.
@@ -89,9 +93,10 @@ public:
      * @param listen Pointer to the PublisherListener.
      * @return Pointer to the created Publisher (nullptr if not created).
      */
-    RTPS_DllAPI static Publisher* createPublisher(Participant *part,
-                                                  PublisherAttributes &att,
-                                                  PublisherListener *listen = nullptr);
+    RTPS_DllAPI static Publisher* createPublisher(
+        Participant* part,
+        const PublisherAttributes& att,
+        PublisherListener* listen = nullptr);
 
     RTPS_DllAPI static void getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes);
 
@@ -102,9 +107,11 @@ public:
      * @param listen Pointer to the SubscriberListener.
      * @return Pointer to the created Subscriber (nullptr if not created).
      */
-    RTPS_DllAPI static Subscriber* createSubscriber(Participant *part,
-                                                    const std::string &subscriber_profile,
-                                                    SubscriberListener *listen = nullptr);
+    RTPS_DllAPI static Subscriber* createSubscriber(
+        Participant* part,
+        const std::string& subscriber_profile,
+        SubscriberListener* listen = nullptr);
+
     /**
      * Create a Subscriber in a Participant.
      * @param part Pointer to the participant where you want to create the Publisher.
@@ -112,9 +119,10 @@ public:
      * @param listen Pointer to the SubscriberListener.
      * @return Pointer to the created Subscriber (nullptr if not created).
      */
-    RTPS_DllAPI static Subscriber* createSubscriber(Participant *part,
-                                                    SubscriberAttributes &att,
-                                                    SubscriberListener *listen = nullptr);
+    RTPS_DllAPI static Subscriber* createSubscriber(
+        Participant* part,
+        const SubscriberAttributes& att,
+        SubscriberListener* listen = nullptr);
 
     RTPS_DllAPI static void getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes);
 
@@ -144,7 +152,10 @@ public:
      * @param type Returned type.
      * @return True if type was found.
      */
-    RTPS_DllAPI static bool getRegisteredType(Participant* part, const char* typeName, TopicDataType** type);
+    RTPS_DllAPI static bool getRegisteredType(
+        Participant* part,
+        const char* typeName,
+        TopicDataType** type);
 
     /**
      * Register a type in a participant.
@@ -160,7 +171,9 @@ public:
      * @param type Pointer to the Type.
      * @return True if correctly registered.
      */
-    RTPS_DllAPI static bool registerDynamicType(Participant* part, types::DynamicPubSubType* type);
+    RTPS_DllAPI static bool registerDynamicType(
+        Participant* part,
+        types::DynamicPubSubType* type);
 
     /**
      * Unregister a type in a participant.
@@ -168,7 +181,9 @@ public:
      * @param typeName Name of the type.
      * @return True if correctly unregistered.
      */
-    RTPS_DllAPI static bool unregisterType(Participant* part, const char* typeName);
+    RTPS_DllAPI static bool unregisterType(
+        Participant* part,
+        const char* typeName);
 
     /**
      * Stop and remove all participants, publishers and subscribers in this Domain.
@@ -180,10 +195,11 @@ public:
      * @param xml_profile_file XML profile file.
      * @return True if correctly loaded.
      */
-    RTPS_DllAPI static bool loadXMLProfilesFile(const std::string &xml_profile_file);
+    RTPS_DllAPI static bool loadXMLProfilesFile(const std::string& xml_profile_file);
 
 private:
 
+    static std::mutex m_mutex;
     static std::vector<t_p_Participant> m_participants;
     static bool default_xml_profiles_loaded;
 

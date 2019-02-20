@@ -35,26 +35,35 @@ class ReaderProxy;
  * NackResponseDelay class use to delay the response to an NACK message.
  * @ingroup WRITER_MODULE
  */
-class NackResponseDelay:public TimedEvent {
-public:
-	/**
-	*
-	* @param p_RP
-	* @param intervalmillisec
-	*/
-	NackResponseDelay(ReaderProxy* p_RP,double intervalmillisec);
-	virtual ~NackResponseDelay();
+class NackResponseDelay:public TimedEvent
+{
+    public:
 
-	/**
-	* Method invoked when the event occurs
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
+        /*!
+         *
+         * @param[in] writer Writer which creates this event.
+         * @param[in] interval_millisec Interval of the event in milliseconds.
+         */
+        NackResponseDelay(
+                StatefulWriter* writer,
+                double interval_millisec);
 
-	//!Associated reader proxy
-	ReaderProxy* mp_RP;
+        virtual ~NackResponseDelay();
+
+        /*!
+         * Method invoked when the event occurs
+         *
+         * @param code Code representing the status of the event
+         * @param msg Message associated to the event
+         */
+        void event(
+                EventCode code,
+                const char* msg= nullptr);
+
+    private:
+
+        //!Associated writer
+        StatefulWriter* writer_;
 };
 }
 }

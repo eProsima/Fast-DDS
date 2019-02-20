@@ -277,6 +277,14 @@ bool NetworkFactory::fillDefaultUnicastLocator(Locator_t &locator, const RTPSPar
     return result;
 }
 
+void NetworkFactory::Shutdown()
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        transport->Shutdown();
+    }
+}
+
 uint16_t NetworkFactory::calculateWellKnownPort(const RTPSParticipantAttributes& att) const
 {
     return static_cast<uint16_t>(att.port.portBase +

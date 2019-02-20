@@ -134,6 +134,11 @@ class NetworkFactory
          * */
         bool fillDefaultUnicastLocator(Locator_t &locator, const RTPSParticipantAttributes& m_att) const;
 
+        /**
+         * Shutdown method to close the connections of the transports.
+        */
+        void Shutdown();
+
     private:
 
         std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;

@@ -253,6 +253,10 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(const std::string& sIp,
     if (is_multicast)
     {
         getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address(true));
+#if defined(__QNX__)
+        getSocketPtr(socket)->set_option(asio::detail::socket_option::boolean<
+            ASIO_OS_DEF(SOL_SOCKET), SO_REUSEPORT>(true));
+#endif
     }
 
     getSocketPtr(socket)->bind(GenerateEndpoint(sIp, port));
@@ -474,7 +478,7 @@ void UDPv4Transport::SetSendBufferSize(uint32_t size)
     mConfiguration_.sendBufferSize = size;
 }
 
-void UDPv4Transport::SetSocketOutbountInterface(eProsimaUDPSocket& socket, const std::string& sIp)
+void UDPv4Transport::SetSocketOutboundInterface(eProsimaUDPSocket& socket, const std::string& sIp)
 {
 	getSocketPtr(socket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string(sIp)));
 }

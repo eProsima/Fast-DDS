@@ -59,28 +59,29 @@ class EDPSimple : public EDP
     //!Discovery attributes.
     BuiltinAttributes m_discovery;
     //!Pointer to the Publications Writer (only created if indicated in the DiscoveryAtributes).
-    t_p_StatefulWriter mp_PubWriter;
+    t_p_StatefulWriter publications_writer_;
     //!Pointer to the Subscriptions Writer (only created if indicated in the DiscoveryAtributes).
-    t_p_StatefulWriter mp_SubWriter;
+    t_p_StatefulWriter subscriptions_writer_;
     //!Pointer to the Publications Reader (only created if indicated in the DiscoveryAtributes).
-    t_p_StatefulReader mp_PubReader;
+    t_p_StatefulReader publications_reader_;
     //!Pointer to the Subscriptions Reader (only created if indicated in the DiscoveryAtributes).
-    t_p_StatefulReader mp_SubReader;
+    t_p_StatefulReader subscriptions_reader_;
 
 #if HAVE_SECURITY
-    t_p_StatefulWriter sedp_builtin_publications_secure_writer_;
+    t_p_StatefulWriter publications_secure_writer_;
 
-    t_p_StatefulReader sedp_builtin_publications_secure_reader_;
+    t_p_StatefulReader publications_secure_reader_;
 
-    t_p_StatefulWriter sedp_builtin_subscriptions_secure_writer_;
+    t_p_StatefulWriter subscriptions_secure_writer_;
 
-    t_p_StatefulReader sedp_builtin_subscriptions_secure_reader_;
+    t_p_StatefulReader subscriptions_secure_reader_;
 #endif
 
-    //!Pointer to the ReaderListener associated with PubReader
-    EDPSimplePUBListener* mp_pubListen;
-    //!Pointer to the ReaderListener associated with SubReader
-    EDPSimpleSUBListener* mp_subListen;
+    //!Pointer to the listener associated with PubReader and PubWriter.
+    EDPSimplePUBListener* publications_listener_;
+
+    //!Pointer to the listener associated with SubReader and SubWriter.
+    EDPSimpleSUBListener* subscriptions_listener_;
 
     /**
      * Initialization method.

@@ -36,18 +36,21 @@ namespace eprosima {
 namespace fastrtps {
 
 
-SubscriberImpl::SubscriberImpl(ParticipantImpl* p,TopicDataType* ptype,
-        SubscriberAttributes& att,SubscriberListener* listen):
-    mp_participant(p),
-    mp_reader(nullptr),
-    mp_type(ptype),
-    m_att(att),
+SubscriberImpl::SubscriberImpl(
+        ParticipantImpl* p,
+        TopicDataType* ptype,
+        const SubscriberAttributes& att,
+        SubscriberListener* listen)
+    : mp_participant(p)
+    , mp_reader(nullptr)
+    , mp_type(ptype)
+    , m_att(att)
 #pragma warning (disable : 4355 )
-    m_history(this,ptype->m_typeSize  + 3/*Possible alignment*/, att.topic.historyQos, att.topic.resourceLimitsQos,att.historyMemoryPolicy),
-    mp_listener(listen),
-    m_readerListener(this),
-    mp_userSubscriber(nullptr),
-    mp_rtpsParticipant(nullptr)
+    , m_history(this,ptype->m_typeSize  + 3/*Possible alignment*/, att.topic.historyQos, att.topic.resourceLimitsQos,att.historyMemoryPolicy)
+    , mp_listener(listen)
+    , m_readerListener(this)
+    , mp_userSubscriber(nullptr)
+    , mp_rtpsParticipant(nullptr)
     {
 
     }

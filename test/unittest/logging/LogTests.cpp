@@ -25,22 +25,21 @@
 using namespace eprosima::fastrtps;
 using namespace std;
 
-class LogTests: public ::testing::Test 
+class LogTests: public ::testing::Test
 {
    public:
-   LogTests() 
+   LogTests()
    {
-      std::unique_ptr<MockConsumer> consumer(new MockConsumer);
-      std::unique_ptr<StdoutConsumer> defaultConsumer(new StdoutConsumer);
-      mockConsumer = consumer.get();
-      Log::RegisterConsumer(std::move(consumer));
-      Log::SetVerbosity(Log::Info);
+       mockConsumer = new MockConsumer();
+
+       Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+       Log::SetVerbosity(Log::Info);
    }
 
    ~LogTests()
    {
-      Log::Reset();
-      Log::KillThread();
+       Log::Reset();
+       Log::KillThread();
    }
 
    MockConsumer* mockConsumer;
@@ -53,108 +52,108 @@ class LogTests: public ::testing::Test
 
 TEST_F(LogTests, asynchronous_logging)
 {
-   logError(SampleCategory, "Sample error message");
-   logWarning(SampleCategory, "Sample warning message");
-   logWarning(DifferentCategory, "Sample warning message in another category");
+    logError(SampleCategory, "Sample error message");
+    logWarning(SampleCategory, "Sample warning message");
+    logWarning(DifferentCategory, "Sample warning message in another category");
 
-   auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(3u, consumedEntries.size());
+    auto consumedEntries = HELPER_WaitForEntries(3);
+    ASSERT_EQ(3u, consumedEntries.size());
 }
 
 TEST_F(LogTests, reporting_options)
 {
-   // moving away from the defaults
-   Log::ReportFilenames(true);
-   Log::ReportFunctions(false);
+    // moving away from the defaults
+    Log::ReportFilenames(true);
+    Log::ReportFunctions(false);
 
-   logError(Reporting, "Error with different reporting options");
-   auto consumedEntries = HELPER_WaitForEntries(1);
-   ASSERT_EQ(1u, consumedEntries.size());
-   
-   auto entry = consumedEntries.back();
-   ASSERT_NE(entry.context.filename, nullptr);
-   ASSERT_EQ(entry.context.function, nullptr);
+    logError(Reporting, "Error with different reporting options");
+    auto consumedEntries = HELPER_WaitForEntries(1);
+    ASSERT_EQ(1u, consumedEntries.size());
+
+    auto entry = consumedEntries.back();
+    ASSERT_NE(entry.context.filename, nullptr);
+    ASSERT_EQ(entry.context.function, nullptr);
 }
 
 TEST_F(LogTests, multithreaded_logging)
 {
-   vector<unique_ptr<thread>> threads;
-   for (int i = 0; i != 5; i++)
-   {
-      threads.emplace_back(new thread([i]{
-         logWarning(Multithread, "I'm thread " << i);
-      }));
-   }
+    vector<unique_ptr<thread>> threads;
+    for (int i = 0; i != 5; i++)
+    {
+        threads.emplace_back(new thread([i]{
+                    logWarning(Multithread, "I'm thread " << i);
+                    }));
+    }
 
-   for (auto& thread: threads) {
-      thread->join();
-   }
+    for (auto& thread: threads) {
+        thread->join();
+    }
 
-   auto consumedEntries = HELPER_WaitForEntries(5);
-   ASSERT_EQ(5u, consumedEntries.size());
+    auto consumedEntries = HELPER_WaitForEntries(5);
+    ASSERT_EQ(5u, consumedEntries.size());
 }
 
 TEST_F(LogTests, regex_category_filtering)
 {
-   Log::SetCategoryFilter(std::regex("(Good)"));
-   logError(GoodCategory, "This should be logged because my regex filter allows for it");
-   logError(BadCategory, "If you're seeing this, something went wrong");
-   logWarning(EvenMoreGoodCategory, "This should be logged too!");
-   auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(2u, consumedEntries.size());
+    Log::SetCategoryFilter(std::regex("(Good)"));
+    logError(GoodCategory, "This should be logged because my regex filter allows for it");
+    logError(BadCategory, "If you're seeing this, something went wrong");
+    logWarning(EvenMoreGoodCategory, "This should be logged too!");
+    auto consumedEntries = HELPER_WaitForEntries(3);
+    ASSERT_EQ(2u, consumedEntries.size());
 }
 
 TEST_F(LogTests, multi_criteria_filtering_with_regex)
 {
-   Log::SetCategoryFilter(std::regex("(Good)"));
-   Log::SetFilenameFilter(std::regex("(LogTests)", std::regex_constants::icase));
-   Log::SetErrorStringFilter(std::regex("(Good)"));
-   Log::ReportFilenames(true); // For clarity, not necessary.
+    Log::SetCategoryFilter(std::regex("(Good)"));
+    Log::SetFilenameFilter(std::regex("(LogTests)", std::regex_constants::icase));
+    Log::SetErrorStringFilter(std::regex("(Good)"));
+    Log::ReportFilenames(true); // For clarity, not necessary.
 
-   logError(GoodCategory, "This should be logged because it contains the word \"Good\" in the "\
-      "error string and the category, and is in the right filename");
-   logError(BadCategory,  "Despite the word \"Good\" being here, this shouldn't be logged");
-   logError(GoodCategory, "And neither should this.");
-   auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(1u, consumedEntries.size());
+    logError(GoodCategory, "This should be logged because it contains the word \"Good\" in the "\
+            "error string and the category, and is in the right filename");
+    logError(BadCategory,  "Despite the word \"Good\" being here, this shouldn't be logged");
+    logError(GoodCategory, "And neither should this.");
+    auto consumedEntries = HELPER_WaitForEntries(3);
+    ASSERT_EQ(1u, consumedEntries.size());
 
-   Log::SetFilenameFilter(std::regex("(we shouldn't find this ever)"));
-   logError(GoodCategory,  "Despite the word \"Good\" being here, this shouldn't be logged because "\
-                           "the filename is all wrong");
+    Log::SetFilenameFilter(std::regex("(we shouldn't find this ever)"));
+    logError(GoodCategory,  "Despite the word \"Good\" being here, this shouldn't be logged because "\
+            "the filename is all wrong");
 
-   consumedEntries = HELPER_WaitForEntries(2);
-   ASSERT_EQ(1u, consumedEntries.size());
+    consumedEntries = HELPER_WaitForEntries(2);
+    ASSERT_EQ(1u, consumedEntries.size());
 }
 
 TEST_F(LogTests, multiple_verbosity_levels)
 {
-   Log::SetVerbosity(Log::Warning);
-   logError(VerbosityChecks, "This should be logged");
-   logWarning(VerbosityChecks, "This should be logged too!");
-   logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
-   auto consumedEntries = HELPER_WaitForEntries(3);
-   ASSERT_EQ(2u, consumedEntries.size());
+    Log::SetVerbosity(Log::Warning);
+    logError(VerbosityChecks, "This should be logged");
+    logWarning(VerbosityChecks, "This should be logged too!");
+    logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
+    auto consumedEntries = HELPER_WaitForEntries(3);
+    ASSERT_EQ(2u, consumedEntries.size());
 
-   Log::SetVerbosity(Log::Error);
-   logError(VerbosityChecks, "This should be logged");
-   logWarning(VerbosityChecks, "If you're seeing this, something went wrong");
-   logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
+    Log::SetVerbosity(Log::Error);
+    logError(VerbosityChecks, "This should be logged");
+    logWarning(VerbosityChecks, "If you're seeing this, something went wrong");
+    logInfo(VerbosityChecks, "If you're seeing this, something went wrong");
 
-   consumedEntries = HELPER_WaitForEntries(5);
-   ASSERT_EQ(3u, consumedEntries.size());
+    consumedEntries = HELPER_WaitForEntries(5);
+    ASSERT_EQ(3u, consumedEntries.size());
 }
 
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)
 {
-   size_t entries = 0;
-   for (uint32_t i = 0; i != AsyncTries; i++)
-   {
-      entries = mockConsumer->ConsumedEntries().size();
-      if (entries == amount) break;
-      this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
-   }
+    size_t entries = 0;
+    for (uint32_t i = 0; i != AsyncTries; i++)
+    {
+        entries = mockConsumer->ConsumedEntries().size();
+        if (entries == amount) break;
+        this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
+    }
 
-   return mockConsumer->ConsumedEntries();
+    return mockConsumer->ConsumedEntries();
 }
 
 int main(int argc, char **argv)

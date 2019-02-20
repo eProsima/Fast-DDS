@@ -76,7 +76,10 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , logical_port_range(20)
     , logical_port_increment(2)
     , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
+    , enable_tcp_nodelay(false)
     , wait_for_tcp_negotiation(false)
+    , calculate_crc(true)
+    , check_crc(true)
 {
 }
 
@@ -89,12 +92,16 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , logical_port_range(t.logical_port_range)
     , logical_port_increment(t.logical_port_increment)
     , tcp_negotiation_timeout(t.tcp_negotiation_timeout)
+    , enable_tcp_nodelay(t.enable_tcp_nodelay)
     , wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
+    , calculate_crc(t.calculate_crc)
+    , check_crc(t.check_crc)
 {
 }
 
 TCPTransportInterface::TCPTransportInterface()
     : mRTCPMessageManager(nullptr)
+    , mSendRetryActive(true)
     , mCleanSocketsPoolTimer(nullptr)
 {
 }
@@ -295,7 +302,13 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTCP_MSG_OUT, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
+        logError(RTCP_MSG_OUT, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
+        return false;
+    }
+    catch (const asio::error_code& code)
+    {
+        (void)code;
+        logError(RTCP, "TCPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with code: " << code);
         return false;
     }
 
@@ -319,7 +332,10 @@ void TCPTransportInterface::FillTCPHeader(TCPHeader& header, const octet* sendBu
 {
     header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getSize());
     header.logicalPort = logicalPort;
-    CalculateCRC(header, sendBuffer, sendBufferSize);
+    if (GetConfiguration()->calculate_crc)
+    {
+        CalculateCRC(header, sendBuffer, sendBufferSize);
+    }
 }
 
 
@@ -547,7 +563,7 @@ void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
         return p.second == pChannelResource;
     });
 
-    if (searchIt != mChannelResources.end() && pChannelResource->IsAlive())
+    if (searchIt != mChannelResources.end() && pChannelResource->IsAlive() && mSendRetryActive)
     {
         TCPChannelResource *newChannel = nullptr;
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
@@ -808,7 +824,7 @@ bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet*
                             body_size);
                         //logInfo(RTCP_MSG_IN, " Received [ReadBody]");
 
-                        if (!CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                        if (GetConfiguration()->check_crc && !CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
                         {
                             logWarning(RTCP_MSG_IN, "Bad TCP header CRC");
                         }
@@ -1011,12 +1027,16 @@ bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSiz
 
         return success;
     }
-    else
+    else if (mSendRetryActive)
     {
         logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
             << IPLocator::getLogicalPort(remoteLocator));
-        eClock::my_sleep(100);
         return false;
+    }
+    else
+    {
+        // With the retry disabled, the messages are discarded
+        return true;
     }
 }
 
@@ -1114,6 +1134,11 @@ void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::er
             eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(acceptor->mSocket);
             acceptor->mSocket = nullptr;
 #endif
+
+            getSocketPtr(unicastSocket)->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
+            getSocketPtr(unicastSocket)->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
+            getSocketPtr(unicastSocket)->set_option(ip::tcp::no_delay(GetConfiguration()->enable_tcp_nodelay));
+
             // Store the new connection.
             TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, mService,
                 unicastSocket, GetConfiguration()->maxMessageSize);
@@ -1178,6 +1203,10 @@ void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error
         {
             try
             {
+                outputSocket->getSocket()->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
+                outputSocket->getSocket()->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
+                outputSocket->getSocket()->set_option(ip::tcp::no_delay(GetConfiguration()->enable_tcp_nodelay));
+
                 outputSocket->SetThread(
                     new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
                 outputSocket->SetRTCPThread(
@@ -1343,6 +1372,11 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
     // TODO: Add WAN address
 
     return true;
+}
+
+void TCPTransportInterface::Shutdown()
+{
+    mSendRetryActive = false;
 }
 
 

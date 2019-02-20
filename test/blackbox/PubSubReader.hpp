@@ -403,15 +403,61 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& add_to_unicast_locator_list(const std::string& ip, uint32_t port)
+        {
+            eprosima::fastrtps::rtps::Locator_t loc;
+            IPLocator::setIPv4(loc, ip);
+            loc.port = port;
+            subscriber_attr_.unicastLocatorList.push_back(loc);
+
+            return *this;
+        }
+
         PubSubReader& multicastLocatorList(eprosima::fastrtps::rtps::LocatorList_t multicastLocators)
         {
             subscriber_attr_.multicastLocatorList = multicastLocators;
             return *this;
         }
 
+        PubSubReader& add_to_multicast_locator_list(const std::string& ip, uint32_t port)
+        {
+            eprosima::fastrtps::rtps::Locator_t loc;
+            IPLocator::setIPv4(loc, ip);
+            loc.port = port;
+            subscriber_attr_.multicastLocatorList.push_back(loc);
+
+            return *this;
+        }
+
         PubSubReader& metatraffic_unicast_locator_list(eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
         {
             participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = unicastLocators;
+            return *this;
+        }
+
+        PubSubReader& add_to_metatraffic_unicast_locator_list(const std::string& ip, uint32_t port)
+        {
+            eprosima::fastrtps::rtps::Locator_t loc;
+            IPLocator::setIPv4(loc, ip);
+            loc.port = port;
+            participant_attr_.rtps.builtin.metatrafficUnicastLocatorList.push_back(loc);
+
+            return *this;
+        }
+
+        PubSubReader& metatraffic_multicast_locator_list(eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
+        {
+            participant_attr_.rtps.builtin.metatrafficMulticastLocatorList = unicastLocators;
+            return *this;
+        }
+
+        PubSubReader& add_to_metatraffic_multicast_locator_list(const std::string& ip, uint32_t port)
+        {
+            eprosima::fastrtps::rtps::Locator_t loc;
+            IPLocator::setIPv4(loc, ip);
+            loc.port = port;
+            participant_attr_.rtps.builtin.metatrafficMulticastLocatorList.push_back(loc);
+
             return *this;
         }
 

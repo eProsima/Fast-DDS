@@ -33,6 +33,7 @@ enum class XMLP_ret
 };
 
 
+extern const char* DEFAULT_FASTRTPS_ENV_VARIABLE;
 extern const char* DEFAULT_FASTRTPS_PROFILES;
 
 extern const char* ROOT;
@@ -45,6 +46,7 @@ extern const char* PUBLISHER;
 extern const char* SUBSCRIBER;
 extern const char* RTPS;
 extern const char* TYPES;
+extern const char* LOG;
 
 extern const char* TRANSPORT_DESCRIPTOR;
 extern const char* TRANSPORT_ID;
@@ -61,8 +63,11 @@ extern const char* KEEP_ALIVE_TIMEOUT;
 extern const char* MAX_LOGICAL_PORT;
 extern const char* LOGICAL_PORT_RANGE;
 extern const char* LOGICAL_PORT_INCREMENT;
+extern const char* ENABLE_TCP_NODELAY;
 extern const char* METADATA_LOGICAL_PORT;
 extern const char* LISTENING_PORTS;
+extern const char* CALCULATE_CRC;
+extern const char* CHECK_CRC;
 
 extern const char* QOS_PROFILE;
 extern const char* APPLICATION;
@@ -115,13 +120,14 @@ extern const char* PREALLOCATED;
 extern const char* PREALLOCATED_WITH_REALLOC;
 extern const char* DYNAMIC;
 extern const char* LOCATOR;
+extern const char* UDPv4_LOCATOR;
+extern const char* UDPv6_LOCATOR;
+extern const char* TCPv4_LOCATOR;
+extern const char* TCPv6_LOCATOR;
 extern const char* KIND;
 extern const char* ADDRESS;
-extern const char* IPV6_ADDRESS;
-extern const char* ADDRESSES;
 extern const char* UNIQUE_LAN_ID;
 extern const char* WAN_ADDRESS;
-extern const char* IP_ADDRESS;
 extern const char* RESERVED;
 extern const char* UDPv4;
 extern const char* UDPv6;
@@ -135,9 +141,9 @@ extern const char* NACK_RESP_DELAY;
 extern const char* NACK_SUPRESSION;
 extern const char* BY_NAME;
 extern const char* BY_VAL;
-extern const char* _INFINITE;
-extern const char* ZERO;
-extern const char* INVALID;
+extern const char* DURATION_INFINITY;
+extern const char* DURATION_INFINITE_SEC;
+extern const char* DURATION_INFINITE_NSEC;
 extern const char* SECONDS;
 extern const char* FRACTION;
 extern const char* SHARED;
@@ -263,12 +269,10 @@ extern const char* _VOLATILE_DURABILITY_QOS;
 extern const char* STRENGTH;
 
 // TYPES parser
-extern const char* STRUCT;
-extern const char* UNION;
 extern const char* BOOLEAN;
 extern const char* CHAR;
 extern const char* WCHAR;
-extern const char* OCTET;
+extern const char* TBYTE;
 extern const char* SHORT;
 extern const char* LONG;
 extern const char* USHORT;
@@ -280,24 +284,32 @@ extern const char* DOUBLE;
 extern const char* LONGDOUBLE;
 extern const char* STRING;
 extern const char* WSTRING;
-extern const char* BOUNDEDSTRING;
-extern const char* BOUNDEDWSTRING;
+extern const char* LITERAL;
+extern const char* STRUCT;
+extern const char* UNION;
+extern const char* SEQUENCE;
 extern const char* MAP;
 extern const char* TYPEDEF;
 extern const char* ENUM;
-extern const char* LITERAL;
-extern const char* SEQUENCE;
 extern const char* CASE;
-extern const char* CASEVALUE;
 extern const char* DEFAULT;
 extern const char* DISCRIMINATOR;
-extern const char* DIMENSIONS;
+extern const char* CASE_DISCRIMINATOR;
+extern const char* ARRAY_DIMENSIONS;
+extern const char* STR_MAXLENGTH;
+extern const char* SEQ_MAXLENGTH;
+extern const char* MAP_MAXLENGTH;
+extern const char* MAP_KEY_TYPE;
+extern const char* ENUMERATOR;
+extern const char* NON_BASIC_TYPE;
+extern const char* NON_BASIC_TYPE_NAME;
 extern const char* KEY;
-extern const char* KEY_TYPE;
-extern const char* VALUE_TYPE;
-extern const char* LENGHT;
-extern const char* MAXLENGTH;
+extern const char* MEMBER;
 
+// LOG
+extern const char* USE_DEFAULT;
+extern const char* CONSUMER;
+extern const char* CLASS;
 
 } /* xmlparser */
 } /* namespace */

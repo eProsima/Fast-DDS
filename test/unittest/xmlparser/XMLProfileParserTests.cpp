@@ -12,23 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/log/Log.h>
+#include <fastrtps/log/FileConsumer.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
+#include <memory>
+#include <thread>
+#include <chrono>
+#include <sstream>
+#include <fstream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace ::testing;
+
+// Initialize Log mock
+LogMock *log_mock;
+std::function<void(std::unique_ptr<LogConsumer>&&)> Log::RegisterConsumerFunc =
+    [](std::unique_ptr<LogConsumer>&& c) { log_mock->RegisterConsumer(std::move(c)); };
+std::function<void()> Log::ClearConsumersFunc = []() { log_mock->ClearConsumers(); };
 
 class XMLProfileParserTests: public ::testing::Test
 {
     public:
+
         XMLProfileParserTests()
         {
+            log_mock = new LogMock();
         }
 
         ~XMLProfileParserTests()
         {
-            Log::KillThread();
+            delete log_mock;
         }
 };
 
@@ -227,7 +243,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
-    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeInvalid);
+    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
@@ -294,7 +310,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
-    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeInvalid);
+    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
     EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
@@ -523,10 +539,27 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
 
 #endif
 
+TEST_F(XMLProfileParserTests, file_xml_consumer_append)
+{
+    EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
+    EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
+    xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
+}
+
+TEST_F(XMLProfileParserTests, log_inactive)
+{
+    EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
+    xmlparser::XMLProfileManager::loadXMLFile("log_inactive.xml");
+}
+
+TEST_F(XMLProfileParserTests, file_and_default)
+{
+    EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
+    xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
+}
+
 int main(int argc, char **argv)
 {
-    Log::SetVerbosity(Log::Info);
-    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

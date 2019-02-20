@@ -75,7 +75,6 @@ LatencyTestPublisher::~LatencyTestPublisher()
     Domain::removeParticipant(mp_participant);
 }
 
-
 bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
         const std::string& export_prefix, const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy, bool large_data, const std::string& sXMLConfigFile, bool dynamic_types,
@@ -265,11 +264,14 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream pt;
     pt << "LatencyTest_";
     if (hostname)
+    {
         pt << asio::ip::host_name() << "_";
+    }
     pt << pid << "_PUB2SUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
     PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    
     if (!reliable)
     {
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -303,7 +305,9 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream st;
     st << "LatencyTest_";
     if (hostname)
+    {
         st << asio::ip::host_name() << "_";
+    }
     st << pid << "_SUB2PUB";
     SubDataparam.topic.topicName = st.str();
     if (reliable)
@@ -337,14 +341,17 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream pct;
     pct << "LatencyTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_PUB2SUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-
     if (mp_commandpub == nullptr)
     {
         return false;
@@ -356,15 +363,17 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     std::ostringstream sct;
     sct << "LatencyTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_SUB2PUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-
     if (mp_commandsub == nullptr)
     {
         return false;
@@ -373,7 +382,9 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     // Calculate overhead
     t_start_ = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i)
+    {
         t_end_ = std::chrono::steady_clock::now();
+    }
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     cout << "Overhead " << t_overhead_.count() << " ns" << endl;
 
@@ -505,7 +516,9 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subs
         }
     }
     else
-        cout<< "Problem reading"<<endl;
+    {
+        cout << "Problem reading" << endl;
+    }
 }
 
 void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscriber)
@@ -513,7 +526,6 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscri
     if (mp_up->dynamic_data)
     {
         subscriber->takeNextData((void*)mp_up->m_DynData_in,&mp_up->m_sampleinfo);
-
         if (mp_up->m_DynData_in->GetUint32Value(0) == mp_up->m_DynData_out->GetUint32Value(0))
         {
             mp_up->t_end_ = std::chrono::steady_clock::now();
@@ -535,7 +547,6 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscri
     else
     {
         subscriber->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
-
         if(mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
         {
             mp_up->t_end_ = std::chrono::steady_clock::now();
@@ -561,7 +572,10 @@ void LatencyTestPublisher::run()
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    while(disc_count_ != (n_subscribers * 4)) disc_cond_.wait(disc_lock);
+    while (disc_count_ != (n_subscribers * 4))
+    {
+        disc_cond_.wait(disc_lock);
+    }
     disc_lock.unlock();
 
     cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
@@ -571,8 +585,10 @@ void LatencyTestPublisher::run()
 
     for(std::vector<uint32_t>::iterator ndata = data_size_pub.begin(); ndata != data_size_pub.end(); ++ndata)
     {
-        if(!this->test(*ndata))
+        if (!this->test(*ndata))
+        {
             break;
+        }
         eClock::my_sleep(100);
         if (ndata != data_size_pub.end() - 1)
         {
@@ -586,8 +602,10 @@ void LatencyTestPublisher::run()
     Domain::removeSubscriber(mp_commandsub);
 
     std::string str_reliable = "besteffort";
-    if(reliable_)
+    if (reliable_)
+    {
         str_reliable = "reliable";
+    }
 
     if (n_export_csv)
     {
@@ -739,14 +757,14 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
 {
     TimeStats TS;
-    TS.nbytes = datasize+4;
+    TS.nbytes = datasize + 4;
     TS.received = n_received;
     TS.m_min = *std::min_element(times_.begin(), times_.end());
     TS.m_max = *std::max_element(times_.begin(), times_.end());
     TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size();
 
-    double auxstdev=0;
-    for(std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
+    double auxstdev = 0;
+    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
     {
         auxstdev += pow(((*tit).count() - TS.mean), 2);
     }
@@ -757,32 +775,47 @@ void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
     size_t elem = 0;
 
     elem = static_cast<size_t>(times_.size() * 0.5);
-    if(elem > 0 && elem <= times_.size())
+    if (elem > 0 && elem <= times_.size())
+    {
         TS.p50 = times_.at(--elem).count();
+    }
     else
+    {
         TS.p50 = NAN;
+    }
 
     elem = static_cast<size_t>(times_.size() * 0.9);
-    if(elem > 0 && elem <= times_.size())
+    if (elem > 0 && elem <= times_.size())
+    {
         TS.p90 = times_.at(--elem).count();
+    }
     else
+    {
         TS.p90 = NAN;
+    }
 
     elem = static_cast<size_t>(times_.size() * 0.99);
-    if(elem > 0 && elem <= times_.size())
+    if (elem > 0 && elem <= times_.size())
+    {
         TS.p99 = times_.at(--elem).count();
+    }
     else
+    {
         TS.p99 = NAN;
+    }
 
     elem = static_cast<size_t>(times_.size() * 0.9999);
-    if(elem > 0 && elem <= times_.size())
+    if (elem > 0 && elem <= times_.size())
+    {
         TS.p9999 = times_.at(--elem).count();
+    }
     else
+    {
         TS.p9999 = NAN;
+    }
 
     m_stats.push_back(TS);
 }
-
 
 void LatencyTestPublisher::printStat(TimeStats& TS)
 {

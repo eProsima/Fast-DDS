@@ -19,6 +19,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 set(${PROJECT_NAME}_source_files
     log/Log.cpp
     log/StdoutConsumer.cpp
+    log/FileConsumer.cpp
     utils/eClock.cpp
     utils/IPFinder.cpp
     utils/md5.cpp
@@ -112,6 +113,7 @@ set(${PROJECT_NAME}_source_files
     types/TypeNamesGenerator.cpp
     types/TypesBase.cpp
 
+    attributes/TopicAttributes.cpp
     qos/ParameterList.cpp
     qos/ParameterTypes.cpp
     qos/QosPolicies.cpp
@@ -194,7 +196,7 @@ else()
     set(HAVE_SECURITY 0)
 endif()
 
-if(WIN32)
+if(WIN32 AND (MSVC OR MSVC_IDE))
     list(APPEND ${PROJECT_NAME}_source_files
         ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
         )

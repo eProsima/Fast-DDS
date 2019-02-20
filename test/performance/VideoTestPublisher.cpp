@@ -50,6 +50,9 @@ VideoTestPublisher::VideoTestPublisher()
     , m_dropRate(0)
     , m_sendSleepTime(0)
     , m_forcedDomain(-1)
+    , m_videoWidth(1024)
+    , m_videoHeight(720)
+    , m_videoFrameRate(30)
 {
     m_datapublistener.mp_up = this;
     m_commandpublistener.mp_up = this;
@@ -58,10 +61,29 @@ VideoTestPublisher::VideoTestPublisher()
 
 VideoTestPublisher::~VideoTestPublisher()
 {
-    if (sink)   gst_object_unref(GST_OBJECT(sink)), sink = nullptr;
-    if (videorate)   gst_object_unref(GST_OBJECT(videorate)), videorate = nullptr;
-    if (filesrc)   gst_object_unref(GST_OBJECT(filesrc)), filesrc = nullptr;
-    if (pipeline)   gst_object_unref(GST_OBJECT(pipeline)), pipeline = nullptr;
+    if (sink)
+    {
+        gst_object_unref(GST_OBJECT(sink));
+        sink = nullptr;
+    }
+
+    if (videorate)
+    {
+        gst_object_unref(GST_OBJECT(videorate));
+        videorate = nullptr;
+    }
+
+    if (filesrc)
+    {
+        gst_object_unref(GST_OBJECT(filesrc));
+        filesrc = nullptr;
+    }
+
+    if (pipeline)
+    {
+        gst_object_unref(GST_OBJECT(pipeline));
+        pipeline = nullptr;
+    }
 
     Domain::removeParticipant(mp_participant);
 }
@@ -69,7 +91,8 @@ VideoTestPublisher::~VideoTestPublisher()
 
 bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time, int forced_domain)
+        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time, 
+        int forced_domain, int videoWidth, int videoHeight, int videoFrameRate)
 {
     large_data = true;
     m_testTime = test_time;
@@ -80,6 +103,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     n_subscribers = n_sub;
     reliable_ = reliable;
     m_forcedDomain = forced_domain;
+    m_videoWidth = videoWidth;
+    m_videoHeight = videoHeight;
+    m_videoFrameRate = videoFrameRate;
 
     // GSTREAMER PIPELINE INITIALIZATION.
     InitGStreamer();
@@ -134,16 +160,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     // Create Data Publisher
     std::string profile_name = "publisher_profile";
     PublisherAttributes PubDataparam;
-    PubDataparam.topic.topicDataType = "VideoType";
-    PubDataparam.topic.topicKind = NO_KEY;
-    std::ostringstream pt;
-    pt << "VideoTest_";
-    if (hostname)
-        pt << asio::ip::host_name() << "_";
-    pt << pid << "_PUB2SUB";
-    PubDataparam.topic.topicName = pt.str();
-    PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+
     if (!reliable)
     {
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -157,13 +174,23 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
 
     if(m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
-    }
-    else
-    {
-        mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
+        eprosima::fastrtps::xmlparser::XMLProfileManager::fillPublisherAttributes(profile_name, PubDataparam);
     }
 
+    PubDataparam.topic.topicDataType = "VideoType";
+    PubDataparam.topic.topicKind = NO_KEY;
+    std::ostringstream pt;
+    pt << "VideoTest_";
+    if (hostname)
+    {
+        pt << asio::ip::host_name() << "_";
+    }
+    pt << pid << "_PUB2SUB";
+    PubDataparam.topic.topicName = pt.str();
+    PubDataparam.times.heartbeatPeriod.seconds = 0;
+    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+
+    mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
     if (mp_datapub == nullptr)
     {
         return false;
@@ -176,12 +203,15 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     std::ostringstream pct;
     pct << "VideoTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_PUB2SUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 
     if (mp_commandpub == nullptr)
@@ -195,7 +225,9 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     std::ostringstream sct;
     sct << "VideoTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_SUB2PUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -203,7 +235,6 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-
     if (mp_commandsub == nullptr)
     {
         return false;
@@ -267,7 +298,6 @@ void VideoTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*p
 void VideoTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
-
     if(info.status == MATCHED_MATCHING)
     {
         cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
@@ -367,6 +397,8 @@ bool VideoTestPublisher::test(uint32_t datasize)
     command.m_command = STOP;
     mp_commandpub->write(&command);
 
+    eClock::my_sleep(500);
+
     if(m_status !=0)
     {
         cout << "Error in test "<<endl;
@@ -408,8 +440,10 @@ void VideoTestPublisher::InitGStreamer()
                     g_object_set(sink, "emit-signals", TRUE, NULL);
                     g_signal_connect(sink, "new-sample", G_CALLBACK(new_sample), this);
 
+                    /*std::string sFramerate = std::to_string(m_videoFrameRate) + "/1";*/
                     GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420",
-                        "width", G_TYPE_INT, 1024, "height", G_TYPE_INT, 720/*, "framerate", G_TYPE_STRING, "25/1"*/, NULL);
+                        "width", G_TYPE_INT, m_videoWidth, "height", G_TYPE_INT, m_videoHeight,
+                        "framerate", GST_TYPE_FRACTION, m_videoFrameRate, 1, NULL);
 
                     // Link the camera source and colorspace filter using capabilities specified
                     gst_bin_add_many(GST_BIN(pipeline), filesrc, videorate, sink, NULL);
@@ -417,9 +451,6 @@ void VideoTestPublisher::InitGStreamer()
                     ok = gst_element_link_filtered(filesrc, videorate, caps) == TRUE;
                     ok = gst_element_link_filtered(videorate, sink, caps) == TRUE;
                     gst_caps_unref(caps);
-                    if (ok)
-                    {
-                    }
                 }
             }
         }
@@ -430,7 +461,6 @@ void VideoTestPublisher::InitGStreamer()
 GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublisher *sub)
 {
     GstFlowReturn returned_value = GST_FLOW_ERROR;
-
     if (sub->mp_video_out != nullptr)
     {
         if (sub->m_sendSleepTime != 0)
@@ -460,7 +490,10 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
 
                     if (rand() % 100 > sub->m_dropRate)
                     {
-                        sub->mp_datapub->write((void*)sub->mp_video_out);
+                        if (!sub->mp_datapub->write((void*)sub->mp_video_out))
+                        {
+                            std::cout << "VideoPublication::run -> Cannot write video" << std::endl;
+                        }
                     }
                     gst_buffer_unmap(buffer, &map);
                 }
@@ -473,15 +506,23 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
             gst_sample_unref(sample);
             returned_value =  GST_FLOW_OK;
         }
+        else
+        {
+            std::cout << "VideoPublication::run -> Sample is nullptr" << std::endl;
+        }
 
         returned_value =  GST_FLOW_ERROR;
+    }
+    else
+    {
+        std::cout << "VideoPublication::run -> Sample is nullptr" << std::endl;
     }
 
     returned_value =  GST_FLOW_OK;
 
     std::chrono::steady_clock::time_point send_end = std::chrono::steady_clock::now();
     std::unique_lock<std::mutex> lock(sub->mutex_);
-    if(std::chrono::duration<double, std::deci>(send_end - sub->send_start_).count() >= sub->m_testTime)
+    if(std::chrono::duration<double, std::ratio<1, 1>>(send_end - sub->send_start_).count() >= sub->m_testTime)
     {
         sub->timer_on_ = true;
         sub->timer_cond_.notify_one();

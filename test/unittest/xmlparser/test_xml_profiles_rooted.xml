@@ -6,26 +6,20 @@
             <rtps>
                 <defaultUnicastLocatorList>
                     <locator>
-                        <kind>UDPv4</kind>
-                        <address>192.168.1.2</address>
-                        <port>2019</port>
+                        <udpv4>
+                            <address>192.168.1.2</address>
+                            <port>2019</port>
+                        </udpv4>
                     </locator>
                 </defaultUnicastLocatorList>
                 <defaultMulticastLocatorList>
                     <locator>
-                        <kind>UDPv4</kind>
-                        <address>239.255.0.1</address>
-                        <port>2021</port>
+                        <udpv4>
+                            <address>239.255.0.1</address>
+                            <port>2021</port>
+                        </udpv4>
                     </locator>
                 </defaultMulticastLocatorList>
-                <defaultOutLocatorList>
-                    <locator>
-                        <kind>UDPv4</kind>
-                        <address>192.168.1.1</address>
-                        <port>1979</port>
-                    </locator>
-                </defaultOutLocatorList>
-                <defaultSendPort>80</defaultSendPort>
                 <sendSocketBufferSize>32</sendSocketBufferSize>
                 <listenSocketBufferSize>1000</listenSocketBufferSize>
                 <builtin>
@@ -34,13 +28,11 @@
                     <EDP>SIMPLE</EDP>
                     <domainId>2019102</domainId>
                     <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
+                        <sec>DURATION_INFINITY</sec>
                     </leaseDuration>
                     <leaseAnnouncement>
-                        <durationbyval>
-                            <seconds>10</seconds>
-                            <fraction>333</fraction>
-                        </durationbyval>
+                        <sec>10</sec>
+                        <fraction>333</fraction>
                     </leaseAnnouncement>
                     <simpleEDP>
                         <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
@@ -48,32 +40,38 @@
                     </simpleEDP>
                     <metatrafficUnicastLocatorList>
                         <locator>
-                            <kind>UDPv4</kind>
-                            <address>192.168.1.5</address>
-                            <port>9999</port>
+                            <udpv4>
+                                <address>192.168.1.5</address>
+                                <port>9999</port>
+                            </udpv4>
                         </locator>
                         <locator>
-                            <kind>UDPv4</kind>
-                            <address>192.168.1.6</address>
-                            <port>6666</port>
+                            <udpv4>
+                                <address>192.168.1.6</address>
+                                <port>6666</port>
+                            </udpv4>
                         </locator>
                     </metatrafficUnicastLocatorList>
                     <metatrafficMulticastLocatorList>
                         <locator>
-                            <kind>UDPv4</kind>
-                            <address>239.255.0.2</address>
-                            <port>32</port>
+                            <udpv4>
+                                <address>239.255.0.2</address>
+                                <port>32</port>
+                            </udpv4>
                         </locator>
                         <locator>
-                            <address>239.255.0.3</address>
-                            <port>2112</port>
+                            <udpv4>
+                                <address>239.255.0.3</address>
+                                <port>2112</port>
+                            </udpv4>
                         </locator>
                     </metatrafficMulticastLocatorList>
                     <initialPeersList>
                         <locator>
-                            <kind>UDPv4</kind>
-                            <address>239.255.0.1</address>
-                            <port>21120</port>
+                            <udpv4>
+                                <address>239.255.0.1</address>
+                                <port>21120</port>
+                            </udpv4>
                         </locator>
                     </initialPeersList>
                 </builtin>
@@ -87,8 +85,6 @@
                     <offsetd3>456</offsetd3>
                 </port>
                 <participantID>9898</participantID>
-                <use_IP4_to_send>true</use_IP4_to_send>
-                <use_IP6_to_send>false</use_IP6_to_send>
                 <throughputController>
                     <bytesPerPeriod>2048</bytesPerPeriod>
                     <periodMillisecs>45</periodMillisecs>
@@ -121,19 +117,18 @@
                 <liveliness>
                     <kind>MANUAL_BY_PARTICIPANT</kind>
                     <lease_duration>
-                        <durationbyval>
-                            <seconds>1</seconds>
-                            <fraction>2</fraction>
-                        </durationbyval>
+                        <sec>1</sec>
+                        <fraction>2</fraction>
                     </lease_duration>
                     <announcement_period>
-                        <durationbyname>INFINITE</durationbyname>
+                        <sec>DURATION_INFINITY</sec>
                     </announcement_period>
                 </liveliness>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
                     <max_blocking_time>
-                        <durationbyname>ZERO</durationbyname>
+                        <sec>0</sec>
+                        <fraction>0</fraction>
                     </max_blocking_time>
                 </reliability>
                 <partition>
@@ -148,54 +143,53 @@
             </qos>
             <times>
                 <initialHeartbeatDelay>
-                    <durationbyname>ZERO</durationbyname>
+                    <sec>0</sec>
+                    <fraction>0</fraction>
                 </initialHeartbeatDelay>
                 <heartbeatPeriod>
-                    <durationbyval>
-                        <seconds>11</seconds>
-                        <fraction>32</fraction>
-                    </durationbyval>
+                    <sec>11</sec>
+                    <fraction>32</fraction>
                 </heartbeatPeriod>
                 <nackResponseDelay>
-                    <durationbyname>INVALID</durationbyname>
+                    <sec>0</sec>
+                    <fraction>0</fraction>
                 </nackResponseDelay>
                 <nackSupressionDuration>
-                    <durationbyval>
-                        <seconds>121</seconds>
-                        <fraction>332</fraction>
-                    </durationbyval>
+                    <sec>121</sec>
+                    <fraction>332</fraction>
                 </nackSupressionDuration>
             </times>
             <unicastLocatorList>
                 <locator>
-                    <address>192.168.1.3</address>
-                    <port>197</port>
+                    <udpv4>
+                        <address>192.168.1.3</address>
+                        <port>197</port>
+                    </udpv4>
                 </locator>
                 <locator>
-                    <kind>UDPv4</kind>
-                    <address>192.168.1.9</address>
-                    <port>219</port>
+                    <udpv4>
+                        <address>192.168.1.9</address>
+                        <port>219</port>
+                    </udpv4>
                 </locator>
             </unicastLocatorList>
             <multicastLocatorList>
                 <locator>
-                    <kind>UDPv4</kind>
-                    <address>239.255.0.1</address>
-                    <port>2020</port>
+                    <udpv4>
+                        <address>239.255.0.1</address>
+                        <port>2020</port>
+                    </udpv4>
                 </locator>
                 <locator>
-                    <kind>UDPv4</kind>
+                    <udpv4>
+                    </udpv4>
                 </locator>
                 <locator>
-                    <port>1989</port>
+                    <udpv4>
+                        <port>1989</port>
+                    </udpv4>
                 </locator>
             </multicastLocatorList>
-            <outLocatorList>
-                <locator>
-                    <kind>UDPv4</kind>
-                    <port>2021</port>
-                </locator>
-            </outLocatorList>
             <throughputController>
                 <bytesPerPeriod>9236</bytesPerPeriod>
                 <periodMillisecs>234</periodMillisecs>
@@ -228,19 +222,18 @@
                 <liveliness>
                     <kind>MANUAL_BY_TOPIC</kind>
                     <lease_duration>
-                        <durationbyval>
-                            <seconds>11</seconds>
-                            <fraction>22</fraction>
-                        </durationbyval>
+                        <sec>11</sec>
+                        <fraction>22</fraction>
                     </lease_duration>
                     <announcement_period>
-                        <durationbyname>ZERO</durationbyname>
+                        <sec>0</sec>
+                        <fraction>0</fraction>
                     </announcement_period>
                 </liveliness>
                 <reliability>
                     <kind>RELIABLE</kind>
                     <max_blocking_time>
-                        <durationbyname>INFINITE</durationbyname>
+                        <sec>DURATION_INFINITY</sec>
                     </max_blocking_time>
                 </reliability>
                 <partition>
@@ -254,50 +247,45 @@
             </qos>
             <times>
                 <initialAcknackDelay>
-                    <durationbyname>ZERO</durationbyname>
+                    <sec>0</sec>
+                    <fraction>0</fraction>
                 </initialAcknackDelay>
                 <heartbeatResponseDelay>
-                    <durationbyval>
-                        <seconds>18</seconds>
-                        <fraction>81</fraction>
-                    </durationbyval>
+                    <sec>18</sec>
+                    <fraction>81</fraction>
                 </heartbeatResponseDelay>
             </times>
             <unicastLocatorList>
                 <locator>
-                    <address>192.168.1.10</address>
-                    <port>196</port>
+                    <udpv4>
+                        <address>192.168.1.10</address>
+                        <port>196</port>
+                    </udpv4>
                 </locator>
                 <locator>
-                    <kind>UDPv4</kind>
-                    <port>212</port>
+                    <udpv4>
+                        <port>212</port>
+                    </udpv4>
                 </locator>
             </unicastLocatorList>
             <multicastLocatorList>
                 <locator>
-                    <kind>UDPv4</kind>
-                    <address>239.255.0.10</address>
-                    <port>220</port>
+                    <udpv4>
+                        <address>239.255.0.10</address>
+                        <port>220</port>
+                    </udpv4>
                 </locator>
                 <locator>
-                    <kind>UDPv4</kind>
+                    <udpv4>
+                    </udpv4>
                 </locator>
                 <locator>
-                    <address>239.255.0.11</address>
-                    <port>9891</port>
+                    <udpv4>
+                        <address>239.255.0.11</address>
+                        <port>9891</port>
+                    </udpv4>
                 </locator>
             </multicastLocatorList>
-            <outLocatorList>
-                <locator>
-                    <kind>UDPv4</kind>
-                    <address>192.168.1.2</address>
-                    <port>2079</port>
-                </locator>
-                <!--locator>
-                    <kind>UDPv6</kind>
-                    <port>2030</port>
-                </locator-->
-            </outLocatorList>
             <expectsInlineQos>true</expectsInlineQos>
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
             <userDefinedID>13</userDefinedID>

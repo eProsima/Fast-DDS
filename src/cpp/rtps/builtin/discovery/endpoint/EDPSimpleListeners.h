@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -31,57 +32,96 @@ class EDPSimple;
 class RTPSReader;
 struct CacheChange_t;
 
-/**
+/*!
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
- *@ingroup DISCOVERY_MODULE
+ * @ingroup DISCOVERY_MODULE
  */
-class EDPSimplePUBListener : public ReaderListener
+class EDPSimplePUBListener : public ReaderListener, public WriterListener
 {
     public:
-        /**
+
+        /*!
           Constructor
-         * @param p Pointer to the EDPSimple associated with this listener.
+         * @param sedp Pointer to the EDPSimple associated with this listener.
          */
-        EDPSimplePUBListener(EDPSimple* p):mp_SEDP(p){};
-        virtual ~EDPSimplePUBListener(){};
+        EDPSimplePUBListener(EDPSimple* sedp) : sedp_(sedp) {}
+
+        virtual ~EDPSimplePUBListener() {}
+
         /**
          * Virtual method, 
          * @param reader
          * @param change
          */
-        void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change);
+        void onNewCacheChangeAdded(
+                RTPSReader* reader,
+                const CacheChange_t* const  change) override;
+
+
+        /*!
+         * This method is called when all the readers matched with this Writer acknowledge that a cache 
+         * change has been received.
+         * @param writer Pointer to the RTPSWriter.
+         * @param change Pointer to the affected CacheChange_t.
+         */
+        void onWriterChangeReceivedByAll(
+                RTPSWriter* writer,
+                CacheChange_t* change) override;
+
         /**
          * Compute the Key from a CacheChange_t
          * @param change Pointer to the change.
          */
         bool computeKey(CacheChange_t* change);
+
+    private:
+
         //!Pointer to the EDPSimple
-        EDPSimple* mp_SEDP;
+        EDPSimple* sedp_;
 };
-/**
+
+/*!
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
- *@ingroup DISCOVERY_MODULE
+ * @ingroup DISCOVERY_MODULE
  */
-class EDPSimpleSUBListener : public ReaderListener
+class EDPSimpleSUBListener : public ReaderListener, public WriterListener
 {
     public:
-        /**
-         * @param p
+
+        /*!
+          Constructor
+         * @param sedp Pointer to the EDPSimple associated with this listener.
          */
-        EDPSimpleSUBListener(EDPSimple* p):mp_SEDP(p){}
+        EDPSimpleSUBListener(EDPSimple* sedp) : sedp_(sedp){}
 
         virtual ~EDPSimpleSUBListener(){}
         /**
          * @param reader
          * @param change
          */
-        void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
+        void onNewCacheChangeAdded(
+                RTPSReader* reader,
+                const CacheChange_t* const change) override;
+
+        /*!
+         * This method is called when all the readers matched with this Writer acknowledge that a cache 
+         * change has been received.
+         * @param writer Pointer to the RTPSWriter.
+         * @param change Pointer to the affected CacheChange_t.
+         */
+        void onWriterChangeReceivedByAll(
+                RTPSWriter* writer,
+                CacheChange_t* change) override;
+
         /**
          * @param change
          */
         bool computeKey(CacheChange_t* change);
+
+    private:
+
         //!Pointer to the EDPSimple
-        EDPSimple* mp_SEDP;
+        EDPSimple* sedp_;
 };
 
 } /* namespace rtps */

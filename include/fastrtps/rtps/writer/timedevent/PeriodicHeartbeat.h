@@ -43,7 +43,10 @@ class PeriodicHeartbeat: public TimedEvent
          * @param p_RP
          * @param interval
          */
-        PeriodicHeartbeat(StatefulWriter* p_RP,double interval);
+        PeriodicHeartbeat(
+                StatefulWriter* p_RP,
+                double interval);
+
         virtual ~PeriodicHeartbeat();
 
         /**
@@ -52,7 +55,9 @@ class PeriodicHeartbeat: public TimedEvent
          * @param code Code representing the status of the event
          * @param msg Message associated to the event
          */
-        void event(EventCode code, const char* msg= nullptr);
+        void event(
+                EventCode code,
+                const char* msg= nullptr);
 
         //!
         RTPSMessageGroup_t m_cdrmessages;

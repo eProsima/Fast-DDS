@@ -22,10 +22,7 @@
 #include <string>
 
 #include "../rtps/common/Types.h"
-
 #include "../qos/QosPolicies.h"
-#include "../log/Log.h"
-
 
 
 namespace eprosima {
@@ -68,7 +65,7 @@ class TopicAttributes
                    (this->topicDataType == b.topicDataType) &&
                    (this->historyQos == b.historyQos);
         }
-        
+
         /**
         * Get the topic data type
         * @return Topic data type
@@ -127,45 +124,7 @@ class TopicAttributes
          * Method to check whether the defined QOS are correct.
          * @return True if they are valid.
          */
-        bool checkQos() const
-        {
-            if(resourceLimitsQos.max_samples_per_instance > resourceLimitsQos.max_samples && topicKind == rtps::WITH_KEY)
-            {
-                logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"):max_samples_per_instance must be <= than max_samples");
-                return false;
-            }
-
-            if (resourceLimitsQos.max_samples_per_instance*resourceLimitsQos.max_instances > resourceLimitsQos.max_samples && topicKind == rtps::WITH_KEY)
-            {
-                logWarning(RTPS_QOS_CHECK, "TOPIC QOS: max_samples < max_samples_per_instance*max_instances");
-            }
-
-            if(historyQos.kind == KEEP_LAST_HISTORY_QOS)
-            {
-                if(historyQos.depth > resourceLimitsQos.max_samples)
-                {
-                    logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"): depth must be <= max_samples");
-                    return false;
-                }
-                if(historyQos.depth > resourceLimitsQos.max_samples_per_instance && topicKind == rtps::WITH_KEY)
-                {
-                    logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"): depth must be <= max_samples_per_instance");
-                    return false;
-                }
-                if(historyQos.depth <=0 )
-                {
-                    logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"): depth must be > 0");
-                    return false;
-                }
-            }
-
-            if(resourceLimitsQos.max_samples != 0 && resourceLimitsQos.allocated_samples > resourceLimitsQos.max_samples)
-            {
-                logError(RTPS_QOS_CHECK,"INCORRECT TOPIC QOS ("<< topicName <<"): max_samples < allocated_samples");
-                return false;
-            }
-            return true;
-        }
+        bool checkQos() const;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

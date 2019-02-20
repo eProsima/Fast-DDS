@@ -15,8 +15,9 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
+    check_gmock()
 
-    if(GTEST_FOUND)
+    if(GTEST_FOUND AND GMOCK_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
@@ -33,6 +34,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles_rooted.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles_rooted.xml
             COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_def_file.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/log_def_file.xml
+            COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_inactive.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/log_inactive.xml
+            COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_node_file_append.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/log_node_file_append.xml
+            COPYONLY)
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp
@@ -45,11 +55,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-
             ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicData.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicDataFactory.cpp
@@ -87,6 +94,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLProfileParserTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
@@ -94,21 +102,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLProfileParserTests ${PRIVACY} fastcdr)
-        else()
-            target_link_libraries(XMLProfileParserTests ${PRIVACY} fastcdr)
-        endif()
-
-        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLProfileParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
-        endif()
-        if(TINYXML2_LIBRARY)
-            target_link_libraries(XMLProfileParserTests ${PRIVACY}
-                ${TINYXML2_LIBRARY}
-                )
-        endif()
+        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            ${TINYXML2_LIBRARY}
+            fastcdr
+            )
         add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
 
 
@@ -125,6 +124,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
 
@@ -164,7 +164,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(XMLParserTests ${XMLPARSER_SOURCE})
         target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLParserTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
@@ -173,22 +173,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             )
-            
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLParserTests ${PRIVACY} iphlpapi Shlwapi ws2_32)
-        endif()
 
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(XMLParserTests ${PRIVACY} fastcdr)
-        else()
-            target_link_libraries(XMLParserTests ${PRIVACY} fastcdr)
-        endif()
-
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES} )
-        if(TINYXML2_LIBRARY)
-            target_link_libraries(XMLParserTests ${PRIVACY} ${TINYXML2_LIBRARY} )
-        endif()
+        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            ${TINYXML2_LIBRARY}
+            fastcdr
+        )
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
     endif()
 endif()
-

@@ -129,6 +129,12 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode);
     RTPS_DllAPI static XMLP_ret parseRoot(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
 
+    /**
+     * Load a XML log node and parses it. It applies the configuration of the node directly.
+     * @param p_root Node to be loaded.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret parseLogConfig(tinyxml2::XMLElement* p_root);
 
     RTPS_DllAPI static XMLP_ret parseXMLTransportsProf(tinyxml2::XMLElement* p_root);
     RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode);
@@ -138,6 +144,13 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret parseXMLTransportData(tinyxml2::XMLElement* p_root);
     RTPS_DllAPI static XMLP_ret parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
     RTPS_DllAPI static XMLP_ret parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root, sp_transport_t p_transport);
+
+    /**
+     * Load a XML consumer node and parses it. Adds the parsed consumer to Log directly.
+     * @param consumer Node to be loaded.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret parseXMLConsumer(tinyxml2::XMLElement& consumer);
 
     RTPS_DllAPI static XMLP_ret parseXMLDynamicTypes(tinyxml2::XMLElement& types);
     RTPS_DllAPI static XMLP_ret parseDynamicTypes(tinyxml2::XMLElement* p_root);
@@ -165,6 +178,11 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLHistoryMemoryPolicy(tinyxml2::XMLElement* elem,
 															rtps::MemoryManagementPolicy_t& historyMemoryPolicy, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLLocatorList(tinyxml2::XMLElement* elem, rtps::LocatorList_t& locatorList, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+    RTPS_DllAPI static XMLP_ret getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator_t& locator, uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLWriterTimes(tinyxml2::XMLElement* elem, rtps::WriterTimes& times, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLReaderTimes(tinyxml2::XMLElement* elem, rtps::ReaderTimes& times, uint8_t ident);
     RTPS_DllAPI static XMLP_ret getXMLDuration(tinyxml2::XMLElement* elem, rtps::Duration_t& duration, uint8_t ident);

@@ -160,11 +160,14 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream pt;
     pt << "LatencyTest_";
     if (hostname)
+    {
         pt << asio::ip::host_name() << "_";
+    }
     pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
     PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+
     if (!reliable)
     {
         PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -198,9 +201,12 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream st;
     st << "LatencyTest_";
     if (hostname)
+    {
         st << asio::ip::host_name() << "_";
+    }
     st << pid << "_PUB2SUB";
     SubDataparam.topic.topicName = st.str();
+
     if (reliable)
     {
         SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -231,14 +237,17 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream pct;
     pct << "LatencyTest_Command_";
     if (hostname)
+    {
         pct << asio::ip::host_name() << "_";
+    }
     pct << pid << "_SUB2PUB";
     PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-
     if (mp_commandpub == nullptr)
     {
         return false;
@@ -250,7 +259,9 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     std::ostringstream sct;
     sct << "LatencyTest_Command_";
     if (hostname)
+    {
         sct << asio::ip::host_name() << "_";
+    }
     sct << pid << "_PUB2SUB";
     SubCommandParam.topic.topicName = sct.str();
     SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -258,12 +269,10 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-
     if (mp_commandsub == nullptr)
     {
         return false;
     }
-
     return true;
 }
 
@@ -359,6 +368,7 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub
         }
         else if(command.m_command == STOP)
         {
+            cout << "Publisher has stopped the test" << endl;
             mp_up->mutex_.lock();
             ++mp_up->data_count_;
             mp_up->mutex_.unlock();
@@ -366,6 +376,7 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub
         }
         else if(command.m_command == STOP_ERROR)
         {
+            cout << "Publisher has canceled the test" << endl;
             mp_up->m_status = -1;
             mp_up->mutex_.lock();
             ++mp_up->data_count_;
@@ -416,8 +427,10 @@ void LatencyTestSubscriber::run()
 
     for(std::vector<uint32_t>::iterator ndata = data_size_sub.begin();ndata!=data_size_sub.end();++ndata)
     {
-        if(!this->test(*ndata))
+        if (!this->test(*ndata))
+        {
             break;
+        }
     }
 }
 

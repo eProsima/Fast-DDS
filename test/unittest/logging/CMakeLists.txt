@@ -21,10 +21,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        set(LOGTESTS_SOURCE
+        set(LOG_COMMON_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            LogTests.cpp)
+            )
+
+        set(LOGTESTS_TEST_SOURCE LogTests.cpp)
+
+        set(LOGTESTS_SOURCE
+            ${LOG_COMMON_SOURCE}
+            ${LOGTESTS_TEST_SOURCE})
 
         include_directories(mock/)
 
@@ -32,12 +38,38 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LogTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS} )
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(LogTests ${PRIVACY}
-                iphlpapi Shlwapi
+        target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            )
+        add_gtest(LogTests SOURCES ${LOGTESTS_TEST_SOURCE})
+
+        set(LOGFILETESTS_TEST_SOURCE LogFileTests.cpp)
+
+        set(LOGFILETESTS_SOURCE
+            ${LOG_COMMON_SOURCE}
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
+            ${LOGFILETESTS_TEST_SOURCE})
+
+        # External sources
+        if(TINYXML2_SOURCE_DIR)
+            list(APPEND LOGFILETESTS_SOURCE
+                ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
                 )
         endif()
-        add_gtest(LogTests SOURCES ${LOGTESTS_SOURCE})
+
+        include_directories(${TINYXML2_INCLUDE_DIR})
+
+        add_executable(LogFileTests ${LOGFILETESTS_SOURCE})
+        target_compile_definitions(LogFileTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(LogFileTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(LogFileTests ${GTEST_LIBRARIES} ${MOCKS}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            ${TINYXML2_LIBRARY}
+            fastcdr
+            )
+
+        add_gtest(LogFileTests SOURCES ${LOGFILETESTS_TEST_SOURCE})
+
     endif()
 endif()

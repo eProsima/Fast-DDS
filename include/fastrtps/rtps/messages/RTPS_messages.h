@@ -77,17 +77,18 @@ enum SubmessageId : uint8_t
  }
 
  //!@brief Structure SubmessageHeader_t, used to contain the header information of a submessage.
- struct SubmessageHeader_t{
+ struct SubmessageHeader_t
+ {
      octet submessageId;
-     uint16_t submessageLength;
-     uint32_t submsgLengthLarger;
+     uint32_t submessageLength;
      SubmessageFlag flags;
+     bool is_last;
 
-     SubmessageHeader_t():
-         submessageId(0),
-         submessageLength(0),
-         submsgLengthLarger(0),
-         flags(0)
+     SubmessageHeader_t()
+         : submessageId(0)
+         , submessageLength(0)
+         , flags(0)
+         , is_last(false)
      {}
  };
 

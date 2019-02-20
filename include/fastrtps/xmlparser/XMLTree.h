@@ -23,7 +23,8 @@ enum class NodeType
     DATA_WRITER,
     DATA_READER,
     ROOT,
-    TYPES
+    TYPES,
+    LOG
 };
 
 class BaseNode

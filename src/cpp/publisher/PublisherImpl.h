@@ -60,8 +60,11 @@ class PublisherImpl
      * Create a publisher, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
-    PublisherImpl(ParticipantImpl* p,TopicDataType* ptype,
-            PublisherAttributes& att,PublisherListener* p_listen = nullptr);
+    PublisherImpl(
+        ParticipantImpl* p,
+        TopicDataType* ptype,
+        const PublisherAttributes& att,
+        PublisherListener* p_listen = nullptr);
 
     virtual ~PublisherImpl();
 
@@ -71,7 +74,9 @@ class PublisherImpl
      * @param  Data
      * @return
      */
-    bool create_new_change(rtps::ChangeKind_t kind, void* Data);
+    bool create_new_change(
+        rtps::ChangeKind_t kind,
+        void* Data);
 
     /**
      * 
@@ -80,7 +85,10 @@ class PublisherImpl
      * @param wparams
      * @return
      */
-    bool create_new_change_with_params(rtps::ChangeKind_t kind, void* Data, rtps::WriteParams &wparams);
+    bool create_new_change_with_params(
+        rtps::ChangeKind_t kind,
+        void* Data,
+        rtps::WriteParams& wparams);
 
     /**
      * Removes the cache change with the minimum sequence number

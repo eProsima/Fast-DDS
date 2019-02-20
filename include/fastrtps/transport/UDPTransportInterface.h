@@ -80,7 +80,7 @@ public:
        uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& remoteLocator);
 
    //! Release the listening socket for the specified port.
-   bool ReleaseInputChannel(const Locator_t& locator, UDPChannelResource* channel);
+   bool ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address);
 
    /**
    * Converts a given remote locator (that is, a locator referring to a remote
@@ -179,7 +179,8 @@ protected:
 
     virtual void SetReceiveBufferSize(uint32_t size) = 0;
     virtual void SetSendBufferSize(uint32_t size) = 0;
-    virtual void SetSocketOutbountInterface(eProsimaUDPSocket&, const std::string&) = 0;
+    virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) = 0;
+
     /*
         struct LocatorCompare {
         bool operator()(const Locator_t& lhs, const Locator_t& rhs) const

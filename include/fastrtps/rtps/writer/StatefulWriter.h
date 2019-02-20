@@ -33,6 +33,7 @@ namespace eprosima
         namespace rtps
         {
             class ReaderProxy;
+            class NackResponseDelay;
 
             /**
              * Class StatefulWriter, specialization of RTPSWriter that maintains information of each matched Reader.
@@ -52,8 +53,15 @@ namespace eprosima
                 PeriodicHeartbeat* mp_periodicHB;
 
                 protected:
+
                 //!Constructor
-                StatefulWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
+                StatefulWriter(
+                        RTPSParticipantImpl*,
+                        GUID_t& guid,
+                        WriterAttributes& att,
+                        WriterHistory* hist,
+                        WriterListener* listen=nullptr);
+
                 private:
                 //!Count of the sent heartbeats.
                 Count_t m_heartbeatCount;
@@ -74,6 +82,10 @@ namespace eprosima
                 unsigned int may_remove_change_;
 
                 public:
+
+                //! Timed Event to manage the Acknack response delay.
+                NackResponseDelay* nack_response_event_;
+
                 /**
                  * Add a specific change to all ReaderLocators.
                  * @param p Pointer to the change.

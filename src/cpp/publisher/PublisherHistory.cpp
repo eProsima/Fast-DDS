@@ -34,9 +34,13 @@ extern eprosima::fastrtps::rtps::WriteParams WRITE_PARAM_DEFAULT;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-PublisherHistory::PublisherHistory(PublisherImpl* pimpl, uint32_t payloadMaxSize, HistoryQosPolicy& history,
-        ResourceLimitsQosPolicy& resource, MemoryManagementPolicy_t mempolicy):
-    WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
+PublisherHistory::PublisherHistory(
+        PublisherImpl* pimpl,
+        uint32_t payloadMaxSize,
+        const HistoryQosPolicy& history,
+        const ResourceLimitsQosPolicy& resource,
+        MemoryManagementPolicy_t mempolicy)
+    : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
                 history.kind == KEEP_ALL_HISTORY_QOS ?
                         resource.allocated_samples :
                         pimpl->getAttributes().topic.getTopicKind() == NO_KEY ?
@@ -46,10 +50,10 @@ PublisherHistory::PublisherHistory(PublisherImpl* pimpl, uint32_t payloadMaxSize
                         resource.max_samples :
                         pimpl->getAttributes().topic.getTopicKind() == NO_KEY ?
                             history.depth :
-                            history.depth * resource.max_instances)),
-    m_historyQos(history),
-    m_resourceLimitsQos(resource),
-    mp_pubImpl(pimpl)
+                            history.depth * resource.max_instances))
+    , m_historyQos(history)
+    , m_resourceLimitsQos(resource)
+    , mp_pubImpl(pimpl)
 {
     // TODO Auto-generated constructor stub
 

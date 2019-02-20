@@ -68,7 +68,9 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
 
     mp_participant = Domain::createParticipant(PParam);
     if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //REGISTER THE TYPE
     Domain::registerType(mp_participant, &m_type);
@@ -85,10 +87,10 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
-
     if (mp_subscriber == nullptr)
+    {
         return false;
-
+    }
 
     return true;
 }
@@ -138,5 +140,7 @@ void HelloWorldSubscriber::run(uint32_t number)
 {
     std::cout << "[RTCP] Subscriber running until " << number << "samples have been received" << std::endl;
     while (number < this->m_listener.n_samples)
+    {
         eClock::my_sleep(500);
+    }
 }

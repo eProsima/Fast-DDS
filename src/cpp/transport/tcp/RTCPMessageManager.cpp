@@ -153,35 +153,39 @@ void RTCPMessageManager::fillHeaders(TCPCPMKind kind, const TCPTransactionId &tr
     header.length = static_cast<uint32_t>(retCtrlHeader.length + TCPHeader::getSize());
 
     // Finally, calculate the CRC
-    octet* it = (octet*)&retCtrlHeader;
+    
     uint32_t crc = 0;
-    for (size_t i = 0; i < TCPControlMsgHeader::getSize(); ++i)
+    if (mTransport->GetConfiguration()->calculate_crc)
     {
-        crc = addToCRC(crc, it[i]);
-    }
-    if (respCode != nullptr)
-    {
-        it = (octet*)respCode;
-        for (int i = 0; i < 4; ++i)
+        octet* it = (octet*)&retCtrlHeader;
+        for (size_t i = 0; i < TCPControlMsgHeader::getSize(); ++i)
         {
             crc = addToCRC(crc, it[i]);
         }
-    }
-    if (payload != nullptr)
-    {
-        octet* pay = (octet*)&(payload->encapsulation);
-        for (uint32_t i = 0; i < 2; ++i)
+        if (respCode != nullptr)
         {
-            crc = addToCRC(crc, pay[i]);
+            it = (octet*)respCode;
+            for (int i = 0; i < 4; ++i)
+            {
+                crc = addToCRC(crc, it[i]);
+            }
         }
-        pay = (octet*)&(payload->length);
-        for (uint32_t i = 0; i < 4; ++i)
+        if (payload != nullptr)
         {
-            crc = addToCRC(crc, pay[i]);
-        }
-        for (uint32_t i = 0; i < payload->length; ++i)
-        {
-            crc = addToCRC(crc, payload->data[i]);
+            octet* pay = (octet*)&(payload->encapsulation);
+            for (uint32_t i = 0; i < 2; ++i)
+            {
+                crc = addToCRC(crc, pay[i]);
+            }
+            pay = (octet*)&(payload->length);
+            for (uint32_t i = 0; i < 4; ++i)
+            {
+                crc = addToCRC(crc, pay[i]);
+            }
+            for (uint32_t i = 0; i < payload->length; ++i)
+            {
+                crc = addToCRC(crc, payload->data[i]);
+            }
         }
     }
     header.crc = crc;

@@ -14,6 +14,7 @@
 
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/transport/TCPv4Transport.h>
+#include "mock/MockTCPv4Transport.h"
 #include <gtest/gtest.h>
 #include <thread>
 #include <fastrtps/utils/IPFinder.h>
@@ -40,6 +41,7 @@ const uint32_t ReceiveBufferCapacity = 65536;
 static uint16_t g_default_port = 0;
 static uint16_t g_output_port = 0;
 static uint16_t g_input_port = 0;
+static std::string g_test_wan_address = "88.88.88.88";
 
 uint16_t get_port(uint16_t offset)
 {
@@ -51,6 +53,19 @@ uint16_t get_port(uint16_t offset)
     }
 
     return port;
+}
+
+static void GetIP4s(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false)
+{
+    IPFinder::getIPs(&locNames, return_loopback);
+    auto new_end = remove_if(locNames.begin(),
+        locNames.end(),
+        [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL; });
+    locNames.erase(new_end, locNames.end());
+    std::for_each(locNames.begin(), locNames.end(), [](IPFinder::info_IP& loc)
+    {
+        loc.locator.kind = LOCATOR_KIND_TCPv4;
+    });
 }
 
 class TCPv4Tests: public ::testing::Test
@@ -566,38 +581,251 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 
 TEST_F(TCPv4Tests, shrink_locator_lists)
 {
-    TCPv4Transport transportUnderTest(descriptor);
+    std::vector<IPFinder::info_IP> localInterfaces;
+    GetIP4s(localInterfaces, false);
+
+    MockTCPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
-    LocatorList_t result, list1, list2, list3;
-    Locator_t locator, locResult1, locResult2, locResult3;
+    LocatorList_t result, list1;
+    Locator_t locator, locator2, locator3;
+    Locator_t openConn1, openConn2;
     locator.kind = LOCATOR_KIND_TCPv4;
     locator.port = g_default_port;
-    locResult1.kind = LOCATOR_KIND_TCPv4;
-    locResult1.port = g_default_port;
-    locResult2.kind = LOCATOR_KIND_TCPv4;
-    locResult2.port = g_default_port;
-    locResult3.kind = LOCATOR_KIND_TCPv4;
-    locResult3.port = g_default_port;
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    locator3.kind = LOCATOR_KIND_TCPv4;
+    locator3.port = g_default_port;
 
     // Check shrink of only one locator list unicast.
     IPLocator::setIPv4(locator, 192,168,1,4);
-    IPLocator::setIPv4(locResult1, 192,168,1,4);
+    IPLocator::setIPv4(locator2, 192,168,1,4);
     list1.push_back(locator);
     IPLocator::setIPv4(locator, 192,168,2,5);
-    IPLocator::setIPv4(locResult2, 192,168,2,5);
+    IPLocator::setIPv4(locator3, 192,168,2,5);
     list1.push_back(locator);
+
+    // Open connections (fake)
+    openConn1 = locator2;
+    openConn2 = locator3;
+    transportUnderTest.OpenOutputChannel(openConn1);
+    transportUnderTest.OpenOutputChannel(openConn2);
 
     result = transportUnderTest.ShrinkLocatorLists({list1});
     ASSERT_EQ(result.size(), 2u);
-    for(auto it = result.begin(); it != result.end(); ++it)
-        ASSERT_TRUE(*it == locResult1 || *it == locResult2);
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+        ASSERT_TRUE(*it == locator2 || *it == locator3);
+    }
     list1.clear();
+
+    // Shrink Two Localhosts and return localhost.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 127, 0, 0, 1);
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    IPLocator::setIPv4(locator2, 127, 0, 0, 1);
+    list1.push_back(locator2);
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 1u);
+    ASSERT_TRUE(*result.begin() == locator);
+    list1.clear();
+
+    transportUnderTest.CloseOutputChannel(openConn1);
+    transportUnderTest.CloseOutputChannel(openConn2);
+
+    // Shrink Several Local addresses and return localhost.
+    if (localInterfaces.size() > 0)
+    {
+        locator.kind = LOCATOR_KIND_TCPv4;
+        locator.port = g_default_port;
+        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+        locator2.kind = LOCATOR_KIND_TCPv4;
+        locator2.port = g_default_port;
+        IPLocator::setIPv4(locator2, localInterfaces.begin()->locator);
+        list1.push_back(locator2);
+        if (localInterfaces.size() > 1)
+        {
+            IPLocator::setIPv4(locator2, localInterfaces[1].locator);
+            list1.push_back(locator2);
+        }
+
+        result = transportUnderTest.ShrinkLocatorLists({ list1 });
+        ASSERT_EQ(result.size(), 1u);
+        ASSERT_TRUE(*result.begin() == locator);
+        list1.clear();
+    }
+
+    // Shrink two WAN Adresses ( Same as mine ) With same LAN Address and same Logical Port and Same Physical Port and return only one.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 192, 168, 0, 1);
+    IPLocator::setWan(locator, g_test_wan_address);
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
+    IPLocator::setWan(locator2, g_test_wan_address);
+    list1.push_back(locator2);
+
+    // Open connections (fake)
+    openConn1.port = g_default_port;
+    IPLocator::setIPv4(openConn1, g_test_wan_address);
+    transportUnderTest.OpenOutputChannel(openConn1);
+
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 1u);
+    ASSERT_TRUE(*result.begin() == locator);
+
+    list1.clear();
+    transportUnderTest.CloseOutputChannel(openConn1);
+
+    // Shrink two WAN Adresses ( Same as mine ) With same LAN Address and same Logical Port and Different Physical Port and return both.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 192, 168, 0, 1);
+    IPLocator::setWan(locator, g_test_wan_address);
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port + 1;
+    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
+    IPLocator::setWan(locator2, g_test_wan_address);
+    list1.push_back(locator2);
+
+    // Open connections (fake)
+    openConn1.port = g_default_port;
+    openConn2.port = g_default_port + 1;
+    IPLocator::setIPv4(openConn1, g_test_wan_address);
+    IPLocator::setIPv4(openConn2, g_test_wan_address);
+    transportUnderTest.OpenOutputChannel(openConn1);
+    transportUnderTest.OpenOutputChannel(openConn2);
+
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 2u);
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+        ASSERT_TRUE(*it == locator || *it == locator2);
+    }
+
+    list1.clear();
+    transportUnderTest.CloseOutputChannel(openConn1);
+    transportUnderTest.CloseOutputChannel(openConn2);
+
+    //Shrink two WAN Adresses ( Same as mine ) With different LAN Address and same Logical Port and same Physical Port and return both.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 192, 168, 0, 1);
+    IPLocator::setWan(locator, g_test_wan_address);
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    IPLocator::setIPv4(locator2, 192, 168, 0, 2);
+    IPLocator::setWan(locator2, g_test_wan_address);
+    list1.push_back(locator2);
+
+    // Open connections (fake)
+    openConn1.port = g_default_port;
+    IPLocator::setIPv4(openConn1, g_test_wan_address);
+    transportUnderTest.OpenOutputChannel(openConn1);
+
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 2u);
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+        ASSERT_TRUE(*it == locator || *it == locator2);
+    }
+
+    list1.clear();
+    transportUnderTest.CloseOutputChannel(openConn1);
+
+    //Shrink two WAN Adresses ( different than mine ) With different LAN Address and same Logical Port and same Physical Port and return both.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 192, 168, 0, 1);
+    IPLocator::setWan(locator, "88.88.88.90");
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    IPLocator::setIPv4(locator2, 192, 168, 0, 2);
+    IPLocator::setWan(locator2, "88.88.88.90");
+    list1.push_back(locator2);
+
+    // Open connections (fake)
+    openConn1.port = g_default_port;
+    IPLocator::setIPv4(openConn1, "88.88.88.90");
+    transportUnderTest.OpenOutputChannel(openConn1);
+
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 2u);
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+        ASSERT_TRUE(*it == locator || *it == locator2);
+    }
+
+    list1.clear();
+    transportUnderTest.CloseOutputChannel(openConn1);
+
+    //Shrink two WAN Adresses ( different than mine ) With same LAN Address and same Logical Port and same Physical Port and return only one.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 192, 168, 0, 1);
+    IPLocator::setWan(locator, "88.88.88.90");
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
+    IPLocator::setWan(locator2, "88.88.88.90");
+    list1.push_back(locator2);
+
+    // Open connections (fake)
+    openConn1.port = g_default_port;
+    IPLocator::setIPv4(openConn1, "88.88.88.90");
+    transportUnderTest.OpenOutputChannel(openConn1);
+
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 1u);
+    ASSERT_TRUE(*result.begin() == locator);
+
+    list1.clear();
+    transportUnderTest.CloseOutputChannel(openConn1);
+
+    //Shrink two WAN Adresses ( different than mine ) With same LAN Address and different Logical Port and same Physical Port and return both.
+    locator.kind = LOCATOR_KIND_TCPv4;
+    locator.port = g_default_port;
+    IPLocator::setIPv4(locator, 192, 168, 0, 1);
+    IPLocator::setWan(locator, "88.88.88.90");
+    IPLocator::setLogicalPort(locator, 3333);
+    list1.push_back(locator);
+    locator2.kind = LOCATOR_KIND_TCPv4;
+    locator2.port = g_default_port;
+    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
+    IPLocator::setWan(locator2, "88.88.88.90");
+    IPLocator::setLogicalPort(locator2, 4444);
+    list1.push_back(locator2);
+
+    // Open connections (fake)
+    openConn1.port = g_default_port;
+    IPLocator::setIPv4(openConn1, "88.88.88.90");
+    transportUnderTest.OpenOutputChannel(openConn1);
+
+    result = transportUnderTest.ShrinkLocatorLists({ list1 });
+    ASSERT_EQ(result.size(), 2u);
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+        ASSERT_TRUE(*it == locator || *it == locator2);
+    }
+
+    list1.clear();
+    transportUnderTest.CloseOutputChannel(openConn1);
+
 }
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);
+    descriptor.set_WAN_address(g_test_wan_address);
 }
 
 int main(int argc, char **argv)

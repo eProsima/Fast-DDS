@@ -31,6 +31,8 @@
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 
+#include <thread>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 

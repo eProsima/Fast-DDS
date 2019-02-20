@@ -53,7 +53,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
         )
+
+        # External sources
+        if(TINYXML2_SOURCE_DIR)
+            list(APPEND DYNAMIC_TYPES_SOURCE
+                ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+                )
+        endif()
 
         set(DYNAMIC_TYPES_TEST_SOURCE
             DynamicTypesTests.cpp
@@ -71,7 +79,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
         )
 
         set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
@@ -96,27 +103,27 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             )
-        target_link_libraries(DynamicTypesTests ${GTEST_LIBRARIES} ${MOCKS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(DynamicTypesTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
-        else()
-            target_link_libraries(DynamicTypesTests ${PRIVACY} fastcdr)
-        endif()
+        target_link_libraries(DynamicTypesTests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            ${TINYXML2_LIBRARY}
+            fastcdr
+        )
         add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
+
 
         add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
         target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(DynamicComplexTypesTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(DynamicComplexTypesTests ${GTEST_LIBRARIES} ${MOCKS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(DynamicComplexTypesTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
-        else()
-            target_link_libraries(DynamicComplexTypesTests ${PRIVACY} fastcdr)
-        endif()
+        target_link_libraries(DynamicComplexTypesTests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            ${TINYXML2_LIBRARY}
+            fastcdr
+        )
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
-
 
     endif()
 endif()

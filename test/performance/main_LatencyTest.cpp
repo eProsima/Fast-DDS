@@ -85,7 +85,10 @@ struct Arg: public option::Arg
             return option::ARG_OK;
         }
 
-        if (msg) printError("Option '", option, "' requires a numeric argument\n");
+        if (msg)
+        {
+            printError("Option '", option, "' requires a numeric argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
@@ -218,7 +221,9 @@ int main(int argc, char** argv)
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
 
     if (parse.error())
+    {
         return 1;
+    }
 
     if (options[HELP])
     {

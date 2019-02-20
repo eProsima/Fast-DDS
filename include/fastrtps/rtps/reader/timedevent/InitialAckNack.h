@@ -41,12 +41,16 @@ class WriterProxy;
 class InitialAckNack: public TimedEvent
 {
     public:
+
         /**
          *
          * @param p_RP
          * @param interval
          */
-        InitialAckNack(WriterProxy* wp, double interval);
+        InitialAckNack(
+                WriterProxy* wp,
+                double interval);
+
         virtual ~InitialAckNack();
 
         /**
@@ -55,7 +59,9 @@ class InitialAckNack: public TimedEvent
          * @param code Code representing the status of the event
          * @param msg Message associated to the event
          */
-        void event(EventCode code, const char* msg= nullptr);
+        void event(
+                EventCode code,
+                const char* msg= nullptr);
 
         //!
         RTPSMessageGroup_t m_cdrmessages;

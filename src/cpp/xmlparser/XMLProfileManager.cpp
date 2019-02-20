@@ -15,10 +15,15 @@
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/log/Log.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace xmlparser {
+#include <cstdlib>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+using namespace eprosima::fastrtps;
+using namespace ::xmlparser;
 
 std::map<std::string, up_participant_t> XMLProfileManager::m_participant_profiles;
 ParticipantAttributes default_participant_attributes;
@@ -102,9 +107,25 @@ void XMLProfileManager::getDefaultTopicAttributes(TopicAttributes& topic_attribu
     topic_attributes = default_topic_attributes;
 }
 
-XMLP_ret XMLProfileManager::loadDefaultXMLFile()
+void XMLProfileManager::loadDefaultXMLFile()
 {
-    return loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
+    // Try to load the default XML file set with an environment variable.
+#ifdef _WIN32
+    char file_path[MAX_PATH];
+    size_t size = MAX_PATH;
+    if (getenv_s(&size, file_path, size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && size > 0)
+    {
+        loadXMLFile(file_path);
+    }
+#else
+    if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
+    {
+        loadXMLFile(file_path);
+    }
+#endif
+
+    // Try to load the default XML file.
+    loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
 }
 
 XMLP_ret XMLProfileManager::loadXMLProfiles(tinyxml2::XMLElement& profiles)
@@ -327,6 +348,7 @@ XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::
 
 XMLP_ret XMLProfileManager::extractParticipantProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_participant_t p_node_part = dynamic_cast<p_node_participant_t>(profile.get());
@@ -357,6 +379,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(up_base_node_t& profile, c
 
 XMLP_ret XMLProfileManager::extractPublisherProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_publisher_t p_node_part = dynamic_cast<p_node_publisher_t>(profile.get());
@@ -387,6 +410,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(up_base_node_t& profile, con
 
 XMLP_ret XMLProfileManager::extractSubscriberProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_subscriber_t p_node_part = dynamic_cast<p_node_subscriber_t>(profile.get());
@@ -457,6 +481,7 @@ p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(const std::string
 
 XMLP_ret XMLProfileManager::extractTopicProfile(up_base_node_t& profile, const std::string& filename)
 {
+    (void)(filename);
     std::string profile_name = "";
 
     p_node_topic_t p_node_topic = dynamic_cast<p_node_topic_t>(profile.get());
@@ -484,7 +509,3 @@ XMLP_ret XMLProfileManager::extractTopicProfile(up_base_node_t& profile, const s
     }
     return XMLP_ret::XML_OK;
 }
-
-} /* xmlparser  */
-} /* namespace  */
-} /* namespace eprosima */

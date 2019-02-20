@@ -18,6 +18,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
+const char* DEFAULT_FASTRTPS_ENV_VARIABLE = "FASTRTPS_DEFAULT_PROFILES_FILE";
 const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
 const char* ROOT = "dds";
@@ -30,6 +31,7 @@ const char* PUBLISHER = "publisher";
 const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
 const char* TYPES = "types";
+const char* LOG = "log";
 
 const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";
@@ -46,8 +48,11 @@ const char* KEEP_ALIVE_TIMEOUT = "keep_alive_timeout_ms";
 const char* MAX_LOGICAL_PORT = "max_logical_port";
 const char* LOGICAL_PORT_RANGE = "logical_port_range";
 const char* LOGICAL_PORT_INCREMENT = "logical_port_increment";
+const char* ENABLE_TCP_NODELAY = "enable_tcp_nodelay";
 const char* METADATA_LOGICAL_PORT = "metadata_logical_port";
 const char* LISTENING_PORTS = "listening_ports";
+const char* CALCULATE_CRC = "calculate_crc";
+const char* CHECK_CRC = "check_crc";
 
 const char* QOS_PROFILE = "qos_profile";
 const char* APPLICATION = "application";
@@ -98,13 +103,14 @@ const char* PREALLOCATED = "PREALLOCATED";
 const char* PREALLOCATED_WITH_REALLOC = "PREALLOCATED_WITH_REALLOC";
 const char* DYNAMIC = "DYNAMIC";
 const char* LOCATOR = "locator";
+const char* UDPv4_LOCATOR = "udpv4";
+const char* UDPv6_LOCATOR = "udpv6";
+const char* TCPv4_LOCATOR = "tcpv4";
+const char* TCPv6_LOCATOR = "tcpv6";
 const char* KIND = "kind";
 const char* ADDRESS = "address";
-const char* IPV6_ADDRESS = "ipv6_address";
-const char* ADDRESSES = "addresses_";
 const char* UNIQUE_LAN_ID = "unique_lan_id";
 const char* WAN_ADDRESS = "wan_address";
-const char* IP_ADDRESS = "ip_address";
 const char* RESERVED = "RESERVED";
 const char* UDPv4 = "UDPv4";
 const char* UDPv6 = "UDPv6";
@@ -118,10 +124,10 @@ const char* NACK_RESP_DELAY = "nackResponseDelay";
 const char* NACK_SUPRESSION = "nackSupressionDuration";
 const char* BY_NAME = "durationbyname";
 const char* BY_VAL = "durationbyval";
-const char* _INFINITE = "INFINITE";
-const char* ZERO = "ZERO";
-const char* INVALID = "INVALID";
-const char* SECONDS = "seconds";
+const char* DURATION_INFINITY = "DURATION_INFINITY";
+const char* DURATION_INFINITE_SEC = "DURATION_INFINITE_SEC";
+const char* DURATION_INFINITE_NSEC = "DURATION_INFINITE_NSEC";
+const char* SECONDS = "sec";
 const char* FRACTION = "fraction";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
@@ -245,41 +251,47 @@ const char* _OWNERSHIP_KIND_NOT_PRESENT = "OWNERSHIP_KIND_NOT_PRESENT";
 const char* STRENGTH = "strength";
 
 // TYPES parser
-const char* STRUCT = "struct";
-const char* UNION = "union";
 const char* BOOLEAN = "boolean";
-const char* CHAR = "char";
-const char* WCHAR = "wchar";
-const char* OCTET = "octet";
-const char* SHORT = "short";
-const char* LONG = "long";
-const char* USHORT = "unsignedshort";
-const char* ULONG = "unsignedlong";
-const char* LONGLONG = "longlong";
-const char* ULONGLONG = "unsignedlonglong";
-const char* FLOAT = "float";
-const char* DOUBLE = "double";
-const char* LONGDOUBLE = "longdouble";
+const char* CHAR = "char8";
+const char* WCHAR = "char16";
+const char* TBYTE = "byte";
+const char* SHORT = "int16";
+const char* LONG = "int32";
+const char* USHORT = "uint16";
+const char* ULONG = "uint32";
+const char* LONGLONG = "int64";
+const char* ULONGLONG = "uint64";
+const char* FLOAT = "float32";
+const char* DOUBLE = "float64";
+const char* LONGDOUBLE = "float128";
 const char* STRING = "string";
 const char* WSTRING = "wstring";
-const char* BOUNDEDSTRING = "boundedString";
-const char* BOUNDEDWSTRING = "boundedWString";
+const char* LITERAL = "literal";
+const char* STRUCT = "struct";
+const char* UNION = "union";
 const char* SEQUENCE = "sequence";
 const char* MAP = "map";
 const char* TYPEDEF = "typedef";
 const char* ENUM = "enum";
-const char* LITERAL = "literal";
 const char* CASE = "case";
-const char* CASEVALUE = "caseValue";
 const char* DEFAULT = "default";
 const char* DISCRIMINATOR = "discriminator";
-const char* DIMENSIONS = "dimensions";
+const char* CASE_DISCRIMINATOR = "caseDiscriminator";
+const char* ARRAY_DIMENSIONS = "arrayDimensions";
+const char* STR_MAXLENGTH = "stringMaxLength";
+const char* SEQ_MAXLENGTH = "sequenceMaxLength";
+const char* MAP_MAXLENGTH = "mapMaxLength";
+const char* MAP_KEY_TYPE = "key_type";
+const char* ENUMERATOR = "enumerator";
+const char* NON_BASIC_TYPE = "nonBasic";
+const char* NON_BASIC_TYPE_NAME = "nonBasicTypeName";
 const char* KEY = "key";
-const char* KEY_TYPE = "key_type";
-const char* VALUE_TYPE = "value_type";
-const char* LENGHT = "length";
-const char* MAXLENGTH = "maxLength";
+const char* MEMBER = "member";
 
+// LOG
+const char* USE_DEFAULT = "use_default";
+const char* CONSUMER = "consumer";
+const char* CLASS = "class";
 
 } /* xmlparser */
 } /* namespace */

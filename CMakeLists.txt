@@ -92,12 +92,21 @@ set(${PROJECT_NAME}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} library provides
 
 message(STATUS "Configuring ${PROJECT_NAME_LARGE}")
 message(STATUS "Version: ${PROJECT_VERSION}")
-message(STATUS "To change de version modify the file configure.ac")
+message(STATUS "To change the version modify the file configure.ac")
 
 ###############################################################################
 # Generation of windows installers.
 ###############################################################################
 option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)
+
+###############################################################################
+# eProsima build options
+###############################################################################
+option(EPROSIMA_BUILD "Activate internal building" OFF)
+
+if(EPROSIMA_INSTALLER)
+    set(EPROSIMA_BUILD ON)
+endif()
 
 ###############################################################################
 # Warning level
@@ -112,12 +121,20 @@ if(MSVC OR MSVC_IDE)
     if(EPROSIMA_EXTRA_CMAKE_CXX_FLAGS)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EPROSIMA_EXTRA_CMAKE_CXX_FLAGS}")
     endif()
+
+    if(EPROSIMA_BUILD)
+        string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+    endif()
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-unknown-pragmas")
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-undefined,error")
+    endif()
+
+    if(EPROSIMA_BUILD)
+        string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
     endif()
 endif()
 
@@ -134,6 +151,7 @@ endif()
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
+set(FORCE_CXX "11")
 check_stdcxx()
 check_compile_feature()
 check_endianness()
@@ -163,16 +181,6 @@ if(WIN32 AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
 else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
 endif()
-
-###############################################################################
-# eProsima build options
-###############################################################################
-option(EPROSIMA_BUILD "Activate internal building" OFF)
-
-if(EPROSIMA_INSTALLER)
-    set(EPROSIMA_BUILD ON)
-endif()
-
 
 ###############################################################################
 # Internal debug messages
