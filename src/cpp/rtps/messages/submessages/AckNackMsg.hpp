@@ -83,7 +83,7 @@ bool RTPSMessageCreator::addSubmessageAcknack(
     CDRMessage::addInt32(msg, count);
 
     //TODO(Ricardo) Improve.
-    submessage_size = msg->pos - position_size_count_size;
+    submessage_size = uint16_t(msg->pos - position_size_count_size);
     octet* o= (octet*)&submessage_size;
     if(msg->msg_endian == DEFAULT_ENDIAN)
     {
@@ -160,7 +160,7 @@ bool RTPSMessageCreator::addSubmessageNackFrag(
     CDRMessage::addUInt32(msg, count);
 
     //TODO(Ricardo) Improve.
-    submessage_size = msg->pos - position_size_count_size;
+    submessage_size = uint16_t(msg->pos - position_size_count_size);
     octet* o= (octet*)&submessage_size;
     if(msg->msg_endian == DEFAULT_ENDIAN)
     {

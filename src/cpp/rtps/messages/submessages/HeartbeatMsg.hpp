@@ -114,7 +114,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeat(
     CDRMessage::addInt32(msg,(int32_t)count);
 
     //TODO(Ricardo) Improve.
-    submessage_size = msg->pos - position_size_count_size;
+    submessage_size = uint16_t(msg->pos - position_size_count_size);
     octet* o= (octet*)&submessage_size;
     if(msg->msg_endian == DEFAULT_ENDIAN)
     {
@@ -188,7 +188,7 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(
     CDRMessage::addInt32(msg, (int32_t)count);
 
     //TODO(Ricardo) Improve.
-    submessage_size = msg->pos - position_size_count_size;
+    submessage_size = uint16_t(msg->pos - position_size_count_size);
     octet* o= (octet*)&submessage_size;
     if(msg->msg_endian == DEFAULT_ENDIAN)
     {
