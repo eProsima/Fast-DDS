@@ -38,7 +38,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         main_MemoryTest.cpp
         )
     add_executable(MemoryTest ${MEMORYTEST_SOURCE})
-    target_link_libraries(MemoryTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    target_link_libraries(MemoryTest fastrtps foonathan_memory ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
     configure_file("cycles_tests.py" "cycles_tests.py")
     configure_file("memory_tests.py" "memory_tests.py")

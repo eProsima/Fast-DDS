@@ -25,6 +25,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -45,7 +49,7 @@ message(STATUS "Configuring RTPSTest_registered...")
 file(GLOB RTPSTESTREGISTERED_SOURCES "*.cpp")
 
 add_executable(RTPSTest_registered ${RTPSTESTREGISTERED_SOURCES})
-target_link_libraries(RTPSTest_registered fastrtps fastcdr)
+target_link_libraries(RTPSTest_registered fastrtps fastcdr foonathan_memory)
 install(TARGETS RTPSTest_registered
     RUNTIME DESTINATION examples/C++/RTPSTest_registered/${BIN_INSTALL_DIR}
     )

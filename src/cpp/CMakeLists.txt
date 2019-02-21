@@ -288,7 +288,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     endif()
 
     # Link library to external libraries.
-    target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
+    target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         ${TINYXML2_LIBRARY}
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>

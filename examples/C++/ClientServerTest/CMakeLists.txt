@@ -25,6 +25,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
 find_package(fastrtps REQUIRED)
 endif()
@@ -45,7 +49,7 @@ message(STATUS "Configuring ClientServerTest...")
 file(GLOB CLIENTSERVERTEST_SOURCES "*.cpp")
 
 add_executable(ClientServerTest ${CLIENTSERVERTEST_SOURCES})
-target_link_libraries(ClientServerTest fastrtps fastcdr)
+target_link_libraries(ClientServerTest fastrtps fastcdr foonathan_memory)
 install(TARGETS ClientServerTest
 	RUNTIME DESTINATION examples/C++/ClientServerTest/${BIN_INSTALL_DIR}
     )

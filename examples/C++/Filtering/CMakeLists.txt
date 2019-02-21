@@ -25,6 +25,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -45,7 +49,7 @@ message(STATUS "Configuring Filtering example...")
 file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(FilteringExample ${DEADLINEQOS_EXAMPLE_SOURCES})
-target_link_libraries(FilteringExample fastrtps fastcdr)
+target_link_libraries(FilteringExample fastrtps fastcdr foonathan_memory)
 install(TARGETS FilteringExample
     RUNTIME DESTINATION examples/C++/FilteringExample/${BIN_INSTALL_DIR}
     )

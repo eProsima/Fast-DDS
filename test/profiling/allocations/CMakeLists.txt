@@ -40,7 +40,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.sh
     )
 
 add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
-target_link_libraries(AllocationTest fastrtps fastcdr osrf_testing_tools_cpp::memory_tools)
+target_link_libraries(AllocationTest fastrtps fastcdr foonathan_memory osrf_testing_tools_cpp::memory_tools)
 install(TARGETS AllocationTest
     RUNTIME DESTINATION test/profiling/allocations/${BIN_INSTALL_DIR})
 

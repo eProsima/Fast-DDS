@@ -139,7 +139,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_compile_definitions(BlackboxTests_PreallocMem PRIVATE
             PREALLOCATED_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_PreallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests_PreallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(BlackboxTests_PreallocMem fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
         add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
@@ -152,7 +152,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_compile_definitions(BlackboxTests_ReallocMem PRIVATE
             PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_ReallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests_ReallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(BlackboxTests_ReallocMem fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
         add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
@@ -165,7 +165,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_compile_definitions(BlackboxTests_DynMem PRIVATE
             DYNAMIC_RESERVE_MEMORY_MODE_TEST)
         target_include_directories(BlackboxTests_DynMem PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests_DynMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(BlackboxTests_DynMem fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
         add_blackbox_gtest(BlackboxTests_DynMem DynMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"

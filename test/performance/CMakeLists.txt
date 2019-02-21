@@ -39,7 +39,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         main_LatencyTest.cpp
         )
     add_executable(LatencyTest ${LATENCYTEST_SOURCE})
-    target_link_libraries(LatencyTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    target_link_libraries(LatencyTest fastrtps foonathan_memory ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
     set(THROUGHPUTTEST_SOURCE ThroughputPublisher.cpp
         ThroughputSubscriber.cpp
@@ -48,7 +48,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         )
     add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
     target_include_directories(ThroughputTest PRIVATE)
-    target_link_libraries(ThroughputTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    target_link_libraries(ThroughputTest fastrtps foonathan_memory ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
     if(WIN32)
         if (EXISTS $ENV{GSTREAMER_1_0_ROOT_X86_64})
@@ -104,7 +104,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         endif()
 
         if (WIN32)
-            target_link_libraries(VideoTest fastrtps
+            target_link_libraries(VideoTest fastrtps foonathan_memory
                 ${CMAKE_THREAD_LIBS_INIT}
                 ${CMAKE_DL_LIBS}
                 ${GST_LIBRARIES}
@@ -114,7 +114,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib
                 $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib)
         else()
-            target_link_libraries(VideoTest fastrtps
+            target_link_libraries(VideoTest fastrtps foonathan_memory
                 ${CMAKE_THREAD_LIBS_INIT}
                 ${CMAKE_DL_LIBS}
                 ${GST_LIBRARIES}

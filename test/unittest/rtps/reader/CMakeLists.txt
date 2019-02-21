@@ -41,7 +41,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/InitialAckNack
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(WriterProxyTests
+        target_link_libraries(WriterProxyTests foonathan_memory
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
