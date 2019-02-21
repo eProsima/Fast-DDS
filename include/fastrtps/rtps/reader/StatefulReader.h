@@ -270,6 +270,8 @@ class StatefulReader : public RTPSReader
         ResourceLimitedVector<WriterProxy*> matched_writers_;
         //! Vector containing pointers to all the inactive, ready for reuse, WriterProxies.
         ResourceLimitedVector<WriterProxy*> matched_writers_pool_;
+        //!
+        ResourceLimitedContainerConfig proxy_changes_config_;
 };
 
 } /* namespace rtps */

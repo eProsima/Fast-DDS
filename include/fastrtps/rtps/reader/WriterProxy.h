@@ -28,6 +28,9 @@
 #include "../attributes/ReaderAttributes.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
+
 #include<set>
 
 // Testing purpose
@@ -61,8 +64,11 @@ public:
     /**
      * Constructor.
      * @param reader Pointer to the StatefulReader creating this proxy.
+     * @param changes_allocation Configuration for the set of Change
      */
-    WriterProxy(StatefulReader* reader);
+    WriterProxy(
+            StatefulReader* reader,
+            const ResourceLimitedContainerConfig& changes_allocation);
 
     /**
      * Activate this proxy associating it to a remote writer.
@@ -294,8 +300,14 @@ private:
     bool is_alive_;
     //!Mutex Pointer
     mutable std::recursive_mutex mutex_;
+
+    using pool_allocator_t =
+        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+
+    //!Memory pool allocator for changes_from_writer_
+    pool_allocator_t changes_pool_;
     //!Vector containing the ChangeFromWriter_t objects.
-    std::set<ChangeFromWriter_t, ChangeFromWriterCmp> changes_from_writer_;
+    foonathan::memory::set<ChangeFromWriter_t, pool_allocator_t> changes_from_writer_;
     SequenceNumber_t changes_from_writer_low_mark_;
     //! Store last ChacheChange_t notified.
     SequenceNumber_t last_notified_;

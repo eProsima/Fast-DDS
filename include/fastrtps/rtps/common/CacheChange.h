@@ -444,6 +444,11 @@ namespace eprosima
                     is_relevant_ = false;
                 }
 
+                bool operator < (const ChangeFromWriter_t& rhs) const
+                {
+                    return seq_num_ < rhs.seq_num_;
+                }
+
                 private:
 
                 //! Status
@@ -454,14 +459,6 @@ namespace eprosima
 
                 //! Sequence number
                 SequenceNumber_t seq_num_;
-            };
-
-            struct ChangeFromWriterCmp
-            {
-                bool operator()(const ChangeFromWriter_t& a, const ChangeFromWriter_t& b) const
-                {
-                    return a.seq_num_ < b.seq_num_;
-                }
             };
 #endif
         }
