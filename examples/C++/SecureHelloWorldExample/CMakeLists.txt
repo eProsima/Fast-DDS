@@ -25,6 +25,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -47,7 +51,7 @@ file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(SecureHelloWorldExample ${HELLOWORLD_EXAMPLE_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_SOURCES_CPP})
 target_include_directories(SecureHelloWorldExample PRIVATE)
-target_link_libraries(SecureHelloWorldExample fastrtps fastcdr)
+target_link_libraries(SecureHelloWorldExample fastrtps fastcdr foonathan_memory)
 install(TARGETS SecureHelloWorldExample
     RUNTIME DESTINATION examples/C++/SecureHelloWorldExample/${BIN_INSTALL_DIR})
 
