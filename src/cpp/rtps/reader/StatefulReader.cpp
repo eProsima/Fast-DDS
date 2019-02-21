@@ -28,6 +28,8 @@
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
 #include <fastrtps/utils/TimeConversion.h>
+#include "../history/HistoryAttributesExtension.hpp"
+
 
 #include <mutex>
 #include <thread>
@@ -63,10 +65,22 @@ StatefulReader::StatefulReader(
     , times_(att.times)
     , matched_writers_(att.matched_writers_allocation)
     , matched_writers_pool_(att.matched_writers_allocation)
+    , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
 {
+    // Update resource limits on proxy changes set adding 256 possibly missing changes
+    proxy_changes_config_.initial += 256u;
+    if (proxy_changes_config_.increment == 0)
+    {
+        proxy_changes_config_.maximum += 256u;
+    }
+    else
+    {
+        proxy_changes_config_.maximum = std::max(proxy_changes_config_.maximum, proxy_changes_config_.initial);
+    }
+
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
-        matched_writers_pool_.push_back(new WriterProxy(this));
+        matched_writers_pool_.push_back(new WriterProxy(this, proxy_changes_config_));
     }
 }
 
@@ -89,7 +103,7 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
         size_t max_readers = matched_writers_pool_.max_size();
         if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
         {
-            wp = new WriterProxy(this);
+            wp = new WriterProxy(this, proxy_changes_config_);
         }
         else
         {

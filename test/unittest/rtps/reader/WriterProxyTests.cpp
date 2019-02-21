@@ -36,7 +36,7 @@ namespace eprosima
             {
                 RemoteWriterAttributes wattr;
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock);
+                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Update MISSING changes util sequence number 3.
@@ -107,7 +107,7 @@ namespace eprosima
             {
                 RemoteWriterAttributes wattr;
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock);
+                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Update LOST changes util sequence number 3.
@@ -156,7 +156,7 @@ namespace eprosima
             {
                 RemoteWriterAttributes wattr;
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock);
+                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Set received change with sequence number 3.
@@ -239,7 +239,7 @@ namespace eprosima
             {
                 RemoteWriterAttributes wattr;
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock);
+                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Set irrelevant change with sequence number 3.
