@@ -301,6 +301,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     if(att.getUserDefinedID()>0)
         ratt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     ratt.times = att.times;
+    ratt.matched_writers_allocation = att.matched_publisher_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
