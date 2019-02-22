@@ -24,11 +24,21 @@
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
+#include <foonathan/memory/namespace_alias.hpp>
+
 #include <typeinfo>
+#include <algorithm>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
+
+constexpr size_t guid_map_node_size = 
+    memory::map_node_size<std::pair<size_t,std::pair<GUID_t, GUID_t>>>::value;
+constexpr size_t guid_count_node_size = 
+    memory::map_node_size<std::pair<size_t,std::pair<GUID_t, uint16_t>>>::value;
+constexpr size_t history_record_node_size = 
+    memory::map_node_size<std::pair<size_t,std::pair<GUID_t, SequenceNumber_t>>>::value;
 
 RTPSReader::RTPSReader(
         RTPSParticipantImpl* pimpl,
@@ -42,6 +52,18 @@ RTPSReader::RTPSReader(
     , m_acceptMessagesToUnknownReaders(true)
     , m_acceptMessagesFromUnkownWriters(true)
     , m_expectsInlineQos(att.expectsInlineQos)
+    , persistence_guid_map_allocator_(
+            guid_map_node_size,
+            guid_map_node_size * std::max(att.matched_writers_allocation.initial, (size_t) 4u))
+    , persistence_guid_count_allocator_(
+            guid_count_node_size,
+            guid_count_node_size * std::max(att.matched_writers_allocation.initial, (size_t) 4u))
+    , history_record_allocator_(
+            history_record_node_size,
+            history_record_node_size * std::max(att.matched_writers_allocation.initial, (size_t) 4u))
+    , persistence_guid_map_(persistence_guid_map_allocator_)
+    , persistence_guid_count_(persistence_guid_count_allocator_)
+    , history_record_(history_record_allocator_)
     , fragmentedChangePitStop_(nullptr)
 {
     mp_history->mp_reader = this;

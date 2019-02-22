@@ -26,6 +26,9 @@
 #include "../attributes/ReaderAttributes.h"
 #include "../common/SequenceNumber.h"
 
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
+
 #include <map>
 
 namespace eprosima {
@@ -281,12 +284,19 @@ protected:
     //!Expects Inline Qos.
     bool m_expectsInlineQos;
 
+    using pool_allocator_t =
+        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+
+    pool_allocator_t persistence_guid_map_allocator_;
+    pool_allocator_t persistence_guid_count_allocator_;
+    pool_allocator_t history_record_allocator_;
+
     //!Physical GUID to persistence GUID map
-    std::map<GUID_t, GUID_t> persistence_guid_map_;
+    foonathan::memory::map<GUID_t, GUID_t, pool_allocator_t> persistence_guid_map_;
     //!Persistence GUID count map
-    std::map<GUID_t, uint16_t> persistence_guid_count_;
+    foonathan::memory::map<GUID_t, uint16_t, pool_allocator_t> persistence_guid_count_;
     //!Information about max notified change
-    std::map<GUID_t, SequenceNumber_t> history_record_;
+    foonathan::memory::map<GUID_t, SequenceNumber_t, pool_allocator_t> history_record_;
 
     //TODO Select one
     FragmentedChangePitStop* fragmentedChangePitStop_;
