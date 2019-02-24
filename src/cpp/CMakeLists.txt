@@ -285,6 +285,12 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         )
 
+    # Define option to link pthread library when sanitizers are enabled
+    option(SANITIZER_ENABLED "Add pthread library when sanitizers are enabled" OFF)
+    if(SANITIZER_ENABLED)
+        target_link_libraries(${PROJECT_NAME} ${PRIVACY} pthread)
+    endif()
+
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
         set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
