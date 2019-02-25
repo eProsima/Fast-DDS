@@ -282,8 +282,9 @@ elseif(NOT EPROSIMA_INSTALLER)
 
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
-        $<$<BOOL:${SANITIZER_ENABLED}>:pthread$<SEMICOLON>${CMAKE_THREAD_LIBS_INIT}>
-        ${CMAKE_DL_LIBS} ${TINYXML2_LIBRARY}
+        ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
+        $<$<BOOL:${SANITIZER_ENABLED}>:pthread>
+        ${TINYXML2_LIBRARY}
         $<$<BOOL:${SECURITY}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         )
