@@ -277,19 +277,16 @@ elseif(NOT EPROSIMA_INSTALLER)
         set(PRIVACY "PRIVATE")
     endif()
 
+    # Define option to link pthread library when sanitizers are enabled
+    option(SANITIZER_ENABLED "Add pthread library when sanitizers are enabled" OFF)
+
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
-        ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
-        ${TINYXML2_LIBRARY}
+        $<$<BOOL:${SANITIZER_ENABLED}>:pthread$<SEMICOLON>${CMAKE_THREAD_LIBS_INIT}>
+        ${CMAKE_DL_LIBS} ${TINYXML2_LIBRARY}
         $<$<BOOL:${SECURITY}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         )
-
-    # Define option to link pthread library when sanitizers are enabled
-    option(SANITIZER_ENABLED "Add pthread library when sanitizers are enabled" OFF)
-    if(SANITIZER_ENABLED)
-        target_link_libraries(${PROJECT_NAME} ${PRIVACY} pthread)
-    endif()
 
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
