@@ -390,6 +390,19 @@ class PubSubReader
             return *this;
         }
 
+        PubSubReader& matched_writers_allocation(size_t initial, size_t maximum)
+        {
+            subscriber_attr_.matched_publisher_allocation.initial = initial;
+            subscriber_attr_.matched_publisher_allocation.maximum = maximum;
+            return *this;
+        }
+
+        PubSubReader& expect_no_allocs()
+        {
+            // TODO(Mcc): Add no allocations check code when feature is completely ready
+            return *this;
+        }
+
         PubSubReader& heartbeatResponseDelay(const int32_t secs, const int32_t frac)
         {
             subscriber_attr_.times.heartbeatResponseDelay.seconds = secs;
