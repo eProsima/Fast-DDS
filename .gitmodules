@@ -13,6 +13,3 @@
 [submodule "thirdparty/tinyxml2"]
 	path = thirdparty/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
-[submodule "thirdparty/foonathan_memory"]
-	path = thirdparty/foonathan_memory
-	url = https://github.com/foonathan/memory
