@@ -180,8 +180,8 @@ bool SubscriberHistory::received_change(
                 << " and no method to obtain it";);
             return false;
         }
-        t_v_Inst_Caches::iterator vit;
-        if (find_Key(a_change, &vit))
+        t_m_Inst_Caches::iterator vit;
+        if (find_key(a_change, &vit))
         {
             //logInfo(RTPS_EDP,"Trying to add change with KEY: "<< vit->first << endl;);
             bool add = false;
@@ -224,7 +224,7 @@ bool SubscriberHistory::received_change(
                     {
                         bool read = (*older_sample)->isRead;
 
-                        if (this->remove_change_sub(*older_sample, &vit))
+                        if (this->remove_change_sub(*older_sample))
                         {
                             if (!read)
                             {
@@ -472,51 +472,41 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
     return false;
 }
 
-bool SubscriberHistory::find_Key(CacheChange_t* a_change, t_v_Inst_Caches::iterator* vit_out)
+bool SubscriberHistory::find_key(
+        CacheChange_t* a_change,
+        t_m_Inst_Caches::iterator* vit_out)
 {
-    t_v_Inst_Caches::iterator vit;
-    bool found = false;
-    for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
+    t_m_Inst_Caches::iterator vit;
+    vit = m_keyedChanges.find(a_change->instanceHandle);
+    if (vit != m_keyedChanges.end())
     {
-        if (a_change->instanceHandle == vit->first)
-        {
-            *vit_out = vit;
-            return true;
-        }
+        *vit_out = vit;
+        return true;
     }
-    if (!found)
-    {
-        if ((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
-        {
-            t_p_I_Change newpair;
-            newpair.first = a_change->instanceHandle;
-            m_keyedChanges.push_back(newpair);
-            *vit_out = m_keyedChanges.end() - 1;
-            return true;
-        }
-        else
-        {
-            for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
-            {
-                if (vit->second.size() == 0)
-                {
-                    m_keyedChanges.erase(vit);
-                    t_p_I_Change newpair;
-                    newpair.first = a_change->instanceHandle;
-                    m_keyedChanges.push_back(newpair);
-                    *vit_out = m_keyedChanges.end() - 1;
-                    return true;
-                }
-            }
-            logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
-        }
 
+    if ((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
+    {
+        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
+        return true;
+    }
+    else
+    {
+        for (vit = m_keyedChanges.begin(); vit!= m_keyedChanges.end(); ++vit)
+        {
+            if (vit->second.size() == 0)
+            {
+                m_keyedChanges.erase(vit);
+                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
+                return true;
+            }
+        }
+        logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
     }
     return false;
 }
 
 
-bool SubscriberHistory::remove_change_sub(CacheChange_t* change, t_v_Inst_Caches::iterator* vit_in)
+bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -536,19 +526,12 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change, t_v_Inst_Caches
     }
     else
     {
-        t_v_Inst_Caches::iterator vit;
-        if (vit_in != nullptr)
-        {
-            vit = *vit_in;
-        }
-        else if (this->find_Key(change, &vit))
-        {
-
-        }
-        else
+        t_m_Inst_Caches::iterator vit;
+        if (!this->find_key(change, &vit))
         {
             return false;
         }
+
         for (auto chit = vit->second.begin(); chit != vit->second.end(); ++chit)
         {
             if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)

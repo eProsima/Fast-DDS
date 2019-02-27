@@ -41,8 +41,8 @@ class PublisherImpl;
 class PublisherHistory:public rtps::WriterHistory
 {
     public:
-        typedef std::pair<rtps::InstanceHandle_t,std::vector<rtps::CacheChange_t*>> t_p_I_Change;
-        typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
+        typedef std::map<rtps::InstanceHandle_t, std::vector<rtps::CacheChange_t*>> t_m_Inst_Caches;
+        typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
         /**
          * Constructor of the PublisherHistory.
          * @param pimpl Pointer to the PublisherImpl.
@@ -89,16 +89,15 @@ class PublisherHistory:public rtps::WriterHistory
         /**
          * Remove a change by the publisher History.
          * @param change Pointer to the CacheChange_t.
-         * @param vit Pointer to the iterator of the Keyed history vector.
          * @return True if removed.
          */
-        bool remove_change_pub(rtps::CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
+        bool remove_change_pub(rtps::CacheChange_t* change);
 
         virtual bool remove_change_g(rtps::CacheChange_t* a_change);
 
     private:
-        //!Vector of pointer to the CacheChange_t divided by key.
-        t_v_Inst_Caches m_keyedChanges;
+        //!Map where keys are instance handles and values are vectors of cache changes associated
+        t_m_Inst_Caches m_keyedChanges;
         //!HistoryQosPolicy values.
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
@@ -106,7 +105,15 @@ class PublisherHistory:public rtps::WriterHistory
         //!Publisher Pointer
         PublisherImpl* mp_pubImpl;
 
-        bool find_Key(rtps::CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
+        /**
+         * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
+         * @param a_change The change to get the key from
+         * @param map_it A map iterator to the given key
+         * @return True if the key was found or could be added to the map
+         */
+        bool find_key(
+                rtps::CacheChange_t* a_change,
+                t_m_Inst_Caches::iterator* map_it);
 };
 
 } /* namespace fastrtps */

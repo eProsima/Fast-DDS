@@ -46,8 +46,8 @@ class SubscriberHistory: public rtps::ReaderHistory
 {
     public:
 
-        typedef std::pair<rtps::InstanceHandle_t,std::vector<rtps::CacheChange_t*>> t_p_I_Change;
-        typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
+        typedef std::map<rtps::InstanceHandle_t,std::vector<rtps::CacheChange_t*>> t_m_Inst_Caches;
+        typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
 
         /**
          * Constructor. Requires information about the subscriner
@@ -94,10 +94,9 @@ class SubscriberHistory: public rtps::ReaderHistory
         /**
          * This method is called to remove a change from the SubscriberHistory.
          * @param change Pointer to the CacheChange_t.
-         * @param vit Pointer to the iterator of the key-ordered cacheChange vector.
          * @return True if removed.
          */
-        bool remove_change_sub(rtps::CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
+        bool remove_change_sub(rtps::CacheChange_t* change);
 
         //!Increase the unread count.
         inline void increaseUnreadCount()
@@ -124,8 +123,8 @@ class SubscriberHistory: public rtps::ReaderHistory
 
         //!Number of unread CacheChange_t.
         uint64_t m_unreadCacheCount;
-        //!Vector of pointer to the CacheChange_t divided by key.
-        t_v_Inst_Caches m_keyedChanges;
+        //!Map where keys are instance handles and values vectors of cache changes
+        t_m_Inst_Caches m_keyedChanges;
         //!HistoryQosPolicy values.
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
@@ -136,8 +135,15 @@ class SubscriberHistory: public rtps::ReaderHistory
         //!Type object to deserialize Key
         void * mp_getKeyObject;
 
-
-        bool find_Key(rtps::CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
+        /**
+         * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
+         * @param a_change The change to get the key from
+         * @param map_it A map iterator to the given key
+         * @return True if it was found or could be added to the map
+         */
+        bool find_key(
+                rtps::CacheChange_t* a_change,
+                t_m_Inst_Caches::iterator* map_it);
 };
 
 } /* namespace fastrtps */
