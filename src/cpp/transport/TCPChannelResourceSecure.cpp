@@ -21,7 +21,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-using namespace tcp_secure;
 using namespace asio;
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
@@ -34,8 +33,8 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
+    , secure_socket_(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(service_, ssl_context_))
 {
-    secure_socket_ = createTCPSocket(service, ssl_context_);
     set_tls_verify_mode(parent->configuration());
 }
 
@@ -44,7 +43,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
         RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
-        tcp_secure::eProsimaTCPSocket socket,
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, maxMsgSize)
     , service_(service)
@@ -76,13 +75,16 @@ void TCPChannelResourceSecure::connect()
         connection_status_ = eConnectionStatus::eConnecting;
         try
         {
-            tcp::resolver resolver(service_);
-            auto endpoints = resolver.resolve(IPLocator::ip_to_string(locator_),
+            Locator_t locator = locator_;
+
+            ip::tcp::resolver resolver(service_);
+
+            auto endpoints = resolver.resolve(
+                IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(locator_),
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
-            Locator_t locator = locator_;
             TCPTransportInterface* parent = parent_;
-            const tcp_secure::eProsimaTCPSocket& secure_socket = secure_socket_;
+            std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket = secure_socket_;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
                 [secure_socket, locator, parent](const std::error_code& error,
@@ -96,13 +98,14 @@ void TCPChannelResourceSecure::connect()
                         role = ssl::stream_base::server;
                     }
 
+                    logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(locator));
+
                     secure_socket->async_handshake(role,
                         [locator, parent](const std::error_code& error)
                     {
                         if (!error)
                         {
-                            logInfo(RTCP_TLS, "Connected: " << IPLocator::ip_to_string(locator) << ":"
-                                << IPLocator::getPhysicalPort(locator));
+                            logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(locator));
                             parent->SocketConnected(locator, error);
                         }
                         else
@@ -154,19 +157,22 @@ void TCPChannelResourceSecure::disconnect()
 
 uint32_t TCPChannelResourceSecure::read(
         octet* buffer,
-        uint32_t buffer_capacity,
         std::size_t size,
         asio::error_code& ec)
 {
+    std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
+    return static_cast<uint32_t>(secure_socket_->read_some(asio::buffer(buffer, size), ec));
+    /*
     size_t rec = 0;
     size_t readed = static_cast<size_t>(-1);
 
     while (readed != 0 && rec < size && !ec && alive())
     {
-        readed = secure_socket_->read_some(asio::buffer(buffer, buffer_capacity), ec);
+        readed = secure_socket_->read_some(asio::buffer(buffer + rec, size - rec), ec);
         rec += readed;
     }
     return static_cast<uint32_t>(rec);
+    */
 }
 
 uint32_t TCPChannelResourceSecure::send(
@@ -174,16 +180,21 @@ uint32_t TCPChannelResourceSecure::send(
         size_t size,
         asio::error_code& ec)
 {
+    std::unique_lock<std::recursive_mutex> write_lock(write_mutex());
+    uint32_t sent = static_cast<uint32_t>(secure_socket_->write_some(asio::buffer(data, size), ec));
+    return sent;
+    /*
     size_t sent = 0;
     size_t aux = static_cast<size_t>(-1);
 
     while (aux != 0 && sent < size && !ec && alive())
     {
-        aux = secure_socket_->write_some(asio::buffer(data, size), ec);
+        aux = secure_socket_->write_some(asio::buffer(data + sent, size - sent), ec);
         sent += aux;
     }
 
     return static_cast<uint32_t>(sent);
+    */
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceSecure::remote_endpoint() const

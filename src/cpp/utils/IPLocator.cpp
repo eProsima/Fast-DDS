@@ -444,10 +444,11 @@ const octet* IPLocator::getWan(const Locator_t& locator)
 
 bool IPLocator::hasWan(const Locator_t& locator)
 {
-    return locator.address[8] != 0 &&
-        locator.address[9] != 0 &&
-        locator.address[10] != 0 &&
-        locator.address[11] != 0;
+    return locator.kind == LOCATOR_KIND_TCPv4 && // TCPv6 doesn't use WAN
+        (locator.address[8] != 0 ||
+        locator.address[9] != 0 ||
+        locator.address[10] != 0 ||
+        locator.address[11] != 0);
 }
 
 std::string IPLocator::toWanstring(const Locator_t& locator)
@@ -506,6 +507,15 @@ Locator_t IPLocator::toPhysicalLocator(const Locator_t& locator)
     Locator_t result = locator;
     setLogicalPort(result, 0);
     return result;
+}
+
+bool IPLocator::ip_equals_wan(const Locator_t& locator)
+{
+    return hasWan(locator) &&
+        locator.address[8]  == locator.address[12] &&
+        locator.address[9]  == locator.address[13] &&
+        locator.address[10] == locator.address[14] &&
+        locator.address[11] == locator.address[15];
 }
 
 // Common
@@ -621,6 +631,32 @@ bool IPLocator::compareAddressAndPhysicalPort(
         const Locator_t& loc2)
 {
     return compareAddress(loc1, loc2, true) && getPhysicalPort(loc1) == getPhysicalPort(loc2);
+}
+
+std::string IPLocator::to_string(const Locator_t& loc)
+{
+    std::stringstream ss;
+    if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
+    {
+        ss << (int)loc.address[8] << "."
+            << (int)loc.address[9] << "."
+            << (int)loc.address[10] << "."
+            << (int)loc.address[11] << "@";
+        ss << (int)loc.address[12] << "." << (int)loc.address[13]
+            << "." << (int)loc.address[14] << "." << (int)loc.address[15]
+            << ":" << loc.port;
+    }
+    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            ss << (int)loc.address[i];
+            if (i < 15)
+                ss << ".";
+        }
+        ss << ":" << loc.port;
+    }
+    return ss.str();
 }
 
 // UDP

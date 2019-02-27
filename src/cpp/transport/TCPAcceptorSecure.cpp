@@ -40,7 +40,6 @@ TCPAcceptorSecure::TCPAcceptorSecure(
 
 void TCPAcceptorSecure::accept(
         TCPTransportInterface* parent,
-        io_service&,
         ssl::context& ssl_context)
 {
     logInfo(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
@@ -56,7 +55,6 @@ void TCPAcceptorSecure::accept(
         acceptor_.async_accept(
             [this, locator, parent, &ssl_context](const std::error_code& error, tcp::socket socket)
             {
-                tcp_secure::eProsimaTCPSocket socket_ptr = tcp_secure::createTCPSocket(std::move(socket), ssl_context);
                 if (!error)
                 {
                     ssl::stream_base::handshake_type role = ssl::stream_base::server;
@@ -64,15 +62,21 @@ void TCPAcceptorSecure::accept(
                     {
                         role = ssl::stream_base::client;
                     }
-                    socket_ptr->async_handshake(role,
-                        [this, locator, parent, socket_ptr](const std::error_code& error)
+
+                    secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(
+                        std::move(socket),
+                        ssl_context);
+
+                    secure_socket_->async_handshake(role,
+                        [this, locator, parent](const std::error_code& error)
                         {
-                            parent->SecureSocketAccepted(this, locator, socket_ptr, error);
+                            //logError(RTCP_TLS, "Handshake: " << error.message());
+                            parent->SecureSocketAccepted(this, locator, error);
                         });
                 }
                 else
                 {
-                    parent->SecureSocketAccepted(this, locator, socket_ptr, error); // This method manages errors too.
+                    parent->SecureSocketAccepted(this, locator, error); // This method manages errors too.
                 }
             });
     }

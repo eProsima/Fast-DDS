@@ -94,7 +94,8 @@ enum  optionIndex {
     INTERVAL,
     IP,
     PORT,
-    TLS
+    TLS,
+    WHITELIST
 };
 
 /*
@@ -126,6 +127,7 @@ const option::Descriptor usage[] = {
         "Usage: HelloWorldExampleTCP <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { TLS, 0, "t", "tls",          Arg::None,      "  -t \t--tls \tUse TLS." },
+    { WHITELIST, 0, "w", "whitelist",       Arg::String,    "  -w \t--whitelist \tUse Whitelist." },
 
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
     { SAMPLES,0,"s","samples",              Arg::Numeric,
@@ -176,6 +178,7 @@ int main(int argc, char** argv)
     std::string wan_ip;
     int port = 5100;
     bool use_tls = false;
+    std::vector<std::string> whitelist;
 
     if (argc > 1)
     {
@@ -246,6 +249,10 @@ int main(int argc, char** argv)
                     use_tls = true;
                     break;
 
+                case WHITELIST:
+                    whitelist.emplace_back(opt.arg);
+                    break;
+
                 case UNKNOWN_OPT:
                     option::printUsage(fwrite, stdout, usage, columns);
                     return 0;
@@ -265,7 +272,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if (mypub.init(wan_ip, static_cast<uint16_t>(port), use_tls))
+                if (mypub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
                 {
                     mypub.run(count, sleep);
                 }
@@ -274,7 +281,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if (mysub.init(wan_ip, static_cast<uint16_t>(port), use_tls))
+                if (mysub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
                 {
                     mysub.run();
                 }

@@ -41,7 +41,8 @@ HelloWorldPublisher::HelloWorldPublisher()
 bool HelloWorldPublisher::init(
         const std::string &wan_ip,
         unsigned short port,
-        bool use_tls)
+        bool use_tls,
+        const std::vector<std::string>& whitelist)
 {
     stop_ = false;
     hello_.index(0);
@@ -56,6 +57,12 @@ bool HelloWorldPublisher::init(
     pparam.rtps.useBuiltinTransports = false;
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+    for (std::string ip : whitelist)
+    {
+        descriptor->interfaceWhiteList.push_back(ip);
+        std::cout << "Whitelisted " << ip << std::endl;
+    }
 
     if (use_tls)
     {

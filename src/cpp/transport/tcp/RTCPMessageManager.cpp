@@ -80,10 +80,11 @@ size_t RTCPMessageManager::sendMessage(
         return 0;
     }
 
-    size_t send = mTransport->send(p_channel_resource, msg.buffer, msg.length);
+    asio::error_code ec;
+    size_t send = p_channel_resource->send(msg.buffer, msg.length, ec);
     if (send != msg.length)
     {
-        logWarning(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes.");
+        logError(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes: " << ec.message());
     }
     //logInfo(RTCP, "Sent " << send << " bytes");
     return send;
@@ -286,6 +287,7 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(TCPChannelResource *p
     request.serialize(&payload);
 
     logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator));
+    //logError(DEBUG, "Sending Connection Request with locator: " << IPLocator::to_string(request.transportLocator()));
     TCPTransactionId id = getTransactionId();
     bool success = sendData(p_channel_resource, BIND_CONNECTION_REQUEST, id, &payload);
     if (!success)
@@ -423,6 +425,9 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
         return RETCODE_INCOMPATIBLE_VERSION;
     }
 
+    //logError(DEBUG, "Receive Connection Request with locator: " << IPLocator::to_string(request.transportLocator())
+    //    << " and will respond with our locator: " << response.locator());
+
     ResponseCode code = p_channel_resource->process_bind_request(request.transportLocator());
     sendData(p_channel_resource, BIND_CONNECTION_RESPONSE, transaction_id, &payload, code);
 
@@ -528,7 +533,7 @@ void RTCPMessageManager::processLogicalPortIsClosedRequest(
 
 ResponseCode RTCPMessageManager::processBindConnectionResponse(
         TCPChannelResource *p_channel_resource,
-        const BindConnectionResponse_t &/*response*/,
+        const BindConnectionResponse_t &,
         const TCPTransactionId &transaction_id)
 {
     if (findTransactionId(transaction_id))
@@ -537,6 +542,7 @@ ResponseCode RTCPMessageManager::processBindConnectionResponse(
                 << IPLocator::getPhysicalPort(p_channel_resource->locator()) << ")");
         p_channel_resource->change_status(TCPChannelResource::eConnectionStatus::eEstablished);
         removeTransactionId(transaction_id);
+        //logError(DEBUG, "Received Connection Response with locator: " << response.locator());
         return RETCODE_OK;
     }
     else
@@ -567,8 +573,7 @@ ResponseCode RTCPMessageManager::processCheckLogicalPortsResponse(
 ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
         TCPChannelResource *p_channel_resource,
         ResponseCode respCode,
-        const TCPTransactionId &transaction_id,
-        Locator_t &/*remote_locator*/)
+        const TCPTransactionId &transaction_id)
 {
     if (findTransactionId(transaction_id))
     {
@@ -770,10 +775,8 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
         //logInfo(RTCP_SEQ, "Receive [OPEN_LOGICAL_PORT_RESPONSE] Seq: " << controlHeader.transaction_id());
         ResponseCode respCode;
         memcpy(&respCode, &(receive_buffer[TCPControlMsgHeader::size()]), 4);
-        Locator_t remote_locator;
-        endpoint_to_locator(p_channel_resource->remote_endpoint(), remote_locator);
         logInfo(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_RESPONSE]");
-        processOpenLogicalPortResponse(p_channel_resource, respCode, controlHeader.transaction_id(), remote_locator);
+        processOpenLogicalPortResponse(p_channel_resource, respCode, controlHeader.transaction_id());
     }
     break;
     case KEEP_ALIVE_RESPONSE:

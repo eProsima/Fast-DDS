@@ -27,10 +27,9 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-
-
-
 #include "HelloWorld.h"
+
+#include <vector>
 
 class HelloWorldSubscriber {
     eprosima::fastrtps::Participant* participant_;
@@ -69,7 +68,8 @@ public:
     bool init(
         const std::string &wan_ip,
         unsigned short port,
-        bool use_tls);
+        bool use_tls,
+        const std::vector<std::string>& whitelist);
 
     //!RUN the subscriber
     void run();

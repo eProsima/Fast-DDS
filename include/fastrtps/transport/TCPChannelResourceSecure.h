@@ -23,46 +23,11 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-namespace tcp_secure{
-    // Typedefs
-    typedef std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> eProsimaTCPSocket;
-    typedef eProsimaTCPSocket eProsimaTCPSocketRef;
-
-    inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket socket)
-    {
-        return socket;
-    }
-
-    inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket socket)
-    {
-        return std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>>(socket);
-    }
-
-    inline eProsimaTCPSocket createTCPSocket(
-        asio::io_service& io_service,
-        asio::ssl::context& ssl_context)
-    {
-        return std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(io_service, ssl_context);
-    }
-
-    inline eProsimaTCPSocket createTCPSocket(
-        asio::ip::tcp::socket&& socket,
-        asio::ssl::context& ssl_context)
-    {
-        return std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(std::move(socket), ssl_context);
-    }
-
-    inline asio::ssl::stream<asio::ip::tcp::socket>& getTCPSocketRef(eProsimaTCPSocket socket)
-    {
-        return *socket;
-    }
-} // namespace tcp_secure
-
 class TCPChannelResourceSecure : public TCPChannelResource
 {
     asio::io_service& service_;
     asio::ssl::context& ssl_context_;
-    tcp_secure::eProsimaTCPSocket secure_socket_;
+    std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
 
 public:
     // Constructor called when trying to connect to a remote server (secure version)
@@ -80,8 +45,7 @@ public:
         RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
-        tcp_secure::eProsimaTCPSocket socket,
-        //asio::ssl::stream<asio::ip::tcp::socket>* socket,
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         uint32_t maxMsgSize);
 
     virtual ~TCPChannelResourceSecure();
@@ -92,7 +56,6 @@ public:
 
     uint32_t read(
         octet* buffer,
-        uint32_t buffer_capacity,
         std::size_t size,
         asio::error_code& ec) override;
 
@@ -112,9 +75,9 @@ public:
     void close() override;
     void shutdown(asio::socket_base::shutdown_type what) override;
 
-    inline tcp_secure::eProsimaTCPSocket secure_socket()
+    inline std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket()
     {
-        return tcp_secure::getSocketPtr(secure_socket_);
+        return secure_socket_;
     }
 
 private:

@@ -159,7 +159,7 @@ protected:
         uint32_t* bytes_received,
         TCPChannelResource* p_channel_resource,
         std::size_t body_size);
-
+/*
     size_t send(
         TCPChannelResource* p_channel_resource,
         const octet* data,
@@ -177,7 +177,7 @@ protected:
         uint32_t send_buffer_size,
         const Locator_t& remote_locator,
         TCPChannelResource* socket);
-
+*/
     virtual void set_receive_buffer_size(uint32_t size) = 0;
     virtual void set_send_buffer_size(uint32_t size) = 0;
 
@@ -348,7 +348,6 @@ public:
     void SocketAccepted(
         TCPAcceptorBasic* acceptor,
         Locator_t acceptor_locator,
-        tcp_basic::eProsimaTCPSocket socket,
         const asio::error_code& error);
 
 #if TLS_FOUND
@@ -356,7 +355,6 @@ public:
     void SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
         Locator_t acceptor_locator,
-        tcp_secure::eProsimaTCPSocket socket,
         const asio::error_code& error);
 #endif
 

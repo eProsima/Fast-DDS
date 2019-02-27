@@ -127,7 +127,6 @@ public:
 
     virtual uint32_t read(
         octet* buffer,
-        uint32_t buffer_capacity,
         std::size_t size,
         asio::error_code& ec) = 0;
 

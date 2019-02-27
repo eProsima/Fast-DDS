@@ -96,7 +96,6 @@ ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)
         {
             copy_pending_ports_from(oldChannel);
             parent_->DeleteSocket(oldChannel);
-            //delete oldChannel;
         }
 
         connection_status_ = eConnectionStatus::eEstablished;
@@ -192,6 +191,7 @@ void TCPChannelResource::add_logical_port(uint16_t port)
             }
         }
     }
+
 }
 
 void TCPChannelResource::send_pending_open_logical_ports()
@@ -226,7 +226,7 @@ void TCPChannelResource::add_logical_port_response(
             {
                 logical_output_ports_.push_back(port);
                 negotiation_condition_.notify_all();
-                logInfo(RTCP, "OpenedLogicalPort " << port);
+                logInfo(RTCP, "OpenedLogicalPort: " << port);
             }
             else
             {

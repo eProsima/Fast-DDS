@@ -22,42 +22,10 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-namespace tcp_basic{
-    // Typedefs
-    typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
-    typedef eProsimaTCPSocket eProsimaTCPSocketRef;
-
-    inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket socket)
-    {
-        return socket;
-    }
-
-    inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket socket)
-    {
-        return socket;
-    }
-
-    inline eProsimaTCPSocket createTCPSocket(asio::io_service& io_service)
-    {
-        return std::make_shared<asio::ip::tcp::socket>(io_service);
-    }
-
-    inline eProsimaTCPSocket createTCPSocket(asio::ip::tcp::socket&& socket)
-    {
-        return std::make_shared<asio::ip::tcp::socket>(std::move(socket));
-    }
-
-    inline asio::ip::tcp::socket& getTCPSocketRef(eProsimaTCPSocket socket)
-    {
-        return *socket;
-    }
-
-} // namespace tcp_basic
-
 class TCPChannelResourceBasic : public TCPChannelResource
 {
-    tcp_basic::eProsimaTCPSocket socket_;
-
+    asio::io_service& service_;
+    std::shared_ptr<asio::ip::tcp::socket> socket_;
 public:
     // Constructor called when trying to connect to a remote server
     TCPChannelResourceBasic(
@@ -71,7 +39,8 @@ public:
     TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         RTCPMessageManager* rtcpManager,
-        tcp_basic::eProsimaTCPSocketRef socket,
+        asio::io_service& service,
+        std::shared_ptr<asio::ip::tcp::socket> socket,
         uint32_t maxMsgSize);
 
     virtual ~TCPChannelResourceBasic();
@@ -82,7 +51,6 @@ public:
 
     uint32_t read(
         octet* buffer,
-        uint32_t buffer_capacity,
         std::size_t size,
         asio::error_code& ec) override;
 
@@ -100,9 +68,9 @@ public:
     void close() override;
     void shutdown(asio::socket_base::shutdown_type what) override;
 
-    inline tcp_basic::eProsimaTCPSocket socket()
+    inline std::shared_ptr<asio::ip::tcp::socket> socket()
     {
-        return tcp_basic::getSocketPtr(socket_);
+        return socket_;
     }
 
 private:

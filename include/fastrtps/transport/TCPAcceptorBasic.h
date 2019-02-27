@@ -24,6 +24,7 @@ namespace rtps{
 
 class TCPAcceptorBasic : public TCPAcceptor
 {
+    std::shared_ptr<asio::ip::tcp::socket> socket_;
 public:
     /**
     * Constructor
@@ -57,7 +58,14 @@ public:
     }
 
     //! Method to start the accepting process.
-    void accept(TCPTransportInterface* parent, asio::io_service&);
+    void accept(TCPTransportInterface* parent);
+
+    std::shared_ptr<asio::ip::tcp::socket> move_socket()
+    {
+        std::shared_ptr<asio::ip::tcp::socket> to_return = socket_;
+        socket_ = nullptr;
+        return to_return;
+    }
 };
 
 

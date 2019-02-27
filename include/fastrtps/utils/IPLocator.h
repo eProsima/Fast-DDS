@@ -157,6 +157,8 @@ class IPLocator
 
         RTPS_DllAPI static Locator_t toPhysicalLocator(const Locator_t& locator);
 
+        RTPS_DllAPI static bool ip_equals_wan(const Locator_t& locator);
+
         // Common
         RTPS_DllAPI static bool setPortRTPS(
             Locator_t& locator,
@@ -176,6 +178,8 @@ class IPLocator
         RTPS_DllAPI static bool compareAddressAndPhysicalPort(
             const Locator_t& loc1,
             const Locator_t& loc2);
+
+        RTPS_DllAPI static std::string to_string(const Locator_t& locator);
 
         // UDP
         RTPS_DllAPI static bool isMulticast(const Locator_t& locator);

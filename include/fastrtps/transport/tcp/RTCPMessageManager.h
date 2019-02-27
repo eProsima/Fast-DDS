@@ -97,7 +97,7 @@ public:
         const CheckLogicalPortsResponse_t &response, const TCPTransactionId &transactionId);
 
     ResponseCode processOpenLogicalPortResponse(TCPChannelResource *p_channel_resource, ResponseCode respCode,
-        const TCPTransactionId &transactionId, Locator_t &remote_locator);
+        const TCPTransactionId &transactionId);
 
     ResponseCode processKeepAliveResponse(TCPChannelResource *p_channel_resource, ResponseCode respCode,
         const TCPTransactionId &transactionId);

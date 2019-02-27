@@ -29,6 +29,8 @@
 
 #include "HelloWorld.h"
 
+#include <vector>
+
 class HelloWorldPublisher {
     class PubListener :public eprosima::fastrtps::PublisherListener
     {
@@ -67,7 +69,8 @@ public:
     bool init(
         const std::string &wan_ip,
         unsigned short port,
-        bool use_tls);
+        bool use_tls,
+        const std::vector<std::string>& whitelist);
 
     //!Publish a sample
     bool publish(bool waitForListener = true);

@@ -360,11 +360,15 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                     // Loopback locator
                     Locator_t loopbackLocator;
                     fill_local_ip(loopbackLocator);
-                    IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
-                    IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
-                    pendingUnicast.push_back(loopbackLocator);
-                    addLocator = false;
-                    break;
+                    // Don't shrink to localhost if localhost isn't allowed but the other interface
+                    if (is_interface_whitelist_empty() || is_interface_allowed(loopbackLocator))
+                    {
+                        IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
+                        IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
+                        pendingUnicast.push_back(loopbackLocator);
+                        addLocator = false;
+                        break;
+                    }
                 }
             }
 
@@ -414,9 +418,11 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
                 // Only allow already connected locators.
                 for (auto locatorIt = connectedLocators.begin(); locatorIt != connectedLocators.end(); ++locatorIt)
                 {
-                    if (((IPLocator::hasWan(*it) && memcmp(IPLocator::getWan(*it), IPLocator::getIPv4(*locatorIt), 4) == 0) ||
-                        (!IPLocator::hasWan(*it) && memcmp(IPLocator::getIPv4(*it), IPLocator::getIPv4(*locatorIt), 4) == 0)) &&
-                        IPLocator::getPhysicalPort(*locatorIt) == IPLocator::getPhysicalPort(*it))
+                    if (((IPLocator::hasWan(*it) &&
+                            memcmp(IPLocator::getWan(*it), IPLocator::getIPv4(*locatorIt), 4) == 0) ||
+                            (!IPLocator::hasWan(*it) &&
+                            memcmp(IPLocator::getIPv4(*it), IPLocator::getIPv4(*locatorIt), 4) == 0)) &&
+                            IPLocator::getPhysicalPort(*locatorIt) == IPLocator::getPhysicalPort(*it))
                     {
                         addLocator = true;
                         break;
@@ -425,7 +431,12 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
 
                 if (addLocator)
                 {
-                    pendingUnicast.push_back(*it);
+                    Locator_t locator = *it;
+                    if (IPLocator::ip_equals_wan(locator)) // Reports WAN but we connected directly
+                    {
+                        IPLocator::setWan(locator, "0.0.0.0");
+                    }
+                    pendingUnicast.push_back(locator);
                 }
             }
             ++it;
@@ -451,8 +462,7 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
         }
     }
 
-    LocatorList_t result(std::move(unicastResult));
-    return result;
+    return unicastResult;
 }
 
 } // namespace rtps

@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <net/if.h>
 #endif
 
 
@@ -140,7 +141,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
 
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
     {
-        if (ifa->ifa_addr == NULL)
+        if (ifa->ifa_addr == NULL || (ifa->ifa_flags & IFF_RUNNING) == 0)
             continue;
 
         family = ifa->ifa_addr->sa_family;

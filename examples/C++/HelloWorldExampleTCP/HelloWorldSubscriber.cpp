@@ -39,13 +39,23 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 bool HelloWorldSubscriber::init(
         const std::string &wan_ip,
         unsigned short port,
-        bool use_tls)
+        bool use_tls,
+        const std::vector<std::string>& whitelist)
 {
     ParticipantAttributes pparam;
     int32_t kind = LOCATOR_KIND_TCPv4;
 
     Locator_t initial_peer_locator;
     initial_peer_locator.kind = kind;
+
+    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+    for (std::string ip : whitelist)
+    {
+        descriptor->interfaceWhiteList.push_back(ip);
+        std::cout << "Whitelisted " << ip << std::endl;
+    }
+
     if (!wan_ip.empty())
     {
         IPLocator::setIPv4(initial_peer_locator, wan_ip);
@@ -64,15 +74,16 @@ bool HelloWorldSubscriber::init(
     pparam.rtps.setName("Participant_sub");
 
     pparam.rtps.useBuiltinTransports = false;
-    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
 
     if (use_tls)
     {
         using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
         descriptor->apply_security = true;
         descriptor->tls_config.password = "test";
         descriptor->tls_config.verify_file = "ca.pem";
         descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+        descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     }
 
     descriptor->wait_for_tcp_negotiation = false;
