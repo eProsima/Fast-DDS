@@ -119,6 +119,12 @@ class SubscriberHistory: public rtps::ReaderHistory
             return m_unreadCacheCount;
         }
 
+        /**
+         * A method that resturns the latest sample for each topic key
+         * @param samples A vector containing the latest sample for each key
+         */
+        void get_latest_samples(std::vector<CacheChange_t*>& samples);
+
     private:
 
         //!Number of unread CacheChange_t.

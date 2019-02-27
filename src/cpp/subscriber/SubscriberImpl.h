@@ -26,6 +26,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/resources/DeadlineTimer.h>
 
 
 namespace eprosima {
@@ -120,6 +121,12 @@ public:
 	 */
 	uint64_t getUnreadCount() const;
 
+    /**
+     * @brief A method called when a new cache change is added
+     * @param change The cache change that has been added
+     */
+    void onNewCacheChangeAdded();
+
 private:
 	//!Participant
 	ParticipantImpl* mp_participant;
@@ -147,6 +154,16 @@ private:
 	Subscriber* mp_userSubscriber;
 	//!RTPSParticipant
 	rtps::RTPSParticipant* mp_rtpsParticipant;
+
+    //!A timer used to check for deadlines
+    DeadlineTimer deadline_timer_;
+    //!Deadline duration
+    Duration_t deadline_duration_;
+
+    /** A method to check for deadlines
+     */
+    void check_deadlines();
+
 };
 
 

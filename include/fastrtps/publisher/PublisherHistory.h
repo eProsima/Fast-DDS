@@ -95,6 +95,12 @@ class PublisherHistory:public rtps::WriterHistory
 
         virtual bool remove_change_g(rtps::CacheChange_t* a_change);
 
+        /**
+         * Returns the latest sample for each topic key
+         * @param samples A vector containing the latest samples
+         */
+        void get_latest_samples(std::vector<CacheChange_t*> &samples);
+
     private:
         //!Map where keys are instance handles and values are vectors of cache changes associated
         t_m_Inst_Caches m_keyedChanges;

@@ -18,6 +18,7 @@
  */
 
 #include "SubscriberImpl.h"
+#include "../participant/ParticipantImpl.h"
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -26,6 +27,7 @@
 
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -51,8 +53,12 @@ SubscriberImpl::SubscriberImpl(
     , m_readerListener(this)
     , mp_userSubscriber(nullptr)
     , mp_rtpsParticipant(nullptr)
+    , deadline_timer_(std::bind(&SubscriberImpl::check_deadlines, this),
+                      att.qos.m_deadline.period,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , deadline_duration_(att.qos.m_deadline.period)
     {
-
     }
 
 
@@ -181,9 +187,10 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
 
 void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/)
 {
+    mp_subscriberImpl->onNewCacheChangeAdded();
+
     if(mp_subscriberImpl->mp_listener != nullptr)
     {
-        //cout << "FIRST BYTE: "<< (int)change->serializedPayload.data[0] << endl;
         mp_subscriberImpl->mp_listener->onNewDataMessage(mp_subscriberImpl->mp_userSubscriber);
     }
 }
@@ -193,6 +200,14 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     if (this->mp_subscriberImpl->mp_listener != nullptr)
     {
         mp_subscriberImpl->mp_listener->onSubscriptionMatched(mp_subscriberImpl->mp_userSubscriber,info);
+    }
+}
+
+void SubscriberImpl::onNewCacheChangeAdded()
+{
+    if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
+    {
+        deadline_timer_.restart_timer();
     }
 }
 
@@ -210,6 +225,44 @@ bool SubscriberImpl::isInCleanState() const
 uint64_t SubscriberImpl::getUnreadCount() const
 {
     return m_history.getUnreadCount();
+}
+
+void SubscriberImpl::check_deadlines()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+    // Get the latest samples from the history
+    std::vector<CacheChange_t *> samples;
+    m_history.get_latest_samples(samples);
+
+    if (samples.empty())
+    {
+        return;
+    }
+
+    // Time of the earliest sample among all topic instances
+    Time_t minTime = samples.front()->sourceTimestamp;
+
+    // Check if any instance missed the dealine
+    for (const auto &sample : samples)
+    {
+        if (sample->sourceTimestamp < minTime)
+        {
+            minTime = sample->sourceTimestamp;
+        }
+
+        if (now - sample->sourceTimestamp > deadline_duration_)
+        {
+            mp_listener->on_requested_deadline_missed(sample->instanceHandle);
+        }
+    }
+
+    // Restart the timer
+    Duration_t interval = deadline_duration_ - now + minTime > 0? deadline_duration_ - now + minTime: deadline_duration_;
+    deadline_timer_.update_interval(interval);
+    deadline_timer_.restart_timer();
 }
 
 } /* namespace fastrtps */

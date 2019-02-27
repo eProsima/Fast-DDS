@@ -32,7 +32,6 @@ set(${PROJECT_NAME}_source_files
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
     rtps/resources/DeadlineTimer.cpp
-    rtps/Endpoint.cpp
     rtps/writer/RTPSWriter.cpp
     rtps/writer/StatefulWriter.cpp
     rtps/writer/ReaderProxy.cpp

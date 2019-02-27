@@ -31,6 +31,10 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/resources/DeadlineTimer.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
+
+#include <functional>
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
@@ -58,6 +62,11 @@ PublisherImpl::PublisherImpl(
     , mp_userPublisher(nullptr)
     , mp_rtpsParticipant(nullptr)
     , high_mark_for_frag_(0)
+    , deadline_timer_(std::bind(&PublisherImpl::check_deadlines, this),
+                      att.qos.m_deadline.period,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , deadline_duration_(att.qos.m_deadline.period)
 {
 }
 
@@ -189,6 +198,12 @@ bool PublisherImpl::create_new_change_with_params(
 
             return true;
         }
+
+        if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
+        {
+            deadline_timer_.restart_timer();
+        }
+        return true;
     }
 
     return false;
@@ -316,4 +331,41 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
+}
+
+void PublisherImpl::check_deadlines()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+    // Get the latest samples from the history
+    std::vector<CacheChange_t *> samples;
+    m_history.get_latest_samples(samples);
+
+    if (samples.empty())
+    {
+        return;
+    }
+
+    // Time of the earliest sample among all topic instances
+    Time_t minTime = samples.front()->sourceTimestamp;
+
+    for (const auto &sample : samples)
+    {
+        if (sample->sourceTimestamp < minTime)
+        {
+            minTime = sample->sourceTimestamp;
+        }
+
+        if (now - sample->sourceTimestamp > deadline_duration_ )
+        {
+            mp_listener->on_offered_deadline_missed(sample->instanceHandle);
+        }
+    }
+
+    // Now restart the timer
+    Duration_t interval = deadline_duration_ - now + minTime > 0? deadline_duration_ - now + minTime: deadline_duration_;
+    deadline_timer_.update_interval(interval);
+    deadline_timer_.restart_timer();
 }

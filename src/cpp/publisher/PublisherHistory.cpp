@@ -273,3 +273,30 @@ bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
 }
+
+void PublisherHistory::get_latest_samples(std::vector<CacheChange_t *> &samples)
+{
+    samples.clear();
+
+    if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    {
+        samples.reserve(1);
+        auto max = *std::max_element(
+                    m_changes.begin(),
+                    m_changes.end(),
+                    [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
+        samples.push_back(max);
+    }
+    else if (mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    {
+        samples.reserve(m_keyedChanges.size());
+        for (auto it = m_keyedChanges.begin(); it != m_keyedChanges.end(); ++it)
+        {
+            auto max = *std::max_element(
+                        it->second.begin(),
+                        it->second.end(),
+                        [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
+            samples.push_back(max);
+        }
+    }
+}

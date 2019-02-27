@@ -30,6 +30,7 @@
 #include <fastrtps/publisher/PublisherHistory.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastrtps/rtps/resources/DeadlineTimer.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -38,8 +39,6 @@ namespace rtps
 class RTPSWriter;
 class RTPSParticipant;
 }
-
-
 
 class TopicDataType;
 class PublisherListener;
@@ -157,6 +156,15 @@ class PublisherImpl
 	rtps::RTPSParticipant* mp_rtpsParticipant;
 
     uint32_t high_mark_for_frag_;
+
+    //! A timer used to check for deadlines
+    DeadlineTimer deadline_timer_;
+    //! Deadline duration
+    Duration_t deadline_duration_;
+
+    /** Method to check for deadlines
+     */
+    void check_deadlines();
 };
 
 
