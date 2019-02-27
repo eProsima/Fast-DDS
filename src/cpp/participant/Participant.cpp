@@ -63,3 +63,8 @@ bool Participant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyDa
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
+
+ResourceEvent& Participant::get_resource_event() const
+{
+    return mp_impl->get_resource_event();
+}
