@@ -426,6 +426,12 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
                 << rdata->guid() << " has different Ownership Kind");
         return false;
     }
+    if(wdata->m_qos.m_deadline.period > rdata->m_qos.m_deadline.period)
+    {
+        logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):Remote reader "
+                << rdata->guid() << " has smaller DEADLINE period");
+        return false;
+    }
 
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
@@ -527,6 +533,12 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer " << wdata->guid() << " has different Ownership Kind" << endl;);
         return false;
     }
+    if(rdata->m_qos.m_deadline.period < wdata->m_qos.m_deadline.period)
+    {
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " << wdata->guid() << "has smaller DEADLINE period");
+        return false;
+    }
+
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif

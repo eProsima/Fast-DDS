@@ -63,7 +63,7 @@ public:
 	DurabilityQosPolicy m_durability;
 	//!Durability Service Qos, NOT implemented in the library.
 	DurabilityServiceQosPolicy m_durabilityService;
-	//!Deadline Qos, NOT implemented in the library.
+    //!Deadline Qos, implemented in the library.
 	DeadlineQosPolicy m_deadline;
 	//!Latency Budget Qos, NOT implemented in the library.
 	LatencyBudgetQosPolicy m_latencyBudget;
