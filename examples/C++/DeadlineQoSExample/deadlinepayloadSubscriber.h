@@ -28,39 +28,50 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include "deadlinepayloadPubSubTypes.h"
 
-#include "deadlineQoS.h"
-#include <asio.hpp>
-#include <asio/steady_timer.hpp>
 #include "mapableKey.h"
-
-
-
 
 class deadlinepayloadSubscriber 
 {
 public:
-	deadlinepayloadSubscriber(asio::steady_timer &timer,asio::io_service &io_service);
+
+    /**
+     * @brief Constructor
+     */
+    deadlinepayloadSubscriber();
+
+    /**
+     * @brief Destructor
+     */
 	virtual ~deadlinepayloadSubscriber();
-	bool init();
+
+    /**
+     * @brief Initialises the subscriber
+     * @param deadline_ms The deadline period in milliseconds
+     * @return True if initialised correctly
+     */
+    bool init(double deadline_ms);
+
+    /**
+     * @brief Runs the subscriber
+     */
 	void run();
+
 private:
 	eprosima::fastrtps::Participant *mp_participant;
 	eprosima::fastrtps::Subscriber *mp_subscriber;
-	//io_service &io;
-	class SubListener : public eprosima::fastrtps::SubscriberListener
+    HelloMsgPubSubType myType;
+    class SubListener : public eprosima::fastrtps::SubscriberListener
 	{
 	public:
-		SubListener(asio::steady_timer &timer, asio::io_service &ioserv) : n_matched(0),n_msg(0), myDeadline(timer,ioserv){};
+        SubListener() : n_matched(0),n_msg(0){};
 		~SubListener(){};
-		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
-		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info) override;
+        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub) override;
+        void on_requested_deadline_missed(eprosima::fastrtps::rtps::InstanceHandle_t& handle) override;
 		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		int n_msg;
-		deadlineQoS myDeadline;
-		
 	} m_listener;
-	HelloMsgPubSubType myType;
 };
 
 #endif // _deadlinepayload_SUBSCRIBER_H_

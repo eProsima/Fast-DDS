@@ -27,15 +27,29 @@ int main(int argc, char** argv)
 {
     std::cout << "Starting " << std::endl;
     int type = 1;
+    int deadline = 1000;
+    int sleep = 100;
     if (argc > 1)
     {
         if (strcmp(argv[1], "publisher") == 0)
         {
             type = 1;
+            if (argc > 2)
+            {
+                deadline = atoi(argv[2]);
+                if (argc > 3)
+                {
+                    sleep = atoi(argv[3]);
+                }
+            }
         }
         else if (strcmp(argv[1], "subscriber") == 0)
         {
             type = 2;
+            if (argc > 2)
+            {
+                deadline = atoi(argv[2]);
+            }
         }
     }
     else
@@ -52,18 +66,16 @@ int main(int argc, char** argv)
         case 1:
             {
                 deadlinepayloadPublisher mypub;
-                if (mypub.init())
+                if (mypub.init(deadline))
                 {
-                    mypub.run();
+                    mypub.run(sleep);
                 }
                 break;
             }
         case 2:
             {
-                io_service io;
-                steady_timer myTimer(io);
-                deadlinepayloadSubscriber mysub(myTimer,io);
-                if (mysub.init())
+                deadlinepayloadSubscriber mysub;
+                if (mysub.init(deadline))
                 {
                     mysub.run();
                 }

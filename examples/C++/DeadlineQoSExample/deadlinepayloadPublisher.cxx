@@ -26,11 +26,19 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-deadlinepayloadPublisher::deadlinepayloadPublisher() : mp_participant(nullptr), mp_publisher(nullptr), double_time(false) {}
+deadlinepayloadPublisher::deadlinepayloadPublisher()
+    : mp_participant(nullptr)
+    , mp_publisher(nullptr)
+    , double_time(false)
+{
+}
 
-deadlinepayloadPublisher::~deadlinepayloadPublisher() {	Domain::removeParticipant(mp_participant);}
+deadlinepayloadPublisher::~deadlinepayloadPublisher()
+{
+    Domain::removeParticipant(mp_participant);
+}
 
-bool deadlinepayloadPublisher::init()
+bool deadlinepayloadPublisher::init(double deadline_period_ms)
 {
     // Create RTPSParticipant
 
@@ -52,14 +60,18 @@ bool deadlinepayloadPublisher::init()
     Wparam.topic.topicKind = WITH_KEY;
     Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
     Wparam.topic.topicName = "deadlinepayloadPubSubTopic";
-    Wparam.topic.resourceLimitsQos.max_instances=32;
-    Wparam.topic.resourceLimitsQos.max_samples_per_instance=5;
-    Wparam.topic.resourceLimitsQos.max_samples = 32*5;
+    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 5;
+    Wparam.topic.resourceLimitsQos.allocated_samples = 15;
+    Wparam.topic.resourceLimitsQos.max_instances = 3;
+    Wparam.topic.resourceLimitsQos.max_samples_per_instance = 5;
+    Wparam.topic.resourceLimitsQos.max_samples = 3*5;
     Wparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
+    Wparam.qos.m_deadline.period = deadline_period_ms * 1e-3;
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
     if(mp_publisher == nullptr)
         return false;
+
     std::cout << "Publisher created, waiting for Subscribers." << std::endl;
     return true;
 }
@@ -78,7 +90,12 @@ void deadlinepayloadPublisher::PubListener::onPublicationMatched(Publisher* /*pu
     }
 }
 
-void deadlinepayloadPublisher::run()
+void deadlinepayloadPublisher::PubListener::on_offered_deadline_missed(InstanceHandle_t &handle)
+{
+    std::cout << "Publisher listener: deadline missed for instance " << handle << std::endl;
+}
+
+void deadlinepayloadPublisher::run(double sleep_ms)
 {
     while(m_listener.n_matched == 0)
     {
@@ -93,19 +110,33 @@ void deadlinepayloadPublisher::run()
     stream << "generic payload";
     st.payload(stream.str());
 
-    /* Initialize your structure here */
+    while(true)
+    {
+        eClock::my_sleep(sleep_ms);
 
-    while(true){
-        eClock::my_sleep(900);
-
-        //Send messages
-        for(unsigned short i=0;i<32;i++){
-            st.deadlinekey(i);				//Set key
-            if(i==15){						//Force key 15 message to be sent half of the times
+        // Send messages
+        for(unsigned short i=0;i<3;i++)
+        {
+            // Set key
+            st.deadlinekey(i);
+            if(i==2)
+            {
+                //Force key 2 message to be sent half of the times
                 double_time = !double_time;
-                if(double_time)	mp_publisher->write(&st);
-            }else{
-                mp_publisher->write(&st);
+                if(double_time)
+                {
+                    if (mp_publisher->write(&st))
+                    {
+                        std::cout << "Message with key " << st.deadlinekey() << " sent" << std::endl;
+                    }
+                }
+            }
+            else
+            {
+                if (mp_publisher->write(&st))
+                {
+                    std::cout << "Message with key " << st.deadlinekey() << " sent" << std::endl;
+                }
             }
         }
     }

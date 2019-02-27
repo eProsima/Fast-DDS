@@ -25,11 +25,19 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-deadlinepayloadSubscriber::deadlinepayloadSubscriber(asio::steady_timer &timer,asio::io_service &ioserv) : mp_participant(nullptr), mp_subscriber(nullptr), m_listener(timer,ioserv) {}
+deadlinepayloadSubscriber::deadlinepayloadSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
+    , m_listener()
+{
+}
 
-deadlinepayloadSubscriber::~deadlinepayloadSubscriber() {	Domain::removeParticipant(mp_participant);}
+deadlinepayloadSubscriber::~deadlinepayloadSubscriber()
+{
+    Domain::removeParticipant(mp_participant);
+}
 
-bool deadlinepayloadSubscriber::init()
+bool deadlinepayloadSubscriber::init(double deadline_ms)
 {
     // Create RTPSParticipant
 
@@ -51,10 +59,12 @@ bool deadlinepayloadSubscriber::init()
     Rparam.topic.topicKind = WITH_KEY;
     Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
     Rparam.topic.topicName = "deadlinepayloadPubSubTopic";
-    Rparam.topic.resourceLimitsQos.max_instances=32;
+    Rparam.topic.resourceLimitsQos.allocated_samples=15;
+    Rparam.topic.resourceLimitsQos.max_instances=3;
     Rparam.topic.resourceLimitsQos.max_samples_per_instance=5;
-    Rparam.topic.resourceLimitsQos.max_samples = 32*5;
+    Rparam.topic.resourceLimitsQos.max_samples = 3*5;
     Rparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
+    Rparam.qos.m_deadline.period = deadline_ms * 1e-3;
     Rparam.topic.historyQos.depth = 5;
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
     if(mp_subscriber == nullptr)
@@ -79,28 +89,24 @@ void deadlinepayloadSubscriber::SubListener::onSubscriptionMatched(Subscriber* /
 
 void deadlinepayloadSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-    // Take data
     HelloMsg st;
-    //InstanceHandle_t myHandle;
-    mapable_key handle;
-    if(sub->takeNextData(&st, &m_info))
+    if(sub->readNextData(&st, &m_info))
     {
         if(m_info.sampleKind == ALIVE)
         {
-            for(int i=0;i<16;i++) handle.value[i] = m_info.iHandle.value[i];
-            myDeadline.setFlag(handle);
+            std::cout << "Message with key " << st.deadlinekey() << " received" << std::endl;
         }
     }
 }
 
+void deadlinepayloadSubscriber::SubListener::on_requested_deadline_missed(InstanceHandle_t &handle)
+{
+    std::cout << "Subscriber listener: deadline missed for instance " << handle << std::endl;
+}
+
 void deadlinepayloadSubscriber::run()
 {
-
-    m_listener.myDeadline.run();
-    std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<<std::endl;
-    std::cout << "------------------------------------------------------"<<std::endl;
+    std::cout << "Subscriber running. Press Enter to stop the Subscriber. " << std::endl;
     std::cin.ignore();
-    std::cout << "Shutting down the Subscriber." << std::endl;
-    m_listener.myDeadline.stop();
 }
 

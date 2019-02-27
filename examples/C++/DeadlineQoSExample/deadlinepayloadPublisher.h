@@ -20,30 +20,50 @@
 
 #include "deadlinepayloadPubSubTypes.h"
 
-
-
 class deadlinepayloadPublisher 
 {
 public:
+
+    /**
+     * @brief Constructor
+     */
 	deadlinepayloadPublisher();
+
+    /**
+     * @brief Destructor
+     */
 	virtual ~deadlinepayloadPublisher();
-	bool init();
-	void run();
+
+    /**
+     * @brief Initialises publisher
+     * @param deadline_period_ms The deadline period in milliseconds
+     * @return True if initialised correctly
+     */
+    bool init(double deadline_period_ms);
+
+    /**
+     * @brief Run the publisher
+     * @param sleep_ms A time period to sleep for before sending the new sample
+     */
+    void run(double sleep_ms);
+
 private:
+
 	eprosima::fastrtps::Participant *mp_participant;
 	eprosima::fastrtps::Publisher *mp_publisher;
-	
-	bool double_time;								//Used to force a period double on a certain key
-
+    HelloMsgPubSubType myType;
 	class PubListener : public eprosima::fastrtps::PublisherListener
 	{
 	public:
 		PubListener() : n_matched(0){};
 		~PubListener(){};
-		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+        void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info) override;
+        void on_offered_deadline_missed(eprosima::fastrtps::rtps::InstanceHandle_t& handle) override;
 		int n_matched;
 	} m_listener;
-	HelloMsgPubSubType myType;
+
+    //!Boolean used to force a period double on a certain key
+    bool double_time;
 };
 
 #endif // _DEADLINEPAYLOAD_PUBLISHER_H_
