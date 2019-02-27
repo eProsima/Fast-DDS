@@ -25,6 +25,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
     class MatchingInfo;
+    class InstanceHandle_t;
 } /* namespace rtps */
 
 class Subscriber;
@@ -54,6 +55,12 @@ class RTPS_DllAPI SubscriberListener
          * @param info Matching information
          */
         virtual void onSubscriptionMatched(Subscriber* /*sub*/, rtps::MatchingInfo& /*info*/){};
+
+        /**
+         * Virtual method to be called when a topic misses the deadline period
+         * @param handle The instance handle
+         */
+        virtual void on_requested_deadline_missed(rtps::InstanceHandle_t& /*handle*/) {}
 };
 
 } /* namespace fastrtps */

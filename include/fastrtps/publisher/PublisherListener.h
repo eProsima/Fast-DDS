@@ -27,6 +27,11 @@ namespace fastrtps {
 
 class Publisher;
 
+namespace rtps
+{
+class InstanceHandle_t;
+}
+
 /**
  * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
  * @ingroup FASTRTPS_MODULE
@@ -43,6 +48,12 @@ public:
 	 * @param info Information regarding the matched subscriber
 	 */
 	virtual void onPublicationMatched(Publisher* pub, rtps::MatchingInfo& info){(void)pub; (void)info;};
+
+    /**
+     * A method called when an instance of a topic misses the deadline period
+     * @param handle The instance handle
+     */
+    virtual void on_offered_deadline_missed(rtps::InstanceHandle_t& /*handle*/) {};
 };
 
 } /* namespace rtps */
