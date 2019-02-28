@@ -205,9 +205,9 @@ bool SubscriberHistory::received_change(
                 }
                 else
                 {
-                    // Try to substitude a older samples.
-                    auto older_sample = m_changes.rend();
-                    for (auto it = m_changes.rbegin(); it != m_changes.rend(); ++it)
+                    // Try to substitute the oldest sample with the same key
+                    auto older_sample = vit->second.rend();
+                    for (auto it = vit->second.rbegin(); it != vit->second.rend(); ++it)
                     {
 
                         if ((*it)->writerGUID == a_change->writerGUID)
@@ -220,7 +220,7 @@ bool SubscriberHistory::received_change(
                         }
                     }
 
-                    if (older_sample != m_changes.rend())
+                    if (older_sample != vit->second.rend())
                     {
                         bool read = (*older_sample)->isRead;
 
