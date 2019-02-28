@@ -94,8 +94,8 @@ protected:
     CleanTCPSocketsEvent* clean_sockets_pool_timer_;
 
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
-    std::thread socket_canceller_thread_;
     bool stop_socket_canceller_;
+    std::thread socket_canceller_thread_;
     std::mutex canceller_mutex_;
     eClock my_clock_;
 
