@@ -245,6 +245,9 @@ void SubscriberImpl::check_deadlines()
     // Time of the earliest sample among all topic instances
     Time_t minTime = samples.front()->sourceTimestamp;
 
+    // Number of instances missing the deadline
+    int num_instances = 0;
+
     // Check if any instance missed the dealine
     for (const auto &sample : samples)
     {
@@ -256,13 +259,17 @@ void SubscriberImpl::check_deadlines()
         if (now - sample->sourceTimestamp > deadline_duration_)
         {
             mp_listener->on_requested_deadline_missed(sample->instanceHandle);
+            num_instances++;
         }
     }
 
-    // Restart the timer
-    Duration_t interval = deadline_duration_ - now + minTime > 0? deadline_duration_ - now + minTime: deadline_duration_;
-    deadline_timer_.update_interval(interval);
-    deadline_timer_.restart_timer();
+    if ((size_t)num_instances < samples.size())
+    {
+        // Restart the timer
+        Duration_t interval = deadline_duration_ - now + minTime > 0? deadline_duration_ - now + minTime: deadline_duration_;
+        deadline_timer_.update_interval(interval);
+        deadline_timer_.restart_timer();
+    }
 }
 
 } /* namespace fastrtps */
