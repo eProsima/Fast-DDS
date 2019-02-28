@@ -801,6 +801,7 @@ void TCPTransportInterface::perform_rtcp_management_thread(TCPChannelResource *p
                 // Keep Alive Management
                 if (!p_channel_resource->waiting_for_keep_alive_ && time_now > next_time)
                 {
+                    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
                     rtcp_message_manager_->sendKeepAliveRequest(p_channel_resource);
                     p_channel_resource->waiting_for_keep_alive_ = true;
                     next_time = time_now + std::chrono::milliseconds(config->keep_alive_frequency_ms);
@@ -993,8 +994,9 @@ bool TCPTransportInterface::Receive(
                                 {
                                     if (rtcp_message_manager_ != nullptr)
                                     {
+                                        // The channel is not going to be deleted because we lock it for reading.
                                         ResponseCode responseCode = rtcp_message_manager_->processRTCPMessage(
-                                            p_channel_resource, receive_buffer, body_size);
+                                                p_channel_resource, receive_buffer, body_size);
 
                                         if (responseCode != RETCODE_OK)
                                         {
@@ -1452,6 +1454,7 @@ void TCPTransportInterface::SocketConnected(
         const asio::error_code& error)
 {
     TCPChannelResource* outputSocket = nullptr;
+
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
         auto it = channel_resources_.find(IPLocator::toPhysicalLocator(locator));
@@ -1459,11 +1462,8 @@ void TCPTransportInterface::SocketConnected(
         {
             outputSocket = it->second;
         }
-    }
 
-    if(outputSocket != nullptr)
-    {
-        if(error.value() == 0)
+        if(outputSocket != nullptr && error.value() == 0)
         {
             try
             {
@@ -1486,27 +1486,30 @@ void TCPTransportInterface::SocketConnected(
                 CloseOutputChannel(locator);
                 */
             }
+            return;
+        }
+    }
+
+    // If we get here, the error isn't zero.
+    if (outputSocket != nullptr)
+    {
+        if (error.value() == asio::error::basic_errors::connection_refused)
+        {
+            // Wait a little before try again to avoid exhaust file descriptors in some systems
+            eClock::my_sleep(200);
+        }
+        else if (error.value() == asio::error::basic_errors::connection_reset ||
+                error.value() == asio::error::basic_errors::connection_aborted)
+        {
+            // Connection was closed by the remote. Wait a little more to retry.
+            logError(RTCP_TLS, "Connection broken: " << error.message());
+            eClock::my_sleep(1000);
         }
         else
         {
-            if (error.value() == asio::error::basic_errors::connection_refused)
-            {
-                // Wait a little before try again to avoid exhaust file descriptors in some systems
-                eClock::my_sleep(200);
-            }
-            else if (error.value() == asio::error::basic_errors::connection_reset ||
-                    error.value() == asio::error::basic_errors::connection_aborted)
-            {
-                // Connection was closed by the remote. Wait a little more to retry.
-                logError(RTCP_TLS, "Connection broken: " << error.message());
-                eClock::my_sleep(1000);
-            }
-            else
-            {
-                logError(RTCP_TLS, error.message());
-            }
-            close_tcp_socket(outputSocket);
+            logError(RTCP_TLS, error.message());
         }
+        close_tcp_socket(outputSocket);
     }
 }
 
