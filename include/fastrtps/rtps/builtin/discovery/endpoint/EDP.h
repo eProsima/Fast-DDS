@@ -174,7 +174,7 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True.
          */
-        bool pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata, ReaderProxyData* rdata);
+        bool pairing_reader_proxy_with_any_local_writer(const GUID_t& participant_guid, ReaderProxyData* rdata);
 
 #if HAVE_SECURITY
         bool pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const GUID_t& remote_participant_guid,
@@ -190,7 +190,7 @@ class EDP
          * @param wdata Pointer to the WriterProxyData.
          * @return True.
          */
-        bool pairing_writer_proxy_with_any_local_reader(ParticipantProxyData* pdata, WriterProxyData* wdata);
+        bool pairing_writer_proxy_with_any_local_reader(const GUID_t& participant_guid, WriterProxyData* wdata);
 
 #if HAVE_SECURITY
         bool pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const GUID_t& remote_participant_guid,
@@ -218,13 +218,13 @@ class EDP
          * @param R Pointer to the Reader
          * @return True
          */
-        bool pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const ReaderProxyData& rdata);
+        bool pairingReader(RTPSReader* R, const GUID_t& participant_guid, const ReaderProxyData& rdata);
         /**l
          * Try to pair/unpair a local Writer against all possible readerProxy Data.
          * @param W Pointer to the Writer
          * @return True
          */
-        bool pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const WriterProxyData& wdata);
+        bool pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const WriterProxyData& wdata);
 
         bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 

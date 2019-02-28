@@ -77,13 +77,13 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
             }
 
             //LOOK IF IS AN UPDATED INFORMATION
-            ParticipantProxyData pdata;
-            if(this->sedp_->mp_PDP->addWriterProxyData(&writerProxyData, pdata)) //ADDED NEW DATA
+            GUID_t participant_guid;
+            if(this->sedp_->mp_PDP->addWriterProxyData(&writerProxyData, participant_guid)) //ADDED NEW DATA
             {
                 // At this point we can release reader lock, cause change is not used
                 reader->getMutex().unlock();
 
-                sedp_->pairing_writer_proxy_with_any_local_reader(&pdata, &writerProxyData);
+                sedp_->pairing_writer_proxy_with_any_local_reader(participant_guid, &writerProxyData);
 
                 // Take again the reader lock.
                 reader->getMutex().lock();
@@ -155,13 +155,13 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
             }
 
             //LOOK IF IS AN UPDATED INFORMATION
-            ParticipantProxyData pdata;
-            if(this->sedp_->mp_PDP->addReaderProxyData(&readerProxyData, pdata)) //ADDED NEW DATA
+            GUID_t participant_guid;
+            if(this->sedp_->mp_PDP->addReaderProxyData(&readerProxyData, participant_guid)) //ADDED NEW DATA
             {
                 // At this point we can release reader lock, cause change is not used
                 reader->getMutex().unlock();
 
-                sedp_->pairing_reader_proxy_with_any_local_writer(&pdata, &readerProxyData);
+                sedp_->pairing_reader_proxy_with_any_local_writer(participant_guid, &readerProxyData);
 
                 // Take again the reader lock.
                 reader->getMutex().lock();

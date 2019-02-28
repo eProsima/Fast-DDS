@@ -177,20 +177,18 @@ void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         {
             if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status=="ALIVE")
             {
-                ParticipantProxyData pdata_aux;
                 ReaderProxyData rdata;
                 GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                if(!this->mp_PDP->lookupReaderProxyData(guid ,rdata, pdata_aux))//IF NOT FOUND, we CREATE AND PAIR IT
+                if(!this->mp_PDP->lookupReaderProxyData(guid ,rdata))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
                     newRemoteReader(pdata, staticproperty.m_userId,staticproperty.m_entityId);
                 }
             }
             else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
             {
-                ParticipantProxyData pdata_aux;
                 WriterProxyData wdata;
                 GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                if(!this->mp_PDP->lookupWriterProxyData(guid,wdata, pdata_aux))//IF NOT FOUND, we CREATE AND PAIR IT
+                if(!this->mp_PDP->lookupWriterProxyData(guid,wdata))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
                     newRemoteWriter(pdata,staticproperty.m_userId,staticproperty.m_entityId);
                 }
@@ -236,10 +234,10 @@ bool EDPStatic::newRemoteReader(const ParticipantProxyData& pdata, uint16_t user
         }
         newRPD.key() = newRPD.guid();
         newRPD.RTPSParticipantKey() = pdata.m_guid;
-        ParticipantProxyData pdata_aux;
-        if(this->mp_PDP->addReaderProxyData(&newRPD, pdata_aux))
+        GUID_t participant_guid;
+        if(this->mp_PDP->addReaderProxyData(&newRPD, participant_guid))
         {
-            this->pairing_reader_proxy_with_any_local_writer(&pdata_aux, &newRPD);
+            this->pairing_reader_proxy_with_any_local_writer(participant_guid, &newRPD);
             return true;
         }
     }
@@ -264,10 +262,10 @@ bool EDPStatic::newRemoteWriter(const ParticipantProxyData& pdata,uint16_t userI
         }
         newWPD.key() = newWPD.guid();
         newWPD.RTPSParticipantKey() = pdata.m_guid;
-        ParticipantProxyData pdata_aux;
-        if(this->mp_PDP->addWriterProxyData(&newWPD, pdata_aux))
+        GUID_t participant_guid;
+        if(this->mp_PDP->addWriterProxyData(&newWPD, participant_guid))
         {
-            this->pairing_writer_proxy_with_any_local_reader(&pdata_aux, &newWPD);
+            this->pairing_writer_proxy_with_any_local_reader(participant_guid, &newWPD);
             return true;
         }
     }
