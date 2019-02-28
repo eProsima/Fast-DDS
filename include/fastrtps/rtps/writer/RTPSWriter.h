@@ -82,16 +82,16 @@ class RTPSWriter : public Endpoint
     RTPS_DllAPI virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
     /**
      * Remove a matched reader.
-     * @param ratt Pointer to the object to remove.
+     * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    RTPS_DllAPI virtual bool matched_reader_remove(const RemoteReaderAttributes& ratt) = 0;
+    RTPS_DllAPI virtual bool matched_reader_remove(const GUID_t& reader_guid) = 0;
     /**
-     * Tells us if a specific Reader is matched against this writer
-     * @param ratt Pointer to the ReaderProxyData object
+     * Tells us if a specific Reader is matched against this writer.
+     * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    RTPS_DllAPI virtual bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) = 0;
+    RTPS_DllAPI virtual bool matched_reader_is_matched(const GUID_t& reader_guid) = 0;
     /**
     * Check if a specific change has been acknowledged by all Readers.
     * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.

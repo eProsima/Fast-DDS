@@ -1726,13 +1726,8 @@ void SecurityManager::unmatch_builtin_endpoints(const ParticipantProxyData& part
     if(participant_stateless_message_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_stateless_message_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_writer_->matched_reader_remove(ratt);
+        GUID_t reader_guid(participant_data.m_guid.guidPrefix, participant_stateless_message_reader_entity_id);
+        participant_stateless_message_writer_->matched_reader_remove(reader_guid);
     }
 
     if(participant_volatile_message_secure_reader_ != nullptr &&
@@ -1751,14 +1746,8 @@ void SecurityManager::unmatch_builtin_endpoints(const ParticipantProxyData& part
     if(participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_volatile_message_secure_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        ratt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_writer_->matched_reader_remove(ratt);
+        GUID_t reader_guid(participant_data.m_guid.guidPrefix, participant_volatile_message_secure_reader_entity_id);
+        participant_volatile_message_secure_writer_->matched_reader_remove(reader_guid);
     }
 }
 

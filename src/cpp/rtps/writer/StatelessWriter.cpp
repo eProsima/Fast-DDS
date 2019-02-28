@@ -366,11 +366,15 @@ void StatelessWriter::update_locators_nts()
     mAllShrinkedLocatorList.push_back(fixed_locators_);
 }
 
-bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& reader_attributes)
+bool StatelessWriter::matched_reader_remove(const GUID_t& reader_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    bool found = matched_readers_.remove_if(reader_attributes.compare_guid_function());
+    bool found = matched_readers_.remove_if(
+        [reader_guid](const RemoteReaderAttributes& item)
+        {
+            return item.guid == reader_guid;
+        });
     if (found)
     {
         std::vector<LocatorList_t> allLocatorLists;
@@ -387,7 +391,7 @@ bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& reader
 
         if (addGuid)
         {
-            all_remote_readers_.remove(reader_attributes.guid);
+            all_remote_readers_.remove(reader_guid);
         }
         update_cached_info_nts(allLocatorLists);
 
@@ -397,10 +401,14 @@ bool StatelessWriter::matched_reader_remove(const RemoteReaderAttributes& reader
     return found;
 }
 
-bool StatelessWriter::matched_reader_is_matched(const RemoteReaderAttributes& reader_attributes)
+bool StatelessWriter::matched_reader_is_matched(const GUID_t& reader_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    return std::any_of(matched_readers_.begin(), matched_readers_.end(), reader_attributes.compare_guid_function());
+    return std::any_of(matched_readers_.begin(), matched_readers_.end(), 
+        [reader_guid](const RemoteReaderAttributes& item)
+        {
+            return item.guid == reader_guid;
+        });
 }
 
 void StatelessWriter::unsent_changes_reset()

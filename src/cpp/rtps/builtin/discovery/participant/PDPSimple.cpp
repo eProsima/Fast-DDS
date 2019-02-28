@@ -782,15 +782,8 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     if(auxendp!=0)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = c_EntityId_SPDPReader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        ratt.endpoint.reliabilityKind = BEST_EFFORT;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        mp_SPDPWriter->matched_reader_remove(ratt);
+        GUID_t reader_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPReader);
+        mp_SPDPWriter->matched_reader_remove(reader_guid);
     }
 }
 

@@ -76,17 +76,17 @@ class StatelessWriter : public RTPSWriter
 
     /**
      * Remove a matched reader.
-     * @param reader_attributes Attributes of the reader to remove.
+     * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    bool matched_reader_remove(const RemoteReaderAttributes& reader_attributes) override;
+    bool matched_reader_remove(const GUID_t& reader_guid) override;
 
     /**
      * Tells us if a specific Reader is matched against this writer
-     * @param reader_attributes Attributes of the reader to check.
+     * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    bool matched_reader_is_matched(const RemoteReaderAttributes& reader_attributes) override;
+    bool matched_reader_is_matched(const GUID_t& reader_guid) override;
 
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.

@@ -121,17 +121,17 @@ public:
 
     /**
      * Remove a matched reader.
-     * @param ratt Attributes of the reader to remove.
+     * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    bool matched_reader_remove(const RemoteReaderAttributes& ratt) override;
+    bool matched_reader_remove(const GUID_t& reader_guid) override;
 
     /**
      * Tells us if a specific Reader is matched against this writer
-     * @param ratt Attributes of the reader to remove.
+     * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) override;
+    bool matched_reader_is_matched(const GUID_t& reader_guid) override;
 
     bool is_acked_by_all(const CacheChange_t* a_change) const override;
 

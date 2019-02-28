@@ -358,9 +358,7 @@ bool EDP::unpairReaderProxy(const GUID_t& participant_guid, const GUID_t& reader
     for(std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
             wit!=mp_RTPSParticipant->userWritersListEnd();++wit)
     {
-        RemoteReaderAttributes ratt;
-        ratt.guid = reader_guid;
-        if((*wit)->matched_reader_remove(ratt))
+        if((*wit)->matched_reader_remove(reader_guid))
         {
 #if HAVE_SECURITY
             mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(), participant_guid, reader_guid);
@@ -695,8 +693,8 @@ bool EDP::pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const Wri
             else
             {
                 //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<RTPS_DEF<<endl);
-                if(W->matched_reader_is_matched((*rdatait)->toRemoteReaderAttributes()) &&
-                        W->matched_reader_remove((*rdatait)->toRemoteReaderAttributes()))
+                if(W->matched_reader_is_matched((*rdatait)->guid()) &&
+                        W->matched_reader_remove((*rdatait)->guid()))
                 {
 #if HAVE_SECURITY
                     mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), participant_guid, (*rdatait)->guid());
@@ -760,8 +758,8 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(const GUID_t& participant_g
             }
             else
             {
-                if((*wit)->matched_reader_is_matched(rdata->toRemoteReaderAttributes())
-                        && (*wit)->matched_reader_remove(rdata->toRemoteReaderAttributes()))
+                if((*wit)->matched_reader_is_matched(rdata->guid())
+                        && (*wit)->matched_reader_remove(rdata->guid()))
                 {
 #if HAVE_SECURITY
                     mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(), participant_guid, rdata->guid());
@@ -813,8 +811,8 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
                 }
                 else
                 {
-                    if((*wit)->matched_reader_is_matched(rdata.toRemoteReaderAttributes())
-                            && (*wit)->matched_reader_remove(rdata.toRemoteReaderAttributes()))
+                    if((*wit)->matched_reader_is_matched(rdata.guid())
+                            && (*wit)->matched_reader_remove(rdata.guid()))
                     {
                         mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(),
                                 remote_participant_guid, rdata.guid());

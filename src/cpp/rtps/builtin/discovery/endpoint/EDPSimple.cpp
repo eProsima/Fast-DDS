@@ -833,6 +833,9 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
     logInfo(RTPS_EDP,"For RTPSParticipant: "<<pdata->m_guid);
 
+    GUID_t tmp_guid;
+    tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
+
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
@@ -857,16 +860,8 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     //auxendp = 1;
     if(auxendp!=0 && publications_writer_.first!=nullptr) //Exist Pub Detector
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = c_EntityId_SEDPPubReader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        publications_writer_.first->matched_reader_remove(ratt);
+        tmp_guid.entityId = c_EntityId_SEDPPubReader;
+        publications_writer_.first->matched_reader_remove(tmp_guid);
     }
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
@@ -893,16 +888,8 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     if(auxendp!=0 && subscriptions_writer_.first!=nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = c_EntityId_SEDPSubReader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        subscriptions_writer_.first->matched_reader_remove(ratt);
+        tmp_guid.entityId = c_EntityId_SEDPSubReader;
+        subscriptions_writer_.first->matched_reader_remove(tmp_guid);
     }
 
 #if HAVE_SECURITY
@@ -934,18 +921,11 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     //auxendp = 1;
     if(auxendp != 0 && publications_secure_writer_.first != nullptr)
     {
-        RemoteReaderAttributes ratt;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = sedp_builtin_publications_secure_reader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        if(publications_secure_writer_.first->matched_reader_remove(ratt))
+        tmp_guid.entityId = sedp_builtin_publications_secure_reader;
+        if(publications_secure_writer_.first->matched_reader_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_reader(
-                    publications_secure_writer_.first->getGuid(), pdata->m_guid, ratt.guid);
+                    publications_secure_writer_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
 
@@ -978,18 +958,11 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     if(auxendp != 0 && subscriptions_secure_writer_.first!=nullptr)
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
-        RemoteReaderAttributes ratt;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = sedp_builtin_subscriptions_secure_reader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        if(subscriptions_secure_writer_.first->matched_reader_remove(ratt))
+        tmp_guid.entityId = sedp_builtin_subscriptions_secure_reader;
+        if(subscriptions_secure_writer_.first->matched_reader_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_reader(
-                    subscriptions_secure_writer_.first->getGuid(), pdata->m_guid, ratt.guid);
+                    subscriptions_secure_writer_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
 #endif

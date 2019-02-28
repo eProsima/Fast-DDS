@@ -609,7 +609,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     return true;
 }
 
-bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
+bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)
 {
     ReaderProxy *rproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
@@ -619,7 +619,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
     ReaderProxyIterator it = matched_readers_.begin();
     while(it != matched_readers_.end())
     {
-        if((*it)->guid() == rdata.guid)
+        if((*it)->guid() == reader_guid)
         {
             logInfo(RTPS_WRITER, "Reader Proxy removed: " << (*it)->guid());
             rproxy = std::move(*it);
@@ -632,7 +632,7 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
         ++it;
     }
 
-    all_remote_readers_.remove(rdata.guid);
+    all_remote_readers_.remove(reader_guid);
     update_cached_info_nts(allLocatorLists);
 
     if(matched_readers_.size()==0)
@@ -654,12 +654,12 @@ bool StatefulWriter::matched_reader_remove(const RemoteReaderAttributes& rdata)
     return false;
 }
 
-bool StatefulWriter::matched_reader_is_matched(const RemoteReaderAttributes& rdata)
+bool StatefulWriter::matched_reader_is_matched(const GUID_t& reader_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(ReaderProxy* it : matched_readers_)
     {
-        if(it->guid() == rdata.guid)
+        if(it->guid() == reader_guid)
         {
             return true;
         }
