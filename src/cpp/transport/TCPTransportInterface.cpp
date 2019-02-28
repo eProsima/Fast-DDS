@@ -19,7 +19,6 @@
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 #include <fastrtps/transport/TCPChannelResourceBasic.h>
@@ -105,6 +104,8 @@ TCPTransportInterface::TCPTransportInterface()
     , rtcp_message_manager_(nullptr)
     , send_retry_active_(true)
     , clean_sockets_pool_timer_(nullptr)
+    , socket_canceller_thread_(&TCPTransportInterface::socket_canceller, this)
+    , stop_socket_canceller_(false)
 {
 }
 #else
@@ -112,6 +113,8 @@ TCPTransportInterface::TCPTransportInterface()
     : rtcp_message_manager_(nullptr)
     , send_retry_active_(true)
     , clean_sockets_pool_timer_(nullptr)
+    , socket_canceller_thread_(&TCPTransportInterface::socket_canceller, this)
+    , stop_socket_canceller_(false)
 {
     if (configuration()->apply_security)
     {
@@ -122,6 +125,8 @@ TCPTransportInterface::TCPTransportInterface()
 
 TCPTransportInterface::~TCPTransportInterface()
 {
+    stop_socket_canceller_ = true;
+    socket_canceller_thread_.join();
 }
 
 void TCPTransportInterface::clean()
@@ -214,7 +219,7 @@ TCPChannelResource* TCPTransportInterface::BindSocket(
 
         if (oldChannel->connection_established())
         {
-            logError(RTCP, "Binding already against an already connected locator: "
+            logError(RTCP, "Binding against an already connected locator: "
                 << IPLocator::to_string(locator) << ". The old one will be destroyed.");
         }
         return oldChannel;
@@ -1792,6 +1797,65 @@ std::string TCPTransportInterface::get_password() const
     return configuration()->tls_config.password;
 }
 
+void TCPTransportInterface::add_socket_to_cancel(TCPChannelResource* socket, uint64_t milliseconds)
+{
+    std::unique_lock<std::mutex> scopeLock(canceller_mutex_);
+    Time_t now;
+    my_clock_.setTimeNow(&now);
+    uint64_t target_nano = now.to_ns() + milliseconds * 1000000;
+    sockets_timestamp_.emplace_back(socket, target_nano);
+}
+
+void TCPTransportInterface::remove_socket_to_cancel(TCPChannelResource* socket)
+{
+    std::unique_lock<std::mutex> scopeLock(canceller_mutex_);
+
+    auto it = std::remove_if(
+        sockets_timestamp_.begin(),
+        sockets_timestamp_.end(),
+        [socket](const std::pair<TCPChannelResource*, uint64_t>& elem)
+        {
+            return elem.first == socket;
+        });
+
+    sockets_timestamp_.erase(it, sockets_timestamp_.end());
+}
+
+void TCPTransportInterface::socket_canceller()
+{
+    std::vector<TCPChannelResource*> to_delete;
+    while (!stop_socket_canceller_)
+    {
+        Time_t now;
+        my_clock_.setTimeNow(&now);
+        uint64_t current_nano = now.to_ns();
+        {
+            std::unique_lock<std::mutex> scopeLock(canceller_mutex_);
+            std::for_each(
+                sockets_timestamp_.begin(),
+                sockets_timestamp_.end(),
+                [&to_delete, current_nano](const std::pair<TCPChannelResource*, uint64_t>& elem)
+                {
+                    if (elem.second <= current_nano)
+                    {
+                        to_delete.emplace_back(elem.first);
+                        logError(RTCP, "Cancelling socket " << IPLocator::to_string(elem.first->locator()));
+                        elem.first->cancel();
+                    }
+                });
+
+            std::for_each(
+                to_delete.begin(),
+                to_delete.end(),
+                [this](TCPChannelResource* channel)
+                {
+                    remove_socket_to_cancel(channel);
+                });
+        }
+        to_delete.clear();
+        eClock::my_sleep(50);
+    }
+}
 
 } // namespace rtps
 } // namespace fastrtps

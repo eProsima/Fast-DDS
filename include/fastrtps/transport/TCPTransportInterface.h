@@ -18,6 +18,7 @@
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/eClock.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
 #include <fastrtps/transport/TCPChannelResourceBasic.h>
 #include <fastrtps/transport/TCPAcceptorBasic.h>
@@ -91,6 +92,12 @@ protected:
     std::vector<TCPChannelResource*> deleted_sockets_pool_;
     std::recursive_mutex deleted_sockets_pool_mutex_;
     CleanTCPSocketsEvent* clean_sockets_pool_timer_;
+
+    std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
+    std::thread socket_canceller_thread_;
+    bool stop_socket_canceller_;
+    std::mutex canceller_mutex_;
+    eClock my_clock_;
 
     TCPTransportInterface();
 
@@ -201,6 +208,8 @@ protected:
      * Aux method to retrieve cert password as a callback
      */
     std::string get_password() const;
+
+    void socket_canceller();
 
 public:
     friend class RTCPMessageManager;
@@ -408,6 +417,12 @@ public:
     virtual const TCPTransportDescriptor* configuration() const = 0;
 
     virtual TCPTransportDescriptor* configuration() = 0;
+
+    void add_socket_to_cancel(
+        TCPChannelResource* socket,
+        uint64_t milliseconds);
+
+    void remove_socket_to_cancel(TCPChannelResource* socket);
 };
 
 } // namespace rtps
