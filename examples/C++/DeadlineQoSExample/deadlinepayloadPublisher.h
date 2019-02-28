@@ -44,8 +44,9 @@ public:
     /**
      * @brief Run the publisher
      * @param sleep_ms A time period to sleep for before sending the new sample
+     * @param samples The number of samples per instance to send. If set to 0 sends sample indefinitely
      */
-    void run(double sleep_ms);
+    void run(double sleep_ms, int samples);
 
 private:
 

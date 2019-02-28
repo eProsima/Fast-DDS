@@ -95,7 +95,7 @@ void deadlinepayloadPublisher::PubListener::on_offered_deadline_missed(InstanceH
     std::cout << "Publisher listener: deadline missed for instance " << handle << std::endl;
 }
 
-void deadlinepayloadPublisher::run(double sleep_ms)
+void deadlinepayloadPublisher::run(double sleep_ms, int samples)
 {
     while(m_listener.n_matched == 0)
     {
@@ -110,9 +110,20 @@ void deadlinepayloadPublisher::run(double sleep_ms)
     stream << "generic payload";
     st.payload(stream.str());
 
+    int sample = 0;
     while(true)
     {
         eClock::my_sleep(sleep_ms);
+
+        if (samples > 0)
+        {
+            if (sample == samples)
+            {
+                // Stop sending samples but keep the publisher running
+                continue;
+            }
+            sample++;
+        }
 
         // Send messages
         for(unsigned short i=0;i<3;i++)

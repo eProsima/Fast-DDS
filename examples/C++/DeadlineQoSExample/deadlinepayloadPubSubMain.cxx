@@ -29,6 +29,7 @@ int main(int argc, char** argv)
     int type = 1;
     int deadline = 1000;
     int sleep = 1000;
+    int samples = 0;
     if (argc > 1)
     {
         if (strcmp(argv[1], "publisher") == 0)
@@ -40,6 +41,10 @@ int main(int argc, char** argv)
                 if (argc > 3)
                 {
                     sleep = atoi(argv[3]);
+                    if (argc > 4)
+                    {
+                        samples = atoi(argv[4]);
+                    }
                 }
             }
         }
@@ -68,7 +73,7 @@ int main(int argc, char** argv)
                 deadlinepayloadPublisher mypub;
                 if (mypub.init(deadline))
                 {
-                    mypub.run(sleep);
+                    mypub.run(sleep, samples);
                 }
                 break;
             }
