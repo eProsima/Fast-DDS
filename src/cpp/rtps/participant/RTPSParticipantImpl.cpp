@@ -1117,8 +1117,7 @@ PDPSimple* RTPSParticipantImpl::pdpsimple()
 
 bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
 {
-    ParticipantProxyData pdata;
-    if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, returnedInfo, pdata))
+    if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, returnedInfo))
     {
         return true;
     }
@@ -1127,8 +1126,7 @@ bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, Write
 
 bool RTPSParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
 {
-    ParticipantProxyData pdata;
-    if (this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, returnedInfo, pdata))
+    if (this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, returnedInfo))
     {
         return true;
     }

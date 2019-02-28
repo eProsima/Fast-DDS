@@ -91,7 +91,7 @@ class PDPSimple
      * @param pdata
      * @return True if correct.
      */
-    bool addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData &pdata_out);
+    bool addReaderProxyData(ReaderProxyData* rdata, GUID_t& participant_guid);
 
     /**
      * Add a WriterProxyData to the correct ParticipantProxyData.
@@ -99,24 +99,22 @@ class PDPSimple
      * @param pdata
      * @return True if correct.
      */
-    bool addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData &pdata);
+    bool addWriterProxyData(WriterProxyData* wdata, GUID_t& participant_guid);
 
     /**
      * This method returns a pointer to a ReaderProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
      * @param[in] reader GUID_t of the reader we are looking for.
      * @param rdata Pointer to pointer of the ReaderProxyData object.
-     * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata, ParticipantProxyData& pdata);
+    bool lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata);
     /**
      * This method returns a pointer to a WriterProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
      * @param[in] writer GUID_t of the writer we are looking for.
      * @param wdata Pointer to pointer of the WriterProxyData object.
-     * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata, ParticipantProxyData& pdata);
+    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata);
     /**
      * This method returns a pointer to a RTPSParticipantProxyData object if it is found among the registered RTPSParticipants.
      * @param[in] pguid GUID_t of the RTPSParticipant we are looking for.

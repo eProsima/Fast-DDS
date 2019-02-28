@@ -518,9 +518,8 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId
             <<" from Liveliness Protocol");
     t_WIT wToEraseIt;
-    ParticipantProxyData pdata;
     WriterProxyData wdata;
-    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), wdata, pdata))
+    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), wdata))
     {
         bool found = false;
         if(wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
@@ -528,9 +527,8 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
             for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
             {
-                ParticipantProxyData pdata2;
                 WriterProxyData wdata2;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
+                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2))
                 {
                     double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)
@@ -566,9 +564,8 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             m_minManRTPSParticipant_MilliSec = std::numeric_limits<double>::max();
             for(t_WIT it= m_livManRTPSParticipantWriters.begin();it!=m_livManRTPSParticipantWriters.end();++it)
             {
-                ParticipantProxyData pdata2;
                 WriterProxyData wdata2;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
+                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2))
                 {
                     double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)

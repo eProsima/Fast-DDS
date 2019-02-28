@@ -360,7 +360,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 
 }
 
-bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata, ParticipantProxyData& pdata)
+bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for (auto pit = m_participantProxies.begin();
@@ -372,7 +372,6 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rda
             if((*rit)->guid() == reader)
             {
                 rdata.copy(*rit);
-                pdata.copy(**pit);
                 return true;
             }
         }
@@ -380,7 +379,7 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rda
     return false;
 }
 
-bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata, ParticipantProxyData& pdata)
+bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for (auto pit = m_participantProxies.begin();
@@ -392,7 +391,6 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wda
             if((*wit)->guid() == writer)
             {
                 wdata.copy(*wit);
-                pdata.copy(**pit);
                 return true;
             }
         }
@@ -585,7 +583,7 @@ bool PDPSimple::createSPDPEndpoints()
     return true;
 }
 
-bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData& pdata)
+bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata, GUID_t& participant_guid)
 {
     logInfo(RTPS_PDP, "Adding reader proxy data " << rdata->guid());
 
@@ -606,7 +604,7 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData&
             rdata->isAlive(true);
 
             // Copy participant data to be used outside.
-            pdata.copy(**pit);
+            participant_guid = (*pit)->m_guid;
 
             // Check that it is not already there:
             for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
@@ -648,7 +646,7 @@ bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData&
     return false;
 }
 
-bool PDPSimple::addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData& pdata)
+bool PDPSimple::addWriterProxyData(WriterProxyData* wdata, GUID_t& participant_guid)
 {
     logInfo(RTPS_PDP, "Adding writer proxy data " << wdata->guid());
 
@@ -669,7 +667,7 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData&
             wdata->isAlive(true);
 
             // Copy participant data to be used outside.
-            pdata.copy(**pit);
+            participant_guid = (*pit)->m_guid;
 
             //CHECK THAT IT IS NOT ALREADY THERE:
             for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
