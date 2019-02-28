@@ -18,7 +18,6 @@
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
 #include <fastrtps/transport/TCPChannelResourceBasic.h>
 #include <fastrtps/transport/TCPAcceptorBasic.h>
@@ -36,6 +35,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include <fastrtps/utils/eClock.h> // Includes <windows.h> and may produce problems when included before asio.
 
 namespace eprosima{
 namespace fastrtps{
