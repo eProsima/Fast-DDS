@@ -72,17 +72,17 @@ class StatefulReader : public RTPSReader
 
         /**
          * Remove a WriterProxyData from the matached writers.
-         * @param wdata Pointer to the WPD object.
+         * @param writer_guid GUID of the writer to remove.
          * @return True if correct.
          */
-        bool matched_writer_remove(const RemoteWriterAttributes& wdata) override;
+        bool matched_writer_remove(const GUID_t& writer_guid) override;
 
         /**
-         * Tells us if a specific Writer is matched against this reader
-         * @param wdata Pointer to the WriterProxyData object
+         * Tells us if a specific Writer is matched against this reader.
+         * @param writer_guid GUID of the writer to check.
          * @return True if it is matched.
          */
-        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) const override;
+        bool matched_writer_is_matched(const GUID_t& writer_guid) const override;
 
         /**
          * Look for a specific WriterProxy.

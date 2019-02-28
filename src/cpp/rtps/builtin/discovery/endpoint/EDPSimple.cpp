@@ -843,16 +843,8 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     //auxendp = 1;
     if(auxendp!=0 && publications_reader_.first!=nullptr) //Exist Pub Writer and i have pub reader
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = c_EntityId_SEDPPubWriter;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        publications_reader_.first->matched_writer_remove(watt);
+        tmp_guid.entityId = c_EntityId_SEDPPubWriter;
+        publications_reader_.first->matched_writer_remove(tmp_guid);
     }
     auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
@@ -870,16 +862,8 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     if(auxendp!=0 && subscriptions_reader_.first!=nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = c_EntityId_SEDPSubWriter;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        subscriptions_reader_.first->matched_writer_remove(watt);
+        tmp_guid.entityId = c_EntityId_SEDPSubWriter;
+        subscriptions_reader_.first->matched_writer_remove(tmp_guid);
     }
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
@@ -899,19 +883,11 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     //auxendp = 1;
     if(auxendp != 0 && publications_secure_reader_.first != nullptr)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = sedp_builtin_publications_secure_writer;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        if(publications_secure_reader_.first->matched_writer_remove(watt))
+        tmp_guid.entityId = sedp_builtin_publications_secure_writer;
+        if(publications_secure_reader_.first->matched_writer_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_writer(
-                    publications_secure_reader_.first->getGuid(), pdata->m_guid, watt.guid);
+                    publications_secure_reader_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
 
@@ -936,19 +912,11 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     if(auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = sedp_builtin_subscriptions_secure_writer;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        if(subscriptions_secure_reader_.first->matched_writer_remove(watt))
+        tmp_guid.entityId = sedp_builtin_subscriptions_secure_writer;
+        if(subscriptions_secure_reader_.first->matched_writer_remove(tmp_guid))
         {
             mp_RTPSParticipant->security_manager().remove_writer(
-                    subscriptions_secure_reader_.first->getGuid(), pdata->m_guid, watt.guid);
+                    subscriptions_secure_reader_.first->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
     auxendp = endp;

@@ -74,17 +74,17 @@ public:
 
     /**
      * Remove a writer represented by its attributes from the matched writers.
-     * @param wdata Attributes of the writer to remove.
+     * @param writer_guid GUID of the writer to remove.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI virtual bool matched_writer_remove(const RemoteWriterAttributes& wdata) = 0;
+    RTPS_DllAPI virtual bool matched_writer_remove(const GUID_t& writer_guid) = 0;
 
     /**
-     * Tells us if a specific Writer is matched against this reader
-     * @param wdata Pointer to the WriterProxyData object
+     * Tells us if a specific Writer is matched against this reader.
+     * @param writer_guid GUID of the writer to check.
      * @return True if it is matched.
      */
-    RTPS_DllAPI virtual bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) const = 0;
+    RTPS_DllAPI virtual bool matched_writer_is_matched(const GUID_t& writer_guid) const = 0;
 
     /**
      * Returns true if the reader accepts a message directed to entityId.

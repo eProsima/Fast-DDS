@@ -385,16 +385,8 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
     if((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
     {
         logInfo(RTPS_LIVELINESS,"Removing remote writer from my local Builtin Reader");
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = c_EntityId_WriterLiveliness;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        mp_builtinReader->matched_writer_remove(watt);
+        tmp_guid.entityId = c_EntityId_WriterLiveliness;
+        mp_builtinReader->matched_writer_remove(tmp_guid);
     }
     auxendp = endp;
     auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
@@ -411,20 +403,11 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReaderSecure != nullptr)
     {
         logInfo(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Secure Reader");
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = c_EntityId_WriterLivelinessSecure;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.security_attributes() = mp_builtinReaderSecure->getAttributes().security_attributes();
-        if (mp_builtinReaderSecure->matched_writer_remove(watt))
+        tmp_guid.entityId = c_EntityId_WriterLivelinessSecure;
+        if (mp_builtinReaderSecure->matched_writer_remove(tmp_guid))
         {
             mp_participant->security_manager().remove_writer(
-                mp_builtinReaderSecure->getGuid(), pdata->m_guid, watt.guid);
+                mp_builtinReaderSecure->getGuid(), pdata->m_guid, tmp_guid);
         }
     }
     auxendp = endp;

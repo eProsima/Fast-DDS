@@ -1710,44 +1710,35 @@ void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProx
 void SecurityManager::unmatch_builtin_endpoints(const ParticipantProxyData& participant_data)
 {
     uint32_t builtin_endpoints = participant_data.m_availableBuiltinEndpoints;
+    GUID_t tmp_guid;
+    tmp_guid.guidPrefix = participant_data.m_guid.guidPrefix;
 
     if(participant_stateless_message_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_stateless_message_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_reader_->matched_writer_remove(watt);
+        tmp_guid.entityId = participant_stateless_message_writer_entity_id;
+        participant_stateless_message_reader_->matched_writer_remove(tmp_guid);
     }
 
     if(participant_stateless_message_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        GUID_t reader_guid(participant_data.m_guid.guidPrefix, participant_stateless_message_reader_entity_id);
-        participant_stateless_message_writer_->matched_reader_remove(reader_guid);
+        tmp_guid.entityId = participant_stateless_message_reader_entity_id;
+        participant_stateless_message_writer_->matched_reader_remove(tmp_guid);
     }
 
     if(participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_reader_->matched_writer_remove(watt);
+        tmp_guid.entityId = participant_volatile_message_secure_writer_entity_id;
+        participant_volatile_message_secure_reader_->matched_writer_remove(tmp_guid);
     }
 
     if(participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        GUID_t reader_guid(participant_data.m_guid.guidPrefix, participant_volatile_message_secure_reader_entity_id);
-        participant_volatile_message_secure_writer_->matched_reader_remove(reader_guid);
+        tmp_guid.entityId = participant_volatile_message_secure_reader_entity_id;
+        participant_volatile_message_secure_writer_->matched_reader_remove(tmp_guid);
     }
 }
 

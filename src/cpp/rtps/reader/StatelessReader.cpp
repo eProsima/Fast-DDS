@@ -80,24 +80,33 @@ bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
+bool StatelessReader::matched_writer_remove(const GUID_t& writer_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    bool found = matched_writers_.remove_if(wdata.compare_guid_function());
-    if (found)
+    ResourceLimitedVector<RemoteWriterAttributes>::iterator it;
+    for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
     {
-        logInfo(RTPS_READER, "Writer " << wdata.guid << " removed from " << m_guid.entityId);
-        remove_persistence_guid(wdata);
+        if (it->guid == writer_guid)
+        {
+            logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid.entityId);
+            remove_persistence_guid(*it);
+            matched_writers_.erase(it);
+            return true;
+        }
     }
 
-    return found;
+    return false;
 }
 
-bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
+bool StatelessReader::matched_writer_is_matched(const GUID_t& writer_guid) const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    return std::any_of(matched_writers_.begin(), matched_writers_.end(), wdata.compare_guid_function());
+    return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
+        [writer_guid](const RemoteWriterAttributes& item)
+        {
+            return item.guid == writer_guid;
+        });
 }
 
 bool StatelessReader::change_received(CacheChange_t* change)

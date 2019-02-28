@@ -768,15 +768,8 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if(auxendp!=0)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = c_EntityId_SPDPWriter;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        watt.endpoint.reliabilityKind = BEST_EFFORT;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        mp_SPDPReader->matched_writer_remove(watt);
+        GUID_t writer_guid(pdata->m_guid.guidPrefix, c_EntityId_SPDPWriter);
+        mp_SPDPReader->matched_writer_remove(writer_guid);
     }
     auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;

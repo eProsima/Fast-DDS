@@ -132,22 +132,22 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
     return true;
 }
 
-bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
 {
     WriterProxy *wproxy = nullptr;
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
     //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid(wdata.guid);
+    mp_history->remove_changes_with_guid(writer_guid);
 
-    for(std::vector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
+    for(ResourceLimitedVector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
     {
-        if((*it)->guid() == wdata.guid)
+        if((*it)->guid() == writer_guid)
         {
             logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->guid());
             wproxy = *it;
             matched_writers_.erase(it);
-            remove_persistence_guid(wdata);
+            remove_persistence_guid(wproxy->attributes());
             break;
         }
     }
@@ -161,7 +161,7 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
         return true;
     }
 
-    logInfo(RTPS_READER,"Writer Proxy " << wdata.guid << " doesn't exist in reader "<<this->getGuid().entityId);
+    logInfo(RTPS_READER,"Writer Proxy " << writer_guid << " doesn't exist in reader "<<this->getGuid().entityId);
     return false;
 }
 
@@ -173,7 +173,7 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
     //Remove cachechanges belonging to the unmatched writer
     mp_history->remove_changes_with_guid(writer_guid);
 
-    for(std::vector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
+    for(ResourceLimitedVector<WriterProxy*>::iterator it=matched_writers_.begin();it!=matched_writers_.end();++it)
     {
         if((*it)->guid() == writer_guid)
         {
@@ -197,12 +197,12 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
     return false;
 }
 
-bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata) const
+bool StatefulReader::matched_writer_is_matched(const GUID_t& writer_guid) const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->guid() == wdata.guid)
+        if(it->guid() == writer_guid)
         {
             return true;
         }

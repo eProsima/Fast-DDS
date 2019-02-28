@@ -37,9 +37,9 @@ class RTPSReader : public Endpoint
 
         virtual ~RTPSReader() = default;
 
-        virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
+        virtual bool matched_writer_add(const RemoteWriterAttributes& wdata) = 0;
 
-        virtual bool matched_writer_remove(RemoteWriterAttributes& wdata) = 0;
+        virtual bool matched_writer_remove(const GUID_t& wdata) = 0;
 
         MOCK_METHOD0(getHistory_mock, ReaderHistory*());
 
