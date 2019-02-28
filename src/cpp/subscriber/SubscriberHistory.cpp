@@ -549,29 +549,37 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
     return false;
 }
 
-void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t *> &samples)
+void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t *> &samples, int &num_samples)
 {
-    samples.clear();
+    num_samples = 0;
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
-        samples.reserve(1);
+        if (samples.size() < 1)
+        {
+            logError(SUBSCRIBER, "Cannot return latest sample, output vector is not long enough");
+            return;
+        }
         auto max = *std::max_element(
                     m_changes.begin(),
                     m_changes.end(),
                     [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
-        samples.push_back(max);
+        samples[num_samples++] = max;
     }
     else if (mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
-        samples.reserve(m_keyedChanges.size());
+        if (samples.size() < m_keyedChanges.size())
+        {
+            logError(SUBSCRIBER, "Cannot return latest samples, output vector is not long enough");
+            return;
+        }
         for (auto it = m_keyedChanges.begin(); it != m_keyedChanges.end(); ++it)
         {
             auto max = *std::max_element(
                         it->second.begin(),
                         it->second.end(),
                         [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
-            samples.push_back(max);
+            samples[num_samples++] = max;
         }
     }
 }

@@ -161,6 +161,8 @@ class PublisherImpl
     DeadlineTimer deadline_timer_;
     //! Deadline duration
     Duration_t deadline_duration_;
+    //! A vector to store the latest samples to check for deadlines
+    std::vector<CacheChange_t*> deadline_samples_;
 
     /** Method to check for deadlines
      */

@@ -121,9 +121,12 @@ class SubscriberHistory: public rtps::ReaderHistory
 
         /**
          * A method that resturns the latest sample for each topic key
-         * @param samples A vector containing the latest sample for each key
+         * @param samples A vector where the latest sample for each key will be placed. Must be long enough
+         * @param num_samples The number of samples in the vector
          */
-        void get_latest_samples(std::vector<CacheChange_t*>& samples);
+        void get_latest_samples(
+                std::vector<CacheChange_t*>& samples,
+                int& num_samples);
 
     private:
 

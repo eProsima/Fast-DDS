@@ -97,9 +97,12 @@ class PublisherHistory:public rtps::WriterHistory
 
         /**
          * Returns the latest sample for each topic key
-         * @param samples A vector containing the latest samples
+         * @param samples A vector where the the latest sample for each key will be placed. Must be long enough
+         * @param num_samples The number of samples in the vector
          */
-        void get_latest_samples(std::vector<CacheChange_t*> &samples);
+        void get_latest_samples(
+                std::vector<CacheChange_t*> &samples,
+                int& num_samples);
 
     private:
         //!Map where keys are instance handles and values are vectors of cache changes associated

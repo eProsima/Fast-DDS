@@ -159,6 +159,8 @@ private:
     DeadlineTimer deadline_timer_;
     //!Deadline duration
     Duration_t deadline_duration_;
+    //!A vector storing the latest samples to check for deadline
+    std::vector<rtps::CacheChange_t*> deadline_samples_;
 
     /** A method to check for deadlines
      */
