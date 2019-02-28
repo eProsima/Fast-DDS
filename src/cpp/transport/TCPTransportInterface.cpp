@@ -104,8 +104,8 @@ TCPTransportInterface::TCPTransportInterface()
     , rtcp_message_manager_(nullptr)
     , send_retry_active_(true)
     , clean_sockets_pool_timer_(nullptr)
-    , socket_canceller_thread_(&TCPTransportInterface::socket_canceller, this)
     , stop_socket_canceller_(false)
+    , socket_canceller_thread_(&TCPTransportInterface::socket_canceller, this)
 {
 }
 #else
@@ -113,8 +113,8 @@ TCPTransportInterface::TCPTransportInterface()
     : rtcp_message_manager_(nullptr)
     , send_retry_active_(true)
     , clean_sockets_pool_timer_(nullptr)
-    , socket_canceller_thread_(&TCPTransportInterface::socket_canceller, this)
     , stop_socket_canceller_(false)
+    , socket_canceller_thread_(&TCPTransportInterface::socket_canceller, this)
 {
     if (configuration()->apply_security)
     {
