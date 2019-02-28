@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile files('../thirdparty/idl/build/libs/idlparser-1.0.0.jar')
+    compile files('../thirdparty/idl/build/libs/TestIDLParser-1.0.0.jar')
 }
 
 task buildIDLParser(type: GradleBuild) {

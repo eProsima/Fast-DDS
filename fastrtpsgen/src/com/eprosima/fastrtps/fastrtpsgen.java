@@ -105,6 +105,9 @@ public class fastrtpsgen {
     // Generate TypeObject files?
     private boolean m_type_object_files = false;
 
+    // Export PubSub symbols
+    private boolean m_export_pubsub_symbols = false;
+
     // Use to know the programming language
     public enum LANGUAGE
     {
@@ -214,6 +217,10 @@ public class fastrtpsgen {
             else if(arg.equals("-typeobject"))
             {
                 m_type_object_files = true;
+            }
+            else if(arg.equals("-exportsymbols"))
+            {
+                m_export_pubsub_symbols = true;
             }
             else if(arg.equals("-I"))
             {
@@ -414,6 +421,9 @@ public class fastrtpsgen {
         System.out.println("\t\t-I <path>: add directory to preprocessor include paths.");
         System.out.println("\t\t-d <path>: sets an output directory for generated files.");
         System.out.println("\t\t-t <temp dir>: sets a specific directory as a temporary directory.");
+        System.out.print("\t\t-typeobject: generates TypeObject files to automatically register the types as");
+        System.out.println(" dynamic.");
+        System.out.println("\t\t-exportsymbols: exports PubSub symbols.");
         System.out.println("\tand the supported input files are:");
         System.out.println("\t* IDL files.");
 
@@ -477,7 +487,7 @@ public class fastrtpsgen {
         }
 
         if (idlParseFileName != null) {
-            Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct, m_type_object_files);
+            Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct, m_type_object_files, m_export_pubsub_symbols);
 
             if(fusion_) ctx.setActivateFusion(true);
 

@@ -79,23 +79,23 @@ struct_type(ctx, parent, struct) ::= <<
  */
 class $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType : public eprosima::fastrtps::TopicDataType {
 public:
-        typedef $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$ type;
+    typedef $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$ type;
 
-	$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
-	virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
-    virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
+
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual void* createData() override;
+    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 >>
 
 union_type(ctx, parent, union) ::= <<>>
 
 enum_type(ctx, parent, enum) ::= <<>>
-

@@ -27,7 +27,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
 {
     // TODO Remove middleware parameter. It is temporal while cdr and rest don't have async functions.
     public Context(String filename, String file, ArrayList includePaths, boolean subscribercode, boolean publishercode,
-            String appProduct, boolean generate_type_object)
+            String appProduct, boolean generate_type_object, boolean export_pubsub_symbols)
     {
         super(filename, file, includePaths);
         m_fileNameUpper = filename.toUpperCase();
@@ -41,6 +41,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
         //m_ddstypes = ddstypes;
 
         m_type_object = generate_type_object;
+        m_export_pubsub_symbols = export_pubsub_symbols;
     }
 
     public void setTypelimitation(String lt)
@@ -220,6 +221,13 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
     private TypeDeclaration m_lastStructure = null;
 
     private boolean m_type_object = false;
+
+    private boolean m_export_pubsub_symbols = false;
+
+    public boolean isExportPubSubSymbols()
+    {
+        return m_export_pubsub_symbols;
+    }
 
     @Override
     public boolean isGenerateTypeObject()

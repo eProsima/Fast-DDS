@@ -27,18 +27,29 @@ public class StructTypeCode extends com.eprosima.idl.parser.typecode.StructTypeC
     public boolean isHasKey()
     {
         boolean returnedValue = false;
-        
-        for(int count = 0; count < getMembers().size() && !returnedValue; ++count)
+
+        for (int count = 0; count < getMembers().size() && !returnedValue; ++count)
         {
             Member member = getMembers().get(count);
             Annotation key = member.getAnnotations().get("Key");
 
-            if(key != null)
+            if (key != null)
             {
                 String value = key.getValue("value");
 
                 if(value != null && value.equals("true"))
                     returnedValue = true;
+            }
+            else // Try with lower case
+            {
+                key = member.getAnnotations().get("key");
+                if (key != null)
+                {
+                    String value = key.getValue("value");
+
+                    if(value != null && value.equals("true"))
+                        returnedValue = true;
+                }
             }
         }
 
