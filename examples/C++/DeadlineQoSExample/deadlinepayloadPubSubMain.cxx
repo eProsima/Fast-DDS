@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     std::cout << "Starting " << std::endl;
     int type = 1;
     int deadline = 1000;
-    int sleep = 100;
+    int sleep = 1000;
     if (argc > 1)
     {
         if (strcmp(argv[1], "publisher") == 0)
