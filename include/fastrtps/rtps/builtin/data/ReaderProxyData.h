@@ -325,12 +325,6 @@ class ReaderProxyData
          */
         void copy(ReaderProxyData* rdata);
 
-        /**
-         * Convert the ProxyData information to RemoteReaderAttributes object.
-         * @return Reference to the RemoteReaderAttributes object.
-         */
-        RemoteReaderAttributes toRemoteReaderAttributes() const;
-
     private:
 
         //!GUID
