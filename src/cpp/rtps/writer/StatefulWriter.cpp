@@ -479,10 +479,16 @@ void StatefulWriter::send_any_unsent_changes()
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
-
 /*
  *	MATCHED_READER-RELATED METHODS
  */
+bool StatefulWriter::matched_reader_add(const ReaderProxyData& data)
+{
+    // TODO (Miguel C): Pending refactor for locator shrink
+    RemoteReaderAttributes tmp(data);
+    return matched_reader_add(tmp);
+}
+
 bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
 {
     if (rdata.guid == c_Guid_Unknown)

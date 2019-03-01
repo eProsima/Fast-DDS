@@ -672,8 +672,7 @@ bool EDP::pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const Wri
                     logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
 #else
-				RemoteReaderAttributes rratt = (*rdatait)->toRemoteReaderAttributes();
-				if(W->matched_reader_add(rratt))
+				if(W->matched_reader_add(**rdatait))
                 {
                     logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << (*rdatait)->guid());
                     //MATCHED AND ADDED CORRECTLY:
@@ -738,8 +737,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(const GUID_t& participant_g
                     logError(RTPS_EDP, "Security manager returns an error for writer " << writerGUID);
                 }
 #else
-                RemoteReaderAttributes rratt = rdata->toRemoteReaderAttributes();
-                if((*wit)->matched_reader_add(rratt))
+                if((*wit)->matched_reader_add(*rdata))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
                     //MATCHED AND ADDED CORRECTLY:
@@ -844,8 +842,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(const GUID_t& l
 
         if(local_writer == writerGUID)
         {
-            RemoteReaderAttributes rratt = remote_reader_data.toRemoteReaderAttributes();
-            if((*wit)->matched_reader_add(rratt))
+            if((*wit)->matched_reader_add(remote_reader_data))
             {
                 logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
                 //MATCHED AND ADDED CORRECTLY:

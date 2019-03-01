@@ -69,6 +69,13 @@ class StatelessWriter : public RTPSWriter
 
     /**
      * Add a matched reader.
+     * @param data Pointer to the ReaderProxyData object added.
+     * @return True if added.
+     */
+    bool matched_reader_add(const ReaderProxyData& data) override;
+
+    /**
+     * Add a matched reader.
      * @param reader_attributes Attributes of the reader to add.
      * @return True if added.
      */

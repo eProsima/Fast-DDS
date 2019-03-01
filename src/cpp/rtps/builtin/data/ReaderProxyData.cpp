@@ -539,24 +539,20 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
     }
 }
 
-RemoteReaderAttributes ReaderProxyData::toRemoteReaderAttributes() const
+RemoteReaderAttributes::RemoteReaderAttributes(const ReaderProxyData& data)
 {
-    RemoteReaderAttributes remoteAtt;
-
-    remoteAtt.guid = m_guid;
-    remoteAtt.expectsInlineQos = this->m_expectsInlineQos;
-    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.durabilityKind();
-    remoteAtt.endpoint.endpointKind = READER;
-    remoteAtt.endpoint.topicKind = m_topicKind;
-    remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
-    remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
-
-    return remoteAtt;
+    guid = data.guid();
+    expectsInlineQos = data.m_expectsInlineQos;
+    endpoint.durabilityKind = data.m_qos.m_durability.durabilityKind();
+    endpoint.endpointKind = READER;
+    endpoint.topicKind = data.topicKind();
+    endpoint.reliabilityKind = data.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    endpoint.unicastLocatorList = data.unicastLocatorList();
+    endpoint.multicastLocatorList = data.multicastLocatorList();
 }
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 

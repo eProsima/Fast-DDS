@@ -31,6 +31,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+class ReaderProxyData;
 
 typedef enum RTPSWriterPublishMode : octet
 {
@@ -129,6 +130,8 @@ class  RemoteReaderAttributes
         {
             endpoint.endpointKind = READER;
         }
+
+        RemoteReaderAttributes(const ReaderProxyData& data);
 
         virtual ~RemoteReaderAttributes()
         {

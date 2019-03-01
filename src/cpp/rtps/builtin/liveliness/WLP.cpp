@@ -258,8 +258,7 @@ bool WLP::pairing_remote_reader_with_local_writer_after_security(const GUID_t& l
 {
     if (local_writer.entityId == c_EntityId_WriterLivelinessSecure)
     {
-        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
-        mp_builtinWriterSecure->matched_reader_add(attrs);
+        mp_builtinWriterSecure->matched_reader_add(remote_reader_data);
         return true;
     }
 

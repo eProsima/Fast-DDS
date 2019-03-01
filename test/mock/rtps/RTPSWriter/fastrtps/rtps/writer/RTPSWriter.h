@@ -38,6 +38,8 @@ class RTPSWriter : public Endpoint
 
         virtual ~RTPSWriter() = default;
 
+        virtual bool matched_reader_add(const ReaderProxyData& ratt) = 0;
+
         virtual bool matched_reader_add(const RemoteReaderAttributes& ratt) = 0;
 
         virtual bool matched_reader_remove(const GUID_t& ratt) = 0;

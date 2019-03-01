@@ -963,14 +963,12 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(c
 
     if(local_writer.entityId == sedp_builtin_publications_secure_writer)
     {
-        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
-        publications_secure_writer_.first->matched_reader_add(attrs);
+        publications_secure_writer_.first->matched_reader_add(remote_reader_data);
         returned_value = true;
     }
     else if(local_writer.entityId == sedp_builtin_subscriptions_secure_writer)
     {
-        RemoteReaderAttributes attrs = remote_reader_data.toRemoteReaderAttributes();
-        subscriptions_secure_writer_.first->matched_reader_add(attrs);
+        subscriptions_secure_writer_.first->matched_reader_add(remote_reader_data);
         returned_value = true;
     }
 

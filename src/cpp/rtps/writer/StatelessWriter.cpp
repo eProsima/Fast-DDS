@@ -285,6 +285,12 @@ void StatelessWriter::send_any_unsent_changes()
 /*
  *	MATCHED_READER-RELATED METHODS
  */
+bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
+{
+    // TODO (Miguel C): Pending refactor for locator shrink
+    RemoteReaderAttributes tmp(data);
+    return matched_reader_add(tmp);
+}
 
 bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attributes)
 {
