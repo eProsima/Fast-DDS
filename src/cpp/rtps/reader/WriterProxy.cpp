@@ -25,6 +25,8 @@
 
 #include <mutex>
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
 #include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
