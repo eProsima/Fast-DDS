@@ -20,6 +20,11 @@ public:
         uint32_t &ret_size, bool generate_identifier = true);
     static std::string getMapTypeName(const std::string &key_type_name, const std::string &value_type_name,
         uint32_t bound, bool generate_identifier = true);
+    // TODO Add bitset and bitmask
+    //static std::string getBitsetTypeName(const std::string &type_name, const std::vector<uint32_t> &bound,
+    //    uint32_t &ret_size, bool generate_identifier = true);
+    //static std::string getBitmaskTypeName(const std::string &type_name, const std::vector<uint32_t> &bound,
+    //    uint32_t &ret_size, bool generate_identifier = true);
 };
 
 } // namespace types

@@ -520,8 +520,6 @@ public class fastrtpsgen {
                 tmanager.addGroup("TypeObjectSource", extensions);
             }
 
-            // TODO: Uncomment following lines and create templates
-
             // Load Types common templates
             tmanager.addGroup("RTPSPubSubTypeHeader");
             tmanager.addGroup("RTPSPubSubTypeSource");

@@ -50,6 +50,11 @@ public:
         const std::vector<uint32_t> &bound, bool complete = false);
     RTPS_DllAPI const TypeIdentifier* GetMapIdentifier(const std::string &key_type_name,
         const std::string &value_type_name, uint32_t bound, bool complete = false);
+    // TODO Add bitset and bitmask
+    //RTPS_DllAPI const TypeIdentifier* GetBitsetIdentifier(const std::string &type_name,
+    //    const std::vector<uint32_t> &bound, bool complete = false);
+    //RTPS_DllAPI const TypeIdentifier* GetBitmaskIdentifier(const std::string &type_name,
+    //    const std::vector<uint32_t> &bound, bool complete = false);
 
     RTPS_DllAPI DynamicType_ptr BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
         const TypeObject* object = nullptr) const;

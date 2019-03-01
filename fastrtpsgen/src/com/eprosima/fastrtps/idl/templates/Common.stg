@@ -29,7 +29,7 @@ fileHeader(ctx, file, description) ::= <<
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file $file$
  * $description$
  *
@@ -100,7 +100,9 @@ keyFunctionSourcesStruct(ctx, parent, struct) ::= <<
 size_t $struct.scopedname$::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
+    $if(struct.inheritances)$    $struct.inheritances : {current_alignment += $it.scopedname$::getKeyMaxCdrSerializedSize(current_alignment);}; separator="\n"$ $endif$
+
     $struct.members : { member | $if(boolean_converter.(member.annotations.("Key").values.("value").value))$ $max_serialized_size(ctx=ctx, typecode=member.typecode, var="current_align")$ $endif$}; separator="\n"$
 
     return current_align;
@@ -108,14 +110,16 @@ size_t $struct.scopedname$::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool $struct.scopedname$::isKeyDefined()
 {
-    return $if(struct.hasKey)$true$else$false$endif$;
+    $if(struct.inheritances)$    $struct.inheritances : {if ($it.scopedname$::isKeyDefined())$\n$        return true;$\n$}; separator="    else\n    "$ $endif$   return $if(struct.hasKey)$true$else$false$endif$;
 }
 
 void $struct.scopedname$::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
+    $if(struct.inheritances)$    $struct.inheritances : {$it.scopedname$::serializeKey(scdr);}; separator="\n"$ $endif$
 	$struct.members : { member |$if(boolean_converter.(member.annotations.("Key").values.("value").value))$ $object_serialization(ctx=ctx, object=member, preffix="m_")$ $endif$ }; separator="\n"$
 }
+
 >>
 
 boolean_converter ::= [
