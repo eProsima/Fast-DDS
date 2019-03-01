@@ -99,3 +99,5 @@ public:
 union_type(ctx, parent, union) ::= <<>>
 
 enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>

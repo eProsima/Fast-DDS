@@ -29,7 +29,7 @@ using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	int type = 0; 
+	int type = 0;
 
 	if (argc == 2)
 	{
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 			type = 2;
 		}
 	}
-	
+
 	if (type==0)
 	{
 		std::cout << "Error: Incorrect arguments." << std::endl;
@@ -50,11 +50,11 @@ int main(int argc, char** argv)
 		std::cout << argv[0] << " publisher|subscriber" << std::endl << std::endl;
 		return 0;
 	}
-	
+
 	std::cout << "Starting " << std::endl;
-	
+
 	// Register the type being used
-	
+
 	switch(type)
 	{
 		case 1:
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 			break;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -119,3 +119,5 @@ struct_type(ctx, parent, struct) ::= <<>>
 union_type(ctx, parent, union) ::= <<>>
 
 enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>

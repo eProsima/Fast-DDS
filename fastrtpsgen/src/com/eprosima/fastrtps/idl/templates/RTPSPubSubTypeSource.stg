@@ -174,3 +174,5 @@ bool $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType::getKe
 union_type(ctx, parent, union) ::= <<>>
 
 enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>

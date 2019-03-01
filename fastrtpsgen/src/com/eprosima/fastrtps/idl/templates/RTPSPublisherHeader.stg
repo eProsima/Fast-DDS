@@ -26,7 +26,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.h"], description=["This hea
 
 #include "$ctx.filename$PubSubTypes.h"
 
-class $ctx.filename$Publisher 
+class $ctx.filename$Publisher
 {
 public:
 	$ctx.filename$Publisher();
@@ -36,7 +36,7 @@ public:
 private:
 	eprosima::fastrtps::Participant *mp_participant;
 	eprosima::fastrtps::Publisher *mp_publisher;
-	
+
 	class PubListener : public eprosima::fastrtps::PublisherListener
 	{
 	public:
@@ -88,3 +88,5 @@ struct_type(ctx, parent, struct) ::= <<>>
 union_type(ctx, parent, union) ::= <<>>
 
 enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>

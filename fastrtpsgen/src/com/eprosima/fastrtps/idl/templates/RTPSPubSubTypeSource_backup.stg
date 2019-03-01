@@ -23,7 +23,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "RTPSPubSubType.cpp"], description=["T
 
 #include "$ctx.filename$PubSubType.h"
 
-$ctx.filename$PubSubType::$ctx.filename$PubSubType() 
+$ctx.filename$PubSubType::$ctx.filename$PubSubType()
 {
 	setName("$ctx.m_lastStructure$");
 	m_typeSize = (uint32_t)$ctx.m_lastStructure$::getMaxCdrSerializedSize();
@@ -31,27 +31,27 @@ $ctx.filename$PubSubType::$ctx.filename$PubSubType()
 	m_keyBuffer = (unsigned char*)malloc($ctx.m_lastStructure$::getKeyMaxCdrSerializedSize()>16 ? $ctx.m_lastStructure$::getKeyMaxCdrSerializedSize() : 16);
 }
 
-$ctx.filename$PubSubType::~$ctx.filename$PubSubType() 
+$ctx.filename$PubSubType::~$ctx.filename$PubSubType()
 {
 	if(m_keyBuffer!=nullptr)
 		delete(m_keyBuffer);
 }
 
-bool $ctx.filename$PubSubType::serialize(void *data, SerializedPayload_t *payload) 
+bool $ctx.filename$PubSubType::serialize(void *data, SerializedPayload_t *payload)
 {
 	$ctx.m_lastStructure$ *p_type = ($ctx.m_lastStructure$*) data;
-	
+
 	// Object that manages the raw buffer.
 	eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size);
 	// Object that serializes the data.
 	eprosima::fastcdr::Cdr ser(fastbuffer,eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS);
 	//Select the correct endianess
-	payload->encapsulation = CDR_LE; 
+	payload->encapsulation = CDR_LE;
 	// Serialize the object:
 	p_type->serialize(ser);
 	//Get the serialized length
     payload->length = (uint16_t)ser.getSerializedDataLength();
-    	
+
 	return true;
 }
 
@@ -81,7 +81,7 @@ void $ctx.filename$PubSubType::deleteData(void* data)
 	delete(($ctx.m_lastStructure$*)data);
 }
 
-bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle) 
+bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle)
 {
 	if(!m_isGetKeyDefined)
 		return false;
@@ -111,7 +111,7 @@ bool $ctx.filename$PubSubType::getKey(void *data, InstanceHandle_t* handle)
         	handle->value[i] = m_keyBuffer[i];
     	}
     }
-	
+
 	return true;
 }
 
@@ -154,3 +154,5 @@ struct_type(ctx, parent, struct) ::= <<>>
 union_type(ctx, parent, union) ::= <<>>
 
 enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
