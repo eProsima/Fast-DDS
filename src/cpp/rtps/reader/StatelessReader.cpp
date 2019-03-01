@@ -51,7 +51,30 @@ StatelessReader::StatelessReader(
 {
 }
 
+bool StatelessReader::matched_writer_add(const WriterProxyData& wdata)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    for (const RemoteWriterAttributes& writer : matched_writers_)
+    {
+        if (writer.guid == wdata.guid())
+        {
+            logWarning(RTPS_READER, "Attempting to add existing writer");
+            return false;
+        }
+    }
 
+    RemoteWriterAttributes* att = matched_writers_.emplace_back(wdata);
+    if (att != nullptr)
+    {
+        add_persistence_guid(*att);
+        m_acceptMessagesFromUnkownWriters = false;
+        logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to " << m_guid.entityId);
+        return true;
+    }
+
+    logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid.entityId);
+    return false;
+}
 
 bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {

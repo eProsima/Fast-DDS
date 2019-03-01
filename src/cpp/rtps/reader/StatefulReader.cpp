@@ -84,6 +84,54 @@ StatefulReader::StatefulReader(
     }
 }
 
+bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    for (WriterProxy* it : matched_writers_)
+    {
+        if (it->guid() == wdata.guid())
+        {
+            logInfo(RTPS_READER, "Attempting to add existing writer");
+            return false;
+        }
+    }
+
+    // Get a writer proxy from the inactive pool (or create a new one if necessary and allowed)
+    WriterProxy* wp = nullptr;
+    if (matched_writers_pool_.empty())
+    {
+        size_t max_readers = matched_writers_pool_.max_size();
+        if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
+        {
+            wp = new WriterProxy(this, proxy_changes_config_);
+        }
+        else
+        {
+            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
+                ") reached for writer " << m_guid << endl);
+            return false;
+        }
+    }
+    else
+    {
+        wp = matched_writers_pool_.back();
+        matched_writers_pool_.pop_back();
+    }
+
+    RemoteWriterAttributes att(wdata);
+    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
+
+    att.endpoint.unicastLocatorList =
+        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({ att.endpoint.unicastLocatorList });
+    wp->start(att);
+
+    add_persistence_guid(att);
+    wp->loaded_from_storage_nts(get_last_notified(att.guid));
+    matched_writers_.push_back(wp);
+    logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
+    return true;
+}
+
 bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);

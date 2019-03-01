@@ -545,22 +545,18 @@ void WriterProxyData::update(WriterProxyData* wdata)
 
 }
 
-RemoteWriterAttributes WriterProxyData::toRemoteWriterAttributes() const
+RemoteWriterAttributes::RemoteWriterAttributes(const WriterProxyData& data)
 {
-    RemoteWriterAttributes remoteAtt;
-
-    remoteAtt.guid = m_guid;
-    remoteAtt.livelinessLeaseDuration = m_qos.m_liveliness.lease_duration;
-    remoteAtt.ownershipStrength = (uint16_t)m_qos.m_ownershipStrength.value;
-    remoteAtt.endpoint.durabilityKind = m_qos.m_durability.durabilityKind();
-    remoteAtt.endpoint.endpointKind = WRITER;
-    remoteAtt.endpoint.topicKind = m_topicKind;
-    remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
-    remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
-    remoteAtt.endpoint.persistence_guid = (persistence_guid_ == c_Guid_Unknown) ? m_guid : persistence_guid_;
-
-    return remoteAtt;
+    guid = data.guid();
+    livelinessLeaseDuration = data.m_qos.m_liveliness.lease_duration;
+    ownershipStrength = (uint16_t)data.m_qos.m_ownershipStrength.value;
+    endpoint.durabilityKind = data.m_qos.m_durability.durabilityKind();
+    endpoint.endpointKind = WRITER;
+    endpoint.topicKind = data.topicKind();
+    endpoint.reliabilityKind = data.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    endpoint.unicastLocatorList = data.unicastLocatorList();
+    endpoint.multicastLocatorList = data.multicastLocatorList();
+    endpoint.persistence_guid = (data.persistence_guid() == c_Guid_Unknown) ? guid : data.persistence_guid();
 }
 
 }

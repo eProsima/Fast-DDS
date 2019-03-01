@@ -70,6 +70,13 @@ public:
      * @param wdata Attributes of the writer to add.
      * @return True if correctly added.
      */
+    virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
+
+    /**
+     * Add a matched writer represented by its attributes.
+     * @param wdata Attributes of the writer to add.
+     * @return True if correctly added.
+     */
     RTPS_DllAPI virtual bool matched_writer_add(const RemoteWriterAttributes& wdata) = 0;
 
     /**

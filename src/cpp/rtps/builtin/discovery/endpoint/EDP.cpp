@@ -608,8 +608,7 @@ bool EDP::pairingReader(RTPSReader* R, const GUID_t& participant_guid, const Rea
                     logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
                 }
 #else
-				RemoteWriterAttributes rwatt = (*wdatait)->toRemoteWriterAttributes();
-                if(R->matched_writer_add(rwatt))
+                if(R->matched_writer_add(**wdatait))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid());
                     //MATCHED AND ADDED CORRECTLY:
@@ -897,8 +896,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(const GUID_t& participant_g
                     logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                 }
 #else
-				RemoteWriterAttributes rwatt = wdata->toRemoteWriterAttributes();
-                if((*rit)->matched_writer_add(rwatt))
+                if((*rit)->matched_writer_add(*wdata))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
                     //MATCHED AND ADDED CORRECTLY:
@@ -1004,8 +1002,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
         if(local_reader == readerGUID)
         {
             // TODO(richiware) Implement and use move with attributes
-            RemoteWriterAttributes rwatt = remote_writer_data.toRemoteWriterAttributes();
-            if((*rit)->matched_writer_add(rwatt))
+            if((*rit)->matched_writer_add(remote_writer_data))
             {
                 logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
                 //MATCHED AND ADDED CORRECTLY:

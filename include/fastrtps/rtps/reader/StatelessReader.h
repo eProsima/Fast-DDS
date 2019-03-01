@@ -58,6 +58,13 @@ public:
      * @param wdata Pointer to the WPD object to add.
      * @return True if correctly added.
      */
+    bool matched_writer_add(const WriterProxyData& wdata) override;
+
+    /**
+     * Add a matched writer represented by a WriterProxyData object.
+     * @param wdata Pointer to the WPD object to add.
+     * @return True if correctly added.
+     */
     bool matched_writer_add(const RemoteWriterAttributes& wdata) override;
 
     /**

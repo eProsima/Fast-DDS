@@ -56,6 +56,14 @@ class StatefulReader : public RTPSReader
 
     public:
 
+
+        /**
+         * Add a matched writer represented by its attributes.
+         * @param wdata Attributes of the writer to add.
+         * @return True if correctly added.
+         */
+        bool matched_writer_add(const WriterProxyData& wdata) override;
+
         /**
          * Add a matched writer represented by a WriterProxyData object.
          * @param wdata Pointer to the WPD object to add.

@@ -341,12 +341,6 @@ class WriterProxyData
         //!Read a parameter list from a CDRMessage_t.
         RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
 
-        /**
-         * Convert the ProxyData information to RemoteWriterAttributes object.
-         * @return Reference to the RemoteWriterAttributes object.
-         */
-        RemoteWriterAttributes toRemoteWriterAttributes() const;
-
     private:
 
         //!GUID

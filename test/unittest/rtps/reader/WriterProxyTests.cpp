@@ -23,6 +23,7 @@
 
 #include <fastrtps/rtps/reader/WriterProxy.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 //using namespace eprosima::fastrtps::rtps;
 namespace eprosima
