@@ -28,8 +28,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-WriteParams WriteParams::WRITE_PARAM_DEFAULT;
-
 typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
 typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
 
@@ -48,7 +46,8 @@ WriterHistory::~WriterHistory()
 
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
-    return add_change(a_change, WriteParams::WRITE_PARAM_DEFAULT);
+    WriteParams wparams;
+    return add_change(a_change, wparams);
 }
 
 bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
@@ -83,14 +82,10 @@ bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
 
-    if(&wparams != &WriteParams::WRITE_PARAM_DEFAULT)
-    {
-        a_change->write_params = wparams;
-
-        // Updated sample identity
-        wparams.sample_identity().writer_guid(a_change->writerGUID);
-        wparams.sample_identity().sequence_number(a_change->sequenceNumber);
-    }
+    a_change->write_params = wparams;
+    // Updated sample identity
+    wparams.sample_identity().writer_guid(a_change->writerGUID);
+    wparams.sample_identity().sequence_number(a_change->sequenceNumber);
 
     m_changes.push_back(a_change);
 

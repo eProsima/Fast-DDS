@@ -23,6 +23,9 @@
 #include <algorithm>
 #include <cassert>
 
+// TODO contar que solo bloquea una vez y nunca mas despues de timeout.
+// TODO si se bloquea el dos, que no se bloqueen los posteriores
+
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
@@ -89,10 +92,6 @@ void eprosima::fastrtps::tmutex_record_mutex_(LockType type, pthread_mutex_t* mu
         position = ++g_tmutex_records_end;
         g_tmutex_records[position].type = type;
         g_tmutex_records[position].mutex = mutex;
-    }
-    else if (g_tmutex_records[position].type != LockType::LOCK)
-    {
-        g_tmutex_records[position].type = type;
     }
 
     ++g_tmutex_records[position].count;

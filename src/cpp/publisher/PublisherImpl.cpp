@@ -78,7 +78,8 @@ bool PublisherImpl::create_new_change(
         ChangeKind_t changeKind,
         void* data)
 {
-    return create_new_change_with_params(changeKind, data, WriteParams::WRITE_PARAM_DEFAULT);
+    WriteParams wparams;
+    return create_new_change_with_params(changeKind, data, wparams);
 }
 
 bool PublisherImpl::create_new_change_with_params(
@@ -115,11 +116,11 @@ bool PublisherImpl::create_new_change_with_params(
     }
 
     // Block lowlevel writer
-    auto until_timeout = std::chrono::steady_clock::now() +
+    wparams.max_blocking_time_point() = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
     std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex(), std::defer_lock);
 
-    if(lock.try_lock_until(until_timeout))
+    if(lock.try_lock_until(wparams.max_blocking_time_point()))
     {
         CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
         if(ch != nullptr)
@@ -309,12 +310,6 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
     {
         mp_publisherImpl->m_history.remove_change_g(ch);
     }
-}
-
-bool PublisherImpl::try_remove_change(std::unique_lock<std::recursive_timed_mutex>& lock)
-{
-    std::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
-    return mp_writer->try_remove_change(max_w, lock);
 }
 
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)

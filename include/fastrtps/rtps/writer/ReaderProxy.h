@@ -112,7 +112,7 @@ public:
     */
     template <class BinaryFunction>
     void for_each_unsent_change(
-            const SequenceNumber_t& max_seq, 
+            const SequenceNumber_t& max_seq,
             BinaryFunction f) const
     {
         if (!changes_for_reader_.empty())

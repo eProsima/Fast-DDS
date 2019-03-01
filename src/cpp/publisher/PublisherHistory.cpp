@@ -75,7 +75,7 @@ bool PublisherHistory::add_pub_change(
 
         if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
         {
-            ret = this->mp_pubImpl->try_remove_change(lock);
+            ret = this->mp_writer->try_remove_change(wparams.max_blocking_time_point(), lock);
         }
         else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
         {

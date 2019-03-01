@@ -80,8 +80,7 @@ private:
     std::condition_variable all_acked_cond_;
     // TODO Also remove when main mutex not recursive.
     bool all_acked_;
-    std::mutex may_remove_change_mutex_;
-    std::condition_variable may_remove_change_cond_;
+    std::condition_variable_any may_remove_change_cond_;
     unsigned int may_remove_change_;
     //! Timed Event to manage the Acknack response delay.
     NackResponseDelay* nack_response_event_;
@@ -142,7 +141,7 @@ public:
      * @return True if removed.
      */
     bool try_remove_change(
-            std::chrono::microseconds& microseconds,
+            std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<std::recursive_timed_mutex>& lock) override;
 
     /**

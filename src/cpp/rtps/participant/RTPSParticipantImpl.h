@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <mutex>
 #include <atomic>
+#include <chrono>
 #include <fastrtps/utils/Semaphore.h>
 
 #if defined(_WIN32)
@@ -171,7 +172,11 @@ public:
     ResourceEvent& getEventResource();
 
     //!Send Method - Deprecated - Stays here for reference purposes
-    void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
+    bool sendSync(
+            CDRMessage_t* msg,
+            Endpoint *pend,
+            const Locator_t& destination_loc,
+            std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     //!Get the participant Mutex
     std::recursive_mutex* getParticipantMutex() const { return mp_mutex; };
@@ -277,7 +282,7 @@ private:
     std::mutex m_receiverResourcelistMutex;
 
     //!SenderResource List
-    std::mutex m_send_resources_mutex;
+    std::timed_mutex m_send_resources_mutex;
     std::vector<SenderResource> m_senderResourceList;
 
     //!Participant Listener

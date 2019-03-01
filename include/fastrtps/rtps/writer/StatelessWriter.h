@@ -114,10 +114,10 @@ class StatelessWriter : public RTPSWriter
     bool is_acked_by_all(const CacheChange_t* change) override;
 
     bool try_remove_change(
-            std::chrono::microseconds&, 
+            std::chrono::steady_clock::time_point&,
             std::unique_lock<std::recursive_timed_mutex>&) override
     {
-        return remove_older_changes(1); 
+        return remove_older_changes(1);
     }
 
     void add_flow_controller(std::unique_ptr<FlowController> controller) override;

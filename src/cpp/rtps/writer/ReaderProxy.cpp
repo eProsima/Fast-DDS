@@ -101,7 +101,7 @@ void ReaderProxy::update_nack_supression_interval(const Duration_t& interval)
 }
 
 void ReaderProxy::add_change(
-        const ChangeForReader_t& change, 
+        const ChangeForReader_t& change,
         bool restart_nack_supression)
 {
     assert(change.getSequenceNumber() > changes_low_mark_);
@@ -235,7 +235,7 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
 }
 
 bool ReaderProxy::set_change_to_status(
-        const SequenceNumber_t& seq_num, 
+        const SequenceNumber_t& seq_num,
         ChangeForReaderStatus_t status,
         bool restart_nack_supression)
 {
@@ -252,6 +252,13 @@ bool ReaderProxy::set_change_to_status(
 
     auto it = find_change(seq_num);
     bool change_was_modified = false;
+
+    // If the status is UNDERWAY (change was right now sent) and the reader is besteffort,
+    // then the status has to be changed to ACKNOWLEDGED.
+    if(UNDERWAY == status && !is_reliable())
+    {
+        status = ACKNOWLEDGED;
+    }
 
     // If the change following the low mark is acknowledged, low mark is advanced.
     // Note that this could be the first change in the collection or a hole if the
@@ -280,7 +287,7 @@ bool ReaderProxy::set_change_to_status(
             }
         }
     }
-    
+
     return change_was_modified;
 }
 

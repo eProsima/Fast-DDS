@@ -127,8 +127,6 @@ class PublisherImpl
      */
     TopicDataType* getType() {return mp_type;};
 
-    bool try_remove_change(std::unique_lock<std::recursive_timed_mutex>& lock);
-
     bool wait_for_all_acked(const rtps::Time_t& max_wait);
 
     private:

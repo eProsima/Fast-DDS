@@ -767,7 +767,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
         SendersBuffer.clear();
     }
 
-    std::lock_guard<std::mutex> guard(m_send_resources_mutex);
+    std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex);
     for (auto mit = newSenders.begin(); mit != newSenders.end(); ++mit)
     {
         m_senderResourceList.push_back(std::move(*mit));
@@ -844,7 +844,7 @@ void RTPSParticipantImpl::createSenderResources(LocatorList_t& Locator_list, boo
 
             for (auto it_buffer = buffer.begin(); it_buffer != buffer.end(); ++it_buffer)
             {
-                std::lock_guard<std::mutex> lock(m_send_resources_mutex);
+                std::lock_guard<std::timed_mutex> lock(m_send_resources_mutex);
                 //Push the new items into the SenderResource buffer
                 m_senderResourceList.push_back(std::move(*it_buffer));
             }
@@ -966,23 +966,36 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
     return participant_names;
 }
 
-void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint* /*pend*/, const Locator_t& destination_loc)
+bool RTPSParticipantImpl::sendSync(
+        CDRMessage_t* msg,
+        Endpoint* /*pend*/,
+        const Locator_t& destination_loc,
+        std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    std::lock_guard<std::mutex> guard(m_send_resources_mutex);
-    for (size_t i = 0; i < m_senderResourceList.size(); ++i)
-    {
-        auto& it = m_senderResourceList[i];
-        bool sendThroughResource = false;
-        if (it.SupportsLocator(destination_loc))
-        {
-            sendThroughResource = true;
-        }
+    bool ret_code = false;
+    std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex, std::defer_lock);
 
-        if (sendThroughResource)
+    if(lock.try_lock_until(max_blocking_time_point))
+    {
+        ret_code = true;
+
+        for (size_t i = 0; i < m_senderResourceList.size(); ++i)
         {
-            it.Send(msg->buffer, msg->length, destination_loc);
+            auto& it = m_senderResourceList[i];
+            bool sendThroughResource = false;
+            if (it.SupportsLocator(destination_loc))
+            {
+                sendThroughResource = true;
+            }
+
+            if (sendThroughResource)
+            {
+                it.Send(msg->buffer, msg->length, destination_loc);
+            }
         }
     }
+
+    return ret_code;
 }
 
 void RTPSParticipantImpl::setGuid(GUID_t& guid)

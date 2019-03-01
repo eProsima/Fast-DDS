@@ -19,6 +19,7 @@
 #define _FASTRTPS_RTPS_COMMON_WRITEPARAMS_H_
 
 #include "SampleIdentity.h"
+#include <chrono>
 
 namespace eprosima
 {
@@ -38,22 +39,27 @@ namespace eprosima
                      * @brief Default constructor.
                      */
                     WriteParams()
+                        : max_blocking_time_point_(std::chrono::steady_clock::now() + std::chrono::hours(24))
                     {
                     }
 
                     /*!
                      * @brief Copy constructor.
                      */
-                    WriteParams(const WriteParams &wparam) : sample_identity_(wparam.sample_identity_),
-                    related_sample_identity_(wparam.related_sample_identity_)
+                    WriteParams(const WriteParams &wparam)
+                        : sample_identity_(wparam.sample_identity_)
+                        , related_sample_identity_(wparam.related_sample_identity_)
+                        , max_blocking_time_point_(wparam.max_blocking_time_point_)
                     {
                     }
 
                     /*!
                      * @brief Move constructor.
                      */
-                    WriteParams(WriteParams &&wparam) : sample_identity_(std::move(wparam.sample_identity_)),
-                    related_sample_identity_(std::move(wparam.related_sample_identity_))
+                    WriteParams(WriteParams &&wparam)
+                        : sample_identity_(std::move(wparam.sample_identity_))
+                        , related_sample_identity_(std::move(wparam.related_sample_identity_))
+                        , max_blocking_time_point_(std::move(wparam.max_blocking_time_point_))
                     {
                     }
 
@@ -64,6 +70,7 @@ namespace eprosima
                     {
                         sample_identity_ = wparam.sample_identity_;
                         related_sample_identity_ = wparam.related_sample_identity_;
+                        max_blocking_time_point_ = wparam.max_blocking_time_point_;
                         return *this;
                     }
 
@@ -74,6 +81,7 @@ namespace eprosima
                     {
                         sample_identity_ = std::move(wparam.sample_identity_);
                         related_sample_identity_ = std::move(wparam.related_sample_identity_);
+                        max_blocking_time_point_ = std::move(wparam.max_blocking_time_point_);
                         return *this;
                     }
 
@@ -121,13 +129,35 @@ namespace eprosima
                         return related_sample_identity_;
                     }
 
-                    static WriteParams WRITE_PARAM_DEFAULT;
+                    WriteParams& max_blocking_time_point(const std::chrono::steady_clock::time_point &time_point)
+                    {
+                        max_blocking_time_point_ = time_point;
+                        return *this;
+                    }
+
+                    WriteParams& max_blocking_time_point(std::chrono::steady_clock::time_point &&time_point)
+                    {
+                        max_blocking_time_point_ = std::move(time_point);
+                        return *this;
+                    }
+
+                    const std::chrono::steady_clock::time_point& max_blocking_time_point() const
+                    {
+                        return max_blocking_time_point_;
+                    }
+
+                    std::chrono::steady_clock::time_point& max_blocking_time_point()
+                    {
+                        return max_blocking_time_point_;
+                    }
 
                 private:
 
                     SampleIdentity sample_identity_;
 
                     SampleIdentity related_sample_identity_;
+
+                    std::chrono::time_point<std::chrono::steady_clock> max_blocking_time_point_;
             };
 
         } //namespace rtps
