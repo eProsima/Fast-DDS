@@ -95,9 +95,9 @@ protected:
 
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
     bool stop_socket_canceller_;
-    std::thread socket_canceller_thread_;
     std::mutex canceller_mutex_;
     eClock my_clock_;
+    std::thread socket_canceller_thread_;
 
     TCPTransportInterface();
 
