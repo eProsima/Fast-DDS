@@ -66,13 +66,9 @@ void TCPChannelResourceBasic::connect()
     if (connection_status_ == eConnectionStatus::eDisconnected)
     {
         connection_status_ = eConnectionStatus::eConnecting;
-        //ip::tcp::endpoint endpoint = parent_->generate_local_endpoint(locator_, IPLocator::getPhysicalPort(locator_));
-        //logError(DEBUG, "Connect to endpoint: " << endpoint.address() << ":" << endpoint.port()
-        //    << " from locator " << IPLocator::to_string(locator_));
+
         try
         {
-            //socket_->async_connect(endpoint, std::bind(&TCPTransportInterface::SocketConnected, parent_,
-            //    locator_, std::placeholders::_1));
             Locator_t locator = locator_;
 
             ip::tcp::resolver resolver(service_);
@@ -126,20 +122,8 @@ uint32_t TCPChannelResourceBasic::read(
         asio::error_code& ec)
 {
     std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
-    //return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, buffer_capacity),
-    //    transfer_exactly(size), ec));
-    return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, size), transfer_exactly(size), ec));
-/*
-    size_t rec = 0;
-    size_t readed = static_cast<size_t>(-1);
 
-    while (readed != 0 && rec < size && !ec && alive())
-    {
-        readed = socket_->read_some(asio::buffer(buffer + rec, size - rec), ec);
-        rec += readed;
-    }
-    return static_cast<uint32_t>(rec);
-*/
+    return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, size), transfer_exactly(size), ec));
 }
 
 uint32_t TCPChannelResourceBasic::send(
@@ -148,20 +132,8 @@ uint32_t TCPChannelResourceBasic::send(
         asio::error_code& ec)
 {
     std::unique_lock<std::recursive_mutex> write_lock(write_mutex());
-    //return static_cast<uint32_t>(socket_->write_some(asio::buffer(data, size), ec));
+
     return static_cast<uint32_t>(socket_->send(asio::buffer(data, size), 0, ec));
-/*
-    size_t sent = 0;
-    size_t aux = static_cast<size_t>(-1);
-
-    while (aux != 0 && sent < size && !ec && alive())
-    {
-        aux = socket_->write_some(asio::buffer(data + sent, size - sent), ec);
-        sent += aux;
-    }
-
-    return static_cast<uint32_t>(sent);
-*/
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint() const

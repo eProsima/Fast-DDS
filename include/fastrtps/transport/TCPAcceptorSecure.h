@@ -23,6 +23,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+/**
+ * TLS TCP Socket acceptor wrapper class.
+ */
 class TCPAcceptorSecure : public TCPAcceptor
 {
     std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;

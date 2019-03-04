@@ -135,15 +135,15 @@ const option::Descriptor usage[] = {
     { INTERVAL,0,"i","interval",            Arg::Numeric,
         "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { IP,0,"a","address",                   Arg::String,
-        "  -a <address>, \t--address=<address> \tPublic IP Address of the publisher." },
+        "  -a <address>, \t--address=<address> \tPublic IP Address of the publisher (Default: None)." },
     { PORT, 0, "p", "port",                 Arg::Numeric,
-        "  -p <num>, \t--port=<num>  \tPhysical Port to listening incoming connections." },
+        "  -p <num>, \t--port=<num>  \tPhysical Port to listening incoming connections (Default: 5100)." },
 
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
     { IP,0,"a","address",                   Arg::String,
-        "  -a <address>, \t--address=<address> \tIP Address of the publisher." },
+        "  -a <address>, \t--address=<address> \tIP Address of the publisher (Default: 127.0.0.1)." },
     { PORT, 0, "p", "port",                 Arg::Numeric,
-        "  -p <num>, \t--port=<num>  \tPhysical Port where the publisher is listening for connections." },
+        "  -p <num>, \t--port=<num>  \tPhysical Port where the publisher is listening for connections (Default: 5100)." },
 
     { 0, 0, 0, 0, 0, 0 }
 };

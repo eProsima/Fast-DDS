@@ -34,17 +34,15 @@ public:
     virtual bool OpenOutputChannel(const Locator_t& locator) override
     {
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
-        TCPChannelResource *channel;
+        TCPChannelResource *channel =
 #if TLS_FOUND
-        if (configuration_.apply_security)
-        {
-            channel = new TCPChannelResourceSecure(this, nullptr, io_service_, ssl_context_, physicalLocator, 0);
-        }
-        else
+            (configuration_.apply_security) ?
+                static_cast<TCPChannelResource*>(
+                    new TCPChannelResourceSecure(this, nullptr, io_service_, ssl_context_, physicalLocator, 0)) :
 #endif
-        {
-            channel = new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0);
-        }
+                static_cast<TCPChannelResource*>(
+                    new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0));
+
         channel_resources_[physicalLocator] = channel;
         return true;
     }

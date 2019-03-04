@@ -161,18 +161,8 @@ uint32_t TCPChannelResourceSecure::read(
         asio::error_code& ec)
 {
     std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
-    return static_cast<uint32_t>(secure_socket_->read_some(asio::buffer(buffer, size), ec));
-    /*
-    size_t rec = 0;
-    size_t readed = static_cast<size_t>(-1);
 
-    while (readed != 0 && rec < size && !ec && alive())
-    {
-        readed = secure_socket_->read_some(asio::buffer(buffer + rec, size - rec), ec);
-        rec += readed;
-    }
-    return static_cast<uint32_t>(rec);
-    */
+    return static_cast<uint32_t>(secure_socket_->read_some(asio::buffer(buffer, size), ec));
 }
 
 uint32_t TCPChannelResourceSecure::send(
@@ -185,18 +175,6 @@ uint32_t TCPChannelResourceSecure::send(
     uint32_t sent = static_cast<uint32_t>(secure_socket_->write_some(asio::buffer(data, size), ec));
     parent_->remove_socket_to_cancel(this);
     return sent;
-    /*
-    size_t sent = 0;
-    size_t aux = static_cast<size_t>(-1);
-
-    while (aux != 0 && sent < size && !ec && alive())
-    {
-        aux = secure_socket_->write_some(asio::buffer(data + sent, size - sent), ec);
-        sent += aux;
-    }
-
-    return static_cast<uint32_t>(sent);
-    */
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceSecure::remote_endpoint() const

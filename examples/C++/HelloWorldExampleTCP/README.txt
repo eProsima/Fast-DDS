@@ -5,7 +5,8 @@ In the second one: HelloWorldExampleTCP subscriber.
 
 
 This example includes additional options to show the capabilities of the TCP Transport on Fast-RPTS,
-such as WAN and TLS.
+such as WAN and TLS. In this example the publisher will work as a TCP server and the subscriber as a
+TCP client.
 
 Usage: HelloWorldExampleTCP <publisher|subscriber>
 
@@ -17,14 +18,14 @@ Publisher options:
   -s <num>,     --samples=<num>     Number of samples (0, default, infinite).
   -i <num>,     --interval=<num>    Time between samples in milliseconds
                                     (Default: 100).
-  -a <address>, --address=<address> Public IP Address of the publisher.
+  -a <address>, --address=<address> Public IP Address of the publisher (Default: None).
   -p <num>,     --port=<num>        Physical Port to listening incoming
-                                    connections.
+                                    connections (Default: 5100).
 
 Subscriber options:
-  -a <address>, --address=<address> IP Address of the publisher.
+  -a <address>, --address=<address> IP Address of the publisher (Default: 127.0.0.1).
   -p <num>,     --port=<num>        Physical Port where the publisher is
-                                    listening for connections.
+                                    listening for connections (Default: 5100).
 
 
 WAN Example:

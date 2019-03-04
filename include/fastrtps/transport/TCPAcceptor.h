@@ -24,6 +24,9 @@ namespace rtps{
 
 class TCPTransportInterface;
 
+/**
+ * Common class to wrap ASIO acceptors.
+ */
 class TCPAcceptor
 {
 protected:

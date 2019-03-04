@@ -330,16 +330,12 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             std::vector<std::string> vInterfaces = get_binding_interfaces_list();
             for (std::string& sInterface : vInterfaces)
             {
+                newAcceptor =
 #if TLS_FOUND
-                if (configuration()->apply_security)
-                {
-                    newAcceptor = new TCPAcceptorSecure(io_service_, sInterface, locator);
-                }
-                else
+                    (configuration()->apply_security) ?
+                        static_cast<TCPAcceptor*>(new TCPAcceptorSecure(io_service_, sInterface, locator)) :
 #endif
-                {
-                    newAcceptor = new TCPAcceptorBasic(io_service_, sInterface, locator);
-                }
+                        static_cast<TCPAcceptor*>(new TCPAcceptorBasic(io_service_, sInterface, locator));
 
                 uint16_t port = IPLocator::getPhysicalPort(locator);
                 if (socket_acceptors_.find(port) != socket_acceptors_.end())
@@ -652,22 +648,19 @@ void TCPTransportInterface::close_tcp_socket(TCPChannelResource *p_channel_resou
             {
                 if (!p_channel_resource->input_socket())
                 {
+                    newChannel =
 #if TLS_FOUND
-                    if (configuration()->apply_security)
-                    {
-                        newChannel = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
-                            ssl_context_, physicalLocator, configuration()->maxMessageSize);
-                        p_channel_resource->set_all_ports_pending();
-                        newChannel->copy_pending_ports_from(p_channel_resource);
-                    }
-                    else
+                        (configuration()->apply_security) ?
+                            static_cast<TCPChannelResource*>(
+                                new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_,
+                                ssl_context_, physicalLocator, configuration()->maxMessageSize)) :
 #endif
-                    {
-                        newChannel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_,
-                            physicalLocator, configuration()->maxMessageSize);
-                        p_channel_resource->set_all_ports_pending();
-                        newChannel->copy_pending_ports_from(p_channel_resource);
-                    }
+                            static_cast<TCPChannelResource*>(
+                                new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_,
+                                physicalLocator, configuration()->maxMessageSize));
+
+                    p_channel_resource->set_all_ports_pending();
+                    newChannel->copy_pending_ports_from(p_channel_resource);
 
                 }
                 channel_resources_.erase(it);
@@ -721,22 +714,20 @@ bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
             logInfo(OpenOutputChannel, "OpenOutputChannel (physical: "
                 << IPLocator::getPhysicalPort(locator) << "; logical: "
                 << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+
+            channel =
 #if TLS_FOUND
-            if (configuration()->apply_security)
-            {
-                channel = new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_, ssl_context_,
-                    physicalLocator, configuration()->maxMessageSize);
-                channel_resources_[physicalLocator] = channel;
-                channel->connect();
-            }
-            else
+                (configuration()->apply_security) ?
+                    static_cast<TCPChannelResource*>(
+                        new TCPChannelResourceSecure(this, rtcp_message_manager_, io_service_, ssl_context_,
+                        physicalLocator, configuration()->maxMessageSize)) :
 #endif
-            {
-                channel = new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_, physicalLocator,
-                    configuration()->maxMessageSize);
-                channel_resources_[physicalLocator] = channel;
-                channel->connect();
-            }
+                    static_cast<TCPChannelResource*>(
+                        new TCPChannelResourceBasic(this, rtcp_message_manager_, io_service_, physicalLocator,
+                        configuration()->maxMessageSize));
+
+            channel_resources_[physicalLocator] = channel;
+            channel->connect();
         }
 
         success = true;

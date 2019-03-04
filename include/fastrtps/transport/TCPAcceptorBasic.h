@@ -22,6 +22,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+/**
+ * Plain TCP Socket acceptor wrapper class.
+ */
 class TCPAcceptorBasic : public TCPAcceptor
 {
     std::shared_ptr<asio::ip::tcp::socket> socket_;
