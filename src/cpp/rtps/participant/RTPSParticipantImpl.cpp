@@ -1018,7 +1018,7 @@ bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16
         logWarning(RTPS_PARTICIPANT, "Remote Endpoints can only be activated with static discovery protocol");
         return false;
     }
-    return mp_builtinProtocols->mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
+    return mp_builtinProtocols->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
 }
 
 void RTPSParticipantImpl::ResourceSemaphorePost()

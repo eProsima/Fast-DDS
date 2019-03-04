@@ -120,8 +120,9 @@ set(${PROJECT_NAME}_source_files
     qos/WriterQos.cpp
     qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
+	rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
-    rtps/builtin/discovery/participant/PDPSimpleListener.cpp
+    rtps/builtin/discovery/participant/PDPListener.cpp
     rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
     rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp

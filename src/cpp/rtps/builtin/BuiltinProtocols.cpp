@@ -22,6 +22,9 @@
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
+
+#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
@@ -190,6 +193,26 @@ void BuiltinProtocols::stopRTPSParticipantAnnouncement()
 void BuiltinProtocols::resetRTPSParticipantAnnouncement()
 {
     mp_PDP->resetParticipantAnnouncement();
+}
+
+bool BuiltinProtocols::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind)
+{
+    ParticipantProxyData pdata;
+    if (mp_PDP->lookupParticipantProxyData(pguid, pdata))
+    {
+        EDPStatic* pEDP = dynamic_cast<EDPStatic*>(mp_PDP->getEDP());
+
+        if (pEDP == nullptr)
+        {
+            logError(RTPS_PDP, "Trying to use Static Discovery Interface in non Static context");
+        }
+
+        if (kind == WRITER)
+            pEDP->newRemoteWriter(pdata, userDefinedId);
+        else
+            pEDP->newRemoteReader(pdata, userDefinedId);
+    }
+    return false;
 }
 
 }

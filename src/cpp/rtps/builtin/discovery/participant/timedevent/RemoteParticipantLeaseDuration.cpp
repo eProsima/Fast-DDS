@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include "../../../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
@@ -36,12 +36,12 @@ namespace fastrtps{
 namespace rtps {
 
 
-RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
+RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDP* p_PDP,
         ParticipantProxyData* pdata,
         double interval):
-    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
-    mp_PDP(p_SPDP),
+    TimedEvent(p_PDP->getRTPSParticipant()->getEventResource().getIOService(),
+            p_PDP->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
+    mp_PDP(p_PDP),
     mp_participantProxyData(pdata)
     {
 

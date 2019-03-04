@@ -164,7 +164,7 @@ class BuiltinAttributes{
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
                    (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
-                   (this->m_DiscoverServer == b.m_DiscoverServer);
+                   (this->m_DiscoveryServers == b.m_DiscoveryServers);
         }
 
         /**
@@ -180,8 +180,8 @@ class BuiltinAttributes{
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
         std::string m_staticEndpointXMLFilename;
-        //! Discovery Server contact address, only needed if use_SERVER_DiscoveryProtocol=true
-        Locator_t m_DiscoverServer;
+        //! Discovery Server contact addresses, only needed if use_SERVER_DiscoveryProtocol=true
+        LocatorList_t m_DiscoveryServers;
 };
 
 
