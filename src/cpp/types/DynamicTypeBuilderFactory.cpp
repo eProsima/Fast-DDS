@@ -1347,8 +1347,13 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
         object.complete().struct_type().header().detail().type_name(descriptor->GetName());
         //object.complete().struct_type().header().detail().ann_builtin()...
         //object.complete().struct_type().header().detail().ann_custom()...
-        // TODO inheritance
-        //object.complete().struct_type().header().base_type()._d(EK_COMPLETE);
+
+        if (descriptor->GetBaseType().get() != nullptr)
+        {
+            TypeIdentifier parent;
+            BuildTypeIdentifier(descriptor->GetBaseType(), parent);
+            object.complete().struct_type().header().base_type(parent);
+        }
         //object.complete().struct_type().header().base_type().equivalence_hash()[0..13];
 
         TypeIdentifier identifier;
@@ -1431,9 +1436,13 @@ void DynamicTypeBuilderFactory::BuildStructTypeObject(const TypeDescriptor* desc
             }
             object.minimal().struct_type().member_seq().emplace_back(msm);
         }
-        // TODO Inheritance
-        //object.minimal().struct_type().header().base_type()._d(EK_MINIMAL);
-        //object.minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+        if (descriptor->GetBaseType().get() != nullptr)
+        {
+            TypeIdentifier parent;
+            BuildTypeIdentifier(descriptor->GetBaseType(), parent);
+            object.minimal().struct_type().header().base_type(parent);
+        }
 
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);

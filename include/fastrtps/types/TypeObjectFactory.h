@@ -39,7 +39,7 @@ public:
     RTPS_DllAPI std::string GetTypeName(const TypeKind kind) const;
     RTPS_DllAPI std::string GetTypeName(const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI const TypeIdentifier* GetPrimitiveTypeIdentifier(TypeKind kind);
+    RTPS_DllAPI const TypeIdentifier* GetPrimitiveTypeIdentifier(TypeKind kind) const;
     //RTPS_DllAPI TypeIdentifier* TryCreateTypeIdentifier(const std::string &type_name);
     RTPS_DllAPI const TypeIdentifier* GetTypeIdentifier(const std::string &type_name, bool complete = false) const;
     RTPS_DllAPI const TypeIdentifier* GetTypeIdentifierTryingComplete(const std::string &type_name) const;

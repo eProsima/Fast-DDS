@@ -373,7 +373,7 @@ std::string TypeObjectFactory::GetTypeName(const TypeKind kind) const
     return "";
 }
 
-const TypeIdentifier* TypeObjectFactory::GetPrimitiveTypeIdentifier(TypeKind kind)
+const TypeIdentifier* TypeObjectFactory::GetPrimitiveTypeIdentifier(TypeKind kind) const
 {
     std::string typeName = GetTypeName(kind);
     if (typeName.empty()) return nullptr;
@@ -962,10 +962,11 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
         }
         case TK_STRUCTURE:
         {
-            //const TypeIdentifier *aux = &object->complete().struct_type().header().base_type();
-            //const TypeIdentifier *aux = GetTypeIdentifierTryingComplete(descriptor.GetName());
-            // TODO Used for inheritance!
-            //descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            const TypeIdentifier *aux = &object->complete().struct_type().header().base_type();
+            if (aux->_d() == TK_STRUCTURE)
+            {
+                descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            }
 
             DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
@@ -1002,13 +1003,47 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
         }
         case TK_BITMASK:
         {
-            // TODO To implement
-            return nullptr;
+            DynamicTypeBuilder_ptr bitmaskType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
+
+            //uint32_t order = 0;
+            const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
+            for (auto member = seq.begin(); member != seq.end(); ++member)
+            {
+                MemberDescriptor memDesc;
+                memDesc.mId = member->common().position();
+                memDesc.SetName(member->detail().name());
+                bitmaskType->AddMember(&memDesc);
+            }
+            return bitmaskType->Build();
         }
         case TK_BITSET:
         {
-            // TODO To implement
-            return nullptr;
+            const TypeIdentifier *aux = &object->complete().bitset_type().header().base_type();
+            if (aux->_d() == TK_BITSET)
+            {
+                descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            }
+
+            DynamicTypeBuilder_ptr bitsetType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
+
+            //uint32_t order = 0;
+            const CompleteBitfieldSeq& fields = object->complete().bitset_type().field_seq();
+            for (auto member = fields.begin(); member != fields.end(); ++member)
+            {
+                //const TypeIdentifier *auxMem = &member.common().member_type_id();
+                const TypeIdentifier *auxMem = GetPrimitiveTypeIdentifier(member->common().holder_type());
+                if (auxMem == nullptr)
+                {
+                    std::cout << "(Bitset) auxMem is nullptr, but original member has " << (int)member->common().holder_type() << std::endl;
+                }
+                MemberDescriptor memDesc;
+                memDesc.mId = member->common().position();
+                memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
+                memDesc.SetName(member->detail().name());
+                // TODO Add bitbound!!
+                bitsetType->AddMember(&memDesc);
+            }
+            return bitsetType->Build();
         }
         case TK_UNION:
         {
@@ -1093,4 +1128,3 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
-

@@ -4208,16 +4208,19 @@ CompleteBitsetHeader::~CompleteBitsetHeader()
 CompleteBitsetHeader::CompleteBitsetHeader(const CompleteBitsetHeader &x)
 {
     m_detail = x.m_detail;
+    m_base_type = x.m_base_type;
 }
 
 CompleteBitsetHeader::CompleteBitsetHeader(CompleteBitsetHeader &&x)
 {
     m_detail = std::move(x.m_detail);
+    m_base_type = std::move(x.m_base_type);
 }
 
 CompleteBitsetHeader& CompleteBitsetHeader::operator=(const CompleteBitsetHeader &x)
 {
     m_detail = x.m_detail;
+    m_base_type = x.m_base_type;
 
     return *this;
 }
@@ -4225,6 +4228,7 @@ CompleteBitsetHeader& CompleteBitsetHeader::operator=(const CompleteBitsetHeader
 CompleteBitsetHeader& CompleteBitsetHeader::operator=(CompleteBitsetHeader &&x)
 {
     m_detail = std::move(x.m_detail);
+    m_base_type = std::move(x.m_base_type);
 
     return *this;
 }
@@ -4233,6 +4237,7 @@ size_t CompleteBitsetHeader::getCdrSerializedSize(const CompleteBitsetHeader& da
 {
     size_t initial_alignment = current_alignment;
 
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
     current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
 
     return current_alignment - initial_alignment;
@@ -4240,11 +4245,13 @@ size_t CompleteBitsetHeader::getCdrSerializedSize(const CompleteBitsetHeader& da
 
 void CompleteBitsetHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+    scdr << m_base_type;
     scdr << m_detail;
 }
 
 void CompleteBitsetHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+    dcdr >> m_base_type;
     dcdr >> m_detail;
 }
 
@@ -4256,37 +4263,45 @@ MinimalBitsetHeader::~MinimalBitsetHeader()
 {
 }
 
-MinimalBitsetHeader::MinimalBitsetHeader(const MinimalBitsetHeader &)
+MinimalBitsetHeader::MinimalBitsetHeader(const MinimalBitsetHeader &x)
 {
+    m_base_type = x.m_base_type;
 }
 
-MinimalBitsetHeader::MinimalBitsetHeader(MinimalBitsetHeader &&)
+MinimalBitsetHeader::MinimalBitsetHeader(MinimalBitsetHeader &&x)
 {
+    m_base_type = std::move(x.m_base_type);
 }
 
-MinimalBitsetHeader& MinimalBitsetHeader::operator=(const MinimalBitsetHeader &)
+MinimalBitsetHeader& MinimalBitsetHeader::operator=(const MinimalBitsetHeader &x)
 {
+    m_base_type = x.m_base_type;
     return *this;
 }
 
-MinimalBitsetHeader& MinimalBitsetHeader::operator=(MinimalBitsetHeader &&)
+MinimalBitsetHeader& MinimalBitsetHeader::operator=(MinimalBitsetHeader &&x)
 {
+    m_base_type = std::move(x.m_base_type);
     return *this;
 }
 
-size_t MinimalBitsetHeader::getCdrSerializedSize(const MinimalBitsetHeader& , size_t current_alignment)
+size_t MinimalBitsetHeader::getCdrSerializedSize(const MinimalBitsetHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
 
     return current_alignment - initial_alignment;
 }
 
-void MinimalBitsetHeader::serialize(eprosima::fastcdr::Cdr &) const
+void MinimalBitsetHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+    scdr << m_base_type;
 }
 
-void MinimalBitsetHeader::deserialize(eprosima::fastcdr::Cdr &)
+void MinimalBitsetHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+    dcdr >> m_base_type;
 }
 
 CompleteBitsetType::CompleteBitsetType()

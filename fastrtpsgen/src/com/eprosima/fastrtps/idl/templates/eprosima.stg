@@ -40,6 +40,12 @@ struct_inherit_copy_init(parent) ::= <<$parent.scopedname$(x)>>
 
 struct_inherit_move_init(parent) ::= <<$parent.scopedname$(std::move(x))>>
 
+bitset_inherit_default_init(parent) ::= <<$parent.scopedname$()>>
+
+bitset_inherit_copy_init(parent) ::= <<$parent.scopedname$(x)>>
+
+bitset_inherit_move_init(parent) ::= <<$parent.scopedname$(std::move(x))>>
+
 member_default_init(member) ::= <<
 $if(member.typecode.primitive)$
 m_$member.name$ = $member.typecode.initialValue$;

@@ -2466,6 +2466,11 @@ public:
     RTPS_DllAPI CompleteBitsetHeader& operator=(const CompleteBitsetHeader &x);
     RTPS_DllAPI CompleteBitsetHeader& operator=(CompleteBitsetHeader &&x);
 
+    RTPS_DllAPI inline void base_type(const TypeIdentifier &_base_type) { m_base_type = _base_type; }
+    RTPS_DllAPI inline void base_type(TypeIdentifier &&_base_type) { m_base_type = std::move(_base_type); }
+    RTPS_DllAPI inline const TypeIdentifier& base_type() const { return m_base_type; }
+    RTPS_DllAPI inline TypeIdentifier& base_type() { return m_base_type; }
+
     RTPS_DllAPI inline void detail(const CompleteTypeDetail &_detail) { m_detail = _detail; }
     RTPS_DllAPI inline void detail(CompleteTypeDetail &&_detail) { m_detail = std::move(_detail); }
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
@@ -2476,6 +2481,7 @@ public:
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 private:
+    TypeIdentifier m_base_type;
     CompleteTypeDetail m_detail;
 };
 
@@ -2492,11 +2498,17 @@ public:
     RTPS_DllAPI MinimalBitsetHeader& operator=(const MinimalBitsetHeader &x);
     RTPS_DllAPI MinimalBitsetHeader& operator=(MinimalBitsetHeader &&x);
 
+    RTPS_DllAPI inline void base_type(const TypeIdentifier &_base_type) { m_base_type = _base_type; }
+    RTPS_DllAPI inline void base_type(TypeIdentifier &&_base_type) { m_base_type = std::move(_base_type); }
+    RTPS_DllAPI inline const TypeIdentifier& base_type() const { return m_base_type; }
+    RTPS_DllAPI inline TypeIdentifier& base_type() { return m_base_type; }
+
     // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(const MinimalBitsetHeader& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 private:
+    TypeIdentifier m_base_type;
 };
 /*struct CompleteBitsetType  {
 	BitsetTypeFlag         bitset_flags; // unused
