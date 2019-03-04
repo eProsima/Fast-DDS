@@ -411,6 +411,8 @@ enum_type(ctx, parent, enum) ::= <<>>
 
 bitmask_type(ctx, parent, bitmask) ::= <<>>
 
+bitset_type(ctx, parent, bitset) ::= <<>>
+
 
 /** Utils **/
 extractMember(ctx, parent, member) ::= <<
