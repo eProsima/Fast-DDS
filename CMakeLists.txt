@@ -224,6 +224,21 @@ option(SECURITY "Activate security" OFF)
 
 if(SECURITY)
     find_package(OpenSSL REQUIRED)
+else()
+    find_package(OpenSSL)
+endif()
+
+option(NO_TLS "Disables TLS Support" OFF)
+if(OpenSSL_FOUND AND NOT NO_TLS)
+    set(TLS_FOUND 1)
+else()
+    set(TLS_FOUND 0)
+endif()
+
+if(SECURITY OR TLS_FOUND)
+    set(LINK_SSL 1)
+else()
+    set(LINK_SSL 0)
 endif()
 
 ###############################################################################

@@ -42,7 +42,17 @@ SubscriberHistory::SubscriberHistory(
         const HistoryQosPolicy& history,
         const ResourceLimitsQosPolicy& resource,
         MemoryManagementPolicy_t mempolicy)
-    : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,resource.allocated_samples,resource.max_samples + 1))
+    : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,
+                history.kind == KEEP_ALL_HISTORY_QOS ?
+                        resource.allocated_samples :
+                        simpl->getAttributes().topic.getTopicKind() == NO_KEY ?
+                            std::min(resource.allocated_samples, history.depth) :
+                            std::min(resource.allocated_samples, history.depth * resource.max_instances),
+                history.kind == KEEP_ALL_HISTORY_QOS ?
+                        resource.max_samples :
+                        simpl->getAttributes().topic.getTopicKind() == NO_KEY ?
+                            history.depth :
+                            history.depth * resource.max_instances))
     , m_unreadCacheCount(0)
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)

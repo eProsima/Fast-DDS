@@ -79,6 +79,9 @@ set(${PROJECT_NAME}_source_files
     transport/ChannelResource.cpp
     transport/UDPChannelResource.cpp
     transport/TCPChannelResource.cpp
+    transport/TCPChannelResourceBasic.cpp
+    transport/TCPAcceptor.cpp
+    transport/TCPAcceptorBasic.cpp
     transport/UDPv4Transport.cpp
     transport/TCPTransportInterface.cpp
     transport/UDPTransportInterface.cpp
@@ -86,7 +89,6 @@ set(${PROJECT_NAME}_source_files
     transport/UDPv6Transport.cpp
     transport/TCPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
-    transport/test_TCPv4Transport.cpp
     transport/tcp/TCPControlMessage.cpp
     transport/tcp/RTCPMessageManager.cpp
     transport/tcp/test_RTCPMessageManager.cpp
@@ -154,6 +156,14 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/SQLite3PersistenceService.cpp
     rtps/persistence/sqlite3.c
     )
+
+# TLS Support
+if(TLS_FOUND)
+    list(APPEND ${PROJECT_NAME}_source_files
+        transport/TCPChannelResourceSecure.cpp
+        transport/TCPAcceptorSecure.cpp
+        )
+endif()
 
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
@@ -281,7 +291,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         ${TINYXML2_LIBRARY}
-        $<$<BOOL:${SECURITY}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+        $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         )
 

@@ -46,7 +46,7 @@ void CleanTCPSocketsEvent::event(EventCode code, const char* /*msg*/)
 {
     if(code == EVENT_SUCCESS)
     {
-        mp_transport->CleanDeletedSockets();
+        mp_transport->clean_deleted_sockets();
     }
 }
 
