@@ -1005,7 +1005,6 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
         {
             DynamicTypeBuilder_ptr bitmaskType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
-            //uint32_t order = 0;
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
             {
@@ -1018,6 +1017,7 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
         }
         case TK_BITSET:
         {
+            /*
             const TypeIdentifier *aux = &object->complete().bitset_type().header().base_type();
             if (aux->_d() == TK_BITSET)
             {
@@ -1044,6 +1044,9 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
                 bitsetType->AddMember(&memDesc);
             }
             return bitsetType->Build();
+            */
+           logError(XTYPES, "Bitset isn't supported by DynamicType");
+           return nullptr;
         }
         case TK_UNION:
         {
