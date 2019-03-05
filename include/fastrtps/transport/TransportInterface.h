@@ -35,6 +35,8 @@ static const std::string s_IPv6AddressAny = "::";
 class SenderResource;
 class ChannelResource;
 
+using SendResourceList = std::vector<std::unique_ptr<SenderResource>>;
+
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
  * TransportInterface expects the user to implement a logical equivalence between Locators and protocol-specific "channels".
@@ -65,12 +67,6 @@ public:
     virtual bool init() = 0;
 
     /**
-    * Must report whether the output channel associated to this locator is open. Channels must either be
-    * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
-    */
-    virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
-
-    /**
     * Must report whether the input channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
@@ -87,20 +83,14 @@ public:
 
     //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
     //! any resources that are needed for said channel.
-    virtual bool OpenOutputChannel(const Locator_t&) = 0;
-
+    virtual bool OpenOutputChannel(
+            SendResourceList& sender_resource_list,
+            const Locator_t&) = 0;
     virtual bool OpenExtraOutputChannel(const Locator_t&) = 0;
 
     virtual bool OpenInputChannel(
         const Locator_t&,
         TransportReceiverInterface*, uint32_t) = 0;
-
-    /**
-    * Must close the channel that maps to/from the given locator.
-    * IMPORTANT: It MUST be safe to call this method even during a Send operation on another thread. You must implement
-    * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
-    */
-    virtual bool CloseOutputChannel(const Locator_t&) = 0;
 
     /**
     * Must close the channel that maps to/from the given locator.
@@ -114,24 +104,6 @@ public:
 
     //! Must report whether two locators map to the same internal channel.
     virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
-
-    /**
-     * Must execute a blocking send, through the outbound channel that maps to the localLocator, targeted to the
-     * remote address defined by remote_locator. Must be threadsafe between channels, but not necessarily
-     * within the same channel.
-     */
-    virtual bool send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
-        const Locator_t& localLocator,
-        const Locator_t& remote_locator) = 0;
-
-    virtual bool send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
-        const Locator_t& localLocator,
-        const Locator_t& remote_locator,
-        ChannelResource* p_channel_resource) = 0;
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
@@ -177,6 +149,15 @@ public:
      * Shutdown method to close the connections of the transports.
     */
     virtual void shutdown() {};
+
+    int32_t kind() const { return transport_kind_; }
+
+protected:
+
+    TransportInterface(int32_t transport_kind)
+        : transport_kind_(transport_kind) {}
+
+    int32_t transport_kind_;
 };
 
 } // namespace rtps

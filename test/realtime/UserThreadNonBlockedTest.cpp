@@ -103,27 +103,13 @@ class UserThreadNonBlockedTest : public ::testing::Test
 
         virtual void SetUp()
         {
-            // Create participant
-            eprosima::fastrtps::ParticipantAttributes participant_attr;
-            participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr);
-            assert(participant_);
-
-            // Register type
-            eprosima::fastrtps::Domain::registerType(participant_, &type_);
-
             // Create publisher
             publisher_attr_.topic.topicDataType = type_.getName();
             publisher_attr_.topic.topicName = "Dummy";
-            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_, nullptr);
-            assert(publisher_);
 
             // Create subscriber
-            eprosima::fastrtps::SubscriberAttributes subscriber_attr;
-            subscriber_attr.topic.topicDataType = type_.getName();
-            subscriber_attr.topic.topicName = "Dummy";
-            subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr, nullptr);
-            assert(subscriber_);
-
+            subscriber_attr_.topic.topicDataType = type_.getName();
+            subscriber_attr_.topic.topicName = "Dummy";
         }
 
         virtual void TearDown()
@@ -133,9 +119,27 @@ class UserThreadNonBlockedTest : public ::testing::Test
             participant_ = nullptr;
         }
 
+        void init()
+        {
+            // Create participant
+            participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_);
+            assert(participant_);
+
+            // Register type
+            eprosima::fastrtps::Domain::registerType(participant_, &type_);
+
+            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_, nullptr);
+            assert(publisher_);
+
+            subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr_, nullptr);
+            assert(subscriber_);
+        }
+
     public:
 
         UserThreadNonBlockedTest() = default;
+
+        eprosima::fastrtps::ParticipantAttributes participant_attr_;
 
         eprosima::fastrtps::Participant* participant_;
 
@@ -145,11 +149,66 @@ class UserThreadNonBlockedTest : public ::testing::Test
 
         eprosima::fastrtps::Publisher* publisher_;
 
+        eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
+
         eprosima::fastrtps::Subscriber* subscriber_;
 };
 
-TEST_F(UserThreadNonBlockedTest, write_sample)
+TEST_F(UserThreadNonBlockedTest, write_sample_besteffort)
 {
+    publisher_attr_.qos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+    subscriber_attr_.qos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+    init();
+
+    DummyType sample{1};
+
+    // Record the mutexes.
+    eprosima::fastrtps::tmutex_start_recording();
+
+    publisher_->write(reinterpret_cast<void*>(&sample));
+
+    eprosima::fastrtps::tmutex_stop_recording();
+
+    ASSERT_EQ(2, eprosima::fastrtps::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
+    ASSERT_EQ(2, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+
+    for(size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    {
+        std::cout << "Testing mutex " << count << std::endl;
+        // Start testing locking the mutexes.
+        eprosima::fastrtps::tmutex_lock_mutex(count);
+
+        std::promise<std::pair<bool, std::chrono::microseconds>> promise;
+        std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
+        std::thread([&]
+                {
+                auto now = std::chrono::steady_clock::now();
+                bool returned_value = publisher_->write(reinterpret_cast<void*>(&sample));
+                auto end = std::chrono::steady_clock::now();
+                promise.set_value_at_thread_exit( std::pair<bool, std::chrono::microseconds>(returned_value,
+                            std::chrono::duration_cast<std::chrono::microseconds>(end - now)));
+                }).detach();
+        future.wait();
+        auto returned_value = future.get();
+        // If main mutex cannot be taken, the write fails.
+        // But for the rest the information is stored and it is as if the samples was sent.
+        ASSERT_EQ(count == 0 ? false : true, returned_value.first);
+        std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+                    publisher_attr_.qos.m_reliability.max_blocking_time));
+        ASSERT_GE(returned_value.second, max_w);
+        ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
+
+        eprosima::fastrtps::tmutex_unlock_mutex(count);
+    }
+}
+
+TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
+{
+    publisher_attr_.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    subscriber_attr_.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    init();
+
     DummyType sample{1};
 
     // Record the mutexes.

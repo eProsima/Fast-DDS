@@ -282,8 +282,8 @@ private:
     std::mutex m_receiverResourcelistMutex;
 
     //!SenderResource List
-    std::timed_mutex m_send_resources_mutex;
-    std::vector<SenderResource> m_senderResourceList;
+    std::timed_mutex m_send_resources_mutex_;
+    SendResourceList send_resource_list_;
 
     //!Participant Listener
     RTPSParticipantListener* mp_participantListener;
@@ -332,11 +332,6 @@ private:
         @param loc -  Locator we want to change
         */
     Locator_t& applyLocatorAdaptRule(Locator_t &loc);
-
-    /** Checks if there is any sender resource available to reach the given locator.
-    @param loc -  Locator we want to check
-    */
-    bool checkSenderResource(Locator_t& locator);
 
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;

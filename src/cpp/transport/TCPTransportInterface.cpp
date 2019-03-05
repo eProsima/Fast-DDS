@@ -678,7 +678,7 @@ void TCPTransportInterface::close_tcp_socket(TCPChannelResource *p_channel_resou
 }
 
 
-bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
+bool TCPTransportInterface::OpenOutputChannel(std::vector<SenderResource*>, const Locator_t& locator)
 {
     bool success = false;
     uint16_t logicalPort = IPLocator::getLogicalPort(locator);

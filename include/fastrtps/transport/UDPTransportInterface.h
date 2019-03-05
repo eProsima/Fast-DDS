@@ -44,7 +44,7 @@ public:
    virtual bool CloseInputChannel(const Locator_t&) override;
 
    //! Removes all outbound sockets on the given port.
-   virtual bool CloseOutputChannel(const Locator_t&) override;
+   bool CloseOutputChannel(eProsimaUDPSocket& socket);
 
    //! Reports whether Locators correspond to the same port.
    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
@@ -60,11 +60,10 @@ public:
    //! Checks for TCP kinds.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
 
-   //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsOutputChannelOpen(const Locator_t&) const override;
-
    //! Opens a socket on the given address and port (as long as they are white listed).
-   virtual bool OpenOutputChannel(const Locator_t&) override;
+   virtual bool OpenOutputChannel(
+           SendResourceList& sender_resource_list,
+           const Locator_t&) override;
    virtual bool OpenExtraOutputChannel(const Locator_t&) override;
 
    /**
@@ -98,11 +97,12 @@ public:
    * @param localLocator Locator mapping to the channel we're sending from.
    * @param remote_locator Locator describing the remote destination we're sending to.
    */
-   virtual bool send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& localLocator,
-       const Locator_t& remote_locator) override;
-
-   virtual bool send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& localLocator,
-       const Locator_t& remote_locator, ChannelResource* p_channel_resource) override;
+   virtual bool send(
+           const octet* send_buffer,
+           uint32_t send_buffer_size,
+           eProsimaUDPSocket& socket,
+           const Locator_t& remote_locator,
+           bool only_multicast_purpose);
 
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
@@ -118,21 +118,17 @@ public:
 
 protected:
 
-    int32_t transport_kind_;
-
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
     asio::io_service io_service_;
     std::vector<IPFinder::info_IP> currentInterfaces;
 
-    mutable std::recursive_mutex mOutputMapMutex;
     mutable std::recursive_mutex mInputMapMutex;
     std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
-    std::vector<UDPChannelResource*> mOutputSockets;
 
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
 
-    UDPTransportInterface();
+    UDPTransportInterface(int32_t transport_kind);
 
     virtual bool compare_locator_ip(const Locator_t& lh, const Locator_t& rh) const = 0;
     virtual bool compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const = 0;
@@ -165,7 +161,6 @@ protected:
     UDPChannelResource* CreateInputChannelResource(const std::string& sInterface, const Locator_t& locator,
         bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver);
     virtual eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) = 0;
-    bool OpenAndBindOutputSockets(const Locator_t& locator);
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
     /** Function to be called from a new thread, which takes cares of performing a blocking receive
     operation on the ReceiveResource
@@ -173,21 +168,9 @@ protected:
     */
     void perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator);
 
-    bool send_through_socket(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& remote_locator,
-        eProsimaUDPSocketRef socket);
-
     virtual void set_receive_buffer_size(uint32_t size) = 0;
     virtual void set_send_buffer_size(uint32_t size) = 0;
     virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) = 0;
-
-    /*
-        struct LocatorCompare {
-        bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
-        {
-            return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0);
-        }
-    };
-    */
 };
 
 } // namespace rtps

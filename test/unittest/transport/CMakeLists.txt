@@ -61,7 +61,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
         )
@@ -77,7 +76,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
         )
@@ -105,7 +103,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/CleanTCPSocketsEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
@@ -144,7 +141,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/CleanTCPSocketsEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
@@ -176,7 +172,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/SenderResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
         )
 

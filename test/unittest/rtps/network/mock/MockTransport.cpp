@@ -13,9 +13,6 @@
 // limitations under the License.
 
 #include <MockTransport.h>
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
-#include <fastrtps/transport/UDPv6Transport.h>
 #include <algorithm>
 #include <cstring>
 
@@ -28,17 +25,17 @@ namespace rtps{
 std::vector<MockTransport*> MockTransport::mockTransportInstances;
 
 MockTransport::MockTransport(const MockTransportDescriptor& descriptor)
-    : mockSupportedKind(descriptor.supportedKind)
+    : TransportInterface(descriptor.supportedKind)
     , mockMaximumChannels(descriptor.maximumChannels)
 {
     mockTransportInstances.push_back(this);
 }
 
 MockTransport::MockTransport()
-   : mockSupportedKind(DefaultKind)
-   , mockMaximumChannels(DefaultMaxChannels)
+    : TransportInterface(DefaultKind)
+    , mockMaximumChannels(DefaultMaxChannels)
 {
-   mockTransportInstances.push_back(this);
+    mockTransportInstances.push_back(this);
 }
 
 MockTransport::~MockTransport()
@@ -55,11 +52,6 @@ bool MockTransport::init()
     return true;
 }
 
-bool MockTransport::IsOutputChannelOpen(const Locator_t& locator) const
-{
-    return (find(mockOpenOutputChannels.begin(), mockOpenOutputChannels.end(), locator.port) != mockOpenOutputChannels.end());
-}
-
 bool MockTransport::IsInputChannelOpen(const Locator_t& locator) const
 {
     return (find(mockOpenInputChannels.begin(), mockOpenInputChannels.end(), locator.port) != mockOpenInputChannels.end());
@@ -67,7 +59,7 @@ bool MockTransport::IsInputChannelOpen(const Locator_t& locator) const
 
 bool MockTransport::IsLocatorSupported(const Locator_t& locator) const
 {
-    return locator.kind == mockSupportedKind;
+    return locator.kind == transport_kind_;
 }
 
 bool MockTransport::is_locator_allowed(const Locator_t& /*locator*/) const
@@ -75,7 +67,9 @@ bool MockTransport::is_locator_allowed(const Locator_t& /*locator*/) const
     return true;
 }
 
-bool MockTransport::OpenOutputChannel(const Locator_t& locator)
+bool MockTransport::OpenOutputChannel(
+        SendResourceList& sender_resource_list,
+        const Locator_t& locator)
 {
     mockOpenOutputChannels.push_back(locator.port);
     return true;
@@ -103,33 +97,12 @@ bool MockTransport::DoOutputLocatorsMatch(
     return true;
 }
 
-bool MockTransport::send(
-        const octet* sendBuffer,
-        uint32_t sendBufferSize,
-        const Locator_t& localLocator,
-        const Locator_t& remoteLocator)
-{
-    std::vector<octet> sendVector;
-    sendVector.assign(sendBuffer,sendBuffer + sendBufferSize);
-    mockMessagesSent.push_back( { remoteLocator, localLocator, sendVector } );
-    return true;
-}
-
 Locator_t MockTransport::RemoteToMainLocal(const Locator_t& remote) const
 {
     Locator_t mainLocal(remote);
     //memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
     mainLocal.set_Invalid_Address();
     return mainLocal;
-}
-
-bool MockTransport::CloseOutputChannel(const Locator_t& locator)
-{
-   mockOpenOutputChannels.erase(std::remove(mockOpenOutputChannels.begin(),
-                                      mockOpenOutputChannels.end(),
-                                      locator.port),
-                                mockOpenOutputChannels.end());
-   return true;
 }
 
 bool MockTransport::CloseInputChannel(const Locator_t& locator)
