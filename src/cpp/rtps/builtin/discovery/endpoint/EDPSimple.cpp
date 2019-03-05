@@ -676,7 +676,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && publications_reader_.first!=nullptr) //Exist Pub Writer and i have pub reader
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
-        RemoteWriterAttributes watt(pdata.m_VendorId);
+        RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPPubWriter;
         watt.endpoint.persistence_guid = watt.guid;
@@ -694,7 +694,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && publications_writer_.first!=nullptr) //Exist Pub Detector
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Reader to my Pub Writer");
-        RemoteReaderAttributes ratt(pdata.m_VendorId);
+        RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SEDPPubReader;
@@ -712,7 +712,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && subscriptions_reader_.first!=nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
-        RemoteWriterAttributes watt(pdata.m_VendorId);
+        RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SEDPSubWriter;
         watt.endpoint.persistence_guid = watt.guid;
@@ -730,7 +730,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp!=0 && subscriptions_writer_.first!=nullptr) //Exist Pub Announcer
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Reader to my Sub Writer");
-        RemoteReaderAttributes ratt(pdata.m_VendorId);
+        RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SEDPSubReader;

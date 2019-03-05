@@ -130,14 +130,7 @@ class  RemoteReaderAttributes
 {
     public:
 
-        RemoteReaderAttributes() : expectsInlineQos(false),
-        is_eprosima_endpoint(true)
-        {
-            endpoint.endpointKind = READER;
-        }
-
-        RemoteReaderAttributes(const VendorId_t& vendor_id) : expectsInlineQos(false),
-        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
+        RemoteReaderAttributes() : expectsInlineQos(false)
         {
             endpoint.endpointKind = READER;
         }
@@ -165,8 +158,6 @@ class  RemoteReaderAttributes
 
         //!Expects inline QOS.
         bool expectsInlineQos;
-
-        bool is_eprosima_endpoint;
 };
 }
 }
