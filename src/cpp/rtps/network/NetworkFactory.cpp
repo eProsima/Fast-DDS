@@ -125,7 +125,7 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
     locators.swap(normalizedLocators);
 }
 
-LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) const
 {
     LocatorList_t returnedList;
 

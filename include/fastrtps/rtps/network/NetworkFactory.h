@@ -77,7 +77,7 @@ class NetworkFactory
 
         void NormalizeLocators(LocatorList_t& locators);
 
-        LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists);
+        LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) const;
 
         bool is_local_locator(const Locator_t& locator) const;
 
