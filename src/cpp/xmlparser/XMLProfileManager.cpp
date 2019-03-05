@@ -334,6 +334,8 @@ XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::
         }
     }
 
+    profileCount += static_cast<unsigned int>(m_transport_profiles.size()); // Count transport profiles
+
     if (0 == profileCount)
     {
         m_xml_files.emplace(filename, XMLP_ret::XML_ERROR);

@@ -21,7 +21,7 @@ namespace fastrtps {
 namespace rtps {
 
 UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket)
-    : mMsgReceiver(nullptr)
+    : message_receiver_(nullptr)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
 {
@@ -29,23 +29,23 @@ UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket)
 
 UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket, uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
-    , mMsgReceiver(nullptr)
+    , message_receiver_(nullptr)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
 {
 }
 
 UDPChannelResource::UDPChannelResource(UDPChannelResource&& channelResource)
-    : mMsgReceiver(channelResource.mMsgReceiver)
+    : message_receiver_(channelResource.message_receiver_)
     , socket_(moveSocket(channelResource.socket_))
     , only_multicast_purpose_(channelResource.only_multicast_purpose_)
 {
-    channelResource.mMsgReceiver = nullptr;
+    channelResource.message_receiver_ = nullptr;
 }
 
 UDPChannelResource::~UDPChannelResource()
 {
-    mMsgReceiver = nullptr;
+    message_receiver_ = nullptr;
 }
 
 } // namespace rtps

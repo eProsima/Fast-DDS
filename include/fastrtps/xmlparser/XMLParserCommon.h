@@ -311,6 +311,49 @@ extern const char* USE_DEFAULT;
 extern const char* CONSUMER;
 extern const char* CLASS;
 
+// TLS Config
+extern const char* TLS;
+extern const char* TLS_PASSWORD;
+extern const char* TLS_OPTIONS;
+extern const char* TLS_CERT_CHAIN_FILE;
+extern const char* TLS_PRIVATE_KEY_FILE;
+extern const char* TLS_TMP_DH_FILE;
+extern const char* TLS_VERIFY_FILE;
+extern const char* TLS_VERIFY_MODE;
+extern const char* TLS_VERIFY_PATHS;
+extern const char* TLS_DEFAULT_VERIFY_PATH;
+extern const char* TLS_VERIFY_DEPTH;
+extern const char* TLS_RSA_PRIVATE_KEY_FILE;
+extern const char* TLS_HANDSHAKE_ROLE;
+
+// TLS HandShake Role
+extern const char* TLS_HANDSHAKE_ROLE_DEFAULT;
+extern const char* TLS_HANDSHAKE_ROLE_CLIENT;
+extern const char* TLS_HANDSHAKE_ROLE_SERVER;
+
+// TLS Verify Stuff
+extern const char* TLS_VERIFY_PATH;
+extern const char* TLS_VERIFY;
+
+// TLS Options
+extern const char* TLS_OPTION;
+extern const char* TLS_DEFAULT_WORKAROUNDS;
+extern const char* TLS_NO_COMPRESSION;
+extern const char* TLS_NO_SSLV2;
+extern const char* TLS_NO_SSLV3;
+extern const char* TLS_NO_TLSV1;
+extern const char* TLS_NO_TLSV1_1;
+extern const char* TLS_NO_TLSV1_2;
+extern const char* TLS_NO_TLSV1_3;
+extern const char* TLS_SINGLE_DH_USE;
+
+// TLS Verify Mode
+extern const char* TLS_VERIFY_NONE;
+extern const char* TLS_VERIFY_PEER;
+extern const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT;
+extern const char* TLS_VERIFY_CLIENT_ONCE;
+
+
 } /* xmlparser */
 } /* namespace */
 } /* namespace eprosima */

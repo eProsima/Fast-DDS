@@ -188,7 +188,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
+        EXPECT_TRUE(transportUnderTest.send(message, 5, outputChannelLocator, multicastLocator));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -231,7 +231,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(transportUnderTest.Send(message, 5, outputChannelLocator, multicastLocator));
+        EXPECT_TRUE(transportUnderTest.send(message, 5, outputChannelLocator, multicastLocator));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
