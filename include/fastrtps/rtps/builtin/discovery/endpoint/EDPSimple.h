@@ -54,7 +54,7 @@ class EDPSimple : public EDP
      * @param p Pointer to the PDPSimple
      * @param part Pointer to the RTPSParticipantImpl
      */
-    EDPSimple(PDPSimple* p,RTPSParticipantImpl* part);
+    EDPSimple(PDP* p,RTPSParticipantImpl* part);
     virtual ~EDPSimple();
     //!Discovery attributes.
     BuiltinAttributes m_discovery;

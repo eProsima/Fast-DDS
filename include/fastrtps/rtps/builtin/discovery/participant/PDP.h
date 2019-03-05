@@ -221,9 +221,9 @@ class PDP
     RTPSParticipantImpl* mp_RTPSParticipant;
     //!Discovery attributes.
     BuiltinAttributes m_discovery;
-    //!Pointer to the SPDPWriter.
+    //!Pointer to the PDPWriter.
     RTPSWriter* mp_PDPWriter;
-    //!Pointer to the SPDPReader.
+    //!Pointer to the PDPReader.
     RTPSReader* mp_PDPReader;
     //!Pointer to the EDP object.
     EDP* mp_EDP;
@@ -246,4 +246,4 @@ class PDP
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif
-#endif /* PDPSIMPLE_H_ */
+#endif /* PDP_H_ */

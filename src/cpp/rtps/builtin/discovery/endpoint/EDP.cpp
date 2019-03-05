@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
 
 #include "../../../participant/RTPSParticipantImpl.h"
 
@@ -50,7 +50,7 @@ namespace fastrtps{
 namespace rtps {
 
 
-EDP::EDP(PDPSimple* p,RTPSParticipantImpl* part): mp_PDP(p),
+EDP::EDP(PDP* p,RTPSParticipantImpl* part): mp_PDP(p),
     mp_RTPSParticipant(part) { }
 
 EDP::~EDP()

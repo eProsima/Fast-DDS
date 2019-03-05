@@ -38,7 +38,7 @@ class WriterQos;
 
 namespace rtps {
 
-class PDPSimple;
+class PDP;
 class ParticipantProxyData;
 class RTPSWriter;
 class RTPSReader;
@@ -59,7 +59,7 @@ class EDP
          * @param p Pointer to the PDPSimple
          * @param part Pointer to the RTPSParticipantImpl
          */
-        EDP(PDPSimple* p,RTPSParticipantImpl* part);
+        EDP(PDP* p,RTPSParticipantImpl* part);
         virtual ~EDP();
 
         /**
@@ -207,7 +207,7 @@ class EDP
 #endif
 
         //! Pointer to the PDPSimple object that contains the endpoint discovery protocol.
-        PDPSimple* mp_PDP;
+        PDP* mp_PDP;
         //! Pointer to the RTPSParticipant.
         RTPSParticipantImpl* mp_RTPSParticipant;
 

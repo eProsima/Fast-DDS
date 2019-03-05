@@ -26,8 +26,10 @@
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "../../transport/TransportInterface.h"
 #include "../resources/ResourceManagement.h"
+#include "ServerAttributes.h"
 
 #include <memory>
+#include <list>
 
 namespace eprosima {
 namespace fastrtps{
@@ -124,6 +126,8 @@ class BuiltinAttributes{
         LocatorList_t metatrafficMulticastLocatorList;
         //! Initial peers.
         LocatorList_t initialPeersList;
+        //! Discovery Server settings, only needed if use_SERVER_DiscoveryProtocol=true
+        std::list<RemoteServerAttributes>  m_DiscoveryServers;
 
         //! Memory policy for builtin readers
         MemoryManagementPolicy_t readerHistoryMemoryPolicy;
@@ -180,8 +184,6 @@ class BuiltinAttributes{
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
         std::string m_staticEndpointXMLFilename;
-        //! Discovery Server contact addresses, only needed if use_SERVER_DiscoveryProtocol=true
-        LocatorList_t m_DiscoveryServers;
 };
 
 

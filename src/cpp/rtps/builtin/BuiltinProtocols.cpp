@@ -70,11 +70,13 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
     m_metatrafficUnicastLocatorList = m_att.metatrafficUnicastLocatorList;
     m_metatrafficMulticastLocatorList = m_att.metatrafficMulticastLocatorList;
     m_initialPeersList = m_att.initialPeersList;
+    m_DiscoveryServers = m_att.m_DiscoveryServers;
 
     if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
     {
-        mp_PDP = new PDPSimple(this);
-        if(!mp_PDP->initPDP(mp_participantImpl)){
+        PDPSimple * pS = new PDPSimple(this);
+        mp_PDP = pS;
+        if(!pS->initPDP(mp_participantImpl)){
             logError(RTPS_PDP,"Participant discovery configuration failed");
             return false;
         }
@@ -83,8 +85,8 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
             mp_WLP = new WLP(this);
             mp_WLP->initWL(mp_participantImpl);
         }
-        mp_PDP->announceParticipantState(true);
-        mp_PDP->resetParticipantAnnouncement();
+        pS->announceParticipantState(true);
+        pS->resetParticipantAnnouncement();
     }
 
     return true;
@@ -187,12 +189,28 @@ void BuiltinProtocols::announceRTPSParticipantState()
 
 void BuiltinProtocols::stopRTPSParticipantAnnouncement()
 {
-    mp_PDP->stopParticipantAnnouncement();
+    PDPSimple * pS = dynamic_cast<PDPSimple *>(mp_PDP);
+    if (pS == nullptr)
+    {
+        logWarning(RTPS_PDP, "Using periodical announcement interface with non simple PDP");
+    }
+    else
+    {
+        pS->stopParticipantAnnouncement();
+    }
 }
 
 void BuiltinProtocols::resetRTPSParticipantAnnouncement()
 {
-    mp_PDP->resetParticipantAnnouncement();
+    PDPSimple * pS = dynamic_cast<PDPSimple *>(mp_PDP);
+    if (pS == nullptr)
+    {
+        logWarning(RTPS_PDP, "Using periodical announcement interface with non simple PDP");
+    }
+    else
+    {
+        pS->resetParticipantAnnouncement();
+    }
 }
 
 bool BuiltinProtocols::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind)

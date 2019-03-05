@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include "EDPSimpleListeners.h"
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
 #include "../../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -52,7 +52,7 @@ const int32_t edp_initial_reserved_caches = 20;
 
 
 EDPSimple::EDPSimple(
-        PDPSimple* p,
+        PDP* p,
         RTPSParticipantImpl* part)
     : EDP(p,part)
     , publications_listener_(nullptr)

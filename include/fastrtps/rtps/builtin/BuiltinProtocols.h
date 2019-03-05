@@ -20,9 +20,10 @@
 #ifndef BUILTINPROTOCOLS_H_
 #define BUILTINPROTOCOLS_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../attributes/RTPSParticipantAttributes.h"
 
-#include "../common/Guid.h"
+#include <list>
+
+#include "../attributes/RTPSParticipantAttributes.h"
 
 
 namespace eprosima {
@@ -35,7 +36,7 @@ namespace fastrtps{
 
 namespace rtps {
 
-class PDPSimple;
+class PDP;
 class WLP;
 class RTPSParticipantImpl;
 class RTPSWriter;
@@ -72,7 +73,7 @@ class BuiltinProtocols
     //!Pointer to the RTPSParticipantImpl.
     RTPSParticipantImpl* mp_participantImpl;
     //!Pointer to the PDPSimple.
-    PDPSimple* mp_PDP;
+    PDP* mp_PDP;
     //!Pointer to the WLP
     WLP* mp_WLP;
     //!Locator list for metatraffic
@@ -81,6 +82,8 @@ class BuiltinProtocols
     LocatorList_t m_metatrafficUnicastLocatorList;
     //! Initial peers
     LocatorList_t m_initialPeersList;
+    //! Known discovery and backup server container
+    std::list<RemoteServerAttributes> m_DiscoveryServers;
 
     /**
      * Add a local Writer to the BuiltinProtocols.

@@ -39,7 +39,7 @@ namespace fastrtps{
 namespace rtps {
 
 
-EDPStatic::EDPStatic(PDPSimple* p,RTPSParticipantImpl* part):
+EDPStatic::EDPStatic(PDP* p,RTPSParticipantImpl* part):
     EDP(p,part),
     mp_edpXML(nullptr)
 {
