@@ -101,15 +101,6 @@ class  RemoteWriterAttributes
         RemoteWriterAttributes() 
             : livelinessLeaseDuration(c_TimeInfinite)
             , ownershipStrength(0)
-            , is_eprosima_endpoint(true)
-        {
-            endpoint.endpointKind = WRITER;
-        }
-
-        RemoteWriterAttributes(const VendorId_t& vendor_id) 
-            : livelinessLeaseDuration(c_TimeInfinite)
-            , ownershipStrength(0)
-            , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
         {
             endpoint.endpointKind = WRITER;
         }
@@ -139,8 +130,6 @@ class  RemoteWriterAttributes
 
         //!Ownership Strength of the associated writer.
         uint16_t ownershipStrength;
-
-        bool is_eprosima_endpoint;
 };
 
 } /* namespace rtps */

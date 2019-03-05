@@ -1654,7 +1654,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
     if (participant_stateless_message_reader_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
-        RemoteWriterAttributes watt(participant_data.m_VendorId);
+        RemoteWriterAttributes watt;
         watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         watt.guid.entityId = participant_stateless_message_writer_entity_id;
         watt.endpoint.persistence_guid = watt.guid;
@@ -1666,7 +1666,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
     if (participant_stateless_message_writer_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        RemoteReaderAttributes ratt(participant_data.m_VendorId);
+        RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         ratt.guid.entityId = participant_stateless_message_reader_entity_id;
@@ -1683,7 +1683,7 @@ void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProx
     if(participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
-        RemoteWriterAttributes watt(participant_data.m_VendorId);
+        RemoteWriterAttributes watt;
         watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
         watt.endpoint.persistence_guid = watt.guid;
@@ -1696,7 +1696,7 @@ void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProx
     if(participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        RemoteReaderAttributes ratt(participant_data.m_VendorId);
+        RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
         ratt.guid.entityId = participant_volatile_message_secure_reader_entity_id;

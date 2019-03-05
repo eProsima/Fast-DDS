@@ -716,7 +716,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if(auxendp!=0)
     {
-        RemoteWriterAttributes watt(pdata->m_VendorId);
+        RemoteWriterAttributes watt;
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SPDPWriter;
         watt.endpoint.persistence_guid = watt.guid;
@@ -730,7 +730,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     if(auxendp!=0)
     {
-        RemoteReaderAttributes ratt(pdata->m_VendorId);
+        RemoteReaderAttributes ratt;
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SPDPReader;
