@@ -560,6 +560,12 @@ void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t *> &samples
             logError(SUBSCRIBER, "Cannot return latest sample, output vector is not long enough");
             return;
         }
+
+        if (m_changes.empty())
+        {
+            return;
+        }
+
         auto max = *std::max_element(
                     m_changes.begin(),
                     m_changes.end(),
@@ -573,6 +579,12 @@ void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t *> &samples
             logError(SUBSCRIBER, "Cannot return latest samples, output vector is not long enough");
             return;
         }
+
+        if (m_keyedChanges.empty())
+        {
+            return;
+        }
+
         for (auto it = m_keyedChanges.begin(); it != m_keyedChanges.end(); ++it)
         {
             auto max = *std::max_element(
