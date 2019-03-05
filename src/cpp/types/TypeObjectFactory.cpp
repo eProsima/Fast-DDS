@@ -1096,31 +1096,27 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
         }
         case TK_ANNOTATION:
         {
-            // TODO To implement
-            return nullptr;
+            DynamicTypeBuilder_ptr annotationType =
+                DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
 
-            /*
-            uint64_t order = 0;
-            for (MinimalAnnotationParameter &member : object->minimal().annotation_type().member_seq())
+            for (const CompleteAnnotationParameter &member : object->complete().annotation_type().member_seq())
             {
-            const TypeIdentifier *auxMem = &member.common().type_id();
+                const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member.common().member_type_id());
+                if (auxMem == nullptr)
+                {
+                    std::cout << "(Annotation) auxMem is nullptr, but original member has " << (int)member.common().member_type_id()._d() << std::endl;
+                }
 
-            MemberDescriptor *memDesc = new MemberDescriptor();
-            memDesc->SetName(member.name());
-            memDesc->default_value(); [...]
-            // Copy pasted...
-            memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-            memDesc->SetIndex(order++);
-            memDesc->mId = member.common().member_id();
-            memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
-            memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
-            for (uint32_t lab : member.common().label_seq())
-            {
-            memDesc->AddUnionCaseIndex(lab);
+                MemberDescriptor memDesc;
+                memDesc.SetName(member.name());
+                memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
+                // Member default values?
+                //memDesc->default_value(); [...]
+                annotationType->AddMember(&memDesc);
             }
-            memDesc->mType->mDescriptor->mBaseType = descriptor;
-            }
-            */
+            // Annotation inner definitions?
+
+            return annotationType->Build();
         }
         default:
             break;

@@ -1047,13 +1047,13 @@ void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor
                 break;
             case TK_BITMASK:
                 {
-                    // Not implemented
+                    BuildBitmaskTypeObject(descriptor, object, *members, complete);
                 }
                 break;
             // Structured TKs
             case TK_ANNOTATION:
                 {
-                    // Not implemented
+                    BuildAnnotationTypeObject(descriptor, object, *members, complete);
                 }
                 break;
             case TK_STRUCTURE:
@@ -1068,7 +1068,7 @@ void DynamicTypeBuilderFactory::BuildTypeObject(const TypeDescriptor* descriptor
                 break;
             case TK_BITSET:
                 {
-                    // Not implemented
+                    BuildBitsetTypeObject(descriptor, object, *members, complete);
                 }
                 break;
         }
@@ -1665,6 +1665,358 @@ void DynamicTypeBuilderFactory::BuildUnionTypeObject(const TypeDescriptor* descr
         payload.encapsulation = CDR_LE;
 
         object.serialize(ser);
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
+}
+
+void DynamicTypeBuilderFactory::BuildBitsetTypeObject(
+        const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<const MemberDescriptor*> members,
+        bool complete) const
+{
+    if (complete)
+    {
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_BITSET);
+
+        object.complete().bitset_type().bitset_flags().IS_FINAL(false);
+        object.complete().bitset_type().bitset_flags().IS_APPENDABLE(false);
+        object.complete().bitset_type().bitset_flags().IS_MUTABLE(false);
+        object.complete().bitset_type().bitset_flags().IS_NESTED(false);
+        object.complete().bitset_type().bitset_flags().IS_AUTOID_HASH(false);
+
+        for (const MemberDescriptor* member : members)
+        {
+            CompleteBitfield msm;
+            msm.common().position(member->GetId());
+            //msm.common().bitcount(member->); // No available field
+            msm.common().holder_type(member->mType->GetKind());
+            msm.detail().name(member->GetName());
+            object.complete().bitset_type().field_seq().emplace_back(msm);
+        }
+
+        object.complete().bitset_type().header().detail().type_name(descriptor->GetName());
+        //object.complete().bitset_type().header().detail().ann_builtin()...
+        //object.complete().bitset_type().header().detail().ann_custom()...
+
+        if (descriptor->GetBaseType().get() != nullptr)
+        {
+            TypeIdentifier parent;
+            BuildTypeIdentifier(descriptor->GetBaseType(), parent);
+            object.complete().bitset_type().header().base_type(parent);
+        }
+        //object.complete().bitset_type().header().base_type().equivalence_hash()[0..13];
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           CompleteBitsetType::getCdrSerializedSize(object.complete().bitset_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (CompleteBitfield &st : object.complete().bitset_type().field_seq())
+        {
+            ser << st;
+        }
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
+    else
+    {
+        object._d(EK_COMPLETE);
+        object.minimal()._d(TK_BITSET);
+
+        object.minimal().bitset_type().bitset_flags().IS_FINAL(false);
+        object.minimal().bitset_type().bitset_flags().IS_APPENDABLE(false);
+        object.minimal().bitset_type().bitset_flags().IS_MUTABLE(false);
+        object.minimal().bitset_type().bitset_flags().IS_NESTED(false);
+        object.minimal().bitset_type().bitset_flags().IS_AUTOID_HASH(false);
+
+        for (const MemberDescriptor* member : members)
+        {
+            MinimalBitfield msm;
+            msm.common().position(member->GetId());
+            //msm.common().bitcount(member->); // No available field
+            msm.common().holder_type(member->mType->GetKind());
+            MD5 parent_bitfield_hash(member->GetName());
+            for(int i = 0; i < 4; ++i)
+            {
+                msm.name_hash()[i] = parent_bitfield_hash.digest[i];
+            }
+            object.minimal().bitset_type().field_seq().emplace_back(msm);
+        }
+
+        //object.minimal().bitset_type().header().detail().ann_builtin()...
+        //object.minimal().bitset_type().header().detail().ann_custom()...
+
+        if (descriptor->GetBaseType().get() != nullptr)
+        {
+            TypeIdentifier parent;
+            BuildTypeIdentifier(descriptor->GetBaseType(), parent);
+            object.minimal().bitset_type().header().base_type(parent);
+        }
+        //object.minimal().bitset_type().header().base_type().equivalence_hash()[0..13];
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           MinimalBitsetType::getCdrSerializedSize(object.minimal().bitset_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (MinimalBitfield &st : object.minimal().bitset_type().field_seq())
+        {
+            ser << st;
+        }
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
+}
+
+void DynamicTypeBuilderFactory::BuildBitmaskTypeObject(
+        const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<const MemberDescriptor*> members,
+        bool complete) const
+{
+    if (complete)
+    {
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_BITMASK);
+
+        object.complete().bitmask_type().bitmask_flags().IS_FINAL(false);
+        object.complete().bitmask_type().bitmask_flags().IS_APPENDABLE(false);
+        object.complete().bitmask_type().bitmask_flags().IS_MUTABLE(false);
+        object.complete().bitmask_type().bitmask_flags().IS_NESTED(false);
+        object.complete().bitmask_type().bitmask_flags().IS_AUTOID_HASH(false);
+
+        for (const MemberDescriptor* member : members)
+        {
+            CompleteBitflag msm;
+            msm.common().position(member->GetId());
+            msm.detail().name(member->GetName());
+            object.complete().bitmask_type().flag_seq().emplace_back(msm);
+        }
+
+        object.complete().bitmask_type().header().detail().type_name(descriptor->GetName());
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           CompleteBitmaskType::getCdrSerializedSize(object.complete().bitmask_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (CompleteBitflag &st : object.complete().bitmask_type().flag_seq())
+        {
+            ser << st;
+        }
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
+    else
+    {
+        object._d(EK_COMPLETE);
+        object.minimal()._d(TK_BITMASK);
+
+        object.minimal().bitmask_type().bitmask_flags().IS_FINAL(false);
+        object.minimal().bitmask_type().bitmask_flags().IS_APPENDABLE(false);
+        object.minimal().bitmask_type().bitmask_flags().IS_MUTABLE(false);
+        object.minimal().bitmask_type().bitmask_flags().IS_NESTED(false);
+        object.minimal().bitmask_type().bitmask_flags().IS_AUTOID_HASH(false);
+
+        for (const MemberDescriptor* member : members)
+        {
+            MinimalBitflag msm;
+            msm.common().position(member->GetId());
+            MD5 parent_bitfield_hash(member->GetName());
+            for(int i = 0; i < 4; ++i)
+            {
+                msm.detail().name_hash()[i] = parent_bitfield_hash.digest[i];
+            }
+            object.minimal().bitmask_type().flag_seq().emplace_back(msm);
+        }
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           MinimalBitmaskType::getCdrSerializedSize(object.minimal().bitmask_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (MinimalBitflag &st : object.minimal().bitmask_type().flag_seq())
+        {
+            ser << st;
+        }
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
+}
+
+void DynamicTypeBuilderFactory::BuildAnnotationTypeObject(
+        const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<const MemberDescriptor*> members,
+        bool complete) const
+{
+    if (complete)
+    {
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_ANNOTATION);
+
+        for (const MemberDescriptor* member : members)
+        {
+            CompleteAnnotationParameter msm;
+            msm.name(member->GetName());
+            //msm.default_value(member->); // No equivalence field
+
+            TypeObject memObj;
+            BuildTypeObject(member->mType->mDescriptor, memObj);
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            if (typeId == nullptr)
+            {
+                logError(DYN_TYPES, "Member " << member->GetName() << " of annotation " << descriptor->GetName() << " failed.");
+            }
+            else
+            {
+                TypeIdentifier memIdent = *typeId;
+                msm.common().member_type_id(memIdent);
+            }
+
+            object.complete().annotation_type().member_seq().emplace_back(msm);
+        }
+
+        object.complete().annotation_type().header().annotation_name(descriptor->GetName());
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           CompleteAnnotationType::getCdrSerializedSize(object.complete().annotation_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (CompleteAnnotationParameter &st : object.complete().annotation_type().member_seq())
+        {
+            ser << st;
+        }
+        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        MD5 objectHash;
+        objectHash.update((char*)payload.data, payload.length);
+        objectHash.finalize();
+        for(int i = 0; i < 14; ++i)
+        {
+            identifier.equivalence_hash()[i] = objectHash.digest[i];
+        }
+
+        TypeObjectFactory::GetInstance()->AddTypeObject(descriptor->GetName(), &identifier, &object);
+    }
+    else
+    {
+        object._d(EK_COMPLETE);
+        object.minimal()._d(TK_ANNOTATION);
+
+        for (const MemberDescriptor* member : members)
+        {
+            MinimalAnnotationParameter msm;
+            msm.name(member->GetName());
+            //msm.default_value(member->); // No equivalence field
+
+            TypeObject memObj;
+            BuildTypeObject(member->mType->mDescriptor, memObj);
+            const TypeIdentifier *typeId = TypeObjectFactory::GetInstance()->GetTypeIdentifier(member->mType->GetName());
+            if (typeId == nullptr)
+            {
+                logError(DYN_TYPES, "Member " << member->GetName() << " of annotation " << descriptor->GetName() << " failed.");
+            }
+            else
+            {
+                TypeIdentifier memIdent = *typeId;
+                msm.common().member_type_id(memIdent);
+            }
+
+            object.minimal().annotation_type().member_seq().emplace_back(msm);
+        }
+
+        TypeIdentifier identifier;
+        identifier._d(EK_COMPLETE);
+
+        SerializedPayload_t payload(static_cast<uint32_t>(
+           MinimalAnnotationType::getCdrSerializedSize(object.minimal().annotation_type()) + 4));
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        payload.encapsulation = CDR_LE;
+        // Serialize encapsulation
+
+        for (MinimalAnnotationParameter &st : object.minimal().annotation_type().member_seq())
+        {
+            ser << st;
+        }
         payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);

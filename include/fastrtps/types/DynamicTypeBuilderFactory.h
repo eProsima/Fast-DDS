@@ -130,6 +130,12 @@ protected:
         const std::vector<const MemberDescriptor*> members, bool complete = true) const;
     void BuildUnionTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
         const std::vector<const MemberDescriptor*> members, bool complete = true) const;
+    void BuildBitsetTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<const MemberDescriptor*> members, bool complete = true) const;
+    void BuildBitmaskTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<const MemberDescriptor*> members, bool complete = true) const;
+    void BuildAnnotationTypeObject(const TypeDescriptor* descriptor, TypeObject& object,
+        const std::vector<const MemberDescriptor*> members, bool complete = true) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicTypeBuilder*> mBuildersList;
