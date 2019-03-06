@@ -206,6 +206,18 @@ bool PublisherImpl::create_new_change_with_params(
 
         if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
         {
+            // Cancel timer
+            deadline_timer_.cancel_timer();
+
+            // Calculate the time at which the instance with the oldest change will expire
+            int num_instances = 0;
+            m_history.get_latest_samples(deadline_samples_, num_instances);
+            auto min = *std::min_element(deadline_samples_.begin(),
+                                         deadline_samples_.begin() + num_instances,
+                                         [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
+            deadline_timer_.update_interval(deadline_duration_ - ch->sourceTimestamp + min->sourceTimestamp);
+
+            // Restart the timer
             deadline_timer_.restart_timer();
         }
         return true;
@@ -342,7 +354,7 @@ void PublisherImpl::check_deadlines()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
-    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    // If this method is called, one instance (the one with the oldest change) has missed the deadline
 
     // Get the latest samples from the history
     int num_samples = 0;
@@ -350,34 +362,23 @@ void PublisherImpl::check_deadlines()
 
     if (num_samples == 0)
     {
+        logError(PUBLISHER, "Deadline timer expired but no samples available");
         return;
     }
 
     // Time of the earliest sample among all topic instances
     Time_t minTime = deadline_samples_.front()->sourceTimestamp;
-
-    // Number of instances missing the deadline
-    int num_instances = 0;
+    // Instance of the earliest sample among all topic instances
+    InstanceHandle_t handle = deadline_samples_.front()->instanceHandle;
 
     for (int i = 0; i < num_samples; i++)
     {
         if (deadline_samples_[i]->sourceTimestamp < minTime)
         {
             minTime = deadline_samples_[i]->sourceTimestamp;
-        }
-
-        if (now - deadline_samples_[i]->sourceTimestamp > deadline_duration_ )
-        {
-            mp_listener->on_offered_deadline_missed(deadline_samples_[i]->instanceHandle);
-            num_instances++;
+            handle = deadline_samples_[i]->instanceHandle;
         }
     }
 
-    if (num_instances < num_samples)
-    {
-        // Now restart the timer
-        Duration_t interval = deadline_duration_ - now + minTime > 0? deadline_duration_ - now + minTime: deadline_duration_;
-        deadline_timer_.update_interval(interval);
-        deadline_timer_.restart_timer();
-    }
+    mp_listener->on_offered_deadline_missed(handle);
 }

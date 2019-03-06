@@ -189,9 +189,9 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
     return updated;
 }
 
-void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/)
+void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const change)
 {
-    mp_subscriberImpl->onNewCacheChangeAdded();
+    mp_subscriberImpl->onNewCacheChangeAdded(change);
 
     if(mp_subscriberImpl->mp_listener != nullptr)
     {
@@ -207,10 +207,22 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
-void SubscriberImpl::onNewCacheChangeAdded()
+void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
 {
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
+        // Cancel the timer
+        deadline_timer_.cancel_timer();
+
+        // Update timer interval
+        int num_samples = 0;
+        m_history.get_latest_samples(deadline_samples_, num_samples);
+        auto min = *std::min_element(deadline_samples_.begin(),
+                                     deadline_samples_.begin() + num_samples,
+                                     [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
+        deadline_timer_.update_interval(deadline_duration_ - change->sourceTimestamp + min->sourceTimestamp);
+
+        // Restart
         deadline_timer_.restart_timer();
     }
 }
@@ -235,7 +247,7 @@ void SubscriberImpl::check_deadlines()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
-    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    // If this method is called, one instance (the one with the oldest change) has missed the deadline
 
     // Get the latest samples from the history
     int num_samples = 0;
@@ -243,37 +255,25 @@ void SubscriberImpl::check_deadlines()
 
     if (num_samples == 0)
     {
+        logError(SUBSCRIBER, "Deadline timer expired but no samples available");
         return;
     }
 
     // Time of the earliest sample among all topic instances
     Time_t minTime = deadline_samples_.front()->sourceTimestamp;
+    // Instance handle of the earlist sample among all topic instances
+    InstanceHandle_t handle = deadline_samples_.front()->instanceHandle;
 
-    // Number of instances missing the deadline
-    int num_instances = 0;
-
-    // Check if any instance missed the dealine
     for (int i = 0; i < num_samples; ++i)
     {
         if (deadline_samples_[i]->sourceTimestamp < minTime)
         {
             minTime = deadline_samples_[i]->sourceTimestamp;
-        }
-
-        if (now - deadline_samples_[i]->sourceTimestamp > deadline_duration_)
-        {
-            mp_listener->on_requested_deadline_missed(deadline_samples_[i]->instanceHandle);
-            num_instances++;
+            handle = deadline_samples_[i]->instanceHandle;
         }
     }
 
-    if (num_instances < num_samples)
-    {
-        // Restart the timer
-        Duration_t interval = deadline_duration_ - now + minTime > 0? deadline_duration_ - now + minTime: deadline_duration_;
-        deadline_timer_.update_interval(interval);
-        deadline_timer_.restart_timer();
-    }
+    mp_listener->on_requested_deadline_missed(handle);
 }
 
 } /* namespace fastrtps */
