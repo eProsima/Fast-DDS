@@ -20,19 +20,19 @@
 
 #include "deadlinepayloadPubSubTypes.h"
 
-class deadlinepayloadPublisher 
+class deadlinepayloadPublisher
 {
 public:
 
     /**
      * @brief Constructor
      */
-	deadlinepayloadPublisher();
+    deadlinepayloadPublisher();
 
     /**
      * @brief Destructor
      */
-	virtual ~deadlinepayloadPublisher();
+    virtual ~deadlinepayloadPublisher();
 
     /**
      * @brief Initialises publisher
@@ -50,18 +50,18 @@ public:
 
 private:
 
-	eprosima::fastrtps::Participant *mp_participant;
-	eprosima::fastrtps::Publisher *mp_publisher;
+    eprosima::fastrtps::Participant *mp_participant;
+    eprosima::fastrtps::Publisher *mp_publisher;
     HelloMsgPubSubType myType;
-	class PubListener : public eprosima::fastrtps::PublisherListener
-	{
-	public:
-		PubListener() : n_matched(0){};
-		~PubListener(){};
+    class PubListener : public eprosima::fastrtps::PublisherListener
+    {
+    public:
+        PubListener() : n_matched(0){};
+        ~PubListener(){};
         void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info) override;
         void on_offered_deadline_missed(eprosima::fastrtps::rtps::InstanceHandle_t& handle) override;
-		int n_matched;
-	} m_listener;
+        int n_matched;
+    } m_listener;
 
     //!Boolean used to force a period double on a certain key
     bool double_time;

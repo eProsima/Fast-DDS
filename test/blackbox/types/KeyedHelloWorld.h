@@ -36,20 +36,6 @@
 #define eProsima_user_DllExport
 #endif
 
-#if defined(_WIN32)
-#if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(deadlinemessage_SOURCE)
-#define deadlinemessage_DllAPI __declspec( dllexport )
-#else
-#define deadlinemessage_DllAPI __declspec( dllimport )
-#endif // deadlinemessage_SOURCE
-#else
-#define deadlinemessage_DllAPI
-#endif
-#else
-#define deadlinemessage_DllAPI
-#endif // _WIN32
-
 namespace eprosima
 {
     namespace fastcdr

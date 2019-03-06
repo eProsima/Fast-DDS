@@ -128,32 +128,32 @@ public:
     void onNewCacheChangeAdded(const CacheChange_t* const change);
 
 private:
-	//!Participant
-	ParticipantImpl* mp_participant;
 
-	//!Pointer to associated RTPSReader
-	rtps::RTPSReader* mp_reader;
-	//! Pointer to the TopicDataType object.
-	TopicDataType* mp_type;
-	//!Attributes of the Subscriber
-	SubscriberAttributes m_att;
-	//!History
-	SubscriberHistory m_history;
-	//!Listener
-	SubscriberListener* mp_listener;
-	class SubscriberReaderListener : public rtps::ReaderListener
-	{
-	public:
+    //!Participant
+    ParticipantImpl* mp_participant;
+    //!Pointer to associated RTPSReader
+    rtps::RTPSReader* mp_reader;
+    //! Pointer to the TopicDataType object.
+    TopicDataType* mp_type;
+    //!Attributes of the Subscriber
+    SubscriberAttributes m_att;
+    //!History
+    SubscriberHistory m_history;
+    //!Listener
+    SubscriberListener* mp_listener;
+    class SubscriberReaderListener : public rtps::ReaderListener
+    {
+    public:
         SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
         virtual ~SubscriberReaderListener() {}
-		void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
-		void onNewCacheChangeAdded(rtps::RTPSReader * reader,const rtps::CacheChange_t* const change);
-		SubscriberImpl* mp_subscriberImpl;
+        void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
+        void onNewCacheChangeAdded(rtps::RTPSReader * reader,const rtps::CacheChange_t* const change);
+        SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
 
-	Subscriber* mp_userSubscriber;
-	//!RTPSParticipant
-	rtps::RTPSParticipant* mp_rtpsParticipant;
+    Subscriber* mp_userSubscriber;
+    //!RTPSParticipant
+    rtps::RTPSParticipant* mp_rtpsParticipant;
 
     //!A timer used to check for deadlines
     DeadlineTimer deadline_timer_;
