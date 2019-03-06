@@ -348,7 +348,12 @@ LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t
         bool addLocator = true;
         while (it != locatorList.end())
         {
-            assert((*it).kind == transport_kind_);
+            if ((*it).kind != transport_kind_)
+            {
+                ++it;
+                continue;
+            }
+
             addLocator = true;
 
             // Check is local interface.

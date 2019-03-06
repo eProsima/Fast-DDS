@@ -1280,7 +1280,11 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 
         while (it != locatorList.end())
         {
-            assert((*it).kind == transport_kind_);
+            if ((*it).kind != transport_kind_)
+            {
+                ++it;
+                continue;
+            }
 
             // Check is local interface.
             auto localInterface = current_interfaces_.begin();

@@ -571,7 +571,11 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 
         while (it != locatorList.end())
         {
-            assert((*it).kind == transport_kind_);
+            if ((*it).kind != transport_kind_)
+            {
+                ++it;
+                continue;
+            }
 
             if (IPLocator::isMulticast(*it))
             {
