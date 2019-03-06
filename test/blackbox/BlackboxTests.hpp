@@ -43,6 +43,7 @@
 
 #include "types/HelloWorldType.h"
 #include "types/FixedSizedType.h"
+#include "types/KeyedHelloWorldType.h"
 #include "types/StringType.h"
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
@@ -111,6 +112,8 @@ std::list<HelloWorld> default_helloworld_data_generator(size_t max = 0);
 
 std::list<FixedSized> default_fixed_sized_data_generator(size_t max = 0);
 
+std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max = 0);
+
 std::list<String> default_large_string_data_generator(size_t max = 0);
 
 std::list<Data64kb> default_data64kb_data_generator(size_t max = 0);
@@ -123,6 +126,8 @@ std::list<Data1mb> default_data300kb_mix_data_generator(size_t max = 0);
 extern const std::function<void(const HelloWorld&)>  default_helloworld_print;
 
 extern const std::function<void(const FixedSized&)>  default_fixed_sized_print;
+
+extern const std::function<void(const KeyedHelloWorld&)>  default_keyedhelloworld_print;
 
 extern const std::function<void(const String&)>  default_string_print;
 

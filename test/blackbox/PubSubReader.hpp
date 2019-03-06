@@ -106,7 +106,10 @@ class PubSubReader
         class Listener: public eprosima::fastrtps::SubscriberListener
         {
             public:
-                Listener(PubSubReader &reader) : reader_(reader) {}
+                Listener(PubSubReader &reader)
+                    : reader_(reader)
+                    , times_deadline_missed_(0)
+                {}
 
                 ~Listener(){}
 
@@ -138,21 +141,43 @@ class PubSubReader
                     }
                 }
 
+                void on_requested_deadline_missed(eprosima::fastrtps::rtps::InstanceHandle_t&) override
+                {
+                    times_deadline_missed_++;
+                }
+
+                int missed_deadlines() const
+                {
+                    return times_deadline_missed_;
+                }
+
             private:
 
                 Listener& operator=(const Listener&) = delete;
 
                 PubSubReader& reader_;
+
+                int times_deadline_missed_;
         } listener_;
 
         friend class Listener;
 
     public:
 
-        PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this),
-        participant_(nullptr), subscriber_(nullptr), topic_name_(topic_name), initialized_(false),
-        matched_(0), participant_matched_(0), receiving_(false), current_received_count_(0),
-        number_samples_expected_(0), discovery_result_(false), onDiscovery_(nullptr)
+        PubSubReader(const std::string& topic_name)
+            : participant_listener_(*this),
+              listener_(*this),
+              participant_(nullptr),
+              subscriber_(nullptr),
+              topic_name_(topic_name),
+              initialized_(false),
+              matched_(0),
+              participant_matched_(0),
+              receiving_(false),
+              current_received_count_(0),
+              number_samples_expected_(0),
+              discovery_result_(false),
+              onDiscovery_(nullptr)
 #if HAVE_SECURITY
         , authorized_(0), unauthorized_(0)
 #endif
@@ -351,6 +376,24 @@ class PubSubReader
         PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
         {
             subscriber_attr_.qos.m_reliability.kind = kind;
+            return *this;
+        }
+
+        PubSubReader& deadline_period(const eprosima::fastrtps::rtps::Duration_t deadline_period)
+        {
+            subscriber_attr_.qos.m_deadline.period = deadline_period;
+            return *this;
+        }
+
+        PubSubReader& key(bool keyed)
+        {
+            subscriber_attr_.topic.topicKind = keyed ? eprosima::fastrtps::TopicKind_t::WITH_KEY : eprosima::fastrtps::TopicKind_t::NO_KEY;
+            return *this;
+        }
+
+        PubSubReader& topic_kind(const eprosima::fastrtps::rtps::TopicKind_t kind)
+        {
+            subscriber_attr_.topic.topicKind = kind;
             return *this;
         }
 
@@ -621,6 +664,11 @@ class PubSubReader
         bool is_matched() const
         {
             return matched_ > 0;
+        }
+
+        int missed_deadlines() const
+        {
+            return listener_.missed_deadlines();
         }
 
     private:
