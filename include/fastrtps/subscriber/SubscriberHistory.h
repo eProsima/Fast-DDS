@@ -26,15 +26,12 @@
 #include "../qos/QosPolicies.h"
 #include "SampleInfo.h"
 
-
-
 namespace eprosima {
 namespace fastrtps {
 
 namespace rtps{
 class WriterProxy;
 }
-
 
 class SubscriberImpl;
 
@@ -45,9 +42,6 @@ class SubscriberImpl;
 class SubscriberHistory: public rtps::ReaderHistory
 {
     public:
-
-        typedef std::map<rtps::InstanceHandle_t,std::vector<rtps::CacheChange_t*>> t_m_Inst_Caches;
-        typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
 
         /**
          * Constructor. Requires information about the subscriner
@@ -129,6 +123,41 @@ class SubscriberHistory: public rtps::ReaderHistory
                 int& num_samples);
 
     private:
+
+        /**
+         * @brief A struct storing a vector of cache changes and the latest change in the group
+         * @ingroup FASTRTPS_MODULE
+         */
+        struct KeyedChanges
+        {
+            //! Default constructor
+            KeyedChanges()
+                : cache_changes_()
+                , latest_change_(new CacheChange_t)
+            {}
+
+            //! Copy constructor
+            KeyedChanges(const KeyedChanges& other)
+                : cache_changes_(other.cache_changes_)
+                , latest_change_(new CacheChange_t)
+            {
+                latest_change_->copy(other.latest_change_);
+            }
+
+            //! Destructor
+            ~KeyedChanges()
+            {
+                delete latest_change_;
+            }
+
+            //! A vector of cache changes
+            std::vector<CacheChange_t*> cache_changes_;
+            //! The latest cache change in the struct
+            CacheChange_t* latest_change_;
+        };
+
+        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+        typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
 
         //!Number of unread CacheChange_t.
         uint64_t m_unreadCacheCount;

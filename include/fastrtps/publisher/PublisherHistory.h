@@ -41,8 +41,6 @@ class PublisherImpl;
 class PublisherHistory:public rtps::WriterHistory
 {
     public:
-        typedef std::map<rtps::InstanceHandle_t, std::vector<rtps::CacheChange_t*>> t_m_Inst_Caches;
-        typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
         /**
          * Constructor of the PublisherHistory.
          * @param pimpl Pointer to the PublisherImpl.
@@ -105,6 +103,43 @@ class PublisherHistory:public rtps::WriterHistory
                 int& num_samples);
 
     private:
+
+        /**
+         * @brief A struct storing a vector of cache changes and the latest change in the group
+         * @ingroup FASTRTPS_MODULE
+         */
+        struct KeyedChanges
+        {
+            //! Default constructor
+            KeyedChanges()
+                : cache_changes_()
+                , latest_change_(new CacheChange_t)
+            {
+            }
+
+            //! Copy constructor
+            KeyedChanges(const KeyedChanges& other)
+                : cache_changes_(other.cache_changes_)
+                , latest_change_(new CacheChange_t)
+            {
+                latest_change_->copy(other.latest_change_);
+            }
+
+            //! Destructor
+            ~KeyedChanges()
+            {
+                delete latest_change_;
+            }
+
+            //! A vector of cache changes
+            std::vector<CacheChange_t*> cache_changes_;
+            //! The latest cache change in the struct
+            CacheChange_t* latest_change_;
+        };
+
+        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+        typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
+
         //!Map where keys are instance handles and values are vectors of cache changes associated
         t_m_Inst_Caches m_keyedChanges;
         //!HistoryQosPolicy values.
