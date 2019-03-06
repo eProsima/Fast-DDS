@@ -1270,6 +1270,34 @@ bool TCPTransportInterface::send_through_socket(
     return bytesSent > 0;
 }
 */
+
+void TCPTransportInterface::select_locators(LocatorSelector& selector) const
+{
+    ResourceLimitedVector<LocatorSelectorEntry*>& entries =  selector.transport_starts();
+
+    for (size_t i = 0; i < entries.size(); ++i)
+    {
+        LocatorSelectorEntry* entry = entries[i];
+        if (entry->transport_should_process)
+        {
+            bool selected = false;
+            for (size_t j = 0; j < entry->unicast.size(); ++j)
+            {
+                if (IsLocatorSupported(entry->unicast[j]))
+                {
+                    entry->state.unicast.push_back(j);
+                    selected = true;
+                }
+            }
+
+            if (selected)
+            {
+                selector.select(i);
+            }
+        }
+    }
+}
+
 LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
 {
     LocatorList_t unicastResult;

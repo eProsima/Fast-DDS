@@ -18,6 +18,7 @@
 #include <memory>
 #include <vector>
 #include "../rtps/common/Locator.h"
+#include "../rtps/common/LocatorSelector.hpp"
 #include "../rtps/common/PortParameters.h"
 #include "./TransportDescriptorInterface.h"
 #include "./TransportReceiverInterface.h"
@@ -134,6 +135,18 @@ public:
         ChannelResource* p_channel_resource) = 0;
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
+
+    /**
+     * Performs the locator selection algorithm for this transport.
+     *
+     * It basically constist of the following steps
+     *   - selector.transport_starts is called
+     *   - transport handles the selection state of each locator
+     *   - if a locator from an entry is selected, selector.select is called for that entry
+     *
+     * @param [in, out] selector Locator selector.
+     */
+    virtual void select_locators(LocatorSelector& selector) const = 0;
 
     virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
 

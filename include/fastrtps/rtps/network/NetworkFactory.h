@@ -16,6 +16,7 @@
 #define NETWORK_FACTORY_HPP
 
 #include <fastrtps/transport/TransportInterface.h>
+#include <fastrtps/rtps/common/LocatorSelector.hpp>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -76,6 +77,17 @@ class NetworkFactory
             std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list);
 
         void NormalizeLocators(LocatorList_t& locators);
+
+        /**
+         * Performs the locator selection algorithm.
+         *
+         * It basically constist of the following steps
+         *   - selector.selection_start is called
+         *   - the transport selection algorithm is called for each registered transport
+         *
+         * @param [in, out] selector Locator selector.
+         */
+        void select_locators(LocatorSelector& selector) const;
 
         LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) const;
 

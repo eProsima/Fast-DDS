@@ -351,6 +351,22 @@ public:
         const Locator_t& remote_locator,
         ChannelResource* p_channel_resource) override;
 
+    /**
+     * Performs the locator selection algorithm for this transport.
+     *
+     * It basically constist of the following steps
+     *   - selector.transport_starts is called
+     *   - transport handles the selection state of each locator
+     *   - if a locator from an entry is selected, selector.select is called for that entry
+     *
+     * In the case of TCP, multicast locators are never selected. All TCPv6 unicast locators 
+     * are selected. For TCPv4, only locators on the same WAN as the transport or with the
+     * WAN address of a connected channel are selected.
+     *
+     * @param [in, out] selector Locator selector.
+     */
+    virtual void select_locators(LocatorSelector& selector) const override;
+
     virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
     //! Callback called each time that an incomming connection is accepted.

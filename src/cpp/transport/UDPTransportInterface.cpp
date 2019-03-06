@@ -558,6 +558,98 @@ bool UDPTransportInterface::send_through_socket(const octet* send_buffer, uint32
     return true;
 }
 
+/**
+ * Invalidate all selector entries containing certain multicast locator.
+ *
+ * This function will process all entries from 'index' onwards and, if any
+ * of them has 'locator' on its multicast list, will invalidate them
+ * (i.e. their 'transport_should_process' flag will be changed to false).
+ *
+ * If this function returns true, the locator received should be selected.
+ * 
+ * @param entries   Selector entries collection to process
+ * @param index     Starting index to process
+ * @param locator   Locator to be searched
+ *
+ * @return true when at least one entry was invalidated, false otherwise
+ */
+static bool check_and_invalidate(
+        ResourceLimitedVector<LocatorSelectorEntry*>& entries,
+        size_t index,
+        const Locator_t& locator)
+{
+    bool ret_val = false;
+    for (; index < entries.size(); ++index)
+    {
+        LocatorSelectorEntry* entry = entries[index];
+        if (entry->transport_should_process)
+        {
+            for (const Locator_t& loc : entry->multicast)
+            {
+                if (loc == locator)
+                {
+                    entry->transport_should_process = false;
+                    ret_val = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    return ret_val;
+}
+
+void UDPTransportInterface::select_locators(LocatorSelector& selector) const
+{
+    ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
+
+    for (size_t i = 0; i < entries.size(); ++i)
+    {
+        LocatorSelectorEntry* entry = entries[i];
+        if (entry->transport_should_process)
+        {
+            bool selected = false;
+
+            // First try to find a multicast locator which is at least on another list.
+            for (size_t j = 0; j < entry->multicast.size() && !selected; ++j)
+            {
+                if (IsLocatorSupported(entry->multicast[j]))
+                {
+                    if (check_and_invalidate(entries, i + 1, entry->multicast[j]))
+                    {
+                        entry->state.multicast.push_back(j);
+                        selected = true;
+                    }
+                    else if (entry->unicast.size() == 0)
+                    {
+                        entry->state.multicast.push_back(j);
+                        selected = true;
+                    }
+                }
+            }
+
+            // If we couldn't find a multicast locator, select all unicast locators
+            if (!selected)
+            {
+                for (size_t j = 0; j < entry->unicast.size(); ++j)
+                {
+                    if (IsLocatorSupported(entry->unicast[j].kind))
+                    {
+                        entry->state.unicast.push_back(j);
+                        selected = true;
+                    }
+                }
+            }
+
+            // Select this entry if necessary
+            if (selected)
+            {
+                selector.select(i);
+            }
+        }
+    }
+}
+
 LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
 {
     LocatorList_t multicastResult, unicastResult;

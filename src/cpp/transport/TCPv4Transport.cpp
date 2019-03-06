@@ -331,6 +331,12 @@ bool TCPv4Transport::fillUnicastLocator(
     return result;
 }
 
+void TCPv4Transport::select_locators(LocatorSelector& selector) const
+{
+    // TODO (Miguel C): WAN / LAN considerations
+    TCPTransportInterface::select_locators(selector);
+}
+
 LocatorList_t TCPv4Transport::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
 {
     LocatorList_t unicastResult;

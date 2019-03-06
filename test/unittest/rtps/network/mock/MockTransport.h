@@ -87,6 +87,20 @@ class MockTransport: public TransportInterface
 
         virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
+        /**
+         * Performs the locator selection algorithm for this transport.
+         *
+         * It basically constist of the following steps
+         *   - selector.transport_starts is called
+         *   - transport handles the selection state of each locator
+         *   - if a locator from an entry is selected, selector.select is called for that entry
+         *
+         * In the case of the mock transport all unicast locators are selected.
+         *
+         * @param [in, out] selector Locator selector.
+         */
+        virtual void select_locators(LocatorSelector& selector) const override;
+
         virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
         virtual bool is_local_locator(const Locator_t&) const override { return false; }

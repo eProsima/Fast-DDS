@@ -125,6 +125,21 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
     locators.swap(normalizedLocators);
 }
 
+void NetworkFactory::select_locators(LocatorSelector& selector) const
+{
+    selector.selection_start();
+
+    /* - for each transport:
+     *   - transport_starts is called
+     *   - transport handles the selection state of each entry
+     *   - select may be called
+     */
+    for (auto& transport : mRegisteredTransports)
+    {
+        transport->select_locators(selector);
+    }
+}
+
 LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) const
 {
     LocatorList_t returnedList;

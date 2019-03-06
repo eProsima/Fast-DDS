@@ -104,6 +104,21 @@ public:
    virtual bool send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& localLocator,
        const Locator_t& remote_locator, ChannelResource* p_channel_resource) override;
 
+    /**
+     * Performs the locator selection algorithm for this transport.
+     *
+     * It basically constist of the following steps
+     *   - selector.transport_starts is called
+     *   - transport handles the selection state of each locator
+     *   - if a locator from an entry is selected, selector.select is called for that entry
+     *
+     * In the case of UDP, multicast locators are selected when present in more than one entry,
+     * otherwise unicast locators are selected.
+     * 
+     * @param [in, out] selector Locator selector.
+     */
+   virtual void select_locators(LocatorSelector& selector) const override;
+
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
     virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
