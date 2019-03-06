@@ -211,6 +211,8 @@ void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
 {
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
+        std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+
         // Cancel the timer
         deadline_timer_.cancel_timer();
 
@@ -246,6 +248,8 @@ uint64_t SubscriberImpl::getUnreadCount() const
 void SubscriberImpl::check_deadlines()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
 
     // If this method is called, one instance (the one with the oldest change) has missed the deadline
 

@@ -354,6 +354,8 @@ void PublisherImpl::check_deadlines()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
+    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+
     // If this method is called, one instance (the one with the oldest change) has missed the deadline
 
     // Get the latest samples from the history

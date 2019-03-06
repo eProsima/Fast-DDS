@@ -280,6 +280,8 @@ bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
 
 void PublisherHistory::get_latest_samples(std::vector<CacheChange_t *> &samples, int& num_samples)
 {
+    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+
     num_samples = 0;
 
     if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)

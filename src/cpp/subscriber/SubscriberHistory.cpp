@@ -561,6 +561,8 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
 
 void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t*> &samples, int &num_samples)
 {
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
     num_samples = 0;
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
