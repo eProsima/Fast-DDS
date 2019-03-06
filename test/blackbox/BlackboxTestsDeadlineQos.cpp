@@ -26,14 +26,19 @@ using namespace eprosima::fastrtps::rtps;
 
 BLACKBOXTEST(DeadlineQos, NoKeyTopicLongDeadline)
 {
+    // This test sets a long deadline (long in comparison to the write rate),
+    // makes the writer send a few samples and checks that the deadline was
+    // not missed
+    // Uses a topic with no key
+
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Rate at which writer sends data in ms
+    // Write rate in milliseconds
     uint32_t writer_sleep_ms = 100;
     // Number of samples written by writer
     uint32_t writer_samples = 3;
-    // Deadline period in ms (long in comparison to the rate at which samples are written)
+    // Deadline period in seconds
     eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 2 * 1e-3);
 
     reader.deadline_period(deadline_s);
@@ -68,14 +73,18 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicLongDeadline)
 
 BLACKBOXTEST(DeadlineQos, NoKeyTopicShortDeadline)
 {
+    // This test sets a short deadline (short compared to the write rate),
+    // makes the writer send a few samples and checks that the deadline was missed every time
+    // Uses a topic with no key
+
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Rate at which writer sends data in ms
-    uint32_t writer_sleep_ms = 500;
+    // Write rate in milliseconds
+    uint32_t writer_sleep_ms = 100;
     // Number of samples written by writer
     uint32_t writer_samples = 3;
-    // Deadline period in ms (short in comparison to the rate at which samples are written)
+    // Deadline period in seconds
     eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 0.1 * 1e-3);
 
     reader.deadline_period(deadline_s);
@@ -101,7 +110,6 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicShortDeadline)
         writer.send_sample(data_sample);
         ++count;
         reader.block_for_at_least(count);
-
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
 
@@ -112,15 +120,19 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicShortDeadline)
 
 BLACKBOXTEST(DeadlineQos, KeyedTopicLongDeadline)
 {
+    // This test sets a long deadline (long in comparison to the write rate),
+    // makes the writer send a few samples and checks that the deadline was met
+    // Uses a topic with key
+
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Rate at which writer sends data in ms
+    // Write rate in milliseconds
     uint32_t writer_sleep_ms = 100;
     // Number of samples written by writer
     uint32_t writer_samples = 4;
-    // Deadline period in ms (long compared to rate at which samples are written)
-    eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 2 * 1e-3);
+    // Deadline period in seconds
+    eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 4 * 1e-3);
 
     reader.deadline_period(deadline_s);
     writer.deadline_period(deadline_s);
@@ -157,14 +169,18 @@ BLACKBOXTEST(DeadlineQos, KeyedTopicLongDeadline)
 
 BLACKBOXTEST(DeadlineQos, KeyedTopicShortDeadline)
 {
+    // This test sets a short deadline (short compared to the write rate),
+    // makes the writer send a few samples and checks that the deadline was missed every time
+    // Uses a topic with key
+
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Rate at which writer sends data in ms
-    uint32_t writer_sleep_ms = 1000;
-    // Number of samples written by writer
+    // Only one sample sent by the writer
     uint32_t writer_samples = 4;
-    // Deadline period in ms (short compared to rate at which samples are written)
+    // Time to wait before sending the sample
+    uint32_t writer_sleep_ms = 100;
+    // Deadline period in ms
     eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 0.1 * 1e-3);
 
     reader.deadline_period(deadline_s);
@@ -196,6 +212,6 @@ BLACKBOXTEST(DeadlineQos, KeyedTopicShortDeadline)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
 
-    EXPECT_EQ(writer.missed_deadlines(), 0);
-    EXPECT_EQ(reader.missed_deadlines(), 0);
+    EXPECT_EQ(writer.missed_deadlines(), writer_samples);
+    EXPECT_EQ(reader.missed_deadlines(), writer_samples);
 }
