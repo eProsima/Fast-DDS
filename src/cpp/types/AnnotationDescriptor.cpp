@@ -22,33 +22,33 @@ namespace fastrtps {
 namespace types {
 
 AnnotationDescriptor::AnnotationDescriptor()
-: mType(nullptr)
+: type_(nullptr)
 {
 }
 
 AnnotationDescriptor::~AnnotationDescriptor()
 {
-    mType = nullptr;
+    type_ = nullptr;
 }
 
 AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor* descriptor)
 {
-    CopyFrom(descriptor);
+    copy_from(descriptor);
 }
 
 AnnotationDescriptor::AnnotationDescriptor(DynamicType_ptr pType)
 {
-    mType = pType;
+    type_ = pType;
 }
 
-ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descriptor)
+ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
         try
         {
-            mType = descriptor->mType;
-            mValue = descriptor->mValue;
+            type_ = descriptor->type_;
+            value_ = descriptor->value_;
         }
         catch(std::exception& /*e*/)
         {
@@ -63,19 +63,19 @@ ResponseCode AnnotationDescriptor::CopyFrom(const AnnotationDescriptor* descript
     return ResponseCode::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
+bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
 {
-    if (other != nullptr && (mType == other->mType || (mType != nullptr && mType->Equals(other->mType.get()))))
+    if (other != nullptr && (type_ == other->type_ || (type_ != nullptr && type_->equals(other->type_.get()))))
     {
-        if (mValue.size() != other->mValue.size())
+        if (value_.size() != other->value_.size())
         {
             return false;
         }
 
-        for (auto it = mValue.begin(); it != mValue.end(); ++it)
+        for (auto it = value_.begin(); it != value_.end(); ++it)
         {
-            auto it2 = other->mValue.find(it->first);
-            if (it2 == other->mValue.end() || it2->second != it->second)
+            auto it2 = other->value_.find(it->first);
+            if (it2 == other->value_.end() || it2->second != it->second)
             {
                 return false;
             }
@@ -84,16 +84,22 @@ bool AnnotationDescriptor::Equals(const AnnotationDescriptor* other) const
     return true;
 }
 
-bool AnnotationDescriptor::GetKeyAnnotation() const
+bool AnnotationDescriptor::key_annotation() const
 {
-    auto it = mValue.find(ANNOTATION_KEY_ID);
-    return (it != mValue.end() && it->second == "true");
+    auto it = value_.find(ANNOTATION_KEY_ID);
+    if (it == value_.end())
+    {
+        it = value_.find(ANNOTATION_EPKEY_ID); // Legacy "@Key"
+    }
+    return (it != value_.end() && it->second == "true");
 }
 
-ResponseCode AnnotationDescriptor::GetValue(std::string& value, const std::string& key)
+ResponseCode AnnotationDescriptor::get_value(
+        std::string& value,
+        const std::string& key)
 {
-    auto it = mValue.find(key);
-    if (it != mValue.end())
+    auto it = value_.find(key);
+    if (it != value_.end())
     {
         value = it->second;
         return ResponseCode::RETCODE_OK;
@@ -101,31 +107,33 @@ ResponseCode AnnotationDescriptor::GetValue(std::string& value, const std::strin
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-ResponseCode AnnotationDescriptor::GetAllValues(std::map<std::string, std::string>& value)
+ResponseCode AnnotationDescriptor::get_all_value(std::map<std::string, std::string>& value)
 {
-    value = mValue;
+    value = value_;
     return ResponseCode::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::IsConsistent() const
+bool AnnotationDescriptor::is_consistent() const
 {
-    if (mType == nullptr || mType->GetKind() != TK_ANNOTATION)
+    if (type_ == nullptr || type_->get_kind() != TK_ANNOTATION)
     {
         return false;
     }
 
-    //TODO: Check consistency of mValue
+    //TODO: Check consistency of value_
     return true;
 }
 
-void AnnotationDescriptor::SetType(DynamicType_ptr pType)
+void AnnotationDescriptor::set_type(DynamicType_ptr pType)
 {
-    mType = pType;
+    type_ = pType;
 }
 
-ResponseCode AnnotationDescriptor::SetValue(const std::string& key, const std::string& value)
+ResponseCode AnnotationDescriptor::set_value(
+        const std::string& key,
+        const std::string& value)
 {
-    mValue[key] = value;
+    value_[key] = value;
     return ResponseCode::RETCODE_OK;
 }
 

@@ -26,63 +26,96 @@ namespace types {
 
 class TypeObjectFactory
 {
-public:
-    RTPS_DllAPI static TypeObjectFactory* GetInstance();
-    RTPS_DllAPI static ResponseCode DeleteInstance();
-
-    ~TypeObjectFactory();
-
-    RTPS_DllAPI const TypeObject* GetTypeObject(const std::string &type_name, bool complete = false) const;
-    RTPS_DllAPI const TypeObject* GetTypeObject(const TypeIdentifier* identifier) const;
-
-    RTPS_DllAPI TypeKind GetTypeKind(const std::string &type_name) const;
-    RTPS_DllAPI std::string GetTypeName(const TypeKind kind) const;
-    RTPS_DllAPI std::string GetTypeName(const TypeIdentifier* identifier) const;
-
-    RTPS_DllAPI const TypeIdentifier* GetPrimitiveTypeIdentifier(TypeKind kind) const;
-    //RTPS_DllAPI TypeIdentifier* TryCreateTypeIdentifier(const std::string &type_name);
-    RTPS_DllAPI const TypeIdentifier* GetTypeIdentifier(const std::string &type_name, bool complete = false) const;
-    RTPS_DllAPI const TypeIdentifier* GetTypeIdentifierTryingComplete(const std::string &type_name) const;
-    RTPS_DllAPI const TypeIdentifier* GetStringIdentifier(uint32_t bound, bool wide = false);
-    RTPS_DllAPI const TypeIdentifier* GetSequenceIdentifier(const std::string &type_name, uint32_t bound,
-        bool complete = false);
-    RTPS_DllAPI const TypeIdentifier* GetArrayIdentifier(const std::string &type_name,
-        const std::vector<uint32_t> &bound, bool complete = false);
-    RTPS_DllAPI const TypeIdentifier* GetMapIdentifier(const std::string &key_type_name,
-        const std::string &value_type_name, uint32_t bound, bool complete = false);
-    // TODO Add bitset and bitmask
-    //RTPS_DllAPI const TypeIdentifier* GetBitsetIdentifier(const std::string &type_name,
-    //    const std::vector<uint32_t> &bound, bool complete = false);
-    //RTPS_DllAPI const TypeIdentifier* GetBitmaskIdentifier(const std::string &type_name,
-    //    const std::vector<uint32_t> &bound, bool complete = false);
-
-    RTPS_DllAPI DynamicType_ptr BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
-        const TypeObject* object = nullptr) const;
-
-    RTPS_DllAPI void AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier);
-    RTPS_DllAPI void AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
-        const TypeObject* object);
-    RTPS_DllAPI inline void AddAlias(const std::string &alias_name, const std::string &target_type)
-    {
-        std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
-        m_Aliases.emplace(std::pair<std::string, std::string>(alias_name, target_type));
-    }
-
-protected:
-    TypeObjectFactory();
-    std::map<const std::string, const TypeIdentifier*> m_Identifiers; // Basic, builtin and EK_MINIMAL
-    std::map<const std::string, const TypeIdentifier*> m_CompleteIdentifiers; // Only EK_COMPLETE
-    std::map<const TypeIdentifier*, const TypeObject*> m_Objects; // EK_MINIMAL
-    std::map<const TypeIdentifier*, const TypeObject*> m_CompleteObjects; // EK_COMPLETE
-    std::map<std::string, std::string> m_Aliases; // Aliases
-
-    DynamicType_ptr BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const;
-    const TypeIdentifier* TryGetComplete(const TypeIdentifier* identifier) const;
-    const TypeIdentifier* GetStoredTypeIdentifier(const TypeIdentifier *identifier) const;
-    void nullifyAllEntries(const TypeIdentifier *identifier);
 private:
     mutable std::recursive_mutex m_MutexIdentifiers;
     mutable std::recursive_mutex m_MutexObjects;
+
+protected:
+    TypeObjectFactory();
+    std::map<const std::string, const TypeIdentifier*> identifiers_; // Basic, builtin and EK_MINIMAL
+    std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
+    std::map<const TypeIdentifier*, const TypeObject*> objects_; // EK_MINIMAL
+    std::map<const TypeIdentifier*, const TypeObject*> complete_objects_; // EK_COMPLETE
+    std::map<std::string, std::string> aliases_; // Aliases
+
+    DynamicType_ptr build_dynamic_type(
+            TypeDescriptor& descriptor,
+            const TypeObject* object) const;
+
+    const TypeIdentifier* try_get_complete(const TypeIdentifier* identifier) const;
+
+    const TypeIdentifier* get_stored_type_identifier(const TypeIdentifier* identifier) const;
+
+    void nullify_all_entries(const TypeIdentifier* identifier);
+
+public:
+    RTPS_DllAPI static TypeObjectFactory* get_instance();
+
+    RTPS_DllAPI static ResponseCode delete_instance();
+
+    ~TypeObjectFactory();
+
+    RTPS_DllAPI const TypeObject* get_type_object(
+            const std::string& type_name,
+            bool complete = false) const;
+
+    RTPS_DllAPI const TypeObject* get_type_object(const TypeIdentifier* identifier) const;
+
+    RTPS_DllAPI TypeKind get_type_kind(const std::string& type_name) const;
+
+    RTPS_DllAPI std::string get_type_name(const TypeKind kind) const;
+
+    RTPS_DllAPI std::string get_type_name(const TypeIdentifier* identifier) const;
+
+    RTPS_DllAPI const TypeIdentifier* get_primitive_type_identifier(TypeKind kind) const;
+
+    RTPS_DllAPI const TypeIdentifier* get_type_identifier(
+            const std::string& type_name,
+            bool complete = false) const;
+
+    RTPS_DllAPI const TypeIdentifier* get_type_identifier_trying_complete(const std::string& type_name) const;
+
+    RTPS_DllAPI const TypeIdentifier* get_string_identifier(
+            uint32_t bound,
+            bool wide = false);
+
+    RTPS_DllAPI const TypeIdentifier* get_sequence_identifier(
+            const std::string& type_name,
+            uint32_t bound,
+            bool complete = false);
+
+    RTPS_DllAPI const TypeIdentifier* get_array_identifier(
+            const std::string& type_name,
+            const std::vector<uint32_t> &bound,
+            bool complete = false);
+
+    RTPS_DllAPI const TypeIdentifier* get_map_identifier(
+            const std::string& key_type_name,
+            const std::string& value_type_name,
+            uint32_t bound,
+            bool complete = false);
+
+    RTPS_DllAPI DynamicType_ptr build_dynamic_type(
+            const std::string& name,
+            const TypeIdentifier* identifier,
+            const TypeObject* object = nullptr) const;
+
+    RTPS_DllAPI void add_type_identifier(
+            const std::string& type_name,
+            const TypeIdentifier* identifier);
+
+    RTPS_DllAPI void add_type_object(
+            const std::string& type_name,
+            const TypeIdentifier* identifier,
+            const TypeObject* object);
+
+    RTPS_DllAPI inline void add_alias(
+            const std::string& alias_name,
+            const std::string& target_type)
+    {
+        std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+        aliases_.emplace(std::pair<std::string, std::string>(alias_name, target_type));
+    }
 };
 
 } // namespace types

@@ -26,31 +26,48 @@ namespace types {
 
 class DynamicPubSubType : public eprosima::fastrtps::TopicDataType
 {
-public:
-
-    RTPS_DllAPI DynamicPubSubType();
-    RTPS_DllAPI DynamicPubSubType(DynamicType_ptr pDynamicType);
-    RTPS_DllAPI virtual ~DynamicPubSubType();
-
-    RTPS_DllAPI void* createData();
-    RTPS_DllAPI void deleteData(void * data);
-    RTPS_DllAPI bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-    RTPS_DllAPI bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5=false);
-    RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(void* data);
-    RTPS_DllAPI bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-
-    RTPS_DllAPI void CleanDynamicType();
-    RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
-    RTPS_DllAPI ResponseCode SetDynamicType(DynamicData_ptr pData);
-    RTPS_DllAPI ResponseCode SetDynamicType(DynamicType_ptr pType);
-
 protected:
 
     void UpdateDynamicTypeInfo();
 
-    DynamicType_ptr mDynamicType;
+    DynamicType_ptr dynamic_type_;
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
+public:
+
+    RTPS_DllAPI DynamicPubSubType();
+
+    RTPS_DllAPI DynamicPubSubType(DynamicType_ptr pDynamicType);
+
+    RTPS_DllAPI virtual ~DynamicPubSubType();
+
+    RTPS_DllAPI void* createData() override;
+
+    RTPS_DllAPI void deleteData(void * data) override;
+
+    RTPS_DllAPI bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    RTPS_DllAPI bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+
+    RTPS_DllAPI bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+
+    RTPS_DllAPI void CleanDynamicType();
+
+    RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
+
+    RTPS_DllAPI ResponseCode SetDynamicType(DynamicData_ptr pData);
+
+    RTPS_DllAPI ResponseCode SetDynamicType(DynamicType_ptr pType);
 };
 
 } // namespace types

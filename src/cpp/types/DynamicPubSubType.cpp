@@ -25,13 +25,13 @@ namespace fastrtps {
 namespace types {
 
 DynamicPubSubType::DynamicPubSubType()
-    : mDynamicType(nullptr)
+    : dynamic_type_(nullptr)
     , m_keyBuffer(nullptr)
 {
 }
 
 DynamicPubSubType::DynamicPubSubType(DynamicType_ptr pType)
-    : mDynamicType(pType)
+    : dynamic_type_(pType)
     , m_keyBuffer(nullptr)
 {
     UpdateDynamicTypeInfo();
@@ -47,19 +47,19 @@ DynamicPubSubType::~DynamicPubSubType()
 
 void DynamicPubSubType::CleanDynamicType()
 {
-    mDynamicType = nullptr;
+    dynamic_type_ = nullptr;
 }
 
 DynamicType_ptr DynamicPubSubType::GetDynamicType() const
 {
-    return mDynamicType;
+    return dynamic_type_;
 }
 
 ResponseCode DynamicPubSubType::SetDynamicType(DynamicData_ptr pData)
 {
-    if (mDynamicType == nullptr)
+    if (dynamic_type_ == nullptr)
     {
-        mDynamicType = pData->mType;
+        dynamic_type_ = pData->type_;
         UpdateDynamicTypeInfo();
         return ResponseCode::RETCODE_OK;
     }
@@ -72,9 +72,9 @@ ResponseCode DynamicPubSubType::SetDynamicType(DynamicData_ptr pData)
 
 ResponseCode DynamicPubSubType::SetDynamicType(DynamicType_ptr pType)
 {
-    if (mDynamicType == nullptr)
+    if (dynamic_type_ == nullptr)
     {
-        mDynamicType = pType;
+        dynamic_type_ = pType;
         UpdateDynamicTypeInfo();
         return ResponseCode::RETCODE_OK;
     }
@@ -87,15 +87,17 @@ ResponseCode DynamicPubSubType::SetDynamicType(DynamicType_ptr pType)
 
 void* DynamicPubSubType::createData()
 {
-    return DynamicDataFactory::GetInstance()->CreateData(mDynamicType);
+    return DynamicDataFactory::get_instance()->create_data(dynamic_type_);
 }
 
 void DynamicPubSubType::deleteData(void* data)
 {
-    DynamicDataFactory::GetInstance()->DeleteData((DynamicData*)data);
+    DynamicDataFactory::get_instance()->delete_data((DynamicData*)data);
 }
 
-bool DynamicPubSubType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data)
+bool DynamicPubSubType::deserialize(
+        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+        void* data)
 {
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -115,14 +117,17 @@ bool DynamicPubSubType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_
     return true;
 }
 
-bool DynamicPubSubType::getKey(void* data, eprosima::fastrtps::rtps::InstanceHandle_t* handle, bool force_md5)
+bool DynamicPubSubType::getKey(
+        void* data,
+        eprosima::fastrtps::rtps::InstanceHandle_t* handle,
+        bool force_md5)
 {
-    if (mDynamicType == nullptr || !m_isGetKeyDefined)
+    if (dynamic_type_ == nullptr || !m_isGetKeyDefined)
     {
         return false;
     }
     DynamicData* pDynamicData = (DynamicData*)data;
-    size_t keyBufferSize = static_cast<uint32_t>(DynamicData::getKeyMaxCdrSerializedSize(mDynamicType));
+    size_t keyBufferSize = static_cast<uint32_t>(DynamicData::getKeyMaxCdrSerializedSize(dynamic_type_));
 
     if (m_keyBuffer == nullptr)
     {
@@ -161,7 +166,9 @@ std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(void* dat
     };
 }
 
-bool DynamicPubSubType::serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload)
+bool DynamicPubSubType::serialize(
+        void* data,
+        eprosima::fastrtps::rtps::SerializedPayload_t* payload)
 {
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
@@ -188,19 +195,19 @@ bool DynamicPubSubType::serialize(void *data, eprosima::fastrtps::rtps::Serializ
 
 void DynamicPubSubType::UpdateDynamicTypeInfo()
 {
-    if (mDynamicType != nullptr)
+    if (dynamic_type_ != nullptr)
     {
-        m_isGetKeyDefined = mDynamicType->GetKeyAnnotation();
+        m_isGetKeyDefined = dynamic_type_->key_annotation();
 
         std::map<MemberId, DynamicTypeMember*> membersMap;
-        mDynamicType->GetAllMembers(membersMap);
+        dynamic_type_->get_all_members(membersMap);
         for (auto it = membersMap.begin(); it != membersMap.end(); ++it)
         {
-            m_isGetKeyDefined |= it->second->GetKeyAnnotation();
+            m_isGetKeyDefined |= it->second->key_annotation();
         }
 
-        m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(mDynamicType) + 4);
-        setName(mDynamicType->GetName().c_str());
+        m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
+        setName(dynamic_type_->get_name().c_str());
     }
 }
 

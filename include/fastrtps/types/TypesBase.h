@@ -37,7 +37,8 @@ using namespace rtps;
 
 namespace types {
 
-const std::string ANNOTATION_KEY_ID = "@Key";
+const std::string ANNOTATION_KEY_ID = "@key";
+const std::string ANNOTATION_EPKEY_ID = "@Key";
 const std::string ANNOTATION_TOPIC_ID = "@Topic";
 
 const std::string TKNAME_BOOLEAN = "bool";
@@ -391,5 +392,3 @@ const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
 } // namespace eprosima
 
 #endif // TYPES_BASE_H
-
-

@@ -27,47 +27,63 @@ class DynamicType;
 
 class DynamicTypeMember
 {
-public:
-
-    DynamicTypeMember();
-    DynamicTypeMember(const DynamicTypeMember* other);
-    DynamicTypeMember(const MemberDescriptor* descriptor, MemberId id);
-
-    ~DynamicTypeMember();
-
-    ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
-    ResponseCode ApplyAnnotation(const std::string& key, const std::string& value);
-    bool Equals(const DynamicTypeMember*) const;
-
-    ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
-    uint32_t GetAnnotationCount();
-    bool GetKeyAnnotation() const;
-
-    std::vector<uint64_t> GetUnionLabels() const;
-    ResponseCode GetDescriptor(MemberDescriptor* descriptor) const;
-    MemberId GetId() const;
-    std::string GetName() const;
-    bool IsDefaultUnionValue() const;
-
-    const MemberDescriptor* GetDescriptor() const
-    {
-        return &mDescriptor;
-    }
-
 protected:
+    DynamicType* parent_;
+    MemberDescriptor descriptor_;
+    std::vector<AnnotationDescriptor*> annotation_;
+    MemberId id_;
 
-    uint32_t GetIndex() const;
-    void SetIndex(uint32_t index);
-    void SetParent(DynamicType* pType);
+    uint32_t get_index() const;
+
+    void set_index(uint32_t index);
+
+    void set_parent(DynamicType* pType);
 
     friend class DynamicTypeBuilder;
     friend class DynamicType;
     friend class DynamicData;
 
-    DynamicType* mParent;
-    MemberDescriptor mDescriptor;
-    std::vector<AnnotationDescriptor*> mAnnotation;
-    MemberId mId;
+public:
+    DynamicTypeMember();
+
+    DynamicTypeMember(const DynamicTypeMember* other);
+
+    DynamicTypeMember(
+            const MemberDescriptor* descriptor,
+            MemberId id);
+
+    ~DynamicTypeMember();
+
+    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+
+    ResponseCode apply_annotation(
+            const std::string& key,
+            const std::string& value);
+
+    bool equals(const DynamicTypeMember*) const;
+
+    ResponseCode get_annotation(
+            AnnotationDescriptor& descriptor,
+            uint32_t idx);
+
+    uint32_t get_annotation_count();
+
+    bool key_annotation() const;
+
+    std::vector<uint64_t> get_union_labels() const;
+
+    ResponseCode get_descriptor(MemberDescriptor* descriptor) const;
+
+    MemberId get_id() const;
+
+    std::string get_name() const;
+
+    bool is_default_union_value() const;
+
+    const MemberDescriptor* get_descriptor() const
+    {
+        return &descriptor_;
+    }
 };
 
 } // namespace types

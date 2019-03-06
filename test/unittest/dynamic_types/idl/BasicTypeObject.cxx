@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file BasicTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -39,100 +39,100 @@ using namespace eprosima::fastrtps::rtps;
 
 void registerBasicTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
-    factory->AddTypeObject("MyEnum", GetMyEnumIdentifier(true), GetMyEnumObject(true));
-    factory->AddTypeObject("MyEnum", GetMyEnumIdentifier(false), GetMyEnumObject(false));
-    factory->AddTypeObject("MyAliasEnum", GetMyAliasEnumIdentifier(true), GetMyAliasEnumObject(true));
-    factory->AddTypeObject("MyAliasEnum", GetMyAliasEnumIdentifier(false), GetMyAliasEnumObject(false));
-    factory->AddTypeObject("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(true), GetMyAliasAliasEnumObject(true));
-    factory->AddTypeObject("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(false), GetMyAliasAliasEnumObject(false));
-    factory->AddTypeObject("EnumStruct", GetEnumStructIdentifier(true), GetEnumStructObject(true));
-    factory->AddTypeObject("EnumStruct", GetEnumStructIdentifier(false), GetEnumStructObject(false));
-    factory->AddTypeObject("AliasStruct", GetAliasStructIdentifier(true), GetAliasStructObject(true));
-    factory->AddTypeObject("AliasStruct", GetAliasStructIdentifier(false), GetAliasStructObject(false));
-    factory->AddTypeObject("AliasAliasStruct", GetAliasAliasStructIdentifier(true), GetAliasAliasStructObject(true));
-    factory->AddTypeObject("AliasAliasStruct", GetAliasAliasStructIdentifier(false), GetAliasAliasStructObject(false));
-    factory->AddTypeObject("BoolStruct", GetBoolStructIdentifier(true), GetBoolStructObject(true));
-    factory->AddTypeObject("BoolStruct", GetBoolStructIdentifier(false), GetBoolStructObject(false));
-    factory->AddTypeObject("OctetStruct", GetOctetStructIdentifier(true), GetOctetStructObject(true));
-    factory->AddTypeObject("OctetStruct", GetOctetStructIdentifier(false), GetOctetStructObject(false));
-    factory->AddTypeObject("ShortStruct", GetShortStructIdentifier(true), GetShortStructObject(true));
-    factory->AddTypeObject("ShortStruct", GetShortStructIdentifier(false), GetShortStructObject(false));
-    factory->AddTypeObject("LongStruct", GetLongStructIdentifier(true), GetLongStructObject(true));
-    factory->AddTypeObject("LongStruct", GetLongStructIdentifier(false), GetLongStructObject(false));
-    factory->AddTypeObject("LongLongStruct", GetLongLongStructIdentifier(true), GetLongLongStructObject(true));
-    factory->AddTypeObject("LongLongStruct", GetLongLongStructIdentifier(false), GetLongLongStructObject(false));
-    factory->AddTypeObject("UShortStruct", GetUShortStructIdentifier(true), GetUShortStructObject(true));
-    factory->AddTypeObject("UShortStruct", GetUShortStructIdentifier(false), GetUShortStructObject(false));
-    factory->AddTypeObject("ULongStruct", GetULongStructIdentifier(true), GetULongStructObject(true));
-    factory->AddTypeObject("ULongStruct", GetULongStructIdentifier(false), GetULongStructObject(false));
-    factory->AddTypeObject("ULongLongStruct", GetULongLongStructIdentifier(true), GetULongLongStructObject(true));
-    factory->AddTypeObject("ULongLongStruct", GetULongLongStructIdentifier(false), GetULongLongStructObject(false));
-    factory->AddTypeObject("FloatStruct", GetFloatStructIdentifier(true), GetFloatStructObject(true));
-    factory->AddTypeObject("FloatStruct", GetFloatStructIdentifier(false), GetFloatStructObject(false));
-    factory->AddTypeObject("DoubleStruct", GetDoubleStructIdentifier(true), GetDoubleStructObject(true));
-    factory->AddTypeObject("DoubleStruct", GetDoubleStructIdentifier(false), GetDoubleStructObject(false));
-    factory->AddTypeObject("LongDoubleStruct", GetLongDoubleStructIdentifier(true), GetLongDoubleStructObject(true));
-    factory->AddTypeObject("LongDoubleStruct", GetLongDoubleStructIdentifier(false), GetLongDoubleStructObject(false));
-    factory->AddTypeObject("CharStruct", GetCharStructIdentifier(true), GetCharStructObject(true));
-    factory->AddTypeObject("CharStruct", GetCharStructIdentifier(false), GetCharStructObject(false));
-    factory->AddTypeObject("WCharStruct", GetWCharStructIdentifier(true), GetWCharStructObject(true));
-    factory->AddTypeObject("WCharStruct", GetWCharStructIdentifier(false), GetWCharStructObject(false));
-    factory->AddTypeObject("StringStruct", GetStringStructIdentifier(true), GetStringStructObject(true));
-    factory->AddTypeObject("StringStruct", GetStringStructIdentifier(false), GetStringStructObject(false));
-    factory->AddTypeObject("WStringStruct", GetWStringStructIdentifier(true), GetWStringStructObject(true));
-    factory->AddTypeObject("WStringStruct", GetWStringStructIdentifier(false), GetWStringStructObject(false));
-    factory->AddTypeObject("LargeStringStruct", GetLargeStringStructIdentifier(true), GetLargeStringStructObject(true));
-    factory->AddTypeObject("LargeStringStruct", GetLargeStringStructIdentifier(false), GetLargeStringStructObject(false));
-    factory->AddTypeObject("LargeWStringStruct", GetLargeWStringStructIdentifier(true), GetLargeWStringStructObject(true));
-    factory->AddTypeObject("LargeWStringStruct", GetLargeWStringStructIdentifier(false), GetLargeWStringStructObject(false));
-    factory->AddTypeObject("ArraytStruct", GetArraytStructIdentifier(true), GetArraytStructObject(true));
-    factory->AddTypeObject("ArraytStruct", GetArraytStructIdentifier(false), GetArraytStructObject(false));
-    factory->AddTypeObject("MyArray", GetMyArrayIdentifier(true), GetMyArrayObject(true));
-    factory->AddTypeObject("MyArray", GetMyArrayIdentifier(false), GetMyArrayObject(false));
-    factory->AddTypeObject("ArrayArrayStruct", GetArrayArrayStructIdentifier(true), GetArrayArrayStructObject(true));
-    factory->AddTypeObject("ArrayArrayStruct", GetArrayArrayStructIdentifier(false), GetArrayArrayStructObject(false));
-    factory->AddTypeObject("SequenceStruct", GetSequenceStructIdentifier(true), GetSequenceStructObject(true));
-    factory->AddTypeObject("SequenceStruct", GetSequenceStructIdentifier(false), GetSequenceStructObject(false));
-    factory->AddTypeObject("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true), GetSequenceSequenceStructObject(true));
-    factory->AddTypeObject("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false), GetSequenceSequenceStructObject(false));
-    factory->AddTypeObject("MapStruct", GetMapStructIdentifier(true), GetMapStructObject(true));
-    factory->AddTypeObject("MapStruct", GetMapStructIdentifier(false), GetMapStructObject(false));
-    factory->AddTypeObject("MapMapStruct", GetMapMapStructIdentifier(true), GetMapMapStructObject(true));
-    factory->AddTypeObject("MapMapStruct", GetMapMapStructIdentifier(false), GetMapMapStructObject(false));
-    factory->AddTypeObject("StructStruct", GetStructStructIdentifier(true), GetStructStructObject(true));
-    factory->AddTypeObject("StructStruct", GetStructStructIdentifier(false), GetStructStructObject(false));
-    factory->AddTypeObject("StructStructStruct", GetStructStructStructIdentifier(true), GetStructStructStructObject(true));
-    factory->AddTypeObject("StructStructStruct", GetStructStructStructIdentifier(false), GetStructStructStructObject(false));
-    factory->AddTypeObject("SimpleUnion", GetSimpleUnionIdentifier(true), GetSimpleUnionObject(true));
-    factory->AddTypeObject("SimpleUnion", GetSimpleUnionIdentifier(false), GetSimpleUnionObject(false));
-    factory->AddTypeObject("UnionUnion", GetUnionUnionIdentifier(true), GetUnionUnionObject(true));
-    factory->AddTypeObject("UnionUnion", GetUnionUnionIdentifier(false), GetUnionUnionObject(false));
-    factory->AddTypeObject("WCharUnion", GetWCharUnionIdentifier(true), GetWCharUnionObject(true));
-    factory->AddTypeObject("WCharUnion", GetWCharUnionIdentifier(false), GetWCharUnionObject(false));
-    factory->AddTypeObject("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true), GetSimpleUnionStructObject(true));
-    factory->AddTypeObject("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false), GetSimpleUnionStructObject(false));
-    factory->AddTypeObject("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(true), GetUnionUnionUnionStructObject(true));
-    factory->AddTypeObject("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(false), GetUnionUnionUnionStructObject(false));
-    factory->AddTypeObject("WCharUnionStruct", GetWCharUnionStructIdentifier(true), GetWCharUnionStructObject(true));
-    factory->AddTypeObject("WCharUnionStruct", GetWCharUnionStructIdentifier(false), GetWCharUnionStructObject(false));
+    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true), GetMyEnumObject(true));
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false), GetMyEnumObject(false));
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true), GetMyAliasEnumObject(true));
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false), GetMyAliasEnumObject(false));
+    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(true), GetMyAliasAliasEnumObject(true));
+    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(false), GetMyAliasAliasEnumObject(false));
+    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(true), GetEnumStructObject(true));
+    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(false), GetEnumStructObject(false));
+    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(true), GetAliasStructObject(true));
+    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(false), GetAliasStructObject(false));
+    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(true), GetAliasAliasStructObject(true));
+    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(false), GetAliasAliasStructObject(false));
+    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(true), GetBoolStructObject(true));
+    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(false), GetBoolStructObject(false));
+    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(true), GetOctetStructObject(true));
+    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(false), GetOctetStructObject(false));
+    factory->add_type_object("ShortStruct", GetShortStructIdentifier(true), GetShortStructObject(true));
+    factory->add_type_object("ShortStruct", GetShortStructIdentifier(false), GetShortStructObject(false));
+    factory->add_type_object("LongStruct", GetLongStructIdentifier(true), GetLongStructObject(true));
+    factory->add_type_object("LongStruct", GetLongStructIdentifier(false), GetLongStructObject(false));
+    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(true), GetLongLongStructObject(true));
+    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(false), GetLongLongStructObject(false));
+    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(true), GetUShortStructObject(true));
+    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(false), GetUShortStructObject(false));
+    factory->add_type_object("ULongStruct", GetULongStructIdentifier(true), GetULongStructObject(true));
+    factory->add_type_object("ULongStruct", GetULongStructIdentifier(false), GetULongStructObject(false));
+    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(true), GetULongLongStructObject(true));
+    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(false), GetULongLongStructObject(false));
+    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(true), GetFloatStructObject(true));
+    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(false), GetFloatStructObject(false));
+    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(true), GetDoubleStructObject(true));
+    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(false), GetDoubleStructObject(false));
+    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(true), GetLongDoubleStructObject(true));
+    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(false), GetLongDoubleStructObject(false));
+    factory->add_type_object("CharStruct", GetCharStructIdentifier(true), GetCharStructObject(true));
+    factory->add_type_object("CharStruct", GetCharStructIdentifier(false), GetCharStructObject(false));
+    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(true), GetWCharStructObject(true));
+    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(false), GetWCharStructObject(false));
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(true), GetStringStructObject(true));
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(false), GetStringStructObject(false));
+    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true), GetWStringStructObject(true));
+    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false), GetWStringStructObject(false));
+    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true), GetLargeStringStructObject(true));
+    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(false), GetLargeStringStructObject(false));
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true), GetLargeWStringStructObject(true));
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false), GetLargeWStringStructObject(false));
+    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(true), GetArraytStructObject(true));
+    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(false), GetArraytStructObject(false));
+    factory->add_type_object("MyArray", GetMyArrayIdentifier(true), GetMyArrayObject(true));
+    factory->add_type_object("MyArray", GetMyArrayIdentifier(false), GetMyArrayObject(false));
+    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(true), GetArrayArrayStructObject(true));
+    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(false), GetArrayArrayStructObject(false));
+    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true), GetSequenceStructObject(true));
+    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false), GetSequenceStructObject(false));
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true), GetSequenceSequenceStructObject(true));
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false), GetSequenceSequenceStructObject(false));
+    factory->add_type_object("MapStruct", GetMapStructIdentifier(true), GetMapStructObject(true));
+    factory->add_type_object("MapStruct", GetMapStructIdentifier(false), GetMapStructObject(false));
+    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(true), GetMapMapStructObject(true));
+    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(false), GetMapMapStructObject(false));
+    factory->add_type_object("StructStruct", GetStructStructIdentifier(true), GetStructStructObject(true));
+    factory->add_type_object("StructStruct", GetStructStructIdentifier(false), GetStructStructObject(false));
+    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(true), GetStructStructStructObject(true));
+    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(false), GetStructStructStructObject(false));
+    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(true), GetSimpleUnionObject(true));
+    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(false), GetSimpleUnionObject(false));
+    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(true), GetUnionUnionObject(true));
+    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(false), GetUnionUnionObject(false));
+    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(true), GetWCharUnionObject(true));
+    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(false), GetWCharUnionObject(false));
+    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true), GetSimpleUnionStructObject(true));
+    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false), GetSimpleUnionStructObject(false));
+    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(true), GetUnionUnionUnionStructObject(true));
+    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(false), GetUnionUnionUnionStructObject(false));
+    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(true), GetWCharUnionStructObject(true));
+    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(false), GetWCharUnionStructObject(false));
 }
 
 const TypeIdentifier* GetMyEnumIdentifier(bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyEnum", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMyEnumObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyEnum", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", complete);
 }
 
 const TypeObject* GetMyEnumObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnum", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnum", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -147,7 +147,7 @@ const TypeObject* GetMyEnumObject(bool complete)
 
 const TypeObject* GetMinimalMyEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnum", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnum", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -240,14 +240,14 @@ const TypeObject* GetMinimalMyEnumObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnum", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyEnum", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MyEnum", false);
 }
 
 const TypeObject* GetCompleteMyEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnum", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnum", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -337,26 +337,26 @@ const TypeObject* GetCompleteMyEnumObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnum", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyEnum", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MyEnum", true);
 }
 
 const TypeIdentifier* GetMyAliasEnumIdentifier(bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyAliasEnum", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMyAliasEnumObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyAliasEnum", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", complete);
 }
 
 const TypeObject* GetMyAliasEnumObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasEnum", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -373,7 +373,7 @@ const TypeObject* GetMyAliasEnumObject(bool complete)
 
 const TypeObject* GetMinimalMyAliasEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasEnum", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -399,7 +399,7 @@ const TypeObject* GetMinimalMyAliasEnumObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyEnum", false);
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false);
 
 
     if (relatedType != nullptr)
@@ -436,16 +436,16 @@ const TypeObject* GetMinimalMyAliasEnumObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum", "MyEnum");
+    TypeObjectFactory::get_instance()->add_alias("MyAliasEnum", "MyEnum");
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyAliasEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MyAliasEnum", false);
 }
 
 const TypeObject* GetCompleteMyAliasEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasEnum", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -478,7 +478,7 @@ const TypeObject* GetCompleteMyAliasEnumObject()
     //type_object->complete().alias_type().body().common().ann_custom()
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete("MyEnum");
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("MyEnum");
 
 
     if (relatedType != nullptr)
@@ -515,28 +515,28 @@ const TypeObject* GetCompleteMyAliasEnumObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MyAliasEnum", "MyEnum");
+    TypeObjectFactory::get_instance()->add_alias("MyAliasEnum", "MyEnum");
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasEnum", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyAliasEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasEnum", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MyAliasEnum", true);
 }
 
 const TypeIdentifier* GetMyAliasAliasEnumIdentifier(bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyAliasAliasEnum", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyAliasAliasEnum", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMyAliasAliasEnumObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyAliasAliasEnum", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MyAliasAliasEnum", complete);
 }
 
 const TypeObject* GetMyAliasAliasEnumObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasAliasEnum", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasAliasEnum", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -553,7 +553,7 @@ const TypeObject* GetMyAliasAliasEnumObject(bool complete)
 
 const TypeObject* GetMinimalMyAliasAliasEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasAliasEnum", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasAliasEnum", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -579,7 +579,7 @@ const TypeObject* GetMinimalMyAliasAliasEnumObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyAliasEnum", false);
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false);
 
 
     if (relatedType != nullptr)
@@ -616,16 +616,16 @@ const TypeObject* GetMinimalMyAliasAliasEnumObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MyAliasAliasEnum", "MyAliasEnum");
+    TypeObjectFactory::get_instance()->add_alias("MyAliasAliasEnum", "MyAliasEnum");
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasAliasEnum", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyAliasAliasEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasAliasEnum", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MyAliasAliasEnum", false);
 }
 
 const TypeObject* GetCompleteMyAliasAliasEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasAliasEnum", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasAliasEnum", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -658,7 +658,7 @@ const TypeObject* GetCompleteMyAliasAliasEnumObject()
     //type_object->complete().alias_type().body().common().ann_custom()
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete("MyAliasEnum");
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("MyAliasEnum");
 
 
     if (relatedType != nullptr)
@@ -695,28 +695,28 @@ const TypeObject* GetCompleteMyAliasAliasEnumObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MyAliasAliasEnum", "MyAliasEnum");
+    TypeObjectFactory::get_instance()->add_alias("MyAliasAliasEnum", "MyAliasEnum");
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyAliasAliasEnum", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyAliasAliasEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyAliasAliasEnum", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MyAliasAliasEnum", true);
 }
 
 const TypeIdentifier* GetEnumStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("EnumStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("EnumStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetEnumStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("EnumStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("EnumStruct", complete);
 }
 
 const TypeObject* GetEnumStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("EnumStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EnumStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -731,7 +731,7 @@ const TypeObject* GetEnumStructObject(bool complete)
 
 const TypeObject* GetMinimalEnumStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("EnumStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EnumStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -793,14 +793,14 @@ const TypeObject* GetMinimalEnumStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("EnumStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("EnumStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("EnumStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("EnumStruct", false);
 }
 
 const TypeObject* GetCompleteEnumStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("EnumStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EnumStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -863,26 +863,26 @@ const TypeObject* GetCompleteEnumStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("EnumStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("EnumStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("EnumStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("EnumStruct", true);
 }
 
 const TypeIdentifier* GetAliasStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("AliasStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("AliasStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetAliasStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("AliasStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("AliasStruct", complete);
 }
 
 const TypeObject* GetAliasStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("AliasStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -897,7 +897,7 @@ const TypeObject* GetAliasStructObject(bool complete)
 
 const TypeObject* GetMinimalAliasStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("AliasStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -959,14 +959,14 @@ const TypeObject* GetMinimalAliasStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("AliasStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("AliasStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("AliasStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("AliasStruct", false);
 }
 
 const TypeObject* GetCompleteAliasStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("AliasStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1029,26 +1029,26 @@ const TypeObject* GetCompleteAliasStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("AliasStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("AliasStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("AliasStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("AliasStruct", true);
 }
 
 const TypeIdentifier* GetAliasAliasStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("AliasAliasStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("AliasAliasStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetAliasAliasStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("AliasAliasStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("AliasAliasStruct", complete);
 }
 
 const TypeObject* GetAliasAliasStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("AliasAliasStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasAliasStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1063,7 +1063,7 @@ const TypeObject* GetAliasAliasStructObject(bool complete)
 
 const TypeObject* GetMinimalAliasAliasStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("AliasAliasStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasAliasStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1125,14 +1125,14 @@ const TypeObject* GetMinimalAliasAliasStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("AliasAliasStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("AliasAliasStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("AliasAliasStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("AliasAliasStruct", false);
 }
 
 const TypeObject* GetCompleteAliasAliasStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("AliasAliasStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasAliasStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1195,26 +1195,26 @@ const TypeObject* GetCompleteAliasAliasStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("AliasAliasStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("AliasAliasStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("AliasAliasStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("AliasAliasStruct", true);
 }
 
 const TypeIdentifier* GetBoolStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("BoolStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BoolStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetBoolStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("BoolStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("BoolStruct", complete);
 }
 
 const TypeObject* GetBoolStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("BoolStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoolStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1229,7 +1229,7 @@ const TypeObject* GetBoolStructObject(bool complete)
 
 const TypeObject* GetMinimalBoolStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("BoolStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoolStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1261,7 +1261,7 @@ const TypeObject* GetMinimalBoolStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_bool.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_bool_hash("my_bool");
@@ -1299,14 +1299,14 @@ const TypeObject* GetMinimalBoolStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("BoolStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("BoolStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("BoolStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("BoolStruct", false);
 }
 
 const TypeObject* GetCompleteBoolStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("BoolStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoolStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1338,7 +1338,7 @@ const TypeObject* GetCompleteBoolStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_bool.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_bool.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_bool.detail().name("my_bool");
@@ -1377,26 +1377,26 @@ const TypeObject* GetCompleteBoolStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("BoolStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("BoolStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("BoolStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("BoolStruct", true);
 }
 
 const TypeIdentifier* GetOctetStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("OctetStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("OctetStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetOctetStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("OctetStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("OctetStruct", complete);
 }
 
 const TypeObject* GetOctetStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("OctetStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1411,7 +1411,7 @@ const TypeObject* GetOctetStructObject(bool complete)
 
 const TypeObject* GetMinimalOctetStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("OctetStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1443,7 +1443,7 @@ const TypeObject* GetMinimalOctetStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_octet_hash("my_octet");
@@ -1481,14 +1481,14 @@ const TypeObject* GetMinimalOctetStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("OctetStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("OctetStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("OctetStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("OctetStruct", false);
 }
 
 const TypeObject* GetCompleteOctetStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("OctetStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1520,7 +1520,7 @@ const TypeObject* GetCompleteOctetStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_octet.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_octet.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_octet.detail().name("my_octet");
@@ -1559,26 +1559,26 @@ const TypeObject* GetCompleteOctetStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("OctetStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("OctetStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("OctetStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("OctetStruct", true);
 }
 
 const TypeIdentifier* GetShortStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("ShortStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ShortStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetShortStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("ShortStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("ShortStruct", complete);
 }
 
 const TypeObject* GetShortStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ShortStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1593,7 +1593,7 @@ const TypeObject* GetShortStructObject(bool complete)
 
 const TypeObject* GetMinimalShortStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ShortStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1625,7 +1625,7 @@ const TypeObject* GetMinimalShortStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_int16.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_int16_hash("my_int16");
@@ -1663,14 +1663,14 @@ const TypeObject* GetMinimalShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ShortStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ShortStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("ShortStruct", false);
 }
 
 const TypeObject* GetCompleteShortStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ShortStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1702,7 +1702,7 @@ const TypeObject* GetCompleteShortStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_int16.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_int16.detail().name("my_int16");
@@ -1741,26 +1741,26 @@ const TypeObject* GetCompleteShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ShortStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ShortStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("ShortStruct", true);
 }
 
 const TypeIdentifier* GetLongStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("LongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetLongStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("LongStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("LongStruct", complete);
 }
 
 const TypeObject* GetLongStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1775,7 +1775,7 @@ const TypeObject* GetLongStructObject(bool complete)
 
 const TypeObject* GetMinimalLongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1807,7 +1807,7 @@ const TypeObject* GetMinimalLongStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_int32.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_int32_hash("my_int32");
@@ -1845,14 +1845,14 @@ const TypeObject* GetMinimalLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("LongStruct", false);
 }
 
 const TypeObject* GetCompleteLongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1884,7 +1884,7 @@ const TypeObject* GetCompleteLongStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_int32.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_int32.detail().name("my_int32");
@@ -1923,26 +1923,26 @@ const TypeObject* GetCompleteLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("LongStruct", true);
 }
 
 const TypeIdentifier* GetLongLongStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("LongLongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongLongStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetLongLongStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("LongLongStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("LongLongStruct", complete);
 }
 
 const TypeObject* GetLongLongStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongLongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1957,7 +1957,7 @@ const TypeObject* GetLongLongStructObject(bool complete)
 
 const TypeObject* GetMinimalLongLongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongLongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1989,7 +1989,7 @@ const TypeObject* GetMinimalLongLongStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_int64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_int64_hash("my_int64");
@@ -2027,14 +2027,14 @@ const TypeObject* GetMinimalLongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LongLongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LongLongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", false);
 }
 
 const TypeObject* GetCompleteLongLongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongLongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2066,7 +2066,7 @@ const TypeObject* GetCompleteLongLongStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_int64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_int64.detail().name("my_int64");
@@ -2105,26 +2105,26 @@ const TypeObject* GetCompleteLongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LongLongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LongLongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", true);
 }
 
 const TypeIdentifier* GetUShortStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("UShortStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UShortStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetUShortStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("UShortStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("UShortStruct", complete);
 }
 
 const TypeObject* GetUShortStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UShortStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UShortStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2139,7 +2139,7 @@ const TypeObject* GetUShortStructObject(bool complete)
 
 const TypeObject* GetMinimalUShortStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UShortStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UShortStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2171,7 +2171,7 @@ const TypeObject* GetMinimalUShortStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_uint16.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_uint16_hash("my_uint16");
@@ -2209,14 +2209,14 @@ const TypeObject* GetMinimalUShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("UShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("UShortStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("UShortStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("UShortStruct", false);
 }
 
 const TypeObject* GetCompleteUShortStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UShortStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UShortStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2248,7 +2248,7 @@ const TypeObject* GetCompleteUShortStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_uint16.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_uint16.detail().name("my_uint16");
@@ -2287,26 +2287,26 @@ const TypeObject* GetCompleteUShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("UShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("UShortStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("UShortStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("UShortStruct", true);
 }
 
 const TypeIdentifier* GetULongStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("ULongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ULongStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetULongStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("ULongStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("ULongStruct", complete);
 }
 
 const TypeObject* GetULongStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ULongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2321,7 +2321,7 @@ const TypeObject* GetULongStructObject(bool complete)
 
 const TypeObject* GetMinimalULongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ULongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2353,7 +2353,7 @@ const TypeObject* GetMinimalULongStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_uint32.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_uint32_hash("my_uint32");
@@ -2391,14 +2391,14 @@ const TypeObject* GetMinimalULongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ULongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ULongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ULongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("ULongStruct", false);
 }
 
 const TypeObject* GetCompleteULongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ULongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2430,7 +2430,7 @@ const TypeObject* GetCompleteULongStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_uint32.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_uint32.detail().name("my_uint32");
@@ -2469,26 +2469,26 @@ const TypeObject* GetCompleteULongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ULongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ULongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ULongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("ULongStruct", true);
 }
 
 const TypeIdentifier* GetULongLongStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("ULongLongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ULongLongStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetULongLongStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("ULongLongStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("ULongLongStruct", complete);
 }
 
 const TypeObject* GetULongLongStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ULongLongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongLongStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2503,7 +2503,7 @@ const TypeObject* GetULongLongStructObject(bool complete)
 
 const TypeObject* GetMinimalULongLongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ULongLongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongLongStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2535,7 +2535,7 @@ const TypeObject* GetMinimalULongLongStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_uint64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_uint64_hash("my_uint64");
@@ -2573,14 +2573,14 @@ const TypeObject* GetMinimalULongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ULongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ULongLongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ULongLongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("ULongLongStruct", false);
 }
 
 const TypeObject* GetCompleteULongLongStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ULongLongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongLongStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2612,7 +2612,7 @@ const TypeObject* GetCompleteULongLongStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_uint64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_uint64.detail().name("my_uint64");
@@ -2651,26 +2651,26 @@ const TypeObject* GetCompleteULongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ULongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ULongLongStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ULongLongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("ULongLongStruct", true);
 }
 
 const TypeIdentifier* GetFloatStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("FloatStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("FloatStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetFloatStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("FloatStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("FloatStruct", complete);
 }
 
 const TypeObject* GetFloatStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("FloatStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("FloatStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2685,7 +2685,7 @@ const TypeObject* GetFloatStructObject(bool complete)
 
 const TypeObject* GetMinimalFloatStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("FloatStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("FloatStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2717,7 +2717,7 @@ const TypeObject* GetMinimalFloatStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_float32.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_float32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_float32_hash("my_float32");
@@ -2755,14 +2755,14 @@ const TypeObject* GetMinimalFloatStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("FloatStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("FloatStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("FloatStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("FloatStruct", false);
 }
 
 const TypeObject* GetCompleteFloatStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("FloatStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("FloatStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2794,7 +2794,7 @@ const TypeObject* GetCompleteFloatStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_float32.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_float32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_float32.detail().name("my_float32");
@@ -2833,26 +2833,26 @@ const TypeObject* GetCompleteFloatStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("FloatStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("FloatStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("FloatStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("FloatStruct", true);
 }
 
 const TypeIdentifier* GetDoubleStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("DoubleStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("DoubleStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetDoubleStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("DoubleStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("DoubleStruct", complete);
 }
 
 const TypeObject* GetDoubleStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("DoubleStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2867,7 +2867,7 @@ const TypeObject* GetDoubleStructObject(bool complete)
 
 const TypeObject* GetMinimalDoubleStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("DoubleStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2899,7 +2899,7 @@ const TypeObject* GetMinimalDoubleStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_float64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_float64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_float64_hash("my_float64");
@@ -2937,14 +2937,14 @@ const TypeObject* GetMinimalDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("DoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("DoubleStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("DoubleStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", false);
 }
 
 const TypeObject* GetCompleteDoubleStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("DoubleStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2976,7 +2976,7 @@ const TypeObject* GetCompleteDoubleStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_float64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_float64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_float64.detail().name("my_float64");
@@ -3015,26 +3015,26 @@ const TypeObject* GetCompleteDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("DoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("DoubleStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("DoubleStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", true);
 }
 
 const TypeIdentifier* GetLongDoubleStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("LongDoubleStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongDoubleStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetLongDoubleStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("LongDoubleStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("LongDoubleStruct", complete);
 }
 
 const TypeObject* GetLongDoubleStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongDoubleStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3049,7 +3049,7 @@ const TypeObject* GetLongDoubleStructObject(bool complete)
 
 const TypeObject* GetMinimalLongDoubleStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongDoubleStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3081,7 +3081,7 @@ const TypeObject* GetMinimalLongDoubleStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_float128.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_float128.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_float128_hash("my_float128");
@@ -3119,14 +3119,14 @@ const TypeObject* GetMinimalLongDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LongDoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LongDoubleStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LongDoubleStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", false);
 }
 
 const TypeObject* GetCompleteLongDoubleStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LongDoubleStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3158,7 +3158,7 @@ const TypeObject* GetCompleteLongDoubleStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_float128.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_float128.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_float128.detail().name("my_float128");
@@ -3197,26 +3197,26 @@ const TypeObject* GetCompleteLongDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LongDoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LongDoubleStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LongDoubleStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", true);
 }
 
 const TypeIdentifier* GetCharStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CharStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("CharStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetCharStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("CharStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("CharStruct", complete);
 }
 
 const TypeObject* GetCharStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("CharStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("CharStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3231,7 +3231,7 @@ const TypeObject* GetCharStructObject(bool complete)
 
 const TypeObject* GetMinimalCharStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("CharStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("CharStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3263,7 +3263,7 @@ const TypeObject* GetMinimalCharStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_char.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_char.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_char_hash("my_char");
@@ -3301,14 +3301,14 @@ const TypeObject* GetMinimalCharStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("CharStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("CharStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("CharStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("CharStruct", false);
 }
 
 const TypeObject* GetCompleteCharStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("CharStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("CharStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3340,7 +3340,7 @@ const TypeObject* GetCompleteCharStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_char.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_char.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_char.detail().name("my_char");
@@ -3379,26 +3379,26 @@ const TypeObject* GetCompleteCharStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("CharStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("CharStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("CharStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("CharStruct", true);
 }
 
 const TypeIdentifier* GetWCharStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("WCharStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WCharStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetWCharStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("WCharStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("WCharStruct", complete);
 }
 
 const TypeObject* GetWCharStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3413,7 +3413,7 @@ const TypeObject* GetWCharStructObject(bool complete)
 
 const TypeObject* GetMinimalWCharStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3445,7 +3445,7 @@ const TypeObject* GetMinimalWCharStructObject()
         {
             cppType = "longdouble";
         }
-        mst_my_wchar.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 my_wchar_hash("my_wchar");
@@ -3483,14 +3483,14 @@ const TypeObject* GetMinimalWCharStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WCharStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WCharStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WCharStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("WCharStruct", false);
 }
 
 const TypeObject* GetCompleteWCharStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3522,7 +3522,7 @@ const TypeObject* GetCompleteWCharStructObject()
         {
             cppType = "longdouble";
         }
-        cst_my_wchar.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_my_wchar.detail().name("my_wchar");
@@ -3561,26 +3561,26 @@ const TypeObject* GetCompleteWCharStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WCharStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WCharStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WCharStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("WCharStruct", true);
 }
 
 const TypeIdentifier* GetStringStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("StringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StringStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("StringStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("StringStruct", complete);
 }
 
 const TypeObject* GetStringStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StringStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3595,7 +3595,7 @@ const TypeObject* GetStringStructObject(bool complete)
 
 const TypeObject* GetMinimalStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StringStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3621,7 +3621,7 @@ const TypeObject* GetMinimalStringStructObject()
     mst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_string.common().member_flags().IS_KEY(false);
     mst_my_string.common().member_flags().IS_DEFAULT(false);
-    mst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
+    mst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     MD5 my_string_hash("my_string");
@@ -3659,14 +3659,14 @@ const TypeObject* GetMinimalStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("StringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("StringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StringStruct", false);
 }
 
 const TypeObject* GetCompleteStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StringStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3692,7 +3692,7 @@ const TypeObject* GetCompleteStringStructObject()
     cst_my_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_string.common().member_flags().IS_KEY(false);
     cst_my_string.common().member_flags().IS_DEFAULT(false);
-    cst_my_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, false));
+    cst_my_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
 
 
     cst_my_string.detail().name("my_string");
@@ -3731,26 +3731,26 @@ const TypeObject* GetCompleteStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("StringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("StringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StringStruct", true);
 }
 
 const TypeIdentifier* GetWStringStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("WStringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WStringStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetWStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("WStringStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("WStringStruct", complete);
 }
 
 const TypeObject* GetWStringStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WStringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WStringStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3765,7 +3765,7 @@ const TypeObject* GetWStringStructObject(bool complete)
 
 const TypeObject* GetMinimalWStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WStringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WStringStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3791,7 +3791,7 @@ const TypeObject* GetMinimalWStringStructObject()
     mst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_wstring.common().member_flags().IS_KEY(false);
     mst_my_wstring.common().member_flags().IS_DEFAULT(false);
-    mst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, true));
+    mst_my_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, true));
 
 
     MD5 my_wstring_hash("my_wstring");
@@ -3829,14 +3829,14 @@ const TypeObject* GetMinimalWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WStringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WStringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("WStringStruct", false);
 }
 
 const TypeObject* GetCompleteWStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WStringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WStringStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3862,7 +3862,7 @@ const TypeObject* GetCompleteWStringStructObject()
     cst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_wstring.common().member_flags().IS_KEY(false);
     cst_my_wstring.common().member_flags().IS_DEFAULT(false);
-    cst_my_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(255, true));
+    cst_my_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, true));
 
 
     cst_my_wstring.detail().name("my_wstring");
@@ -3901,26 +3901,26 @@ const TypeObject* GetCompleteWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WStringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WStringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("WStringStruct", true);
 }
 
 const TypeIdentifier* GetLargeStringStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("LargeStringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LargeStringStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetLargeStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("LargeStringStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("LargeStringStruct", complete);
 }
 
 const TypeObject* GetLargeStringStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LargeStringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeStringStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3935,7 +3935,7 @@ const TypeObject* GetLargeStringStructObject(bool complete)
 
 const TypeObject* GetMinimalLargeStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LargeStringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeStringStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3961,7 +3961,7 @@ const TypeObject* GetMinimalLargeStringStructObject()
     mst_my_large_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_large_string.common().member_flags().IS_KEY(false);
     mst_my_large_string.common().member_flags().IS_DEFAULT(false);
-    mst_my_large_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(41925, false));
+    mst_my_large_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, false));
 
 
     MD5 my_large_string_hash("my_large_string");
@@ -3999,14 +3999,14 @@ const TypeObject* GetMinimalLargeStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LargeStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LargeStringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LargeStringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("LargeStringStruct", false);
 }
 
 const TypeObject* GetCompleteLargeStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LargeStringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeStringStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4032,7 +4032,7 @@ const TypeObject* GetCompleteLargeStringStructObject()
     cst_my_large_string.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_large_string.common().member_flags().IS_KEY(false);
     cst_my_large_string.common().member_flags().IS_DEFAULT(false);
-    cst_my_large_string.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(41925, false));
+    cst_my_large_string.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, false));
 
 
     cst_my_large_string.detail().name("my_large_string");
@@ -4071,26 +4071,26 @@ const TypeObject* GetCompleteLargeStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LargeStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LargeStringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LargeStringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("LargeStringStruct", true);
 }
 
 const TypeIdentifier* GetLargeWStringStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("LargeWStringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LargeWStringStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetLargeWStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("LargeWStringStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("LargeWStringStruct", complete);
 }
 
 const TypeObject* GetLargeWStringStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LargeWStringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeWStringStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4105,7 +4105,7 @@ const TypeObject* GetLargeWStringStructObject(bool complete)
 
 const TypeObject* GetMinimalLargeWStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LargeWStringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeWStringStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4131,7 +4131,7 @@ const TypeObject* GetMinimalLargeWStringStructObject()
     mst_my_large_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_large_wstring.common().member_flags().IS_KEY(false);
     mst_my_large_wstring.common().member_flags().IS_DEFAULT(false);
-    mst_my_large_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(41925, true));
+    mst_my_large_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, true));
 
 
     MD5 my_large_wstring_hash("my_large_wstring");
@@ -4169,14 +4169,14 @@ const TypeObject* GetMinimalLargeWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LargeWStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LargeWStringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LargeWStringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("LargeWStringStruct", false);
 }
 
 const TypeObject* GetCompleteLargeWStringStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("LargeWStringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeWStringStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4202,7 +4202,7 @@ const TypeObject* GetCompleteLargeWStringStructObject()
     cst_my_large_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_large_wstring.common().member_flags().IS_KEY(false);
     cst_my_large_wstring.common().member_flags().IS_DEFAULT(false);
-    cst_my_large_wstring.common().member_type_id(*TypeObjectFactory::GetInstance()->GetStringIdentifier(41925, true));
+    cst_my_large_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(41925, true));
 
 
     cst_my_large_wstring.detail().name("my_large_wstring");
@@ -4241,26 +4241,26 @@ const TypeObject* GetCompleteLargeWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("LargeWStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("LargeWStringStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("LargeWStringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("LargeWStringStruct", true);
 }
 
 const TypeIdentifier* GetArraytStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("ArraytStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ArraytStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetArraytStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("ArraytStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("ArraytStruct", complete);
 }
 
 const TypeObject* GetArraytStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ArraytStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArraytStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4275,7 +4275,7 @@ const TypeObject* GetArraytStructObject(bool complete)
 
 const TypeObject* GetMinimalArraytStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ArraytStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArraytStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4301,7 +4301,7 @@ const TypeObject* GetMinimalArraytStructObject()
     mst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array.common().member_flags().IS_KEY(false);
     mst_my_array.common().member_flags().IS_DEFAULT(false);
-    mst_my_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2, 2, 2}, false));
+    mst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2, 2, 2}, false));
 
 
     MD5 my_array_hash("my_array");
@@ -4339,14 +4339,14 @@ const TypeObject* GetMinimalArraytStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ArraytStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ArraytStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ArraytStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("ArraytStruct", false);
 }
 
 const TypeObject* GetCompleteArraytStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ArraytStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArraytStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4372,7 +4372,7 @@ const TypeObject* GetCompleteArraytStructObject()
     cst_my_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array.common().member_flags().IS_KEY(false);
     cst_my_array.common().member_flags().IS_DEFAULT(false);
-    cst_my_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("int32_t", {2, 2, 2}, true));
+    cst_my_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {2, 2, 2}, true));
 
 
     cst_my_array.detail().name("my_array");
@@ -4411,26 +4411,26 @@ const TypeObject* GetCompleteArraytStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ArraytStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ArraytStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ArraytStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("ArraytStruct", true);
 }
 
 const TypeIdentifier* GetMyArrayIdentifier(bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyArray", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyArray", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMyArrayObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyArray", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MyArray", complete);
 }
 
 const TypeObject* GetMyArrayObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyArray", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyArray", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4447,7 +4447,7 @@ const TypeObject* GetMyArrayObject(bool complete)
 
 const TypeObject* GetMinimalMyArrayObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyArray", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyArray", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4473,7 +4473,7 @@ const TypeObject* GetMinimalMyArrayObject()
     type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifier(TypeNamesGenerator::getArrayTypeName("int32_t", {2, 2}), false);
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_array_type_name("int32_t", {2, 2}), false);
 
 
     if (relatedType != nullptr)
@@ -4510,16 +4510,16 @@ const TypeObject* GetMinimalMyArrayObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MyArray", TypeNamesGenerator::getArrayTypeName("int32_t", {2, 2}));
+    TypeObjectFactory::get_instance()->add_alias("MyArray", TypeNamesGenerator::get_array_type_name("int32_t", {2, 2}));
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyArray", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyArray", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyArray", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MyArray", false);
 }
 
 const TypeObject* GetCompleteMyArrayObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyArray", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyArray", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4552,7 +4552,7 @@ const TypeObject* GetCompleteMyArrayObject()
     //type_object->complete().alias_type().body().common().ann_custom()
 
     // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(TypeNamesGenerator::getArrayTypeName("int32_t", {2, 2}));
+    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_array_type_name("int32_t", {2, 2}));
 
 
     if (relatedType != nullptr)
@@ -4589,28 +4589,28 @@ const TypeObject* GetCompleteMyArrayObject()
     }
 
     // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::GetInstance()->AddAlias("MyArray", TypeNamesGenerator::getArrayTypeName("int32_t", {2, 2}));
+    TypeObjectFactory::get_instance()->add_alias("MyArray", TypeNamesGenerator::get_array_type_name("int32_t", {2, 2}));
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyArray", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyArray", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyArray", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MyArray", true);
 }
 
 const TypeIdentifier* GetArrayArrayStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("ArrayArrayStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ArrayArrayStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetArrayArrayStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("ArrayArrayStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("ArrayArrayStruct", complete);
 }
 
 const TypeObject* GetArrayArrayStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ArrayArrayStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArrayArrayStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4625,7 +4625,7 @@ const TypeObject* GetArrayArrayStructObject(bool complete)
 
 const TypeObject* GetMinimalArrayArrayStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ArrayArrayStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArrayArrayStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4651,7 +4651,7 @@ const TypeObject* GetMinimalArrayArrayStructObject()
     mst_my_array_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_array_array.common().member_flags().IS_KEY(false);
     mst_my_array_array.common().member_flags().IS_DEFAULT(false);
-    mst_my_array_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyArray", {2, 2}, false));
+    mst_my_array_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("MyArray", {2, 2}, false));
 
 
     MD5 my_array_array_hash("my_array_array");
@@ -4689,14 +4689,14 @@ const TypeObject* GetMinimalArrayArrayStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ArrayArrayStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ArrayArrayStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ArrayArrayStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("ArrayArrayStruct", false);
 }
 
 const TypeObject* GetCompleteArrayArrayStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("ArrayArrayStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArrayArrayStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4722,7 +4722,7 @@ const TypeObject* GetCompleteArrayArrayStructObject()
     cst_my_array_array.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_array_array.common().member_flags().IS_KEY(false);
     cst_my_array_array.common().member_flags().IS_DEFAULT(false);
-    cst_my_array_array.common().member_type_id(*TypeObjectFactory::GetInstance()->GetArrayIdentifier("MyArray", {2, 2}, true));
+    cst_my_array_array.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("MyArray", {2, 2}, true));
 
 
     cst_my_array_array.detail().name("my_array_array");
@@ -4761,26 +4761,26 @@ const TypeObject* GetCompleteArrayArrayStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("ArrayArrayStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ArrayArrayStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("ArrayArrayStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("ArrayArrayStruct", true);
 }
 
 const TypeIdentifier* GetSequenceStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("SequenceStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetSequenceStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("SequenceStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("SequenceStruct", complete);
 }
 
 const TypeObject* GetSequenceStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SequenceStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4795,7 +4795,7 @@ const TypeObject* GetSequenceStructObject(bool complete)
 
 const TypeObject* GetMinimalSequenceStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SequenceStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4821,7 +4821,7 @@ const TypeObject* GetMinimalSequenceStructObject()
     mst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence.common().member_flags().IS_KEY(false);
     mst_my_sequence.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequence.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 2, false));
+    mst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 2, false));
 
 
     MD5 my_sequence_hash("my_sequence");
@@ -4859,14 +4859,14 @@ const TypeObject* GetMinimalSequenceStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SequenceStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SequenceStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SequenceStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", false);
 }
 
 const TypeObject* GetCompleteSequenceStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SequenceStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4892,7 +4892,7 @@ const TypeObject* GetCompleteSequenceStructObject()
     cst_my_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence.common().member_flags().IS_KEY(false);
     cst_my_sequence.common().member_flags().IS_DEFAULT(false);
-    cst_my_sequence.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier("int32_t", 2, true));
+    cst_my_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 2, true));
 
 
     cst_my_sequence.detail().name("my_sequence");
@@ -4931,26 +4931,26 @@ const TypeObject* GetCompleteSequenceStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SequenceStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SequenceStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SequenceStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", true);
 }
 
 const TypeIdentifier* GetSequenceSequenceStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("SequenceSequenceStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceSequenceStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetSequenceSequenceStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("SequenceSequenceStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("SequenceSequenceStruct", complete);
 }
 
 const TypeObject* GetSequenceSequenceStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SequenceSequenceStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceSequenceStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4965,7 +4965,7 @@ const TypeObject* GetSequenceSequenceStructObject(bool complete)
 
 const TypeObject* GetMinimalSequenceSequenceStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SequenceSequenceStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceSequenceStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4991,7 +4991,7 @@ const TypeObject* GetMinimalSequenceSequenceStructObject()
     mst_my_sequence_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_sequence_sequence.common().member_flags().IS_KEY(false);
     mst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false);
-    mst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier(TypeNamesGenerator::getSequenceTypeName("int32_t", 2), 3, false));
+    mst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 2), 3, false));
 
 
     MD5 my_sequence_sequence_hash("my_sequence_sequence");
@@ -5029,14 +5029,14 @@ const TypeObject* GetMinimalSequenceSequenceStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SequenceSequenceStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SequenceSequenceStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SequenceSequenceStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("SequenceSequenceStruct", false);
 }
 
 const TypeObject* GetCompleteSequenceSequenceStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SequenceSequenceStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceSequenceStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5062,7 +5062,7 @@ const TypeObject* GetCompleteSequenceSequenceStructObject()
     cst_my_sequence_sequence.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_sequence_sequence.common().member_flags().IS_KEY(false);
     cst_my_sequence_sequence.common().member_flags().IS_DEFAULT(false);
-    cst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::GetInstance()->GetSequenceIdentifier(TypeNamesGenerator::getSequenceTypeName("int32_t", 2), 3, true));
+    cst_my_sequence_sequence.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_sequence_type_name("int32_t", 2), 3, true));
 
 
     cst_my_sequence_sequence.detail().name("my_sequence_sequence");
@@ -5101,26 +5101,26 @@ const TypeObject* GetCompleteSequenceSequenceStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SequenceSequenceStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SequenceSequenceStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SequenceSequenceStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("SequenceSequenceStruct", true);
 }
 
 const TypeIdentifier* GetMapStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MapStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MapStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMapStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MapStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MapStruct", complete);
 }
 
 const TypeObject* GetMapStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MapStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5135,7 +5135,7 @@ const TypeObject* GetMapStructObject(bool complete)
 
 const TypeObject* GetMinimalMapStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MapStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5161,7 +5161,7 @@ const TypeObject* GetMinimalMapStructObject()
     mst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map.common().member_flags().IS_KEY(false);
     mst_my_map.common().member_flags().IS_DEFAULT(false);
-    mst_my_map.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "int32_t", 2, false));
+    mst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 2, false));
 
 
     MD5 my_map_hash("my_map");
@@ -5199,14 +5199,14 @@ const TypeObject* GetMinimalMapStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MapStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MapStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MapStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MapStruct", false);
 }
 
 const TypeObject* GetCompleteMapStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MapStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5232,7 +5232,7 @@ const TypeObject* GetCompleteMapStructObject()
     cst_my_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map.common().member_flags().IS_KEY(false);
     cst_my_map.common().member_flags().IS_DEFAULT(false);
-    cst_my_map.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", "int32_t", 2, true));
+    cst_my_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", "int32_t", 2, true));
 
 
     cst_my_map.detail().name("my_map");
@@ -5271,26 +5271,26 @@ const TypeObject* GetCompleteMapStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MapStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MapStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MapStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MapStruct", true);
 }
 
 const TypeIdentifier* GetMapMapStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MapMapStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MapMapStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMapMapStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MapMapStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MapMapStruct", complete);
 }
 
 const TypeObject* GetMapMapStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MapMapStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapMapStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5305,7 +5305,7 @@ const TypeObject* GetMapMapStructObject(bool complete)
 
 const TypeObject* GetMinimalMapMapStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MapMapStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapMapStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5331,7 +5331,7 @@ const TypeObject* GetMinimalMapMapStructObject()
     mst_my_map_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_map_map.common().member_flags().IS_KEY(false);
     mst_my_map_map.common().member_flags().IS_DEFAULT(false);
-    mst_my_map_map.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getMapTypeName("int32_t", "int32_t", 2), 2, false));
+    mst_my_map_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 2), 2, false));
 
 
     MD5 my_map_map_hash("my_map_map");
@@ -5369,14 +5369,14 @@ const TypeObject* GetMinimalMapMapStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MapMapStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MapMapStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MapMapStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MapMapStruct", false);
 }
 
 const TypeObject* GetCompleteMapMapStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MapMapStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapMapStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5402,7 +5402,7 @@ const TypeObject* GetCompleteMapMapStructObject()
     cst_my_map_map.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_map_map.common().member_flags().IS_KEY(false);
     cst_my_map_map.common().member_flags().IS_DEFAULT(false);
-    cst_my_map_map.common().member_type_id(*TypeObjectFactory::GetInstance()->GetMapIdentifier("int32_t", TypeNamesGenerator::getMapTypeName("int32_t", "int32_t", 2), 2, true));
+    cst_my_map_map.common().member_type_id(*TypeObjectFactory::get_instance()->get_map_identifier("int32_t", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 2), 2, true));
 
 
     cst_my_map_map.detail().name("my_map_map");
@@ -5441,26 +5441,26 @@ const TypeObject* GetCompleteMapMapStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MapMapStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MapMapStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MapMapStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MapMapStruct", true);
 }
 
 const TypeIdentifier* GetStructStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("StructStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetStructStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("StructStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructStruct", complete);
 }
 
 const TypeObject* GetStructStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StructStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5475,7 +5475,7 @@ const TypeObject* GetStructStructObject(bool complete)
 
 const TypeObject* GetMinimalStructStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StructStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5507,7 +5507,7 @@ const TypeObject* GetMinimalStructStructObject()
         {
             cppType = "longdouble";
         }
-        mst_a.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_a.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 a_hash("a");
@@ -5532,7 +5532,7 @@ const TypeObject* GetMinimalStructStructObject()
         {
             cppType = "longdouble";
         }
-        mst_b.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_b.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 b_hash("b");
@@ -5570,14 +5570,14 @@ const TypeObject* GetMinimalStructStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("StructStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("StructStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructStruct", false);
 }
 
 const TypeObject* GetCompleteStructStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StructStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5609,7 +5609,7 @@ const TypeObject* GetCompleteStructStructObject()
         {
             cppType = "longdouble";
         }
-        cst_a.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_a.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_a.detail().name("a");
@@ -5632,7 +5632,7 @@ const TypeObject* GetCompleteStructStructObject()
         {
             cppType = "longdouble";
         }
-        cst_b.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_b.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_b.detail().name("b");
@@ -5671,26 +5671,26 @@ const TypeObject* GetCompleteStructStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("StructStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("StructStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructStruct", true);
 }
 
 const TypeIdentifier* GetStructStructStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("StructStructStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructStructStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetStructStructStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("StructStructStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructStructStruct", complete);
 }
 
 const TypeObject* GetStructStructStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StructStructStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStructStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5705,7 +5705,7 @@ const TypeObject* GetStructStructStructObject(bool complete)
 
 const TypeObject* GetMinimalStructStructStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StructStructStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStructStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5754,7 +5754,7 @@ const TypeObject* GetMinimalStructStructStructObject()
         {
             cppType = "longdouble";
         }
-        mst_child_int64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_child_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     MD5 child_int64_hash("child_int64");
@@ -5792,14 +5792,14 @@ const TypeObject* GetMinimalStructStructStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("StructStructStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructStructStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("StructStructStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructStructStruct", false);
 }
 
 const TypeObject* GetCompleteStructStructStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("StructStructStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStructStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5846,7 +5846,7 @@ const TypeObject* GetCompleteStructStructStructObject()
         {
             cppType = "longdouble";
         }
-        cst_child_int64.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_child_int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_child_int64.detail().name("child_int64");
@@ -5885,26 +5885,26 @@ const TypeObject* GetCompleteStructStructStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("StructStructStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructStructStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("StructStructStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructStructStruct", true);
 }
 
 const TypeIdentifier* GetSimpleUnionIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleUnion", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SimpleUnion", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetSimpleUnionObject(complete);
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleUnion", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("SimpleUnion", complete);
 }
 
 const TypeObject* GetSimpleUnionObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnion", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnion", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5919,7 +5919,7 @@ const TypeObject* GetSimpleUnionObject(bool complete)
 
 const TypeObject* GetMinimalSimpleUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnion", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnion", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5943,7 +5943,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("int32_t", false));
+    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
@@ -5961,7 +5961,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_first.common().label_seq().emplace_back(A);
@@ -5987,7 +5987,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_second.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_second.common().label_seq().emplace_back(B);
@@ -6024,15 +6024,15 @@ const TypeObject* GetMinimalSimpleUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnion", false);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleUnion", false);
 }
 
 const TypeObject* GetCompleteSimpleUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnion", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnion", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -6058,7 +6058,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("int32_t", false));
+    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
@@ -6076,7 +6076,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_first.common().label_seq().emplace_back(A);
@@ -6102,7 +6102,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_second.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_second.common().label_seq().emplace_back(B);
@@ -6142,27 +6142,27 @@ const TypeObject* GetCompleteSimpleUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnion", true);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleUnion", true);
 }
 
 const TypeIdentifier* GetUnionUnionIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("UnionUnion", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnionUnion", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetUnionUnionObject(complete);
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("UnionUnion", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("UnionUnion", complete);
 }
 
 const TypeObject* GetUnionUnionObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnion", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnion", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6177,7 +6177,7 @@ const TypeObject* GetUnionUnionObject(bool complete)
 
 const TypeObject* GetMinimalUnionUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnion", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnion", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6201,7 +6201,7 @@ const TypeObject* GetMinimalUnionUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("int32_t", false));
+    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
@@ -6219,7 +6219,7 @@ const TypeObject* GetMinimalUnionUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_first.common().label_seq().emplace_back(A);
@@ -6274,15 +6274,15 @@ const TypeObject* GetMinimalUnionUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("UnionUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("UnionUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnion", false);
+    return TypeObjectFactory::get_instance()->get_type_object("UnionUnion", false);
 }
 
 const TypeObject* GetCompleteUnionUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnion", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnion", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -6308,7 +6308,7 @@ const TypeObject* GetCompleteUnionUnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("int32_t", false));
+    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
@@ -6326,7 +6326,7 @@ const TypeObject* GetCompleteUnionUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_first.common().label_seq().emplace_back(A);
@@ -6384,27 +6384,27 @@ const TypeObject* GetCompleteUnionUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("UnionUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("UnionUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnion", true);
+    return TypeObjectFactory::get_instance()->get_type_object("UnionUnion", true);
 }
 
 const TypeIdentifier* GetWCharUnionIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("WCharUnion", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WCharUnion", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetWCharUnionObject(complete);
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("WCharUnion", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("WCharUnion", complete);
 }
 
 const TypeObject* GetWCharUnionObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnion", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnion", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6419,7 +6419,7 @@ const TypeObject* GetWCharUnionObject(bool complete)
 
 const TypeObject* GetMinimalWCharUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnion", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnion", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6443,7 +6443,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("wchar_t", false));
+    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
@@ -6461,7 +6461,7 @@ const TypeObject* GetMinimalWCharUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_first.common().label_seq().emplace_back(A);
@@ -6487,7 +6487,7 @@ const TypeObject* GetMinimalWCharUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_second.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_second.common().label_seq().emplace_back(B);
@@ -6524,15 +6524,15 @@ const TypeObject* GetMinimalWCharUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WCharUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WCharUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnion", false);
+    return TypeObjectFactory::get_instance()->get_type_object("WCharUnion", false);
 }
 
 const TypeObject* GetCompleteWCharUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnion", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnion", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -6558,7 +6558,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("wchar_t", false));
+    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
@@ -6576,7 +6576,7 @@ const TypeObject* GetCompleteWCharUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_first.common().label_seq().emplace_back(A);
@@ -6602,7 +6602,7 @@ const TypeObject* GetCompleteWCharUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_second.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_second.common().label_seq().emplace_back(B);
@@ -6642,27 +6642,27 @@ const TypeObject* GetCompleteWCharUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WCharUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WCharUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnion", true);
+    return TypeObjectFactory::get_instance()->get_type_object("WCharUnion", true);
 }
 
 const TypeIdentifier* GetSimpleUnionStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleUnionStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SimpleUnionStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetSimpleUnionStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleUnionStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("SimpleUnionStruct", complete);
 }
 
 const TypeObject* GetSimpleUnionStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnionStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6677,7 +6677,7 @@ const TypeObject* GetSimpleUnionStructObject(bool complete)
 
 const TypeObject* GetMinimalSimpleUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnionStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6739,14 +6739,14 @@ const TypeObject* GetMinimalSimpleUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleUnionStruct", false);
 }
 
 const TypeObject* GetCompleteSimpleUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnionStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -6809,26 +6809,26 @@ const TypeObject* GetCompleteSimpleUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleUnionStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleUnionStruct", true);
 }
 
 const TypeIdentifier* GetUnionUnionUnionStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("UnionUnionUnionStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnionUnionUnionStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetUnionUnionUnionStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("UnionUnionUnionStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("UnionUnionUnionStruct", complete);
 }
 
 const TypeObject* GetUnionUnionUnionStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnionUnionStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6843,7 +6843,7 @@ const TypeObject* GetUnionUnionUnionStructObject(bool complete)
 
 const TypeObject* GetMinimalUnionUnionUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnionUnionStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -6905,14 +6905,14 @@ const TypeObject* GetMinimalUnionUnionUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("UnionUnionUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("UnionUnionUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("UnionUnionUnionStruct", false);
 }
 
 const TypeObject* GetCompleteUnionUnionUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnionUnionStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -6975,26 +6975,26 @@ const TypeObject* GetCompleteUnionUnionUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("UnionUnionUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("UnionUnionUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("UnionUnionUnionStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("UnionUnionUnionStruct", true);
 }
 
 const TypeIdentifier* GetWCharUnionStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("WCharUnionStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WCharUnionStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetWCharUnionStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("WCharUnionStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("WCharUnionStruct", complete);
 }
 
 const TypeObject* GetWCharUnionStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnionStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -7009,7 +7009,7 @@ const TypeObject* GetWCharUnionStructObject(bool complete)
 
 const TypeObject* GetMinimalWCharUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnionStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -7071,14 +7071,14 @@ const TypeObject* GetMinimalWCharUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WCharUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WCharUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("WCharUnionStruct", false);
 }
 
 const TypeObject* GetCompleteWCharUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnionStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -7141,7 +7141,7 @@ const TypeObject* GetCompleteWCharUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("WCharUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("WCharUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("WCharUnionStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("WCharUnionStruct", true);
 }

@@ -27,26 +27,34 @@ class DynamicType;
 
 class AnnotationDescriptor
 {
+protected:
+    DynamicType_ptr type_;
+	std::map<std::string, std::string> value_;
+
 public:
     AnnotationDescriptor();
     ~AnnotationDescriptor();
     AnnotationDescriptor(const AnnotationDescriptor* descriptor);
-    AnnotationDescriptor(DynamicType_ptr pType);
+    AnnotationDescriptor(DynamicType_ptr p_type);
 
-    ResponseCode CopyFrom(const AnnotationDescriptor* other);
-    bool Equals(const AnnotationDescriptor*) const;
-    bool IsConsistent() const;
-    bool GetKeyAnnotation() const;
+    ResponseCode copy_from(const AnnotationDescriptor* other);
+    bool equals(const AnnotationDescriptor*) const;
+    bool is_consistent() const;
+    bool key_annotation() const;
 
-    ResponseCode GetValue(std::string& value, const std::string& key);
-    ResponseCode GetAllValues(std::map<std::string, std::string>& value);
-    ResponseCode SetValue(const std::string& key, const std::string& value);
-    void SetType(DynamicType_ptr pType);
+    ResponseCode get_value(
+            std::string& value,
+            const std::string& key);
 
-protected:
+    ResponseCode get_all_value(
+            std::map<std::string,
+            std::string>& value);
 
-    DynamicType_ptr mType;
-	std::map<std::string, std::string> mValue;
+    ResponseCode set_value(
+        const std::string& key,
+        const std::string& value);
+
+    void set_type(DynamicType_ptr pType);
 };
 
 } // namespace types

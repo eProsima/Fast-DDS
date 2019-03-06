@@ -22,85 +22,98 @@ namespace fastrtps {
 namespace types {
 
 MemberDescriptor::MemberDescriptor()
-: mName("")
-, mId(MEMBER_ID_INVALID)
-, mType(nullptr)
-, mDefaultValue("")
-, mIndex(INDEX_INVALID)
-, mDefaultLabel(false)
+: name_("")
+, id_(MEMBER_ID_INVALID)
+, type_(nullptr)
+, default_value_("")
+, index_(INDEX_INVALID)
+, default_label_(false)
 {
 }
 
-MemberDescriptor::MemberDescriptor(uint32_t index, const std::string& name)
-    : mName(name)
-    , mId(MEMBER_ID_INVALID)
-    , mType(nullptr)
-    , mDefaultValue("")
-    , mIndex(index)
-    , mDefaultLabel(false)
+MemberDescriptor::MemberDescriptor(
+        uint32_t index,
+        const std::string& name)
+    : name_(name)
+    , id_(MEMBER_ID_INVALID)
+    , type_(nullptr)
+    , default_value_("")
+    , index_(index)
+    , default_label_(false)
 {
 }
 
 MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
-: mName("")
-, mId(MEMBER_ID_INVALID)
-, mType(nullptr)
-, mDefaultValue("")
-, mIndex(INDEX_INVALID)
-, mDefaultLabel(false)
+: name_("")
+, id_(MEMBER_ID_INVALID)
+, type_(nullptr)
+, default_value_("")
+, index_(INDEX_INVALID)
+, default_label_(false)
 {
-    CopyFrom(descriptor);
+    copy_from(descriptor);
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType)
-    : mName(name)
-    , mId(id)
-    , mType(mType)
-    , mDefaultValue("")
-    , mIndex(INDEX_INVALID)
-    , mDefaultLabel(false)
+MemberDescriptor::MemberDescriptor(
+        MemberId id,
+        const std::string& name,
+        DynamicType_ptr type_)
+    : name_(name)
+    , id_(id)
+    , type_(type_)
+    , default_value_("")
+    , index_(INDEX_INVALID)
+    , default_label_(false)
 {
 
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
-    const std::string& defaultValue)
-    : mName(name)
-    , mId(id)
-    , mType(mType)
-    , mDefaultValue(defaultValue)
-    , mIndex(INDEX_INVALID)
-    , mDefaultLabel(false)
+MemberDescriptor::MemberDescriptor(
+        MemberId id,
+        const std::string& name,
+        DynamicType_ptr type_,
+        const std::string& defaultValue)
+    : name_(name)
+    , id_(id)
+    , type_(type_)
+    , default_value_(defaultValue)
+    , index_(INDEX_INVALID)
+    , default_label_(false)
 {
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
-    const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
-    : mName(name)
-    , mId(id)
-    , mType(mType)
-    , mDefaultValue(defaultValue)
-    , mIndex(INDEX_INVALID)
-    , mDefaultLabel(isDefaultLabel)
+MemberDescriptor::MemberDescriptor(
+        MemberId id,
+        const std::string& name,
+        DynamicType_ptr type_,
+        const std::string& defaultValue,
+        const std::vector<uint64_t>& unionLabels,
+        bool isDefaultLabel)
+    : name_(name)
+    , id_(id)
+    , type_(type_)
+    , default_value_(defaultValue)
+    , index_(INDEX_INVALID)
+    , default_label_(isDefaultLabel)
 {
-    mLabels = unionLabels;
+    labels_ = unionLabels;
 }
 
 MemberDescriptor::~MemberDescriptor()
 {
-    mType = nullptr;
+    type_ = nullptr;
 }
 
-void MemberDescriptor::AddUnionCaseIndex(uint64_t value)
+void MemberDescriptor::add_union_case_index(uint64_t value)
 {
-    mLabels.push_back(value);
+    labels_.push_back(value);
 }
 
-bool MemberDescriptor::CheckUnionLabels(const std::vector<uint64_t>& labels) const
+bool MemberDescriptor::check_union_labels(const std::vector<uint64_t>& labels) const
 {
     for (auto it = labels.begin(); it != labels.end(); ++it)
     {
-        if (std::find(mLabels.begin(), mLabels.end(), *it) != mLabels.end())
+        if (std::find(labels_.begin(), labels_.end(), *it) != labels_.end())
         {
             return false;
         }
@@ -108,19 +121,19 @@ bool MemberDescriptor::CheckUnionLabels(const std::vector<uint64_t>& labels) con
     return true;
 }
 
-ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
+ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
 {
     if (other != nullptr)
     {
         try
         {
-            mType = other->mType;
-            mName = other->mName;
-            mId = other->mId;
-            mDefaultValue = other->mDefaultValue;
-            mIndex = other->mIndex;
-            mDefaultLabel = other->mDefaultLabel;
-            mLabels = other->mLabels;
+            type_ = other->type_;
+            name_ = other->name_;
+            id_ = other->id_;
+            default_value_ = other->default_value_;
+            index_ = other->index_;
+            default_label_ = other->default_label_;
+            labels_ = other->labels_;
             return ResponseCode::RETCODE_OK;
         }
         catch (std::exception& /*e*/)
@@ -135,14 +148,14 @@ ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
     }
 }
 
-bool MemberDescriptor::Equals(const MemberDescriptor* other) const
+bool MemberDescriptor::equals(const MemberDescriptor* other) const
 {
-    if (other != nullptr && mName == other->mName && mId == other->mId &&
-        ((mType == nullptr && other->mType == nullptr) || mType->Equals(other->mType.get())) &&
-        mDefaultValue == other->mDefaultValue && mIndex == other->mIndex && mDefaultLabel == other->mDefaultLabel &&
-        mLabels.size() == other->mLabels.size())
+    if (other != nullptr && name_ == other->name_ && id_ == other->id_ &&
+        ((type_ == nullptr && other->type_ == nullptr) || type_->equals(other->type_.get())) &&
+        default_value_ == other->default_value_ && index_ == other->index_ && default_label_ == other->default_label_ &&
+        labels_.size() == other->labels_.size())
     {
-        for (auto it = mLabels.begin(), it2 = other->mLabels.begin(); it != mLabels.end(); ++it, ++it2)
+        for (auto it = labels_.begin(), it2 = other->labels_.begin(); it != labels_.end(); ++it, ++it2)
         {
             if (*it != *it2)
                 return false;
@@ -152,67 +165,67 @@ bool MemberDescriptor::Equals(const MemberDescriptor* other) const
     return false;
 }
 
-MemberId MemberDescriptor::GetId() const
+MemberId MemberDescriptor::get_id() const
 {
-    return mId;
+    return id_;
 }
 
-uint32_t MemberDescriptor::GetIndex() const
+uint32_t MemberDescriptor::get_index() const
 {
-    return mIndex;
+    return index_;
 }
 
-TypeKind MemberDescriptor::GetKind() const
+TypeKind MemberDescriptor::get_kind() const
 {
-    if (mType != nullptr)
+    if (type_ != nullptr)
     {
-        return mType->GetKind();
+        return type_->get_kind();
     }
     return 0;
 }
 
-std::string MemberDescriptor::GetName() const
+std::string MemberDescriptor::get_name() const
 {
-    return mName;
+    return name_;
 }
 
-std::vector<uint64_t> MemberDescriptor::GetUnionLabels() const
+std::vector<uint64_t> MemberDescriptor::get_union_labels() const
 {
-    return mLabels;
+    return labels_;
 }
 
-bool MemberDescriptor::IsConsistent(TypeKind parentKind) const
+bool MemberDescriptor::is_consistent(TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
-    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && mType == nullptr)
+    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && type_ == nullptr)
     {
         return false;
     }
 
     // Only aggregated types must use the ID value.
-    if (mId != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
+    if (id_ != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
         parentKind != TK_ANNOTATION)
     {
         return false;
     }
 
-    if (!IsDefaultValueConsistent(mDefaultValue))
+    if (!is_default_value_consistent(default_value_))
     {
         return false;
     }
 
-    if (!IsTypeNameConsistent(mName))
+    if (!is_type_name_consistent(name_))
     {
         return false;
     }
 
     // Only Unions need the field "label"
-    if (mLabels.size() != 0 && parentKind != TK_UNION)
+    if (labels_.size() != 0 && parentKind != TK_UNION)
     {
         return false;
     }
     // If the field isn't the default value for the union, it must have a label value.
-    else if (parentKind == TK_UNION && mDefaultLabel == false && mLabels.size() == 0)
+    else if (parentKind == TK_UNION && default_label_ == false && labels_.size() == 0)
     {
         return false;
     }
@@ -220,18 +233,18 @@ bool MemberDescriptor::IsConsistent(TypeKind parentKind) const
     return true;
 }
 
-bool MemberDescriptor::IsDefaultUnionValue() const
+bool MemberDescriptor::is_default_union_value() const
 {
-    return mDefaultLabel;
+    return default_label_;
 }
 
-bool MemberDescriptor::IsDefaultValueConsistent(const std::string& sDefaultValue) const
+bool MemberDescriptor::is_default_value_consistent(const std::string& sDefaultValue) const
 {
     if (sDefaultValue.length() > 0)
     {
         try
         {
-            switch (GetKind())
+            switch (get_kind())
             {
             default:
                 return true;
@@ -343,7 +356,7 @@ bool MemberDescriptor::IsDefaultValueConsistent(const std::string& sDefaultValue
     return true;
 }
 
-bool MemberDescriptor::IsTypeNameConsistent(const std::string& sName) const
+bool MemberDescriptor::is_type_name_consistent(const std::string& sName) const
 {
     // The first letter must start with a letter ( uppercase or lowercase )
     if (sName.length() > 0 && std::isalpha(sName[0]))
@@ -361,29 +374,29 @@ bool MemberDescriptor::IsTypeNameConsistent(const std::string& sName) const
     return false;
 }
 
-void MemberDescriptor::SetId(MemberId id)
+void MemberDescriptor::set_id(MemberId id)
 {
-    mId = id;
+    id_ = id;
 }
 
-void MemberDescriptor::SetIndex(uint32_t index)
+void MemberDescriptor::set_index(uint32_t index)
 {
-    mIndex = index;
+    index_ = index;
 }
 
-void MemberDescriptor::SetName(const std::string& name)
+void MemberDescriptor::set_name(const std::string& name)
 {
-    mName = name;
+    name_ = name;
 }
 
-void MemberDescriptor::SetType(DynamicType_ptr type)
+void MemberDescriptor::set_type(DynamicType_ptr type)
 {
-    mType = type;
+    type_ = type;
 }
 
-void MemberDescriptor::SetDefaultUnionValue(bool bDefault)
+void MemberDescriptor::set_default_union_value(bool bDefault)
 {
-    mDefaultLabel = bDefault;
+    default_label_ = bDefault;
 }
 
 } // namespace types

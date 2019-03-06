@@ -42,31 +42,31 @@ class DynamicComplexTypesTests: public ::testing::Test
         DynamicComplexTypesTests()
         {
             CompleteStruct toRegisterStatic;
-            m_factory = DynamicTypeBuilderFactory::GetInstance();
+            m_factory = DynamicTypeBuilderFactory::get_instance();
             init();
         }
 
         ~DynamicComplexTypesTests()
         {
             m_DynAutoType = nullptr;
-            //DynamicDataFactory::GetInstance()->DeleteData(m_DynAuto);
+            //DynamicDataFactory::get_instance()->delete_data(m_DynAuto);
 
             m_DynManualType = nullptr;
-            //DynamicDataFactory::GetInstance()->DeleteData(m_DynManual);
+            //DynamicDataFactory::get_instance()->delete_data(m_DynManual);
 
-            if (!DynamicTypeBuilderFactory::GetInstance()->IsEmpty())
+            if (!DynamicTypeBuilderFactory::get_instance()->is_empty())
             {
                 logError(DYN_TEST, "DynamicTypeBuilderFactory is not empty.");
             }
 
-            if (!DynamicDataFactory::GetInstance()->IsEmpty())
+            if (!DynamicDataFactory::get_instance()->is_empty())
             {
                 logError(DYN_TEST, "DynamicDataFactory is not empty.");
             }
 
-            DynamicDataFactory::DeleteInstance();
-            DynamicTypeBuilderFactory::DeleteInstance();
-            TypeObjectFactory::DeleteInstance();
+            DynamicDataFactory::delete_instance();
+            DynamicTypeBuilderFactory::delete_instance();
+            TypeObjectFactory::delete_instance();
 
             Log::KillThread();
         }
@@ -133,14 +133,14 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
 {
     if (m_KeyedStructType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr keyedStruct_builder = m_factory->CreateStructBuilder();
-        DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-        octet_builder->ApplyAnnotation("@Key", "true");
-        keyedStruct_builder->AddMember(0, "key", octet_builder->Build());
-        keyedStruct_builder->AddMember(1, "basic", GetBasicStructType());
-        keyedStruct_builder->ApplyAnnotation("@Key", "true");
-        keyedStruct_builder->SetName("KeyedStruct");
-        m_KeyedStructType = keyedStruct_builder->Build();
+        DynamicTypeBuilder_ptr keyedStruct_builder = m_factory->create_struct_builder();
+        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+        octet_builder->apply_annotation("@Key", "true");
+        keyedStruct_builder->add_member(0, "key", octet_builder->build());
+        keyedStruct_builder->add_member(1, "basic", GetBasicStructType());
+        keyedStruct_builder->apply_annotation("@Key", "true");
+        keyedStruct_builder->set_name("KeyedStruct");
+        m_KeyedStructType = keyedStruct_builder->build();
     }
 
     return m_KeyedStructType;
@@ -150,12 +150,12 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
 {
     if (m_MyEnumType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myEnum_builder = m_factory->CreateEnumBuilder();
-        myEnum_builder->SetName("MyEnum");
-        myEnum_builder->AddEmptyMember(0, "A");
-        myEnum_builder->AddEmptyMember(1, "B");
-        myEnum_builder->AddEmptyMember(2, "C");
-        m_MyEnumType = myEnum_builder->Build();
+        DynamicTypeBuilder_ptr myEnum_builder = m_factory->create_enum_builder();
+        myEnum_builder->set_name("MyEnum");
+        myEnum_builder->add_empty_member(0, "A");
+        myEnum_builder->add_empty_member(1, "B");
+        myEnum_builder->add_empty_member(2, "C");
+        m_MyEnumType = myEnum_builder->build();
     }
 
     return m_MyEnumType;
@@ -165,8 +165,8 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnumType()
 {
     if (m_MyAliasEnumType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum_builder = m_factory->CreateAliasBuilder(GetMyEnumType(), "MyAliasEnum");
-        m_MyAliasEnumType = myAliasEnum_builder->Build();
+        DynamicTypeBuilder_ptr myAliasEnum_builder = m_factory->create_alias_builder(GetMyEnumType(), "MyAliasEnum");
+        m_MyAliasEnumType = myAliasEnum_builder->build();
     }
 
     return m_MyAliasEnumType;
@@ -176,8 +176,8 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum2Type()
 {
     if (m_MyAliasEnum2Type.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum2_builder = m_factory->CreateAliasBuilder(GetMyAliasEnumType(), "MyAliasEnum2");
-        m_MyAliasEnum2Type = myAliasEnum2_builder->Build();
+        DynamicTypeBuilder_ptr myAliasEnum2_builder = m_factory->create_alias_builder(GetMyAliasEnumType(), "MyAliasEnum2");
+        m_MyAliasEnum2Type = myAliasEnum2_builder->build();
     }
 
     return m_MyAliasEnum2Type;
@@ -187,8 +187,8 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum3Type()
 {
     if (m_MyAliasEnum3Type.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum3_builder = m_factory->CreateAliasBuilder(GetMyAliasEnum2Type(), "MyAliasEnum3");
-        m_MyAliasEnum3Type = myAliasEnum3_builder->Build();
+        DynamicTypeBuilder_ptr myAliasEnum3_builder = m_factory->create_alias_builder(GetMyAliasEnum2Type(), "MyAliasEnum3");
+        m_MyAliasEnum3Type = myAliasEnum3_builder->build();
     }
 
     return m_MyAliasEnum3Type;
@@ -198,10 +198,10 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
 {
     if (m_MyOctetArray500.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-        DynamicTypeBuilder_ptr myOctetArray500_builder = m_factory->CreateArrayBuilder(octet_builder.get(), { 500 });
-        myOctetArray500_builder->SetName("MyOctetArray500");
-        m_MyOctetArray500 = myOctetArray500_builder->Build();
+        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr myOctetArray500_builder = m_factory->create_array_builder(octet_builder.get(), { 500 });
+        myOctetArray500_builder->set_name("MyOctetArray500");
+        m_MyOctetArray500 = myOctetArray500_builder->build();
     }
 
     return m_MyOctetArray500;
@@ -211,9 +211,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
 {
     if (m_BSAlias5.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr bSAlias5_builder = m_factory->CreateArrayBuilder(GetBasicStructType(), { 5 });
-        bSAlias5_builder->SetName("BSAlias5");
-        m_BSAlias5 = bSAlias5_builder->Build();
+        DynamicTypeBuilder_ptr bSAlias5_builder = m_factory->create_array_builder(GetBasicStructType(), { 5 });
+        bSAlias5_builder->set_name("BSAlias5");
+        m_BSAlias5 = bSAlias5_builder->build();
     }
 
     return m_BSAlias5;
@@ -223,9 +223,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
 {
     if (m_MA3.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr mA3_builder = m_factory->CreateArrayBuilder(GetMyAliasEnum3Type(), { 42 });
-        mA3_builder->SetName("MA3");
-        m_MA3 = mA3_builder->Build();
+        DynamicTypeBuilder_ptr mA3_builder = m_factory->create_array_builder(GetMyAliasEnum3Type(), { 42 });
+        mA3_builder->set_name("MA3");
+        m_MA3 = mA3_builder->build();
     }
 
     return m_MA3;
@@ -235,10 +235,10 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
 {
     if (m_MyMiniArray.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr int32_builder = m_factory->CreateInt32Builder();
-        DynamicTypeBuilder_ptr myMiniArray_builder = m_factory->CreateArrayBuilder(int32_builder.get(), { 2 });
-        myMiniArray_builder->SetName("MyMiniArray");
-        m_MyMiniArray = myMiniArray_builder->Build();
+        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
+        DynamicTypeBuilder_ptr myMiniArray_builder = m_factory->create_array_builder(int32_builder.get(), { 2 });
+        myMiniArray_builder->set_name("MyMiniArray");
+        m_MyMiniArray = myMiniArray_builder->build();
     }
 
     return m_MyMiniArray;
@@ -248,10 +248,10 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
 {
     if (m_MySequenceLong.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr int32_builder = m_factory->CreateInt32Builder();
-        DynamicTypeBuilder_ptr seqLong_builder = m_factory->CreateSequenceBuilder(int32_builder.get());
-        DynamicTypeBuilder_ptr mySequenceLong_builder = m_factory->CreateAliasBuilder(seqLong_builder.get(), "MySequenceLong");
-        m_MySequenceLong = mySequenceLong_builder->Build();
+        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
+        DynamicTypeBuilder_ptr seqLong_builder = m_factory->create_sequence_builder(int32_builder.get());
+        DynamicTypeBuilder_ptr mySequenceLong_builder = m_factory->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+        m_MySequenceLong = mySequenceLong_builder->build();
     }
 
     return m_MySequenceLong;
@@ -262,43 +262,43 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
     if (m_BasicStructType.get() == nullptr)
     {
         // Members
-        DynamicTypeBuilder_ptr bool_builder = m_factory->CreateBoolBuilder();
-        DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-        DynamicTypeBuilder_ptr int16_builder = m_factory->CreateInt16Builder();
-        DynamicTypeBuilder_ptr int32_builder = m_factory->CreateInt32Builder();
-        DynamicTypeBuilder_ptr int64_builder = m_factory->CreateInt64Builder();
-        DynamicTypeBuilder_ptr uint16_builder = m_factory->CreateUint16Builder();
-        DynamicTypeBuilder_ptr uint32_builder = m_factory->CreateUint32Builder();
-        DynamicTypeBuilder_ptr uint64_builder = m_factory->CreateUint64Builder();
-        DynamicTypeBuilder_ptr float_builder = m_factory->CreateFloat32Builder();
-        DynamicTypeBuilder_ptr double_builder = m_factory->CreateFloat64Builder();
-        DynamicTypeBuilder_ptr ldouble_builder = m_factory->CreateFloat128Builder();
-        DynamicTypeBuilder_ptr char_builder = m_factory->CreateChar8Builder();
-        DynamicTypeBuilder_ptr wchar_builder = m_factory->CreateChar16Builder();
-        DynamicTypeBuilder_ptr string_builder = m_factory->CreateStringBuilder();
-        DynamicTypeBuilder_ptr wstring_builder = m_factory->CreateWstringBuilder();
-        DynamicTypeBuilder_ptr basicStruct_builder = m_factory->CreateStructBuilder();
+        DynamicTypeBuilder_ptr bool_builder = m_factory->create_bool_builder();
+        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr int16_builder = m_factory->create_int16_builder();
+        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
+        DynamicTypeBuilder_ptr int64_builder = m_factory->create_int64_builder();
+        DynamicTypeBuilder_ptr uint16_builder = m_factory->create_uint16_builder();
+        DynamicTypeBuilder_ptr uint32_builder = m_factory->create_uint32_builder();
+        DynamicTypeBuilder_ptr uint64_builder = m_factory->create_uint64_builder();
+        DynamicTypeBuilder_ptr float_builder = m_factory->create_float32_builder();
+        DynamicTypeBuilder_ptr double_builder = m_factory->create_float64_builder();
+        DynamicTypeBuilder_ptr ldouble_builder = m_factory->create_float128_builder();
+        DynamicTypeBuilder_ptr char_builder = m_factory->create_char8_builder();
+        DynamicTypeBuilder_ptr wchar_builder = m_factory->create_char16_builder();
+        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder();
+        DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder();
+        DynamicTypeBuilder_ptr basicStruct_builder = m_factory->create_struct_builder();
 
         // Add members to the struct.
         int idx = 0;
-        basicStruct_builder->AddMember(idx++, "my_bool", bool_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_octet", octet_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_int16", int16_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_int32", int32_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_int64", int64_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_uint16", uint16_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_uint32", uint32_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_uint64", uint64_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_float32", float_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_float64", double_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_float128", ldouble_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_char", char_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_wchar", wchar_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_string", string_builder.get());
-        basicStruct_builder->AddMember(idx++, "my_wstring", wstring_builder.get());
-        basicStruct_builder->SetName("BasicStruct");
+        basicStruct_builder->add_member(idx++, "my_bool", bool_builder.get());
+        basicStruct_builder->add_member(idx++, "my_octet", octet_builder.get());
+        basicStruct_builder->add_member(idx++, "my_int16", int16_builder.get());
+        basicStruct_builder->add_member(idx++, "my_int32", int32_builder.get());
+        basicStruct_builder->add_member(idx++, "my_int64", int64_builder.get());
+        basicStruct_builder->add_member(idx++, "my_uint16", uint16_builder.get());
+        basicStruct_builder->add_member(idx++, "my_uint32", uint32_builder.get());
+        basicStruct_builder->add_member(idx++, "my_uint64", uint64_builder.get());
+        basicStruct_builder->add_member(idx++, "my_float32", float_builder.get());
+        basicStruct_builder->add_member(idx++, "my_float64", double_builder.get());
+        basicStruct_builder->add_member(idx++, "my_float128", ldouble_builder.get());
+        basicStruct_builder->add_member(idx++, "my_char", char_builder.get());
+        basicStruct_builder->add_member(idx++, "my_wchar", wchar_builder.get());
+        basicStruct_builder->add_member(idx++, "my_string", string_builder.get());
+        basicStruct_builder->add_member(idx++, "my_wstring", wstring_builder.get());
+        basicStruct_builder->set_name("BasicStruct");
 
-        m_BasicStructType = basicStruct_builder->Build();
+        m_BasicStructType = basicStruct_builder->build();
     }
 
     return m_BasicStructType;
@@ -309,64 +309,64 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
     if (m_ComplexStructType.get() == nullptr)
     {
         // Members (auxiliar types are tab)
-        DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-        DynamicTypeBuilder_ptr my_sequence_octet_builder = m_factory->CreateSequenceBuilder(octet_builder.get(), 55);
-        DynamicTypeBuilder_ptr my_sequence_struct_builder = m_factory->CreateSequenceBuilder(GetBasicStructType());
-        DynamicTypeBuilder_ptr char_builder = m_factory->CreateChar8Builder();
-        DynamicTypeBuilder_ptr byte_builder = m_factory->CreateByteBuilder();
-        DynamicTypeBuilder_ptr my_array_octet_builder = m_factory->CreateArrayBuilder(byte_builder.get(), { 500, 5, 4 });
+        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr my_sequence_octet_builder = m_factory->create_sequence_builder(octet_builder.get(), 55);
+        DynamicTypeBuilder_ptr my_sequence_struct_builder = m_factory->create_sequence_builder(GetBasicStructType());
+        DynamicTypeBuilder_ptr char_builder = m_factory->create_char8_builder();
+        DynamicTypeBuilder_ptr byte_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr my_array_octet_builder = m_factory->create_array_builder(byte_builder.get(), { 500, 5, 4 });
         // MyOctetArray500 is already created
             // We reuse the bounds... { 5 }
-        DynamicTypeBuilder_ptr my_array_struct_builder = m_factory->CreateArrayBuilder(GetBasicStructType(), { 5 });
-        DynamicTypeBuilder_ptr int16_builder = m_factory->CreateInt16Builder();
-        DynamicTypeBuilder_ptr my_map_octet_short_builder = m_factory->CreateMapBuilder(octet_builder.get(), int16_builder.get());
-        DynamicTypeBuilder_ptr int32_builder = m_factory->CreateInt32Builder();
-        DynamicTypeBuilder_ptr my_map_long_struct_builder = m_factory->CreateMapBuilder(int32_builder.get()->Build(), GetBasicStructType());
-        DynamicTypeBuilder_ptr seqOctet_builder = m_factory->CreateSequenceBuilder(octet_builder.get());
-        DynamicTypeBuilder_ptr seqSeqOctet_builder = m_factory->CreateSequenceBuilder(seqOctet_builder.get());
-        DynamicTypeBuilder_ptr my_map_long_seq_octet_builder = m_factory->CreateMapBuilder(int32_builder.get(), seqSeqOctet_builder.get());
-        DynamicTypeBuilder_ptr my_map_long_octet_array_500_builder = m_factory->CreateMapBuilder(int32_builder.get()->Build(), GetMyOctetArray500Type());
-        DynamicTypeBuilder_ptr map_octet_bsalias5_builder = m_factory->CreateMapBuilder(octet_builder.get()->Build(), GetBSAlias5Type());
-        DynamicTypeBuilder_ptr my_map_long_lol_type_builder = m_factory->CreateMapBuilder(int32_builder.get(), map_octet_bsalias5_builder.get());
-        DynamicTypeBuilder_ptr my_small_string_8_builder = m_factory->CreateStringBuilder(128);
-        DynamicTypeBuilder_ptr my_small_string_16_builder = m_factory->CreateWstringBuilder(64);
-        DynamicTypeBuilder_ptr my_large_string_8_builder = m_factory->CreateStringBuilder(500);
-        DynamicTypeBuilder_ptr my_large_string_16_builder = m_factory->CreateWstringBuilder(1024);
-        DynamicTypeBuilder_ptr string75_8_builder = m_factory->CreateStringBuilder(75);
-        DynamicTypeBuilder_ptr my_array_string_builder = m_factory->CreateArrayBuilder(string75_8_builder.get(), { 5, 5 });
+        DynamicTypeBuilder_ptr my_array_struct_builder = m_factory->create_array_builder(GetBasicStructType(), { 5 });
+        DynamicTypeBuilder_ptr int16_builder = m_factory->create_int16_builder();
+        DynamicTypeBuilder_ptr my_map_octet_short_builder = m_factory->create_map_builder(octet_builder.get(), int16_builder.get());
+        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
+        DynamicTypeBuilder_ptr my_map_long_struct_builder = m_factory->create_map_builder(int32_builder.get()->build(), GetBasicStructType());
+        DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
+        DynamicTypeBuilder_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get());
+        DynamicTypeBuilder_ptr my_map_long_seq_octet_builder = m_factory->create_map_builder(int32_builder.get(), seqSeqOctet_builder.get());
+        DynamicTypeBuilder_ptr my_map_long_octet_array_500_builder = m_factory->create_map_builder(int32_builder.get()->build(), GetMyOctetArray500Type());
+        DynamicTypeBuilder_ptr map_octet_bsalias5_builder = m_factory->create_map_builder(octet_builder.get()->build(), GetBSAlias5Type());
+        DynamicTypeBuilder_ptr my_map_long_lol_type_builder = m_factory->create_map_builder(int32_builder.get(), map_octet_bsalias5_builder.get());
+        DynamicTypeBuilder_ptr my_small_string_8_builder = m_factory->create_string_builder(128);
+        DynamicTypeBuilder_ptr my_small_string_16_builder = m_factory->create_wstring_builder(64);
+        DynamicTypeBuilder_ptr my_large_string_8_builder = m_factory->create_string_builder(500);
+        DynamicTypeBuilder_ptr my_large_string_16_builder = m_factory->create_wstring_builder(1024);
+        DynamicTypeBuilder_ptr string75_8_builder = m_factory->create_string_builder(75);
+        DynamicTypeBuilder_ptr my_array_string_builder = m_factory->create_array_builder(string75_8_builder.get(), { 5, 5 });
 
         // MA3 is already defined.
         // { 5 } being reused
-        DynamicTypeBuilder_ptr my_array_arrays_builder = m_factory->CreateArrayBuilder(GetMyMiniArrayType(), { 5 });
-        DynamicTypeBuilder_ptr my_sequences_array_builder = m_factory->CreateArrayBuilder(GetMySequenceLongType(), { 23 });
-        DynamicTypeBuilder_ptr complexStruct_builder = m_factory->CreateStructBuilder();
+        DynamicTypeBuilder_ptr my_array_arrays_builder = m_factory->create_array_builder(GetMyMiniArrayType(), { 5 });
+        DynamicTypeBuilder_ptr my_sequences_array_builder = m_factory->create_array_builder(GetMySequenceLongType(), { 23 });
+        DynamicTypeBuilder_ptr complexStruct_builder = m_factory->create_struct_builder();
 
             // Add members to the struct.
             int idx = 0;
-            complexStruct_builder->AddMember(idx++, "my_octet", octet_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_basic_struct", GetBasicStructType());
-            complexStruct_builder->AddMember(idx++, "my_alias_enum", GetMyAliasEnumType());
-            complexStruct_builder->AddMember(idx++, "my_enum", GetMyEnumType());
-            complexStruct_builder->AddMember(idx++, "my_sequence_octet", my_sequence_octet_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_sequence_struct", my_sequence_struct_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_array_octet", my_array_octet_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_octet_array_500", GetMyOctetArray500Type());
-            complexStruct_builder->AddMember(idx++, "my_array_struct", my_array_struct_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_map_octet_short", my_map_octet_short_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_map_long_struct", my_map_long_struct_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_map_long_seq_octet", my_map_long_seq_octet_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_map_long_octet_array_500", my_map_long_octet_array_500_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_small_string_8", my_small_string_8_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_small_string_16", my_small_string_16_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_large_string_8", my_large_string_8_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_large_string_16", my_large_string_16_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_array_string", my_array_string_builder.get());
-            complexStruct_builder->AddMember(idx++, "multi_alias_array_42", GetMA3Type());
-            complexStruct_builder->AddMember(idx++, "my_array_arrays", my_array_arrays_builder.get());
-            complexStruct_builder->AddMember(idx++, "my_sequences_array", my_sequences_array_builder.get());
-        complexStruct_builder->SetName("ComplexStruct");
-        m_ComplexStructType = complexStruct_builder->Build();
+            complexStruct_builder->add_member(idx++, "my_octet", octet_builder.get());
+            complexStruct_builder->add_member(idx++, "my_basic_struct", GetBasicStructType());
+            complexStruct_builder->add_member(idx++, "my_alias_enum", GetMyAliasEnumType());
+            complexStruct_builder->add_member(idx++, "my_enum", GetMyEnumType());
+            complexStruct_builder->add_member(idx++, "my_sequence_octet", my_sequence_octet_builder.get());
+            complexStruct_builder->add_member(idx++, "my_sequence_struct", my_sequence_struct_builder.get());
+            complexStruct_builder->add_member(idx++, "my_array_octet", my_array_octet_builder.get());
+            complexStruct_builder->add_member(idx++, "my_octet_array_500", GetMyOctetArray500Type());
+            complexStruct_builder->add_member(idx++, "my_array_struct", my_array_struct_builder.get());
+            complexStruct_builder->add_member(idx++, "my_map_octet_short", my_map_octet_short_builder.get());
+            complexStruct_builder->add_member(idx++, "my_map_long_struct", my_map_long_struct_builder.get());
+            complexStruct_builder->add_member(idx++, "my_map_long_seq_octet", my_map_long_seq_octet_builder.get());
+            complexStruct_builder->add_member(idx++, "my_map_long_octet_array_500", my_map_long_octet_array_500_builder.get());
+            complexStruct_builder->add_member(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder.get());
+            complexStruct_builder->add_member(idx++, "my_small_string_8", my_small_string_8_builder.get());
+            complexStruct_builder->add_member(idx++, "my_small_string_16", my_small_string_16_builder.get());
+            complexStruct_builder->add_member(idx++, "my_large_string_8", my_large_string_8_builder.get());
+            complexStruct_builder->add_member(idx++, "my_large_string_16", my_large_string_16_builder.get());
+            complexStruct_builder->add_member(idx++, "my_array_string", my_array_string_builder.get());
+            complexStruct_builder->add_member(idx++, "multi_alias_array_42", GetMA3Type());
+            complexStruct_builder->add_member(idx++, "my_array_arrays", my_array_arrays_builder.get());
+            complexStruct_builder->add_member(idx++, "my_sequences_array", my_sequences_array_builder.get());
+        complexStruct_builder->set_name("ComplexStruct");
+        m_ComplexStructType = complexStruct_builder->build();
     }
 
     return m_ComplexStructType;
@@ -376,11 +376,11 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
 {
     if (m_UnionSwitchType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myUnion_builder = m_factory->CreateUnionBuilder(GetMyEnumType());
-        myUnion_builder->AddMember(0, "basic", GetBasicStructType(), "A", { 0 }, false);
-        myUnion_builder->AddMember(1, "complex", GetComplexStructType(), "B", { 1, 2 }, false);
-        myUnion_builder->SetName("MyUnion");
-        m_UnionSwitchType = myUnion_builder->Build();
+        DynamicTypeBuilder_ptr myUnion_builder = m_factory->create_union_builder(GetMyEnumType());
+        myUnion_builder->add_member(0, "basic", GetBasicStructType(), "A", { 0 }, false);
+        myUnion_builder->add_member(1, "complex", GetComplexStructType(), "B", { 1, 2 }, false);
+        myUnion_builder->set_name("MyUnion");
+        m_UnionSwitchType = myUnion_builder->build();
     }
 
     return m_UnionSwitchType;
@@ -390,15 +390,15 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
 {
     if (m_Union2SwitchType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-        DynamicTypeBuilder_ptr int32_builder = m_factory->CreateInt32Builder();
-        DynamicTypeBuilder_ptr string_builder = m_factory->CreateStringBuilder();
-        DynamicTypeBuilder_ptr myUnion2_builder = m_factory->CreateUnionBuilder(octet_builder.get());
-        myUnion2_builder->AddMember(0, "uno", int32_builder.get(), "0", { 0 }, false);
-        myUnion2_builder->AddMember(1, "imString", string_builder.get(), "1", { 1 }, false);
-        myUnion2_builder->AddMember(2, "tres", int32_builder.get(), "2", { 2 }, false);
-        myUnion2_builder->SetName("MyUnion2");
-        m_Union2SwitchType = myUnion2_builder->Build();
+        DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
+        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder();
+        DynamicTypeBuilder_ptr myUnion2_builder = m_factory->create_union_builder(octet_builder.get());
+        myUnion2_builder->add_member(0, "uno", int32_builder.get(), "0", { 0 }, false);
+        myUnion2_builder->add_member(1, "imString", string_builder.get(), "1", { 1 }, false);
+        myUnion2_builder->add_member(2, "tres", int32_builder.get(), "2", { 2 }, false);
+        myUnion2_builder->set_name("MyUnion2");
+        m_Union2SwitchType = myUnion2_builder->build();
     }
 
     return m_Union2SwitchType;
@@ -408,13 +408,13 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
 {
     if (m_CompleteStructType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr completeStruct_builder = m_factory->CreateStructBuilder();
+        DynamicTypeBuilder_ptr completeStruct_builder = m_factory->create_struct_builder();
         // Add members to the struct.
         int idx = 0;
-        completeStruct_builder->AddMember(idx++, "my_union", GetUnionSwitchType());
-        completeStruct_builder->AddMember(idx++, "my_union_2", GetUnion2SwitchType());
-        completeStruct_builder->SetName("CompleteStruct");
-        m_CompleteStructType = completeStruct_builder->Build();
+        completeStruct_builder->add_member(idx++, "my_union", GetUnionSwitchType());
+        completeStruct_builder->add_member(idx++, "my_union_2", GetUnion2SwitchType());
+        completeStruct_builder->set_name("CompleteStruct");
+        m_CompleteStructType = completeStruct_builder->build();
     }
 
     return m_CompleteStructType;
@@ -422,9 +422,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
 
 void DynamicComplexTypesTests::init()
 {
-    const TypeIdentifier *id = TypeObjectFactory::GetInstance()->GetTypeIdentifier("CompleteStruct", true);
-    const TypeObject *obj = TypeObjectFactory::GetInstance()->GetTypeObject(id);
-    m_DynAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType("CompleteStruct", id, obj);
+    const TypeIdentifier *id = TypeObjectFactory::get_instance()->get_type_identifier("CompleteStruct", true);
+    const TypeObject *obj = TypeObjectFactory::get_instance()->get_type_object(id);
+    m_DynAutoType = TypeObjectFactory::get_instance()->build_dynamic_type("CompleteStruct", id, obj);
 
     m_DynManualType = GetCompleteStructType();
 }
@@ -433,9 +433,9 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    types::DynamicData_ptr dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    ASSERT_TRUE(dynData2->Equals(dynData.get()));
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynData2 = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    ASSERT_TRUE(dynData2->equals(dynData.get()));
 
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
@@ -449,25 +449,25 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
 
     ASSERT_TRUE(pubsubType.deserialize(&payload2, dynData2.get()));
-    ASSERT_TRUE(dynData2->Equals(dynData.get()));
+    ASSERT_TRUE(dynData2->equals(dynData.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
 {
-    types::DynamicData* dynAutoData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
-    types::DynamicData* dynManualData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    types::DynamicData* dynAutoData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData* dynManualData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
 
-    ASSERT_TRUE(dynManualData->Equals(dynAutoData));
+    ASSERT_TRUE(dynManualData->equals(dynAutoData));
 
-    DynamicDataFactory::GetInstance()->DeleteData(dynAutoData);
-    DynamicDataFactory::GetInstance()->DeleteData(dynManualData);
+    DynamicDataFactory::get_instance()->delete_data(dynAutoData);
+    DynamicDataFactory::get_instance()->delete_data(dynManualData);
 }
 
 TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubtype(m_DynAutoType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     uint32_t payloadSize = static_cast<uint32_t>(pubsubtype.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubtype.serialize(dynData.get(), &payload));
@@ -481,28 +481,28 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
     ASSERT_TRUE(payloadSize2 == payload2.length);
 
-    types::DynamicData_ptr dynData2 = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynData2 = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     ASSERT_TRUE(pubsubtype.deserialize(&payload2, dynData2.get()));
 
-    ASSERT_TRUE(dynData2->Equals(dynData.get()));
+    ASSERT_TRUE(dynData2->equals(dynData.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Conversions_Test)
 {
     TypeObject newObject;
-    DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(m_DynManualType, newObject, true);
+    DynamicTypeBuilderFactory::get_instance()->build_type_object(m_DynManualType, newObject, true);
 
-    const TypeIdentifier* identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier(m_DynManualType->GetName(),
+    const TypeIdentifier* identifier = TypeObjectFactory::get_instance()->get_type_identifier(m_DynManualType->get_name(),
         true);
-    DynamicType_ptr newAutoType = TypeObjectFactory::GetInstance()->BuildDynamicType(m_DynManualType->GetName(),
+    DynamicType_ptr newAutoType = TypeObjectFactory::get_instance()->build_dynamic_type(m_DynManualType->get_name(),
         identifier, &newObject);
-    types::DynamicData* dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    types::DynamicData* dynData2 = DynamicDataFactory::GetInstance()->CreateData(newAutoType);
+    types::DynamicData* dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData* dynData2 = DynamicDataFactory::get_instance()->create_data(newAutoType);
 
-    ASSERT_TRUE(dynData2->Equals(dynData));
+    ASSERT_TRUE(dynData2->equals(dynData));
 
-    DynamicDataFactory::GetInstance()->DeleteData(dynData);
-    DynamicDataFactory::GetInstance()->DeleteData(dynData2);
+    DynamicDataFactory::get_instance()->delete_data(dynData);
+    DynamicDataFactory::get_instance()->delete_data(dynData2);
 }
 
 TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
@@ -510,25 +510,25 @@ TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
     TypeObject typeObject1, typeObject2, typeObject3;
     DynamicTypeBuilder_ptr type1, type2, type3;
     {
-        type1 = DynamicTypeBuilderFactory::GetInstance()->CreateUint16Builder();
-        //types::DynamicData_ptr data = DynamicDataFactory::GetInstance()->CreateData(type1);
-        DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(type1->getTypeDescriptor(), typeObject1);
+        type1 = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        //types::DynamicData_ptr data = DynamicDataFactory::get_instance()->create_data(type1);
+        DynamicTypeBuilderFactory::get_instance()->build_type_object(type1->get_type_descriptor(), typeObject1);
     }
     {
-        type2 = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Builder();
-        //types::DynamicData_ptr data2 = DynamicDataFactory::GetInstance()->CreateData(type2);
-        DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(type2->getTypeDescriptor(), typeObject2);
+        type2 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        //types::DynamicData_ptr data2 = DynamicDataFactory::get_instance()->create_data(type2);
+        DynamicTypeBuilderFactory::get_instance()->build_type_object(type2->get_type_descriptor(), typeObject2);
     }
 
     {
-        type3 = DynamicTypeBuilderFactory::GetInstance()->CreateInt16Builder();
-        //types::DynamicData_ptr data2 = DynamicDataFactory::GetInstance()->CreateData(type3);
-        DynamicTypeBuilderFactory::GetInstance()->BuildTypeObject(type3->getTypeDescriptor(), typeObject3);
+        type3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        //types::DynamicData_ptr data2 = DynamicDataFactory::get_instance()->create_data(type3);
+        DynamicTypeBuilderFactory::get_instance()->build_type_object(type3->get_type_descriptor(), typeObject3);
     }
 
-    const TypeIdentifier* identifier1 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type1->GetName());
-    const TypeIdentifier* identifier2 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type2->GetName());
-    const TypeIdentifier* identifier3 = TypeObjectFactory::GetInstance()->GetTypeIdentifier(type3->GetName());
+    const TypeIdentifier* identifier1 = TypeObjectFactory::get_instance()->get_type_identifier(type1->get_name());
+    const TypeIdentifier* identifier2 = TypeObjectFactory::get_instance()->get_type_identifier(type2->get_name());
+    const TypeIdentifier* identifier3 = TypeObjectFactory::get_instance()->get_type_identifier(type3->get_name());
     ASSERT_FALSE(*identifier1 == *identifier2);
     ASSERT_FALSE(*identifier1 == *identifier3);
     ASSERT_TRUE(*identifier2 == *identifier3);
@@ -538,8 +538,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -562,33 +562,33 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
     //staticData.my_union_2()._d(A);
     staticData.my_union_2().uno(156);
 
-    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
-    DynamicData *basic = my_union->LoanValue(my_union->GetMemberIdByName("basic"));
+    DynamicData *my_union = dynData->loan_value(dynData->get_member_id_by_name("my_union"));
+    DynamicData *basic = my_union->loan_value(my_union->get_member_id_by_name("basic"));
 
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
 
-    my_union->ReturnLoanedValue(basic);
-    dynData->ReturnLoanedValue(my_union);
+    my_union->return_loaned_value(basic);
+    dynData->return_loaned_value(my_union);
 
-    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
-    my_union_2->SetInt32Value(156, my_union_2->GetMemberIdByName("uno"));
+    DynamicData *my_union_2 = dynData->loan_value(dynData->get_member_id_by_name("my_union_2"));
+    my_union_2->set_int32_value(156, my_union_2->get_member_id_by_name("uno"));
 
 
-    dynData->ReturnLoanedValue(my_union_2);
+    dynData->return_loaned_value(my_union_2);
 
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
@@ -600,15 +600,15 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
     ASSERT_TRUE(pbComplete.serialize(&staticData, &payload));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromStatic.get()));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynData.get()));
+    ASSERT_TRUE(dynDataFromStatic->equals(dynData.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -630,33 +630,33 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
 
     staticData.my_union_2().imString("JuanCarlosArcereredekljnjkds");
 
-    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
-    DynamicData *basic = my_union->LoanValue(my_union->GetMemberIdByName("basic"));
+    DynamicData *my_union = dynData->loan_value(dynData->get_member_id_by_name("my_union"));
+    DynamicData *basic = my_union->loan_value(my_union->get_member_id_by_name("basic"));
 
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
 
-    my_union->ReturnLoanedValue(basic);
-    dynData->ReturnLoanedValue(my_union);
+    my_union->return_loaned_value(basic);
+    dynData->return_loaned_value(my_union);
 
-    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
-    my_union_2->SetStringValue("JuanCarlosArcereredekljnjkds", my_union_2->GetMemberIdByName("imString"));
+    DynamicData *my_union_2 = dynData->loan_value(dynData->get_member_id_by_name("my_union_2"));
+    my_union_2->set_string_value("JuanCarlosArcereredekljnjkds", my_union_2->get_member_id_by_name("imString"));
 
 
-    dynData->ReturnLoanedValue(my_union_2);
+    dynData->return_loaned_value(my_union_2);
 
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
@@ -669,15 +669,15 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
     ASSERT_TRUE(pbComplete.serialize(&staticData, &payload));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromStatic.get()));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynData.get()));
+    ASSERT_TRUE(dynDataFromStatic->equals(dynData.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -700,32 +700,32 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
     //staticData.my_union_2()._d(A);
     staticData.my_union_2().tres(333);
 
-    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
-    DynamicData *basic = my_union->LoanValue(my_union->GetMemberIdByName("basic"));
+    DynamicData *my_union = dynData->loan_value(dynData->get_member_id_by_name("my_union"));
+    DynamicData *basic = my_union->loan_value(my_union->get_member_id_by_name("basic"));
 
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
 
-    my_union->ReturnLoanedValue(basic);
-    dynData->ReturnLoanedValue(my_union);
+    my_union->return_loaned_value(basic);
+    dynData->return_loaned_value(my_union);
 
-    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
-    my_union_2->SetInt32Value(333, my_union_2->GetMemberIdByName("tres"));
+    DynamicData *my_union_2 = dynData->loan_value(dynData->get_member_id_by_name("my_union_2"));
+    my_union_2->set_int32_value(333, my_union_2->get_member_id_by_name("tres"));
 
-    dynData->ReturnLoanedValue(my_union_2);
+    dynData->return_loaned_value(my_union_2);
 
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
@@ -737,12 +737,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
     ASSERT_TRUE(pbComplete.serialize(&staticData, &payload));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromStatic.get()));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynData.get()));
+    ASSERT_TRUE(dynDataFromStatic->equals(dynData.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 {
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -839,325 +839,325 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     staticData.my_union_2()._d(A);
     staticData.my_union_2().uno(156);
 
-    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
+    DynamicData *my_union = dynData->loan_value(dynData->get_member_id_by_name("my_union"));
 
-    DynamicData *complex = my_union->LoanValue(my_union->GetMemberIdByName("complex"));
-    complex->SetByteValue(66, complex->GetMemberIdByName("my_octet"));
+    DynamicData *complex = my_union->loan_value(my_union->get_member_id_by_name("complex"));
+    complex->set_byte_value(66, complex->get_member_id_by_name("my_octet"));
 
-    DynamicData *basic = complex->LoanValue(complex->GetMemberIdByName("my_basic_struct"));
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
-    complex->ReturnLoanedValue(basic);
+    DynamicData *basic = complex->loan_value(complex->get_member_id_by_name("my_basic_struct"));
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    complex->return_loaned_value(basic);
 
-    complex->SetEnumValue("C", complex->GetMemberIdByName("my_alias_enum"));
-    complex->SetEnumValue("B", complex->GetMemberIdByName("my_enum"));
+    complex->set_enum_value("C", complex->get_member_id_by_name("my_alias_enum"));
+    complex->set_enum_value("B", complex->get_member_id_by_name("my_enum"));
 
-    DynamicData *my_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_sequence_octet"));
+    DynamicData *my_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_sequence_octet"));
     MemberId id;
-    my_seq_octet->InsertSequenceData(id);
-    my_seq_octet->SetByteValue(88, id);
-    my_seq_octet->InsertSequenceData(id);
-    my_seq_octet->SetByteValue(99, id);
+    my_seq_octet->insert_sequence_data(id);
+    my_seq_octet->set_byte_value(88, id);
+    my_seq_octet->insert_sequence_data(id);
+    my_seq_octet->set_byte_value(99, id);
     //staticData.my_union().complex().my_sequence_octet().push_back(88);
     //staticData.my_union().complex().my_sequence_octet().push_back(99);
-    complex->ReturnLoanedValue(my_seq_octet);
+    complex->return_loaned_value(my_seq_octet);
 
-    DynamicData *my_seq_struct = complex->LoanValue(complex->GetMemberIdByName("my_sequence_struct"));
-    my_seq_struct->InsertSequenceData(id);
-    my_seq_struct->SetComplexValue(DynamicDataFactory::GetInstance()->CreateCopy(basic), id);
+    DynamicData *my_seq_struct = complex->loan_value(complex->get_member_id_by_name("my_sequence_struct"));
+    my_seq_struct->insert_sequence_data(id);
+    my_seq_struct->set_complex_value(DynamicDataFactory::get_instance()->create_copy(basic), id);
     //staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
-    complex->ReturnLoanedValue(my_seq_struct);
+    complex->return_loaned_value(my_seq_struct);
 
-    DynamicData *my_array_octet = complex->LoanValue(complex->GetMemberIdByName("my_array_octet"));
+    DynamicData *my_array_octet = complex->loan_value(complex->get_member_id_by_name("my_array_octet"));
     for (unsigned int i = 0; i < 500; ++i)
     {
         for (unsigned int j = 0; j < 5; ++j)
         {
             for (unsigned int k = 0; k < 4; ++k)
             {
-                MemberId array_idx = my_array_octet->GetArrayIndex({ i, j, k });
-                my_array_octet->SetByteValue(static_cast<uint8_t>(j*k), array_idx);
+                MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
+                my_array_octet->set_byte_value(static_cast<uint8_t>(j*k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
     }
-    complex->ReturnLoanedValue(my_array_octet);
+    complex->return_loaned_value(my_array_octet);
 
-    DynamicData *my_array_struct = complex->LoanValue(complex->GetMemberIdByName("my_array_struct"));
+    DynamicData *my_array_struct = complex->loan_value(complex->get_member_id_by_name("my_array_struct"));
     for (int i = 0; i < 5; ++i)
     {
-        DynamicData *tempBasic = DynamicDataFactory::GetInstance()->CreateData(GetBasicStructType());
-        tempBasic->SetBoolValue(i % 2 == 1, tempBasic->GetMemberIdByName("my_bool"));
-        tempBasic->SetByteValue(static_cast<uint8_t>(i), tempBasic->GetMemberIdByName("my_octet"));
-        tempBasic->SetInt16Value(static_cast<int16_t>(-i), tempBasic->GetMemberIdByName("my_int16"));
-        tempBasic->SetInt32Value(i, tempBasic->GetMemberIdByName("my_int32"));
-        tempBasic->SetInt64Value(i*1000, tempBasic->GetMemberIdByName("my_int64"));
-        tempBasic->SetUint16Value(static_cast<uint16_t>(i), tempBasic->GetMemberIdByName("my_uint16"));
-        tempBasic->SetUint32Value(i, tempBasic->GetMemberIdByName("my_uint32"));
-        tempBasic->SetUint64Value(i*10005, tempBasic->GetMemberIdByName("my_uint64"));
-        tempBasic->SetFloat32Value(i*5.5f, tempBasic->GetMemberIdByName("my_float32"));
-        tempBasic->SetFloat64Value(i*8.8, tempBasic->GetMemberIdByName("my_float64"));
-        tempBasic->SetFloat128Value(i*10.0, tempBasic->GetMemberIdByName("my_float128"));
-        tempBasic->SetChar8Value('J', tempBasic->GetMemberIdByName("my_char"));
-        tempBasic->SetChar16Value(L'C', tempBasic->GetMemberIdByName("my_wchar"));
-        tempBasic->SetStringValue("JC@eProsima", tempBasic->GetMemberIdByName("my_string"));
-        tempBasic->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", tempBasic->GetMemberIdByName("my_wstring"));
-        my_array_struct->SetComplexValue(tempBasic, i);
+        DynamicData *tempBasic = DynamicDataFactory::get_instance()->create_data(GetBasicStructType());
+        tempBasic->set_bool_value(i % 2 == 1, tempBasic->get_member_id_by_name("my_bool"));
+        tempBasic->set_byte_value(static_cast<uint8_t>(i), tempBasic->get_member_id_by_name("my_octet"));
+        tempBasic->set_int16_value(static_cast<int16_t>(-i), tempBasic->get_member_id_by_name("my_int16"));
+        tempBasic->set_int32_value(i, tempBasic->get_member_id_by_name("my_int32"));
+        tempBasic->set_int64_value(i*1000, tempBasic->get_member_id_by_name("my_int64"));
+        tempBasic->set_uint16_value(static_cast<uint16_t>(i), tempBasic->get_member_id_by_name("my_uint16"));
+        tempBasic->set_uint32_value(i, tempBasic->get_member_id_by_name("my_uint32"));
+        tempBasic->set_uint64_value(i*10005, tempBasic->get_member_id_by_name("my_uint64"));
+        tempBasic->set_float32_value(i*5.5f, tempBasic->get_member_id_by_name("my_float32"));
+        tempBasic->set_float64_value(i*8.8, tempBasic->get_member_id_by_name("my_float64"));
+        tempBasic->set_float128_value(i*10.0, tempBasic->get_member_id_by_name("my_float128"));
+        tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
+        tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
+        tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
+        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        my_array_struct->set_complex_value(tempBasic, i);
     }
-    complex->ReturnLoanedValue(my_array_struct);
+    complex->return_loaned_value(my_array_struct);
 
-    DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-    DynamicData_ptr key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
+    DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+    DynamicData_ptr key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
     MemberId kId;
     MemberId vId;
     MemberId ssId;
     MemberId sId;
-    DynamicData *my_map_octet_short = complex->LoanValue(complex->GetMemberIdByName("my_map_octet_short"));
-    key_oct->SetByteValue(0);
-    my_map_octet_short->InsertMapData(key_oct.get(), kId, vId);
-    my_map_octet_short->SetInt16Value((short)1340, vId);
-    key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
-    key_oct->SetByteValue(1);
-    my_map_octet_short->InsertMapData(key_oct.get(), kId, vId);
-    my_map_octet_short->SetInt16Value((short)1341, vId);
+    DynamicData *my_map_octet_short = complex->loan_value(complex->get_member_id_by_name("my_map_octet_short"));
+    key_oct->set_byte_value(0);
+    my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
+    my_map_octet_short->set_int16_value((short)1340, vId);
+    key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    key_oct->set_byte_value(1);
+    my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
+    my_map_octet_short->set_int16_value((short)1341, vId);
     //staticData.my_union().complex().my_map_octet_short()[0] = 1340;
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
-    complex->ReturnLoanedValue(my_map_octet_short);
+    complex->return_loaned_value(my_map_octet_short);
 
-    DynamicTypeBuilder_ptr long_builder = m_factory->CreateInt32Builder();
-    DynamicData_ptr key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    DynamicData *my_map_long_struct = complex->LoanValue(complex->GetMemberIdByName("my_map_long_struct"));
+    DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
+    DynamicData_ptr key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    DynamicData *my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
-    //DynamicData *mas3 = my_array_struct->LoanValue(3);
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(55);
-    my_map_long_struct->InsertMapData(key.get(), kId, vId);
-    basic = my_map_long_struct->LoanValue(vId);
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
-    my_map_long_struct->ReturnLoanedValue(basic);
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(1000);
-    my_map_long_struct->InsertMapData(key.get(), kId, vId);
-    DynamicData *mas3 = my_map_long_struct->LoanValue(vId);
+    //DynamicData *mas3 = my_array_struct->loan_value(3);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(55);
+    my_map_long_struct->insert_map_data(key.get(), kId, vId);
+    basic = my_map_long_struct->loan_value(vId);
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    my_map_long_struct->return_loaned_value(basic);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(1000);
+    my_map_long_struct->insert_map_data(key.get(), kId, vId);
+    DynamicData *mas3 = my_map_long_struct->loan_value(vId);
     int i = 3;
-    mas3->SetBoolValue(i % 2 == 1, mas3->GetMemberIdByName("my_bool"));
-    mas3->SetByteValue(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_octet"));
-    mas3->SetInt16Value(static_cast<int16_t>(-i), mas3->GetMemberIdByName("my_int16"));
-    mas3->SetInt32Value(i, mas3->GetMemberIdByName("my_int32"));
-    mas3->SetInt64Value(i*1000, mas3->GetMemberIdByName("my_int64"));
-    mas3->SetUint16Value(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_uint16"));
-    mas3->SetUint32Value(i, mas3->GetMemberIdByName("my_uint32"));
-    mas3->SetUint64Value(i*10005, mas3->GetMemberIdByName("my_uint64"));
-    mas3->SetFloat32Value(i*5.5f, mas3->GetMemberIdByName("my_float32"));
-    mas3->SetFloat64Value(i*8.8, mas3->GetMemberIdByName("my_float64"));
-    mas3->SetFloat128Value(i*10.0, mas3->GetMemberIdByName("my_float128"));
-    mas3->SetChar8Value('J', mas3->GetMemberIdByName("my_char"));
-    mas3->SetChar16Value(L'C', mas3->GetMemberIdByName("my_wchar"));
-    mas3->SetStringValue("JC@eProsima", mas3->GetMemberIdByName("my_string"));
-    mas3->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", mas3->GetMemberIdByName("my_wstring"));
-    my_map_long_struct->ReturnLoanedValue(mas3);
+    mas3->set_bool_value(i % 2 == 1, mas3->get_member_id_by_name("my_bool"));
+    mas3->set_byte_value(static_cast<uint8_t>(i), mas3->get_member_id_by_name("my_octet"));
+    mas3->set_int16_value(static_cast<int16_t>(-i), mas3->get_member_id_by_name("my_int16"));
+    mas3->set_int32_value(i, mas3->get_member_id_by_name("my_int32"));
+    mas3->set_int64_value(i*1000, mas3->get_member_id_by_name("my_int64"));
+    mas3->set_uint16_value(static_cast<uint8_t>(i), mas3->get_member_id_by_name("my_uint16"));
+    mas3->set_uint32_value(i, mas3->get_member_id_by_name("my_uint32"));
+    mas3->set_uint64_value(i*10005, mas3->get_member_id_by_name("my_uint64"));
+    mas3->set_float32_value(i*5.5f, mas3->get_member_id_by_name("my_float32"));
+    mas3->set_float64_value(i*8.8, mas3->get_member_id_by_name("my_float64"));
+    mas3->set_float128_value(i*10.0, mas3->get_member_id_by_name("my_float128"));
+    mas3->set_char8_value('J', mas3->get_member_id_by_name("my_char"));
+    mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
+    mas3->set_string_value("JC@eProsima", mas3->get_member_id_by_name("my_string"));
+    mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
+    my_map_long_struct->return_loaned_value(mas3);
 
     // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
     // staticData.my_union().complex().my_map_long_struct()[55] = staticData.my_union().complex().my_basic_struct();
-    complex->ReturnLoanedValue(my_map_long_struct);
+    complex->return_loaned_value(my_map_long_struct);
 
-    DynamicData *my_map_long_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_map_long_seq_octet"));
+    DynamicData *my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->CreateSequenceBuilder(octet_builder.get());
-    types::DynamicType_ptr seqSeqOctet_builder = m_factory->CreateSequenceBuilder(seqOctet_builder.get())->Build();
-    DynamicData *dataSeqOctet = seqOctet_builder->Build();
-    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->Build();
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(1, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(2, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(3, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(4, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(5, id);
-    dataSeqSeqOctet->InsertSequenceData(id);
-    dataSeqSeqOctet->SetComplexValue(dataSeqOctet, id);*/
-    // InsertMapData(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
+    /*DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
+    types::DynamicType_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get())->build();
+    DynamicData *dataSeqOctet = seqOctet_builder->build();
+    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(1, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(2, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(3, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(4, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(5, id);
+    dataSeqSeqOctet->insert_sequence_data(id);
+    dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);*/
+    // insert_map_data(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
     // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(0);
-    my_map_long_seq_octet->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(0);
+    my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
-    DynamicData* seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
-    seq_seq_oct->InsertSequenceData(ssId);
-    DynamicData* seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    DynamicData* seq_seq_oct = my_map_long_seq_octet->loan_value(vId);
+    seq_seq_oct->insert_sequence_data(ssId);
+    DynamicData* seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(55);
-    my_map_long_seq_octet->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(55);
+    my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
-    seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
-    seq_seq_oct->InsertSequenceData(ssId);
-    seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    seq_seq_oct->InsertSequenceData(ssId);
-    seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    seq_seq_oct = my_map_long_seq_octet->loan_value(vId);
+    seq_seq_oct->insert_sequence_data(ssId);
+    seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    seq_seq_oct->insert_sequence_data(ssId);
+    seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
     //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
     //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
     //staticData.my_union().complex().my_map_long_seq_octet()[0].push_back(my_vector_octet);
-    complex->ReturnLoanedValue(my_map_long_seq_octet);
+    complex->return_loaned_value(my_map_long_seq_octet);
 
     DynamicData *my_map_long_octet_array_500 =
-        complex->LoanValue(complex->GetMemberIdByName("my_map_long_octet_array_500"));
+        complex->loan_value(complex->get_member_id_by_name("my_map_long_octet_array_500"));
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(0);
-    my_map_long_octet_array_500->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(0);
+    my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
 
-    DynamicData* oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->SetByteValue(j%256, j);
+        oct_array_500->set_byte_value(j%256, j);
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
-    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
+    my_map_long_octet_array_500->return_loaned_value(oct_array_500);
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(10);
-    my_map_long_octet_array_500->InsertMapData(key.get(), kId, vId);
-    oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(10);
+    my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
+    oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->SetByteValue((j+55)%256, j);
+        oct_array_500->set_byte_value((j+55)%256, j);
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
-    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
-    complex->ReturnLoanedValue(my_map_long_octet_array_500);
+    my_map_long_octet_array_500->return_loaned_value(oct_array_500);
+    complex->return_loaned_value(my_map_long_octet_array_500);
 
-    complex->SetStringValue("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->GetMemberIdByName("my_small_string_8"));
-    complex->SetWstringValue(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->GetMemberIdByName("my_small_string_16"));
-    complex->SetStringValue("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->GetMemberIdByName("my_large_string_8"));
-    complex->SetWstringValue(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->GetMemberIdByName("my_large_string_16"));
+    complex->set_string_value("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->get_member_id_by_name("my_small_string_8"));
+    complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name("my_small_string_16"));
+    complex->set_string_value("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->get_member_id_by_name("my_large_string_8"));
+    complex->set_wstring_value(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name("my_large_string_16"));
 
-    DynamicData *my_array_string = complex->LoanValue(complex->GetMemberIdByName("my_array_string"));
+    DynamicData *my_array_string = complex->loan_value(complex->get_member_id_by_name("my_array_string"));
     for (unsigned int j = 0; j < 5; ++j)
     {
         for (unsigned int k = 0; k < 5; ++k)
         {
-            MemberId array_idx = my_array_string->GetArrayIndex({ j, k });
-            my_array_string->SetStringValue("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
+            MemberId array_idx = my_array_string->get_array_index({ j, k });
+            my_array_string->set_string_value("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
             //staticData.my_union().complex().my_array_string()[i][j]("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42");
         }
     }
-    complex->ReturnLoanedValue(my_array_string);
+    complex->return_loaned_value(my_array_string);
 
-    DynamicData *multi_alias_array_42 = complex->LoanValue(complex->GetMemberIdByName("multi_alias_array_42"));
+    DynamicData *multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->SetEnumValue(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, j);
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
-    complex->ReturnLoanedValue(multi_alias_array_42);
+    complex->return_loaned_value(multi_alias_array_42);
 
-    DynamicData *my_array_arrays = complex->LoanValue(complex->GetMemberIdByName("my_array_arrays"));
+    DynamicData *my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData *myMiniArray = my_array_arrays->LoanValue(j);
+        DynamicData *myMiniArray = my_array_arrays->loan_value(j);
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->SetInt32Value(j*k, k);
+            myMiniArray->set_int32_value(j*k, k);
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
-        my_array_arrays->ReturnLoanedValue(myMiniArray);
+        my_array_arrays->return_loaned_value(myMiniArray);
     }
-    complex->ReturnLoanedValue(my_array_arrays);
+    complex->return_loaned_value(my_array_arrays);
 
-    DynamicData *my_sequences_array = complex->LoanValue(complex->GetMemberIdByName("my_sequences_array"));
+    DynamicData *my_sequences_array = complex->loan_value(complex->get_member_id_by_name("my_sequences_array"));
     for (int j = 0; j < 23; ++j)
     {
-        DynamicData *seq = DynamicDataFactory::GetInstance()->CreateData(GetMySequenceLongType());
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j, id);
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j*10, id);
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j*100, id);
-        my_sequences_array->SetComplexValue(seq, j);
+        DynamicData *seq = DynamicDataFactory::get_instance()->create_data(GetMySequenceLongType());
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j, id);
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j*10, id);
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j*100, id);
+        my_sequences_array->set_complex_value(seq, j);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
     }
-    complex->ReturnLoanedValue(my_sequences_array);
+    complex->return_loaned_value(my_sequences_array);
 
-    my_union->ReturnLoanedValue(complex);
-    dynData->ReturnLoanedValue(my_union);
+    my_union->return_loaned_value(complex);
+    dynData->return_loaned_value(my_union);
 
-    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
-    my_union_2->SetInt32Value(156, my_union_2->GetMemberIdByName("uno"));
+    DynamicData *my_union_2 = dynData->loan_value(dynData->get_member_id_by_name("my_union_2"));
+    my_union_2->set_int32_value(156, my_union_2->get_member_id_by_name("uno"));
 
-    dynData->ReturnLoanedValue(my_union_2);
+    dynData->return_loaned_value(my_union_2);
 
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
@@ -1214,18 +1214,18 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     }
     std::cout << "END" << std::endl;
     */
-    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynDataFromDynamic.get()));
+    ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
 {
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -1322,325 +1322,325 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     //staticData.my_union_2()._d() = B;
     staticData.my_union_2().imString("GASCO!");
 
-    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
+    DynamicData *my_union = dynData->loan_value(dynData->get_member_id_by_name("my_union"));
 
-    DynamicData *complex = my_union->LoanValue(my_union->GetMemberIdByName("complex"));
-    complex->SetByteValue(66, complex->GetMemberIdByName("my_octet"));
+    DynamicData *complex = my_union->loan_value(my_union->get_member_id_by_name("complex"));
+    complex->set_byte_value(66, complex->get_member_id_by_name("my_octet"));
 
-    DynamicData *basic = complex->LoanValue(complex->GetMemberIdByName("my_basic_struct"));
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
-    complex->ReturnLoanedValue(basic);
+    DynamicData *basic = complex->loan_value(complex->get_member_id_by_name("my_basic_struct"));
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    complex->return_loaned_value(basic);
 
-    complex->SetEnumValue("C", complex->GetMemberIdByName("my_alias_enum"));
-    complex->SetEnumValue("B", complex->GetMemberIdByName("my_enum"));
+    complex->set_enum_value("C", complex->get_member_id_by_name("my_alias_enum"));
+    complex->set_enum_value("B", complex->get_member_id_by_name("my_enum"));
 
-    DynamicData *my_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_sequence_octet"));
+    DynamicData *my_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_sequence_octet"));
     MemberId id;
-    my_seq_octet->InsertSequenceData(id);
-    my_seq_octet->SetByteValue(88, id);
-    my_seq_octet->InsertSequenceData(id);
-    my_seq_octet->SetByteValue(99, id);
+    my_seq_octet->insert_sequence_data(id);
+    my_seq_octet->set_byte_value(88, id);
+    my_seq_octet->insert_sequence_data(id);
+    my_seq_octet->set_byte_value(99, id);
     //staticData.my_union().complex().my_sequence_octet().push_back(88);
     //staticData.my_union().complex().my_sequence_octet().push_back(99);
-    complex->ReturnLoanedValue(my_seq_octet);
+    complex->return_loaned_value(my_seq_octet);
 
-    DynamicData *my_seq_struct = complex->LoanValue(complex->GetMemberIdByName("my_sequence_struct"));
-    my_seq_struct->InsertSequenceData(id);
-    my_seq_struct->SetComplexValue(DynamicDataFactory::GetInstance()->CreateCopy(basic), id);
+    DynamicData *my_seq_struct = complex->loan_value(complex->get_member_id_by_name("my_sequence_struct"));
+    my_seq_struct->insert_sequence_data(id);
+    my_seq_struct->set_complex_value(DynamicDataFactory::get_instance()->create_copy(basic), id);
     //staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
-    complex->ReturnLoanedValue(my_seq_struct);
+    complex->return_loaned_value(my_seq_struct);
 
-    DynamicData *my_array_octet = complex->LoanValue(complex->GetMemberIdByName("my_array_octet"));
+    DynamicData *my_array_octet = complex->loan_value(complex->get_member_id_by_name("my_array_octet"));
     for (unsigned int i = 0; i < 500; ++i)
     {
         for (unsigned int j = 0; j < 5; ++j)
         {
             for (unsigned int k = 0; k < 4; ++k)
             {
-                MemberId array_idx = my_array_octet->GetArrayIndex({ i, j, k });
-                my_array_octet->SetByteValue(static_cast<uint8_t>(j*k), array_idx);
+                MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
+                my_array_octet->set_byte_value(static_cast<uint8_t>(j*k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
     }
-    complex->ReturnLoanedValue(my_array_octet);
+    complex->return_loaned_value(my_array_octet);
 
-    DynamicData *my_array_struct = complex->LoanValue(complex->GetMemberIdByName("my_array_struct"));
+    DynamicData *my_array_struct = complex->loan_value(complex->get_member_id_by_name("my_array_struct"));
     for (int i = 0; i < 5; ++i)
     {
-        DynamicData *tempBasic = DynamicDataFactory::GetInstance()->CreateData(GetBasicStructType());
-        tempBasic->SetBoolValue(i % 2 == 1, tempBasic->GetMemberIdByName("my_bool"));
-        tempBasic->SetByteValue(static_cast<uint8_t>(i), tempBasic->GetMemberIdByName("my_octet"));
-        tempBasic->SetInt16Value(static_cast<int16_t>(-i), tempBasic->GetMemberIdByName("my_int16"));
-        tempBasic->SetInt32Value(i, tempBasic->GetMemberIdByName("my_int32"));
-        tempBasic->SetInt64Value(i * 1000, tempBasic->GetMemberIdByName("my_int64"));
-        tempBasic->SetUint16Value(static_cast<uint16_t>(i), tempBasic->GetMemberIdByName("my_uint16"));
-        tempBasic->SetUint32Value(i, tempBasic->GetMemberIdByName("my_uint32"));
-        tempBasic->SetUint64Value(i * 10005, tempBasic->GetMemberIdByName("my_uint64"));
-        tempBasic->SetFloat32Value(i*5.5f, tempBasic->GetMemberIdByName("my_float32"));
-        tempBasic->SetFloat64Value(i*8.8, tempBasic->GetMemberIdByName("my_float64"));
-        tempBasic->SetFloat128Value(i*10.0, tempBasic->GetMemberIdByName("my_float128"));
-        tempBasic->SetChar8Value('J', tempBasic->GetMemberIdByName("my_char"));
-        tempBasic->SetChar16Value(L'C', tempBasic->GetMemberIdByName("my_wchar"));
-        tempBasic->SetStringValue("JC@eProsima", tempBasic->GetMemberIdByName("my_string"));
-        tempBasic->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", tempBasic->GetMemberIdByName("my_wstring"));
-        my_array_struct->SetComplexValue(tempBasic, i);
+        DynamicData *tempBasic = DynamicDataFactory::get_instance()->create_data(GetBasicStructType());
+        tempBasic->set_bool_value(i % 2 == 1, tempBasic->get_member_id_by_name("my_bool"));
+        tempBasic->set_byte_value(static_cast<uint8_t>(i), tempBasic->get_member_id_by_name("my_octet"));
+        tempBasic->set_int16_value(static_cast<int16_t>(-i), tempBasic->get_member_id_by_name("my_int16"));
+        tempBasic->set_int32_value(i, tempBasic->get_member_id_by_name("my_int32"));
+        tempBasic->set_int64_value(i * 1000, tempBasic->get_member_id_by_name("my_int64"));
+        tempBasic->set_uint16_value(static_cast<uint16_t>(i), tempBasic->get_member_id_by_name("my_uint16"));
+        tempBasic->set_uint32_value(i, tempBasic->get_member_id_by_name("my_uint32"));
+        tempBasic->set_uint64_value(i * 10005, tempBasic->get_member_id_by_name("my_uint64"));
+        tempBasic->set_float32_value(i*5.5f, tempBasic->get_member_id_by_name("my_float32"));
+        tempBasic->set_float64_value(i*8.8, tempBasic->get_member_id_by_name("my_float64"));
+        tempBasic->set_float128_value(i*10.0, tempBasic->get_member_id_by_name("my_float128"));
+        tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
+        tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
+        tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
+        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        my_array_struct->set_complex_value(tempBasic, i);
     }
-    complex->ReturnLoanedValue(my_array_struct);
+    complex->return_loaned_value(my_array_struct);
 
-    DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-    DynamicData_ptr key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
+    DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+    DynamicData_ptr key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
     MemberId kId;
     MemberId vId;
     MemberId ssId;
     MemberId sId;
-    DynamicData *my_map_octet_short = complex->LoanValue(complex->GetMemberIdByName("my_map_octet_short"));
-    key_oct->SetByteValue(0);
-    my_map_octet_short->InsertMapData(key_oct.get(), kId, vId);
-    my_map_octet_short->SetInt16Value((short)1340, vId);
-    key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
-    key_oct->SetByteValue(1);
-    my_map_octet_short->InsertMapData(key_oct.get(), kId, vId);
-    my_map_octet_short->SetInt16Value((short)1341, vId);
+    DynamicData *my_map_octet_short = complex->loan_value(complex->get_member_id_by_name("my_map_octet_short"));
+    key_oct->set_byte_value(0);
+    my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
+    my_map_octet_short->set_int16_value((short)1340, vId);
+    key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    key_oct->set_byte_value(1);
+    my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
+    my_map_octet_short->set_int16_value((short)1341, vId);
     //staticData.my_union().complex().my_map_octet_short()[0] = 1340;
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
-    complex->ReturnLoanedValue(my_map_octet_short);
+    complex->return_loaned_value(my_map_octet_short);
 
-    DynamicTypeBuilder_ptr long_builder = m_factory->CreateInt32Builder();
-    DynamicData_ptr key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    DynamicData *my_map_long_struct = complex->LoanValue(complex->GetMemberIdByName("my_map_long_struct"));
+    DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
+    DynamicData_ptr key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    DynamicData *my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
-    //DynamicData *mas3 = my_array_struct->LoanValue(3);
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(55);
-    my_map_long_struct->InsertMapData(key.get(), kId, vId);
-    basic = my_map_long_struct->LoanValue(vId);
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
-    my_map_long_struct->ReturnLoanedValue(basic);
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(1000);
-    my_map_long_struct->InsertMapData(key.get(), kId, vId);
-    DynamicData *mas3 = my_map_long_struct->LoanValue(vId);
+    //DynamicData *mas3 = my_array_struct->loan_value(3);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(55);
+    my_map_long_struct->insert_map_data(key.get(), kId, vId);
+    basic = my_map_long_struct->loan_value(vId);
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    my_map_long_struct->return_loaned_value(basic);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(1000);
+    my_map_long_struct->insert_map_data(key.get(), kId, vId);
+    DynamicData *mas3 = my_map_long_struct->loan_value(vId);
     int i = 3;
-    mas3->SetBoolValue(i % 2 == 1, mas3->GetMemberIdByName("my_bool"));
-    mas3->SetByteValue(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_octet"));
-    mas3->SetInt16Value(static_cast<int16_t>(-i), mas3->GetMemberIdByName("my_int16"));
-    mas3->SetInt32Value(i, mas3->GetMemberIdByName("my_int32"));
-    mas3->SetInt64Value(i * 1000, mas3->GetMemberIdByName("my_int64"));
-    mas3->SetUint16Value(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_uint16"));
-    mas3->SetUint32Value(i, mas3->GetMemberIdByName("my_uint32"));
-    mas3->SetUint64Value(i * 10005, mas3->GetMemberIdByName("my_uint64"));
-    mas3->SetFloat32Value(i*5.5f, mas3->GetMemberIdByName("my_float32"));
-    mas3->SetFloat64Value(i*8.8, mas3->GetMemberIdByName("my_float64"));
-    mas3->SetFloat128Value(i*10.0, mas3->GetMemberIdByName("my_float128"));
-    mas3->SetChar8Value('J', mas3->GetMemberIdByName("my_char"));
-    mas3->SetChar16Value(L'C', mas3->GetMemberIdByName("my_wchar"));
-    mas3->SetStringValue("JC@eProsima", mas3->GetMemberIdByName("my_string"));
-    mas3->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", mas3->GetMemberIdByName("my_wstring"));
-    my_map_long_struct->ReturnLoanedValue(mas3);
+    mas3->set_bool_value(i % 2 == 1, mas3->get_member_id_by_name("my_bool"));
+    mas3->set_byte_value(static_cast<uint8_t>(i), mas3->get_member_id_by_name("my_octet"));
+    mas3->set_int16_value(static_cast<int16_t>(-i), mas3->get_member_id_by_name("my_int16"));
+    mas3->set_int32_value(i, mas3->get_member_id_by_name("my_int32"));
+    mas3->set_int64_value(i * 1000, mas3->get_member_id_by_name("my_int64"));
+    mas3->set_uint16_value(static_cast<uint8_t>(i), mas3->get_member_id_by_name("my_uint16"));
+    mas3->set_uint32_value(i, mas3->get_member_id_by_name("my_uint32"));
+    mas3->set_uint64_value(i * 10005, mas3->get_member_id_by_name("my_uint64"));
+    mas3->set_float32_value(i*5.5f, mas3->get_member_id_by_name("my_float32"));
+    mas3->set_float64_value(i*8.8, mas3->get_member_id_by_name("my_float64"));
+    mas3->set_float128_value(i*10.0, mas3->get_member_id_by_name("my_float128"));
+    mas3->set_char8_value('J', mas3->get_member_id_by_name("my_char"));
+    mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
+    mas3->set_string_value("JC@eProsima", mas3->get_member_id_by_name("my_string"));
+    mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
+    my_map_long_struct->return_loaned_value(mas3);
 
     // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
     // staticData.my_union().complex().my_map_long_struct()[55] = staticData.my_union().complex().my_basic_struct();
-    complex->ReturnLoanedValue(my_map_long_struct);
+    complex->return_loaned_value(my_map_long_struct);
 
-    DynamicData *my_map_long_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_map_long_seq_octet"));
+    DynamicData *my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->CreateSequenceBuilder(octet_builder.get());
-    types::DynamicType_ptr seqSeqOctet_builder = m_factory->CreateSequenceBuilder(seqOctet_builder.get())->Build();
-    DynamicData *dataSeqOctet = seqOctet_builder->Build();
-    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->Build();
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(1, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(2, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(3, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(4, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(5, id);
-    dataSeqSeqOctet->InsertSequenceData(id);
-    dataSeqSeqOctet->SetComplexValue(dataSeqOctet, id);*/
-    // InsertMapData(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
+    /*DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
+    types::DynamicType_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get())->build();
+    DynamicData *dataSeqOctet = seqOctet_builder->build();
+    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(1, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(2, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(3, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(4, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(5, id);
+    dataSeqSeqOctet->insert_sequence_data(id);
+    dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);*/
+    // insert_map_data(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
     // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(0);
-    my_map_long_seq_octet->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(0);
+    my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
-    DynamicData* seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
-    seq_seq_oct->InsertSequenceData(ssId);
-    DynamicData* seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    DynamicData* seq_seq_oct = my_map_long_seq_octet->loan_value(vId);
+    seq_seq_oct->insert_sequence_data(ssId);
+    DynamicData* seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(55);
-    my_map_long_seq_octet->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(55);
+    my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
-    seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
-    seq_seq_oct->InsertSequenceData(ssId);
-    seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    seq_seq_oct->InsertSequenceData(ssId);
-    seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    seq_seq_oct = my_map_long_seq_octet->loan_value(vId);
+    seq_seq_oct->insert_sequence_data(ssId);
+    seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    seq_seq_oct->insert_sequence_data(ssId);
+    seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
     //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
     //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
     //staticData.my_union().complex().my_map_long_seq_octet()[0].push_back(my_vector_octet);
-    complex->ReturnLoanedValue(my_map_long_seq_octet);
+    complex->return_loaned_value(my_map_long_seq_octet);
 
     DynamicData *my_map_long_octet_array_500 =
-        complex->LoanValue(complex->GetMemberIdByName("my_map_long_octet_array_500"));
+        complex->loan_value(complex->get_member_id_by_name("my_map_long_octet_array_500"));
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(0);
-    my_map_long_octet_array_500->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(0);
+    my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
 
-    DynamicData* oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->SetByteValue(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, j);
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
-    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
+    my_map_long_octet_array_500->return_loaned_value(oct_array_500);
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(10);
-    my_map_long_octet_array_500->InsertMapData(key.get(), kId, vId);
-    oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(10);
+    my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
+    oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->SetByteValue((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, j);
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
-    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
-    complex->ReturnLoanedValue(my_map_long_octet_array_500);
+    my_map_long_octet_array_500->return_loaned_value(oct_array_500);
+    complex->return_loaned_value(my_map_long_octet_array_500);
 
-    complex->SetStringValue("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->GetMemberIdByName("my_small_string_8"));
-    complex->SetWstringValue(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->GetMemberIdByName("my_small_string_16"));
-    complex->SetStringValue("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->GetMemberIdByName("my_large_string_8"));
-    complex->SetWstringValue(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->GetMemberIdByName("my_large_string_16"));
+    complex->set_string_value("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->get_member_id_by_name("my_small_string_8"));
+    complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name("my_small_string_16"));
+    complex->set_string_value("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->get_member_id_by_name("my_large_string_8"));
+    complex->set_wstring_value(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name("my_large_string_16"));
 
-    DynamicData *my_array_string = complex->LoanValue(complex->GetMemberIdByName("my_array_string"));
+    DynamicData *my_array_string = complex->loan_value(complex->get_member_id_by_name("my_array_string"));
     for (unsigned int j = 0; j < 5; ++j)
     {
         for (unsigned int k = 0; k < 5; ++k)
         {
-            MemberId array_idx = my_array_string->GetArrayIndex({ j, k });
-            my_array_string->SetStringValue("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
+            MemberId array_idx = my_array_string->get_array_index({ j, k });
+            my_array_string->set_string_value("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
             //staticData.my_union().complex().my_array_string()[i][j]("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42");
         }
     }
-    complex->ReturnLoanedValue(my_array_string);
+    complex->return_loaned_value(my_array_string);
 
-    DynamicData *multi_alias_array_42 = complex->LoanValue(complex->GetMemberIdByName("multi_alias_array_42"));
+    DynamicData *multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->SetEnumValue(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, j);
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
-    complex->ReturnLoanedValue(multi_alias_array_42);
+    complex->return_loaned_value(multi_alias_array_42);
 
-    DynamicData *my_array_arrays = complex->LoanValue(complex->GetMemberIdByName("my_array_arrays"));
+    DynamicData *my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData *myMiniArray = my_array_arrays->LoanValue(j);
+        DynamicData *myMiniArray = my_array_arrays->loan_value(j);
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->SetInt32Value(j*k, k);
+            myMiniArray->set_int32_value(j*k, k);
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
-        my_array_arrays->ReturnLoanedValue(myMiniArray);
+        my_array_arrays->return_loaned_value(myMiniArray);
     }
-    complex->ReturnLoanedValue(my_array_arrays);
+    complex->return_loaned_value(my_array_arrays);
 
-    DynamicData *my_sequences_array = complex->LoanValue(complex->GetMemberIdByName("my_sequences_array"));
+    DynamicData *my_sequences_array = complex->loan_value(complex->get_member_id_by_name("my_sequences_array"));
     for (int j = 0; j < 23; ++j)
     {
-        DynamicData *seq = DynamicDataFactory::GetInstance()->CreateData(GetMySequenceLongType());
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j, id);
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j * 10, id);
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j * 100, id);
-        my_sequences_array->SetComplexValue(seq, j);
+        DynamicData *seq = DynamicDataFactory::get_instance()->create_data(GetMySequenceLongType());
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j, id);
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j * 10, id);
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j * 100, id);
+        my_sequences_array->set_complex_value(seq, j);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
     }
-    complex->ReturnLoanedValue(my_sequences_array);
+    complex->return_loaned_value(my_sequences_array);
 
-    my_union->ReturnLoanedValue(complex);
-    dynData->ReturnLoanedValue(my_union);
+    my_union->return_loaned_value(complex);
+    dynData->return_loaned_value(my_union);
 
-    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
-    my_union_2->SetStringValue("GASCO!", my_union_2->GetMemberIdByName("imString"));
+    DynamicData *my_union_2 = dynData->loan_value(dynData->get_member_id_by_name("my_union_2"));
+    my_union_2->set_string_value("GASCO!", my_union_2->get_member_id_by_name("imString"));
 
-    dynData->ReturnLoanedValue(my_union_2);
+    dynData->return_loaned_value(my_union_2);
 
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
@@ -1655,18 +1655,18 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
     ASSERT_TRUE(stPayload.length == payloadSize2);
 
-    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynDataFromDynamic.get()));
+    ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
 {
-    types::DynamicData_ptr dynData = DynamicDataFactory::GetInstance()->CreateData(m_DynManualType);
+    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -1762,325 +1762,325 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     }
     staticData.my_union_2().tres(156);
 
-    DynamicData *my_union = dynData->LoanValue(dynData->GetMemberIdByName("my_union"));
+    DynamicData *my_union = dynData->loan_value(dynData->get_member_id_by_name("my_union"));
 
-    DynamicData *complex = my_union->LoanValue(my_union->GetMemberIdByName("complex"));
-    complex->SetByteValue(66, complex->GetMemberIdByName("my_octet"));
+    DynamicData *complex = my_union->loan_value(my_union->get_member_id_by_name("complex"));
+    complex->set_byte_value(66, complex->get_member_id_by_name("my_octet"));
 
-    DynamicData *basic = complex->LoanValue(complex->GetMemberIdByName("my_basic_struct"));
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
-    complex->ReturnLoanedValue(basic);
+    DynamicData *basic = complex->loan_value(complex->get_member_id_by_name("my_basic_struct"));
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    complex->return_loaned_value(basic);
 
-    complex->SetEnumValue("C", complex->GetMemberIdByName("my_alias_enum"));
-    complex->SetEnumValue("B", complex->GetMemberIdByName("my_enum"));
+    complex->set_enum_value("C", complex->get_member_id_by_name("my_alias_enum"));
+    complex->set_enum_value("B", complex->get_member_id_by_name("my_enum"));
 
-    DynamicData *my_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_sequence_octet"));
+    DynamicData *my_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_sequence_octet"));
     MemberId id;
-    my_seq_octet->InsertSequenceData(id);
-    my_seq_octet->SetByteValue(88, id);
-    my_seq_octet->InsertSequenceData(id);
-    my_seq_octet->SetByteValue(99, id);
+    my_seq_octet->insert_sequence_data(id);
+    my_seq_octet->set_byte_value(88, id);
+    my_seq_octet->insert_sequence_data(id);
+    my_seq_octet->set_byte_value(99, id);
     //staticData.my_union().complex().my_sequence_octet().push_back(88);
     //staticData.my_union().complex().my_sequence_octet().push_back(99);
-    complex->ReturnLoanedValue(my_seq_octet);
+    complex->return_loaned_value(my_seq_octet);
 
-    DynamicData *my_seq_struct = complex->LoanValue(complex->GetMemberIdByName("my_sequence_struct"));
-    my_seq_struct->InsertSequenceData(id);
-    my_seq_struct->SetComplexValue(DynamicDataFactory::GetInstance()->CreateCopy(basic), id);
+    DynamicData *my_seq_struct = complex->loan_value(complex->get_member_id_by_name("my_sequence_struct"));
+    my_seq_struct->insert_sequence_data(id);
+    my_seq_struct->set_complex_value(DynamicDataFactory::get_instance()->create_copy(basic), id);
     //staticData.my_union().complex().my_sequence_struct().push_back(staticData.my_union().complex().my_basic_struct());
-    complex->ReturnLoanedValue(my_seq_struct);
+    complex->return_loaned_value(my_seq_struct);
 
-    DynamicData *my_array_octet = complex->LoanValue(complex->GetMemberIdByName("my_array_octet"));
+    DynamicData *my_array_octet = complex->loan_value(complex->get_member_id_by_name("my_array_octet"));
     for (unsigned int i = 0; i < 500; ++i)
     {
         for (unsigned int j = 0; j < 5; ++j)
         {
             for (unsigned int k = 0; k < 4; ++k)
             {
-                MemberId array_idx = my_array_octet->GetArrayIndex({ i, j, k });
-                my_array_octet->SetByteValue(static_cast<uint8_t>(j*k), array_idx);
+                MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
+                my_array_octet->set_byte_value(static_cast<uint8_t>(j*k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
     }
-    complex->ReturnLoanedValue(my_array_octet);
+    complex->return_loaned_value(my_array_octet);
 
-    DynamicData *my_array_struct = complex->LoanValue(complex->GetMemberIdByName("my_array_struct"));
+    DynamicData *my_array_struct = complex->loan_value(complex->get_member_id_by_name("my_array_struct"));
     for (int i = 0; i < 5; ++i)
     {
-        DynamicData *tempBasic = DynamicDataFactory::GetInstance()->CreateData(GetBasicStructType());
-        tempBasic->SetBoolValue(i % 2 == 1, tempBasic->GetMemberIdByName("my_bool"));
-        tempBasic->SetByteValue(static_cast<uint8_t>(i), tempBasic->GetMemberIdByName("my_octet"));
-        tempBasic->SetInt16Value(static_cast<int16_t>(-i), tempBasic->GetMemberIdByName("my_int16"));
-        tempBasic->SetInt32Value(i, tempBasic->GetMemberIdByName("my_int32"));
-        tempBasic->SetInt64Value(i * 1000, tempBasic->GetMemberIdByName("my_int64"));
-        tempBasic->SetUint16Value(static_cast<uint16_t>(i), tempBasic->GetMemberIdByName("my_uint16"));
-        tempBasic->SetUint32Value(i, tempBasic->GetMemberIdByName("my_uint32"));
-        tempBasic->SetUint64Value(i * 10005, tempBasic->GetMemberIdByName("my_uint64"));
-        tempBasic->SetFloat32Value(i*5.5f, tempBasic->GetMemberIdByName("my_float32"));
-        tempBasic->SetFloat64Value(i*8.8, tempBasic->GetMemberIdByName("my_float64"));
-        tempBasic->SetFloat128Value(i*10.0, tempBasic->GetMemberIdByName("my_float128"));
-        tempBasic->SetChar8Value('J', tempBasic->GetMemberIdByName("my_char"));
-        tempBasic->SetChar16Value(L'C', tempBasic->GetMemberIdByName("my_wchar"));
-        tempBasic->SetStringValue("JC@eProsima", tempBasic->GetMemberIdByName("my_string"));
-        tempBasic->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", tempBasic->GetMemberIdByName("my_wstring"));
-        my_array_struct->SetComplexValue(tempBasic, i);
+        DynamicData *tempBasic = DynamicDataFactory::get_instance()->create_data(GetBasicStructType());
+        tempBasic->set_bool_value(i % 2 == 1, tempBasic->get_member_id_by_name("my_bool"));
+        tempBasic->set_byte_value(static_cast<uint8_t>(i), tempBasic->get_member_id_by_name("my_octet"));
+        tempBasic->set_int16_value(static_cast<int16_t>(-i), tempBasic->get_member_id_by_name("my_int16"));
+        tempBasic->set_int32_value(i, tempBasic->get_member_id_by_name("my_int32"));
+        tempBasic->set_int64_value(i * 1000, tempBasic->get_member_id_by_name("my_int64"));
+        tempBasic->set_uint16_value(static_cast<uint16_t>(i), tempBasic->get_member_id_by_name("my_uint16"));
+        tempBasic->set_uint32_value(i, tempBasic->get_member_id_by_name("my_uint32"));
+        tempBasic->set_uint64_value(i * 10005, tempBasic->get_member_id_by_name("my_uint64"));
+        tempBasic->set_float32_value(i*5.5f, tempBasic->get_member_id_by_name("my_float32"));
+        tempBasic->set_float64_value(i*8.8, tempBasic->get_member_id_by_name("my_float64"));
+        tempBasic->set_float128_value(i*10.0, tempBasic->get_member_id_by_name("my_float128"));
+        tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
+        tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
+        tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
+        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        my_array_struct->set_complex_value(tempBasic, i);
     }
-    complex->ReturnLoanedValue(my_array_struct);
+    complex->return_loaned_value(my_array_struct);
 
-    DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-    DynamicData_ptr key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
+    DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+    DynamicData_ptr key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
     MemberId kId;
     MemberId vId;
     MemberId ssId;
     MemberId sId;
-    DynamicData *my_map_octet_short = complex->LoanValue(complex->GetMemberIdByName("my_map_octet_short"));
-    key_oct->SetByteValue(0);
-    my_map_octet_short->InsertMapData(key_oct.get(), kId, vId);
-    my_map_octet_short->SetInt16Value((short)1340, vId);
-    key_oct = DynamicDataFactory::GetInstance()->CreateData(octet_builder->Build());
-    key_oct->SetByteValue(1);
-    my_map_octet_short->InsertMapData(key_oct.get(), kId, vId);
-    my_map_octet_short->SetInt16Value((short)1341, vId);
+    DynamicData *my_map_octet_short = complex->loan_value(complex->get_member_id_by_name("my_map_octet_short"));
+    key_oct->set_byte_value(0);
+    my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
+    my_map_octet_short->set_int16_value((short)1340, vId);
+    key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    key_oct->set_byte_value(1);
+    my_map_octet_short->insert_map_data(key_oct.get(), kId, vId);
+    my_map_octet_short->set_int16_value((short)1341, vId);
     //staticData.my_union().complex().my_map_octet_short()[0] = 1340;
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
-    complex->ReturnLoanedValue(my_map_octet_short);
+    complex->return_loaned_value(my_map_octet_short);
 
-    DynamicTypeBuilder_ptr long_builder = m_factory->CreateInt32Builder();
-    DynamicData_ptr key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    DynamicData *my_map_long_struct = complex->LoanValue(complex->GetMemberIdByName("my_map_long_struct"));
+    DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
+    DynamicData_ptr key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    DynamicData *my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
-    //DynamicData *mas3 = my_array_struct->LoanValue(3);
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(55);
-    my_map_long_struct->InsertMapData(key.get(), kId, vId);
-    basic = my_map_long_struct->LoanValue(vId);
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(166, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-10401, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(5884001, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(884481567, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(250, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(15884, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(765241, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(158.55f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(765241.58, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(765241878.154874, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('L', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'G', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("Luis@eProsima", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L"LuisGasco@eProsima", basic->GetMemberIdByName("my_wstring"));
-    my_map_long_struct->ReturnLoanedValue(basic);
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(1000);
-    my_map_long_struct->InsertMapData(key.get(), kId, vId);
-    DynamicData *mas3 = my_map_long_struct->LoanValue(vId);
+    //DynamicData *mas3 = my_array_struct->loan_value(3);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(55);
+    my_map_long_struct->insert_map_data(key.get(), kId, vId);
+    basic = my_map_long_struct->loan_value(vId);
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(166, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-10401, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(5884001, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(884481567, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(250, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(15884, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(765241, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(158.55f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    my_map_long_struct->return_loaned_value(basic);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(1000);
+    my_map_long_struct->insert_map_data(key.get(), kId, vId);
+    DynamicData *mas3 = my_map_long_struct->loan_value(vId);
     int i = 3;
-    mas3->SetBoolValue(i % 2 == 1, mas3->GetMemberIdByName("my_bool"));
-    mas3->SetByteValue(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_octet"));
-    mas3->SetInt16Value(static_cast<int16_t>(-i), mas3->GetMemberIdByName("my_int16"));
-    mas3->SetInt32Value(i, mas3->GetMemberIdByName("my_int32"));
-    mas3->SetInt64Value(i * 1000, mas3->GetMemberIdByName("my_int64"));
-    mas3->SetUint16Value(static_cast<uint8_t>(i), mas3->GetMemberIdByName("my_uint16"));
-    mas3->SetUint32Value(i, mas3->GetMemberIdByName("my_uint32"));
-    mas3->SetUint64Value(i * 10005, mas3->GetMemberIdByName("my_uint64"));
-    mas3->SetFloat32Value(i*5.5f, mas3->GetMemberIdByName("my_float32"));
-    mas3->SetFloat64Value(i*8.8, mas3->GetMemberIdByName("my_float64"));
-    mas3->SetFloat128Value(i*10.0, mas3->GetMemberIdByName("my_float128"));
-    mas3->SetChar8Value('J', mas3->GetMemberIdByName("my_char"));
-    mas3->SetChar16Value(L'C', mas3->GetMemberIdByName("my_wchar"));
-    mas3->SetStringValue("JC@eProsima", mas3->GetMemberIdByName("my_string"));
-    mas3->SetWstringValue(L"JC-BOOM-Armadilo!@eProsima", mas3->GetMemberIdByName("my_wstring"));
-    my_map_long_struct->ReturnLoanedValue(mas3);
+    mas3->set_bool_value(i % 2 == 1, mas3->get_member_id_by_name("my_bool"));
+    mas3->set_byte_value(static_cast<uint8_t>(i), mas3->get_member_id_by_name("my_octet"));
+    mas3->set_int16_value(static_cast<int16_t>(-i), mas3->get_member_id_by_name("my_int16"));
+    mas3->set_int32_value(i, mas3->get_member_id_by_name("my_int32"));
+    mas3->set_int64_value(i * 1000, mas3->get_member_id_by_name("my_int64"));
+    mas3->set_uint16_value(static_cast<uint8_t>(i), mas3->get_member_id_by_name("my_uint16"));
+    mas3->set_uint32_value(i, mas3->get_member_id_by_name("my_uint32"));
+    mas3->set_uint64_value(i * 10005, mas3->get_member_id_by_name("my_uint64"));
+    mas3->set_float32_value(i*5.5f, mas3->get_member_id_by_name("my_float32"));
+    mas3->set_float64_value(i*8.8, mas3->get_member_id_by_name("my_float64"));
+    mas3->set_float128_value(i*10.0, mas3->get_member_id_by_name("my_float128"));
+    mas3->set_char8_value('J', mas3->get_member_id_by_name("my_char"));
+    mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
+    mas3->set_string_value("JC@eProsima", mas3->get_member_id_by_name("my_string"));
+    mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
+    my_map_long_struct->return_loaned_value(mas3);
 
     // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
     // staticData.my_union().complex().my_map_long_struct()[55] = staticData.my_union().complex().my_basic_struct();
-    complex->ReturnLoanedValue(my_map_long_struct);
+    complex->return_loaned_value(my_map_long_struct);
 
-    DynamicData *my_map_long_seq_octet = complex->LoanValue(complex->GetMemberIdByName("my_map_long_seq_octet"));
+    DynamicData *my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicTypeBuilder_ptr octet_builder = m_factory->CreateByteBuilder();
-    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->CreateSequenceBuilder(octet_builder.get());
-    types::DynamicType_ptr seqSeqOctet_builder = m_factory->CreateSequenceBuilder(seqOctet_builder.get())->Build();
-    DynamicData *dataSeqOctet = seqOctet_builder->Build();
-    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->Build();
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(1, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(2, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(3, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(4, id);
-    dataSeqOctet->InsertSequenceData(id);
-    dataSeqOctet->SetByteValue(5, id);
-    dataSeqSeqOctet->InsertSequenceData(id);
-    dataSeqSeqOctet->SetComplexValue(dataSeqOctet, id);*/
-    // InsertMapData(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
+    /*DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
+    types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory->create_sequence_builder(octet_builder.get());
+    types::DynamicType_ptr seqSeqOctet_builder = m_factory->create_sequence_builder(seqOctet_builder.get())->build();
+    DynamicData *dataSeqOctet = seqOctet_builder->build();
+    DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(1, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(2, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(3, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(4, id);
+    dataSeqOctet->insert_sequence_data(id);
+    dataSeqOctet->set_byte_value(5, id);
+    dataSeqSeqOctet->insert_sequence_data(id);
+    dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);*/
+    // insert_map_data(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
     // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(0);
-    my_map_long_seq_octet->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(0);
+    my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
-    DynamicData* seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
-    seq_seq_oct->InsertSequenceData(ssId);
-    DynamicData* seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    DynamicData* seq_seq_oct = my_map_long_seq_octet->loan_value(vId);
+    seq_seq_oct->insert_sequence_data(ssId);
+    DynamicData* seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(55);
-    my_map_long_seq_octet->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(55);
+    my_map_long_seq_octet->insert_map_data(key.get(), kId, vId);
 
-    seq_seq_oct = my_map_long_seq_octet->LoanValue(vId);
-    seq_seq_oct->InsertSequenceData(ssId);
-    seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    seq_seq_oct->InsertSequenceData(ssId);
-    seq_oct = seq_seq_oct->LoanValue(ssId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(1, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(2, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(3, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(4, sId);
-    seq_oct->InsertSequenceData(sId);
-    seq_oct->SetByteValue(5, sId);
-    seq_seq_oct->ReturnLoanedValue(seq_oct);
-    my_map_long_seq_octet->ReturnLoanedValue(seq_seq_oct);
+    seq_seq_oct = my_map_long_seq_octet->loan_value(vId);
+    seq_seq_oct->insert_sequence_data(ssId);
+    seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    seq_seq_oct->insert_sequence_data(ssId);
+    seq_oct = seq_seq_oct->loan_value(ssId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(1, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(2, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(3, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(4, sId);
+    seq_oct->insert_sequence_data(sId);
+    seq_oct->set_byte_value(5, sId);
+    seq_seq_oct->return_loaned_value(seq_oct);
+    my_map_long_seq_octet->return_loaned_value(seq_seq_oct);
     //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
     //staticData.my_union().complex().my_map_long_seq_octet()[55].push_back(my_vector_octet);
     //staticData.my_union().complex().my_map_long_seq_octet()[0].push_back(my_vector_octet);
-    complex->ReturnLoanedValue(my_map_long_seq_octet);
+    complex->return_loaned_value(my_map_long_seq_octet);
 
     DynamicData *my_map_long_octet_array_500 =
-        complex->LoanValue(complex->GetMemberIdByName("my_map_long_octet_array_500"));
+        complex->loan_value(complex->get_member_id_by_name("my_map_long_octet_array_500"));
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(0);
-    my_map_long_octet_array_500->InsertMapData(key.get(), kId, vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(0);
+    my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
 
-    DynamicData* oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->SetByteValue(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, j);
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
-    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
+    my_map_long_octet_array_500->return_loaned_value(oct_array_500);
 
-    key = DynamicDataFactory::GetInstance()->CreateData(long_builder->Build());
-    key->SetInt32Value(10);
-    my_map_long_octet_array_500->InsertMapData(key.get(), kId, vId);
-    oct_array_500 = my_map_long_octet_array_500->LoanValue(vId);
+    key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    key->set_int32_value(10);
+    my_map_long_octet_array_500->insert_map_data(key.get(), kId, vId);
+    oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->SetByteValue((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, j);
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
-    my_map_long_octet_array_500->ReturnLoanedValue(oct_array_500);
-    complex->ReturnLoanedValue(my_map_long_octet_array_500);
+    my_map_long_octet_array_500->return_loaned_value(oct_array_500);
+    complex->return_loaned_value(my_map_long_octet_array_500);
 
-    complex->SetStringValue("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->GetMemberIdByName("my_small_string_8"));
-    complex->SetWstringValue(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->GetMemberIdByName("my_small_string_16"));
-    complex->SetStringValue("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->GetMemberIdByName("my_large_string_8"));
-    complex->SetWstringValue(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->GetMemberIdByName("my_large_string_16"));
+    complex->set_string_value("Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->get_member_id_by_name("my_small_string_8"));
+    complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name("my_small_string_16"));
+    complex->set_string_value("hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->get_member_id_by_name("my_large_string_8"));
+    complex->set_wstring_value(L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name("my_large_string_16"));
 
-    DynamicData *my_array_string = complex->LoanValue(complex->GetMemberIdByName("my_array_string"));
+    DynamicData *my_array_string = complex->loan_value(complex->get_member_id_by_name("my_array_string"));
     for (unsigned int j = 0; j < 5; ++j)
     {
         for (unsigned int k = 0; k < 5; ++k)
         {
-            MemberId array_idx = my_array_string->GetArrayIndex({ j, k });
-            my_array_string->SetStringValue("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
+            MemberId array_idx = my_array_string->get_array_index({ j, k });
+            my_array_string->set_string_value("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42", array_idx);
             //staticData.my_union().complex().my_array_string()[i][j]("Ee4rH8nSX1xnWrlDqDJjKWtWntMia9RrZqZPznr0yIDjeroWxUUzpPVV8UK4qUF4eilYR3Dz42");
         }
     }
-    complex->ReturnLoanedValue(my_array_string);
+    complex->return_loaned_value(my_array_string);
 
-    DynamicData *multi_alias_array_42 = complex->LoanValue(complex->GetMemberIdByName("multi_alias_array_42"));
+    DynamicData *multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->SetEnumValue(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, j);
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
-    complex->ReturnLoanedValue(multi_alias_array_42);
+    complex->return_loaned_value(multi_alias_array_42);
 
-    DynamicData *my_array_arrays = complex->LoanValue(complex->GetMemberIdByName("my_array_arrays"));
+    DynamicData *my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData *myMiniArray = my_array_arrays->LoanValue(j);
+        DynamicData *myMiniArray = my_array_arrays->loan_value(j);
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->SetInt32Value(j*k, k);
+            myMiniArray->set_int32_value(j*k, k);
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
-        my_array_arrays->ReturnLoanedValue(myMiniArray);
+        my_array_arrays->return_loaned_value(myMiniArray);
     }
-    complex->ReturnLoanedValue(my_array_arrays);
+    complex->return_loaned_value(my_array_arrays);
 
-    DynamicData *my_sequences_array = complex->LoanValue(complex->GetMemberIdByName("my_sequences_array"));
+    DynamicData *my_sequences_array = complex->loan_value(complex->get_member_id_by_name("my_sequences_array"));
     for (int j = 0; j < 23; ++j)
     {
-        DynamicData *seq = DynamicDataFactory::GetInstance()->CreateData(GetMySequenceLongType());
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j, id);
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j * 10, id);
-        seq->InsertSequenceData(id);
-        seq->SetInt32Value(j * 100, id);
-        my_sequences_array->SetComplexValue(seq, j);
+        DynamicData *seq = DynamicDataFactory::get_instance()->create_data(GetMySequenceLongType());
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j, id);
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j * 10, id);
+        seq->insert_sequence_data(id);
+        seq->set_int32_value(j * 100, id);
+        my_sequences_array->set_complex_value(seq, j);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
     }
-    complex->ReturnLoanedValue(my_sequences_array);
+    complex->return_loaned_value(my_sequences_array);
 
-    my_union->ReturnLoanedValue(complex);
-    dynData->ReturnLoanedValue(my_union);
+    my_union->return_loaned_value(complex);
+    dynData->return_loaned_value(my_union);
 
-    DynamicData *my_union_2 = dynData->LoanValue(dynData->GetMemberIdByName("my_union_2"));
-    my_union_2->SetInt32Value(156, my_union_2->GetMemberIdByName("tres"));
+    DynamicData *my_union_2 = dynData->loan_value(dynData->get_member_id_by_name("my_union_2"));
+    my_union_2->set_int32_value(156, my_union_2->get_member_id_by_name("tres"));
 
-    dynData->ReturnLoanedValue(my_union_2);
+    dynData->return_loaned_value(my_union_2);
 
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
@@ -2137,13 +2137,13 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     }
     std::cout << "END" << std::endl;
     */
-    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynDataFromDynamic.get()));
+    ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
@@ -2167,25 +2167,25 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     staticData.basic().my_wstring(L" Working");
     //staticData.key(88);
 
-    DynamicData *dynData = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
-    DynamicData *basic = dynData->LoanValue(dynData->GetMemberIdByName("basic"));
-    basic->SetBoolValue(true, basic->GetMemberIdByName("my_bool"));
-    basic->SetByteValue(100, basic->GetMemberIdByName("my_octet"));
-    basic->SetInt16Value(-12000, basic->GetMemberIdByName("my_int16"));
-    basic->SetInt32Value(-12000000, basic->GetMemberIdByName("my_int32"));
-    basic->SetInt64Value(-1200000000, basic->GetMemberIdByName("my_int64"));
-    basic->SetUint16Value(12000, basic->GetMemberIdByName("my_uint16"));
-    basic->SetUint32Value(12000000, basic->GetMemberIdByName("my_uint32"));
-    basic->SetUint64Value(1200000000, basic->GetMemberIdByName("my_uint64"));
-    basic->SetFloat32Value(5.5f, basic->GetMemberIdByName("my_float32"));
-    basic->SetFloat64Value(8.888, basic->GetMemberIdByName("my_float64"));
-    basic->SetFloat128Value(1005.1005, basic->GetMemberIdByName("my_float128"));
-    basic->SetChar8Value('O', basic->GetMemberIdByName("my_char"));
-    basic->SetChar16Value(L'M', basic->GetMemberIdByName("my_wchar"));
-    basic->SetStringValue("G It's", basic->GetMemberIdByName("my_string"));
-    basic->SetWstringValue(L" Working", basic->GetMemberIdByName("my_wstring"));
-    dynData->ReturnLoanedValue(basic);
-    //dynData->SetByteValue(88, dynData->GetMemberIdByName("key"));
+    DynamicData *dynData = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
+    DynamicData *basic = dynData->loan_value(dynData->get_member_id_by_name("basic"));
+    basic->set_bool_value(true, basic->get_member_id_by_name("my_bool"));
+    basic->set_byte_value(100, basic->get_member_id_by_name("my_octet"));
+    basic->set_int16_value(-12000, basic->get_member_id_by_name("my_int16"));
+    basic->set_int32_value(-12000000, basic->get_member_id_by_name("my_int32"));
+    basic->set_int64_value(-1200000000, basic->get_member_id_by_name("my_int64"));
+    basic->set_uint16_value(12000, basic->get_member_id_by_name("my_uint16"));
+    basic->set_uint32_value(12000000, basic->get_member_id_by_name("my_uint32"));
+    basic->set_uint64_value(1200000000, basic->get_member_id_by_name("my_uint64"));
+    basic->set_float32_value(5.5f, basic->get_member_id_by_name("my_float32"));
+    basic->set_float64_value(8.888, basic->get_member_id_by_name("my_float64"));
+    basic->set_float128_value(1005.1005, basic->get_member_id_by_name("my_float128"));
+    basic->set_char8_value('O', basic->get_member_id_by_name("my_char"));
+    basic->set_char16_value(L'M', basic->get_member_id_by_name("my_wchar"));
+    basic->set_string_value("G It's", basic->get_member_id_by_name("my_string"));
+    basic->set_wstring_value(L" Working", basic->get_member_id_by_name("my_wstring"));
+    dynData->return_loaned_value(basic);
+    //dynData->set_byte_value(88, dynData->get_member_id_by_name("key"));
 
     KeyedStructPubSubType pbKeyed;
     DynamicPubSubType pubsubType(GetKeyedStructType());
@@ -2200,17 +2200,17 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     ASSERT_TRUE(dynPubSub.serialize(dynData, &dynPayload));
     ASSERT_TRUE(payloadSize2 == dynPayload.length);
 
-    types::DynamicData* dynDataFromStatic = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
+    types::DynamicData* dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
 
-    types::DynamicData* dynDataFromDynamic = DynamicDataFactory::GetInstance()->CreateData(GetKeyedStructType());
+    types::DynamicData* dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
     ASSERT_TRUE(dynPubSub.deserialize(&dynPayload, dynDataFromDynamic));
 
-    ASSERT_TRUE(dynDataFromStatic->Equals(dynDataFromDynamic));
+    ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic));
 
-    DynamicDataFactory::GetInstance()->DeleteData(dynData);
-    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromStatic);
-    DynamicDataFactory::GetInstance()->DeleteData(dynDataFromDynamic);
+    DynamicDataFactory::get_instance()->delete_data(dynData);
+    DynamicDataFactory::get_instance()->delete_data(dynDataFromStatic);
+    DynamicDataFactory::get_instance()->delete_data(dynDataFromDynamic);
 }
 
 int main(int argc, char **argv)

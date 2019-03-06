@@ -30,349 +30,593 @@ class MemberDescriptor;
 
 class DynamicData
 {
-public:
-
-    ResponseCode GetDescriptor(MemberDescriptor& value, MemberId id);
-    ResponseCode SetDescriptor(MemberId id, const MemberDescriptor* value);
-
-    RTPS_DllAPI ResponseCode ClearAllValues();
-    RTPS_DllAPI ResponseCode ClearNonkeyValues();
-    RTPS_DllAPI ResponseCode ClearValue(MemberId id);
-
-    RTPS_DllAPI bool Equals(const DynamicData* other) const;
-    RTPS_DllAPI inline TypeKind GetKind() const;
-    RTPS_DllAPI uint32_t GetItemCount() const;
-    RTPS_DllAPI std::string GetName();
-
-    RTPS_DllAPI MemberId GetMemberIdByName(const std::string& name) const;
-    RTPS_DllAPI MemberId GetMemberIdAtIndex(uint32_t index) const;
-
-    RTPS_DllAPI DynamicData* LoanValue(MemberId id);
-    RTPS_DllAPI ResponseCode ReturnLoanedValue(const DynamicData* value);
-
-    RTPS_DllAPI MemberId GetArrayIndex(const std::vector<uint32_t>& position);
-    RTPS_DllAPI ResponseCode InsertSequenceData(MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertInt32Value(int32_t value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertUint32Value(uint32_t value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertInt16Value(int16_t value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertUint16Value(uint16_t value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertInt64Value(int64_t value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertUint64Value(uint64_t value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertFloat32Value(float value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertFloat64Value(double value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertFloat128Value(long double value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertChar8Value(char value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertChar16Value(wchar_t value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertByteValue(octet value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertBoolValue(bool value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertStringValue(const std::string& value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertWstringValue(const std::wstring& value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertEnumValue(const std::string& value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertComplexValue(const DynamicData* value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertComplexValue(DynamicData* value, MemberId& outId);
-    RTPS_DllAPI ResponseCode InsertComplexValue(DynamicData_ptr value, MemberId& outId);
-
-    RTPS_DllAPI ResponseCode RemoveSequenceData(MemberId id);
-    RTPS_DllAPI ResponseCode ClearData();
-
-    RTPS_DllAPI ResponseCode ClearArrayData(MemberId indexId);
-
-    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, MemberId& outKeyId, MemberId& outValueId);
-    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, DynamicData* value, MemberId& outKey, MemberId& outValue);
-    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, const DynamicData* value, MemberId& outKey, MemberId& outValue);
-    RTPS_DllAPI ResponseCode InsertMapData(const DynamicData* key, DynamicData_ptr value, MemberId& outKey, MemberId& outValue);
-    RTPS_DllAPI ResponseCode RemoveMapData(MemberId keyId);
-
-    RTPS_DllAPI ResponseCode GetInt32Value(int32_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetInt32Value(int32_t value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetUint32Value(uint32_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetUint32Value(uint32_t value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetInt16Value(int16_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetInt16Value(int16_t value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetUint16Value(uint16_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetUint16Value(uint16_t value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetInt64Value(int64_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetInt64Value(int64_t value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetUint64Value(uint64_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetUint64Value(uint64_t value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetFloat32Value(float& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetFloat32Value(float value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetFloat64Value(double& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetFloat64Value(double value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetFloat128Value(long double& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetFloat128Value(long double value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetChar8Value(char& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetChar8Value(char value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetChar16Value(wchar_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetChar16Value(wchar_t value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetByteValue(octet& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetByteValue(octet value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetBoolValue(bool& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetBoolValue(bool value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetStringValue(std::string& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetStringValue(const std::string& value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetWstringValue(std::wstring& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetWstringValue(const std::wstring& value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetEnumValue(std::string& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetEnumValue(const std::string& value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetEnumValue(uint32_t& value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetEnumValue(const uint32_t& value, MemberId id = MEMBER_ID_INVALID);
-    RTPS_DllAPI ResponseCode GetBitmaskValue(const std::string& name, bool& value) const;
-    RTPS_DllAPI ResponseCode SetBitmaskValue(bool value, const std::string& name);
-
-    RTPS_DllAPI ResponseCode GetComplexValue(DynamicData** value, MemberId id) const;
-    RTPS_DllAPI ResponseCode SetComplexValue(DynamicData* value, MemberId id = MEMBER_ID_INVALID);
-
-    RTPS_DllAPI ResponseCode GetUnionLabel(uint64_t& value) const;
-
-    // Basic types returns (copy)
-    RTPS_DllAPI int32_t GetInt32Value(MemberId id) const
-    {
-        int32_t value;
-        if (GetInt32Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI uint32_t GetUint32Value(MemberId id) const
-    {
-        uint32_t value;
-        if (GetUint32Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI int16_t GetInt16Value(MemberId id) const
-    {
-        int16_t value;
-        if (GetInt16Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI uint16_t GetUint16Value(MemberId id) const
-    {
-        uint16_t value;
-        if (GetUint16Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI int64_t GetInt64Value(MemberId id) const
-    {
-        int64_t value;
-        if (GetInt64Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI uint64_t GetUint64Value(MemberId id) const
-    {
-        uint64_t value;
-        if (GetUint64Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI float GetFloat32Value(MemberId id) const
-    {
-        float value;
-        if (GetFloat32Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI double GetFloat64Value(MemberId id) const
-    {
-        double value;
-        if (GetFloat64Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI long double GetFloat128Value(MemberId id) const
-    {
-        long double value;
-        if (GetFloat128Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI char GetChar8Value(MemberId id) const
-    {
-        char value;
-        if (GetChar8Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI wchar_t GetChar16Value(MemberId id) const
-    {
-        wchar_t value;
-        if (GetChar16Value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI octet GetByteValue(MemberId id) const
-    {
-        octet value;
-        if (GetByteValue(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI bool GetBoolValue(MemberId id) const
-    {
-        bool value;
-        if (GetBoolValue(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI std::string GetStringValue(MemberId id) const
-    {
-        std::string value;
-        if (GetStringValue(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI std::wstring GetWstringValue(MemberId id) const
-    {
-        std::wstring value;
-        if (GetWstringValue(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI std::string GetEnumValue(MemberId id) const
-    {
-        std::string value;
-        if (GetEnumValue(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI bool GetBitmaskValue(const std::string& name) const
-    {
-        bool value;
-        if (GetBitmaskValue(name, value) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI uint64_t GetUnionLabel() const
-    {
-        uint64_t value;
-        if (GetUnionLabel(value) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
 protected:
-
     DynamicData();
     DynamicData(const DynamicData* pData);
     DynamicData(DynamicType_ptr pType);
 
     ~DynamicData();
 
-    void AddValue(TypeKind kind, MemberId id);
-    void CreateMembers(DynamicType_ptr pType);
-    void CreateMembers(const DynamicData* pData);
-    void Clean();
-    void CleanMembers();
-    void* CloneValue(MemberId id, TypeKind kind) const;
-    bool CompareValues(TypeKind kind, void* left, void* right) const;
-    ResponseCode InsertArrayData(MemberId indexId);
-    void SerializeEmptyData(const DynamicType_ptr pType, eprosima::fastcdr::Cdr &cdr) const;
-    void SetDefaultValue(MemberId id);
-    void GetValue(std::string& sOutValue, MemberId id = MEMBER_ID_INVALID) const;
-    void SetValue(const std::string& sValue, MemberId id = MEMBER_ID_INVALID);
-    void SetTypeName(const std::string& name);
-    ResponseCode SetUnionId(MemberId id);
-    void UpdateUnionDiscriminator();
-    void SortMemberIds(MemberId startId);
-    void SetUnionDiscriminator(DynamicData* pData);
+    void add_value(
+            TypeKind kind,
+            MemberId id);
+
+    void create_members(DynamicType_ptr pType);
+
+    void create_members(const DynamicData* pData);
+
+    void clean();
+
+    void clean_members();
+
+    void* clone_value(
+            MemberId id,
+            TypeKind kind) const;
+
+    bool compare_values(
+            TypeKind kind,
+            void* left,
+            void* right) const;
+
+    ResponseCode insert_array_data(MemberId indexId);
+
+    void serialize_empty_data(
+            const DynamicType_ptr pType,
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    void set_default_value(MemberId id);
+
+    void get_value(
+            std::string& sOutValue,
+            MemberId id = MEMBER_ID_INVALID) const;
+
+    void set_value(
+            const std::string& sValue,
+            MemberId id = MEMBER_ID_INVALID);
+
+    void set_type_name(const std::string& name);
+
+    ResponseCode set_union_id(MemberId id);
+
+    void update_union_discriminator();
+
+    void sort_member_ids(MemberId startId);
+
+    void set_union_discriminator(DynamicData* pData);
 
     // Serializes and deserializes the Dynamic Data.
-    bool deserialize(eprosima::fastcdr::Cdr &cdr);
-    static size_t getCdrSerializedSize(const DynamicData* data, size_t current_alignment = 0);
-    static size_t getEmptyCdrSerializedSize(const DynamicType* type, size_t current_alignment = 0);
-    static size_t getKeyMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
-    static size_t getMaxCdrSerializedSize(const DynamicType_ptr type, size_t current_alignment = 0);
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    bool deserialize(eprosima::fastcdr::Cdr& cdr);
 
-    DynamicType_ptr mType;
-    std::map<MemberId, MemberDescriptor*> mDescriptors;
+    static size_t getCdrSerializedSize(
+            const DynamicData* data,
+            size_t current_alignment = 0);
+
+    static size_t getEmptyCdrSerializedSize(
+            const DynamicType* type,
+            size_t current_alignment = 0);
+
+    static size_t getKeyMaxCdrSerializedSize(
+            const DynamicType_ptr type,
+            size_t current_alignment = 0);
+
+    static size_t getMaxCdrSerializedSize(
+            const DynamicType_ptr type,
+            size_t current_alignment = 0);
+
+    void serialize(eprosima::fastcdr::Cdr& cdr) const;
+
+    void serializeKey(eprosima::fastcdr::Cdr& cdr) const;
+
+    DynamicType_ptr type_;
+    std::map<MemberId, MemberDescriptor*> descriptors_;
 
 #ifdef DYNAMIC_TYPES_CHECKING
-    int32_t mInt32Value;
-    uint32_t mUInt32Value;
-    int16_t mInt16Value;
-    uint16_t mUInt16Value;
-    int64_t mInt64Value;
-    uint64_t mUInt64Value;
-    float mFloat32Value;
-    double mFloat64Value;
-    long double mFloat128Value;
-    char mChar8Value;
-    wchar_t mChar16Value;
-    octet mByteValue;
-    bool mBoolValue;
-    std::string mStringValue;
-    std::wstring mWStringValue;
-    std::map<MemberId, DynamicData*> mComplexValues;
+    int32_t int32_value_;
+    uint32_t uint32_value_;
+    int16_t int16_value_;
+    uint16_t uint16_value_;
+    int64_t int64_value_;
+    uint64_t uint64_value_;
+    float float32_value_;
+    double float64_value_;
+    long double float128_value_;
+    char char8_value_;
+    wchar_t char16_value_;
+    octet byte_value_;
+    bool bool_value_;
+    std::string string_value_;
+    std::wstring wstring_value_;
+    std::map<MemberId, DynamicData*> complex_values_;
 #else
-    std::map<MemberId, void*> mValues;
+    std::map<MemberId, void*> values_;
 #endif
-    std::vector<MemberId> mLoanedValues;
-    bool mIsKeyElement;
-    DynamicData* mDefaultArrayValue;
-    uint64_t mUnionLabel;
-    MemberId mUnionId;
-    DynamicData* mUnionDiscriminator;
+    std::vector<MemberId> loaned_values_;
+    bool key_element_;
+    DynamicData* default_array_value_;
+    uint64_t union_label_;
+    MemberId union_id_;
+    DynamicData* union_discriminator_;
 
     friend class DynamicDataFactory;
     friend class DynamicPubSubType;
+
+public:
+
+    ResponseCode get_descriptor(
+            MemberDescriptor& value,
+            MemberId id);
+
+    ResponseCode set_descriptor(
+            MemberId id,
+            const MemberDescriptor* value);
+
+    RTPS_DllAPI ResponseCode clear_all_values();
+
+    RTPS_DllAPI ResponseCode clear_nonkey_values();
+
+    RTPS_DllAPI ResponseCode clear_value(MemberId id);
+
+    RTPS_DllAPI bool equals(const DynamicData* other) const;
+
+    RTPS_DllAPI inline TypeKind get_kind() const;
+
+    RTPS_DllAPI uint32_t get_item_count() const;
+
+    RTPS_DllAPI std::string get_name();
+
+    RTPS_DllAPI MemberId get_member_id_by_name(const std::string& name) const;
+
+    RTPS_DllAPI MemberId get_member_id_at_index(uint32_t index) const;
+
+    RTPS_DllAPI DynamicData* loan_value(MemberId id);
+
+    RTPS_DllAPI ResponseCode return_loaned_value(const DynamicData* value);
+
+    RTPS_DllAPI MemberId get_array_index(const std::vector<uint32_t>& position);
+
+    RTPS_DllAPI ResponseCode insert_sequence_data(MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_int32_value(
+            int32_t value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_uint32_value(
+            uint32_t value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_int16_value(
+            int16_t value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_uint16_value(
+            uint16_t value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_int64_value(
+            int64_t value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_uint64_value(
+            uint64_t value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_float32_value(
+            float value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_float64_value(
+            double value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_float128_value(
+            long double value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_char8_value(
+            char value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_char16_value(
+            wchar_t value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_byte_value(
+            octet value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_bool_value(
+            bool value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_string_value(
+            const std::string& value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_wstring_value(
+            const std::wstring& value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_enum_value(
+            const std::string& value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_complex_value(
+            const DynamicData* value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_complex_value(
+            DynamicData* value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode insert_complex_value(
+            DynamicData_ptr value,
+            MemberId& outId);
+
+    RTPS_DllAPI ResponseCode remove_sequence_data(MemberId id);
+
+    RTPS_DllAPI ResponseCode clear_data();
+
+    RTPS_DllAPI ResponseCode clear_array_data(MemberId indexId);
+
+    RTPS_DllAPI ResponseCode insert_map_data(
+            const DynamicData* key,
+            MemberId& outKeyId,
+            MemberId& outValueId);
+
+    RTPS_DllAPI ResponseCode insert_map_data(
+            const DynamicData* key,
+            DynamicData* value,
+            MemberId& outKey,
+            MemberId& outValue);
+
+    RTPS_DllAPI ResponseCode insert_map_data(
+            const DynamicData* key,
+            const DynamicData* value,
+            MemberId& outKey,
+            MemberId& outValue);
+
+    RTPS_DllAPI ResponseCode insert_map_data(
+            const DynamicData* key,
+            DynamicData_ptr value,
+            MemberId& outKey,
+            MemberId& outValue);
+
+    RTPS_DllAPI ResponseCode remove_map_data(MemberId keyId);
+
+    RTPS_DllAPI ResponseCode get_int32_value(
+            int32_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_int32_value(
+            int32_t value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_uint32_value(
+            uint32_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_uint32_value(
+            uint32_t value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_int16_value(
+            int16_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_int16_value(
+            int16_t value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_uint16_value(
+            uint16_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_uint16_value(
+            uint16_t value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_int64_value(
+            int64_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_int64_value(
+            int64_t value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_uint64_value(
+            uint64_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_uint64_value(
+            uint64_t value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_float32_value(
+            float& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_float32_value(
+            float value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_float64_value(
+            double& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_float64_value(
+            double value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_float128_value(
+            long double& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_float128_value(
+            long double value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_char8_value(
+            char& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_char8_value(
+            char value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_char16_value(
+            wchar_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_char16_value(
+            wchar_t value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_byte_value(
+            octet& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_byte_value(
+            octet value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_bool_value(
+            bool& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_bool_value(
+            bool value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_string_value(
+            std::string& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_string_value(
+            const std::string& value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_wstring_value(
+            std::wstring& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_wstring_value(
+            const std::wstring& value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_enum_value(
+            std::string& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_enum_value(
+            const std::string& value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_enum_value(
+            uint32_t& value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_enum_value(
+            const uint32_t& value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_bitmask_value(
+            const std::string& name,
+            bool& value) const;
+
+    RTPS_DllAPI ResponseCode set_bitmask_value(
+            bool value,
+            const std::string& name);
+
+    RTPS_DllAPI ResponseCode get_complex_value(
+            DynamicData** value,
+            MemberId id) const;
+
+    RTPS_DllAPI ResponseCode set_complex_value(
+            DynamicData* value,
+            MemberId id = MEMBER_ID_INVALID);
+
+    RTPS_DllAPI ResponseCode get_union_label(uint64_t& value) const;
+
+    // Basic types returns (copy)
+    RTPS_DllAPI int32_t get_int32_value(MemberId id) const
+    {
+        int32_t value;
+        if (get_int32_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI uint32_t get_uint32_value(MemberId id) const
+    {
+        uint32_t value;
+        if (get_uint32_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI int16_t get_int16_value(MemberId id) const
+    {
+        int16_t value;
+        if (get_int16_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI uint16_t get_uint16_value(MemberId id) const
+    {
+        uint16_t value;
+        if (get_uint16_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI int64_t get_int64_value(MemberId id) const
+    {
+        int64_t value;
+        if (get_int64_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI uint64_t get_uint64_value(MemberId id) const
+    {
+        uint64_t value;
+        if (get_uint64_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI float get_float32_value(MemberId id) const
+    {
+        float value;
+        if (get_float32_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI double get_float64_value(MemberId id) const
+    {
+        double value;
+        if (get_float64_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI long double get_float128_value(MemberId id) const
+    {
+        long double value;
+        if (get_float128_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI char get_char8_value(MemberId id) const
+    {
+        char value;
+        if (get_char8_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI wchar_t get_char16_value(MemberId id) const
+    {
+        wchar_t value;
+        if (get_char16_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI octet get_byte_value(MemberId id) const
+    {
+        octet value;
+        if (get_byte_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI bool get_bool_value(MemberId id) const
+    {
+        bool value;
+        if (get_bool_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI std::string get_string_value(MemberId id) const
+    {
+        std::string value;
+        if (get_string_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI std::wstring get_wstring_value(MemberId id) const
+    {
+        std::wstring value;
+        if (get_wstring_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI std::string get_enum_value(MemberId id) const
+    {
+        std::string value;
+        if (get_enum_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI bool get_bitmask_value(const std::string& name) const
+    {
+        bool value;
+        if (get_bitmask_value(name, value) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI uint64_t get_union_label() const
+    {
+        uint64_t value;
+        if (get_union_label(value) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
 };
 
 

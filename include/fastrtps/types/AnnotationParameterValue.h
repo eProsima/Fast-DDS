@@ -28,6 +28,8 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <codecvt>
+#include <locale>
 
 namespace eprosima
 {
@@ -589,6 +591,53 @@ public:
      * @param cdr CDR serialization object.
      */
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+    /**
+     * Aux method to return value as its string representation.
+     */
+    std::string to_string() const
+    {
+        switch(m__d)
+        {
+            case TK_BOOLEAN:
+                return std::to_string(m_boolean_value);
+            case TK_BYTE:
+                return std::to_string(m_byte_value);
+            case TK_INT16:
+                return std::to_string(m_int16_value);
+            case TK_UINT16:
+                return std::to_string(m_uint_16_value);
+            case TK_INT32:
+                return std::to_string(m_int32_value);
+            case TK_UINT32:
+                return std::to_string(m_uint32_value);
+            case TK_INT64:
+                return std::to_string(m_int64_value);
+            case TK_UINT64:
+                return std::to_string(m_uint64_value);
+            case TK_FLOAT32:
+                return std::to_string(m_float32_value);
+            case TK_FLOAT64:
+                return std::to_string(m_float64_value);
+            case TK_FLOAT128:
+                return std::to_string(m_float128_value);
+            case TK_CHAR8:
+                return std::to_string(m_char_value);
+            case TK_CHAR16:
+                return std::to_string(m_wchar_value);
+            case TK_ENUM:
+                return std::to_string(m_enumerated_value);
+            case TK_STRING16:
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                return conv.to_bytes(m_string16_value);
+            }
+            case TK_STRING8:
+                return m_string8_value;
+            default:
+                return "";
+        }
+    }
 
 private:
     char m__d;

@@ -29,39 +29,7 @@ class DynamicTypeBuilder;
 
 class DynamicType
 {
-public:
-
-    bool Equals(const DynamicType* other) const;
-
-    ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members);
-    ResponseCode GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members);
-
-    uint32_t GetBounds(uint32_t index = 0) const;
-    uint32_t GetBoundsSize() const;
-
-    ResponseCode GetDescriptor(TypeDescriptor* descriptor) const;
-
-    bool GetKeyAnnotation() const;
-    inline TypeKind GetKind() const
-    {
-        return mKind;
-    }
-    std::string GetName() const;
-    MemberId GetMembersCount() const;
-    uint32_t GetTotalBounds() const;
-
-    const TypeDescriptor* getTypeDescriptor() const
-    {
-        return mDescriptor;
-    }
-
-    bool HasChildren() const;
-    bool IsConsistent() const;
-    bool IsComplexKind() const;
-    bool IsDiscriminatorType() const;
-
 protected:
-
     friend class DynamicTypeBuilder;
     friend class DynamicTypeBuilderFactory;
     friend class MemberDescriptor;
@@ -73,42 +41,107 @@ protected:
     friend class DynamicTypeMember;
 
     DynamicType();
+
     DynamicType(const TypeDescriptor* descriptor);
+
     DynamicType(const DynamicTypeBuilder* other);
 
     virtual ~DynamicType();
 
-    virtual void Clear();
+    virtual void clear();
 
-    ResponseCode CopyFromBuilder(const DynamicTypeBuilder* other);
+    ResponseCode copy_from_builder(const DynamicTypeBuilder* other);
 
     // Checks if there is a member with the given name.
-    bool ExistsMemberByName(const std::string& name) const;
+    bool exists_member_by_name(const std::string& name) const;
 
     // This method is used by Dynamic Data to override the name of the types based on ALIAS.
-    void SetName(const std::string& name);
+    void set_name(const std::string& name);
 
-    ResponseCode ApplyAnnotation(AnnotationDescriptor& descriptor);
-    ResponseCode ApplyAnnotation(const std::string& key, const std::string& value);
-    ResponseCode ApplyAnnotationToMember(MemberId id, AnnotationDescriptor& descriptor);
-    ResponseCode ApplyAnnotationToMember(MemberId id, const std::string& key, const std::string& value);
+    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
 
-    ResponseCode GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx);
-    uint32_t GetAnnotationCount();
-    DynamicType_ptr GetBaseType() const;
-    DynamicType_ptr GetDiscriminatorType() const;
-    DynamicType_ptr GetElementType() const;
-    DynamicType_ptr GetKeyElementType() const;
-    ResponseCode GetMember(DynamicTypeMember& member, MemberId id);
-    ResponseCode GetMemberByName(DynamicTypeMember& member, const std::string& name);
+    ResponseCode apply_annotation(
+            const std::string& key,
+            const std::string& value);
 
-    TypeDescriptor* mDescriptor;
-    std::vector<AnnotationDescriptor*> mAnnotation;
-    std::map<MemberId, DynamicTypeMember*> mMemberById;         // Aggregated members
-    std::map<std::string, DynamicTypeMember*> mMemberByName;    // Uses the pointers from "mMemberById".
-    std::string mName;
-    TypeKind mKind;
-    bool mIsKeyDefined;
+    ResponseCode apply_annotation_to_member(
+            MemberId id,
+            AnnotationDescriptor& descriptor);
+
+    ResponseCode apply_annotation_to_member(
+            MemberId id,
+            const std::string& key,
+            const std::string& value);
+
+    ResponseCode get_annotation(
+            AnnotationDescriptor& descriptor,
+            uint32_t idx);
+
+    uint32_t get_annotation_count();
+
+    DynamicType_ptr get_base_type() const;
+
+    DynamicType_ptr get_discriminator_type() const;
+
+    DynamicType_ptr get_element_type() const;
+
+    DynamicType_ptr get_key_element_type() const;
+
+    ResponseCode get_member(
+            DynamicTypeMember& member,
+            MemberId id);
+
+    ResponseCode get_member_by_name(
+            DynamicTypeMember& member,
+            const std::string& name);
+
+    TypeDescriptor* descriptor_;
+    std::vector<AnnotationDescriptor*> annotation_;
+    std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
+    std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
+    std::string name_;
+    TypeKind kind_;
+    bool is_key_defined_;
+
+public:
+    bool equals(const DynamicType* other) const;
+
+    ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
+
+    ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
+
+    uint32_t get_bounds(uint32_t index = 0) const;
+
+    uint32_t get_bounds_size() const;
+
+    ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
+
+    bool key_annotation() const;
+
+    inline TypeKind get_kind() const
+    {
+        return kind_;
+    }
+
+    std::string get_name() const;
+
+    MemberId get_members_count() const;
+
+    uint32_t get_total_bounds() const;
+
+    const TypeDescriptor* get_type_descriptor() const
+    {
+        return descriptor_;
+    }
+
+    bool has_children() const;
+
+    bool is_consistent() const;
+
+    bool is_complex_kind() const;
+
+    bool is_discriminator_type() const;
+
 };
 
 } // namespace types

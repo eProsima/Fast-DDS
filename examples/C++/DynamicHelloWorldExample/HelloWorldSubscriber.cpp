@@ -51,15 +51,15 @@ bool HelloWorldSubscriber::init()
         return false;
 
     //  Create basic types and add members to the struct.
-    DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
-    DynamicTypeBuilder_ptr created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder();
-    DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
-    struct_type_builder->AddMember(0, "index", created_type_ulong.get());
-    struct_type_builder->AddMember(1, "message", created_type_string.get());
-    struct_type_builder->SetName("HelloWorld");
-    DynamicType_ptr dynType = struct_type_builder->Build();
+    DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+    DynamicTypeBuilder_ptr created_type_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+    DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    struct_type_builder->add_member(0, "index", created_type_ulong.get());
+    struct_type_builder->add_member(1, "message", created_type_string.get());
+    struct_type_builder->set_name("HelloWorld");
+    DynamicType_ptr dynType = struct_type_builder->build();
     m_DynType.SetDynamicType(dynType);
-    m_listener.m_DynHello = DynamicDataFactory::GetInstance()->CreateData(dynType);
+    m_listener.m_DynHello = DynamicDataFactory::get_instance()->create_data(dynType);
 
     //REGISTER THE TYPE
     Domain::registerDynamicType(mp_participant, &m_DynType);
@@ -84,7 +84,7 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
     // TODO Auto-generated destructor stub
     Domain::removeParticipant(mp_participant);
 
-    DynamicDataFactory::GetInstance()->DeleteData(m_listener.m_DynHello);
+    DynamicDataFactory::get_instance()->delete_data(m_listener.m_DynHello);
 
     Domain::stopAll();
 }
@@ -128,9 +128,9 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
             this->n_samples++;
             // Print your structure data here.
             std::string message;
-            m_DynHello->GetStringValue(message, 1);
+            m_DynHello->get_string_value(message, 1);
             uint32_t index;
-            m_DynHello->GetUint32Value(index, 0);
+            m_DynHello->get_uint32_value(index, 0);
 
             std::cout << "Message: "<<message<< " with index: "<<index<< " RECEIVED"<<std::endl;
         }

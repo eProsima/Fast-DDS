@@ -68,17 +68,17 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
     if (dynamic_data) // Dummy type registration
     {
         // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
-        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-        struct_type_builder->AddMember(1, "data",
-            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+        struct_type_builder->add_member(1, "data",
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED
             ));
-        struct_type_builder->SetName("MemoryType");
+        struct_type_builder->set_name("MemoryType");
 
-        m_pDynType = struct_type_builder->Build();
+        m_pDynType = struct_type_builder->build();
         m_DynType.SetDynamicType(m_pDynType);
     }
 
@@ -192,7 +192,7 @@ bool MemoryTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid
 
     if (dynamic_data)
     {
-        DynamicTypeBuilderFactory::DeleteInstance();
+        DynamicTypeBuilderFactory::delete_instance();
         subAttr = mp_datasub->getAttributes();
         Domain::removeSubscriber(mp_datasub);
         Domain::unregisterType(mp_participant, "MemoryType"); // Unregister as we will register it later with correct size
@@ -305,7 +305,7 @@ void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
         ++mp_up->n_received;
         if (mp_up->m_echo)
         {
-            std::cout << "Received data: " << mp_up->m_DynData->GetUint32Value(0)
+            std::cout << "Received data: " << mp_up->m_DynData->get_uint32_value(0)
                 << "(" << mp_up->n_received << ")" << std::endl;
         }
     }
@@ -346,18 +346,18 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
     {
         // Create basic builders
         DynamicTypeBuilder_ptr struct_type_builder(
-            DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+            DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
-        struct_type_builder->AddMember(0, "seqnum",
-            DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-        struct_type_builder->AddMember(1, "data",
-            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), datasize
+        struct_type_builder->add_member(0, "seqnum",
+            DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+        struct_type_builder->add_member(1, "data",
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), datasize
             ));
-        struct_type_builder->SetName("MemoryType");
+        struct_type_builder->set_name("MemoryType");
 
-        m_pDynType = struct_type_builder->Build();
+        m_pDynType = struct_type_builder->build();
         m_DynType.CleanDynamicType();
         m_DynType.SetDynamicType(m_pDynType);
 
@@ -365,7 +365,7 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
 
         mp_datasub = Domain::createSubscriber(mp_participant, subAttr, &m_datasublistener);
 
-        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+        m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
     }
     else
     {
@@ -406,8 +406,8 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
     //cout << "REMOVED: "<< removed<<endl;
     if (dynamic_data)
     {
-        DynamicTypeBuilderFactory::DeleteInstance();
-        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+        DynamicTypeBuilderFactory::delete_instance();
+        DynamicDataFactory::get_instance()->delete_data(m_DynData);
         subAttr = mp_datasub->getAttributes();
     }
     else

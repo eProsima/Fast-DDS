@@ -24,84 +24,86 @@ namespace fastrtps {
 namespace types {
 
 DynamicTypeMember::DynamicTypeMember()
-    : mParent(nullptr)
-    , mId(MEMBER_ID_INVALID)
+    : parent_(nullptr)
+    , id_(MEMBER_ID_INVALID)
 {
 }
 
-DynamicTypeMember::DynamicTypeMember(const MemberDescriptor* descriptor, MemberId id)
-    : mParent(nullptr)
-    , mId(id)
+DynamicTypeMember::DynamicTypeMember(
+        const MemberDescriptor* descriptor,
+        MemberId id)
+    : parent_(nullptr)
+    , id_(id)
 {
-    mDescriptor.CopyFrom(descriptor);
-    mDescriptor.SetId(id);
+    descriptor_.copy_from(descriptor);
+    descriptor_.set_id(id);
 }
 
 DynamicTypeMember::DynamicTypeMember(const DynamicTypeMember* other)
-    : mParent(other->mParent)
-    , mId(other->mId)
+    : parent_(other->parent_)
+    , id_(other->id_)
 {
-    mDescriptor.CopyFrom(&other->mDescriptor);
-    for (auto it = other->mAnnotation.begin(); it != other->mAnnotation.end(); ++it)
+    descriptor_.copy_from(&other->descriptor_);
+    for (auto it = other->annotation_.begin(); it != other->annotation_.end(); ++it)
     {
         AnnotationDescriptor* newDesc = new AnnotationDescriptor(*it);
-        mAnnotation.push_back(newDesc);
+        annotation_.push_back(newDesc);
     }
 }
 
 DynamicTypeMember::~DynamicTypeMember()
 {
-    mParent = nullptr;
-    for (auto it = mAnnotation.begin(); it != mAnnotation.end(); ++it)
+    parent_ = nullptr;
+    for (auto it = annotation_.begin(); it != annotation_.end(); ++it)
     {
         delete *it;
     }
-    mAnnotation.clear();
+    annotation_.clear();
 }
 
-ResponseCode DynamicTypeMember::ApplyAnnotation(AnnotationDescriptor& descriptor)
+ResponseCode DynamicTypeMember::apply_annotation(AnnotationDescriptor& descriptor)
 {
-    if (descriptor.IsConsistent())
+    if (descriptor.is_consistent())
     {
         // Store the annotation in the list of the member.
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->CopyFrom(&descriptor);
-        mAnnotation.push_back(pNewDescriptor);
+        pNewDescriptor->copy_from(&descriptor);
+        annotation_.push_back(pNewDescriptor);
 
         // Update the annotations on the member Dynamic Type.
-        mDescriptor.mType->ApplyAnnotation(descriptor);
+        descriptor_.type_->apply_annotation(descriptor);
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-ResponseCode DynamicTypeMember::ApplyAnnotation(const std::string& key, const std::string& value)
+ResponseCode DynamicTypeMember::apply_annotation(const std::string& key, const std::string& value)
 {
     // Update the annotations on the member Dynamic Type.
-    mDescriptor.mType->ApplyAnnotation(key, value);
+    descriptor_.type_->apply_annotation(key, value);
 
-    auto it = mAnnotation.begin();
-    if (it != mAnnotation.end())
+    auto it = annotation_.begin();
+    if (it != annotation_.end())
     {
-        return (*it)->SetValue(key, value);
+        return (*it)->set_value(key, value);
     }
     else
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->SetType(DynamicTypeBuilderFactory::GetInstance()->CreateAnnotationPrimitive());
-        pNewDescriptor->SetValue(key, value);
-        mAnnotation.push_back(pNewDescriptor);
+        pNewDescriptor->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive());
+        pNewDescriptor->set_value(key, value);
+        annotation_.push_back(pNewDescriptor);
         return ResponseCode::RETCODE_OK;
     }
 }
 
-bool DynamicTypeMember::Equals(const DynamicTypeMember* other) const
+bool DynamicTypeMember::equals(const DynamicTypeMember* other) const
 {
-    if (other != nullptr && mAnnotation.size() == other->mAnnotation.size())
+    if (other != nullptr && annotation_.size() == other->annotation_.size())
     {
-        for (auto it = mAnnotation.begin(), it2 = other->mAnnotation.begin(); it != mAnnotation.end(); ++it, ++it2)
+        for (auto it = annotation_.begin(), it2 = other->annotation_.begin(); it != annotation_.end(); ++it, ++it2)
         {
-            if (!(*it)->Equals(*it2))
+            if (!(*it)->equals(*it2))
             {
                 return false;
             }
@@ -114,26 +116,28 @@ bool DynamicTypeMember::Equals(const DynamicTypeMember* other) const
     }
 }
 
-ResponseCode DynamicTypeMember::GetAnnotation(AnnotationDescriptor& descriptor, uint32_t idx)
+ResponseCode DynamicTypeMember::get_annotation(
+        AnnotationDescriptor& descriptor,
+        uint32_t idx)
 {
-    if (idx < mAnnotation.size())
+    if (idx < annotation_.size())
     {
-        descriptor.CopyFrom(mAnnotation[idx]);
+        descriptor.copy_from(annotation_[idx]);
         return ResponseCode::RETCODE_OK;
     }
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-uint32_t DynamicTypeMember::GetAnnotationCount()
+uint32_t DynamicTypeMember::get_annotation_count()
 {
-    return static_cast<uint32_t>(mAnnotation.size());
+    return static_cast<uint32_t>(annotation_.size());
 }
 
-bool DynamicTypeMember::GetKeyAnnotation() const
+bool DynamicTypeMember::key_annotation() const
 {
-    for (auto anIt = mAnnotation.begin(); anIt != mAnnotation.end(); ++anIt)
+    for (auto anIt = annotation_.begin(); anIt != annotation_.end(); ++anIt)
     {
-        if ((*anIt)->GetKeyAnnotation())
+        if ((*anIt)->key_annotation())
         {
             return true;
         }
@@ -141,16 +145,16 @@ bool DynamicTypeMember::GetKeyAnnotation() const
     return false;
 }
 
-std::vector<uint64_t> DynamicTypeMember::GetUnionLabels() const
+std::vector<uint64_t> DynamicTypeMember::get_union_labels() const
 {
-    return mDescriptor.GetUnionLabels();
+    return descriptor_.get_union_labels();
 }
 
-ResponseCode DynamicTypeMember::GetDescriptor(MemberDescriptor* descriptor) const
+ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) const
 {
     if (descriptor != nullptr)
     {
-        descriptor->CopyFrom(&mDescriptor);
+        descriptor->copy_from(&descriptor_);
         return ResponseCode::RETCODE_OK;
     }
     else
@@ -160,34 +164,34 @@ ResponseCode DynamicTypeMember::GetDescriptor(MemberDescriptor* descriptor) cons
     }
 }
 
-uint32_t DynamicTypeMember::GetIndex() const
+uint32_t DynamicTypeMember::get_index() const
 {
-    return mDescriptor.GetIndex();
+    return descriptor_.get_index();
 }
 
-std::string DynamicTypeMember::GetName() const
+std::string DynamicTypeMember::get_name() const
 {
-    return mDescriptor.GetName();
+    return descriptor_.get_name();
 }
 
-MemberId DynamicTypeMember::GetId() const
+MemberId DynamicTypeMember::get_id() const
 {
-    return mDescriptor.GetId();
+    return descriptor_.get_id();
 }
 
-bool DynamicTypeMember::IsDefaultUnionValue() const
+bool DynamicTypeMember::is_default_union_value() const
 {
-    return mDescriptor.IsDefaultUnionValue();
+    return descriptor_.is_default_union_value();
 }
 
-void DynamicTypeMember::SetIndex(uint32_t index)
+void DynamicTypeMember::set_index(uint32_t index)
 {
-    mDescriptor.SetIndex(index);
+    descriptor_.set_index(index);
 }
 
-void DynamicTypeMember::SetParent(DynamicType* pType)
+void DynamicTypeMember::set_parent(DynamicType* pType)
 {
-    mParent = pType;
+    parent_ = pType;
 }
 
 } // namespace types
