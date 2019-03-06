@@ -113,6 +113,8 @@ class PublisherHistory:public rtps::WriterHistory
         ResourceLimitsQosPolicy m_resourceLimitsQos;
         //!Publisher Pointer
         PublisherImpl* mp_pubImpl;
+        //!The latest cache change written (only used for topics with no key)
+        CacheChange_t* mp_latestCacheChange;
 
         /**
          * @brief Method that finds a key in m_keyedChanges or tries to add it if not found

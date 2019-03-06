@@ -57,6 +57,7 @@ SubscriberHistory::SubscriberHistory(
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
     , mp_subImpl(simpl)
+    , mp_latestCacheChange(new CacheChange_t)
     , mp_getKeyObject(nullptr)
 {
     if (mp_subImpl->getType()->m_isGetKeyDefined)
@@ -71,6 +72,7 @@ SubscriberHistory::~SubscriberHistory()
     {
         mp_subImpl->getType()->deleteData(mp_getKeyObject);
     }
+    delete mp_latestCacheChange;
 }
 
 bool SubscriberHistory::received_change(
@@ -154,7 +156,12 @@ bool SubscriberHistory::received_change(
                 logInfo(SUBSCRIBER, this->mp_subImpl->getGuid().entityId
                     << ": Change " << a_change->sequenceNumber << " added from: "
                     << a_change->writerGUID;);
-                //print_changes_seqNum();
+
+                if (mp_latestCacheChange == mp_invalidCache || mp_latestCacheChange->sourceTimestamp < a_change->sourceTimestamp)
+                {
+                    mp_latestCacheChange->copy(a_change);
+                }
+
                 return true;
             }
         }
@@ -549,7 +556,7 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
     return false;
 }
 
-void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t *> &samples, int &num_samples)
+void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t*> &samples, int &num_samples)
 {
     num_samples = 0;
 
@@ -561,16 +568,10 @@ void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t *> &samples
             return;
         }
 
-        if (m_changes.empty())
+        if(mp_latestCacheChange != mp_invalidCache)
         {
-            return;
+            samples[num_samples++] = mp_latestCacheChange;
         }
-
-        auto max = *std::max_element(
-                    m_changes.begin(),
-                    m_changes.end(),
-                    [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
-        samples[num_samples++] = max;
     }
     else if (mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {

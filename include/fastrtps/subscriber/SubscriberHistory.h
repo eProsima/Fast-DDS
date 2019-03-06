@@ -140,6 +140,8 @@ class SubscriberHistory: public rtps::ReaderHistory
         ResourceLimitsQosPolicy m_resourceLimitsQos;
         //!Publisher Pointer
         SubscriberImpl* mp_subImpl;
+        //!The latest cache change received (only used for topics with no key)
+        CacheChange_t* mp_latestCacheChange;
 
         //!Type object to deserialize Key
         void * mp_getKeyObject;

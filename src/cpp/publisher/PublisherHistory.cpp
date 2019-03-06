@@ -54,13 +54,15 @@ PublisherHistory::PublisherHistory(
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
     , mp_pubImpl(pimpl)
+    , mp_latestCacheChange(new CacheChange_t)
 {
     // TODO Auto-generated constructor stub
 
 }
 
-PublisherHistory::~PublisherHistory() {
-    // TODO Auto-generated destructor stub
+PublisherHistory::~PublisherHistory()
+{
+    delete mp_latestCacheChange;
 }
 
 
@@ -99,6 +101,7 @@ bool PublisherHistory::add_pub_change(
     {
         if(this->add_change_(change, wparams, max_blocking_time))
         {
+            mp_latestCacheChange->copy(change);
             returnedValue = true;
         }
     }
@@ -286,16 +289,10 @@ void PublisherHistory::get_latest_samples(std::vector<CacheChange_t *> &samples,
             return;
         }
 
-        if (m_changes.empty())
+        if (mp_latestCacheChange != mp_invalidCache)
         {
-            return;
+            samples[num_samples++] = mp_latestCacheChange;
         }
-
-        auto max = *std::max_element(
-                    m_changes.begin(),
-                    m_changes.end(),
-                    [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
-        samples[num_samples++] = max;
     }
     else if (mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
