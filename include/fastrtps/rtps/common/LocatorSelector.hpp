@@ -136,7 +136,7 @@ public:
      *
      * @return true if the enabling state has changed, false otherwise.
      */
-    bool state_has_changed()
+    bool state_has_changed() const
     {
         if (entries_.size() != last_state_.size())
         {
@@ -194,6 +194,49 @@ public:
             std::find(selections_.begin(), selections_.end(), index) == selections_.end())
         {
             selections_.push_back(index);
+        }
+    }
+
+    /**
+     * Count the number of selected locators.
+     *
+     * @return the number of selected locators.
+     */
+    size_t selected_size() const
+    {
+        size_t result = 0;
+
+        for (size_t index : selections_)
+        {
+            LocatorSelectorEntry* entry = entries_.at(index);
+            result += entry->state.multicast.size();
+            result += entry->state.unicast.size();
+        }
+
+        return result;
+    }
+
+    /**
+     * Performs an action on each selected locator.
+     *
+     * @param action   Unary function that accepts a locator as argument.
+     *                 The function shall not modify its argument.
+     *                 This can either be a function pointer or a function object.
+     */
+    template<class UnaryPredicate>
+    void for_each(UnaryPredicate action) const
+    {
+        for (size_t index : selections_)
+        {
+            LocatorSelectorEntry* entry = entries_.at(index);
+            for (size_t loc_index : entry->state.multicast)
+            {
+                action(entry->multicast.at(loc_index));
+            }
+            for (size_t loc_index : entry->state.unicast)
+            {
+                action(entry->unicast.at(loc_index));
+            }
         }
     }
 
