@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
@@ -28,6 +29,7 @@
 #include <vector>
 
 using namespace std;
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 class NetworkTests: public ::testing::Test
@@ -349,9 +351,19 @@ void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigne
 
 struct ShrinkLocatorCase_t
 {
+    static const size_t TEST_MAX_ENTRIES = 4u;
+    static const size_t TEST_MAX_UNICAST_LOCATORS = 4u;
+    static const size_t TEST_MAX_MULTICAST_LOCATORS = 1u;
+
+    ShrinkLocatorCase_t()
+    {
+    }
+
     std::string name;
     std::vector<LocatorList_t> input;
     LocatorList_t output;
+
+    std::vector<LocatorSelectorEntry> temp_entries;
 
     void clear(const char* case_name)
     {
@@ -360,10 +372,51 @@ struct ShrinkLocatorCase_t
         output.clear();
     }
 
+    void prepare_selector(LocatorSelector& selector)
+    {
+        uint32_t id = 1;
+        selector.clear();
+        temp_entries.clear();
+        temp_entries.reserve(input.size());
+        for (const LocatorList_t& loc_list : input)
+        {
+            temp_entries.emplace_back(TEST_MAX_UNICAST_LOCATORS, TEST_MAX_MULTICAST_LOCATORS);
+            LocatorSelectorEntry& entry = temp_entries.back();
+            entry.remote_guid.entityId = id++;
+            for (const Locator_t& loc : loc_list)
+            {
+                if (IPLocator::isMulticast(loc))
+                {
+                    entry.multicast.push_back(loc);
+                }
+                else
+                {
+                    entry.unicast.push_back(loc);
+                }
+            }
+
+            selector.add_entry(&entry);
+        }
+    }
+
     void perform_test(const NetworkFactory& network) const
     {
         LocatorList_t result = network.ShrinkLocatorLists(input);
         ASSERT_EQ(result, output) << "on test " << name;
+    }
+
+    void perform_selector_test(const NetworkFactory& network)
+    {
+        LocatorSelector selector(ResourceLimitedContainerConfig::fixed_size_configuration(TEST_MAX_ENTRIES));
+        prepare_selector(selector);
+        selector.reset(true);
+        network.select_locators(selector);
+        ASSERT_EQ(selector.selected_size(), output.size()) << "on test " << name;
+        selector.for_each(
+            [this](const Locator_t& locator)
+            {
+                ASSERT_TRUE(output.contains(locator));
+            });
     }
 };
 
@@ -543,6 +596,22 @@ TEST_F(NetworkTests, LocatorShrink)
     for (const ShrinkLocatorCase_t& test : test_cases)
     {
         test.perform_test(f);
+    }
+}
+
+TEST_F(NetworkTests, LocatorShrinkRefactored)
+{
+    std::vector<ShrinkLocatorCase_t> test_cases;
+    fill_blackbox_locators_test_cases(test_cases);
+
+    NetworkFactory f;
+    UDPv4TransportDescriptor udpv4;
+    f.RegisterTransport(&udpv4);
+    // TODO: Register more transports
+
+    for (ShrinkLocatorCase_t& test : test_cases)
+    {
+        test.perform_selector_test(f);
     }
 }
 
