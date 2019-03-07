@@ -111,6 +111,7 @@ set(${PROJECT_NAME}_source_files
     types/TypeObjectFactory.cpp
     types/TypeNamesGenerator.cpp
     types/TypesBase.cpp
+    types/BuiltinAnnotationsTypeObject.cpp
 
     attributes/TopicAttributes.cpp
     qos/ParameterList.cpp

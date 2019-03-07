@@ -43,19 +43,12 @@ protected:
     friend class DynamicTypeBuilderFactory;
 
     TypeDescriptor* descriptor_;
-    std::vector<AnnotationDescriptor*> annotation_;
     std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
     std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
     std::string name_;
     TypeKind kind_;
     MemberId current_member_id_;
     uint32_t max_index_;
-
-    ResponseCode _apply_annotation(AnnotationDescriptor& descriptor);
-
-    ResponseCode _apply_annotation(
-            const std::string& key,
-            const std::string& value);
 
     ResponseCode _apply_annotation_to_member(
             MemberId id,
@@ -125,8 +118,8 @@ public:
     RTPS_DllAPI ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
 
     RTPS_DllAPI ResponseCode apply_annotation(
-            std::string key,
-            std::string value);
+            const std::string& key,
+            const std::string& value);
 
     RTPS_DllAPI ResponseCode apply_annotation_to_member(
             MemberId id,
@@ -134,8 +127,8 @@ public:
 
     RTPS_DllAPI ResponseCode apply_annotation_to_member(
             MemberId id,
-            std::string key,
-            std::string value);
+            const std::string& key,
+            const std::string& value);
 
     RTPS_DllAPI DynamicType_ptr build();
 

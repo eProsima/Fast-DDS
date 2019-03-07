@@ -17,6 +17,7 @@
 
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <mutex>
 
@@ -40,13 +41,29 @@ protected:
 
     DynamicType_ptr build_dynamic_type(
             TypeDescriptor& descriptor,
-            const TypeObject* object) const;
+            const TypeObject* object,
+            const DynamicType_ptr annotation_member_type = nullptr) const;
 
     const TypeIdentifier* try_get_complete(const TypeIdentifier* identifier) const;
 
     const TypeIdentifier* get_stored_type_identifier(const TypeIdentifier* identifier) const;
 
     void nullify_all_entries(const TypeIdentifier* identifier);
+
+    void create_builtin_annotations();
+
+    void apply_type_annotations(
+            DynamicTypeBuilder_ptr& type_builder,
+            const AppliedAnnotationSeq& annotations) const;
+
+    void apply_member_annotations(
+            DynamicTypeBuilder_ptr& parent_type_builder,
+            MemberId member_id,
+            const AppliedAnnotationSeq& annotations) const;
+
+    std::string get_key_from_hash(
+            const DynamicType_ptr annotation_descriptor_type,
+            const NameHash& hash) const;
 
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();

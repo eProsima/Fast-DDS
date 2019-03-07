@@ -37,9 +37,28 @@ using namespace rtps;
 
 namespace types {
 
+const std::string CONST_TRUE = "true";
+const std::string CONST_FALSE = "false";
+
 const std::string ANNOTATION_KEY_ID = "@key";
 const std::string ANNOTATION_EPKEY_ID = "@Key";
 const std::string ANNOTATION_TOPIC_ID = "@Topic";
+const std::string ANNOTATION_EXTENSIBILITY_ID = "@extensibility";
+const std::string ANNOTATION_FINAL_ID = "@final";
+const std::string ANNOTATION_APPENDABLE_ID = "@appendable";
+const std::string ANNOTATION_MUTABLE_ID = "@mutable";
+const std::string ANNOTATION_NESTED_ID = "@nested";
+const std::string ANNOTATION_OPTIONAL_ID = "@optional";
+const std::string ANNOTATION_MUST_UNDERSTAND_ID = "@must_understand";
+const std::string ANNOTATION_NON_SERIALIZED_ID = "@non_serialized";
+const std::string ANNOTATION_BIT_BOUND_ID = "@bit_bound";
+const std::string ANNOTATION_DEFAULT_LITERAL_ID = "@default_literal";
+const std::string ANNOTATION_VALUE_ID = "@value";
+const std::string ANNOTATION_POSITION_ID = "@position";
+
+const std::string EXTENSIBILITY_FINAL = "FINAL";
+const std::string EXTENSIBILITY_APPENDABLE = "APPENDABLE";
+const std::string EXTENSIBILITY_MUTABLE = "MUTABLE";
 
 const std::string TKNAME_BOOLEAN = "bool";
 const std::string TKNAME_INT16 = "int16_t";

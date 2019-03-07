@@ -633,9 +633,108 @@ public:
                 return conv.to_bytes(m_string16_value);
             }
             case TK_STRING8:
+            case TK_NONE: // Cheat!
                 return m_string8_value;
             default:
                 return "";
+        }
+    }
+
+    /**
+     * Aux method to set value from its string representation.
+     */
+    void from_string(const std::string& value)
+    {
+        switch(m__d)
+        {
+            case TK_BOOLEAN:
+            {
+                std::string val_;
+                std::transform(val_.begin(), val_.end(), val_.begin(), ::tolower);
+                boolean_value(val_.compare("0") != 0 || val_.compare(CONST_TRUE) == 0);
+            }
+            break;
+            case TK_BYTE:
+            {
+                byte_value(static_cast<uint8_t>(std::stoul(value)));
+            }
+            break;
+            case TK_INT16:
+            {
+                int16_value(static_cast<int16_t>(std::stoi(value)));
+            }
+            break;
+            case TK_INT32:
+            {
+                int32_value(static_cast<int32_t>(std::stoi(value)));
+            }
+            break;
+            case TK_INT64:
+            {
+                int64_value(static_cast<int64_t>(std::stoll(value)));
+            }
+            break;
+            case TK_UINT16:
+            {
+                uint_16_value(static_cast<uint16_t>(std::stoul(value)));
+            }
+            break;
+            case TK_UINT32:
+            {
+                uint32_value(static_cast<uint32_t>(std::stoul(value)));
+            }
+            break;
+            case TK_UINT64:
+            {
+                uint64_value(static_cast<uint64_t>(std::stoull(value)));
+            }
+            break;
+            case TK_FLOAT32:
+            {
+                float32_value(std::stof(value));
+            }
+            break;
+            case TK_FLOAT64:
+            {
+                float64_value(std::stod(value));
+            }
+            break;
+            case TK_FLOAT128:
+            {
+                float128_value(std::stold(value));
+            }
+            break;
+            case TK_CHAR8:
+            {
+                char_value(value.c_str()[0]);
+            }
+            break;
+            case TK_CHAR16:
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                wchar_value(conv.from_bytes(value).c_str()[0]);
+            }
+            break;
+            case TK_STRING8:
+            case TK_NONE: // Cheat!
+            {
+                string8_value(value);
+            }
+            break;
+            case TK_STRING16:
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                string16_value(conv.from_bytes(value));
+            }
+            break;
+            case TK_ENUM:
+            {
+                // TODO Translate from enum value name to integer value
+                enumerated_value(static_cast<uint32_t>(std::stoul(value)));
+            }
+            break;
+            default:
+            break;
         }
     }
 

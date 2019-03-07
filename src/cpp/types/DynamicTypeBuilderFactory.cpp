@@ -22,6 +22,7 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/log/Log.h>
 
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -642,7 +643,8 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_custom_builder(
             kind == TK_FLOAT32 || kind == TK_FLOAT64 || kind == TK_FLOAT128 || kind == TK_CHAR8 ||
             kind == TK_CHAR16 || kind == TK_STRING8 || kind == TK_STRING16 || kind == TK_ALIAS ||
             kind == TK_ENUM || kind == TK_BITMASK || kind == TK_STRUCTURE || kind == TK_UNION ||
-            kind == TK_BITSET || kind == TK_SEQUENCE || kind == TK_ARRAY || kind == TK_MAP)
+            kind == TK_BITSET || kind == TK_SEQUENCE || kind == TK_ARRAY || kind == TK_MAP ||
+            kind == TK_ANNOTATION)
         {
             DynamicTypeBuilder* pNewType = new DynamicTypeBuilder(descriptor);
             if (pNewType != nullptr && name.length() > 0)
@@ -1113,6 +1115,9 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         object.complete().alias_type().alias_flags().IS_NESTED(false);
         object.complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
 
+        // Apply annotations
+        apply_type_annotations(object.complete().alias_type().header().detail().ann_custom(), descriptor);
+
         object.complete().alias_type().header().detail().type_name(descriptor->get_name());
         object.complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
         object.complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
@@ -1224,21 +1229,24 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
     {
         object._d(EK_COMPLETE);
         object.complete()._d(TK_ENUM);
-        object.complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
+        object.complete().enumerated_type().header().common().bit_bound(descriptor->annotation_get_bit_bound());
         object.complete().enumerated_type().header().detail().type_name(descriptor->get_name());
+
+        // Apply annotations
+        apply_type_annotations(object.complete().enumerated_type().header().detail().ann_custom(), descriptor);
 
         for (const MemberDescriptor* member : members)
         {
             CompleteEnumeratedLiteral mel;
-            mel.common().flags().TRY_CONSTRUCT1(false);
-            mel.common().flags().TRY_CONSTRUCT2(false);
-            mel.common().flags().IS_EXTERNAL(false);
-            mel.common().flags().IS_OPTIONAL(false);
-            mel.common().flags().IS_MUST_UNDERSTAND(false);
-            mel.common().flags().IS_KEY(false);
-            mel.common().flags().IS_DEFAULT(false);
+            mel.common().flags().IS_DEFAULT(member->annotation_is_default_literal());
             mel.common().value(member->get_index());
             mel.detail().name(member->get_name());
+
+            // Apply member annotations
+            TypeDescriptor member_type_descriptor;
+            member->type_->get_descriptor(&member_type_descriptor);
+            apply_type_annotations(mel.detail().ann_custom(), &member_type_descriptor);
+
             object.complete().enumerated_type().literal_seq().emplace_back(mel);
         }
 
@@ -1275,13 +1283,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         for (const MemberDescriptor* member : members)
         {
             MinimalEnumeratedLiteral mel;
-            mel.common().flags().TRY_CONSTRUCT1(false);
-            mel.common().flags().TRY_CONSTRUCT2(false);
-            mel.common().flags().IS_EXTERNAL(false);
-            mel.common().flags().IS_OPTIONAL(false);
-            mel.common().flags().IS_MUST_UNDERSTAND(false);
-            mel.common().flags().IS_KEY(false);
-            mel.common().flags().IS_DEFAULT(false);
+            mel.common().flags().IS_DEFAULT(member->annotation_is_default_literal());
             mel.common().value(member->get_index());
             MD5 hash(member->get_name());
             for(int i = 0; i < 4; ++i)
@@ -1320,19 +1322,22 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
 void DynamicTypeBuilderFactory::build_struct_type_code(
         const TypeDescriptor* descriptor,
         TypeObject& object,
-                                                    const std::vector<const MemberDescriptor*> members,
-                                                    bool complete) const
+        const std::vector<const MemberDescriptor*> members,
+        bool complete) const
 {
     if (complete)
     {
         object._d(EK_COMPLETE);
         object.complete()._d(TK_STRUCTURE);
 
-        object.complete().struct_type().struct_flags().IS_FINAL(false);
-        object.complete().struct_type().struct_flags().IS_APPENDABLE(false);
-        object.complete().struct_type().struct_flags().IS_MUTABLE(false);
-        object.complete().struct_type().struct_flags().IS_NESTED(false);
+        object.complete().struct_type().struct_flags().IS_FINAL(descriptor->annotation_is_final());
+        object.complete().struct_type().struct_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
+        object.complete().struct_type().struct_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
+        object.complete().struct_type().struct_flags().IS_NESTED(descriptor->annotation_get_nested());
         object.complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+
+        // Apply annotations
+        apply_type_annotations(object.complete().struct_type().header().detail().ann_custom(), descriptor);
 
         for (const MemberDescriptor* member : members)
         {
@@ -1341,12 +1346,15 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
-            msm.common().member_flags().IS_OPTIONAL(false);
-            msm.common().member_flags().IS_MUST_UNDERSTAND(false);
-            msm.common().member_flags().IS_KEY(false);
+            msm.common().member_flags().IS_OPTIONAL(member->annotation_is_optional());
+            msm.common().member_flags().IS_MUST_UNDERSTAND(member->annotation_is_must_understand());
+            msm.common().member_flags().IS_KEY(member->annotation_is_key());
             msm.common().member_flags().IS_DEFAULT(false);
-            //TypeIdentifier memIdent;
-            //build_type_identifier(member->type_->descriptor_, memIdent);
+
+            // Apply member annotations
+            TypeDescriptor member_type_descriptor;
+            member->type_->get_descriptor(&member_type_descriptor);
+            apply_type_annotations(msm.detail().ann_custom(), &member_type_descriptor);
 
             std::map<MemberId, DynamicTypeMember*> membersMap;
             member->type_->get_all_members(membersMap);
@@ -1358,10 +1366,12 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
 
             TypeObject memObj;
             build_type_object(member->type_->descriptor_, memObj, &innerMembers);
-            const TypeIdentifier* typeId = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member->type_->get_name());
+            const TypeIdentifier* typeId =
+                TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name() << " of struct " << descriptor->get_name() << " failed.");
+                logError(DYN_TYPES, "Member " << member->get_name() << " of struct "
+                    << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -1390,7 +1400,8 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteStructType::getCdrSerializedSize(object.complete().struct_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -1417,10 +1428,10 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_STRUCTURE);
 
-        object.minimal().struct_type().struct_flags().IS_FINAL(false);
-        object.minimal().struct_type().struct_flags().IS_APPENDABLE(false);
-        object.minimal().struct_type().struct_flags().IS_MUTABLE(false);
-        object.minimal().struct_type().struct_flags().IS_NESTED(false);
+        object.minimal().struct_type().struct_flags().IS_FINAL(descriptor->annotation_is_final());
+        object.minimal().struct_type().struct_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
+        object.minimal().struct_type().struct_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
+        object.minimal().struct_type().struct_flags().IS_NESTED(descriptor->annotation_get_nested());
         object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
         for (const MemberDescriptor* member : members)
@@ -1430,9 +1441,9 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
-            msm.common().member_flags().IS_OPTIONAL(false);
-            msm.common().member_flags().IS_MUST_UNDERSTAND(false);
-            msm.common().member_flags().IS_KEY(false);
+            msm.common().member_flags().IS_OPTIONAL(member->annotation_is_optional());
+            msm.common().member_flags().IS_MUST_UNDERSTAND(member->annotation_is_must_understand());
+            msm.common().member_flags().IS_KEY(member->annotation_is_key());
             msm.common().member_flags().IS_DEFAULT(false);
             //TypeIdentifier memIdent;
             //build_type_identifier(member->type_->descriptor_, memIdent);
@@ -1447,17 +1458,19 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
 
             TypeObject memObj;
             build_type_object(member->type_->descriptor_, memObj, &innerMembers);
-            const TypeIdentifier* typeId = TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
+            const TypeIdentifier* typeId =
+                TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name() << " of struct " << descriptor->get_name() << " failed.");
+                logError(DYN_TYPES, "Member " << member->get_name()
+                    << " of struct " << descriptor->get_name() << " failed.");
             }
             else
             {
                 TypeIdentifier memIdent = *typeId;
                 msm.common().member_type_id(memIdent);
             }
-            //msm.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name()));
+
             MD5 hash(member->get_name());
             for(int i = 0; i < 4; ++i)
             {
@@ -1478,7 +1491,8 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalStructType::getCdrSerializedSize(object.minimal().struct_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -1514,10 +1528,10 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object._d(EK_COMPLETE);
         object.complete()._d(TK_UNION);
 
-        object.complete().union_type().union_flags().IS_FINAL(false);
-        object.complete().union_type().union_flags().IS_APPENDABLE(false);
-        object.complete().union_type().union_flags().IS_MUTABLE(false);
-        object.complete().union_type().union_flags().IS_NESTED(false);
+        object.complete().union_type().union_flags().IS_FINAL(descriptor->annotation_is_final());
+        object.complete().union_type().union_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
+        object.complete().union_type().union_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
+        object.complete().union_type().union_flags().IS_NESTED(descriptor->annotation_get_nested());
         object.complete().union_type().union_flags().IS_AUTOID_HASH(false);
 
         object.complete().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
@@ -1525,15 +1539,18 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.complete().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
         object.complete().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
         object.complete().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-        object.complete().union_type().discriminator().common().member_flags().IS_KEY(false);
+        object.complete().union_type().discriminator().common().member_flags().IS_KEY(
+            descriptor->discriminator_type_->descriptor_->annotation_get_key());
         object.complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+
+        // Apply annotations
+        apply_type_annotations(object.complete().struct_type().header().detail().ann_custom(), descriptor);
 
         TypeObject discObj;
         build_type_object(descriptor->discriminator_type_->descriptor_, discObj);
         TypeIdentifier discIdent =
             *TypeObjectFactory::get_instance()->get_type_identifier(descriptor->discriminator_type_->get_name());
         object.complete().union_type().discriminator().common().type_id(discIdent);
-            //*TypeObjectFactory::get_instance()->get_type_identifier(descriptor->discriminator_type_->get_name()));
 
         for (const MemberDescriptor* member : members)
         {
@@ -1547,8 +1564,10 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             mum.common().member_flags().IS_KEY(false);
             mum.common().member_flags().IS_DEFAULT(member->is_default_union_value());
 
-            //TypeIdentifier memIdent;
-            //build_type_identifier(member->type_->descriptor_, memIdent);
+            // Apply member annotations
+            TypeDescriptor member_type_descriptor;
+            member->type_->get_descriptor(&member_type_descriptor);
+            apply_type_annotations(mum.detail().ann_custom(), &member_type_descriptor);
 
             std::map<MemberId, DynamicTypeMember*> membersMap;
             member->type_->get_all_members(membersMap);
@@ -1560,19 +1579,19 @@ void DynamicTypeBuilderFactory::build_union_type_code(
 
             TypeObject memObj;
             build_type_object(member->type_->descriptor_, memObj, &innerMembers);
-            const TypeIdentifier* typeId = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member->type_->get_name());
+            const TypeIdentifier* typeId =
+                TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name() << " of union " << descriptor->get_name() << " failed.");
+                logError(DYN_TYPES, "Member " << member->get_name()
+                    << " of union " << descriptor->get_name() << " failed.");
             }
             else
             {
                 TypeIdentifier memIdent = *typeId;
                 mum.common().type_id(memIdent);
             }
-            //TypeIdentifier memIdent = *TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
-            //mum.common().type_id(memIdent);
-            //mum.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name()));
+
             for (uint64_t lab : member->get_union_labels())
             {
                 mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
@@ -1612,10 +1631,10 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_UNION);
 
-        object.minimal().union_type().union_flags().IS_FINAL(false);
-        object.minimal().union_type().union_flags().IS_APPENDABLE(false);
-        object.minimal().union_type().union_flags().IS_MUTABLE(false);
-        object.minimal().union_type().union_flags().IS_NESTED(false);
+        object.minimal().union_type().union_flags().IS_FINAL(descriptor->annotation_is_final());
+        object.minimal().union_type().union_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
+        object.minimal().union_type().union_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
+        object.minimal().union_type().union_flags().IS_NESTED(descriptor->annotation_get_nested());
         object.minimal().union_type().union_flags().IS_AUTOID_HASH(false);
 
         object.minimal().union_type().discriminator().common().member_flags().TRY_CONSTRUCT1(false);
@@ -1623,7 +1642,8 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.minimal().union_type().discriminator().common().member_flags().IS_EXTERNAL(false);
         object.minimal().union_type().discriminator().common().member_flags().IS_OPTIONAL(false);
         object.minimal().union_type().discriminator().common().member_flags().IS_MUST_UNDERSTAND(false);
-        object.minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
+        object.minimal().union_type().discriminator().common().member_flags().IS_KEY(
+            descriptor->discriminator_type_->descriptor_->annotation_get_key());
         object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
         TypeObject discObj;
@@ -1658,19 +1678,19 @@ void DynamicTypeBuilderFactory::build_union_type_code(
 
             TypeObject memObj;
             build_type_object(member->type_->descriptor_, memObj, &innerMembers);
-            const TypeIdentifier* typeId = TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
+            const TypeIdentifier* typeId =
+                TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name() << " of union " << descriptor->get_name() << " failed.");
+                logError(DYN_TYPES, "Member " << member->get_name()
+                    << " of union " << descriptor->get_name() << " failed.");
             }
             else
             {
                 TypeIdentifier memIdent = *typeId;
                 mum.common().type_id(memIdent);
             }
-            //TypeIdentifier memIdent = *TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
-            //mum.common().type_id(memIdent);
-            //mum.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name()));
+
             for (uint64_t lab : member->get_union_labels())
             {
                 mum.common().label_seq().emplace_back(static_cast<uint32_t>(lab));
@@ -1725,6 +1745,9 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         object.complete().bitset_type().bitset_flags().IS_NESTED(false);
         object.complete().bitset_type().bitset_flags().IS_AUTOID_HASH(false);
 
+        // Apply annotations
+        apply_type_annotations(object.complete().bitset_type().header().detail().ann_custom(), descriptor);
+
         for (const MemberDescriptor* member : members)
         {
             CompleteBitfield msm;
@@ -1732,6 +1755,12 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
             //msm.common().bitcount(member->type_->get_bounds()); // Use this?
             msm.common().holder_type(member->type_->get_kind());
             msm.detail().name(member->get_name());
+
+            // Apply member annotations
+            TypeDescriptor member_type_descriptor;
+            member->type_->get_descriptor(&member_type_descriptor);
+            apply_type_annotations(msm.detail().ann_custom(), &member_type_descriptor);
+
             object.complete().bitset_type().field_seq().emplace_back(msm);
         }
 
@@ -1752,7 +1781,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteBitsetType::getCdrSerializedSize(object.complete().bitset_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -1815,7 +1845,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalBitsetType::getCdrSerializedSize(object.minimal().bitset_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -1855,11 +1886,20 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         object.complete().bitmask_type().bitmask_flags().IS_NESTED(false);
         object.complete().bitmask_type().bitmask_flags().IS_AUTOID_HASH(false);
 
+        // Apply annotations
+        apply_type_annotations(object.complete().bitmask_type().header().detail().ann_custom(), descriptor);
+
         for (const MemberDescriptor* member : members)
         {
             CompleteBitflag msm;
             msm.common().position(member->get_id());
             msm.detail().name(member->get_name());
+
+            // Apply member annotations
+            TypeDescriptor member_type_descriptor;
+            member->type_->get_descriptor(&member_type_descriptor);
+            apply_type_annotations(msm.detail().ann_custom(), &member_type_descriptor);
+
             object.complete().bitmask_type().flag_seq().emplace_back(msm);
         }
 
@@ -1870,7 +1910,8 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteBitmaskType::getCdrSerializedSize(object.complete().bitmask_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -1920,7 +1961,8 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalBitmaskType::getCdrSerializedSize(object.minimal().bitmask_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -1968,10 +2010,12 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
 
             TypeObject memObj;
             build_type_object(member->type_->descriptor_, memObj);
-            const TypeIdentifier* typeId = TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
+            const TypeIdentifier* typeId =
+                TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name() << " of annotation " << descriptor->get_name() << " failed.");
+                logError(DYN_TYPES, "Member " << member->get_name()
+                    << " of annotation " << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -1989,7 +2033,8 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteAnnotationType::getCdrSerializedSize(object.complete().annotation_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -2030,10 +2075,12 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
 
             TypeObject memObj;
             build_type_object(member->type_->descriptor_, memObj);
-            const TypeIdentifier* typeId = TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
+            const TypeIdentifier* typeId =
+                TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
             {
-                logError(DYN_TYPES, "Member " << member->get_name() << " of annotation " << descriptor->get_name() << " failed.");
+                logError(DYN_TYPES, "Member " << member->get_name()
+                    << " of annotation " << descriptor->get_name() << " failed.");
             }
             else
             {
@@ -2049,7 +2096,8 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
 
         SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalAnnotationType::getCdrSerializedSize(object.minimal().annotation_type()) + 4));
-        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size); // Object that manages the raw buffer.
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
                 eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -2083,7 +2131,7 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         {
             std::string value = member->get_default_value();
             std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-            apv.boolean_value(value.compare("0") != 0 || value.compare("true") == 0);
+            apv.boolean_value(value.compare("0") != 0 || value.compare(CONST_TRUE) == 0);
         }
         break;
         case TK_BYTE:
@@ -2343,6 +2391,35 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_bitset_type(uint32_t bound)
         logError(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
     }
     return nullptr;
+}
+
+void DynamicTypeBuilderFactory::apply_type_annotations(
+        AppliedAnnotationSeq& annotations,
+        const TypeDescriptor* descriptor) const
+{
+    for (const AnnotationDescriptor* annotation : descriptor->annotation_)
+    {
+        AppliedAnnotation ann;
+        ann.annotation_typeid(
+            *TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(annotation->type_->get_name()));
+        std::map<std::string, std::string> values;
+        annotation->get_all_value(values);
+        for (auto it : values)
+        {
+            AppliedAnnotationParameter ann_param;
+            MD5 message_hash(it.first);
+            for(int i = 0; i < 4; ++i)
+            {
+                ann_param.paramname_hash()[i] = message_hash.digest[i];
+            }
+            AnnotationParameterValue param_value;
+            param_value._d(annotation->type_->get_kind());
+            param_value.from_string(it.second);
+            ann_param.value(param_value);
+            ann.param_seq().push_back(ann_param);
+        }
+        annotations.push_back(ann);
+    }
 }
 
 } // namespace types

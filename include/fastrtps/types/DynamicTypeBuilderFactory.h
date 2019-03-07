@@ -16,6 +16,7 @@
 #define TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <mutex>
 
@@ -85,6 +86,10 @@ protected:
     void set_annotation_default_value(
             AnnotationParameterValue& apv,
             const MemberDescriptor* member) const;
+
+    void apply_type_annotations(
+            AppliedAnnotationSeq& annotations,
+            const TypeDescriptor* descriptor) const;
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicTypeBuilder*> builders_list_;

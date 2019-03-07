@@ -78,12 +78,6 @@ DynamicTypeBuilder::~DynamicTypeBuilder()
         descriptor_ = nullptr;
     }
 
-    for (auto it = annotation_.begin(); it != annotation_.end(); ++it)
-    {
-        delete *it;
-    }
-    annotation_.clear();
-
     for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
     {
         delete it->second;
@@ -242,12 +236,14 @@ ResponseCode DynamicTypeBuilder::add_member(
 
 ResponseCode DynamicTypeBuilder::apply_annotation(AnnotationDescriptor& descriptor)
 {
-    return _apply_annotation(descriptor);
+    return descriptor_->apply_annotation(descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::apply_annotation(std::string key, std::string value)
+ResponseCode DynamicTypeBuilder::apply_annotation(
+        const std::string& key,
+        const std::string& value)
 {
-    return _apply_annotation(key, value);
+    return descriptor_->apply_annotation(key, value);
 }
 
 ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
@@ -259,8 +255,8 @@ ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
 
 ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
         MemberId id,
-        std::string key,
-        std::string value)
+        const std::string& key,
+        const std::string& value)
 {
     return _apply_annotation_to_member(id, key, value);
 }
@@ -330,12 +326,6 @@ ResponseCode DynamicTypeBuilder::copy_from_builder(const DynamicTypeBuilder* oth
         kind_ = other->kind_;
         descriptor_ = new TypeDescriptor(other->descriptor_);
 
-        for (auto it = other->annotation_.begin(); it != other->annotation_.end(); ++it)
-        {
-            AnnotationDescriptor* newDescriptor = new AnnotationDescriptor(*it);
-            annotation_.push_back(newDescriptor);
-        }
-
         for (auto it = other->member_by_id_.begin(); it != other->member_by_id_.end(); ++it)
         {
             DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
@@ -361,12 +351,6 @@ void DynamicTypeBuilder::clear()
         delete descriptor_;
         descriptor_ = nullptr;
     }
-
-    for (auto it = annotation_.begin(); it != annotation_.end(); ++it)
-    {
-        delete *it;
-    }
-    annotation_.clear();
 
     for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
     {
@@ -435,40 +419,6 @@ ResponseCode DynamicTypeBuilder::set_name(const std::string& name)
     return ResponseCode::RETCODE_OK;
 }
 
-ResponseCode DynamicTypeBuilder::_apply_annotation(AnnotationDescriptor& descriptor)
-{
-    if (descriptor.is_consistent())
-    {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->copy_from(&descriptor);
-        annotation_.push_back(pNewDescriptor);
-        return ResponseCode::RETCODE_OK;
-    }
-    else
-    {
-        logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
-    }
-}
-
-ResponseCode DynamicTypeBuilder::_apply_annotation(const std::string& key, const std::string& value)
-{
-    auto it = annotation_.begin();
-    if (it != annotation_.end())
-    {
-        (*it)->set_value(key, value);
-    }
-    else
-    {
-        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive());
-        pNewDescriptor->set_value(key, value);
-        annotation_.push_back(pNewDescriptor);
-    }
-
-    return ResponseCode::RETCODE_OK;
-}
-
 ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
         MemberId id,
         AnnotationDescriptor& descriptor)
@@ -511,6 +461,7 @@ ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
 }
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

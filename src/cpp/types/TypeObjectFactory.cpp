@@ -21,6 +21,9 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
+#include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/utils/md5.h>
 #include <fastrtps/log/Log.h>
 #include <sstream>
 
@@ -128,6 +131,8 @@ TypeObjectFactory::TypeObjectFactory()
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
+
+    create_builtin_annotations();
 }
 
 TypeObjectFactory::~TypeObjectFactory()
@@ -172,6 +177,11 @@ TypeObjectFactory::~TypeObjectFactory()
         }
         complete_objects_.clear();
     }
+}
+
+void TypeObjectFactory::create_builtin_annotations()
+{
+    register_builtin_annotations_types();
 }
 
 void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
@@ -943,7 +953,8 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
 // TODO annotations
 DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         TypeDescriptor& descriptor,
-        const TypeObject* object) const
+        const TypeObject* object,
+        const DynamicType_ptr annotation_member_type) const
 {
     if (object == nullptr || object->_d() != EK_COMPLETE)
     {
@@ -962,7 +973,13 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
             descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             descriptor.set_name(object->complete().alias_type().header().detail().type_name());
-            return DynamicTypeBuilderFactory::get_instance()->create_type(&descriptor);
+            DynamicTypeBuilder_ptr alias_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
+
+            return alias_type->build();
         }
         case TK_STRUCTURE:
         {
@@ -972,7 +989,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
 
-            DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+            DynamicTypeBuilder_ptr struct_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
 
             //uint32_t order = 0;
             const CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
@@ -982,32 +1003,75 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().member_type_id());
                 if (auxMem == nullptr)
                 {
-                    std::cout << "(Struct) auxMem is nullptr, but original member has " << (int)member->common().member_type_id()._d() << std::endl;
+                    logWarning(DYNAMIC_TYPES, "(Struct) auxMem is nullptr, but original member has "
+                        << (int)member->common().member_type_id()._d());
                 }
                 MemberDescriptor memDesc;
                 memDesc.id_ = member->common().member_id();
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 //memDesc.set_index(order++);
                 memDesc.set_name(member->detail().name());
-                structType->add_member(&memDesc);
+                struct_type->add_member(&memDesc);
+                apply_member_annotations(struct_type, member->common().member_id(), member->detail().ann_custom());
             }
-            return structType->build();
+            return struct_type->build();
         }
         case TK_ENUM:
         {
-            DynamicTypeBuilder_ptr enumType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+            // bit_bound annotation effect!
+            descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
 
-            uint32_t order = 0;
+            DynamicTypeBuilder_ptr enum_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
+            /*
+            {
+                const AppliedAnnotationSeq& annotations =
+                    object->complete().enumerated_type().header().detail().ann_custom();
+                for (const AppliedAnnotation& annotation : annotations)
+                {
+                    const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+                    if (anno_id == nullptr)
+                    {
+                        logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                            << (int)annotation.annotation_typeid()._d());
+                    }
+                    AnnotationDescriptor anno_desc;
+                    anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+                    const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+                    for (const AppliedAnnotationParameter a_param : anno_params)
+                    {
+                        std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+                        anno_desc.set_value(param_key, a_param.value().to_string());
+                    }
+                    enum_type->apply_annotation(anno_desc);
+                }
+            }
+            */
+
             const CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
-                enumType->add_empty_member(order++, member->detail().name());
+                enum_type->add_empty_member(member->common().value(), member->detail().name());
+                apply_member_annotations(enum_type, member->common().value(), member->detail().ann_custom());
+                if (member->common().flags().IS_DEFAULT())
+                {
+                    AnnotationDescriptor def_flag;
+                    def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
+                    enum_type->apply_annotation_to_member(member->common().value(), def_flag);
+                }
             }
-            return enumType->build();
+            return enum_type->build();
         }
         case TK_BITMASK:
         {
-            DynamicTypeBuilder_ptr bitmaskType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+            DynamicTypeBuilder_ptr bitmask_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
 
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
@@ -1015,9 +1079,10 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 MemberDescriptor memDesc;
                 memDesc.id_ = member->common().position();
                 memDesc.set_name(member->detail().name());
-                bitmaskType->add_member(&memDesc);
+                bitmask_type->add_member(&memDesc);
+                apply_member_annotations(bitmask_type, member->common().position(), member->detail().ann_custom());
             }
-            return bitmaskType->build();
+            return bitmask_type->build();
         }
         case TK_BITSET:
         {
@@ -1028,7 +1093,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
 
-            DynamicTypeBuilder_ptr bitsetType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+            DynamicTypeBuilder_ptr bitsetType =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
 
             //uint32_t order = 0;
             const CompleteBitfieldSeq& fields = object->complete().bitset_type().field_seq();
@@ -1038,14 +1107,19 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* auxMem = get_primitive_type_identifier(member->common().holder_type());
                 if (auxMem == nullptr)
                 {
-                    std::cout << "(Bitset) auxMem is nullptr, but original member has " << (int)member->common().holder_type() << std::endl;
+                    logWarning(DYNAMIC_TYPES, "(Bitset) auxMem is nullptr, but original member has "
+                        << (int)member->common().holder_type());
                 }
                 MemberDescriptor memDesc;
                 memDesc.id_ = member->common().position();
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 memDesc.set_name(member->detail().name());
                 // TODO Add bitbound!!
+                // memDesc.type_->set_bound(member->common().bitcount());
+                // bounds are meant for string, arrays, sequences, maps, but not for bitset!
+                // Lack in the standard?
                 bitsetType->add_member(&memDesc);
+                apply_member_annotations(bitsetType, member->common().position(), member->detail().ann_custom());
             }
             return bitsetType->build();
             */
@@ -1058,7 +1132,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
             descriptor.discriminator_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
 
-            DynamicTypeBuilder_ptr unionType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+            DynamicTypeBuilder_ptr union_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
 
             //uint32_t order = 0;
             const CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
@@ -1067,7 +1145,8 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().type_id());
                 if (auxMem == nullptr)
                 {
-                    std::cout << "(Union) auxMem is nullptr, but original member has " << (int)member->common().type_id()._d() << std::endl;
+                    logWarning(DYNAMIC_TYPES, "(Union) auxMem is nullptr, but original member has "
+                        << (int)member->common().type_id()._d());
                 }
                 MemberDescriptor memDesc;
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
@@ -1093,38 +1172,119 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                         memDesc.add_union_case_index(lab);
                     }
                 }
-                unionType->add_member(&memDesc);
+                union_type->add_member(&memDesc);
+                apply_member_annotations(union_type, member->common().member_id(), member->detail().ann_custom());
             }
 
-            return unionType->build();
+            return union_type->build();
         }
         case TK_ANNOTATION:
         {
-            DynamicTypeBuilder_ptr annotationType =
+            DynamicTypeBuilder_ptr annotation_type =
                 DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
 
             for (const CompleteAnnotationParameter& member : object->complete().annotation_type().member_seq())
             {
-                const TypeIdentifier* auxMem = get_stored_type_identifier(&member.common().member_type_id());
-                if (auxMem == nullptr)
+                const TypeIdentifier* aux_mem = get_stored_type_identifier(&member.common().member_type_id());
+                if (aux_mem == nullptr)
                 {
-                    std::cout << "(Annotation) auxMem is nullptr, but original member has " << (int)member.common().member_type_id()._d() << std::endl;
+                    logWarning(DYNAMIC_TYPES, "(Annotation) aux_mem is nullptr, but original member has "
+                        << (int)member.common().member_type_id()._d());
                 }
 
-                MemberDescriptor memDesc;
-                memDesc.set_name(member.name());
-                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
-                memDesc.set_default_value(member.default_value().to_string());
-                annotationType->add_member(&memDesc);
+                MemberDescriptor mem_desc;
+                mem_desc.set_name(member.name());
+                if (annotation_member_type != nullptr)
+                {
+                    mem_desc.set_type(annotation_member_type);
+                }
+                else
+                {
+                    mem_desc.set_type(build_dynamic_type(get_type_name(aux_mem), aux_mem, get_type_object(aux_mem)));
+                }
+                mem_desc.set_default_value(member.default_value().to_string());
+                annotation_type->add_member(&mem_desc);
             }
             // Annotation inner definitions?
 
-            return annotationType->build();
+            return annotation_type->build();
         }
         default:
             break;
     }
     return nullptr;
+}
+
+void TypeObjectFactory::apply_type_annotations(
+        DynamicTypeBuilder_ptr& type_builder,
+        const AppliedAnnotationSeq& annotations) const
+{
+    for (const AppliedAnnotation& annotation : annotations)
+    {
+        const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+        if (anno_id == nullptr)
+        {
+            logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                << (int)annotation.annotation_typeid()._d());
+        }
+        AnnotationDescriptor anno_desc;
+        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+        for (const AppliedAnnotationParameter a_param : anno_params)
+        {
+            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+            anno_desc.set_value(param_key, a_param.value().to_string());
+        }
+        type_builder->apply_annotation(anno_desc);
+    }
+}
+
+void TypeObjectFactory::apply_member_annotations(
+        DynamicTypeBuilder_ptr& parent_type_builder,
+        MemberId member_id,
+        const AppliedAnnotationSeq& annotations) const
+{
+    for (const AppliedAnnotation& annotation : annotations)
+    {
+        const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+        if (anno_id == nullptr)
+        {
+            logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                << (int)annotation.annotation_typeid()._d());
+        }
+        AnnotationDescriptor anno_desc;
+        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+        for (const AppliedAnnotationParameter a_param : anno_params)
+        {
+            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+            anno_desc.set_value(param_key, a_param.value().to_string());
+        }
+        parent_type_builder->apply_annotation_to_member(member_id, anno_desc);
+    }
+}
+
+std::string TypeObjectFactory::get_key_from_hash(
+        const DynamicType_ptr annotation_descriptor_type,
+        const NameHash& hash) const
+{
+    std::map<MemberId, DynamicTypeMember*> members;
+    annotation_descriptor_type->get_all_members(members);
+    for (auto it : members)
+    {
+        std::string name = it.second->get_name();
+        NameHash memberHash;
+        MD5 message_hash(name);
+        for(int i = 0; i < 4; ++i)
+        {
+            memberHash[i] = message_hash.digest[i];
+        }
+        if (memberHash == hash)
+        {
+            return name;
+        }
+    }
+    return "";
 }
 
 } // namespace types

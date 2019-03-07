@@ -28,6 +28,8 @@ class DynamicType;
 class AnnotationDescriptor
 {
 protected:
+    friend class DynamicTypeBuilderFactory;
+
     DynamicType_ptr type_;
 	std::map<std::string, std::string> value_;
 
@@ -46,15 +48,20 @@ public:
             std::string& value,
             const std::string& key);
 
-    ResponseCode get_all_value(
-            std::map<std::string,
-            std::string>& value);
+    ResponseCode get_value(std::string& value); // key = "value"
+
+    ResponseCode get_all_value(std::map<std::string, std::string>& value) const;
 
     ResponseCode set_value(
         const std::string& key,
         const std::string& value);
 
     void set_type(DynamicType_ptr pType);
+
+    const DynamicType_ptr type() const
+    {
+        return type_;
+    }
 };
 
 } // namespace types

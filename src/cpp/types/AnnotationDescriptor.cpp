@@ -91,7 +91,12 @@ bool AnnotationDescriptor::key_annotation() const
     {
         it = value_.find(ANNOTATION_EPKEY_ID); // Legacy "@Key"
     }
-    return (it != value_.end() && it->second == "true");
+    return (it != value_.end() && it->second == CONST_TRUE);
+}
+
+ResponseCode AnnotationDescriptor::get_value(std::string& value)
+{
+    return get_value(value, "value");
 }
 
 ResponseCode AnnotationDescriptor::get_value(
@@ -107,7 +112,7 @@ ResponseCode AnnotationDescriptor::get_value(
     return ResponseCode::RETCODE_BAD_PARAMETER;
 }
 
-ResponseCode AnnotationDescriptor::get_all_value(std::map<std::string, std::string>& value)
+ResponseCode AnnotationDescriptor::get_all_value(std::map<std::string, std::string>& value) const
 {
     value = value_;
     return ResponseCode::RETCODE_OK;

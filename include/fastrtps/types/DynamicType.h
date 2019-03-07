@@ -96,7 +96,6 @@ protected:
             const std::string& name);
 
     TypeDescriptor* descriptor_;
-    std::vector<AnnotationDescriptor*> annotation_;
     std::map<MemberId, DynamicTypeMember*> member_by_id_;         // Aggregated members
     std::map<std::string, DynamicTypeMember*> member_by_name_;    // Uses the pointers from "member_by_id_".
     std::string name_;
@@ -115,6 +114,10 @@ public:
     uint32_t get_bounds_size() const;
 
     ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
+
+    const TypeDescriptor* get_descriptor() const;
+
+    TypeDescriptor* get_descriptor();
 
     bool key_annotation() const;
 

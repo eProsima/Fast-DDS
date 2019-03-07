@@ -35,6 +35,7 @@ protected:
     std::vector<uint32_t> bound_;           // Length for strings, arrays, sequences, maps and bitmasks.
     DynamicType_ptr element_type_;          // Value Type for arrays, sequences, maps, bitmasks.
     DynamicType_ptr key_element_type_;      // Key Type for maps.
+    std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
 
     void clean();
 
@@ -42,6 +43,7 @@ protected:
 
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;
+    friend class DynamicType;
 
 public:
     TypeDescriptor();
@@ -81,6 +83,57 @@ public:
     void set_kind(TypeKind kind);
 
     void set_name(std::string name);
+
+    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+
+    ResponseCode apply_annotation(
+            const std::string& key,
+            const std::string& value);
+
+    AnnotationDescriptor* get_annotation(const std::string& name) const;
+
+    // Annotations application
+    bool annotation_is_extensibility() const;
+
+    bool annotation_is_mutable() const;
+
+    bool annotation_is_final() const;
+
+    bool annotation_is_appendable() const;
+
+    bool annotation_is_nested() const;
+
+    bool annotation_is_bit_bound() const;
+
+    bool annotation_is_key() const;
+
+    bool annotation_is_non_serialized() const;
+
+    // Annotation getters
+    std::string annotation_get_extensibility() const;
+
+    bool annotation_get_nested() const;
+
+    uint16_t annotation_get_bit_bound() const;
+
+    bool annotation_get_key() const;
+
+    // Annotation setters
+    void annotation_set_extensibility(const std::string& extensibility);
+
+    void annotation_set_mutable();
+
+    void annotation_set_final();
+
+    void annotation_set_appendable();
+
+    void annotation_set_nested(bool nested);
+
+    void annotation_set_bit_bound(uint16_t bit_bound);
+
+    void annotation_set_key(bool key);
+
+    void annotation_set_non_serialized(bool non_serialized);
 };
 
 } // namespace types

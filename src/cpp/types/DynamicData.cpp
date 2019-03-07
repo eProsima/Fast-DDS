@@ -4952,6 +4952,11 @@ ResponseCode DynamicData::get_union_label(uint64_t& value) const
 
 bool DynamicData::deserialize(eprosima::fastcdr::Cdr& cdr)
 {
+    if (type_->get_descriptor()->annotation_is_non_serialized())
+    {
+        return true;
+    }
+
     switch (get_kind())
     {
     default:
@@ -5341,6 +5346,11 @@ size_t DynamicData::getCdrSerializedSize(
         const DynamicData* data,
         size_t current_alignment /*= 0*/)
 {
+    if (data->type_->get_descriptor()->annotation_is_non_serialized())
+    {
+        return current_alignment;
+    }
+
     size_t initial_alignment = current_alignment;
 
     switch (data->get_kind())
@@ -5521,6 +5531,11 @@ size_t DynamicData::getMaxCdrSerializedSize(
         const DynamicType_ptr type,
         size_t current_alignment /*= 0*/)
 {
+    if (type->get_descriptor()->annotation_is_non_serialized())
+    {
+        return current_alignment;
+    }
+
     size_t initial_alignment = current_alignment;
 
     switch (type->get_kind())
@@ -5643,6 +5658,11 @@ size_t DynamicData::getMaxCdrSerializedSize(
 
 void DynamicData::serialize(eprosima::fastcdr::Cdr& cdr) const
 {
+    if (type_->get_descriptor()->annotation_is_non_serialized())
+    {
+        return;
+    }
+
     switch (get_kind())
     {
     default:
@@ -5940,6 +5960,11 @@ size_t DynamicData::getEmptyCdrSerializedSize(
         const DynamicType* type,
         size_t current_alignment /*= 0*/)
 {
+    if (type->get_descriptor()->annotation_is_non_serialized())
+    {
+        return current_alignment;
+    }
+
     size_t initial_alignment = current_alignment;
 
     switch (type->get_kind())
@@ -6037,6 +6062,11 @@ void DynamicData::serialize_empty_data(
         const DynamicType_ptr pType,
         eprosima::fastcdr::Cdr& cdr) const
 {
+    if (pType->get_descriptor()->annotation_is_non_serialized())
+    {
+        return;
+    }
+
     switch (pType->get_kind())
     {
         default:

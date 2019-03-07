@@ -81,7 +81,7 @@ ResponseCode DynamicType::apply_annotation(AnnotationDescriptor& descriptor)
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
-        annotation_.push_back(pNewDescriptor);
+        descriptor_->annotation_.push_back(pNewDescriptor);
         is_key_defined_ = key_annotation();
         return ResponseCode::RETCODE_OK;
     }
@@ -94,8 +94,8 @@ ResponseCode DynamicType::apply_annotation(AnnotationDescriptor& descriptor)
 
 ResponseCode DynamicType::apply_annotation(const std::string& key, const std::string& value)
 {
-    auto it = annotation_.begin();
-    if (it != annotation_.end())
+    auto it = descriptor_->annotation_.begin();
+    if (it != descriptor_->annotation_.end())
     {
         (*it)->set_value(key, value);
     }
@@ -104,7 +104,7 @@ ResponseCode DynamicType::apply_annotation(const std::string& key, const std::st
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive());
         pNewDescriptor->set_value(key, value);
-        annotation_.push_back(pNewDescriptor);
+        descriptor_->annotation_.push_back(pNewDescriptor);
         is_key_defined_ = key_annotation();
     }
 
@@ -164,12 +164,6 @@ void DynamicType::clear()
         descriptor_ = nullptr;
     }
 
-    for (auto it = annotation_.begin(); it != annotation_.end(); ++it)
-    {
-        delete *it;
-    }
-    annotation_.clear();
-
     for (auto it = member_by_id_.begin(); it != member_by_id_.end(); ++it)
     {
         delete it->second;
@@ -187,12 +181,6 @@ ResponseCode DynamicType::copy_from_builder(const DynamicTypeBuilder* other)
         name_ = other->name_;
         kind_ = other->kind_;
         descriptor_ = new TypeDescriptor(other->descriptor_);
-
-        for (auto it = other->annotation_.begin(); it != other->annotation_.end(); ++it)
-        {
-            AnnotationDescriptor* newDescriptor = new AnnotationDescriptor(*it);
-            annotation_.push_back(newDescriptor);
-        }
 
         for (auto it = other->member_by_id_.begin(); it != other->member_by_id_.end(); ++it)
         {
@@ -238,9 +226,19 @@ ResponseCode DynamicType::get_descriptor(TypeDescriptor* descriptor) const
     }
 }
 
+const TypeDescriptor* DynamicType::get_descriptor() const
+{
+    return descriptor_;
+}
+
+TypeDescriptor* DynamicType::get_descriptor()
+{
+    return descriptor_;
+}
+
 bool DynamicType::key_annotation() const
 {
-    for (auto anIt = annotation_.begin(); anIt != annotation_.end(); ++anIt)
+    for (auto anIt = descriptor_->annotation_.begin(); anIt != descriptor_->annotation_.end(); ++anIt)
     {
         if ((*anIt)->key_annotation())
         {
@@ -252,11 +250,13 @@ bool DynamicType::key_annotation() const
 
 bool DynamicType::equals(const DynamicType* other) const
 {
-    if (other != nullptr && annotation_.size() == other->annotation_.size() &&
+    if (other != nullptr && descriptor_->annotation_.size() == other->descriptor_->annotation_.size() &&
         member_by_id_.size() == other->member_by_id_.size() && member_by_name_.size() == other->member_by_name_.size())
     {
         // Check the annotation list
-        for (auto it = annotation_.begin(), it2 = other->annotation_.begin(); it != annotation_.end(); ++it, ++it2)
+        for (auto it = descriptor_->annotation_.begin(),
+                it2 = other->descriptor_->annotation_.begin();
+                it != descriptor_->annotation_.end(); ++it, ++it2)
         {
             if (!(*it)->equals(*it))
             {
@@ -365,16 +365,16 @@ ResponseCode DynamicType::get_all_members(std::map<MemberId, DynamicTypeMember*>
 
 uint32_t DynamicType::get_annotation_count()
 {
-    return static_cast<uint32_t>(annotation_.size());
+    return static_cast<uint32_t>(descriptor_->annotation_.size());
 }
 
 ResponseCode DynamicType::get_annotation(
         AnnotationDescriptor& descriptor,
         uint32_t idx)
 {
-    if (idx < annotation_.size())
+    if (idx < descriptor_->annotation_.size())
     {
-        descriptor = *annotation_[idx];
+        descriptor = *descriptor_->annotation_[idx];
         return ResponseCode::RETCODE_OK;
     }
     else

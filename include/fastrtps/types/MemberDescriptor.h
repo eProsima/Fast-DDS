@@ -33,7 +33,7 @@ protected:
     std::string default_value_;         // Default value of the member in string.
     uint32_t index_;                    // Definition order of the member inside it's parent.
     std::vector<uint64_t> labels_;      // Case Labels for unions.
-    bool default_label_;                 // TRUE if it's the default option of a union.
+    bool default_label_;                // TRUE if it's the default option of a union.
 
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
@@ -115,6 +115,41 @@ public:
     {
         default_value_ = value;
     }
+
+    // Annotations application
+    RTPS_DllAPI bool annotation_is_optional() const;
+
+    RTPS_DllAPI bool annotation_is_key() const;
+
+    RTPS_DllAPI bool annotation_is_must_understand() const;
+
+    RTPS_DllAPI bool annotation_is_non_serialized() const;
+
+    RTPS_DllAPI bool annotation_is_value() const;
+
+    RTPS_DllAPI bool annotation_is_default_literal() const;
+
+    RTPS_DllAPI bool annotation_is_position() const;
+
+    // Annotations getters
+    RTPS_DllAPI std::string annotation_get_value() const;
+
+    RTPS_DllAPI uint16_t annotation_get_position() const;
+
+    // Annotations setters
+    RTPS_DllAPI void annotation_set_optional(bool optional);
+
+    RTPS_DllAPI void annotation_set_key(bool key);
+
+    RTPS_DllAPI void annotation_set_must_understand(bool must_understand);
+
+    RTPS_DllAPI void annotation_set_non_serialized(bool non_serialized);
+
+    RTPS_DllAPI void annotation_set_value(const std::string& value);
+
+    RTPS_DllAPI void annotation_set_default_literal();
+
+    RTPS_DllAPI void annotation_set_position(uint16_t position);
 };
 
 } // namespace types

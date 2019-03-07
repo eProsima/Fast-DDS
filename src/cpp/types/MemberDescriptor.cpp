@@ -14,6 +14,8 @@
 
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/log/Log.h>
 
@@ -397,6 +399,126 @@ void MemberDescriptor::set_type(DynamicType_ptr type)
 void MemberDescriptor::set_default_union_value(bool bDefault)
 {
     default_label_ = bDefault;
+}
+
+// Annotations application
+bool MemberDescriptor::annotation_is_optional() const
+{
+    AnnotationDescriptor* ann = type_->get_descriptor()->get_annotation(ANNOTATION_OPTIONAL_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+    return false;
+}
+
+bool MemberDescriptor::annotation_is_key() const
+{
+    return type_->get_descriptor()->annotation_get_key();
+}
+
+bool MemberDescriptor::annotation_is_must_understand() const
+{
+    AnnotationDescriptor* ann = type_->get_descriptor()->get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+    return false;
+}
+
+bool MemberDescriptor::annotation_is_non_serialized() const
+{
+    return type_->get_descriptor()->annotation_is_non_serialized();
+}
+
+bool MemberDescriptor::annotation_is_value() const
+{
+    return type_->get_descriptor()->get_annotation(ANNOTATION_VALUE_ID) != nullptr;
+}
+
+bool MemberDescriptor::annotation_is_default_literal() const
+{
+    return type_->get_descriptor()->get_annotation(ANNOTATION_DEFAULT_LITERAL_ID) != nullptr;
+}
+
+bool MemberDescriptor::annotation_is_position() const
+{
+    return type_->get_descriptor()->get_annotation(ANNOTATION_OPTIONAL_ID) != nullptr;
+}
+
+// Annotations getters
+std::string MemberDescriptor::annotation_get_value() const
+{
+    AnnotationDescriptor* ann = type_->get_descriptor()->get_annotation(ANNOTATION_VALUE_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value;
+        }
+    }
+    return "";
+}
+
+uint16_t MemberDescriptor::annotation_get_position() const
+{
+    AnnotationDescriptor* ann = type_->get_descriptor()->get_annotation(ANNOTATION_POSITION_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return static_cast<uint16_t>(std::stoi(value));
+        }
+    }
+    return -1;
+}
+
+// Annotations setters
+void MemberDescriptor::annotation_set_optional(bool optional)
+{
+    type_->get_descriptor()->apply_annotation(ANNOTATION_OPTIONAL_ID, (optional) ? CONST_TRUE : CONST_FALSE);
+}
+
+void MemberDescriptor::annotation_set_key(bool key)
+{
+    type_->get_descriptor()->apply_annotation(ANNOTATION_KEY_ID, (key) ? CONST_TRUE : CONST_FALSE);
+}
+
+void MemberDescriptor::annotation_set_must_understand(bool must_understand)
+{
+    type_->get_descriptor()->apply_annotation(
+        ANNOTATION_MUST_UNDERSTAND_ID, (must_understand) ? CONST_TRUE : CONST_FALSE);
+}
+
+void MemberDescriptor::annotation_set_non_serialized(bool non_serialized)
+{
+    type_->get_descriptor()->annotation_set_non_serialized(non_serialized);
+}
+
+void MemberDescriptor::annotation_set_value(const std::string& value)
+{
+    type_->get_descriptor()->apply_annotation(ANNOTATION_VALUE_ID, value);
+}
+
+void MemberDescriptor::annotation_set_default_literal()
+{
+    type_->get_descriptor()->apply_annotation(ANNOTATION_KEY_ID, CONST_TRUE);
+}
+
+void MemberDescriptor::annotation_set_position(uint16_t position)
+{
+    type_->get_descriptor()->apply_annotation(ANNOTATION_VALUE_ID, std::to_string(position));
 }
 
 } // namespace types
