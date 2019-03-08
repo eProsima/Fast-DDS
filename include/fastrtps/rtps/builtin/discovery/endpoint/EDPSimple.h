@@ -100,6 +100,9 @@ class EDPSimple : public EDP
      */
     void removeRemoteEndpoints(ParticipantProxyData* pdata) override;
 
+    //! Verify if the given participant EDP enpoints are matched with us
+    bool areRemoteEndpointsMatched(const ParticipantProxyData* pdata) override;
+
     /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
      * @param rdata Pointer to the ReaderProxyData object.

@@ -126,6 +126,7 @@ set(${PROJECT_NAME}_source_files
 	rtps/builtin/discovery/participant/PDPServer.cpp
     rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
     rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
+	rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp

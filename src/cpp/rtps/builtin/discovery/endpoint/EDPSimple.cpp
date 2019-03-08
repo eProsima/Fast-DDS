@@ -1001,6 +1001,73 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
 #endif
 }
 
+bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
+{
+    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+
+    uint32_t auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+    if (auxendp != 0 && publications_reader_.first != nullptr) //Exist Pub Writer and I have Pub Reader
+    {
+        RemoteWriterAttributes watt(pdata->m_VendorId);
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_SEDPPubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+
+        if (!publications_reader_.first->matched_writer_is_matched(watt))
+            return false;
+    }
+
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+    if (auxendp != 0 && publications_writer_.first != nullptr) //Exist Pub Detector
+    {
+        RemoteReaderAttributes ratt(pdata->m_VendorId);
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_SEDPPubReader;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+
+        if (!publications_writer_.first->matched_reader_is_matched(ratt))
+            return false;
+    }
+
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+    if (auxendp != 0 && subscriptions_reader_.first != nullptr) //Exist Pub Announcer
+    {
+        RemoteWriterAttributes watt(pdata->m_VendorId);
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_SEDPSubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+
+        if (!subscriptions_reader_.first->matched_writer_is_matched(watt))
+            return false;
+    }
+
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+    if (auxendp != 0 && subscriptions_writer_.first != nullptr) //Exist Pub Announcer
+    {
+        RemoteReaderAttributes ratt(pdata->m_VendorId);
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_SEDPSubReader;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+
+        if (!subscriptions_writer_.first->matched_reader_is_matched(ratt))
+            return false;
+    }
+
+    return true;
+}
+
 #if HAVE_SECURITY
 bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(const GUID_t& local_reader,
         const WriterProxyData& remote_writer_data)

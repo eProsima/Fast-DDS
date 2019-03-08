@@ -23,6 +23,7 @@
 
 
 #include "PDP.h"
+#include "timedevent/DSClientEvent.h"
 
 
 namespace eprosima {
@@ -38,42 +39,77 @@ class StatefulReader;
  */
 class PDPServer : public PDP
 {
+    friend class DSClientEvent;
+
     public:
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
      */
     PDPServer(BuiltinProtocols* builtin);
-    virtual ~PDPServer();
+    ~PDPServer();
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+    void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
      * @param part Pointer to the RTPSParticipant.
      * @return True on success
      */
-    bool initPDP(RTPSParticipantImpl* part);
+    bool initPDP(RTPSParticipantImpl* part) override;
 
     /**
      * Create the SPDP Writer and Reader
      * @return True if correct.
      */
-    bool createPDPEndpoints();
+    bool createPDPEndpoints() override;
 
     /**
-     * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
+     * Check if all servers have acknowledge the client PDP data
+     * @return True if all can reach the client
+     */
+    bool all_servers_acknowledge_PDP();
+
+    /**
+     * Check if we have our PDP received data updated
+     * @return True if we known all the participants the servers are aware of
+     */
+    bool is_all_servers_PDPdata_updated();
+
+    /**
+     * Force the sending of our local DPD to all servers 
+     * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
+     * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
+     */
+    void announceParticipantState(bool new_change, bool dispose = false) override;
+
+    //! Not currently needed for DSClientEvent announcement
+    void stopParticipantAnnouncement() override {};
+
+    //! Not currently needed for DSClientEvent announcement
+    void resetParticipantAnnouncement() override {};
+
+    /**
+     * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation) but must be implemented
+     * to solve server shutdown situations.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
-    void assignRemoteEndpoints(ParticipantProxyData* pdata);
+    void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
+    void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
 
-    void removeRemoteEndpoints(ParticipantProxyData * pdata);
+    //!Matching server EDP endpoints
+    void match_all_server_EDP_endpoints();
+
+    // TODO: see if the liveliness mechanism is compatible with the DATA(p) driven one and make corrections if needed
 
     private:
 
-    //!TimedEvent to periodically resend the local RTPSParticipant information.
-    // TODO: Create a new TimedEvent associated with PDP servers acknowledgement
-
+    /**
+    * TimedEvent for server synchronization: 
+    *   first stage: periodically resend the local RTPSParticipant information until all servers have acknowledge reception
+    *   second stage: waiting PDP info is up to date before allowing EDP matching
+    */ 
+    DSClientEvent * mp_sync;
 };
 
 }

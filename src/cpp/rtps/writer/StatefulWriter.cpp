@@ -491,6 +491,15 @@ void StatefulWriter::send_any_unsent_changes()
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
+void StatefulWriter::send_any_unacknowledge_changes()
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    for (auto remoteReader : matched_readers)
+    {
+        remoteReader->convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
+    }
+}
 
 /*
  *	MATCHED_READER-RELATED METHODS

@@ -19,16 +19,18 @@
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-
-#include "../../../participant/RTPSParticipantImpl.h"
-
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
+
+#include <fastrtps/utils/TimeConversion.h>
+
+#include "../../../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
@@ -79,17 +81,18 @@ GUID_t RemoteServerAttributes::GetEDPSubscriptionsReader() const
 }
 
 PDPServer::PDPServer(BuiltinProtocols* built):
-    PDP(built)
+    PDP(built), mp_sync(nullptr)
     {
 
     }
 
 PDPServer::~PDPServer()
 {
-
+    if (mp_sync != nullptr)
+        delete(mp_sync);
 }
 
-void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant_data)
+void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant_data) 
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
@@ -140,6 +143,8 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
         logError(RTPS_PDP,"Endpoint discovery configuration failed");
         return false;
     }
+
+    mp_sync = new DSClientEvent(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
  
     return true;
 }
@@ -147,7 +152,7 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
 
 bool PDPServer::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP,"Beginning");
+    logInfo(RTPS_PDP,"Beginning PDPServer Endpoints creation");
 
     HistoryAttributes hatt;
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
@@ -165,9 +170,9 @@ bool PDPServer::createPDPEndpoints()
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 
-    mp_listener = new PDPListener(this); // TODO: Create a specific listener for Server Client
+    mp_listener = new PDPListener(this); 
 
-    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false)) //TODO: verify that enable = false (the framework should attach receiver resources later)
+    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false)) 
     {
 //#if HAVE_SECURITY
 //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
@@ -181,7 +186,7 @@ bool PDPServer::createPDPEndpoints()
             rwatt.endpoint.multicastLocatorList.push_back(it->metatrafficMulticastLocatorList);
             rwatt.endpoint.unicastLocatorList.push_back(it->metatrafficUnicastLocatorList);
             rwatt.endpoint.topicKind = WITH_KEY;
-            rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+            rwatt.endpoint.durabilityKind = TRANSIENT; // Server Information must be persistent
             rwatt.endpoint.reliabilityKind = RELIABLE;
 
             mp_PDPReader->matched_writer_add(rwatt);
@@ -220,7 +225,7 @@ bool PDPServer::createPDPEndpoints()
         watt.mode = ASYNCHRONOUS_WRITER;
     }
 
-    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true)) //TODO: verify that enable = false (the framework should attach receiver resources later)
+    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true)) 
     {
 //#if HAVE_SECURITY
 //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
@@ -247,23 +252,141 @@ bool PDPServer::createPDPEndpoints()
         mp_PDPWriterHistory = nullptr;
         return false;
     }
-    logInfo(RTPS_PDP,"PDP Endpoints creation finished");
+    logInfo(RTPS_PDP,"PDPServer Endpoints creation finished");
     return true;
 }
 
 void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    (void)pdata;
-    // Clients only exchange metatraffic with servers
+    // Verify if this participant is a server
+    for (auto svr : mp_builtin->m_DiscoveryServers)
+    {
+        if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+        {
+            svr.proxy = pdata;
+        }
+    }
 }
 
 
 void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    (void)pdata;
-    // Clients only exchange metatraffic with servers
+    // EDP endpoints have been already unmatch by the associated listener
+    assert(!mp_EDP->areRemoteEndpointsMatched(pdata));
+
+    // Verify if this participant is a server
+    bool is_server = false;
+    for (auto svr : mp_builtin->m_DiscoveryServers)
+    {
+        if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+        {
+            svr.proxy = nullptr; // reasign when we receive again server DATA(p)
+            is_server = true;
+        }
+    }
+
+    if (is_server)
+    {
+        // We should unmatch and match the PDP endpoints to renew the PDP reader and writer associated proxies
+        logInfo(RTPS_PDP, "For unmatching for server: " << pdata->m_guid);
+        uint32_t endp = pdata->m_availableBuiltinEndpoints;
+        uint32_t auxendp = endp;
+        auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+
+        if (auxendp != 0)
+        {
+            RemoteWriterAttributes watt;
+    
+            watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+            watt.guid.entityId = c_EntityId_SPDPWriter;
+            watt.endpoint.persistence_guid = watt.guid;
+            watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+            watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+            watt.endpoint.reliabilityKind = RELIABLE;
+            watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+            watt.endpoint.topicKind = WITH_KEY;
+
+            mp_PDPReader->matched_writer_remove(watt);
+            mp_PDPReader->matched_writer_add(watt);
+
+        }
+
+        auxendp = endp;
+        auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+
+        if (auxendp != 0)
+        {
+            RemoteReaderAttributes ratt;
+
+            ratt.expectsInlineQos = false;
+            ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+            ratt.guid.entityId = c_EntityId_SPDPReader;
+            ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
+            ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+            ratt.endpoint.reliabilityKind = RELIABLE;
+            ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+            ratt.endpoint.topicKind = WITH_KEY;
+
+            mp_PDPWriter->matched_reader_remove(ratt);
+            mp_PDPWriter->matched_reader_add(ratt);
+        }
+    }
 }
 
+bool PDPServer::all_servers_acknowledge_PDP()
+{
+    // check if already initialized
+    assert(mp_PDPWriterHistory && mp_PDPWriter);
+
+    // get a reference to client proxy data
+    CacheChange_t * pPD;
+    if (mp_PDPWriterHistory->get_min_change(&pPD))
+    {
+       return mp_PDPWriter->is_acked_by_all(pPD);
+    }
+    else
+    {
+        logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache by a previous call to announceParticipantState()");
+    }
+  
+    return false;
+}
+
+bool PDPServer::is_all_servers_PDPdata_updated()
+{
+    StatefulReader * pR = dynamic_cast<StatefulReader *>(mp_PDPReader);
+    assert(pR);
+    return pR->isInCleanState();
+}
+
+void PDPServer::announceParticipantState(bool new_change, bool dispose)
+{
+    PDP::announceParticipantState(new_change, dispose);
+
+    if (!(dispose || new_change))
+    {
+        StatefulWriter * pW = dynamic_cast<StatefulWriter *>(mp_PDPWriter);
+        assert(pW);
+        pW->send_any_unacknowledge_changes();
+    }
+}
+
+void PDPServer::match_all_server_EDP_endpoints()
+{
+    // PDP must have been initialize
+    assert(mp_EDP);
+
+    for (auto svr : mp_builtin->m_DiscoveryServers)
+    {
+        // We should have received the discovery info
+        assert(svr.proxy);
+
+        if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
+        {
+            mp_EDP->assignRemoteEndpoints(*svr.proxy);
+        }
+    }
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */

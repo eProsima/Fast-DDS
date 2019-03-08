@@ -79,6 +79,12 @@ class PDP
      */
     virtual void announceParticipantState(bool new_change, bool dispose = false);
 
+    //!Stop the RTPSParticipantAnnouncement (only used in tests).
+    virtual void stopParticipantAnnouncement() = 0;
+
+    //!Reset the RTPSParticipantAnnouncement (only used in tests).
+    virtual void resetParticipantAnnouncement() = 0;
+
     /**
      * Add a ReaderProxyData to the correct ParticipantProxyData.
      * @param rdata Pointer to the ReaderProxyData objectr to add.

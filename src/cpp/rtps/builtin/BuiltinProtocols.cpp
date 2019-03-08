@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/common/Locator.h>
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
@@ -72,22 +73,35 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
     m_initialPeersList = m_att.initialPeersList;
     m_DiscoveryServers = m_att.m_DiscoveryServers;
 
+    // WLP
+    if (m_att.use_WriterLivelinessProtocol)
+    {
+        mp_WLP = new WLP(this);
+        mp_WLP->initWL(mp_participantImpl);
+    }
+
+    // PDP
     if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
     {
-        PDPSimple * pS = new PDPSimple(this);
-        mp_PDP = pS;
-        if(!pS->initPDP(mp_participantImpl)){
-            logError(RTPS_PDP,"Participant discovery configuration failed");
-            return false;
-        }
-        if(m_att.use_WriterLivelinessProtocol)
-        {
-            mp_WLP = new WLP(this);
-            mp_WLP->initWL(mp_participantImpl);
-        }
-        pS->announceParticipantState(true);
-        pS->resetParticipantAnnouncement();
+        mp_PDP = new PDPSimple(this);
     }
+    else if (m_att.use_SERVER_DiscoveryProtocol)
+    {
+        mp_PDP = new PDPServer(this);
+    }
+    else
+    {
+        logError(RTPS_PDP, "No participant discovery protocol specified");
+        return false;
+    }
+
+    if (!mp_PDP->initPDP(mp_participantImpl)) {
+        logError(RTPS_PDP, "Participant discovery configuration failed");
+        return false;
+    }
+
+    mp_PDP->announceParticipantState(true);
+    mp_PDP->resetParticipantAnnouncement();
 
     return true;
 }
@@ -184,32 +198,43 @@ bool BuiltinProtocols::removeLocalReader(RTPSReader* R)
 
 void BuiltinProtocols::announceRTPSParticipantState()
 {
-    mp_PDP->announceParticipantState(false);
+    assert(mp_PDP);
+
+    if (mp_PDP)
+    {
+        mp_PDP->announceParticipantState(false);
+    }
+    else
+    {
+        logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
+    }
 }
 
 void BuiltinProtocols::stopRTPSParticipantAnnouncement()
 {
-    PDPSimple * pS = dynamic_cast<PDPSimple *>(mp_PDP);
-    if (pS == nullptr)
+    assert(mp_PDP);
+
+    if (mp_PDP)
     {
-        logWarning(RTPS_PDP, "Using periodical announcement interface with non simple PDP");
+        mp_PDP->stopParticipantAnnouncement();
     }
     else
     {
-        pS->stopParticipantAnnouncement();
+        logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
 }
 
 void BuiltinProtocols::resetRTPSParticipantAnnouncement()
 {
-    PDPSimple * pS = dynamic_cast<PDPSimple *>(mp_PDP);
-    if (pS == nullptr)
+    assert(mp_PDP);
+
+    if (mp_PDP)
     {
-        logWarning(RTPS_PDP, "Using periodical announcement interface with non simple PDP");
+        mp_PDP->resetParticipantAnnouncement();
     }
     else
     {
-        pS->resetParticipantAnnouncement();
+        logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
 }
 

@@ -47,36 +47,36 @@ class PDPSimple : public PDP
      * @param builtin Pointer to the BuiltinProcols object.
      */
     PDPSimple(BuiltinProtocols* builtin);
-    virtual ~PDPSimple();
+    ~PDPSimple();
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+    void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
      * @param part Pointer to the RTPSParticipant.
      * @return True on success
      */
-    bool initPDP(RTPSParticipantImpl* part);
+    bool initPDP(RTPSParticipantImpl* part) override;
 
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
-    virtual void announceParticipantState(bool new_change, bool dispose = false);
+    void announceParticipantState(bool new_change, bool dispose = false) override;
 
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
-    void stopParticipantAnnouncement();
+    void stopParticipantAnnouncement() override;
     //!Reset the RTPSParticipantAnnouncement (only used in tests).
-    void resetParticipantAnnouncement();
+    void resetParticipantAnnouncement() override;
 
     /**
      * This method assigns remtoe endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
-    void assignRemoteEndpoints(ParticipantProxyData* pdata);
+    void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
 
-    void removeRemoteEndpoints(ParticipantProxyData * pdata);
+    void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
 
     private:
 
@@ -87,7 +87,7 @@ class PDPSimple : public PDP
      * Create the SPDP Writer and Reader
      * @return True if correct.
      */
-    bool createPDPEndpoints();
+    bool createPDPEndpoints() override;
 
 };
 

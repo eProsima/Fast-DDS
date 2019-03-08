@@ -30,6 +30,8 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+    class ParticipantProxyData;
+
     /**
      * Class RemoteServerAttributes, to define the attributes of the Discovery Server Protocol.
      * @ingroup RTPS_ATTRIBUTES_MODULE
@@ -38,10 +40,6 @@ namespace rtps {
     class RemoteServerAttributes
     {
     public:
-
-        RemoteServerAttributes() = default;
-        ~RemoteServerAttributes() = default;
-
         inline bool operator==(const RemoteServerAttributes & r) const { return guidPrefix == r.guidPrefix; }
 
         GUID_t GetPDPReader() const;
@@ -60,6 +58,9 @@ namespace rtps {
 
         //!Guid prefix
         GuidPrefix_t guidPrefix;
+
+        // Live participant proxy reference
+        const ParticipantProxyData * proxy{};
     };
 }
 } /* namespace rtps */

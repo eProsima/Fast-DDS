@@ -102,6 +102,11 @@ namespace eprosima
                  */
                 void send_any_unsent_changes() override;
 
+                /**
+                 * Method to send all changes not acknowledge by the readers. Relies on send_any_unsent_changes()
+                 */
+                void send_any_unacknowledge_changes();
+
                 //!Increment the HB count.
                 inline void incrementHBCount(){ ++m_heartbeatCount; };
                 /**

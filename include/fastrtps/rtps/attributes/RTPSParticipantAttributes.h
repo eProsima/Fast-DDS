@@ -118,6 +118,12 @@ class BuiltinAttributes{
          * as well as to all Multicast ports.
          */
         Duration_t leaseDuration_announcementperiod;
+        /**
+         * The period for the RTPSParticipant to:
+            send its Discovery Message to its servers
+            check for EDP endpoints matching
+         */
+        Duration_t discoveryServer_client_syncperiod;
         //!Attributes of the SimpleEDP protocol
         SimpleEDPAttributes m_simpleEDP;
         //!Metatraffic Unicast Locator List
@@ -141,6 +147,7 @@ class BuiltinAttributes{
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
             use_SERVER_DiscoveryProtocol = false;
+            discoveryServer_client_syncperiod.seconds = 1;
             m_staticEndpointXMLFilename = "";
             domainId = 0;
             leaseDuration.seconds = 130;
@@ -158,6 +165,7 @@ class BuiltinAttributes{
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
                    (this->use_SERVER_DiscoveryProtocol == b.use_SERVER_DiscoveryProtocol) &&
+                   (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
                    (this->domainId == b.domainId) &&
                    (this->leaseDuration == b.leaseDuration) &&
                    (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
