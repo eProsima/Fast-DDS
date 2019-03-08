@@ -35,9 +35,8 @@ struct GUID_t;
 class WriteParams;
 }
 
-
-
 class PublisherImpl;
+struct OfferedDeadlineMissedStatus;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -117,6 +116,12 @@ class RTPS_DllAPI Publisher
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
      */
     bool updateAttributes(const PublisherAttributes& att);
+
+    /**
+     * @brief Returns the offered deadline missed status
+     * @param Deadline missed status struct
+     */
+    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
 
     private:
 

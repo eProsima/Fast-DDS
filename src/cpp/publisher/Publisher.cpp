@@ -89,3 +89,8 @@ bool Publisher::updateAttributes(const PublisherAttributes& att)
 {
     return mp_impl->updateAttributes(att);
 }
+
+void Publisher::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+{
+    mp_impl->get_offered_deadline_missed_status(status);
+}

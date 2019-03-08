@@ -389,3 +389,8 @@ void PublisherImpl::check_deadlines()
 
     mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
 }
+
+void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+{
+    status = deadline_missed_status_;
+}

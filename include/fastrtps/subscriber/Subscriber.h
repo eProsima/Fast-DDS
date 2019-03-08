@@ -23,13 +23,12 @@
 #include "../rtps/common/Guid.h"
 #include "../attributes/SubscriberAttributes.h"
 
-
-
 namespace eprosima {
 namespace fastrtps {
 
 class SubscriberImpl;
 class SampleInfo_t;
+struct RequestedDeadlineMissedStatus;
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
@@ -100,6 +99,12 @@ public:
      * @return Unread count
      */
     uint64_t getUnreadCount() const;
+
+    /**
+     * @brief Get the requested deadline missed status
+     * @return The deadline missed status
+     */
+    void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
 
 private:
     SubscriberImpl* mp_impl;

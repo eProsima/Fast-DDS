@@ -127,6 +127,12 @@ public:
      */
     void onNewCacheChangeAdded(const CacheChange_t* const change);
 
+    /**
+     * @brief Get the requested deadline missed status
+     * @return The deadline missed status
+     */
+    void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
+
 private:
 
     //!Participant

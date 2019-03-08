@@ -284,5 +284,11 @@ void SubscriberImpl::check_deadlines()
     mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
 }
 
+
+void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
+{
+    status = deadline_missed_status_;
+}
+
 } /* namespace fastrtps */
 } /* namespace eprosima */
