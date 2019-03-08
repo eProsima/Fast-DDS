@@ -27,7 +27,7 @@
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/resources/DeadlineTimer.h>
-
+#include <fastrtps/qos/RequestedDeadlineMissedStatus.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -155,12 +155,14 @@ private:
     //!RTPSParticipant
     rtps::RTPSParticipant* mp_rtpsParticipant;
 
-    //!A timer used to check for deadlines
+    //! A timer used to check for deadlines
     DeadlineTimer deadline_timer_;
-    //!Deadline duration
+    //! Deadline duration
     Duration_t deadline_duration_;
-    //!A vector storing the latest samples to check for deadline
+    //! A vector storing the latest samples to check for deadline
     std::vector<rtps::CacheChange_t*> deadline_samples_;
+    //! Requested deadline missed status
+    RequestedDeadlineMissedStatus deadline_missed_status_;
 
     /** A method to check for deadlines
      */

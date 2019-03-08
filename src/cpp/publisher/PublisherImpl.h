@@ -31,6 +31,7 @@
 
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/resources/DeadlineTimer.h>
+#include <fastrtps/qos/OfferedDeadlineMissedStatus.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -163,6 +164,8 @@ class PublisherImpl
     Duration_t deadline_duration_;
     //! A vector to store the latest samples to check for deadlines
     std::vector<CacheChange_t*> deadline_samples_;
+    //! The offered deadline missed status
+    OfferedDeadlineMissedStatus deadline_missed_status_;
 
     /** Method to check for deadlines
      */

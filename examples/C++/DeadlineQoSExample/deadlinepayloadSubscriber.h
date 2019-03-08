@@ -65,9 +65,13 @@ private:
     public:
         SubListener() : n_matched(0),n_msg(0){};
         ~SubListener(){};
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info) override;
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info) override;
         void onNewDataMessage(eprosima::fastrtps::Subscriber* sub) override;
-        void on_requested_deadline_missed(eprosima::fastrtps::rtps::InstanceHandle_t& handle) override;
+        void on_requested_deadline_missed(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override;
         eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         int n_msg;

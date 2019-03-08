@@ -68,6 +68,7 @@ PublisherImpl::PublisherImpl(
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_(att.qos.m_deadline.period)
     , deadline_samples_()
+    , deadline_missed_status_()
 {
     if (att.qos.m_deadline.period != c_TimeInfinite)
     {
@@ -382,5 +383,9 @@ void PublisherImpl::check_deadlines()
         }
     }
 
-    mp_listener->on_offered_deadline_missed(handle);
+    deadline_missed_status_.total_count++;
+    deadline_missed_status_.total_count_change++;
+    deadline_missed_status_.last_instance_handle = handle;
+
+    mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
 }

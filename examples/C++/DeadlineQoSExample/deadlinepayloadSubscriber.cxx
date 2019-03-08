@@ -99,9 +99,11 @@ void deadlinepayloadSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
     }
 }
 
-void deadlinepayloadSubscriber::SubListener::on_requested_deadline_missed(InstanceHandle_t &handle)
+void deadlinepayloadSubscriber::SubListener::on_requested_deadline_missed(
+        Subscriber* sub,
+        RequestedDeadlineMissedStatus& status)
 {
-    std::cout << "Subscriber listener: deadline missed for instance " << handle << std::endl;
+    std::cout << "Subscriber " << sub->getGuid() << " missed the deadline for instance " << status.last_instance_handle << std::endl;
 }
 
 void deadlinepayloadSubscriber::run()

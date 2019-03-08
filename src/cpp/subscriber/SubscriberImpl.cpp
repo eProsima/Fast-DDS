@@ -59,6 +59,7 @@ SubscriberImpl::SubscriberImpl(
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_(att.qos.m_deadline.period)
     , deadline_samples_(att.topic.resourceLimitsQos.max_instances)
+    , deadline_missed_status_()
 {
     if (att.qos.m_deadline.period != c_TimeInfinite)
     {
@@ -277,7 +278,10 @@ void SubscriberImpl::check_deadlines()
         }
     }
 
-    mp_listener->on_requested_deadline_missed(handle);
+    deadline_missed_status_.total_count++;
+    deadline_missed_status_.total_count_change++;
+    deadline_missed_status_.last_instance_handle = handle;
+    mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
 }
 
 } /* namespace fastrtps */

@@ -142,9 +142,13 @@ private:
             }
         }
 
-        void on_requested_deadline_missed(eprosima::fastrtps::rtps::InstanceHandle_t&) override
+        void on_requested_deadline_missed(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override
         {
-            times_deadline_missed_++;
+            (void)sub;
+
+            times_deadline_missed_ = status.total_count;
         }
 
         int missed_deadlines() const

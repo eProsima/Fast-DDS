@@ -21,16 +21,12 @@
 
 #include "../rtps/common/Types.h"
 #include "../rtps/common/MatchingInfo.h"
+#include "../qos/OfferedDeadlineMissedStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
 
 class Publisher;
-
-namespace rtps
-{
-class InstanceHandle_t;
-}
 
 /**
  * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
@@ -40,20 +36,33 @@ class InstanceHandle_t;
 class RTPS_DllAPI PublisherListener
 {
 public:
-	PublisherListener(){};
-	virtual ~PublisherListener(){};
+    PublisherListener(){}
+    virtual ~PublisherListener(){}
 	/**
 	 * This method is called when the Publisher is matched (or unmatched) against an endpoint.
 	 * @param pub Pointer to the associated Publisher
 	 * @param info Information regarding the matched subscriber
 	 */
-	virtual void onPublicationMatched(Publisher* pub, rtps::MatchingInfo& info){(void)pub; (void)info;};
+    virtual void onPublicationMatched(
+            Publisher* pub,
+            rtps::MatchingInfo& info)
+    {
+        (void)pub;
+        (void)info;
+    }
 
     /**
-     * A method called when an instance of a topic misses the deadline period
-     * @param handle The instance handle
+     * A method called when a deadline is missed
+     * @param pub Pointer to the associated Publisher
+     * @param status The deadline missed status
      */
-    virtual void on_offered_deadline_missed(rtps::InstanceHandle_t& /*handle*/) {};
+    virtual void on_offered_deadline_missed(
+            Publisher* pub,
+            OfferedDeadlineMissedStatus& status)
+    {
+        (void)pub;
+        (void)status;
+    }
 };
 
 } /* namespace rtps */
