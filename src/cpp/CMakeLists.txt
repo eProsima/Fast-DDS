@@ -278,7 +278,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     endif()
 
     # Link library to external libraries.
-    target_link_directories(${PROJECT_NAME}
+    target_link_directories(${PROJECT_NAME} ${PRIVACY}
         ${TINYXML2_LIBRARY_DIRS}
         )
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
