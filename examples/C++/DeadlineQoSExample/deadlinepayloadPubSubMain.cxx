@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 {
     std::cout << "Starting " << std::endl;
     int type = 1;
-    int deadline = 1000;
+    int deadline = 2000;
     int sleep = 1000;
     int samples = 0;
     if (argc > 1)

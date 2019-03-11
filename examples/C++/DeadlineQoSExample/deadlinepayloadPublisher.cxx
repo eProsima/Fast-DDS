@@ -94,7 +94,8 @@ void deadlinepayloadPublisher::PubListener::on_offered_deadline_missed(
         Publisher* pub,
         OfferedDeadlineMissedStatus& status)
 {
-    std::cout << "Publisher " << pub->getGuid() << " missed the deadline. Last instance: " << status.last_instance_handle << std::endl;
+    (void)pub;
+    std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;
 }
 
 void deadlinepayloadPublisher::run(double sleep_ms, int samples)

@@ -208,7 +208,7 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
-void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
+void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const /*change*/)
 {
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
