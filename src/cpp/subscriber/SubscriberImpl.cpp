@@ -213,19 +213,6 @@ void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
         std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
-
-        // Cancel the timer
-        deadline_timer_.cancel_timer();
-
-        // Update timer interval
-        int num_samples = 0;
-        m_history.get_latest_samples(deadline_samples_, num_samples);
-        auto min = *std::min_element(deadline_samples_.begin(),
-                                     deadline_samples_.begin() + num_samples,
-                                     [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
-        deadline_timer_.update_interval(deadline_duration_ - change->sourceTimestamp + min->sourceTimestamp);
-
-        // Restart
         deadline_timer_.restart_timer();
     }
 }
@@ -252,7 +239,7 @@ void SubscriberImpl::check_deadlines()
 
     std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
 
-    // If this method is called, one instance (the one with the oldest change) has missed the deadline
+    auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
 
     // Get the latest samples from the history
     int num_samples = 0;
@@ -266,22 +253,28 @@ void SubscriberImpl::check_deadlines()
 
     // Time of the earliest sample among all topic instances
     Time_t minTime = deadline_samples_.front()->sourceTimestamp;
-    // Instance handle of the earlist sample among all topic instances
-    InstanceHandle_t handle = deadline_samples_.front()->instanceHandle;
 
-    for (int i = 0; i < num_samples; ++i)
+    for (int i = 0; i < num_samples; i++)
     {
         if (deadline_samples_[i]->sourceTimestamp < minTime)
         {
             minTime = deadline_samples_[i]->sourceTimestamp;
-            handle = deadline_samples_[i]->instanceHandle;
+        }
+
+        if (now_s - deadline_samples_[i]->sourceTimestamp >= deadline_duration_)
+        {
+            deadline_missed_status_.total_count++;
+            deadline_missed_status_.total_count_change++;
+            deadline_missed_status_.last_instance_handle = deadline_samples_[i]->instanceHandle;
+
+            mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
+            deadline_missed_status_.total_count_change = 0;
         }
     }
 
-    deadline_missed_status_.total_count++;
-    deadline_missed_status_.total_count_change++;
-    deadline_missed_status_.last_instance_handle = handle;
-    mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
+    Duration_t interval = minTime + deadline_duration_ - now_s > 0? minTime + deadline_duration_ - now_s: deadline_duration_;
+    deadline_timer_.update_interval(interval);
+    deadline_timer_.restart_timer();
 }
 
 

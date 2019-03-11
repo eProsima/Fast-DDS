@@ -154,9 +154,12 @@ class PubSubWriter
                 }
             }
 
-            void on_offered_deadline_missed(eprosima::fastrtps::rtps::InstanceHandle_t&)
+            void on_offered_deadline_missed(
+                    eprosima::fastrtps::Publisher* pub,
+                    eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
             {
-                times_deadline_missed_++;
+                (void)pub;
+                times_deadline_missed_ = status.total_count;
             }
 
             int missed_deadlines() const

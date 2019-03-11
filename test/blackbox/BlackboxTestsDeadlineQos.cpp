@@ -114,8 +114,8 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicShortDeadline)
     }
 
     // All samples should have missed the deadline
-    EXPECT_EQ(writer.missed_deadlines(), writer_samples);
-    EXPECT_EQ(reader.missed_deadlines(), writer_samples);
+    EXPECT_GE(writer.missed_deadlines(), writer_samples);
+    EXPECT_GE(reader.missed_deadlines(), writer_samples);
 }
 
 BLACKBOXTEST(DeadlineQos, KeyedTopicLongDeadline)
@@ -212,6 +212,6 @@ BLACKBOXTEST(DeadlineQos, KeyedTopicShortDeadline)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
 
-    EXPECT_EQ(writer.missed_deadlines(), writer_samples);
-    EXPECT_EQ(reader.missed_deadlines(), writer_samples);
+    EXPECT_GE(writer.missed_deadlines(), writer_samples);
+    EXPECT_GE(reader.missed_deadlines(), writer_samples);
 }

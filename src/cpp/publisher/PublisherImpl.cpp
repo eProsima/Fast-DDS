@@ -207,18 +207,6 @@ bool PublisherImpl::create_new_change_with_params(
 
         if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
         {
-            // Cancel timer
-            deadline_timer_.cancel_timer();
-
-            // Calculate the time at which the instance with the oldest change will expire
-            int num_instances = 0;
-            m_history.get_latest_samples(deadline_samples_, num_instances);
-            auto min = *std::min_element(deadline_samples_.begin(),
-                                         deadline_samples_.begin() + num_instances,
-                                         [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
-            deadline_timer_.update_interval(deadline_duration_ - ch->sourceTimestamp + min->sourceTimestamp);
-
-            // Restart the timer
             deadline_timer_.restart_timer();
         }
         return true;
@@ -357,7 +345,7 @@ void PublisherImpl::check_deadlines()
 
     std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
 
-    // If this method is called, one instance (the one with the oldest change) has missed the deadline
+    auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
 
     // Get the latest samples from the history
     int num_samples = 0;
@@ -371,26 +359,32 @@ void PublisherImpl::check_deadlines()
 
     // Time of the earliest sample among all topic instances
     Time_t minTime = deadline_samples_.front()->sourceTimestamp;
-    // Instance of the earliest sample among all topic instances
-    InstanceHandle_t handle = deadline_samples_.front()->instanceHandle;
 
     for (int i = 0; i < num_samples; i++)
     {
         if (deadline_samples_[i]->sourceTimestamp < minTime)
         {
             minTime = deadline_samples_[i]->sourceTimestamp;
-            handle = deadline_samples_[i]->instanceHandle;
+        }
+
+        if (now_s - deadline_samples_[i]->sourceTimestamp >= deadline_duration_)
+        {
+            deadline_missed_status_.total_count++;
+            deadline_missed_status_.total_count_change++;
+            deadline_missed_status_.last_instance_handle = deadline_samples_[i]->instanceHandle;
+
+            mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
+            deadline_missed_status_.total_count_change = 0;
         }
     }
 
-    deadline_missed_status_.total_count++;
-    deadline_missed_status_.total_count_change++;
-    deadline_missed_status_.last_instance_handle = handle;
-
-    mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
+    Duration_t interval = deadline_duration_ - now_s + minTime > 0? deadline_duration_ - now_s + minTime: deadline_duration_;
+    deadline_timer_.update_interval(interval);
+    deadline_timer_.restart_timer();
 }
 
 void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
 {
     status = deadline_missed_status_;
+    deadline_missed_status_.total_count_change = 0;
 }
