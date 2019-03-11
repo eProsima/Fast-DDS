@@ -67,13 +67,9 @@ PublisherImpl::PublisherImpl(
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_(att.qos.m_deadline.period)
-    , deadline_samples_()
+    , deadline_samples_(att.topic.getTopicKind() == NO_KEY? 1: att.topic.resourceLimitsQos.max_instances)
     , deadline_missed_status_()
 {
-    if (att.qos.m_deadline.period != c_TimeInfinite)
-    {
-        deadline_samples_.resize(att.topic.getTopicKind() == NO_KEY? 1: att.topic.resourceLimitsQos.max_instances);
-    }
 }
 
 PublisherImpl::~PublisherImpl()
@@ -306,10 +302,14 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
             StatefulWriter* sfw = (StatefulWriter*)mp_writer;
             sfw->updateTimes(att.times);
         }
+
         this->m_att.qos.setQos(att.qos,false);
         this->m_att = att;
         //Notify the participant that a Writer has changed its QOS
         mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
+
+        // Update deadline period
+        deadline_duration_ = m_att.qos.m_deadline.period;
     }
 
 

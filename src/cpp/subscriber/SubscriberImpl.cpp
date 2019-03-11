@@ -58,13 +58,9 @@ SubscriberImpl::SubscriberImpl(
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_(att.qos.m_deadline.period)
-    , deadline_samples_(att.topic.resourceLimitsQos.max_instances)
+    , deadline_samples_(att.topic.getTopicKind() == NO_KEY? 1: att.topic.resourceLimitsQos.max_instances)
     , deadline_missed_status_()
 {
-    if (att.qos.m_deadline.period != c_TimeInfinite)
-    {
-        deadline_samples_.resize(att.topic.getTopicKind() == NO_KEY? 1: att.topic.resourceLimitsQos.max_instances);
-    }
 }
 
 SubscriberImpl::~SubscriberImpl()
@@ -186,6 +182,9 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
         this->m_att.qos.setQos(att.qos,false);
         //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
         mp_rtpsParticipant->updateReader(this->mp_reader, m_att.topic, m_att.qos);
+
+        // Update deadline period
+        deadline_duration_ = m_att.qos.m_deadline.period;
     }
     return updated;
 }
@@ -281,7 +280,7 @@ void SubscriberImpl::check_deadlines()
 void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
 {
     status = deadline_missed_status_;
-    deadline_missed_status_ = 0;
+    deadline_missed_status_.total_count_change = 0;
 }
 
 } /* namespace fastrtps */
