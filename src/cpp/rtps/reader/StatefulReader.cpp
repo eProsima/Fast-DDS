@@ -86,6 +86,8 @@ StatefulReader::StatefulReader(
 
 bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
 {
+    assert(wdata.guid() != c_Guid_Unknown);
+
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for (WriterProxy* it : matched_writers_)
     {
@@ -769,8 +771,7 @@ bool StatefulReader::isInCleanState()
 void StatefulReader::send_acknack(
         const SequenceNumberSet_t& sns,
         RTPSMessageGroup_t& buffer,
-        const LocatorList_t& locators,
-        const std::vector<GUID_t>& guids,
+        const RTPSMessageSenderInterface& sender,
         bool is_final)
 {
 
@@ -785,17 +786,15 @@ void StatefulReader::send_acknack(
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    RTPSMessageGroup group(getRTPSParticipant(), this, RTPSMessageGroup::READER, buffer, locators, guids);
-
-    group.add_acknack(guids, sns, acknackCount, is_final, locators);
+    RTPSMessageGroup group(getRTPSParticipant(), this, buffer, sender);
+    group.add_acknack(sns, acknackCount, is_final);
 
 }
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
         RTPSMessageGroup_t& buffer,
-        const LocatorList_t& locators,
-        const std::vector<GUID_t>& guids,
+        const RTPSMessageSenderInterface& sender,
         bool heartbeat_was_final)
 {
     // Protect reader
@@ -807,16 +806,17 @@ void StatefulReader::send_acknack(
 
     try
     {
-        RTPSMessageGroup group(getRTPSParticipant(), this, RTPSMessageGroup::READER,buffer, locators, guids);
+        RTPSMessageGroup group(getRTPSParticipant(), this, buffer, sender);
         if (!missing_changes.empty() || !heartbeat_was_final)
         {
+            GUID_t guid = sender.remote_guids().at(0);
             SequenceNumberSet_t sns(writer->available_changes_max() + 1);
     
             missing_changes.for_each(
                 [&](const SequenceNumber_t& seq)
                 {
                     // Check if the CacheChange_t is uncompleted.
-                    CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(seq, guids.at(0));
+                    CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(seq, guid);
                     if (uncomplete_change == nullptr)
                     {
                         if (!sns.add(seq))
@@ -836,7 +836,7 @@ void StatefulReader::send_acknack(
             logInfo(RTPS_READER, "Sending ACKNACK: " << sns;);
     
             bool final = sns.empty();
-            group.add_acknack(guids, sns, acknack_count_, final, locators);
+            group.add_acknack(sns, acknack_count_, final);
         }
     
         // Now generage NACK_FRAGS
@@ -875,7 +875,7 @@ void StatefulReader::send_acknack(
                 ++nackfrag_count_;
                 logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
     
-                group.add_nackfrag(guids, cit->sequenceNumber, frag_sns, nackfrag_count_, locators);
+                group.add_nackfrag(cit->sequenceNumber, frag_sns, nackfrag_count_);
             }
         }
     }
@@ -883,4 +883,12 @@ void StatefulReader::send_acknack(
     {
         logError(RTPS_WRITER, "Max blocking time reached");
     }
+}
+
+bool StatefulReader::send_sync_nts(
+        CDRMessage_t* message,
+        const Locator_t& locator,
+        std::chrono::steady_clock::time_point& max_blocking_time_point)
+{
+    return mp_RTPSParticipant->sendSync(message, locator, max_blocking_time_point);
 }

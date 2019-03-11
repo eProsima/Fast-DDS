@@ -174,7 +174,6 @@ public:
     //!Send Method - Deprecated - Stays here for reference purposes
     bool sendSync(
             CDRMessage_t* msg,
-            Endpoint *pend,
             const Locator_t& destination_loc,
             std::chrono::steady_clock::time_point& max_blocking_time_point);
 
