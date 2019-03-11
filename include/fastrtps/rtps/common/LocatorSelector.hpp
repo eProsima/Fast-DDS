@@ -23,6 +23,7 @@
 #include "./Guid.h"
 #include "./Locator.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
+#include "../../utils/IPLocator.h"
 
 #include <algorithm>
 
@@ -214,6 +215,46 @@ public:
         }
 
         return result;
+    }
+
+    /**
+     * Check if a locator is present in the selections of this object.
+     *
+     * @param locator The locator to be checked.
+     *
+     * @return True if the locator has been selected, false otherwise.
+     */
+    bool is_selected(const Locator_t locator) const
+    {
+        if(IPLocator::isMulticast(locator))
+        {
+            for (size_t index : selections_)
+            {
+                LocatorSelectorEntry* entry = entries_.at(index);
+                for (size_t loc_index : entry->state.multicast)
+                {
+                    if (entry->multicast.at(loc_index) == locator)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (size_t index : selections_)
+            {
+                LocatorSelectorEntry* entry = entries_.at(index);
+                for (size_t loc_index : entry->state.unicast)
+                {
+                    if (entry->unicast.at(loc_index) == locator)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
