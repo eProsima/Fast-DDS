@@ -281,6 +281,7 @@ void SubscriberImpl::check_deadlines()
 void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
 {
     status = deadline_missed_status_;
+    deadline_missed_status_ = 0;
 }
 
 } /* namespace fastrtps */
