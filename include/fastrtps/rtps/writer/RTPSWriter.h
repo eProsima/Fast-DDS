@@ -23,6 +23,9 @@
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
+#include "../common/LocatorSelector.hpp"
+#include "../messages/RTPSMessageSenderInterface.hpp"
+
 #include <vector>
 #include <memory>
 #include <functional>
@@ -42,7 +45,7 @@ struct CacheChange_t;
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITER_MODULE
  */
-class RTPSWriter : public Endpoint
+class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
 {
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
@@ -248,6 +251,43 @@ class RTPSWriter : public Endpoint
         return writer_guid == m_guid;
     }
 
+    /**
+     * Check if the destinations managed by this sender interface have changed.
+     *
+     * @return true if destinations have changed, false otherwise.
+     */
+    bool destinations_have_changed() const override;
+
+    /**
+     * Get a GUID prefix representing all destinations.
+     *
+     * @return When all the destinations share the same prefix (i.e. belong to the same participant)
+     * that prefix is returned. When there are no destinations, or they belong to different
+     * participants, c_GuidPrefix_Unknown is returned.
+     */
+    GuidPrefix_t destination_guid_prefix() const override;
+
+    /**
+     * Get the GUID prefix of all the destination participants.
+     *
+     * @return a const reference to a vector with the GUID prefix of all destination participants.
+     */
+    const std::vector<GuidPrefix_t>& remote_participants() const override;
+
+    /**
+     * Get the GUID of all destinations.
+     *
+     * @return a const reference to a vector with the GUID of all destinations.
+     */
+    const std::vector<GUID_t>& remote_guids() const override;
+
+    /**
+     * Send a message through this interface.
+     *
+     * @param message Pointer to the buffer with the message already serialized.
+     */
+    void send(CDRMessage_t* message) const override;
+
     protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -266,10 +306,16 @@ class RTPSWriter : public Endpoint
     bool m_separateSendingEnabled;
 
     LocatorList_t mAllShrinkedLocatorList;
+    LocatorSelector locator_selector_;
 
     ResourceLimitedVector<GUID_t> all_remote_readers_;
+    ResourceLimitedVector<GuidPrefix_t> all_remote_participants_;
 
-    void update_cached_info_nts(std::vector<LocatorList_t>& allLocatorLists);
+    void add_guid(const GUID_t& remote_guid);
+
+    void compute_selected_guids();
+
+    void update_cached_info_nts();
 
     /**
      * Initialize the header of hte CDRMessages.

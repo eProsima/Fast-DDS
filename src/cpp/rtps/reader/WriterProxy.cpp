@@ -114,6 +114,7 @@ WriterProxy::WriterProxy(
     , changes_pool_(changes_node_size, changes_node_size * std::max(changes_allocation.initial, (size_t)1u))
     , changes_from_writer_(changes_pool_)
     , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
+    , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
 {
     //Create Events
     writer_proxy_liveliness_ = new WriterProxyLiveliness(reader);
@@ -131,6 +132,7 @@ void WriterProxy::start(const RemoteWriterAttributes& attributes)
 {
     attributes_ = attributes;
     guid_as_vector_.push_back(attributes_.guid);
+    guid_prefix_as_vector_.push_back(attributes_.guid.guidPrefix);
     is_alive_ = true;
     if (attributes_.livelinessLeaseDuration < c_TimeInfinite)
     {
@@ -145,6 +147,7 @@ void WriterProxy::stop()
     last_heartbeat_count_ = 0;
     heartbeat_final_flag_ = false;
     guid_as_vector_.clear();
+    guid_prefix_as_vector_.clear();
     changes_from_writer_.clear();
 
     writer_proxy_liveliness_->cancel_timer();
@@ -478,12 +481,12 @@ void WriterProxy::perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const
 {
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    reader_->send_acknack(sns, buffer, remote_locators_shrinked(), guid_as_vector_, false);
+    reader_->send_acknack(sns, buffer, *this, false);
 }
 
 void WriterProxy::perform_heartbeat_response(RTPSMessageGroup_t& buffer) const
 {
-    reader_->send_acknack(this, buffer, remote_locators_shrinked(), guid_as_vector_, heartbeat_final_flag_);
+    reader_->send_acknack(this, buffer, *this, heartbeat_final_flag_);
 }
 
 bool WriterProxy::process_heartbeat(
@@ -533,6 +536,14 @@ bool WriterProxy::process_heartbeat(
 void WriterProxy::update_heartbeat_response_interval(const Duration_t& interval)
 {
     heartbeat_response_->update_interval(interval);
+}
+
+void WriterProxy::send(CDRMessage_t* message) const
+{
+    for (const Locator_t& locator : remote_locators_shrinked())
+    {
+        reader_->send_sync_nts(message, locator);
+    }
 }
 
 } /* namespace rtps */

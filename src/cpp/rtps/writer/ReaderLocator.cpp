@@ -20,22 +20,98 @@
 #include <fastrtps/rtps/writer/ReaderLocator.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastrtps/rtps/writer/StatelessWriter.h>
 
+#include "../participant/RTPSParticipantImpl.h"
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-ReaderLocator::ReaderLocator() : expectsInlineQos(false)
+ReaderLocator::ReaderLocator(
+        RTPSParticipantImpl* owner,
+        size_t max_unicast_locators,
+        size_t max_multicast_locators)
+    : owner_(owner)
+    , locator_info_(max_unicast_locators, max_multicast_locators)
+    , expects_inline_qos_(false)
+    , guid_prefix_as_vector_(1u)
+    , guid_as_vector_(1u)
 {
 }
 
-ReaderLocator::~ReaderLocator()
+bool ReaderLocator::start(
+        const GUID_t& remote_guid,
+        const LocatorList_t& unicast_locators,
+        const LocatorList_t& multicast_locators,
+        bool expects_inline_qos)
 {
+    if (locator_info_.remote_guid == c_Guid_Unknown)
+    {
+        expects_inline_qos_ = expects_inline_qos;
+        guid_as_vector_.at(0) = remote_guid;
+        guid_prefix_as_vector_.at(0) = remote_guid.guidPrefix;
+        locator_info_.remote_guid = remote_guid;
+        locator_info_.unicast.clear();
+        locator_info_.multicast.clear();
+
+        for (const Locator_t& locator : unicast_locators)
+        {
+            locator_info_.unicast.push_back(locator);
+        }
+
+        for (const Locator_t& locator : multicast_locators)
+        {
+            locator_info_.multicast.push_back(locator);
+        }
+
+        locator_info_.reset();
+        locator_info_.enable(true);
+        return true;
+    }
+
+    return false;
 }
 
+bool ReaderLocator::stop(const GUID_t& remote_guid)
+{
+    if (locator_info_.remote_guid == remote_guid)
+    {
+        locator_info_.enable(false);
+        locator_info_.reset();
+        locator_info_.multicast.clear();
+        locator_info_.unicast.clear();
+        locator_info_.remote_guid = c_Guid_Unknown;
+        guid_as_vector_.at(0) = c_Guid_Unknown;
+        guid_prefix_as_vector_.at(0) = c_GuidPrefix_Unknown;
+        expects_inline_qos_ = false;
+        return true;
+    }
+
+    return false;
 }
+
+void ReaderLocator::send(CDRMessage_t* message) const
+{
+    if (locator_info_.remote_guid != c_Guid_Unknown)
+    {
+        if (locator_info_.unicast.size() > 0)
+        {
+            for (const Locator_t& locator : locator_info_.unicast)
+            {
+                owner_->sendSync(message, locator);
+            }
+        }
+        else
+        {
+            for (const Locator_t& locator : locator_info_.multicast)
+            {
+                owner_->sendSync(message, locator);
+            }
+        }
+    }
+}
+
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
-
-

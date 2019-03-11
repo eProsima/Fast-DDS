@@ -25,6 +25,7 @@ namespace rtps {
 
 class RTPSMessageGroup_t;
 class WriterProxy;
+class RTPSMessageSenderInterface;
 
 class StatefulReader : public RTPSReader
     {
@@ -46,20 +47,23 @@ class StatefulReader : public RTPSReader
             void send_acknack(
                     const SequenceNumberSet_t& /*sns*/,
                     RTPSMessageGroup_t& /*buffer*/,
-                    const LocatorList_t& /*locators*/,
-                    const std::vector<GUID_t>& /*guids*/,
-                    bool /*is_final*/) 
+                    const RTPSMessageSenderInterface& /*sender*/,
+                    bool /*is_final*/)
             {}
 
             void send_acknack(
                     const WriterProxy* /*writer*/,
                     RTPSMessageGroup_t& /*buffer*/,
-                    const LocatorList_t& /*locators*/,
-                    const std::vector<GUID_t>& /*guids*/,
-                    bool /*heartbeat_was_final*/) 
+                    const RTPSMessageSenderInterface& /*sender*/,
+                    bool /*heartbeat_was_final*/)
             {}
 
             RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }
+
+            void send_sync_nts(
+                    CDRMessage_t* /*message*/,
+                    const Locator_t& /*locator*/)
+            {}
 
     private:
 

@@ -26,6 +26,7 @@
 #include "../common/Locator.h"
 #include "../common/CacheChange.h"
 #include "../attributes/ReaderAttributes.h"
+#include "../messages/RTPSMessageSenderInterface.hpp"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 
 #include <foonathan/memory/container.hpp>
@@ -53,7 +54,7 @@ class RTPSMessageGroup_t;
  * Class WriterProxy that contains the state of each matched writer for a specific reader.
  * @ingroup READER_MODULE
  */
-class WriterProxy
+class WriterProxy : public RTPSMessageSenderInterface
 {
     TEST_FRIENDS
 
@@ -262,6 +263,55 @@ public:
      */
     void update_heartbeat_response_interval(const Duration_t& interval);
 
+    /**
+     * Check if the destinations managed by this sender interface have changed.
+     *
+     * @return true if destinations have changed, false otherwise.
+     */
+    virtual bool destinations_have_changed() const override
+    {
+        return false;
+    }
+
+    /**
+     * Get a GUID prefix representing all destinations.
+     *
+     * @return When all the destinations share the same prefix (i.e. belong to the same participant)
+     * that prefix is returned. When there are no destinations, or they belong to different
+     * participants, c_GuidPrefix_Unknown is returned.
+     */
+    virtual GuidPrefix_t destination_guid_prefix() const override
+    {
+        return guid_prefix_as_vector_.at(0);
+    }
+
+    /**
+     * Get the GUID prefix of all the destination participants.
+     *
+     * @return a const reference to a vector with the GUID prefix of all destination participants.
+     */
+    virtual const std::vector<GuidPrefix_t>& remote_participants() const override
+    {
+        return guid_prefix_as_vector_;
+    }
+
+    /**
+     * Get the GUID of all destinations.
+     *
+     * @return a const reference to a vector with the GUID of all destinations.
+     */
+    virtual const std::vector<GUID_t>& remote_guids() const override
+    {
+        return guid_as_vector_;
+    }
+
+    /**
+     * Send a message through this interface.
+     *
+     * @param message Pointer to the buffer with the message already serialized.
+     */
+    virtual void send(CDRMessage_t* message) const override;
+
 private:
 
     /*!
@@ -313,6 +363,8 @@ private:
     SequenceNumber_t last_notified_;
     //!To fool RTPSMessageGroup when using this proxy as single destination
     ResourceLimitedVector<GUID_t> guid_as_vector_;
+    //!To fool RTPSMessageGroup when using this proxy as single destination
+    ResourceLimitedVector<GuidPrefix_t> guid_prefix_as_vector_;
 
     using ChangeIterator = decltype(changes_from_writer_)::iterator;
 

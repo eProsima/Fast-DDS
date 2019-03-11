@@ -29,7 +29,7 @@
 #include <list>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
@@ -126,17 +126,22 @@ class StatelessWriter : public RTPSWriter
 
     void add_flow_controller(std::unique_ptr<FlowController> controller) override;
 
-    private:
+    /**
+     * Send a message through this interface.
+     *
+     * @param message Pointer to the buffer with the message already serialized.
+     */
+    void send(CDRMessage_t* message) const override;
 
-    void get_builtin_guid(ResourceLimitedVector<GUID_t>& guid_vector);
+private:
+
+    void get_builtin_guid();
 
     bool has_builtin_guid();
 
-    void update_locators_nts();
-
     bool is_inline_qos_expected_ = false;
     LocatorList_t fixed_locators_;
-    ResourceLimitedVector<RemoteReaderAttributes> matched_readers_;
+    ResourceLimitedVector<ReaderLocator> matched_readers_;
     ResourceLimitedVector<ChangeForReader_t, std::true_type> unsent_changes_;
     std::vector<std::unique_ptr<FlowController> > flow_controllers_;
 };

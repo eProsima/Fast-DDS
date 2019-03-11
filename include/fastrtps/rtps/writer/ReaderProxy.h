@@ -28,6 +28,7 @@
 #include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
+#include "ReaderLocator.h"
 
 #include <set>
 
@@ -247,36 +248,6 @@ public:
     }
 
     /**
-     * Get the locators that should be used to send data to the reader represented by this proxy.
-     * @return the locators that should be used to send data to the reader represented by this proxy.
-     */
-    inline const LocatorList_t& remote_locators() const
-    {
-        return reader_attributes_.endpoint.remoteLocatorList;
-    }
-
-    /**
-     * Get the locators that should be used to send data to the reader represented by this proxy.
-     * @return the locators that should be used to send data to the reader represented by this proxy.
-     */
-    inline const LocatorList_t& remote_locators_shrinked() const
-    {
-        return reader_attributes_.endpoint.unicastLocatorList.empty() ?
-            reader_attributes_.endpoint.multicastLocatorList :
-            reader_attributes_.endpoint.unicastLocatorList;
-    }
-
-    /**
-     * Get the GUID of the reader represented to this proxy as a const reference to a vector
-     * of GUID_t object containing just that single GUID. It is used as a temporary workaround
-     * before the API of RTPSMessageGroup is changed.
-     */
-    inline const std::vector<GUID_t>& guid_as_vector() const
-    {
-        return guid_as_vector_;
-    }
-
-    /**
      * Called when an ACKNACK is received to set a new value for the count of the last received ACKNACK.
      * @param acknack_count The count of the received ACKNACK.
      * @return true if internal count changed (i.e. new ACKNACK is accepted)
@@ -331,16 +302,26 @@ public:
      */
     void update_nack_supression_interval(const Duration_t& interval);
 
+    LocatorSelectorEntry* locator_selector_entry()
+    {
+        return locator_info_.locator_selector_entry();
+    }
+
+    const RTPSMessageSenderInterface& message_sender() const
+    {
+        return locator_info_;
+    }
+
 private:
 
     //!Is this proxy active? I.e. does it have a remote reader associated?
     bool is_active_;
+    //!Reader locator information
+    ReaderLocator locator_info_;
     //!Attributes of the Remote Reader
     RemoteReaderAttributes reader_attributes_;
     //!Pointer to the associated StatefulWriter.
     StatefulWriter* writer_;
-    //!To fool RTPSMessageGroup when using this proxy as single destination
-    ResourceLimitedVector<GUID_t> guid_as_vector_;
     //!Set of the changes and its state.
     ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.

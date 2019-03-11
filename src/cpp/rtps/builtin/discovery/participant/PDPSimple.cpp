@@ -509,6 +509,8 @@ bool PDPSimple::createSPDPEndpoints()
         if (mp_SPDPReader != nullptr)
         {
             RemoteWriterAttributes rwatt;
+            rwatt.guid.guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
+            rwatt.guid.entityId = c_EntityId_SPDPWriter;
             rwatt.endpoint.remoteLocatorList = mp_builtin->m_initialPeersList;
             rwatt.endpoint.topicKind = WITH_KEY;
             rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
@@ -555,6 +557,8 @@ bool PDPSimple::createSPDPEndpoints()
             mp_SPDPWriter->set_fixed_locators(mp_builtin->m_initialPeersList);
 
             RemoteReaderAttributes rratt;
+            rratt.guid.guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
+            rratt.guid.entityId = c_EntityId_SPDPReader;
             for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)
             {
                 if (IPLocator::isMulticast(*it))

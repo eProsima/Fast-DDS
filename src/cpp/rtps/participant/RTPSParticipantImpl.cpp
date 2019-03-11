@@ -966,7 +966,7 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
     return participant_names;
 }
 
-void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, Endpoint* /*pend*/, const Locator_t& destination_loc)
+void RTPSParticipantImpl::sendSync(CDRMessage_t* msg, const Locator_t& destination_loc)
 {
     std::lock_guard<std::mutex> guard(m_send_resources_mutex);
     for (size_t i = 0; i < m_senderResourceList.size(); ++i)

@@ -263,18 +263,12 @@ public:
 private:
 
     void send_heartbeat_piggyback_nts_(
-            RTPSMessageGroup& message_group,
-            uint32_t& last_bytes_processed);
-
-    void send_heartbeat_piggyback_nts_(
-            const std::vector<GUID_t>& remote_readers,
-            const LocatorList_t& locators,
+            ReaderProxy* reader,
             RTPSMessageGroup& message_group,
             uint32_t& last_bytes_processed);
 
     void send_heartbeat_nts_(
-            const std::vector<GUID_t>& remote_readers,
-            const LocatorList_t& locators,
+            size_t number_of_readers,
             RTPSMessageGroup& message_group,
             bool final);
 

@@ -40,9 +40,10 @@ ReaderProxy::ReaderProxy(
         const WriterTimes& times, 
         StatefulWriter* writer) 
     : is_active_(false)
+    // TODO (Miguel C): Use participant locators allocation policy
+    , locator_info_(writer->getRTPSParticipant(), 4u, 1u)
     , reader_attributes_()
     , writer_(writer)
-    , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_supression_event_(nullptr)
     , timers_enabled_(false)
@@ -61,9 +62,14 @@ ReaderProxy::~ReaderProxy()
 
 void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
 {
+    locator_info_.start(
+        reader_attributes.guid,
+        reader_attributes.endpoint.unicastLocatorList,
+        reader_attributes.endpoint.multicastLocatorList,
+        reader_attributes.expectsInlineQos);
+
     is_active_ = true;
     reader_attributes_ = reader_attributes;
-    guid_as_vector_.push_back(reader_attributes_.guid);
 
     reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
     reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
@@ -76,6 +82,7 @@ void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
 
 void ReaderProxy::stop()
 {
+    locator_info_.stop(reader_attributes_.guid);
     is_active_ = false;
     reader_attributes_.guid = c_Guid_Unknown;
     disable_timers();
@@ -84,7 +91,6 @@ void ReaderProxy::stop()
     last_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
-    guid_as_vector_.clear();
 }
 
 void ReaderProxy::disable_timers()

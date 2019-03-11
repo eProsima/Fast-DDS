@@ -51,7 +51,9 @@ RTPSWriter::RTPSWriter(
     , mp_listener(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
     , m_separateSendingEnabled(false)
+    , locator_selector_(att.matched_readers_allocation)
     , all_remote_readers_(att.matched_readers_allocation)
+    , all_remote_participants_(att.matched_readers_allocation)
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif
@@ -170,10 +172,43 @@ uint32_t RTPSWriter::calculateMaxDataSize(uint32_t length)
     return maxDataSize;
 }
 
-void RTPSWriter::update_cached_info_nts(std::vector<LocatorList_t>& allLocatorLists)
+void RTPSWriter::add_guid(const GUID_t& remote_guid)
 {
+    const GuidPrefix_t& prefix = remote_guid.guidPrefix;
+    all_remote_readers_.push_back(remote_guid);
+    if (std::find(all_remote_participants_.begin(), all_remote_participants_.end(), prefix) ==
+        all_remote_participants_.end())
+    {
+        all_remote_participants_.push_back(prefix);
+    }
+}
+
+void RTPSWriter::compute_selected_guids()
+{
+    all_remote_readers_.clear();
+    all_remote_participants_.clear();
+
+    for(LocatorSelectorEntry* entry : locator_selector_.transport_starts())
+    {
+        if (entry->enabled)
+        {
+            add_guid(entry->remote_guid);
+        }
+    }
+}
+
+void RTPSWriter::update_cached_info_nts()
+{
+    locator_selector_.reset(true);
+    mp_RTPSParticipant->network_factory().select_locators(locator_selector_);
+
+    // TODO (Miguel C): Remove when RTPSMessageGroup refactor is complete
     mAllShrinkedLocatorList.clear();
-    mAllShrinkedLocatorList.push_back(mp_RTPSParticipant->network_factory().ShrinkLocatorLists(allLocatorLists));
+    locator_selector_.for_each(
+        [this](const Locator_t& locator)
+        {
+            mAllShrinkedLocatorList.push_back(locator);
+        });
 }
 
 #if HAVE_SECURITY
@@ -224,6 +259,36 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
     return true;
 }
 #endif
+
+bool RTPSWriter::destinations_have_changed() const
+{
+    return false;
+}
+
+GuidPrefix_t RTPSWriter::destination_guid_prefix() const
+{
+    return all_remote_participants_.size() == 1 ? all_remote_participants_.at(0) : c_GuidPrefix_Unknown;
+}
+
+const std::vector<GuidPrefix_t>& RTPSWriter::remote_participants() const
+{
+    return all_remote_participants_;
+}
+
+const std::vector<GUID_t>& RTPSWriter::remote_guids() const
+{
+    return all_remote_readers_;
+}
+
+void RTPSWriter::send(CDRMessage_t* message) const
+{
+    RTPSParticipantImpl* participant = getRTPSParticipant();
+    locator_selector_.for_each(
+        [participant, message](const Locator_t& loc)
+        {
+            participant->sendSync(message, loc);
+        });
+}
 
 }  // namespace rtps
 }  // namespace fastrtps

@@ -171,7 +171,7 @@ public:
     ResourceEvent& getEventResource();
 
     //!Send Method - Deprecated - Stays here for reference purposes
-    void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
+    void sendSync(CDRMessage_t* msg, const Locator_t& destination_loc);
 
     //!Get the participant Mutex
     std::recursive_mutex* getParticipantMutex() const { return mp_mutex; };

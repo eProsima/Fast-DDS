@@ -23,6 +23,7 @@
 
 #include "RTPSReader.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
+#include "../common/CDRMessage_t.h"
 
 #include <mutex>
 
@@ -32,6 +33,7 @@ namespace rtps {
 
 class WriterProxy;
 class RTPSMessageGroup_t;
+class RTPSMessageSenderInterface;
 
 /**
  * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
@@ -227,31 +229,37 @@ class StatefulReader : public RTPSReader
          * Sends an acknack message from this reader.
          * @param sns Sequence number bitmap with the acknack information.
          * @param buffer Message buffer to use for serialization.
-         * @param locators List of destination locators.
-         * @param guids List of destination writer GUIDs.
+         * @param sender Message sender interface.
          * @param is_final Value for final flag.
          */
         void send_acknack(
                 const SequenceNumberSet_t& sns,
                 RTPSMessageGroup_t& buffer,
-                const LocatorList_t& locators,
-                const std::vector<GUID_t>& guids,
+                const RTPSMessageSenderInterface& sender,
                 bool is_final);
 
         /**
          * Sends an acknack message from this reader in response to a heartbeat.
          * @param writer Pointer to the proxy representing the writer to send the acknack to.
          * @param buffer Message buffer to use for serialization.
-         * @param locators List of destination locators.
-         * @param guids List of destination writer GUIDs.
+         * @param sender Message sender interface.
          * @param heartbeat_was_final Final flag of the last received heartbeat.
          */
         void send_acknack(
                 const WriterProxy* writer,
                 RTPSMessageGroup_t& buffer,
-                const LocatorList_t& locators,
-                const std::vector<GUID_t>& guids,
+                const RTPSMessageSenderInterface& sender,
                 bool heartbeat_was_final);
+
+        /**
+         * Use the participant of this reader to send a message to certain locator.
+         *
+         * @param message Message to be sent.
+         * @param locator Destination locator.
+         */
+        void send_sync_nts(
+                CDRMessage_t* message,
+                const Locator_t& locator);
 
     private:
 
