@@ -1283,7 +1283,7 @@ void TCPTransportInterface::select_locators(LocatorSelector& selector) const
             bool selected = false;
             for (size_t j = 0; j < entry->unicast.size(); ++j)
             {
-                if (IsLocatorSupported(entry->unicast[j]))
+                if (IsLocatorSupported(entry->unicast[j]) && !selector.is_selected(entry->unicast[j]))
                 {
                     entry->state.unicast.push_back(j);
                     selected = true;

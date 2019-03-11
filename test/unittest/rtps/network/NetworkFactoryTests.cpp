@@ -523,6 +523,21 @@ void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
     test.output.push_back(unicast1_2);
     cases.push_back(test);
 
+    // Two sharing unicast.
+    test.clear("Two UDP lists sharing unicast");
+    list1.clear();
+    list2.clear();
+    list1.push_back(unicast1);
+    list1.push_back(unicast1_2);
+    list2.push_back(unicast1);
+    list2.push_back(unicast2);
+    test.input.push_back(list1);
+    test.input.push_back(list2);
+    test.output.push_back(unicast1);
+    test.output.push_back(unicast1_2);
+    test.output.push_back(unicast2);
+    cases.push_back(test);
+
     // Three. Two use same multicast, the other unicast.
     list1.clear();
     list2.clear();

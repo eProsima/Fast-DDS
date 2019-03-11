@@ -633,7 +633,7 @@ void UDPTransportInterface::select_locators(LocatorSelector& selector) const
             {
                 for (size_t j = 0; j < entry->unicast.size(); ++j)
                 {
-                    if (IsLocatorSupported(entry->unicast[j].kind))
+                    if (IsLocatorSupported(entry->unicast[j].kind) && !selector.is_selected(entry->unicast[j]))
                     {
                         entry->state.unicast.push_back(j);
                         selected = true;
