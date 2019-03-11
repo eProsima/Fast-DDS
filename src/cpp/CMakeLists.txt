@@ -123,7 +123,7 @@ set(${PROJECT_NAME}_source_files
 	rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp
-	rtps/builtin/discovery/participant/PDPServer.cpp
+	rtps/builtin/discovery/participant/PDPClient.cpp
     rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
     rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
 	rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp

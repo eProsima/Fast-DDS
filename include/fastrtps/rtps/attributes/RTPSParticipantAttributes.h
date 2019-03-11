@@ -105,7 +105,7 @@ class BuiltinAttributes{
         /**
          * If set to true, Discovery Server protocol would be implemented
          */
-        bool use_SERVER_DiscoveryProtocol;
+        bool use_CLIENT_DiscoveryProtocol;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
@@ -132,7 +132,7 @@ class BuiltinAttributes{
         LocatorList_t metatrafficMulticastLocatorList;
         //! Initial peers.
         LocatorList_t initialPeersList;
-        //! Discovery Server settings, only needed if use_SERVER_DiscoveryProtocol=true
+        //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
         std::list<RemoteServerAttributes>  m_DiscoveryServers;
 
         //! Memory policy for builtin readers
@@ -146,7 +146,7 @@ class BuiltinAttributes{
             use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
-            use_SERVER_DiscoveryProtocol = false;
+            use_CLIENT_DiscoveryProtocol = false;
             discoveryServer_client_syncperiod.seconds = 1;
             m_staticEndpointXMLFilename = "";
             domainId = 0;
@@ -164,7 +164,7 @@ class BuiltinAttributes{
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
-                   (this->use_SERVER_DiscoveryProtocol == b.use_SERVER_DiscoveryProtocol) &&
+                   (this->use_CLIENT_DiscoveryProtocol == b.use_CLIENT_DiscoveryProtocol) &&
                    (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
                    (this->domainId == b.domainId) &&
                    (this->leaseDuration == b.leaseDuration) &&

@@ -21,7 +21,7 @@
 #include <fastrtps/rtps/common/Locator.h>
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
@@ -85,9 +85,9 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
     {
         mp_PDP = new PDPSimple(this);
     }
-    else if (m_att.use_SERVER_DiscoveryProtocol)
+    else if (m_att.use_CLIENT_DiscoveryProtocol)
     {
-        mp_PDP = new PDPServer(this);
+        mp_PDP = new PDPClient(this);
     }
     else
     {
