@@ -494,6 +494,10 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
 void ReaderProxyData::clear()
 {
     m_expectsInlineQos = false;
+#if HAVE_SECURITY
+    security_attributes_ = 0UL;
+    plugin_security_attributes_ = 0UL;
+#endif
     m_guid = c_Guid_Unknown;
     m_unicastLocatorList.clear();
     m_multicastLocatorList.clear();
@@ -502,9 +506,12 @@ void ReaderProxyData::clear()
     m_typeName = "";
     m_topicName = "";
     m_userDefinedId = 0;
-    m_qos = ReaderQos();
     m_isAlive = true;
     m_topicKind = NO_KEY;
+    m_qos = ReaderQos();
+    m_topicDiscoveryKind = NO_CHECK;
+    m_type_id = TypeIdV1();
+    m_type = TypeObjectV1();
 }
 
 void ReaderProxyData::update(ReaderProxyData* rdata)

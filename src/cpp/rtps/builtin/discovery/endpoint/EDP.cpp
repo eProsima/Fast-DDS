@@ -60,90 +60,95 @@ EDP::~EDP()
 
 bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att, const ReaderQos& rqos)
 {
-    logInfo(RTPS_EDP,"Adding " << reader->getGuid().entityId << " in topic "<<att.topicName);
-    ReaderProxyData rpd;
-    rpd.isAlive(true);
-    rpd.m_expectsInlineQos = reader->expectsInlineQos();
-    rpd.guid(reader->getGuid());
-    rpd.key() = rpd.guid();
-    rpd.multicastLocatorList(reader->getAttributes().multicastLocatorList);
-    rpd.unicastLocatorList(reader->getAttributes().unicastLocatorList);
-    rpd.RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
-    rpd.topicName(att.getTopicName());
-    rpd.typeName(att.getTopicDataType());
-    rpd.topicKind(att.getTopicKind());
-    rpd.topicDiscoveryKind(att.getTopicDiscoveryKind());
-    rpd.m_qos = rqos;
-    rpd.userDefinedId(reader->getAttributes().getUserDefinedID());
+    logInfo(RTPS_EDP,"Adding " << reader->getGuid().entityId << " in topic " << att.topicName);
+
+    auto init_fun = [this, reader, att, rqos](ReaderProxyData* rpd)
+    {
+        rpd->isAlive(true);
+        rpd->m_expectsInlineQos = reader->expectsInlineQos();
+        rpd->guid(reader->getGuid());
+        rpd->key() = rpd->guid();
+        rpd->multicastLocatorList(reader->getAttributes().multicastLocatorList);
+        rpd->unicastLocatorList(reader->getAttributes().unicastLocatorList);
+        rpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
+        rpd->topicName(att.getTopicName());
+        rpd->typeName(att.getTopicDataType());
+        rpd->topicKind(att.getTopicKind());
+        rpd->topicDiscoveryKind(att.getTopicDiscoveryKind());
+        rpd->m_qos = rqos;
+        rpd->userDefinedId(reader->getAttributes().getUserDefinedID());
 #if HAVE_SECURITY
-    if (mp_RTPSParticipant->is_secure())
-    {
-        rpd.security_attributes_ = reader->getAttributes().security_attributes().mask();
-        rpd.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
-    }
-    else
-    {
-        rpd.security_attributes_ = 0UL;
-        rpd.plugin_security_attributes_ = 0UL;
-    }
+        if (mp_RTPSParticipant->is_secure())
+        {
+            rpd->security_attributes_ = reader->getAttributes().security_attributes().mask();
+            rpd->plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+        }
+        else
+        {
+            rpd->security_attributes_ = 0UL;
+            rpd->plugin_security_attributes_ = 0UL;
+        }
 #endif
-    reader->m_acceptMessagesFromUnkownWriters = false;
-
-    if (att.getTopicDiscoveryKind() != NO_CHECK)
-    {
-        if (att.type_id.m_type_identifier._d() == 0) // Not set
+        if (att.getTopicDiscoveryKind() != NO_CHECK)
         {
-            //*rpd.type_id().m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(rpd.typeName());
-            const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
-                    rpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
-            if (type_id == nullptr)
+            if (att.type_id.m_type_identifier._d() == 0) // Not set
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << rpd.typeName() << " isn't registered.");
+                //*rpd.type_id().m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(rpd.typeName());
+                const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
+                    rpd->typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
+                if (type_id == nullptr)
+                {
+                    logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << rpd->typeName() << " isn't registered.");
+                }
+                else
+                {
+                    rpd->type_id().m_type_identifier = *type_id;
+                }
             }
             else
             {
-                rpd.type_id().m_type_identifier = *type_id;
+                rpd->type_id(att.type_id);
             }
-        }
-        else
-        {
-            rpd.type_id(att.type_id);
-        }
 
-        if (att.type.m_type_object._d() == 0
-            && (att.type_id.m_type_identifier._d() == EK_MINIMAL
-                || att.type_id.m_type_identifier._d() == EK_COMPLETE)) // Not set
-        {
-            //*rpd.type().m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject(rpd.typeName());
-            const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
-                    rpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
-            if (type_obj == nullptr)
+            if (att.type.m_type_object._d() == 0
+                && (att.type_id.m_type_identifier._d() == EK_MINIMAL
+                    || att.type_id.m_type_identifier._d() == EK_COMPLETE)) // Not set
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << rpd.typeName() << " isn't registered.");
+                //*rpd.type().m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject(rpd.typeName());
+                const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
+                    rpd->typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
+                if (type_obj == nullptr)
+                {
+                    logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << rpd->typeName() << " isn't registered.");
+                }
+                else
+                {
+                    rpd->type().m_type_object = *type_obj;
+                }
             }
             else
             {
-                rpd.type().m_type_object = *type_obj;
+                rpd->type(att.type);
             }
         }
-        else
-        {
-            rpd.type(att.type);
-        }
-    }
+
+        return true;
+    };
 
     //ADD IT TO THE LIST OF READERPROXYDATA
     GUID_t participant_guid;
-    if(!this->mp_PDP->addReaderProxyData(&rpd, participant_guid))
+    ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(reader->getGuid(), participant_guid, init_fun);
+    if(reader_data == nullptr)
     {
         return false;
     }
 
     //PAIRING
-    pairing_reader_proxy_with_any_local_writer(participant_guid, &rpd);
-    pairingReader(reader, participant_guid, rpd);
+    reader->m_acceptMessagesFromUnkownWriters = false;
+    pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+    pairingReader(reader, participant_guid, *reader_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
-    processLocalReaderProxyData(reader, &rpd);
+    processLocalReaderProxyData(reader, reader_data);
     return true;
 }
 
@@ -236,40 +241,44 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
 
 bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, const ReaderQos& rqos)
 {
-    GUID_t participant_guid;
-    ReaderProxyData rdata;
-    rdata.isAlive(true);
-    rdata.m_expectsInlineQos = reader->expectsInlineQos();
-    rdata.guid(reader->getGuid());
-    rdata.key() = rdata.guid();
-    rdata.multicastLocatorList(reader->getAttributes().multicastLocatorList);
-    rdata.unicastLocatorList(reader->getAttributes().unicastLocatorList);
-    rdata.RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
-    rdata.topicName(att.getTopicName());
-    rdata.typeName(att.getTopicDataType());
-    rdata.topicKind(att.getTopicKind());
-    rdata.topicDiscoveryKind(att.getTopicDiscoveryKind());
-    rdata.m_qos.setQos(rqos, true);
-    rdata.userDefinedId(reader->getAttributes().getUserDefinedID());
+    auto init_fun = [this, reader, att, rqos](ReaderProxyData* rdata)
+    {
+        rdata->isAlive(true);
+        rdata->m_expectsInlineQos = reader->expectsInlineQos();
+        rdata->guid(reader->getGuid());
+        rdata->key() = rdata->guid();
+        rdata->multicastLocatorList(reader->getAttributes().multicastLocatorList);
+        rdata->unicastLocatorList(reader->getAttributes().unicastLocatorList);
+        rdata->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
+        rdata->topicName(att.getTopicName());
+        rdata->typeName(att.getTopicDataType());
+        rdata->topicKind(att.getTopicKind());
+        rdata->topicDiscoveryKind(att.getTopicDiscoveryKind());
+        rdata->m_qos.setQos(rqos, true);
+        rdata->userDefinedId(reader->getAttributes().getUserDefinedID());
 #if HAVE_SECURITY
-    if (mp_RTPSParticipant->is_secure())
-    {
-        rdata.security_attributes_ = reader->getAttributes().security_attributes().mask();
-        rdata.plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
-    }
-    else
-    {
-        rdata.security_attributes_ = 0UL;
-        rdata.plugin_security_attributes_ = 0UL;
-    }
+        if (mp_RTPSParticipant->is_secure())
+        {
+            rdata->security_attributes_ = reader->getAttributes().security_attributes().mask();
+            rdata->plugin_security_attributes_ = reader->getAttributes().security_attributes().plugin_endpoint_attributes;
+        }
+        else
+        {
+            rdata->security_attributes_ = 0UL;
+            rdata->plugin_security_attributes_ = 0UL;
+        }
 #endif
+        return true;
+    };
 
-    if(this->mp_PDP->addReaderProxyData(&rdata, participant_guid))
+    GUID_t participant_guid;
+    ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(reader->getGuid(), participant_guid, init_fun);
+    if(reader_data != nullptr)
     {
-        processLocalReaderProxyData(reader, &rdata);
+        processLocalReaderProxyData(reader, reader_data);
         //this->updatedReaderProxy(rdata);
-        pairing_reader_proxy_with_any_local_writer(participant_guid, &rdata);
-        pairingReader(reader, participant_guid, rdata);
+        pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+        pairingReader(reader, participant_guid, *reader_data);
         return true;
     }
     return false;
@@ -658,29 +667,34 @@ bool EDP::pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const Wri
     for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
-                rdatait!=(*pit)->m_readers.end(); ++rdatait)
+        for(ReaderProxyData* rdatait : (*pit)->m_readers)
         {
-            bool valid = validMatching(&wdata, *rdatait);
+            GUID_t reader_guid = rdatait->guid();
+            if (reader_guid == c_Guid_Unknown)
+            {
+                continue;
+            }
+
+            bool valid = validMatching(&wdata, rdatait);
 
             if(valid)
             {
 #if HAVE_SECURITY
                 if(!mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), (*pit)->m_guid,
-                            **rdatait, W->getAttributes().security_attributes()))
+                            *rdatait, W->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
 #else
-				if(W->matched_reader_add(**rdatait))
+				if(W->matched_reader_add(*rdatait))
                 {
-                    logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << (*rdatait)->guid());
+                    logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << reader_guid);
                     //MATCHED AND ADDED CORRECTLY:
                     if(W->getListener()!=nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
-                        info.remoteEndpointGuid = (*rdatait)->guid();
+                        info.remoteEndpointGuid = reader_guid;
                         W->getListener()->onWriterMatched(W,info);
                     }
                 }
@@ -689,18 +703,17 @@ bool EDP::pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const Wri
             else
             {
                 //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<RTPS_DEF<<endl);
-                if(W->matched_reader_is_matched((*rdatait)->guid()) &&
-                        W->matched_reader_remove((*rdatait)->guid()))
+                if(W->matched_reader_is_matched(reader_guid) && W->matched_reader_remove(reader_guid))
                 {
 #if HAVE_SECURITY
-                    mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), participant_guid, (*rdatait)->guid());
+                    mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), participant_guid, reader_guid);
 #endif
                     //MATCHED AND ADDED CORRECTLY:
                     if(W->getListener()!=nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
-                        info.remoteEndpointGuid = (*rdatait)->guid();
+                        info.remoteEndpointGuid = reader_guid;
                         W->getListener()->onWriterMatched(W,info);
                     }
                 }

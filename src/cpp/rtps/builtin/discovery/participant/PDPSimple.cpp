@@ -366,12 +366,11 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rda
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end();++pit)
     {
-        for (auto rit = (*pit)->m_readers.begin();
-                rit != (*pit)->m_readers.end();++rit)
+        for (ReaderProxyData* rit : (*pit)->m_readers)
         {
-            if((*rit)->guid() == reader)
+            if(rit->guid() == reader)
             {
-                rdata.copy(*rit);
+                rdata.copy(rit);
                 return true;
             }
         }
@@ -406,10 +405,9 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end(); ++pit)
     {
-        for (auto rit = (*pit)->m_readers.begin();
-                rit != (*pit)->m_readers.end(); ++rit)
+        for (ReaderProxyData* rit : (*pit)->m_readers)
         {
-            if((*rit)->guid() == reader_guid)
+            if(rit->guid() == reader_guid)
             {
                 mp_EDP->unpairReaderProxy((*pit)->m_guid, reader_guid);
 
@@ -418,12 +416,11 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
                 {
                     ReaderDiscoveryInfo info;
                     info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    info.info = std::move(**rit);
+                    info.info = std::move(*rit);
                     listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                 }
 
-                delete *rit;
-                (*pit)->m_readers.erase(rit);
+                rit->clear();
                 return true;
             }
         }
@@ -587,67 +584,104 @@ bool PDPSimple::createSPDPEndpoints()
     return true;
 }
 
-bool PDPSimple::addReaderProxyData(ReaderProxyData* rdata, GUID_t& participant_guid)
+ReaderProxyData* PDPSimple::addReaderProxyData(
+        const GUID_t& reader_guid, 
+        GUID_t& participant_guid,
+        std::function<bool(ReaderProxyData*)> initializer_func)
 {
-    logInfo(RTPS_PDP, "Adding reader proxy data " << rdata->guid());
+    logInfo(RTPS_PDP, "Adding reader proxy data " << reader_guid);
+    ReaderProxyData* ret_val = nullptr;
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
     {
-        if((*pit)->m_guid.guidPrefix == rdata->guid().guidPrefix)
+        if((*pit)->m_guid.guidPrefix == reader_guid.guidPrefix)
         {
-            // Set locators information if not defined by ReaderProxyData.
-            if(rdata->unicastLocatorList().empty() && rdata->multicastLocatorList().empty())
-            {
-                rdata->unicastLocatorList((*pit)->m_defaultUnicastLocatorList);
-                rdata->multicastLocatorList((*pit)->m_defaultMulticastLocatorList);
-            }
-            // Set as alive.
-            rdata->isAlive(true);
-
             // Copy participant data to be used outside.
             participant_guid = (*pit)->m_guid;
 
             // Check that it is not already there:
-            for(std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
-                    rit!=(*pit)->m_readers.end();++rit)
+            for(ReaderProxyData* rit : (*pit)->m_readers)
             {
-                if((*rit)->guid().entityId == rdata->guid().entityId)
+                if(rit->guid().entityId == reader_guid.entityId)
                 {
-                    (*rit)->update(rdata);
+                    if (!initializer_func(rit))
+                    {
+                        return nullptr;
+                    }
+
+                    ret_val = rit;
+                    // Set locators information if not defined by initializer_func.
+                    if (ret_val->unicastLocatorList().empty() && ret_val->multicastLocatorList().empty())
+                    {
+                        ret_val->unicastLocatorList((*pit)->m_defaultUnicastLocatorList);
+                        ret_val->multicastLocatorList((*pit)->m_defaultMulticastLocatorList);
+                    }
+                    // Set as alive.
+                    ret_val->isAlive(true);
 
                     RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                     if(listener)
                     {
                         ReaderDiscoveryInfo info;
                         info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
-                        info.info = *rdata;
+                        info.info = *ret_val;
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
-                    return true;
+                    return ret_val;
                 }
             }
 
-            ReaderProxyData* newRPD = new ReaderProxyData(*rdata);
-            (*pit)->m_readers.push_back(newRPD);
+            // Try to reuse an old entry
+            ret_val = nullptr;
+            for (ReaderProxyData* rit : (*pit)->m_readers)
+            {
+                if (rit->guid() == c_Guid_Unknown)
+                {
+                    ret_val = rit;
+                    break;
+                }
+            }
+
+            if (ret_val == nullptr)
+            {
+                // TODO (Miguel C): Resource limits
+                ret_val = new ReaderProxyData();
+                // Add to ParticipantProxyData
+                (*pit)->m_readers.push_back(ret_val);
+            }
+
+            if (!initializer_func(ret_val))
+            {
+                return nullptr;
+            }
+
+            // Set locators information if not defined by initializer_func.
+            if (ret_val->unicastLocatorList().empty() && ret_val->multicastLocatorList().empty())
+            {
+                ret_val->unicastLocatorList((*pit)->m_defaultUnicastLocatorList);
+                ret_val->multicastLocatorList((*pit)->m_defaultMulticastLocatorList);
+            }
+            // Set as alive.
+            ret_val->isAlive(true);
 
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
             if(listener)
             {
                 ReaderDiscoveryInfo info;
                 info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
-                info.info = *rdata;
+                info.info = *ret_val;
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
             }
 
-            return true;
+            return ret_val;
         }
     }
 
-    return false;
+    return nullptr;
 }
 
 bool PDPSimple::addWriterProxyData(WriterProxyData* wdata, GUID_t& participant_guid)
@@ -809,17 +843,20 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
         {
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
 
-            for(std::vector<ReaderProxyData*>::iterator rit = pdata->m_readers.begin();
-                    rit != pdata->m_readers.end();++rit)
+            for(ReaderProxyData* rit : pdata->m_readers)
             {
-                mp_EDP->unpairReaderProxy(partGUID, (*rit)->guid());
-
-                if(listener)
+                GUID_t reader_guid(rit->guid());
+                if (reader_guid != c_Guid_Unknown)
                 {
-                    ReaderDiscoveryInfo info;
-                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    info.info = std::move(**rit);
-                    listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    mp_EDP->unpairReaderProxy(partGUID, reader_guid);
+
+                    if (listener)
+                    {
+                        ReaderDiscoveryInfo info;
+                        info.status = ReaderDiscoveryInfo::REMOVED_READER;
+                        info.info = std::move(*rit);
+                        listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    }
                 }
             }
             for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
