@@ -35,6 +35,32 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+class PDP;
+
+//!PDP subclass choice
+typedef enum PDPType
+{
+    /*  NO discovery whatsoever would be used.
+        Publisher and Subscriber defined with the same topic name would NOT be linked.
+        All matching must be done manually through the addReaderLocator, addReaderProxy, addWriterProxy methods.
+    */
+    NONE, 
+    /*
+        Discovery works according to 'The Real-time Publish-Subscribe Protocol(RTPS) DDS
+        Interoperability Wire Protocol Specification'
+    */
+    SIMPLE, 
+    /*
+    A user defined PDP subclass object must be provided in the attributes that deals with the discovery. Framework is not responsible of this object lifetime.
+    */
+    EXTERNAL,
+    /*
+        Discovery is managed by well-known devoted servers. Only client behaviour is currently available.
+    */
+    CLIENT,
+    SERVER
+}PDPType_t;
+
 /**
  * Class SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
  * @ingroup RTPS_ATTRIBUTES_MODULE
@@ -84,12 +110,8 @@ class SimpleEDPAttributes
  */
 class BuiltinAttributes{
     public:
-        /**
-         * If set to false, NO discovery whatsoever would be used.
-         * Publisher and Subscriber defined with the same topic name would NOT be linked. All matching must be done
-         * manually through the addReaderLocator, addReaderProxy, addWriterProxy methods.
-         */
-        bool use_SIMPLE_RTPSParticipantDiscoveryProtocol;
+        //! Chosen discovery protocol
+        PDPType_t discoveryProtocol;
 
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol;
@@ -102,10 +124,6 @@ class BuiltinAttributes{
          * The XML filename must be provided.
          */
         bool use_STATIC_EndpointDiscoveryProtocol;
-        /**
-         * If set to true, Discovery Server protocol would be implemented
-         */
-        bool use_SERVER_DiscoveryProtocol;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
@@ -118,12 +136,7 @@ class BuiltinAttributes{
          * as well as to all Multicast ports.
          */
         Duration_t leaseDuration_announcementperiod;
-        /**
-         * The period for the RTPSParticipant to:
-            send its Discovery Message to its servers
-            check for EDP endpoints matching
-         */
-        Duration_t discoveryServer_client_syncperiod;
+
         //!Attributes of the SimpleEDP protocol
         SimpleEDPAttributes m_simpleEDP;
         //!Metatraffic Unicast Locator List
@@ -132,7 +145,17 @@ class BuiltinAttributes{
         LocatorList_t metatrafficMulticastLocatorList;
         //! Initial peers.
         LocatorList_t initialPeersList;
-        //! Discovery Server settings, only needed if use_SERVER_DiscoveryProtocol=true
+
+        //! PDP subclass object to use on discovery (only if EXTERNAL selected)
+        PDP * m_PDP;
+        /**
+         * The period for the RTPSParticipant to:
+         *  send its Discovery Message to its servers
+         *  check for EDP endpoints matching
+         */
+        Duration_t discoveryServer_client_syncperiod;
+
+        //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
         std::list<RemoteServerAttributes>  m_DiscoveryServers;
 
         //! Memory policy for builtin readers
@@ -143,11 +166,11 @@ class BuiltinAttributes{
 
         BuiltinAttributes()
         {
-            use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+            discoveryProtocol = PDPType_t::SIMPLE;
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
-            use_SERVER_DiscoveryProtocol = false;
             discoveryServer_client_syncperiod.seconds = 1;
+            m_PDP = nullptr;
             m_staticEndpointXMLFilename = "";
             domainId = 0;
             leaseDuration.seconds = 130;
@@ -160,12 +183,12 @@ class BuiltinAttributes{
 
         bool operator==(const BuiltinAttributes& b) const
         {
-            return (this->use_SIMPLE_RTPSParticipantDiscoveryProtocol == b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
+            return (this->discoveryProtocol == b.discoveryProtocol) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
-                   (this->use_SERVER_DiscoveryProtocol == b.use_SERVER_DiscoveryProtocol) &&
                    (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
+                   (this->m_PDP == b.m_PDP) &&
                    (this->domainId == b.domainId) &&
                    (this->leaseDuration == b.leaseDuration) &&
                    (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&

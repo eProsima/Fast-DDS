@@ -214,7 +214,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
 
     up_base_node_t root_node;
     XMLP_ret loadedRet = XMLParser::loadXML(filename, root_node);
-    if (!root_node)
+    if (!root_node || loadedRet != XMLP_ret::XML_OK)
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
         {
@@ -333,6 +333,8 @@ XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::
             logError(XMLPARSER, "Not expected tag");
         }
     }
+
+    profileCount += static_cast<unsigned int>(m_transport_profiles.size()); // Count transport profiles
 
     if (0 == profileCount)
     {

@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file PDPServer.cpp
+ * @file PDPClient.cpp
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
@@ -80,23 +80,23 @@ GUID_t RemoteServerAttributes::GetEDPSubscriptionsReader() const
     return GUID_t(guidPrefix, c_EntityId_SEDPSubReader);
 }
 
-PDPServer::PDPServer(BuiltinProtocols* built):
+PDPClient::PDPClient(BuiltinProtocols* built):
     PDP(built), mp_sync(nullptr)
     {
 
     }
 
-PDPServer::~PDPServer()
+PDPClient::~PDPClient()
 {
     if (mp_sync != nullptr)
         delete(mp_sync);
 }
 
-void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant_data) 
+void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant_data) 
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if(!getRTPSParticipant()->getAttributes().builtin.use_SERVER_DiscoveryProtocol)
+    if(!getRTPSParticipant()->getAttributes().builtin.discoveryProtocol != PDPType_t::CLIENT)
     {
         logError(RTPS_PDP, "Using a PDP Server object with another user's settings");
     }
@@ -129,7 +129,7 @@ void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant
 
 }
 
-bool PDPServer::initPDP(RTPSParticipantImpl* part)
+bool PDPClient::initPDP(RTPSParticipantImpl* part)
 {
     if (!PDP::initPDP(part))
     {
@@ -150,7 +150,7 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
 }
 
 
-bool PDPServer::createPDPEndpoints()
+bool PDPClient::createPDPEndpoints()
 {
     logInfo(RTPS_PDP,"Beginning PDPServer Endpoints creation");
 
@@ -256,7 +256,7 @@ bool PDPServer::createPDPEndpoints()
     return true;
 }
 
-void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
+void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
     // Verify if this participant is a server
     for (auto svr : mp_builtin->m_DiscoveryServers)
@@ -269,7 +269,7 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
 }
 
 
-void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
+void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
     // EDP endpoints have been already unmatch by the associated listener
     assert(!mp_EDP->areRemoteEndpointsMatched(pdata));
@@ -333,7 +333,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
     }
 }
 
-bool PDPServer::all_servers_acknowledge_PDP()
+bool PDPClient::all_servers_acknowledge_PDP()
 {
     // check if already initialized
     assert(mp_PDPWriterHistory && mp_PDPWriter);
@@ -352,14 +352,14 @@ bool PDPServer::all_servers_acknowledge_PDP()
     return false;
 }
 
-bool PDPServer::is_all_servers_PDPdata_updated()
+bool PDPClient::is_all_servers_PDPdata_updated()
 {
     StatefulReader * pR = dynamic_cast<StatefulReader *>(mp_PDPReader);
     assert(pR);
     return pR->isInCleanState();
 }
 
-void PDPServer::announceParticipantState(bool new_change, bool dispose)
+void PDPClient::announceParticipantState(bool new_change, bool dispose)
 {
     PDP::announceParticipantState(new_change, dispose);
 
@@ -371,7 +371,7 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose)
     }
 }
 
-void PDPServer::match_all_server_EDP_endpoints()
+void PDPClient::match_all_server_EDP_endpoints()
 {
     // PDP must have been initialize
     assert(mp_EDP);

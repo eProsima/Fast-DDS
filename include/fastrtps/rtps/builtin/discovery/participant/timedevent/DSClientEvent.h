@@ -27,7 +27,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class PDPServer;
+class PDPClient;
 
 /**
  * Class DSClientEvent, TimedEvent used to synchronize discover-server clients
@@ -41,7 +41,7 @@ public:
 	 * @param p_PDP Pointer to the PDPServer.
 	 * @param interval Interval in ms.
 	 */
-    DSClientEvent(PDPServer* p_PDP,
+    DSClientEvent(PDPClient* p_PDP,
 			double interval);
 	~DSClientEvent();
 	
@@ -56,7 +56,7 @@ public:
 	void event(EventCode code, const char* msg= nullptr);
 	
 	//!Pointer to the PDPServer object.
-    PDPServer* mp_PDP;
+    PDPClient* mp_PDP;
 };
 }
 } /* namespace rtps */

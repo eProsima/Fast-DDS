@@ -21,7 +21,6 @@
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
@@ -32,18 +31,31 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
-    : mp_participant(nullptr)
-    , mp_subscriber(nullptr)
+    : participant_(nullptr)
+    , subscriber_(nullptr)
 {
 }
 
-bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
+bool HelloWorldSubscriber::init(
+        const std::string &wan_ip,
+        unsigned short port,
+        bool use_tls,
+        const std::vector<std::string>& whitelist)
 {
-    ParticipantAttributes PParam;
+    ParticipantAttributes pparam;
     int32_t kind = LOCATOR_KIND_TCPv4;
 
     Locator_t initial_peer_locator;
     initial_peer_locator.kind = kind;
+
+    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+    for (std::string ip : whitelist)
+    {
+        descriptor->interfaceWhiteList.push_back(ip);
+        std::cout << "Whitelisted " << ip << std::endl;
+    }
+
     if (!wan_ip.empty())
     {
         IPLocator::setIPv4(initial_peer_locator, wan_ip);
@@ -54,40 +66,51 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
         IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
     }
     initial_peer_locator.port = port;
-    PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
+    pparam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
-    PParam.rtps.setName("Participant_sub");
+    pparam.rtps.builtin.domainId = 0;
+    pparam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    pparam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
+    pparam.rtps.setName("Participant_sub");
 
-    PParam.rtps.useBuiltinTransports = false;
-    std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+    pparam.rtps.useBuiltinTransports = false;
+
+    if (use_tls)
+    {
+        using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+        descriptor->apply_security = true;
+        descriptor->tls_config.password = "test";
+        descriptor->tls_config.verify_file = "ca.pem";
+        descriptor->tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+        descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    }
+
     descriptor->wait_for_tcp_negotiation = false;
-    PParam.rtps.userTransports.push_back(descriptor);
+    pparam.rtps.userTransports.push_back(descriptor);
 
-    mp_participant = Domain::createParticipant(PParam);
-    if (mp_participant == nullptr)
+    participant_ = Domain::createParticipant(pparam);
+    if (participant_ == nullptr)
     {
         return false;
     }
 
     //REGISTER THE TYPE
-    Domain::registerType(mp_participant, &m_type);
+    Domain::registerType(participant_, &type_);
 
     //CREATE THE SUBSCRIBER
-    SubscriberAttributes Rparam;
-    Rparam.topic.topicKind = NO_KEY;
-    Rparam.topic.topicDataType = "HelloWorld";
-    Rparam.topic.topicName = "HelloWorldTopicTCP";
-    Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Rparam.topic.historyQos.depth = 30;
-    Rparam.topic.resourceLimitsQos.max_samples = 50;
-    Rparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    mp_subscriber = Domain::createSubscriber(mp_participant, Rparam, (SubscriberListener*)&m_listener);
-    if (mp_subscriber == nullptr)
+    SubscriberAttributes rparam;
+    rparam.topic.topicKind = NO_KEY;
+    rparam.topic.topicDataType = "HelloWorld";
+    rparam.topic.topicName = "HelloWorldTopicTCP";
+    rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    rparam.topic.historyQos.depth = 30;
+    rparam.topic.resourceLimitsQos.max_samples = 50;
+    rparam.topic.resourceLimitsQos.allocated_samples = 20;
+    rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    subscriber_ = Domain::createSubscriber(participant_, rparam, (SubscriberListener*)&listener);
+    if (subscriber_ == nullptr)
     {
         return false;
     }
@@ -95,14 +118,16 @@ bool HelloWorldSubscriber::init(const std::string &wan_ip, unsigned short port)
     return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber() 
+HelloWorldSubscriber::~HelloWorldSubscriber()
 {
-    Domain::removeParticipant(mp_participant);
+    Domain::removeParticipant(participant_);
 }
 
-void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber*, MatchingInfo& info)
+void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber*,
+        MatchingInfo& matching_info)
 {
-    if (info.status == MATCHED_MATCHING)
+    if (matching_info.status == MATCHED_MATCHING)
     {
         n_matched++;
         //logError(HW, "Matched");
@@ -117,14 +142,14 @@ void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber*, Match
 
 void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
-    if (sub->takeNextData((void*)&m_Hello, &m_info))
+    if (sub->takeNextData((void*)&hello, &info))
     {
-        if (m_info.sampleKind == ALIVE)
+        if (info.sampleKind == ALIVE)
         {
             this->n_samples++;
             // Print your structure data here.
-            //logError(HW, "RECEIVED " <<  m_Hello.index());
-            std::cout << "[RTCP] Message " << m_Hello.message() << " " << m_Hello.index() << " RECEIVED" << std::endl;
+            //logError(HW, "RECEIVED " <<  hello.index());
+            std::cout << "[RTCP] Message " << hello.message() << " " << hello.index() << " RECEIVED" << std::endl;
         }
     }
 }
@@ -139,7 +164,7 @@ void HelloWorldSubscriber::run()
 void HelloWorldSubscriber::run(uint32_t number)
 {
     std::cout << "[RTCP] Subscriber running until " << number << "samples have been received" << std::endl;
-    while (number < this->m_listener.n_samples)
+    while (number < this->listener.n_samples)
     {
         eClock::my_sleep(500);
     }

@@ -63,4 +63,9 @@
 #define HAVE_SECURITY @HAVE_SECURITY@
 #endif
 
+// TLS support
+#ifndef TLS_FOUND
+#define TLS_FOUND @TLS_FOUND@
+#endif
+
 #endif // _FASTRTPS_CONFIG_H_

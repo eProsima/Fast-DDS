@@ -106,7 +106,9 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
         for (auto& transport : mRegisteredTransports)
         {
             // Check if the locator is supported and filter unicast locators.
-            if (transport->IsLocatorSupported(loc) && (IPLocator::isMulticast(loc) || transport->IsLocatorAllowed(loc)))
+            if (transport->IsLocatorSupported(loc) &&
+                (IPLocator::isMulticast(loc) ||
+                transport->is_locator_allowed(loc)))
             {
                 // First found transport that supports it, this will normalize the locator.
                 normalizedLocators.push_back(transport->NormalizeLocator(loc));
@@ -281,7 +283,7 @@ void NetworkFactory::Shutdown()
 {
     for (auto& transport : mRegisteredTransports)
     {
-        transport->Shutdown();
+        transport->shutdown();
     }
 }
 

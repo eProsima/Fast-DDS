@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file PDPServer.h
+ * @file PDPClient.h
  *
  */
 
-#ifndef PDPSERVER_H_
-#define PDPSERVER_H_
+#ifndef PDPCLIENT_H_
+#define PDPCLIENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 
@@ -37,7 +37,7 @@ class StatefulReader;
  * Class PDPServer manages client side of the discovery server mechanism
  *@ingroup DISCOVERY_MODULE
  */
-class PDPServer : public PDP
+class PDPClient : public PDP
 {
     friend class DSClientEvent;
 
@@ -46,8 +46,8 @@ class PDPServer : public PDP
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
      */
-    PDPServer(BuiltinProtocols* builtin);
-    ~PDPServer();
+    PDPClient(BuiltinProtocols* builtin);
+    ~PDPClient();
 
     void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
 
@@ -116,4 +116,4 @@ class PDPServer : public PDP
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif
-#endif /* PDPSERVER_H_ */
+#endif /* PDPCLIENT_H_ */

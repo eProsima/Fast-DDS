@@ -27,39 +27,55 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-
-
-
 #include "HelloWorld.h"
 
+#include <vector>
+
 class HelloWorldSubscriber {
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Subscriber* subscriber_;
+    HelloWorldPubSubType type_;
+
 public:
-    HelloWorldSubscriber();
-    virtual ~HelloWorldSubscriber();
-    //!Initialize the subscriber
-    bool init(const std::string &wan_ip, unsigned short port);
-    //!RUN the subscriber
-    void run();
-    //!Run the subscriber until number samples have been recevied.
-    void run(uint32_t number);
-private:
-    eprosima::fastrtps::Participant* mp_participant;
-    eprosima::fastrtps::Subscriber* mp_subscriber;
-public:
-    class SubListener :public eprosima::fastrtps::SubscriberListener
+
+    class SubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
-        SubListener() :n_matched(0), n_samples(0) {};
+        SubListener()
+            : n_matched(0)
+            , n_samples(0)
+        {};
+
         ~SubListener() {};
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        void onSubscriptionMatched(
+            eprosima::fastrtps::Subscriber* sub,
+            eprosima::fastrtps::rtps::MatchingInfo& info);
+
         void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-        HelloWorld m_Hello;
-        eprosima::fastrtps::SampleInfo_t m_info;
+
+        HelloWorld hello;
+        eprosima::fastrtps::SampleInfo_t info;
         int n_matched;
         uint32_t n_samples;
-    }m_listener;
-private:
-    HelloWorldPubSubType m_type;
+    } listener;
+
+    HelloWorldSubscriber();
+
+    virtual ~HelloWorldSubscriber();
+
+    //!Initialize the subscriber
+    bool init(
+        const std::string &wan_ip,
+        unsigned short port,
+        bool use_tls,
+        const std::vector<std::string>& whitelist);
+
+    //!RUN the subscriber
+    void run();
+
+    //!Run the subscriber until number samples have been recevied.
+    void run(uint32_t number);
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

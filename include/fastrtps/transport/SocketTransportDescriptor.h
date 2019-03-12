@@ -37,14 +37,17 @@ static const uint8_t s_defaultTTL = 1;
  * */
 struct SocketTransportDescriptor : public TransportDescriptorInterface
 {
-    SocketTransportDescriptor(uint32_t maximumMessageSize, uint32_t maximumInitialPeersRange)
+    SocketTransportDescriptor(
+            uint32_t maximumMessageSize,
+            uint32_t maximumInitialPeersRange)
         : TransportDescriptorInterface(maximumMessageSize, maximumInitialPeersRange)
         , sendBufferSize(0)
         , receiveBufferSize(0)
         , TTL(s_defaultTTL)
     {}
 
-    SocketTransportDescriptor(const SocketTransportDescriptor& t) : TransportDescriptorInterface(t)
+    SocketTransportDescriptor(const SocketTransportDescriptor& t)
+        : TransportDescriptorInterface(t)
         , sendBufferSize(t.sendBufferSize)
         , receiveBufferSize(t.receiveBufferSize)
         , TTL(t.TTL)

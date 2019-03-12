@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"       
+           targetNamespace="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"
+           elementFormDefault="qualified">
 
     <xs:simpleType name="stringType">
         <xs:restriction base="xs:string"/>
     </xs:simpleType>
 
-    <xs:simpleType name="idType">
+	  <xs:simpleType name="idType">
         <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
 
@@ -48,6 +51,72 @@
             <xs:enumeration value="DYNAMIC"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="tlsOptionsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DEFAULT_WORKAROUNDS"/>
+            <xs:enumeration value="NO_COMPRESSION"/>
+            <xs:enumeration value="NO_SSLV2"/>
+            <xs:enumeration value="NO_SSLV3"/>
+            <xs:enumeration value="NO_TLSV1"/>
+            <xs:enumeration value="NO_TLSV1_1"/>
+            <xs:enumeration value="NO_TLSV1_2"/>
+            <xs:enumeration value="NO_TLSV1_3"/>
+            <xs:enumeration value="SINGLE_DH_USE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="tlsOptionsVectorType">
+        <xs:sequence>
+            <xs:element name="option" type="tlsOptionsType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="tlsVerifyPathVectorType">
+        <xs:sequence>
+            <xs:element name="verify_path" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="tlsVerifyModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VERIFY_NONE"/>
+            <xs:enumeration value="VERIFY_PEER"/>
+            <xs:enumeration value="VERIFY_FAIL_IF_NO_PEER_CERT"/>
+            <xs:enumeration value="VERIFY_CLIENT_ONCE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="tlsVerifyModeVectorType">
+        <xs:sequence>
+            <xs:element name="verify" type="tlsVerifyModeType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="tlsHandShakeRole">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DEFAULT"/>
+            <xs:enumeration value="CLIENT"/>
+            <xs:enumeration value="SERVER"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="tlsConfigType">
+        <xs:all minOccurs="0">
+            <xs:element name="password" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="options" type="tlsOptionsVectorType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="cert_chain_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tmp_dh_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_mode" type="tlsVerifyModeVectorType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_paths" type="tlsVerifyPathVectorType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="default_verify_path" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify_depth" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rsa_private_key_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="handshake_role" type="tlsHandShakeRole" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
 
     <xs:simpleType name="octetVectorType">
         <xs:restriction base="xs:string"/><!-- std::vector<octet> -->
@@ -193,17 +262,45 @@
             <xs:element name="PUBREADER_SUBWRITER" type="boolType"/>
         </xs:all>
     </xs:complexType>
-
-    <xs:simpleType name="EDPType">
+	
+	<xs:simpleType name="PDPType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="SIMPLE"/>
+            <xs:enumeration value="CLIENT"/>
+        </xs:restriction>
+    </xs:simpleType>
+	
+   <xs:simpleType name="EDPType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="SIMPLE"/>
             <xs:enumeration value="STATIC"/>
         </xs:restriction>
     </xs:simpleType>
-
-    <xs:complexType name="builtinAttributesType">
+	
+	<xs:simpleType name="guid">
+		<xs:restriction base="xs:string">
+		  <xs:pattern value="[0-9a-fA-F]{12}" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="RemoteServerAttributes">
+		<xs:all minOccurs="1">
+            <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="guidPrefix" type="guid" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="DiscoveryServerList">
+        <xs:sequence>
+            <xs:element name="RemoteServer" type="RemoteServerAttributes" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+	
+	<xs:complexType name="builtinAttributesType">
         <xs:all minOccurs="0">
-            <xs:element name="use_SIMPLE_RTPS_PDP" type="boolType" minOccurs="0"/>
+            <xs:element name="discoveryProtocol" type="PDPType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
             <xs:element name="EDP" type="EDPType" minOccurs="0"/>
             <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
@@ -213,13 +310,15 @@
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
+			      <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
+			      <xs:element name="discoverServersList" type="DiscoveryServerList" minOccurs="0"/>
             <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
-
-    <xs:complexType name="throughputControllerType">
+	
+	<xs:complexType name="throughputControllerType">
         <xs:all minOccurs="0">
             <xs:element name="bytesPerPeriod" type="uint32Type" minOccurs="0"/>
             <xs:element name="periodMillisecs" type="uint32Type" minOccurs="0"/>
@@ -265,8 +364,8 @@
             <xs:element name="resourceLimitsQos" type="resourceLimitsQosPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
-
-    <xs:simpleType name="durabilityQosKindType">
+	
+   <xs:simpleType name="durabilityQosKindType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="VOLATILE"/>
             <xs:enumeration value="TRANSIENT_LOCAL"/>
@@ -364,7 +463,7 @@
             <xs:element name="kind" type="ownershipQosKindType"/>
         </xs:all>
     </xs:complexType>
-
+	
     <xs:complexType name="ownershipStrengthQosPolicyType">
         <xs:all>
             <xs:element name="value" type="uint32Type"/>
@@ -465,7 +564,7 @@
             <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
-
+	
     <xs:complexType name="readerQosPoliciesType">
         <xs:all minOccurs="0">
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0"/>
@@ -576,9 +675,10 @@
             <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+			      <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+			      <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -676,33 +776,6 @@
 
     <!-- Complex Types -->
 
-    <xs:complexType name="arrayDcl">
-        <xs:attribute name="name" type="string" use="optional"/>
-        <xs:attribute name="type" type="allTypes" use="required"/>
-        <xs:attribute name="dimensions" type="string" use="optional"/>
-    </xs:complexType>
-
-    <xs:complexType name="sequenceDcl">
-        <xs:attribute name="name" type="string" use="optional"/>
-        <xs:attribute name="type" type="allTypes" use="required"/>
-        <xs:attribute name="length" type="xs:unsignedInt" use="optional"/>
-    </xs:complexType>
-
-    <xs:complexType name="memberDcl">
-        <xs:attribute name="name" type="string" use="optional"/>
-        <xs:attribute name="type" type="allTypes" use="required"/>
-        <xs:attribute name="key" type="boolType" use="optional" default="false"/>
-    </xs:complexType>
-
-    <xs:complexType name="structDcl">
-        <xs:sequence>
-            <xs:choice maxOccurs="unbounded">
-                <xs:element name="member" type="memberDcl" minOccurs="1"/>
-            </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="name" type="string" use="required"/>
-    </xs:complexType>
-
     <xs:complexType name="caseDcl">
         <xs:sequence>
             <xs:choice minOccurs="1" maxOccurs="unbounded">
@@ -710,16 +783,6 @@
             </xs:choice>
             <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="unionDcl">
-        <xs:sequence>
-            <xs:element name="discriminator" type="string" minOccurs="1"/>
-            <xs:sequence maxOccurs="unbounded">
-                <xs:element name="case" type="caseDcl" minOccurs="1"/>
-            </xs:sequence>
-        </xs:sequence>
-        <xs:attribute name="name" type="string" use="required"/>
     </xs:complexType>
 
     <!-- Aux declarations -->
@@ -743,7 +806,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="consumerDataType">
+	<xs:complexType name="consumerDataType">
         <xs:all>
             <xs:element name="class" type="string"/>
             <xs:element name="property" type="propertyVectorType"/>
@@ -756,21 +819,22 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!-- Log entry point -->
+    <!-- Log entry point TODO - Review Log parser and XSD
     <xs:element name="log">
-      <xs:complexType>
-        <xs:boolean name="use_default"/>
-        <xs:sequence>
-          <xs:element maxOccurs="consumer">
-            <xs:complexType>
-              <xs:element name="class" type="string" minOccurs="1" maxOccurs="1"/>
-              <xs:sequence>
-                <xs:element name="propertyType"/>
-              </xs:sequence>
-            </xs:complexType>
-        </xs:sequence>
-      </xs:complexType>
-    </xs:element>
+        <xs:complexType>
+            <xs:element name="use_default" type="boolType" minOccurs="0"/>
+            <xs:sequence>
+                <xs:element maxOccurs="consumer">
+                    <xs:complexType>
+                    <xs:element name="class" type="string" minOccurs="1" maxOccurs="1"/>
+                    <xs:sequence>
+                        <xs:element name="propertyType"/>
+                    </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element> -->
 
     <!-- Dynamic Types -->
     <xs:element name="types">
@@ -778,8 +842,8 @@
             <xs:group ref="moduleElems"/>
         </xs:complexType>
     </xs:element>
-
-    <xs:group name="moduleElems">
+	
+	<xs:group name="moduleElems">
         <xs:sequence>
             <xs:choice maxOccurs="unbounded">
                 <xs:element name="struct" type="structDcl" minOccurs="0"/>
@@ -796,16 +860,7 @@
                 <xs:element name="member" type="memberDcl" minOccurs="1"/>
             </xs:choice>
         </xs:sequence>
-        <xs:attribute name="name" type="string" use="required"/>
-    </xs:complexType>
-
-    <xs:complexType name="caseDcl">
-        <xs:sequence>
-            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="caseValue" type="string" minOccurs="1" maxOccurs="unbounded"/>
-            </xs:choice>
-            <xs:element name="member" type="memberDcl" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
+        <xs:attribute name="name" type="stringType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="unionDcl">
@@ -815,11 +870,11 @@
                 <xs:element name="case" type="caseDcl" minOccurs="1"/>
             </xs:sequence>
         </xs:sequence>
-        <xs:attribute name="name" type="identifierName" use="required"/>
+        <xs:attribute name="name" type="stringType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="typedefDcl">
-        <xs:attribute name="name" type="identifierName" use="required"/>
+        <xs:attribute name="name" type="stringType" use="required"/>
         <xs:attribute name="type" type="string" use="required"/>
         <xs:attribute name="key_type" type="string" use="optional"/>
         <xs:attribute name="arrayDimensions" type="string" use="optional"/>
@@ -833,31 +888,24 @@
         <xs:attribute name="value" type="stringType" use="optional"/>
     </xs:complexType>
 
-    <xs:complexType name="enum">
-        <xs:attribute ref="name" use="required"/>
+    <xs:complexType name="enumDcl">
         <xs:sequence>
             <xs:element name="enumerator" type="enumeratorType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:attribute name="name" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="memberDcl">
+        <xs:sequence>
+            <xs:element name="member" type="memberDcl" minOccurs="0"/>
+        </xs:sequence>
         <xs:attribute name="name" type="string" use="required"/>
         <xs:attribute name="type" type="string" use="required"/>
         <xs:attribute name="arrayDimensions" type="string" use="optional"/>
         <xs:attribute name="nonBasic" type="string" use="optional"/>
         <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
         <xs:attribute name="mapMaxLength" type="string" use="optional"/>
-        <xs:sequence>
-            <xs:element name="member" type="memberDcl" minOccurs="0"/>
-        </xs:sequence>
     </xs:complexType>
 
-
-
-
-
-
-
-
-
 </xs:schema>
+

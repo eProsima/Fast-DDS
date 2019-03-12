@@ -18,7 +18,7 @@
  */
 
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
@@ -34,7 +34,7 @@ namespace fastrtps{
 namespace rtps {
 
 
- DSClientEvent::DSClientEvent(PDPServer* p_PDP,
+ DSClientEvent::DSClientEvent(PDPClient* p_PDP,
         double interval):
     TimedEvent(p_PDP->getRTPSParticipant()->getEventResource().getIOService(),
             p_PDP->getRTPSParticipant()->getEventResource().getThread(), interval),

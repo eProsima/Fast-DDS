@@ -21,7 +21,7 @@
 #include <fastrtps/rtps/common/Locator.h>
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
@@ -81,18 +81,28 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
     }
 
     // PDP
-    if(m_att.use_SIMPLE_RTPSParticipantDiscoveryProtocol)
+    switch (attributes.discoveryProtocol)
     {
-        mp_PDP = new PDPSimple(this);
-    }
-    else if (m_att.use_SERVER_DiscoveryProtocol)
-    {
-        mp_PDP = new PDPServer(this);
-    }
-    else
-    {
-        logError(RTPS_PDP, "No participant discovery protocol specified");
-        return false;
+        case PDPType_t::NONE:
+            logError(RTPS_PDP, "No participant discovery protocol specified");
+            return false;
+
+        case PDPType_t::SIMPLE:
+            mp_PDP = new PDPSimple(this);
+            break;
+
+        case PDPType_t::EXTERNAL:
+            assert(attributes.m_PDP);
+            mp_PDP = attributes.m_PDP;
+            break;
+
+        case PDPType_t::CLIENT:
+            mp_PDP = new PDPClient(this);
+            break;
+
+        case PDPType_t::SERVER:
+            assert(0); // currently unavailable
+            break;
     }
 
     if (!mp_PDP->initPDP(mp_participantImpl)) {
