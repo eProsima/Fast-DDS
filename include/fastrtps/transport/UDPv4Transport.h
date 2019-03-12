@@ -47,7 +47,7 @@ public:
 
     virtual ~UDPv4Transport() override;
 
-    virtual const UDPTransportDescriptor* GetConfiguration() const override;
+    virtual const UDPTransportDescriptor* configuration() const override;
 
     /**
         * Starts listening on the specified port, and if the specified address is in the
@@ -59,7 +59,7 @@ public:
 
     virtual bool is_local_locator(const Locator_t& locator) const override;
 
-    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
+    TransportDescriptorInterface* get_configuration() override { return &configuration_; }
 
     virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) override;
 
@@ -75,45 +75,44 @@ protected:
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     UDPv4Transport();
-    UDPv4TransportDescriptor mConfiguration_;
+    UDPv4TransportDescriptor configuration_;
 
-    virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const override;
-    virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const override;
+    virtual bool compare_locator_ip(const Locator_t& lh, const Locator_t& rh) const override;
+    virtual bool compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const override;
 
-    virtual void EndpointToLocator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) override;
-    virtual void FillLocalIp(Locator_t& loc) override;
+    virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) override;
+    virtual void fill_local_ip(Locator_t& loc) override;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) override;
-    virtual asio::ip::udp::endpoint GenerateEndpoint(uint16_t port) override;
-    virtual asio::ip::udp::endpoint GenerateEndpoint(const std::string& sIp, uint16_t port) override;
-    virtual asio::ip::udp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) override;
-    virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) override;
-    virtual asio::ip::udp GenerateProtocol() const override;
-    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) override;
+    virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) override;
+    virtual asio::ip::udp::endpoint generate_endpoint(const std::string& sIp, uint16_t port) override;
+    virtual asio::ip::udp::endpoint generate_endpoint(const Locator_t& loc, uint16_t port) override;
+    virtual asio::ip::udp::endpoint generate_local_endpoint(const Locator_t& loc, uint16_t port) override;
+    virtual asio::ip::udp generate_protocol() const override;
+    virtual void get_ips(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) override;
     eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) override;
 
     //! Checks if the given interface is allowed by the white list.
-    virtual bool IsInterfaceAllowed(const std::string& interface) const override;
+    virtual bool is_interface_allowed(const std::string& interface) const override;
 
     /**
     * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @param locator Input locator.
     * @return Vector of interfaces in string format.
     */
-    virtual std::vector<std::string> GetBindingInterfacesList() override;
+    virtual std::vector<std::string> get_binding_interfaces_list() override;
 
     //! Checks for whether locator is allowed.
-    virtual bool IsLocatorAllowed(const Locator_t&) const override;
+    virtual bool is_locator_allowed(const Locator_t&) const override;
 
     //! Checks if the given interface is allowed by the white list.
-    bool IsInterfaceAllowed(const asio::ip::address_v4& ip) const;
+    bool is_interface_allowed(const asio::ip::address_v4& ip) const;
 
     //! Checks if the interfaces white list is empty.
-    virtual bool IsInterfaceWhiteListEmpty() const override;
-    std::vector<asio::ip::address_v4> mInterfaceWhiteList;
+    virtual bool is_interface_whitelist_empty() const override;
+    std::vector<asio::ip::address_v4> interface_whitelist_;
 
-    virtual void SetReceiveBufferSize(uint32_t size) override;
-    virtual void SetSendBufferSize(uint32_t size) override;
+    virtual void set_receive_buffer_size(uint32_t size) override;
+    virtual void set_send_buffer_size(uint32_t size) override;
     virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) override;
 };
 

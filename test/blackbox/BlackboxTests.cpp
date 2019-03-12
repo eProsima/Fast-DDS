@@ -79,6 +79,9 @@ int main(int argc, char **argv)
 #if HAVE_SECURITY
     blackbox_security_init();
 #endif
+#if TLS_FOUND
+    tls_init();
+#endif
 
     return RUN_ALL_TESTS();
 }

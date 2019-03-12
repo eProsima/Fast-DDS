@@ -46,6 +46,70 @@ namespace rtps{
  */
 class TCPv6Transport : public TCPTransportInterface
 {
+
+protected:
+
+    TCPv6TransportDescriptor configuration_;
+    std::vector<asio::ip::address_v6> interface_whitelist_;
+
+    //! Constructor with no descriptor is necessary for implementations derived from this class.
+    TCPv6Transport();
+
+    virtual bool compare_locator_ip(
+        const Locator_t& lh,
+        const Locator_t& rh) const override;
+
+    virtual bool compare_locator_ip_and_port(
+        const Locator_t& lh,
+        const Locator_t& rh) const override;
+
+    virtual void fill_local_ip(Locator_t& loc) const override;
+
+    virtual asio::ip::tcp::endpoint generate_endpoint(uint16_t port) const override;
+
+    virtual asio::ip::tcp::endpoint generate_endpoint(
+        const Locator_t& loc,
+        uint16_t port) const override;
+
+    virtual asio::ip::tcp::endpoint generate_local_endpoint(
+        Locator_t& loc,
+        uint16_t port) const override;
+
+    virtual asio::ip::tcp generate_protocol() const override;
+
+    virtual asio::ip::tcp get_protocol_type() const override { return asio::ip::tcp::v6(); }
+
+    virtual void get_ips(
+        std::vector<IPFinder::info_IP>& locNames,
+        bool return_loopback = false) const override;
+
+    /**
+    * Method to get a list of interfaces to bind the socket associated to the given locator.
+    * @return Vector of interfaces in string format.
+    */
+    virtual std::vector<std::string> get_binding_interfaces_list() override;
+
+    bool is_locator_allowed(const Locator_t& locator) const override;
+
+    //! Checks if the interfaces white list is empty.
+    virtual bool is_interface_whitelist_empty() const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    virtual bool is_interface_allowed(const std::string& interface) const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    bool is_interface_allowed(const asio::ip::address_v6& ip) const;
+
+    virtual bool is_interface_allowed(const Locator_t& loc) const override;
+
+    virtual void set_receive_buffer_size(uint32_t size) override;
+
+    virtual void set_send_buffer_size(uint32_t size) override;
+
+    virtual void endpoint_to_locator(
+        const asio::ip::tcp::endpoint& endpoint,
+        Locator_t& locator) const override;
+
 public:
     RTPS_DllAPI TCPv6Transport(const TCPv6TransportDescriptor&);
 
@@ -55,7 +119,7 @@ public:
 
     virtual bool is_local_locator(const Locator_t& locator) const override;
 
-    TransportDescriptorInterface* get_configuration() override { return &mConfiguration_; }
+    TransportDescriptorInterface* get_configuration() override { return &configuration_; }
 
     virtual void AddDefaultOutputLocator(LocatorList_t&) override;
 
@@ -65,56 +129,9 @@ public:
 
     virtual uint16_t GetMaxLogicalPort() const override;
 
-protected:
+    virtual const TCPTransportDescriptor* configuration() const override;
 
-    TCPv6TransportDescriptor mConfiguration_;
-    std::vector<asio::ip::address_v6> mInterfaceWhiteList;
-
-
-    //! Constructor with no descriptor is necessary for implementations derived from this class.
-    TCPv6Transport();
-
-    virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const override;
-    virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const override;
-
-    virtual void FillLocalIp(Locator_t& loc) const override;
-
-    virtual const TCPTransportDescriptor* GetConfiguration() const override;
-    virtual TCPTransportDescriptor* GetConfiguration() override;
-
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) const override;
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) const override;
-    virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const override;
-    virtual asio::ip::tcp GenerateProtocol() const override;
-
-    virtual asio::ip::tcp GetProtocolType() const override { return asio::ip::tcp::v6(); }
-
-    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) const override;
-
-    /**
-    * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @param locator Input locator.
-    * @return Vector of interfaces in string format.
-    */
-    virtual std::vector<std::string> GetBindingInterfacesList() override;
-
-    bool IsLocatorAllowed(const Locator_t& locator) const override;
-
-    //! Checks if the interfaces white list is empty.
-    virtual bool IsInterfaceWhiteListEmpty() const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    virtual bool IsInterfaceAllowed(const std::string& interface) const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool IsInterfaceAllowed(const asio::ip::address_v6& ip) const;
-
-    virtual bool IsInterfaceAllowed(const Locator_t& loc) const override;
-
-    virtual void SetReceiveBufferSize(uint32_t size) override;
-    virtual void SetSendBufferSize(uint32_t size) override;
-
-    virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const override;
+    virtual TCPTransportDescriptor* configuration() override;
 };
 
 } // namespace rtps
