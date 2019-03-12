@@ -462,7 +462,7 @@ private:
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
-        void createSenderResources(LocatorList_t& Locator_list, bool ApplyMutation);
+        void createSenderResources(LocatorList_t& locator_list);
 
         bool networkFactoryHasRegisteredTransports() const;
 
