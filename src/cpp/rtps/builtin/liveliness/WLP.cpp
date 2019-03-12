@@ -281,6 +281,7 @@ bool WLP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
 
 bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
+    const NetworkFactory& network = mp_participant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
@@ -350,8 +351,8 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_expectsInlineQos = false;
         ratt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid().entityId = c_EntityId_ReaderLivelinessSecure;
-        ratt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
-        ratt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
+        ratt.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
+        ratt.set_multicast_locators(pdata.m_metatrafficMulticastLocatorList, network);
         ratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         ratt.topicKind(WITH_KEY);

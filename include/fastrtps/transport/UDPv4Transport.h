@@ -81,7 +81,7 @@ protected:
     virtual bool compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const override;
 
     virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) override;
-    virtual void fill_local_ip(Locator_t& loc) override;
+    virtual void fill_local_ip(Locator_t& loc) const override;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) override;
     virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) override;

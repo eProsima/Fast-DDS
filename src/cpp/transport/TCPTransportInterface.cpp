@@ -467,6 +467,19 @@ Locator_t TCPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
     return mainLocal;
 }
 
+bool TCPTransportInterface::transform_remote_locator(
+    const Locator_t& remote_locator,
+    Locator_t& result_locator) const
+{
+    if (IsLocatorSupported(remote_locator) &&
+        is_locator_allowed(remote_locator))
+    {
+        result_locator = remote_locator;
+        return true;
+    }
+
+    return false;
+}
 
 void TCPTransportInterface::CloseOutputChannel(std::shared_ptr<TCPChannelResource>& channel)
 {
