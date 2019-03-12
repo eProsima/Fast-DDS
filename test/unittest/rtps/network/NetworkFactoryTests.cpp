@@ -349,12 +349,12 @@ void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigne
    networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
 }
 
+#define SHRINK_TEST_MAX_ENTRIES 4u
+#define SHRINK_TEST_MAX_UNICAST_LOCATORS 4u
+#define SHRINK_TEST_MAX_MULTICAST_LOCATORS 1u
+
 struct ShrinkLocatorCase_t
 {
-    static const size_t TEST_MAX_ENTRIES = 4u;
-    static const size_t TEST_MAX_UNICAST_LOCATORS = 4u;
-    static const size_t TEST_MAX_MULTICAST_LOCATORS = 1u;
-
     ShrinkLocatorCase_t()
     {
     }
@@ -380,7 +380,7 @@ struct ShrinkLocatorCase_t
         temp_entries.reserve(input.size());
         for (const LocatorList_t& loc_list : input)
         {
-            temp_entries.emplace_back(TEST_MAX_UNICAST_LOCATORS, TEST_MAX_MULTICAST_LOCATORS);
+            temp_entries.emplace_back(SHRINK_TEST_MAX_UNICAST_LOCATORS, SHRINK_TEST_MAX_MULTICAST_LOCATORS);
             LocatorSelectorEntry& entry = temp_entries.back();
             entry.remote_guid.entityId = id++;
             for (const Locator_t& loc : loc_list)
@@ -407,7 +407,7 @@ struct ShrinkLocatorCase_t
 
     void perform_selector_test(const NetworkFactory& network)
     {
-        LocatorSelector selector(ResourceLimitedContainerConfig::fixed_size_configuration(TEST_MAX_ENTRIES));
+        LocatorSelector selector(ResourceLimitedContainerConfig::fixed_size_configuration(SHRINK_TEST_MAX_ENTRIES));
         prepare_selector(selector);
         selector.reset(true);
         network.select_locators(selector);
