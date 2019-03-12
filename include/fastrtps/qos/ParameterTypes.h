@@ -195,7 +195,7 @@ class ParameterLocator_t: public Parameter_t {
          * @param in_length Its associated length
          */
         ParameterLocator_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        ParameterLocator_t(ParameterId_t pid,uint16_t in_length, rtps::Locator_t& loc):Parameter_t(pid,in_length),locator(loc){};
+        ParameterLocator_t(ParameterId_t pid,uint16_t in_length, const rtps::Locator_t& loc):Parameter_t(pid,in_length),locator(loc){};
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.

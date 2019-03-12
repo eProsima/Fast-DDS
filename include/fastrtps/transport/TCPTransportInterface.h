@@ -306,6 +306,21 @@ public:
     virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
     /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     * 
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const override;
+
+    /**
     * Blocking Receive from the specified channel.
     * @param p_channel_resource pointer to the socket where the method is going to read the messages.
     * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That

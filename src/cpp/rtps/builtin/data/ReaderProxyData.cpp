@@ -23,6 +23,8 @@
 
 #include <fastrtps/log/Log.h>
 
+#include <fastrtps/rtps/network/NetworkFactory.h>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -38,6 +40,7 @@ ReaderProxyData::ReaderProxyData()
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
     , m_topicDiscoveryKind(NO_CHECK)
+    , remote_locators_(4u, 1u)
     {
 
     }
@@ -54,8 +57,7 @@ ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo)
     , plugin_security_attributes_(readerInfo.plugin_security_attributes_)
 #endif
     , m_guid(readerInfo.m_guid)
-    , m_unicastLocatorList(readerInfo.m_unicastLocatorList)
-    , m_multicastLocatorList(readerInfo.m_multicastLocatorList)
+    , remote_locators_(readerInfo.remote_locators_)
     , m_key(readerInfo.m_key)
     , m_RTPSParticipantKey(readerInfo.m_RTPSParticipantKey)
     , m_typeName(readerInfo.m_typeName)
@@ -78,8 +80,7 @@ ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
     plugin_security_attributes_ = readerInfo.plugin_security_attributes_;
 #endif
     m_guid = readerInfo.m_guid;
-    m_unicastLocatorList = readerInfo.m_unicastLocatorList;
-    m_multicastLocatorList = readerInfo.m_multicastLocatorList;
+    remote_locators_ = readerInfo.remote_locators_;
     m_key = readerInfo.m_key;
     m_RTPSParticipantKey = readerInfo.m_RTPSParticipantKey;
     m_typeName = readerInfo.m_typeName;
@@ -103,16 +104,14 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
         if (!ParameterList::writeEncapsulationToCDRMsg(msg)) return false;
     }
 
-    for(LocatorListIterator lit = m_unicastLocatorList.begin();
-            lit!=m_unicastLocatorList.end();++lit)
+    for(const Locator_t& locator : remote_locators_.unicast)
     {
-        ParameterLocator_t p(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        ParameterLocator_t p(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,locator);
         if (!p.addToCDRMessage(msg)) return false;
     }
-    for(LocatorListIterator lit = m_multicastLocatorList.begin();
-            lit!=m_multicastLocatorList.end();++lit)
+    for(const Locator_t& locator : remote_locators_.multicast)
     {
-        ParameterLocator_t p(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        ParameterLocator_t p(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,locator);
         if (!p.addToCDRMessage(msg)) return false;
     }
     {
@@ -394,14 +393,16 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                m_unicastLocatorList.push_back(p->locator);
+                // TODO (Miguel C): Use network factory
+                remote_locators_.unicast.push_back(p->locator);
                 break;
             }
             case PID_MULTICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                m_multicastLocatorList.push_back(p->locator);
+                // TODO (Miguel C): Use network factory
+                remote_locators_.multicast.push_back(p->locator);
                 break;
             }
             case PID_EXPECTS_INLINE_QOS:
@@ -499,8 +500,8 @@ void ReaderProxyData::clear()
     plugin_security_attributes_ = 0UL;
 #endif
     m_guid = c_Guid_Unknown;
-    m_unicastLocatorList.clear();
-    m_multicastLocatorList.clear();
+    remote_locators_.unicast.clear();
+    remote_locators_.multicast.clear();
     m_key = InstanceHandle_t();
     m_RTPSParticipantKey = InstanceHandle_t();
     m_typeName = "";
@@ -516,8 +517,7 @@ void ReaderProxyData::clear()
 
 void ReaderProxyData::update(ReaderProxyData* rdata)
 {
-    m_unicastLocatorList = rdata->m_unicastLocatorList;
-    m_multicastLocatorList = rdata->m_multicastLocatorList;
+    remote_locators_ = rdata->remote_locators_;
     m_qos.setQos(rdata->m_qos,false);
     m_isAlive = rdata->m_isAlive;
     m_expectsInlineQos = rdata->m_expectsInlineQos;
@@ -526,8 +526,7 @@ void ReaderProxyData::update(ReaderProxyData* rdata)
 void ReaderProxyData::copy(ReaderProxyData* rdata)
 {
     m_guid = rdata->m_guid;
-    m_unicastLocatorList = rdata->m_unicastLocatorList;
-    m_multicastLocatorList = rdata->m_multicastLocatorList;
+    remote_locators_ = rdata->remote_locators_;
     m_key = rdata->m_key;
     m_RTPSParticipantKey = rdata->m_RTPSParticipantKey;
     m_typeName = rdata->m_typeName;
@@ -546,6 +545,46 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
     }
 }
 
+void ReaderProxyData::add_unicast_locator(const Locator_t& locator)
+{
+    remote_locators_.add_unicast_locator(locator);
+}
+
+void ReaderProxyData::set_unicast_locators(
+        const LocatorList_t& locators,
+        const NetworkFactory& network)
+{
+    Locator_t local_locator;
+    remote_locators_.unicast.clear();
+    for (const Locator_t& locator : locators)
+    {
+        if (network.transform_remote_locator(locator, local_locator))
+        {
+            remote_locators_.add_unicast_locator(local_locator);
+        }
+    }
+}
+
+void ReaderProxyData::add_multicast_locator(const Locator_t& locator)
+{
+    remote_locators_.add_multicast_locator(locator);
+}
+
+void ReaderProxyData::set_multicast_locators(
+        const LocatorList_t& locators,
+        const NetworkFactory& network)
+{
+    Locator_t local_locator;
+    remote_locators_.multicast.clear();
+    for (const Locator_t& locator : locators)
+    {
+        if (network.transform_remote_locator(locator, local_locator))
+        {
+            remote_locators_.add_multicast_locator(locator);
+        }
+    }
+}
+
 RemoteReaderAttributes::RemoteReaderAttributes(const ReaderProxyData& data)
 {
     guid = data.guid();
@@ -554,8 +593,16 @@ RemoteReaderAttributes::RemoteReaderAttributes(const ReaderProxyData& data)
     endpoint.endpointKind = READER;
     endpoint.topicKind = data.topicKind();
     endpoint.reliabilityKind = data.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    endpoint.unicastLocatorList = data.unicastLocatorList();
-    endpoint.multicastLocatorList = data.multicastLocatorList();
+    endpoint.unicastLocatorList.clear();
+    for (const Locator_t& locator : data.remote_locators().unicast)
+    {
+        endpoint.unicastLocatorList.push_back(locator);
+    }
+    endpoint.multicastLocatorList.clear();
+    for (const Locator_t& locator : data.remote_locators().multicast)
+    {
+        endpoint.multicastLocatorList.push_back(locator);
+    }
 }
 
 } /* namespace rtps */

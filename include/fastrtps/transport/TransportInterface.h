@@ -86,6 +86,26 @@ public:
     //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
     virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
 
+    /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     * 
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const
+    {
+        (void)remote_locator;
+        (void)result_locator;
+        return false;
+    }
+
     //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
     //! any resources that are needed for said channel.
     virtual bool OpenOutputChannel(const Locator_t&) = 0;

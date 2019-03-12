@@ -511,6 +511,44 @@ Locator_t UDPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
     return mainLocal;
 }
 
+bool UDPTransportInterface::transform_remote_locator(
+        const Locator_t& remote_locator,
+        Locator_t& result_locator) const
+{
+    if (IsLocatorSupported(remote_locator) &&
+        is_locator_allowed(remote_locator))
+    {
+        result_locator = remote_locator;
+        if (IPLocator::isMulticast(result_locator))
+        {
+            return true;
+        }
+        else
+        {
+            Locator_t loopbackLocator;
+            fill_local_ip(loopbackLocator);
+            bool loopback_allowed = is_locator_allowed(loopbackLocator);
+
+            // Check is local interface.
+            auto localInterface = currentInterfaces.begin();
+            for (; localInterface != currentInterfaces.end(); ++localInterface)
+            {
+                if (compare_locator_ip(localInterface->locator, result_locator))
+                {
+                    if (loopback_allowed)
+                    {
+                        // Loopback locator
+                        fill_local_ip(result_locator);
+                    }
+                    break;
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 bool UDPTransportInterface::send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& localLocator, const Locator_t& remote_locator)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);

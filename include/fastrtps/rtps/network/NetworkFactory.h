@@ -79,6 +79,22 @@ class NetworkFactory
         void NormalizeLocators(LocatorList_t& locators);
 
         /**
+         * Transforms a remote locator into a locator optimized for local communications.
+         * 
+         * If the remote locator corresponds to one of the local interfaces, it is converted
+         * to the corresponding local address.
+         *
+         * @param [in]  remote_locator Locator to be converted.
+         * @param [out] result_locator Converted locator.
+         *
+         * @return false if the input locator is not supported/allowed by any of the registered transports,
+         *         true otherwise.
+         */
+        bool transform_remote_locator(
+                const Locator_t& remote_locator,
+                Locator_t& result_locator) const;
+
+        /**
          * Performs the locator selection algorithm.
          *
          * It basically constist of the following steps

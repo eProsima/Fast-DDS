@@ -658,6 +658,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
 void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
     logInfo(RTPS_EDP,"New DPD received, adding remote endpoints to our SimpleEDP endpoints");
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
@@ -766,8 +767,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_expectsInlineQos = false;
         ratt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid().entityId = sedp_builtin_publications_secure_reader;
-        ratt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
-        ratt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
+        ratt.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
+        ratt.set_multicast_locators(pdata.m_metatrafficMulticastLocatorList, network);
         ratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
@@ -813,8 +814,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_expectsInlineQos = false;
         ratt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid().entityId = sedp_builtin_subscriptions_secure_reader;
-        ratt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
-        ratt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
+        ratt.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
+        ratt.set_multicast_locators(pdata.m_metatrafficMulticastLocatorList, network);
         ratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_reader(

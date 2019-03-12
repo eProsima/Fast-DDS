@@ -125,6 +125,21 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
     locators.swap(normalizedLocators);
 }
 
+bool NetworkFactory::transform_remote_locator(
+        const Locator_t& remote_locator,
+        Locator_t& result_locator) const
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        if (transport->transform_remote_locator(remote_locator, result_locator))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void NetworkFactory::select_locators(LocatorSelector& selector) const
 {
     selector.selection_start();

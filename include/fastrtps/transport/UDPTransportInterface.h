@@ -89,6 +89,21 @@ public:
    */
    virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
+    /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     * 
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const override;
+
    /**
    * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
    * send through all whitelisted interfaces provided the channel is open.
@@ -153,7 +168,7 @@ protected:
     virtual bool compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const = 0;
 
     virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) = 0;
-    virtual void fill_local_ip(Locator_t& loc) = 0;
+    virtual void fill_local_ip(Locator_t& loc) const = 0;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) = 0;
     virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) = 0;

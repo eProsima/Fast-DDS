@@ -594,6 +594,8 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
     {
@@ -614,10 +616,10 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
 
                     ret_val = rit;
                     // Set locators information if not defined by initializer_func.
-                    if (ret_val->unicastLocatorList().empty() && ret_val->multicastLocatorList().empty())
+                    if (ret_val->has_locators() == false)
                     {
-                        ret_val->unicastLocatorList((*pit)->m_defaultUnicastLocatorList);
-                        ret_val->multicastLocatorList((*pit)->m_defaultMulticastLocatorList);
+                        ret_val->set_unicast_locators((*pit)->m_defaultUnicastLocatorList, network);
+                        ret_val->set_multicast_locators((*pit)->m_defaultMulticastLocatorList, network);
                     }
                     // Set as alive.
                     ret_val->isAlive(true);
@@ -660,10 +662,10 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
             }
 
             // Set locators information if not defined by initializer_func.
-            if (ret_val->unicastLocatorList().empty() && ret_val->multicastLocatorList().empty())
+            if (ret_val->has_locators() == false)
             {
-                ret_val->unicastLocatorList((*pit)->m_defaultUnicastLocatorList);
-                ret_val->multicastLocatorList((*pit)->m_defaultMulticastLocatorList);
+                ret_val->set_unicast_locators((*pit)->m_defaultUnicastLocatorList, network);
+                ret_val->set_multicast_locators((*pit)->m_defaultMulticastLocatorList, network);
             }
             // Set as alive.
             ret_val->isAlive(true);

@@ -64,12 +64,13 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
 
     auto init_fun = [this, reader, att, rqos](ReaderProxyData* rpd)
     {
+        const NetworkFactory& network = mp_RTPSParticipant->network_factory();
         rpd->isAlive(true);
         rpd->m_expectsInlineQos = reader->expectsInlineQos();
         rpd->guid(reader->getGuid());
         rpd->key() = rpd->guid();
-        rpd->multicastLocatorList(reader->getAttributes().multicastLocatorList);
-        rpd->unicastLocatorList(reader->getAttributes().unicastLocatorList);
+        rpd->set_multicast_locators(reader->getAttributes().multicastLocatorList, network);
+        rpd->set_unicast_locators(reader->getAttributes().unicastLocatorList, network);
         rpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
         rpd->topicName(att.getTopicName());
         rpd->typeName(att.getTopicDataType());
@@ -243,12 +244,13 @@ bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, con
 {
     auto init_fun = [this, reader, att, rqos](ReaderProxyData* rdata)
     {
+        const NetworkFactory& network = mp_RTPSParticipant->network_factory();
         rdata->isAlive(true);
         rdata->m_expectsInlineQos = reader->expectsInlineQos();
         rdata->guid(reader->getGuid());
         rdata->key() = rdata->guid();
-        rdata->multicastLocatorList(reader->getAttributes().multicastLocatorList);
-        rdata->unicastLocatorList(reader->getAttributes().unicastLocatorList);
+        rdata->set_multicast_locators(reader->getAttributes().multicastLocatorList, network);
+        rdata->set_unicast_locators(reader->getAttributes().unicastLocatorList, network);
         rdata->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
         rdata->topicName(att.getTopicName());
         rdata->typeName(att.getTopicDataType());
