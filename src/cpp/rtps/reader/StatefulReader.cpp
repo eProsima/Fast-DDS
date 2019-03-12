@@ -121,7 +121,7 @@ bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
     }
 
     RemoteWriterAttributes att(wdata);
-    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
+    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList);
 
     att.endpoint.unicastLocatorList =
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({ att.endpoint.unicastLocatorList });
@@ -169,7 +169,7 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
     }
 
     RemoteWriterAttributes att(wdata);
-    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList, false);
+    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList);
 
     att.endpoint.unicastLocatorList =
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({att.endpoint.unicastLocatorList});

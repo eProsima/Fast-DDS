@@ -823,25 +823,14 @@ bool RTPSParticipantImpl::checkSenderResource(Locator_t& locator)
     return false;
 }
 
-void RTPSParticipantImpl::createSenderResources(LocatorList_t& Locator_list, bool ApplyMutation)
+void RTPSParticipantImpl::createSenderResources(LocatorList_t& locator_list)
 {
     std::vector<SenderResource> buffer;
-    for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
+    for (auto it_loc = locator_list.begin(); it_loc != locator_list.end(); ++it_loc)
     {
         if (!checkSenderResource(*it_loc))
         {
             buffer = m_network_Factory.BuildSenderResources(*it_loc);
-            if (buffer.size() == 0 && ApplyMutation)
-            {
-                uint32_t tries = 0;
-                while (buffer.size() == 0 && (tries < m_att.builtin.mutation_tries))
-                {
-                    tries++;
-                    *it_loc = applyLocatorAdaptRule(*it_loc);
-                    buffer = m_network_Factory.BuildSenderResources(*it_loc);
-                }
-            }
-
             for (auto it_buffer = buffer.begin(); it_buffer != buffer.end(); ++it_buffer)
             {
                 std::lock_guard<std::mutex> lock(m_send_resources_mutex);

@@ -361,7 +361,7 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attribut
     }
 
     // TODO (Miguel C): refactor with locator selector
-    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList, false);
+    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList);
 
     logInfo(RTPS_READER,"Reader " << reader_attributes.guid << " added to "<<m_guid.entityId);
     return true;
@@ -381,7 +381,7 @@ bool StatelessWriter::set_fixed_locators(const LocatorList_t& locator_list)
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     fixed_locators_.push_back(locator_list);
-    getRTPSParticipant()->createSenderResources(fixed_locators_, false);
+    getRTPSParticipant()->createSenderResources(fixed_locators_);
 
     return true;
 }

@@ -550,7 +550,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     update_cached_info_nts();
     compute_selected_guids();
 
-    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList, false);
+    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList);
 
     std::set<SequenceNumber_t> not_relevant_changes;
 
