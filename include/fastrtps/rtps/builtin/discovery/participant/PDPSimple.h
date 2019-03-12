@@ -22,9 +22,11 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <mutex>
+
+#include <functional>
+
 #include "../../../common/Guid.h"
 #include "../../../attributes/RTPSParticipantAttributes.h"
-
 #include "../../../../qos/QosPolicies.h"
 
 
@@ -87,11 +89,16 @@ class PDPSimple
 
     /**
      * Add a ReaderProxyData to the correct ParticipantProxyData.
-     * @param rdata Pointer to the ReaderProxyData objectr to add.
-     * @param pdata
-     * @return True if correct.
+     * @param [in]  reader_guid       GUID of the reader to add.
+     * @param [out] participant_guid  GUID of the ParticipantProxyData where the reader was added.
+     * @param [in]  initializer_func  Function to be called in order to set the data of the ReaderProxyData.
+     *
+     * @return A pointer to the added ReaderProxyData (nullptr if it could not be added).
      */
-    bool addReaderProxyData(ReaderProxyData* rdata, GUID_t& participant_guid);
+    ReaderProxyData* addReaderProxyData(
+            const GUID_t& reader_guid, 
+            GUID_t& participant_guid,
+            std::function<bool(ReaderProxyData*)> initializer_func);
 
     /**
      * Add a WriterProxyData to the correct ParticipantProxyData.

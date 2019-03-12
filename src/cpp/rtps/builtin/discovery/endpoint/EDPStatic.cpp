@@ -221,23 +221,30 @@ bool EDPStatic::newRemoteReader(const ParticipantProxyData& pdata, uint16_t user
     ReaderProxyData* rpd = NULL;
     if(mp_edpXML->lookforReader(pdata.m_participantName, userId, &rpd) == xmlparser::XMLP_ret::XML_OK)
     {
-        logInfo(RTPS_EDP,"Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
-        ReaderProxyData newRPD(*rpd);
-        newRPD.guid().guidPrefix = pdata.m_guid.guidPrefix;
-        if(entId != c_EntityId_Unknown)
-            newRPD.guid().entityId = entId;
-        if(!checkEntityId(&newRPD))
+        logInfo(RTPS_EDP, "Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
+        GUID_t reader_guid(pdata.m_guid.guidPrefix, entId != c_EntityId_Unknown ? entId : rpd->guid().entityId);
+
+        auto init_fun = [this, pdata, reader_guid, rpd](ReaderProxyData* newRPD)
         {
-            logError(RTPS_EDP,"The provided entityId for Reader with ID: "
-                    << newRPD.userDefinedId() << " does not match the topic Kind");
-            return false;
-        }
-        newRPD.key() = newRPD.guid();
-        newRPD.RTPSParticipantKey() = pdata.m_guid;
+            *newRPD = *rpd;
+            newRPD->guid(reader_guid);
+            if (!checkEntityId(newRPD))
+            {
+                logError(RTPS_EDP, "The provided entityId for Reader with ID: "
+                    << newRPD->userDefinedId() << " does not match the topic Kind");
+                return false;
+            }
+            newRPD->key() = newRPD->guid();
+            newRPD->RTPSParticipantKey() = pdata.m_guid;
+
+            return true;
+        };
+
         GUID_t participant_guid;
-        if(this->mp_PDP->addReaderProxyData(&newRPD, participant_guid))
+        ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(reader_guid, participant_guid, init_fun);
+        if(reader_data != nullptr)
         {
-            this->pairing_reader_proxy_with_any_local_writer(participant_guid, &newRPD);
+            this->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
             return true;
         }
     }
