@@ -539,11 +539,6 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     }
 
     // Add info of new datareader.
-
-    // TODO (Miguel C.) should be removed
-    rdata.endpoint.unicastLocatorList =
-        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({ rdata.endpoint.unicastLocatorList });
-
     rp->start(rdata);
     locator_selector_.add_entry(rp->locator_selector_entry());
 
