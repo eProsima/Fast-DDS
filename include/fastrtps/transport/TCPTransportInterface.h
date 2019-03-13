@@ -357,14 +357,16 @@ public:
     void SocketAccepted(
         TCPAcceptorBasic* acceptor,
         Locator_t acceptor_locator,
-        const asio::error_code& error);
+        const asio::error_code& error,
+        std::shared_ptr<asio::ip::tcp::socket> socket);
 
 #if TLS_FOUND
     //! Callback called each time that an incomming connection is accepted (secure).
     void SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
         Locator_t acceptor_locator,
-        const asio::error_code& error);
+        const asio::error_code& error,
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket);
 #endif
 
     //! Callback called each time that an outgoing connection is established.

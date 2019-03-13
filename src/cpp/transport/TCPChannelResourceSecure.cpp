@@ -226,17 +226,41 @@ void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor*
 
 void TCPChannelResourceSecure::cancel()
 {
-    secure_socket_->lowest_layer().cancel();
+    try
+    {
+        secure_socket_->lowest_layer().cancel();
+    }
+    catch(const std::exception& e)
+    {
+        (void)e;
+        logInfo(RTCP, "Cancelling ChannelResource: " << e.what());
+    }
 }
 
 void TCPChannelResourceSecure::close()
 {
-    secure_socket_->lowest_layer().close();
+    try
+    {
+        secure_socket_->lowest_layer().close();
+    }
+    catch(const std::exception& e)
+    {
+        (void)e;
+        logInfo(RTCP, "Closing ChannelResource: " << e.what());
+    }
 }
 
 void TCPChannelResourceSecure::shutdown(asio::socket_base::shutdown_type)
 {
-    secure_socket_->shutdown();
+    try
+    {
+        secure_socket_->shutdown();
+    }
+    catch(const std::exception& e)
+    {
+        (void)e;
+        logInfo(RTCP, "Shutting down ChannelResource: " << e.what());
+    }
 }
 
 } // namespace rtps

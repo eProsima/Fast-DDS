@@ -148,7 +148,7 @@ void TCPTransportInterface::clean()
             for (TCPAcceptor* acceptorIt : it->second)
             {
                 deleted_acceptors_.push_back(acceptorIt);
-                delete acceptorIt;
+                //delete acceptorIt;
             }
         }
         socket_acceptors_.clear();
@@ -171,6 +171,11 @@ void TCPTransportInterface::clean()
             unbound_channel_resources_.end());
         unbound_channel_resources_.clear();
     }
+
+    std::for_each(deleted_acceptors_.begin(), deleted_acceptors_.end(), [](TCPAcceptor* it)
+    {
+        delete it;
+    });
 
     std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](TCPChannelResource* it)
     {
@@ -215,14 +220,17 @@ TCPChannelResource* TCPTransportInterface::BindSocket(
         }
 
         TCPChannelResource* oldChannel = it->second;
-        channel_resources_[physicalLocator] = p_channel_resource;
 
         if (oldChannel->connection_established())
         {
             logError(RTCP, "Binding against an already connected locator: "
-                << IPLocator::to_string(locator) << ". The old one will be destroyed.");
+                << IPLocator::to_string(locator));// << ". The old one will be destroyed.");
         }
-        return oldChannel;
+        else
+        {
+            channel_resources_[physicalLocator] = p_channel_resource;
+            return oldChannel;
+        }
     }
     return nullptr;
 }
@@ -1058,66 +1066,7 @@ bool TCPTransportInterface::Receive(
 
     return success;
 }
-/*
-size_t TCPTransportInterface::send(
-        TCPChannelResource* p_channel_resource,
-        const octet* data,
-        size_t size, eSocketErrorCodes& errorCode) const
-{
-    size_t bytesSent = 0;
-    try
-    {
-        asio::error_code ec;
-        std::unique_lock<std::recursive_mutex> scopedLock(p_channel_resource->write_mutex());
-        //bytesSent = p_channel_resource->socket()->send(asio::buffer(data, size), 0, ec);
-        if (p_channel_resource->alive())
-        {
-            bytesSent = p_channel_resource->send(data, size, ec);
-            errorCode = eSocketErrorCodes::eNoError;
-        }
-        else
-        {
-            errorCode = eSocketErrorCodes::eBrokenPipe;
-        }
 
-    }
-    catch (const asio::error_code& error)
-    {
-        logInfo(RTCP, "ASIO [SEND]: " << error.message());
-        if ((asio::error::eof == error.value()) || (asio::error::connection_reset == error.value()))
-        {
-            errorCode = eSocketErrorCodes::eBrokenPipe;
-        }
-        else
-        {
-            errorCode = eSocketErrorCodes::eAsioError;
-        }
-    }
-    catch (const asio::system_error& error)
-    {
-        (void)error;
-        logInfo(RTCP, "ASIO [SEND]: " << error.what());
-        errorCode = eSocketErrorCodes::eSystemError;
-    }
-    catch (const std::exception& error)
-    {
-        (void)error;
-        logInfo(RTCP, "ASIO [SEND]: " << error.what());
-        errorCode = eSocketErrorCodes::eException;
-    }
-
-    return bytesSent;
-}
-
-size_t TCPTransportInterface::send(
-        TCPChannelResource *p_channel_resource,
-        const octet *data,
-        size_t size) const
-{
-    eSocketErrorCodes error;
-    return send(p_channel_resource, data, size, error);
-}
-*/
 bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
@@ -1314,7 +1263,8 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 void TCPTransportInterface::SocketAccepted(
         TCPAcceptorBasic* acceptor,
         Locator_t acceptor_locator, // The locator may be deleted while in this method. We want a copy of the locator.
-        const asio::error_code& error)
+        const asio::error_code& error,
+        std::shared_ptr<asio::ip::tcp::socket> socket)
 {
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -1336,7 +1286,7 @@ void TCPTransportInterface::SocketAccepted(
         {
             // Store the new connection.
             TCPChannelResource *p_channel_resource = new TCPChannelResourceBasic(this, rtcp_message_manager_,
-                io_service_, acceptor->move_socket(), configuration()->maxMessageSize);
+                io_service_, socket, configuration()->maxMessageSize);
 
             p_channel_resource->set_options(configuration());
 
@@ -1379,7 +1329,8 @@ void TCPTransportInterface::SocketAccepted(
 void TCPTransportInterface::SecureSocketAccepted(
         TCPAcceptorSecure* acceptor,
         Locator_t acceptor_locator, // The locator may be deleted while in this method. We want a copy of the locator.
-        const asio::error_code& error)
+        const asio::error_code& error,
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket)
 {
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
@@ -1401,7 +1352,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         {
             // Store the new connection.
             TCPChannelResource *p_channel_resource = new TCPChannelResourceSecure(this, rtcp_message_manager_,
-                io_service_, ssl_context_, acceptor->move_socket(), configuration()->maxMessageSize);
+                io_service_, ssl_context_, secure_socket, configuration()->maxMessageSize);
 
             p_channel_resource->set_options(configuration());
             unbound_channel_resources_.push_back(p_channel_resource);
@@ -1825,24 +1776,29 @@ void TCPTransportInterface::socket_canceller()
             std::for_each(
                 sockets_timestamp_.begin(),
                 sockets_timestamp_.end(),
-                [&to_delete, current_nano](const std::pair<TCPChannelResource*, uint64_t>& elem)
+                [this, &to_delete, current_nano](const std::pair<TCPChannelResource*, uint64_t>& elem)
                 {
                     if (elem.second <= current_nano)
                     {
                         to_delete.emplace_back(elem.first);
-                        logError(RTCP, "Cancelling socket " << IPLocator::to_string(elem.first->locator()));
+                        logError(RTCP, "Cancelling socket " << IPLocator::to_string(elem.first->locator())
+                            << ": " << elem.first);
+                        elem.first->shutdown(asio::ip::tcp::socket::shutdown_both);
                         elem.first->cancel();
+                        //elem.first->disconnect();
+                        //DeleteSocket(elem.first);
                     }
                 });
-
-            std::for_each(
-                to_delete.begin(),
-                to_delete.end(),
-                [this](TCPChannelResource* channel)
-                {
-                    remove_socket_to_cancel(channel);
-                });
         }
+
+        std::for_each(
+            to_delete.begin(),
+            to_delete.end(),
+            [this](TCPChannelResource* channel)
+            {
+                remove_socket_to_cancel(channel);
+            });
+
         to_delete.clear();
         eClock::my_sleep(50);
     }

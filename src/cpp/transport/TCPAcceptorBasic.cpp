@@ -49,12 +49,11 @@ void TCPAcceptorBasic::accept(TCPTransportInterface* parent)
         {
             if (!error)
             {
-                socket_ = std::make_shared<tcp::socket>(std::move(socket));
-                parent->SocketAccepted(this, locator, error);
+                parent->SocketAccepted(this, locator, error, std::make_shared<tcp::socket>(std::move(socket)));
             }
             else
             {
-                parent->SocketAccepted(this, locator, error); // Only manage the error
+                parent->SocketAccepted(this, locator, error, nullptr); // Only manage the error
             }
 
         });

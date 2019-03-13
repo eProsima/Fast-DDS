@@ -63,7 +63,7 @@ TCPChannelResourceBasic::~TCPChannelResourceBasic()
 void TCPChannelResourceBasic::connect()
 {
     std::unique_lock<std::mutex> scoped(status_mutex_);
-    if (connection_status_ == eConnectionStatus::eDisconnected)
+    if (connection_status_ == eConnectionStatus::eDisconnected && alive_)
     {
         connection_status_ = eConnectionStatus::eConnecting;
 
@@ -77,12 +77,15 @@ void TCPChannelResourceBasic::connect()
                 IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(locator_),
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
+            TCPTransportInterface* parent = parent_;
+            std::shared_ptr<asio::ip::tcp::socket> socket = socket_;
+
             asio::async_connect(
-                *socket_,
+                *socket,
                 endpoints,
-                [this, locator](std::error_code ec, ip::tcp::endpoint)
+                [parent, locator](std::error_code ec, ip::tcp::endpoint)
                 {
-                    parent_->SocketConnected(locator, ec);
+                    parent->SocketConnected(locator, ec);
                 }
             );
         }
@@ -155,17 +158,41 @@ void TCPChannelResourceBasic::set_options(const TCPTransportDescriptor* options)
 
 void TCPChannelResourceBasic::cancel()
 {
-    socket_->cancel();
+    try
+    {
+        socket_->cancel();
+    }
+    catch(const std::exception& e)
+    {
+        (void)e;
+        logInfo(RTCP, "Cancelling ChannelResource: " << e.what());
+    }
 }
 
 void TCPChannelResourceBasic::close()
 {
-    socket_->close();
+    try
+    {
+        socket_->close();
+    }
+    catch(const std::exception& e)
+    {
+        (void)e;
+        logInfo(RTCP, "Closing ChannelResource: " << e.what());
+    }
 }
 
 void TCPChannelResourceBasic::shutdown(asio::socket_base::shutdown_type what)
 {
-    socket_->shutdown(what);
+    try
+    {
+        socket_->shutdown(what);
+    }
+    catch(const std::exception& e)
+    {
+        (void)e;
+        logInfo(RTCP, "Shutting down ChannelResource: " << e.what());
+    }
 }
 
 } // namespace rtps
