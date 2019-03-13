@@ -123,8 +123,6 @@ bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
     RemoteWriterAttributes att(wdata);
     getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList);
 
-    att.endpoint.unicastLocatorList =
-        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({ att.endpoint.unicastLocatorList });
     wp->start(att);
 
     add_persistence_guid(att);
@@ -171,8 +169,6 @@ bool StatefulReader::matched_writer_add(const RemoteWriterAttributes& wdata)
     RemoteWriterAttributes att(wdata);
     getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList);
 
-    att.endpoint.unicastLocatorList =
-        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({att.endpoint.unicastLocatorList});
     wp->start(att);
 
     add_persistence_guid(att);
