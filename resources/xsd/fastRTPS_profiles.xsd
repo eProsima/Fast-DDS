@@ -252,7 +252,7 @@
 
     <xs:complexType name="locatorListType">
         <xs:sequence>
-            <xs:element name="locator" type="locatorType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="locator" type="locatorType" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -290,12 +290,12 @@
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
 		</xs:all>
-		<xs:attribute name="guidPrefix" type="guid" use="required"/>
+		<xs:attribute name="Prefix" type="guid" use="required"/>
 	</xs:complexType>
 	
 	<xs:complexType name="DiscoveryServerList">
         <xs:sequence>
-            <xs:element name="RemoteServer" type="RemoteServerAttributes" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="RemoteServer" type="RemoteServerAttributes" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 	

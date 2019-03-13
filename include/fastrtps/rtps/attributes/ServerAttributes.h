@@ -25,6 +25,8 @@
 #include "../common/Guid.h"
 #include "../common/Locator.h"
 
+#include <list>
+
 
 namespace eprosima {
 namespace fastrtps{
@@ -51,6 +53,11 @@ namespace rtps {
         GUID_t GetEDPPublicationsWriter() const;
         GUID_t GetEDPSubscriptionsReader() const;
 
+        inline bool ReadguidPrefix(const char * pfx)   
+        {
+            return bool(std::istringstream(pfx) >> guidPrefix);
+        }
+
         //!Metatraffic Unicast Locator List
         LocatorList_t metatrafficUnicastLocatorList;
         //!Metatraffic Multicast Locator List.
@@ -62,6 +69,8 @@ namespace rtps {
         // Live participant proxy reference
         const ParticipantProxyData * proxy{};
     };
+
+    typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 }
 } /* namespace rtps */
 } /* namespace eprosima */

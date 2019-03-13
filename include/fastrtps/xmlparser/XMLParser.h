@@ -444,11 +444,25 @@ class XMLParser
         bool* b,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        PDPType_t * e,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLList(
+        tinyxml2::XMLElement* elem,
+        RemoteServerList_t & list,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLRemoteServer(
+        tinyxml2::XMLElement* elem,
+        RemoteServerAttributes & server,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLString(
         tinyxml2::XMLElement* elem,
         std::string* s,
         uint8_t ident);
-
 
     RTPS_DllAPI static XMLP_ret getXMLTransports(
         tinyxml2::XMLElement *elem,

@@ -29,7 +29,6 @@
 #include "ServerAttributes.h"
 
 #include <memory>
-#include <list>
 
 namespace eprosima {
 namespace fastrtps{
@@ -59,7 +58,8 @@ typedef enum PDPType
     */
     CLIENT,
     SERVER
-}PDPType_t;
+
+} PDPType_t;
 
 /**
  * Class SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
@@ -109,6 +109,7 @@ class SimpleEDPAttributes
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class BuiltinAttributes{
+
     public:
         //! Chosen discovery protocol
         PDPType_t discoveryProtocol;
@@ -156,7 +157,7 @@ class BuiltinAttributes{
         Duration_t discoveryServer_client_syncperiod;
 
         //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
-        std::list<RemoteServerAttributes>  m_DiscoveryServers;
+        RemoteServerList_t  m_DiscoveryServers;
 
         //! Memory policy for builtin readers
         MemoryManagementPolicy_t readerHistoryMemoryPolicy;

@@ -138,16 +138,18 @@ inline std::istream& operator>>(std::istream& input, GuidPrefix_t& guiP)
 
     if (s)
     {
-        try
-        {
-            char point;
-            unsigned short hex;
+        char point;
+        unsigned short hex;
+        std::ios_base::iostate excp_mask;
 
-            input.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+        try
+        {   
+            excp_mask = input.exceptions();
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
             input >> std::hex >> hex;
             guiP.value[0] = hex;
 
-            for (uint8_t i = 1; i < 12; ++i)
+            for (int i = 1; i < 12; ++i)
             {
                 input >> point;
                 if (point != '.')
@@ -161,6 +163,8 @@ inline std::istream& operator>>(std::istream& input, GuidPrefix_t& guiP)
             input >> std::dec;
         }
         catch (std::ios_base::failure & ) {}
+
+        input.exceptions(excp_mask);
     }
 
     return input;
