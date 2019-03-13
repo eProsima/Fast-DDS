@@ -150,7 +150,6 @@ void TCPTransportInterface::clean()
             for (TCPAcceptor* acceptorIt : it->second)
             {
                 deleted_acceptors_.push_back(acceptorIt);
-                //delete acceptorIt;
             }
         }
         socket_acceptors_.clear();
@@ -229,8 +228,7 @@ TCPChannelResource* TCPTransportInterface::BindSocket(
 
         if (oldChannel->connection_established())
         {
-            logError(RTCP, "Binding against an already connected locator: "
-                << IPLocator::to_string(locator));// << ". The old one will be destroyed.");
+            logError(RTCP, "Binding against an already connected locator: " << IPLocator::to_string(locator));
         }
         else
         {
@@ -791,14 +789,6 @@ void TCPTransportInterface::perform_rtcp_management_thread(TCPChannelResource *p
     std::chrono::time_point<std::chrono::system_clock> timeout_time =
         time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
 
-/*
-    logInfo(RTCP, "START perform_rtcp_management_thread " << IPLocator::toIPv4string(p_channel_resource->locator()) \
-            << ":" << IPLocator::getPhysicalPort(p_channel_resource->locator()) << " (" \
-            << p_channel_resource->socket()->local_endpoint().address() << ":" \
-            << p_channel_resource->socket()->local_endpoint().port() << "->" \
-            << p_channel_resource->socket()->remote_endpoint().address() << ":" \
-            << p_channel_resource->socket()->remote_endpoint().port() << ")");
-*/
     while (p_channel_resource->alive())
     {
         if (p_channel_resource->connection_established())
@@ -849,7 +839,6 @@ void TCPTransportInterface::perform_listen_operation(TCPChannelResource *p_chann
         logicalPort = IPLocator::getLogicalPort(remote_locator);
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
         auto it = receiver_resources_.find(logicalPort);
-        //TransportReceiverInterface* receiver = p_channel_resource->GetMessageReceiver(logicalPort);
         if (it != receiver_resources_.end())
         {
             TransportReceiverInterface* receiver = it->second.first;
@@ -926,12 +915,8 @@ bool TCPTransportInterface::Receive(
                 success = true;
 
                 // Read the header
-                //octet header[TCPHEADER_SIZE];
                 TCPHeader tcp_header;
                 asio::error_code ec;
-                //size_t bytes_received = read(*p_channel_resource->socket(),
-                //    asio::buffer(&tcp_header, TCPHeader::getSize()),
-                //    transfer_exactly(TCPHeader::getSize()), ec);
 
                 size_t bytes_received = p_channel_resource->read(reinterpret_cast<octet*>(&tcp_header),
                     TCPHeader::size(), ec);
@@ -1164,14 +1149,6 @@ bool TCPTransportInterface::send(
                             success = true;
                         }
                     }
-                    //success = send_through_socket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::size()),
-                    //    remote_locator, tcpChannelResource);
-
-                    //if (success)
-                    //{
-                    //    success = send_through_socket(send_buffer, send_buffer_size, remote_locator,
-                    //        tcpChannelResource);
-                    //}
                 }
             }
         }
@@ -1192,39 +1169,7 @@ bool TCPTransportInterface::send(
         return true;
     }
 }
-/*
-bool TCPTransportInterface::send_through_socket(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
-        const Locator_t& remote_locator,
-        TCPChannelResource *socket)
-{
-    auto destinationEndpoint = generate_endpoint(remote_locator, IPLocator::getPhysicalPort(remote_locator));
 
-    size_t bytesSent = 0;
-    (void)destinationEndpoint;
-
-    //logInfo(RTCP, "SOCKET SEND to physical port " << socket->socket()->remote_endpoint().port());
-
-    eSocketErrorCodes errorCode;
-    bytesSent = send(socket, send_buffer, send_buffer_size, errorCode);
-    switch (errorCode)
-    {
-    case eNoError:
-        //logInfo(RTCP, " Sent [OK]: " << send_buffer_size << " bytes to locator " << IPLocator::getLogicalPort(remote_locator));
-        break;
-    default:
-        // Inform that connection has been lost
-        logInfo(RTCP, " Sent [FAILED]: " << send_buffer_size << " bytes to locator " << IPLocator::getLogicalPort(remote_locator) << " ERROR=" << errorCode);
-        //socket->ConnectionLost();
-        close_tcp_socket(socket);
-        break;
-    }
-
-    logInfo(RTCP_MSG_OUT, "[SENT] TO " << remote_locator << " - " << send_buffer_size << " (" << bytesSent << ").");
-    return bytesSent > 0;
-}
-*/
 LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
 {
     LocatorList_t unicastResult;
@@ -1791,8 +1736,6 @@ void TCPTransportInterface::socket_canceller()
                             << ": " << elem.first);
                         elem.first->shutdown(asio::ip::tcp::socket::shutdown_both);
                         elem.first->cancel();
-                        //elem.first->disconnect();
-                        //DeleteSocket(elem.first);
                     }
                 });
         }

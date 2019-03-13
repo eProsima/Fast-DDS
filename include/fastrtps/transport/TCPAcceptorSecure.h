@@ -28,7 +28,6 @@ namespace rtps{
  */
 class TCPAcceptorSecure : public TCPAcceptor
 {
-    //std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
 public:
     /**
     * Constructor
@@ -65,13 +64,6 @@ public:
     void accept(
         TCPTransportInterface* parent,
         std::shared_ptr<asio::ssl::context>);
-
-    //std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> move_socket()
-    //{
-    //    std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> to_return = secure_socket_;
-    //    secure_socket_ = nullptr;
-    //    return to_return;
-    //}
 };
 
 
