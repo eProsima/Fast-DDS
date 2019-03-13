@@ -174,23 +174,27 @@ void TCPTransportInterface::clean()
         unbound_channel_resources_.clear();
     }
 
-    std::for_each(deleted_acceptors_.begin(), deleted_acceptors_.end(), [](TCPAcceptor* it)
-    {
-        delete it;
-    });
-
     std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](TCPChannelResource* it)
     {
         this->DeleteSocket(it); // Disable all added TCPChannelResources
     });
 
-    clean_deleted_sockets();
-
     if (io_service_thread_)
     {
-        io_service_->stop();
+        do
+        {
+            io_service_->stop();
+        } while (!io_service_->stopped());
+
         io_service_thread_->join();
     }
+
+    std::for_each(deleted_acceptors_.begin(), deleted_acceptors_.end(), [](TCPAcceptor* it)
+    {
+        delete it;
+    });
+
+    clean_deleted_sockets();
 
     if (rtcp_message_manager_ != nullptr)
     {
