@@ -57,12 +57,8 @@ bool deadlinepayloadSubscriber::init(double deadline_ms)
 
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = WITH_KEY;
-    Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
+    Rparam.topic.topicDataType = myType.getName();
     Rparam.topic.topicName = "deadlinepayloadPubSubTopic";
-    Rparam.topic.resourceLimitsQos.allocated_samples=15;
-    Rparam.topic.resourceLimitsQos.max_instances=3;
-    Rparam.topic.resourceLimitsQos.max_samples_per_instance=5;
-    Rparam.topic.resourceLimitsQos.max_samples = 3*5;
     Rparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_deadline.period = deadline_ms * 1e-3;
     Rparam.topic.historyQos.depth = 5;

@@ -58,14 +58,8 @@ bool deadlinepayloadPublisher::init(double deadline_period_ms)
 
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = WITH_KEY;
-    Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
+    Wparam.topic.topicDataType = myType.getName();
     Wparam.topic.topicName = "deadlinepayloadPubSubTopic";
-    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 5;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 15;
-    Wparam.topic.resourceLimitsQos.max_instances = 3;
-    Wparam.topic.resourceLimitsQos.max_samples_per_instance = 5;
-    Wparam.topic.resourceLimitsQos.max_samples = 3*5;
     Wparam.qos.m_reliability.kind= RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_deadline.period = deadline_period_ms * 1e-3;
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
