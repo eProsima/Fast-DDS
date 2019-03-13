@@ -50,6 +50,12 @@
 #include <functional>
 #include <gtest/gtest.h>
 
+#if HAVE_SECURITY
+extern void blackbox_security_init();
+#endif
+
+extern uint16_t global_port;
+
 /****** Auxiliary print functions  ******/
 template<class Type>
 void default_receive_print(const Type&)
