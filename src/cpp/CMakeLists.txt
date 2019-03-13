@@ -29,6 +29,7 @@ set(${PROJECT_NAME}_source_files
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
     rtps/resources/TimedEventImpl.cpp
+    rtps/resources/TimedCallback.cpp
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
     rtps/writer/RTPSWriter.cpp

@@ -41,7 +41,7 @@ class RTPSWriter;
 class RTPSReader;
 class WriterProxyData;
 class ReaderProxyData;
-
+class ResourceEvent;
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
@@ -140,6 +140,8 @@ class RTPS_DllAPI RTPSParticipant
     bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
 
     bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
+
+    ResourceEvent& get_resource_event() const;
 
     private:
 
