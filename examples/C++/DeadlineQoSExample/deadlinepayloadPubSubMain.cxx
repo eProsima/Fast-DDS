@@ -27,8 +27,8 @@ int main(int argc, char** argv)
 {
     std::cout << "Starting " << std::endl;
     int type = 1;
-    int deadline = 2000;
-    int sleep = 1000;
+    int deadline_ms = 2000;
+    int sleep_ms = 1000;
     int samples = 0;
     if (argc > 1)
     {
@@ -37,10 +37,10 @@ int main(int argc, char** argv)
             type = 1;
             if (argc > 2)
             {
-                deadline = atoi(argv[2]);
+                deadline_ms = atoi(argv[2]);
                 if (argc > 3)
                 {
-                    sleep = atoi(argv[3]);
+                    sleep_ms = atoi(argv[3]);
                     if (argc > 4)
                     {
                         samples = atoi(argv[4]);
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
             type = 2;
             if (argc > 2)
             {
-                deadline = atoi(argv[2]);
+                deadline_ms = atoi(argv[2]);
             }
         }
     }
@@ -71,16 +71,16 @@ int main(int argc, char** argv)
         case 1:
             {
                 deadlinepayloadPublisher mypub;
-                if (mypub.init(deadline))
+                if (mypub.init(deadline_ms))
                 {
-                    mypub.run(sleep, samples);
+                    mypub.run(sleep_ms, samples);
                 }
                 break;
             }
         case 2:
             {
                 deadlinepayloadSubscriber mysub;
-                if (mysub.init(deadline))
+                if (mysub.init(deadline_ms))
                 {
                     mysub.run();
                 }

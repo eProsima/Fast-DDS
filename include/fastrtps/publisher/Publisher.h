@@ -25,6 +25,7 @@
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"
 #include "../attributes/PublisherAttributes.h"
+#include "../qos/OfferedDeadlineMissedStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -36,7 +37,6 @@ class WriteParams;
 }
 
 class PublisherImpl;
-struct OfferedDeadlineMissedStatus;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
