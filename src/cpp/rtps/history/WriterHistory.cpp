@@ -28,9 +28,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
-typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
-
+WriteParams WriteParams::WRITE_PARAM_DEFAULT;
 
 WriterHistory::WriterHistory(const HistoryAttributes& att):
     History(att),

@@ -31,18 +31,14 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-
-typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
-typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
-
-History::History(const HistoryAttributes & att):
-    m_att(att),
-    m_isHistoryFull(false),
-    mp_invalidCache(nullptr),
-    m_changePool(att.initialReservedCaches,att.payloadMaxSize,att.maximumReservedCaches,att.memoryPolicy),
-    mp_minSeqCacheChange(nullptr),
-    mp_maxSeqCacheChange(nullptr),
-    mp_mutex(nullptr)
+History::History(const HistoryAttributes & att)
+    : m_att(att)
+    , m_isHistoryFull(false)
+    , mp_invalidCache(nullptr)
+    , m_changePool(att.initialReservedCaches,att.payloadMaxSize,att.maximumReservedCaches,att.memoryPolicy)
+    , mp_minSeqCacheChange(nullptr)
+    , mp_maxSeqCacheChange(nullptr)
+    , mp_mutex(nullptr)
 
     {
         m_changes.reserve((uint32_t)abs(att.initialReservedCaches));
@@ -51,8 +47,6 @@ History::History(const HistoryAttributes & att):
         mp_invalidCache->sequenceNumber = c_SequenceNumber_Unknown;
         mp_minSeqCacheChange = mp_invalidCache;
         mp_maxSeqCacheChange = mp_invalidCache;
-        //logInfo(RTPS_HISTORY,"History created");
-
     }
 
 History::~History()
