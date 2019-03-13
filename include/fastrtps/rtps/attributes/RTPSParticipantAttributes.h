@@ -251,7 +251,8 @@ class RTPSParticipantAttributes
                    (this->participantID == b.participantID) &&
                    (this->throughputController == b.throughputController) &&
                    (this->useBuiltinTransports == b.useBuiltinTransports) &&
-                   (this->properties == b.properties);
+                   (this->properties == b.properties &&
+                   (this->prefix == b.prefix));
         }
 
         /**
@@ -276,6 +277,9 @@ class RTPSParticipantAttributes
          * Default value: 0.
          */
         uint32_t listenSocketBufferSize;
+
+        //! Optionally allow user defined GuidPrefix_t
+        GuidPrefix_t prefix;
 
         //! Builtin parameters.
         BuiltinAttributes builtin;

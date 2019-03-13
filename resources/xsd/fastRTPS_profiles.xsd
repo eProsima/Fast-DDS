@@ -280,7 +280,8 @@
 	
 	<xs:simpleType name="guid">
 		<xs:restriction base="xs:string">
-		  <xs:pattern value="[0-9a-fA-F]{12}" />
+		  <xs:pattern value="([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}" />
+      <xs:whiteSpace value='collapse'/>
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -589,6 +590,7 @@
 
     <xs:complexType name="rtpsParticipantAttributesType">
         <xs:all minOccurs="0">
+            <xs:element name="prefix" type="guid" minOccurs="0"/>
             <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>

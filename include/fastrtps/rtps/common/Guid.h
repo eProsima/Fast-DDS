@@ -132,6 +132,40 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
     return output<<std::dec;
 }
 
+inline std::istream& operator>>(std::istream& input, GuidPrefix_t& guiP) 
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        try
+        {
+            char point;
+            unsigned short hex;
+
+            input.exceptions(std::ios_base::failbit | std::ios_base::badbit);
+            input >> std::hex >> hex;
+            guiP.value[0] = hex;
+
+            for (uint8_t i = 1; i < 12; ++i)
+            {
+                input >> point;
+                if (point != '.')
+                {
+                    input.setstate(std::ios_base::failbit);
+                }
+                input >> hex;
+                guiP.value[i] = hex;
+            }
+
+            input >> std::dec;
+        }
+        catch (std::ios_base::failure & ) {}
+    }
+
+    return input;
+}
+
 #define ENTITYID_UNKNOWN 0x00000000
 #define ENTITYID_RTPSParticipant  0x000001c1
 #define ENTITYID_SEDP_BUILTIN_TOPIC_WRITER  0x000002c2

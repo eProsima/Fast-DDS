@@ -455,6 +455,11 @@ class XMLParser
         std::vector<std::shared_ptr<rtps::TransportDescriptorInterface>> &transports,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLguidPrefix(
+        tinyxml2::XMLElement *elem,
+        GuidPrefix_t &prefix,
+        uint8_t ident);
+
 };
 
 } // namespace xmlparser

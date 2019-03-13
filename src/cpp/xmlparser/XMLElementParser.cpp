@@ -2156,3 +2156,23 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     *s = text;
     return XMLP_ret::XML_OK;
 }
+
+XMLP_ret XMLParser::getXMLguidPrefix(tinyxml2::XMLElement *elem, GuidPrefix_t &prefix, uint8_t /*ident*/)
+{
+    const char* text = nullptr;
+
+    if (nullptr == elem )
+    {
+        logError(XMLPARSER, "nullptr when getXMLguidPrefix XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (text = elem->GetText()))
+    {
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLguidPrefix XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    std::istringstream is(text);
+    return (is >> prefix ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR);
+
+}
