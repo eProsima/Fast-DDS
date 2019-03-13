@@ -1,0 +1,374 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "SerializationTest.cpp"], description=["This file contains serialization test code."])$
+
+#include "$ctx.filename$PubSubTypes.h"
+#include <fastcdr/Cdr.h>
+#include <fastrtps/rtps/common/SerializedPayload.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <string.h>
+
+#define BUFFER_SIZE 64000
+
+$definitions; separator="\n"$
+
+int test$ctx.lastStructure.name$()
+{
+    using eprosima::fastrtps::rtps::SerializedPayload_t;
+
+    $ctx.lastStructure.name$ $ctx.lastStructure.name$_serialization_topic;
+    $ctx.lastStructure.name$ $ctx.lastStructure.name$_deserialization_topic;
+
+    initialize$ctx.lastStructure.name$(&$ctx.lastStructure.name$_serialization_topic);
+
+    $ctx.lastStructure.name$PubSubType pst;
+    uint32_t payloadSize = static_cast<uint32_t>(pst.getSerializedSizeProvider(&$ctx.lastStructure.name$_serialization_topic)());
+
+    SerializedPayload_t payload(payloadSize);
+    if (pst.serialize(&$ctx.lastStructure.name$_serialization_topic, &payload) == 0)
+    {
+        return 0;
+    }
+
+    if (pst.deserialize(&payload, &$ctx.lastStructure.name$_deserialization_topic) == 0)
+    {
+        return 0;
+    }
+
+    uint32_t payloadOutSize = static_cast<uint32_t>(pst.getSerializedSizeProvider(&$ctx.lastStructure.name$_deserialization_topic)());
+
+    //int topic_equal = memcmp(&$ctx.lastStructure.name$_serialization_topic, &$ctx.lastStructure.name$_deserialization_topic, sizeof(&$ctx.lastStructure.name$)) == 0;
+    int topic_equal = compare$ctx.lastStructure.name$(&$ctx.lastStructure.name$_serialization_topic, &$ctx.lastStructure.name$_deserialization_topic);
+    int size_equal = payloadOutSize == payloadSize;
+
+    printf("\n");
+    printf("===== Before serialize: =====\n");
+    print$ctx.lastStructure.name$(&$ctx.lastStructure.name$_serialization_topic);
+    printf("\n");
+    printf("===== After deserialize: =====\n");
+    print$ctx.lastStructure.name$(&$ctx.lastStructure.name$_deserialization_topic);
+    printf("\n");
+    printf("SerializedPayload_t: \n");
+    printf("length: %d - %d\n", payloadSize, payload.length);
+    printf("data: ");
+    for(int i = 0; i < payloadSize; ++i)
+    {
+        printf("%02X ", payload.data[i]);
+    }
+    printf("\n\n");
+
+    printf("Topic $ctx.lastStructure.name$ size: %s => payloadIn: %d, payloadOut: %d, type: %ld\n", size_equal ? "OK" : "ERROR", payloadSize, payloadOutSize, sizeof($ctx.lastStructure.name$));
+    printf("Topic $ctx.lastStructure.name$ comparation: %s\n", topic_equal ? "OK" : "ERROR");
+
+    if (!topic_equal)
+    {
+        return 0;
+    }
+
+    return payload.length == payloadSize;
+
+/*
+
+    uint8_t buffer[BUFFER_SIZE];
+    ucdrBuffer mb;
+
+    ucdr_init_buffer(&mb, buffer, BUFFER_SIZE);
+    $ctx.lastStructure.name$_serialize_topic(&mb, &$ctx.lastStructure.name$_serialization_topic);
+
+    ucdr_reset_buffer(&mb);
+    $ctx.lastStructure.name$_deserialize_topic(&mb, &$ctx.lastStructure.name$_deserialization_topic);
+
+    uint32_t $ctx.lastStructure.name$_serialization_topic_size = $ctx.lastStructure.name$_size_of_topic(&$ctx.lastStructure.name$_serialization_topic, 0);
+    uint32_t $ctx.lastStructure.name$_deserialization_topic_size = $ctx.lastStructure.name$_size_of_topic(&$ctx.lastStructure.name$_deserialization_topic, 0);
+    uint32_t buffer_length = ucdr_buffer_length(&mb);
+
+    int topic_equal = 0 == memcmp(&$ctx.lastStructure.name$_serialization_topic, &$ctx.lastStructure.name$_deserialization_topic, sizeof($ctx.lastStructure.name$));
+    int size_equal = $ctx.lastStructure.name$_serialization_topic_size == $ctx.lastStructure.name$_deserialization_topic_size;
+    size_equal = size_equal && $ctx.lastStructure.name$_serialization_topic_size == buffer_length;
+
+    printf("\n");
+    printf("===== Before serialize: =====\n");
+    print$ctx.lastStructure.name$(&$ctx.lastStructure.name$_serialization_topic);
+    printf("\n");
+    printf("===== After deserialize: =====\n");
+    print$ctx.lastStructure.name$(&$ctx.lastStructure.name$_deserialization_topic);
+    printf("\n");
+    printf("ucdrBuffer: \n");
+    printf("length: %d\n", buffer_length);
+    printf("data: ");
+    for(int i = 0; i < buffer_length; ++i)
+    {
+        printf("%02X ", mb.init[i]);
+    }
+    printf("\n\n");
+
+    printf("Topic $ctx.lastStructure.name$ size: %s => pre: %d, post: %d, buffer: %d\n", size_equal ? "OK" : "ERROR", $ctx.lastStructure.name$_serialization_topic_size, $ctx.lastStructure.name$_deserialization_topic_size, buffer_length);
+    printf("Topic $ctx.lastStructure.name$ comparation: %s\n", topic_equal ? "OK" : "ERROR");
+
+    return topic_equal && size_equal;
+    */
+}
+
+int main(void)
+{
+    return test$ctx.lastStructure.name$() ? 0 : 1;
+}
+
+>>
+
+struct_type(ctx, parent, struct) ::= <<
+void print$struct.name$($struct.name$* topic)
+{
+    printf("$struct.name$: { \n");
+    $struct.members:{$member_print(typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    printf("}\n");
+}
+
+void initialize$struct.name$($struct.name$* topic)
+{
+    $struct.members:{$member_assignment(typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+}
+
+int compare$struct.name$($struct.name$* a, $struct.name$* b)
+{
+    $struct.members:{$member_comparision(typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    return 1;
+}
+
+>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+
+// ========================================================================================
+//                                      ASSIGNMENT
+// ========================================================================================
+member_assignment(typecode, name, originName) ::= <<
+$if(typecode.primitive)$
+topic->$name$(static_cast<$typecode.cTypename$>(rand()));
+$elseif(typecode.isType_d)$
+topic->$name$("AAAAA");
+$elseif(typecode.isType_e)$
+$sequence_assigment(typecode=typecode, name=name)$
+$elseif(typecode.isType_f)$
+$array_assigment(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$else$
+initialize$typecode.cTypename$(&topic->$name$());
+$endif$
+>>
+
+array_member_assignment(typecode, name, originName) ::= <<
+$if(typecode.primitive)$
+topic->$name$ = static_cast<$typecode.cTypename$>(rand());
+$elseif(typecode.isType_d)$
+topic->$name$ = "AAAAA";
+$elseif(typecode.isType_e)$
+$sequence_assigment(typecode=typecode, name=name)$
+$elseif(typecode.isType_f)$
+$array_assigment(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$else$
+initialize$typecode.cTypename$(&topic->$name$());
+$endif$
+>>
+
+sequence_assigment(typecode, name) ::= <<
+$if(typecode.contentTypeCode.primitive)$
+memset(&topic->$name$(), rand(), topic->$name$().size() * $typecode.contentTypeCode.size$);
+$else$
+for(int i = 0; i < topic->$name$().size(); ++i)
+{
+    $array_member_assignment(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$endif$
+>>
+
+array_assigment(typecode, name, originalName, dimensions) ::= <<
+$if(rest(dimensions))$
+for(int i$length(dimensions)$ = 0; i$length(dimensions)$ < sizeof(topic->$name$()) / sizeof(topic->$name$()[0]); ++i$length(dimensions)$)
+{
+    $array_assigment(typecode=typecode, name=indexName(name=name, suffix=length(dimensions)), originName=originName, dimensions=rest(dimensions))$
+}
+$elseif(typecode.contentTypeCode.primitive)$
+memset(&topic->$name$(), static_cast<$typecode.cTypename$>(rand()), sizeof(topic->$name$()));
+$elseif(typecode.contentTypeCode.isType_d)$
+for(int i = 0; i < sizeof(topic->$name$()) / $typecode.contentTypeCode.maxsize$; ++i)
+{
+    $array_member_assignment(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$else$
+for(int i = 0; i < sizeof(topic->$name$()) / sizeof($typecode.cTypename$); ++i)
+{
+    $array_member_assignment(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$endif$
+>>
+
+// ========================================================================================
+//                                         PRINT
+// ========================================================================================
+member_print(typecode, name, originName) ::= <<
+$if(typecode.primitive)$
+printf("$name$: 0x%" PRIx64 "\n", (uint64_t)topic->$name$());
+$elseif(typecode.isType_d)$
+printf("$name$: %s\n", topic->$name$());
+$elseif(typecode.isType_e)$
+$sequence_print(typecode=typecode, name=name)$
+$elseif(typecode.isType_f)$
+$array_print(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$else$
+print$typecode.cTypename$(&topic->$name$());
+$endif$
+>>
+
+array_member_print(typecode, name, originName) ::= <<
+$if(typecode.primitive)$
+printf("$name$: 0x%" PRIx64 "\n", (uint64_t)topic->$name$);
+$elseif(typecode.isType_d)$
+printf("$name$: %s\n", topic->$name$);
+$elseif(typecode.isType_e)$
+$sequence_print(typecode=typecode, name=name)$
+$elseif(typecode.isType_f)$
+$array_print(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$else$
+print$typecode.cTypename$(&topic->$name$());
+$endif$
+>>
+
+sequence_print(typecode, name) ::= <<
+printf("$name$_size: 0x%" PRIx64 "\n", (uint64_t)topic->$name$().size());
+$if(typecode.contentTypeCode.primitive)$
+printf("$name$: ");
+$print_sequence(name)$
+$else$
+printf("$name$: \n");
+for(int i = 0; i < topic->$name$().size; ++i)
+{
+    $array_member_print(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$endif$
+>>
+
+array_print(typecode, name, originalName, dimensions) ::= <<
+$if(rest(dimensions))$
+printf("$name$: \n");
+for(int i$length(dimensions)$ = 0; i$length(dimensions)$ < sizeof(topic->$name$()) / sizeof(topic->$name$()[0]); ++i$length(dimensions)$)
+{
+    $array_print(typecode=typecode, name=indexName(name=name, suffix=length(dimensions)), originName=originName, dimensions=rest(dimensions))$
+}
+$elseif(typecode.contentTypeCode.primitive)$
+printf("$name$: ");
+$print_array(typecode=typecode, name=name)$
+$elseif(typecode.contentTypeCode.isType_d)$
+printf("$name$: \n");
+for(int i = 0; i < sizeof(topic->$name$()) / $typecode.contentTypeCode.maxsize$; ++i)
+{
+    $array_member_print(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$else$
+printf("$name$: \n");
+for(int i = 0; i < sizeof(topic->$name$()) / sizeof($typecode.cTypename$); ++i)
+{
+    $array_member_print(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$endif$
+>>
+
+print_sequence(name) ::= <<
+for(int i = 0; i < topic->$name$().size; ++i)
+{
+    printf("%" PRIx64 " ", (uint64_t)topic->$name$()[i]);
+}
+printf("\n");
+>>
+
+print_array(typecode, name) ::= <<
+for(int i = 0; i < sizeof(topic->$name$()) / sizeof($typecode.cTypename$); ++i)
+{
+    printf("%" PRIx64 " ", (uint64_t)topic->$name$()[i]);
+}
+printf("\n");
+>>
+
+// ========================================================================================
+//                                      COMPARISION
+// ========================================================================================
+member_comparision(typecode, name, originName) ::= <<
+$if(typecode.primitive)$
+if (a->$name$() != b->$name$()) return 0;
+$elseif(typecode.isType_d)$
+if (a->$name$() != b->$name$()) return 0;
+$elseif(typecode.isType_e)$
+$sequence_comparision(typecode=typecode, name=name)$
+$elseif(typecode.isType_f)$
+$array_comparision(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$else$
+if (!compare$typecode.cTypename$(&a->$name$(), &b->$name$())) return 0;
+$endif$
+>>
+
+array_member_comparision(typecode, name, originName) ::= <<
+$if(typecode.primitive)$
+if (a->$name$ != b->$name$) return 0;
+$elseif(typecode.isType_d)$
+if (a->$name$ != b->$name$) return 0;
+$elseif(typecode.isType_e)$
+$sequence_comparision(typecode=typecode, name=name)$
+$elseif(typecode.isType_f)$
+$array_comparision(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$else$
+if (!compare$typecode.cTypename$(&a->$name$, &b->$name$)) return 0;
+$endif$
+>>
+
+sequence_comparision(typecode, name) ::= <<
+for(int i = 0; i < a->$name$().size(); ++i)
+{
+    $array_member_comparision(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+>>
+
+array_comparision(typecode, name, originalName, dimensions) ::= <<
+$if(rest(dimensions))$
+for(int i$length(dimensions)$ = 0; i$length(dimensions)$ < sizeof(a->$name$()) / sizeof(a->$name$()[0]); ++i$length(dimensions)$)
+{
+    $array_comparision(typecode=typecode, name=indexName(name=name, suffix=length(dimensions)), originName=originName, dimensions=rest(dimensions))$
+}
+$elseif(typecode.contentTypeCode.primitive)$
+if (memcmp(&a->$name$(), &b->$name$(), sizeof(a->$name$())) != 0) return 0;
+$elseif(typecode.contentTypeCode.isType_d)$
+for(int i = 0; i < sizeof(a->$name$()) / $typecode.contentTypeCode.maxsize$; ++i)
+{
+    $array_member_comparision(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$else$
+for(int i = 0; i < sizeof(a->$name$()) / sizeof($typecode.cTypename$); ++i)
+{
+    $array_member_comparision(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+}
+$endif$
+>>
+
+// ========================================================================================
+//                                      AUXILIAR
+// ========================================================================================
+indexName(name, suffix) ::= <<$name$()[i$suffix$]>>

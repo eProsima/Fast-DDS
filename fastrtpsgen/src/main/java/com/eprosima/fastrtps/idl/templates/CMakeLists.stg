@@ -14,7 +14,7 @@
 
 group CMakeLists;
 
-cmakelists(solution) ::= <<
+cmakelists(solution, test) ::= <<
 
 cmake_minimum_required(VERSION 2.8.12)
 
@@ -27,11 +27,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
 
-$solution.projects : {$pub_sub_execs(project=it, libraries=solution.libraries)$}; separator="\n"$
+$solution.projects : {$pub_sub_execs(project=it, libraries=solution.libraries, test=test)$}; separator="\n"$
 
 >>
 
-pub_sub_execs(project, libraries) ::= <<
+pub_sub_execs(project, libraries, test) ::= <<
 
 message(STATUS "Configuring $project.name$...")
 add_library($project.name$_lib $project.commonSrcFiles : {$it$}; separator=" "$)
@@ -40,5 +40,13 @@ target_link_libraries($project.name$_lib $solution.libraries : {$it$}; separator
 add_executable($project.name$ $project.projectSrcFiles : {$it$}; separator=" "$)
 target_link_libraries($project.name$ $solution.libraries : {$it$}; separator=" "$
         $project.name$_lib $project.dependencies : {$it$_lib}; separator=" "$)
+
+
+$if(test)$
+# $project.name$ Serialization Test
+add_executable($project.name$SerializationTest $project.name$SerializationTest.cpp $project.name$PubSubTypes.cxx)
+target_link_libraries($project.name$SerializationTest $project.name$_lib $solution.libraries : {$it$}; separator=" "$)
+
+$endif$
 
 >>

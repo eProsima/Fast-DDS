@@ -108,6 +108,9 @@ public class fastrtpsgen {
     // Export PubSub symbols
     private boolean m_export_pubsub_symbols = false;
 
+    // Testing
+    private boolean m_test = false;
+
     // Use to know the programming language
     public enum LANGUAGE
     {
@@ -222,6 +225,10 @@ public class fastrtpsgen {
             {
                 m_export_pubsub_symbols = true;
             }
+            else if(arg.equals("-test"))
+            {
+                m_test = true;
+            }
             else if(arg.equals("-I"))
             {
                 if (count < args.length) {
@@ -309,7 +316,7 @@ public class fastrtpsgen {
                     solution.addInclude("$(JAVA_HOME)/include/linux");
             }
 
-            if (m_exampleOption != null && !m_exampleOption.contains("Win")) {
+            if ((m_exampleOption != null || m_test) && !m_exampleOption.contains("Win")) {
                 solution.addLibrary("fastcdr");
             }
 
@@ -328,7 +335,7 @@ public class fastrtpsgen {
             }
 
             // Generate solution
-            if (returnedValue && m_exampleOption != null) {
+            if (returnedValue && (m_exampleOption != null) || m_test) {
                 if ((returnedValue = genSolution(solution)) == false) {
                     System.out.println(ColorMessage.error() + "While the solution was being generated");
                 }
@@ -535,6 +542,12 @@ public class fastrtpsgen {
             // Load PubSubMain template
             tmanager.addGroup("RTPSPubSubMain");
 
+            if (m_test)
+            {
+                // Load test template
+                tmanager.addGroup("SerializationTestSource");
+            }
+
             // Add JNI sources.
             if(m_languageOption == LANGUAGE.JAVA)
             {
@@ -594,6 +607,15 @@ public class fastrtpsgen {
                             }
                         }
                     }
+                }
+
+                if (m_test)
+                {
+                    System.out.println("Generating Serialization Test file...");
+                    String fileName = m_outputDir + onlyFileName + "SerializationTest.cpp";
+                    returnedValue =
+                        Utils.writeFile(fileName, maintemplates.getTemplate("SerializationTestSource"), m_replace);
+                    //project.addCommonSrcFile(fileName);
                 }
 
                 // TODO: Uncomment following lines and create templates
@@ -704,7 +726,7 @@ public class fastrtpsgen {
             if (m_exampleOption != null) {
                 System.out.println("Generating solution for arch " + m_exampleOption + "...");
 
-                if (m_exampleOption.equals("CMake")) {
+                if (m_exampleOption.equals("CMake") || m_test) {
                     System.out.println("Generating CMakeLists solution");
                     returnedValue = genCMakeLists(solution);
                 } else if (m_exampleOption.substring(3, 6).equals("Win")) {
@@ -900,6 +922,7 @@ public class fastrtpsgen {
             cmake = cmakeTemplates.getInstanceOf("cmakelists");
 
             cmake.setAttribute("solution", solution);
+            cmake.setAttribute("test", m_test);
 
             returnedValue = Utils.writeFile(m_outputDir + "CMakeLists.txt", cmake, m_replace);
 
