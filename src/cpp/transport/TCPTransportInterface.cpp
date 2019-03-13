@@ -100,7 +100,8 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator=(const TCPTransportDesc
 
 #if TLS_FOUND
 TCPTransportInterface::TCPTransportInterface()
-    : ssl_context_(asio::ssl::context::sslv23)
+    : io_service_(std::make_shared<asio::io_service>())
+    , ssl_context_(std::make_shared<asio::ssl::context>(asio::ssl::context::sslv23))
     , rtcp_message_manager_(nullptr)
     , send_retry_active_(true)
     , clean_sockets_pool_timer_(nullptr)
@@ -110,7 +111,8 @@ TCPTransportInterface::TCPTransportInterface()
 }
 #else
 TCPTransportInterface::TCPTransportInterface()
-    : rtcp_message_manager_(nullptr)
+    : io_service_(std::make_shared<asio::io_service>())
+    , rtcp_message_manager_(nullptr)
     , send_retry_active_(true)
     , clean_sockets_pool_timer_(nullptr)
     , stop_socket_canceller_(false)
@@ -186,7 +188,7 @@ void TCPTransportInterface::clean()
 
     if (io_service_thread_)
     {
-        io_service_.stop();
+        io_service_->stop();
         io_service_thread_->join();
     }
 
@@ -480,7 +482,7 @@ bool TCPTransportInterface::init()
     if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
     {
         // Check system buffer sizes.
-        ip::tcp::socket socket(io_service_);
+        ip::tcp::socket socket(*io_service_);
         socket.open(generate_protocol());
 
         if (configuration()->sendBufferSize == 0)
@@ -538,8 +540,8 @@ bool TCPTransportInterface::init()
 
     auto ioServiceFunction = [&]()
     {
-        io_service::work work(io_service_);
-        io_service_.run();
+        io_service::work work(*io_service_);
+        io_service_->run();
     };
     io_service_thread_.reset(new std::thread(ioServiceFunction));
 
@@ -1621,7 +1623,7 @@ void TCPTransportInterface::apply_tls_config()
     const TCPTransportDescriptor* descriptor = configuration();
     if (descriptor->apply_security)
     {
-        ssl_context_.set_verify_callback([](bool preverified, ssl::verify_context&)
+        ssl_context_->set_verify_callback([](bool preverified, ssl::verify_context&)
         {
             return preverified;
         });
@@ -1631,50 +1633,50 @@ void TCPTransportInterface::apply_tls_config()
 
         if (!config->password.empty())
         {
-            ssl_context_.set_password_callback(std::bind(&TCPTransportInterface::get_password, this));
+            ssl_context_->set_password_callback(std::bind(&TCPTransportInterface::get_password, this));
         }
 
         if (!config->verify_file.empty())
         {
-            ssl_context_.load_verify_file(config->verify_file);
+            ssl_context_->load_verify_file(config->verify_file);
         }
 
         if (!config->cert_chain_file.empty())
         {
-            ssl_context_.use_certificate_chain_file(config->cert_chain_file);
+            ssl_context_->use_certificate_chain_file(config->cert_chain_file);
         }
 
         if (!config->private_key_file.empty())
         {
-            ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
+            ssl_context_->use_private_key_file(config->private_key_file, ssl::context::pem);
         }
 
         if (!config->tmp_dh_file.empty())
         {
-            ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
+            ssl_context_->use_tmp_dh_file(config->tmp_dh_file);
         }
 
         if (!config->verify_paths.empty())
         {
             for (const std::string& path : config->verify_paths)
             {
-                ssl_context_.add_verify_path(path);
+                ssl_context_->add_verify_path(path);
             }
         }
 
         if (config->default_verify_path)
         {
-            ssl_context_.set_default_verify_paths();
+            ssl_context_->set_default_verify_paths();
         }
 
         if (config->verify_depth >= 0)
         {
-            ssl_context_.set_verify_depth(config->verify_depth);
+            ssl_context_->set_verify_depth(config->verify_depth);
         }
 
         if (!config->rsa_private_key_file.empty())
         {
-            ssl_context_.use_private_key_file(config->rsa_private_key_file, ssl::context::pem);
+            ssl_context_->use_private_key_file(config->rsa_private_key_file, ssl::context::pem);
         }
 
         if (config->options != TLSOptions::NONE)
@@ -1728,7 +1730,7 @@ void TCPTransportInterface::apply_tls_config()
                 options |= ssl::context::single_dh_use;
             }
 
-            ssl_context_.set_options(options);
+            ssl_context_->set_options(options);
         }
     }
 #endif

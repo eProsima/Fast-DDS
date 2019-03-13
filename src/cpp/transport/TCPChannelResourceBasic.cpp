@@ -27,19 +27,19 @@ namespace rtps {
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         RTCPMessageManager* rtcpManager,
-        asio::io_service& service,
+        std::shared_ptr<asio::io_service> service,
         const Locator_t& locator,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
     , service_(service)
-    , socket_(std::make_shared<asio::ip::tcp::socket>(service))
+    , socket_(std::make_shared<asio::ip::tcp::socket>(*service_))
 {
 }
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         RTCPMessageManager* rtcpManager,
-        asio::io_service& service,
+        std::shared_ptr<asio::io_service> service,
         std::shared_ptr<asio::ip::tcp::socket> socket,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, maxMsgSize)
@@ -71,7 +71,7 @@ void TCPChannelResourceBasic::connect()
         {
             Locator_t locator = locator_;
 
-            ip::tcp::resolver resolver(service_);
+            ip::tcp::resolver resolver(*service_);
 
             auto endpoints = resolver.resolve(
                 IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(locator_),

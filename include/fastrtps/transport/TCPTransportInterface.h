@@ -73,9 +73,9 @@ class TCPTransportInterface : public TransportInterface
 protected:
     std::vector<IPFinder::info_IP> current_interfaces_;
     int32_t transport_kind_;
-    asio::io_service io_service_;
+    std::shared_ptr<asio::io_service> io_service_;
 #if TLS_FOUND
-    asio::ssl::context ssl_context_;
+    std::shared_ptr<asio::ssl::context> ssl_context_;
 #endif
     std::shared_ptr<std::thread> io_service_thread_;
     RTCPMessageManager* rtcp_message_manager_;

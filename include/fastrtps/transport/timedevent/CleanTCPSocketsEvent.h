@@ -35,14 +35,21 @@ class TCPTransportInterface;
  */
 class CleanTCPSocketsEvent :public TimedEvent
 {
+    //!Pointer to the TCPTransportInterface object.
+    TCPTransportInterface* transport_;
+
 public:
 	/**
 	 * Constructor
 	 * @param p_transport Pointer to the TCPTransportInterface object.
 	 * @param interval Interval in ms.
 	 */
-    CleanTCPSocketsEvent(TCPTransportInterface* p_transport, asio::io_service& service, const std::thread& thread,
-        double interval);
+    CleanTCPSocketsEvent(
+			TCPTransportInterface* p_transport,
+			std::shared_ptr<asio::io_service> service,
+			const std::thread& thread,
+        	double interval);
+
 	virtual ~CleanTCPSocketsEvent();
 
  	/**
@@ -51,9 +58,6 @@ public:
 	* @param msg Message associated to the event
 	*/
 	void event(EventCode code, const char* msg = nullptr);
-
-    //!Pointer to the TCPTransportInterface object.
-    TCPTransportInterface* mp_transport;
 };
 
 }

@@ -34,16 +34,16 @@ protected:
     Locator_t locator_;
     asio::ip::tcp::endpoint endpoint_;
     std::vector<Locator_t> pending_out_locators_;
-    asio::io_service* io_service_;
+    std::shared_ptr<asio::io_service> io_service_;
 
 public:
     TCPAcceptor(
-        asio::io_service& io_service,
+        std::shared_ptr<asio::io_service> io_service,
         TCPTransportInterface* parent,
         const Locator_t& locator);
 
     TCPAcceptor(
-        asio::io_service& io_service,
+        std::shared_ptr<asio::io_service> io_service,
         const std::string& interface,
         const Locator_t& locator);
 

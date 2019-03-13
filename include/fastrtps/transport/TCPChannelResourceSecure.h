@@ -25,8 +25,8 @@ namespace rtps{
 
 class TCPChannelResourceSecure : public TCPChannelResource
 {
-    asio::io_service& service_;
-    asio::ssl::context& ssl_context_;
+    std::shared_ptr<asio::io_service> service_;
+    std::shared_ptr<asio::ssl::context> ssl_context_;
     std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
 
 public:
@@ -34,8 +34,8 @@ public:
     TCPChannelResourceSecure(
         TCPTransportInterface* parent,
         RTCPMessageManager* rtcpManager,
-        asio::io_service& service,
-        asio::ssl::context& ssl_context,
+        std::shared_ptr<asio::io_service> service,
+        std::shared_ptr<asio::ssl::context> ssl_context,
         const Locator_t& locator,
         uint32_t maxMsgSize);
 
@@ -43,8 +43,8 @@ public:
     TCPChannelResourceSecure(
         TCPTransportInterface* parent,
         RTCPMessageManager* rtcpManager,
-        asio::io_service& service,
-        asio::ssl::context& ssl_context,
+        std::shared_ptr<asio::io_service> service,
+        std::shared_ptr<asio::ssl::context> ssl_context,
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         uint32_t maxMsgSize);
 

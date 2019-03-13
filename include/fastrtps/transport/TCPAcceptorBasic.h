@@ -36,7 +36,7 @@ public:
     * @param locator Locator with the information about where to accept connections.
     */
     TCPAcceptorBasic(
-        asio::io_service& io_service,
+        std::shared_ptr<asio::io_service> io_service,
         TCPTransportInterface* parent,
         const Locator_t& locator);
 
@@ -47,7 +47,7 @@ public:
     * @param locator Locator with the information about where to accept connections.
     */
     TCPAcceptorBasic(
-        asio::io_service& io_service,
+        std::shared_ptr<asio::io_service> io_service,
         const std::string& interface,
         const Locator_t& locator);
 

@@ -29,10 +29,13 @@ namespace fastrtps{
 namespace rtps {
 
 
-CleanTCPSocketsEvent::CleanTCPSocketsEvent(TCPTransportInterface* p_transport, asio::io_service& service,
-    const std::thread& thread, double interval)
-: TimedEvent(service, thread, interval, TimedEvent::NONE)
-, mp_transport(p_transport)
+CleanTCPSocketsEvent::CleanTCPSocketsEvent(
+        TCPTransportInterface* p_transport,
+        std::shared_ptr<asio::io_service> service,
+        const std::thread& thread,
+        double interval)
+: TimedEvent(*service, thread, interval, TimedEvent::NONE)
+, transport_(p_transport)
 {
 
 }
@@ -46,7 +49,7 @@ void CleanTCPSocketsEvent::event(EventCode code, const char* /*msg*/)
 {
     if(code == EVENT_SUCCESS)
     {
-        mp_transport->clean_deleted_sockets();
+        transport_->clean_deleted_sockets();
     }
 }
 

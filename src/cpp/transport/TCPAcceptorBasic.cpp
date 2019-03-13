@@ -21,7 +21,7 @@ namespace fastrtps{
 namespace rtps{
 
 TCPAcceptorBasic::TCPAcceptorBasic(
-        asio::io_service& io_service,
+        std::shared_ptr<asio::io_service> io_service,
         TCPTransportInterface* parent,
         const Locator_t& locator)
     : TCPAcceptor(io_service, parent, locator)
@@ -30,7 +30,7 @@ TCPAcceptorBasic::TCPAcceptorBasic(
 }
 
 TCPAcceptorBasic::TCPAcceptorBasic(
-        asio::io_service& io_service,
+        std::shared_ptr<asio::io_service> io_service,
         const std::string& interface,
         const Locator_t& locator)
     : TCPAcceptor(io_service, interface, locator)
