@@ -54,15 +54,12 @@ PublisherHistory::PublisherHistory(
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
     , mp_pubImpl(pimpl)
-    , mp_latestCacheChange(new CacheChange_t)
 {
     // TODO Auto-generated constructor stub
-
 }
 
 PublisherHistory::~PublisherHistory()
 {
-    delete mp_latestCacheChange;
 }
 
 
@@ -101,7 +98,6 @@ bool PublisherHistory::add_pub_change(
     {
         if(this->add_change_(change, wparams, max_blocking_time))
         {
-            mp_latestCacheChange->copy(change);
             returnedValue = true;
         }
     }
@@ -115,7 +111,7 @@ bool PublisherHistory::add_pub_change(
             bool add = false;
             if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if((int32_t)vit->second.cache_changes_.size() < m_resourceLimitsQos.max_samples_per_instance)
+                if((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -126,13 +122,13 @@ bool PublisherHistory::add_pub_change(
             }
             else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if(vit->second.cache_changes_.size() < (size_t)m_historyQos.depth)
+                if(vit->second.size() < (size_t)m_historyQos.depth)
                 {
                     add = true;
                 }
                 else
                 {
-                    if(remove_change_pub(vit->second.cache_changes_.front()))
+                    if(remove_change_pub(vit->second.front()))
                     {
                         add = true;
                     }
@@ -146,8 +142,7 @@ bool PublisherHistory::add_pub_change(
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
                             << " and "<<change->serializedPayload.length<< " bytes");
-                    vit->second.cache_changes_.push_back(change);
-                    vit->second.latest_change_->copy(change);
+                    vit->second.push_back(change);
                     returnedValue =  true;
                 }
             }
@@ -172,17 +167,17 @@ bool PublisherHistory::find_key(
 
     if ((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
     {
-        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
         return true;
     }
     else
     {
         for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
         {
-            if (vit->second.cache_changes_.size() == 0)
+            if (vit->second.size() == 0)
             {
                 m_keyedChanges.erase(vit);
-                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
                 return true;
             }
         }
@@ -255,14 +250,14 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
             return false;
         }
 
-        for(auto chit = vit->second.cache_changes_.begin(); chit!= vit->second.cache_changes_.end(); ++chit)
+        for(auto chit = vit->second.begin(); chit!= vit->second.end(); ++chit)
         {
             if( ((*chit)->sequenceNumber == change->sequenceNumber)
                     && ((*chit)->writerGUID == change->writerGUID) )
             {
                 if(remove_change(change))
                 {
-                    vit->second.cache_changes_.erase(chit);
+                    vit->second.erase(chit);
                     m_isHistoryFull = false;
                     return true;
                 }
@@ -276,43 +271,4 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
 bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
-}
-
-void PublisherHistory::get_latest_samples(std::vector<CacheChange_t *> &samples, int& num_samples)
-{
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
-
-    num_samples = 0;
-
-    if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
-    {
-        if (samples.size() < 1)
-        {
-            logError(PUBLISHER, "Cannot return latest sample, output vector is not long enough");
-            return;
-        }
-
-        if (mp_latestCacheChange != mp_invalidCache)
-        {
-            samples[num_samples++] = mp_latestCacheChange;
-        }
-    }
-    else if (mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
-    {
-        if (samples.size() < m_keyedChanges.size())
-        {
-            logError(PUBLISHER, "Cannot return latest samples, output vector is not long enough");
-            return;
-        }
-
-        if (m_keyedChanges.empty())
-        {
-            return;
-        }
-
-        for (auto it = m_keyedChanges.begin(); it != m_keyedChanges.end(); ++it)
-        {
-            samples[num_samples++] = it->second.latest_change_;
-        }
-    }
 }

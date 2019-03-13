@@ -57,7 +57,6 @@ SubscriberHistory::SubscriberHistory(
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
     , mp_subImpl(simpl)
-    , mp_latestCacheChange(new CacheChange_t)
     , mp_getKeyObject(nullptr)
 {
     if (mp_subImpl->getType()->m_isGetKeyDefined)
@@ -72,7 +71,6 @@ SubscriberHistory::~SubscriberHistory()
     {
         mp_subImpl->getType()->deleteData(mp_getKeyObject);
     }
-    delete mp_latestCacheChange;
 }
 
 bool SubscriberHistory::received_change(
@@ -157,11 +155,6 @@ bool SubscriberHistory::received_change(
                     << ": Change " << a_change->sequenceNumber << " added from: "
                     << a_change->writerGUID;);
 
-                if (mp_latestCacheChange == mp_invalidCache || mp_latestCacheChange->sourceTimestamp < a_change->sourceTimestamp)
-                {
-                    mp_latestCacheChange->copy(a_change);
-                }
-
                 return true;
             }
         }
@@ -193,7 +186,7 @@ bool SubscriberHistory::received_change(
             bool add = false;
             if (m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if ((int32_t)vit->second.cache_changes_.size() < m_resourceLimitsQos.max_samples_per_instance)
+                if ((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -205,15 +198,15 @@ bool SubscriberHistory::received_change(
             }
             else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if (vit->second.cache_changes_.size() < (size_t)m_historyQos.depth)
+                if (vit->second.size() < (size_t)m_historyQos.depth)
                 {
                     add = true;
                 }
                 else
                 {
                     // Try to substitute the oldest sample with the same key
-                    auto older_sample = vit->second.cache_changes_.rend();
-                    for (auto it = vit->second.cache_changes_.rbegin(); it != vit->second.cache_changes_.rend(); ++it)
+                    auto older_sample = vit->second.rend();
+                    for (auto it = vit->second.rbegin(); it != vit->second.rend(); ++it)
                     {
 
                         if ((*it)->writerGUID == a_change->writerGUID)
@@ -226,7 +219,7 @@ bool SubscriberHistory::received_change(
                         }
                     }
 
-                    if (older_sample != vit->second.cache_changes_.rend())
+                    if (older_sample != vit->second.rend())
                     {
                         bool read = (*older_sample)->isRead;
 
@@ -257,22 +250,21 @@ bool SubscriberHistory::received_change(
                     if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                         m_isHistoryFull = true;
                     //ADD TO KEY VECTOR
-                    if (vit->second.cache_changes_.size() == 0)
+                    if (vit->second.size() == 0)
                     {
-                        vit->second.cache_changes_.push_back(a_change);
+                        vit->second.push_back(a_change);
                     }
-                    else if (vit->second.cache_changes_.back()->sequenceNumber < a_change->sequenceNumber)
+                    else if (vit->second.back()->sequenceNumber < a_change->sequenceNumber)
                     {
-                        vit->second.cache_changes_.push_back(a_change);
+                        vit->second.push_back(a_change);
                     }
                     else
                     {
-                        vit->second.cache_changes_.push_back(a_change);
-                        std::sort(vit->second.cache_changes_.begin(),
-                                  vit->second.cache_changes_.end(),
+                        vit->second.push_back(a_change);
+                        std::sort(vit->second.begin(),
+                                  vit->second.end(),
                                   sort_ReaderHistoryCache);
                     }
-                    vit->second.latest_change_->copy(vit->second.cache_changes_.back());
 
                     logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId
                         << ": Change " << a_change->sequenceNumber << " added from: "
@@ -496,17 +488,17 @@ bool SubscriberHistory::find_key(
 
     if ((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
     {
-        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
         return true;
     }
     else
     {
         for (vit = m_keyedChanges.begin(); vit!= m_keyedChanges.end(); ++vit)
         {
-            if (vit->second.cache_changes_.size() == 0)
+            if (vit->second.size() == 0)
             {
                 m_keyedChanges.erase(vit);
-                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
                 return true;
             }
         }
@@ -542,13 +534,13 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
             return false;
         }
 
-        for (auto chit = vit->second.cache_changes_.begin(); chit != vit->second.cache_changes_.end(); ++chit)
+        for (auto chit = vit->second.begin(); chit != vit->second.end(); ++chit)
         {
             if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)
             {
                 if (remove_change(change))
                 {
-                    vit->second.cache_changes_.erase(chit);
+                    vit->second.erase(chit);
                     m_isHistoryFull = false;
                     return true;
                 }
@@ -557,43 +549,4 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
         logError(SUBSCRIBER, "Change not found, something is wrong");
     }
     return false;
-}
-
-void SubscriberHistory::get_latest_samples(std::vector<CacheChange_t*> &samples, int &num_samples)
-{
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-
-    num_samples = 0;
-
-    if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
-    {
-        if (samples.size() < 1)
-        {
-            logError(SUBSCRIBER, "Cannot return latest sample, output vector is not long enough");
-            return;
-        }
-
-        if(mp_latestCacheChange != mp_invalidCache)
-        {
-            samples[num_samples++] = mp_latestCacheChange;
-        }
-    }
-    else if (mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
-    {
-        if (samples.size() < m_keyedChanges.size())
-        {
-            logError(SUBSCRIBER, "Cannot return latest samples, output vector is not long enough");
-            return;
-        }
-
-        if (m_keyedChanges.empty())
-        {
-            return;
-        }
-
-        for (auto it = m_keyedChanges.begin(); it != m_keyedChanges.end(); ++it)
-        {
-            samples[num_samples++] = it->second.latest_change_;
-        }
-    }
 }

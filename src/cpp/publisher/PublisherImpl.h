@@ -168,14 +168,20 @@ class PublisherImpl
     DeadlineTimer deadline_timer_;
     //! Deadline duration
     Duration_t deadline_duration_;
-    //! A vector to store the latest samples to check for deadlines
-    std::vector<CacheChange_t*> deadline_samples_;
+    //! A map where keys are instance handles and values are times when instances are due to 'expire', i.e. miss the deadline
+    std::map<InstanceHandle_t, Time_t> next_deadline_;
+    //! The current timer owner, i.e. the instance which started the timer
+    InstanceHandle_t timer_owner_;
     //! The offered deadline missed status
     OfferedDeadlineMissedStatus deadline_missed_status_;
 
-    /** Method to check for deadlines
+    /** Method called when an instance misses the deadline
      */
-    void check_deadlines();
+    void deadline_missed();
+
+    /** A method to reschedule the deadline timer
+     */
+    void timer_reschedule();
 };
 
 

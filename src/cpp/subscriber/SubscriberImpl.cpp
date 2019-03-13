@@ -53,12 +53,12 @@ SubscriberImpl::SubscriberImpl(
     , m_readerListener(this)
     , mp_userSubscriber(nullptr)
     , mp_rtpsParticipant(nullptr)
-    , deadline_timer_(std::bind(&SubscriberImpl::check_deadlines, this),
+    , deadline_timer_(std::bind(&SubscriberImpl::deadline_missed, this),
                       att.qos.m_deadline.period,
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_(att.qos.m_deadline.period)
-    , deadline_samples_(att.topic.getTopicKind() == NO_KEY? 1: att.topic.resourceLimitsQos.max_instances)
+    , next_deadline_()
     , deadline_missed_status_()
 {
 }
@@ -207,12 +207,19 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
-void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const /*change*/)
+void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
 {
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
         std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
-        deadline_timer_.restart_timer();
+
+        auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
+        next_deadline_[change->instanceHandle] = now_s + deadline_duration_;
+
+        if (timer_owner_ == change->instanceHandle || timer_owner_ == InstanceHandle_t())
+        {
+            timer_reschedule();
+        }
     }
 }
 
@@ -232,53 +239,47 @@ uint64_t SubscriberImpl::getUnreadCount() const
     return m_history.getUnreadCount();
 }
 
-void SubscriberImpl::check_deadlines()
+void SubscriberImpl::timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
     std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
 
+    timer_owner_ = std::min_element(next_deadline_.begin(),
+                                    next_deadline_.end(),
+                                    [](const std::pair<InstanceHandle_t, Time_t>& lhs, const std::pair<InstanceHandle_t, Time_t>& rhs){ return lhs.second < rhs.second; })->first;
+
     auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
+    auto interval_s = next_deadline_[timer_owner_] - now_s;
 
-    // Get the latest samples from the history
-    int num_samples = 0;
-    m_history.get_latest_samples(deadline_samples_, num_samples);
-
-    if (num_samples == 0)
-    {
-        logError(SUBSCRIBER, "Deadline timer expired but no samples available");
-        return;
-    }
-
-    // Time of the earliest sample among all topic instances
-    Time_t minTime = deadline_samples_.front()->sourceTimestamp;
-
-    for (int i = 0; i < num_samples; i++)
-    {
-        if (deadline_samples_[i]->sourceTimestamp < minTime)
-        {
-            minTime = deadline_samples_[i]->sourceTimestamp;
-        }
-
-        if (now_s - deadline_samples_[i]->sourceTimestamp >= deadline_duration_)
-        {
-            deadline_missed_status_.total_count++;
-            deadline_missed_status_.total_count_change++;
-            deadline_missed_status_.last_instance_handle = deadline_samples_[i]->instanceHandle;
-
-            mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
-            deadline_missed_status_.total_count_change = 0;
-        }
-    }
-
-    Duration_t interval = minTime + deadline_duration_ - now_s > 0? minTime + deadline_duration_ - now_s: deadline_duration_;
-    deadline_timer_.update_interval(interval);
+    deadline_timer_.cancel_timer();
+    deadline_timer_.update_interval(interval_s);
     deadline_timer_.restart_timer();
+}
+
+void SubscriberImpl::deadline_missed()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+
+    deadline_missed_status_.total_count++;
+    deadline_missed_status_.total_count_change++;
+    deadline_missed_status_.last_instance_handle = timer_owner_;
+    mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
+    deadline_missed_status_.total_count_change = 0;
+
+    auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
+    next_deadline_[timer_owner_] = now_s + deadline_duration_;
+
+    timer_reschedule();
 }
 
 
 void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
 {
+    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
 }

@@ -62,12 +62,13 @@ PublisherImpl::PublisherImpl(
     , mp_userPublisher(nullptr)
     , mp_rtpsParticipant(nullptr)
     , high_mark_for_frag_(0)
-    , deadline_timer_(std::bind(&PublisherImpl::check_deadlines, this),
+    , deadline_timer_(std::bind(&PublisherImpl::deadline_missed, this),
                       att.qos.m_deadline.period,
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_(att.qos.m_deadline.period)
-    , deadline_samples_(att.topic.getTopicKind() == NO_KEY? 1: att.topic.resourceLimitsQos.max_instances)
+    , next_deadline_()
+    , timer_owner_()
     , deadline_missed_status_()
 {
 }
@@ -203,7 +204,13 @@ bool PublisherImpl::create_new_change_with_params(
 
         if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
         {
-            deadline_timer_.restart_timer();
+            auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
+            next_deadline_[handle] = now_s + deadline_duration_;
+
+            if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
+            {
+                timer_reschedule();
+            }
         }
         return true;
     }
@@ -339,52 +346,46 @@ bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
     return mp_writer->wait_for_all_acked(max_wait);
 }
 
-void PublisherImpl::check_deadlines()
+void PublisherImpl::timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
     std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
 
+    timer_owner_ = std::min_element(next_deadline_.begin(),
+                                    next_deadline_.end(),
+                                    [](const std::pair<InstanceHandle_t, Time_t> &lhs, const std::pair<InstanceHandle_t, Time_t> &rhs){ return lhs.second < rhs.second;})->first;
+
     auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
+    auto interval_s = next_deadline_[timer_owner_] - now_s;
 
-    // Get the latest samples from the history
-    int num_samples = 0;
-    m_history.get_latest_samples(deadline_samples_, num_samples);
-
-    if (num_samples == 0)
-    {
-        logError(PUBLISHER, "Deadline timer expired but no samples available");
-        return;
-    }
-
-    // Time of the earliest sample among all topic instances
-    Time_t minTime = deadline_samples_.front()->sourceTimestamp;
-
-    for (int i = 0; i < num_samples; i++)
-    {
-        if (deadline_samples_[i]->sourceTimestamp < minTime)
-        {
-            minTime = deadline_samples_[i]->sourceTimestamp;
-        }
-
-        if (now_s - deadline_samples_[i]->sourceTimestamp >= deadline_duration_)
-        {
-            deadline_missed_status_.total_count++;
-            deadline_missed_status_.total_count_change++;
-            deadline_missed_status_.last_instance_handle = deadline_samples_[i]->instanceHandle;
-
-            mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
-            deadline_missed_status_.total_count_change = 0;
-        }
-    }
-
-    Duration_t interval = deadline_duration_ - now_s + minTime > 0? deadline_duration_ - now_s + minTime: deadline_duration_;
-    deadline_timer_.update_interval(interval);
+    deadline_timer_.cancel_timer();
+    deadline_timer_.update_interval(interval_s);
     deadline_timer_.restart_timer();
+}
+
+void PublisherImpl::deadline_missed()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+
+    deadline_missed_status_.total_count++;
+    deadline_missed_status_.total_count_change++;
+    deadline_missed_status_.last_instance_handle = timer_owner_;
+    mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
+    deadline_missed_status_.total_count_change = 0;
+
+    auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
+    next_deadline_[timer_owner_] = now_s + deadline_duration_;
+
+    timer_reschedule();
 }
 
 void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
 {
+    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
 }

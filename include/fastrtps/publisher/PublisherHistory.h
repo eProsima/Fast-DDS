@@ -93,51 +93,9 @@ class PublisherHistory:public rtps::WriterHistory
 
         virtual bool remove_change_g(rtps::CacheChange_t* a_change);
 
-        /**
-         * Returns the latest sample for each topic key
-         * @param samples A vector where the the latest sample for each key will be placed. Must be long enough
-         * @param num_samples The number of samples in the vector
-         */
-        void get_latest_samples(
-                std::vector<CacheChange_t*> &samples,
-                int& num_samples);
-
     private:
 
-        /**
-         * @brief A struct storing a vector of cache changes and the latest change in the group
-         * @ingroup FASTRTPS_MODULE
-         */
-        struct KeyedChanges
-        {
-            //! Default constructor
-            KeyedChanges()
-                : cache_changes_()
-                , latest_change_(new CacheChange_t)
-            {
-            }
-
-            //! Copy constructor
-            KeyedChanges(const KeyedChanges& other)
-                : cache_changes_(other.cache_changes_)
-                , latest_change_(new CacheChange_t)
-            {
-                latest_change_->copy(other.latest_change_);
-            }
-
-            //! Destructor
-            ~KeyedChanges()
-            {
-                delete latest_change_;
-            }
-
-            //! A vector of cache changes
-            std::vector<CacheChange_t*> cache_changes_;
-            //! The latest cache change in the struct
-            CacheChange_t* latest_change_;
-        };
-
-        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+        typedef std::map<rtps::InstanceHandle_t, std::vector<rtps::CacheChange_t*>> t_m_Inst_Caches;
         typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
 
         //!Map where keys are instance handles and values are vectors of cache changes associated
@@ -148,8 +106,6 @@ class PublisherHistory:public rtps::WriterHistory
         ResourceLimitsQosPolicy m_resourceLimitsQos;
         //!Publisher Pointer
         PublisherImpl* mp_pubImpl;
-        //!The latest cache change written (only used for topics with no key)
-        CacheChange_t* mp_latestCacheChange;
 
         /**
          * @brief Method that finds a key in m_keyedChanges or tries to add it if not found

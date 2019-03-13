@@ -113,50 +113,9 @@ class SubscriberHistory: public rtps::ReaderHistory
             return m_unreadCacheCount;
         }
 
-        /**
-         * A method that resturns the latest sample for each topic key
-         * @param samples A vector where the latest sample for each key will be placed. Must be long enough
-         * @param num_samples The number of samples in the vector
-         */
-        void get_latest_samples(
-                std::vector<CacheChange_t*>& samples,
-                int& num_samples);
-
     private:
 
-        /**
-         * @brief A struct storing a vector of cache changes and the latest change in the group
-         * @ingroup FASTRTPS_MODULE
-         */
-        struct KeyedChanges
-        {
-            //! Default constructor
-            KeyedChanges()
-                : cache_changes_()
-                , latest_change_(new CacheChange_t)
-            {}
-
-            //! Copy constructor
-            KeyedChanges(const KeyedChanges& other)
-                : cache_changes_(other.cache_changes_)
-                , latest_change_(new CacheChange_t)
-            {
-                latest_change_->copy(other.latest_change_);
-            }
-
-            //! Destructor
-            ~KeyedChanges()
-            {
-                delete latest_change_;
-            }
-
-            //! A vector of cache changes
-            std::vector<CacheChange_t*> cache_changes_;
-            //! The latest cache change in the struct
-            CacheChange_t* latest_change_;
-        };
-
-        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+        typedef std::map<rtps::InstanceHandle_t, std::vector<rtps::CacheChange_t*>> t_m_Inst_Caches;
         typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
 
         //!Number of unread CacheChange_t.
@@ -169,8 +128,6 @@ class SubscriberHistory: public rtps::ReaderHistory
         ResourceLimitsQosPolicy m_resourceLimitsQos;
         //!Publisher Pointer
         SubscriberImpl* mp_subImpl;
-        //!The latest cache change received (only used for topics with no key)
-        CacheChange_t* mp_latestCacheChange;
 
         //!Type object to deserialize Key
         void * mp_getKeyObject;
