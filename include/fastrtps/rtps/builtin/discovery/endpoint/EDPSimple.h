@@ -23,6 +23,9 @@
 
 #include "EDP.h"
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -143,6 +146,8 @@ class EDPSimple : public EDP
                 const ReaderProxyData& remote_reader_data) override;
 #endif
 
+    ReaderProxyData temp_reader_proxy_data_;
+    WriterProxyData temp_writer_proxy_data_;
 };
 
 }
