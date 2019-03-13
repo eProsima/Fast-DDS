@@ -1782,7 +1782,7 @@ void TCPTransportInterface::socket_canceller()
             std::for_each(
                 sockets_timestamp_.begin(),
                 sockets_timestamp_.end(),
-                [this, &to_delete, current_nano](const std::pair<TCPChannelResource*, uint64_t>& elem)
+                [&to_delete, current_nano](const std::pair<TCPChannelResource*, uint64_t>& elem)
                 {
                     if (elem.second <= current_nano)
                     {
