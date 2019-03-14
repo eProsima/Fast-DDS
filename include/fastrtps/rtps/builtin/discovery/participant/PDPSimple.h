@@ -98,7 +98,7 @@ class PDPSimple
     ReaderProxyData* addReaderProxyData(
             const GUID_t& reader_guid, 
             GUID_t& participant_guid,
-            std::function<bool(ReaderProxyData*)> initializer_func);
+            std::function<bool(ReaderProxyData*, bool, const ParticipantProxyData&)> initializer_func);
 
     /**
      * Add a WriterProxyData to the correct ParticipantProxyData.

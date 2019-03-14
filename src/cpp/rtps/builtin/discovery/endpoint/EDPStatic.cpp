@@ -30,6 +30,8 @@
 
 #include <fastrtps/log/Log.h>
 
+#include "../../../participant/RTPSParticipantImpl.h"
+
 #include <mutex>
 
 #include <sstream>
@@ -224,8 +226,15 @@ bool EDPStatic::newRemoteReader(const ParticipantProxyData& pdata, uint16_t user
         logInfo(RTPS_EDP, "Activating: " << rpd->guid().entityId << " in topic " << rpd->topicName());
         GUID_t reader_guid(pdata.m_guid.guidPrefix, entId != c_EntityId_Unknown ? entId : rpd->guid().entityId);
 
-        auto init_fun = [this, pdata, reader_guid, rpd](ReaderProxyData* newRPD)
+        auto init_fun = [this, pdata, reader_guid, rpd](
+                ReaderProxyData* newRPD,
+                bool updating,
+                const ParticipantProxyData& participant_data)
         {
+            // Should be a new reader
+            (void)updating;
+            assert(!updating);
+
             *newRPD = *rpd;
             newRPD->guid(reader_guid);
             if (!checkEntityId(newRPD))
@@ -236,6 +245,12 @@ bool EDPStatic::newRemoteReader(const ParticipantProxyData& pdata, uint16_t user
             }
             newRPD->key() = newRPD->guid();
             newRPD->RTPSParticipantKey() = pdata.m_guid;
+            if (!newRPD->has_locators())
+            {
+                const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+                newRPD->set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
+                newRPD->set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+            }
 
             return true;
         };
