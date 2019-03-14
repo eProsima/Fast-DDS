@@ -63,3 +63,8 @@ bool Participant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyDa
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
+
+rtps::RTPSParticipant* Participant::get_lower_layer_counterpart() const
+{
+    return mp_impl->get_rtps_participant();
+}

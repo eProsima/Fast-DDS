@@ -158,6 +158,11 @@ class ParticipantImpl
         const rtps::GUID_t& readerGuid,
         rtps::ReaderProxyData& returnedInfo);
 
+    rtps::RTPSParticipant* get_rtps_participant()
+    {
+        return mp_rtpsParticipant;
+    }
+
     private:
     //!Participant Attributes
     ParticipantAttributes m_att;

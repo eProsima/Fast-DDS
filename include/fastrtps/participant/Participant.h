@@ -33,6 +33,7 @@ class ParticipantAttributes;
 
 namespace rtps
 {
+    class RTPSParticipant;
     class WriterProxyData;
     class ReaderProxyData;
 }
@@ -86,6 +87,15 @@ class RTPS_DllAPI Participant
     bool get_remote_writer_info(const rtps::GUID_t& writerGuid, rtps::WriterProxyData& returnedInfo);
 
     bool get_remote_reader_info(const rtps::GUID_t& readerGuid, rtps::ReaderProxyData& returnedInfo);
+
+    /**
+     * Get the reader-writer layer counterpart of this participant.
+     *
+     * @remark This method is for expert users on the RTPS protocol. 
+     *
+     * @return Pointer to the RTPSParticipant counterpart of this participant.
+     */
+    rtps::RTPSParticipant* get_lower_layer_counterpart() const;
 };
 
 }
