@@ -36,11 +36,12 @@ ReaderProxyData::ReaderProxyData()
     , security_attributes_(0UL)
     , plugin_security_attributes_(0UL)
 #endif
+    // TODO (Miguel C): Use participant locators allocation policy
+    , remote_locators_(4u, 1u)
     , m_userDefinedId(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
     , m_topicDiscoveryKind(NO_CHECK)
-    , remote_locators_(4u, 1u)
     {
 
     }
@@ -236,9 +237,11 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     return CDRMessage::addParameterSentinel(msg);
 }
 
-bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
+bool ReaderProxyData::readFromCDRMessage(
+        CDRMessage_t* msg,
+        const NetworkFactory& network)
 {
-    auto param_process = [this](const Parameter_t* param)
+    auto param_process = [this, & network](const Parameter_t* param)
     {
         switch (param->Pid)
         {
@@ -393,16 +396,22 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                // TODO (Miguel C): Use network factory
-                remote_locators_.unicast.push_back(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    remote_locators_.add_unicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_MULTICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                // TODO (Miguel C): Use network factory
-                remote_locators_.multicast.push_back(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    remote_locators_.add_multicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_EXPECTS_INLINE_QOS:
