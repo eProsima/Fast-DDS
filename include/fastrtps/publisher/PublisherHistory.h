@@ -93,13 +93,61 @@ class PublisherHistory:public rtps::WriterHistory
 
         virtual bool remove_change_g(rtps::CacheChange_t* a_change);
 
-    private:
+        /**
+         * @brief Sets the next deadline for the given instance
+         * @param handle The instance handle
+         * @param next_deadline_us The time point when the deadline will occur
+         * @return True if deadline was set successfully
+         */
+        bool set_next_deadline(InstanceHandle_t handle, std::chrono::steady_clock::time_point next_deadline_us);
 
-        typedef std::map<rtps::InstanceHandle_t, std::vector<rtps::CacheChange_t*>> t_m_Inst_Caches;
-        typedef std::vector<rtps::CacheChange_t*> t_v_Caches;
+        /**
+         * @brief Returns the deadline for the instance that is next going to 'expire'
+         * @param handle The handle for the instance that will next miss the deadline
+         * @param next_deadline_us The time point when the deadline will occur
+         * @return True if deadline could be retrieved for the given instance
+         */
+        bool get_next_deadline(InstanceHandle_t& handle, std::chrono::steady_clock::time_point& next_deadline_us);
+
+private:
+
+        /**
+         * @brief A struct storing a vector of cache changes and the next deadline in the group
+         * @ingroup FASTRTPS_MODULE
+         */
+        struct KeyedChanges
+        {
+            //! Default constructor
+            KeyedChanges()
+                : cache_changes_()
+                , next_deadline_us_()
+            {
+            }
+
+            //! Copy constructor
+            KeyedChanges(const KeyedChanges& other)
+                : cache_changes_(other.cache_changes_)
+                , next_deadline_us_(other.next_deadline_us_)
+            {
+            }
+
+            //! Destructor
+            ~KeyedChanges()
+            {
+            }
+
+            //! A vector of cache changes
+            std::vector<CacheChange_t*> cache_changes_;
+            //! The time when the group will miss the deadline
+            std::chrono::steady_clock::time_point next_deadline_us_;
+        };
+
+        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
 
         //!Map where keys are instance handles and values are vectors of cache changes associated
         t_m_Inst_Caches m_keyedChanges;
+        //!Time point when the next deadline will occur (only used for topics with no key)
+        std::chrono::steady_clock::time_point next_deadline_us_;
         //!HistoryQosPolicy values.
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.

@@ -58,7 +58,6 @@ SubscriberImpl::SubscriberImpl(
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
-    , next_deadline_us_()
     , deadline_missed_status_()
 {
 }
@@ -68,6 +67,11 @@ SubscriberImpl::~SubscriberImpl()
     if(mp_reader != nullptr)
     {
         logInfo(SUBSCRIBER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
+    }
+
+    if (m_att.qos.m_deadline.period != c_TimeInfinite)
+    {
+        deadline_timer_.cancel_timer();
     }
 
     RTPSDomain::removeRTPSReader(mp_reader);
@@ -218,7 +222,11 @@ void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
     {
         std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
 
-        next_deadline_us_[change->instanceHandle] = steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_);
+        if (!m_history.set_next_deadline(change->instanceHandle, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+        {
+            logError(SUBSCRIBER, "Could not set next deadline in the history");
+            return;
+        }
 
         if (timer_owner_ == change->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
@@ -249,13 +257,13 @@ void SubscriberImpl::timer_reschedule()
 
     std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
 
-    timer_owner_ = std::min_element(next_deadline_us_.begin(),
-                                    next_deadline_us_.end(),
-                                    [](
-                                    const std::pair<InstanceHandle_t, steady_clock::time_point>& lhs,
-                                    const std::pair<InstanceHandle_t, steady_clock::time_point>& rhs){ return lhs.second < rhs.second; })->first;
-
-    auto interval_ms = duration_cast<milliseconds>(next_deadline_us_[timer_owner_] - steady_clock::now());
+    steady_clock::time_point next_deadline_us;
+    if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
+    {
+        logError(SUBSCRIBER, "Could not get the next deadline from the history");
+        return;
+    }
+    auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
 
     deadline_timer_.cancel_timer();
     deadline_timer_.update_interval_millisec(interval_ms.count());
@@ -274,8 +282,11 @@ void SubscriberImpl::deadline_missed()
     mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
-    next_deadline_us_[timer_owner_] = steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_);
-
+    if (!m_history.set_next_deadline(timer_owner_, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+    {
+        logError(SUBSCRIBER, "Could not set next deadline in the history");
+        return;
+    }
     timer_reschedule();
 }
 

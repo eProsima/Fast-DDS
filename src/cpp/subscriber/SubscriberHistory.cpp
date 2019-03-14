@@ -186,7 +186,7 @@ bool SubscriberHistory::received_change(
             bool add = false;
             if (m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if ((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
+                if ((int32_t)vit->second.cache_changes_.size() < m_resourceLimitsQos.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -198,15 +198,15 @@ bool SubscriberHistory::received_change(
             }
             else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if (vit->second.size() < (size_t)m_historyQos.depth)
+                if (vit->second.cache_changes_.size() < (size_t)m_historyQos.depth)
                 {
                     add = true;
                 }
                 else
                 {
                     // Try to substitute the oldest sample with the same key
-                    auto older_sample = vit->second.rend();
-                    for (auto it = vit->second.rbegin(); it != vit->second.rend(); ++it)
+                    auto older_sample = vit->second.cache_changes_.rend();
+                    for (auto it = vit->second.cache_changes_.rbegin(); it != vit->second.cache_changes_.rend(); ++it)
                     {
 
                         if ((*it)->writerGUID == a_change->writerGUID)
@@ -219,7 +219,7 @@ bool SubscriberHistory::received_change(
                         }
                     }
 
-                    if (older_sample != vit->second.rend())
+                    if (older_sample != vit->second.cache_changes_.rend())
                     {
                         bool read = (*older_sample)->isRead;
 
@@ -250,19 +250,19 @@ bool SubscriberHistory::received_change(
                     if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                         m_isHistoryFull = true;
                     //ADD TO KEY VECTOR
-                    if (vit->second.size() == 0)
+                    if (vit->second.cache_changes_.size() == 0)
                     {
-                        vit->second.push_back(a_change);
+                        vit->second.cache_changes_.push_back(a_change);
                     }
-                    else if (vit->second.back()->sequenceNumber < a_change->sequenceNumber)
+                    else if (vit->second.cache_changes_.back()->sequenceNumber < a_change->sequenceNumber)
                     {
-                        vit->second.push_back(a_change);
+                        vit->second.cache_changes_.push_back(a_change);
                     }
                     else
                     {
-                        vit->second.push_back(a_change);
-                        std::sort(vit->second.begin(),
-                                  vit->second.end(),
+                        vit->second.cache_changes_.push_back(a_change);
+                        std::sort(vit->second.cache_changes_.begin(),
+                                  vit->second.cache_changes_.end(),
                                   sort_ReaderHistoryCache);
                     }
 
@@ -488,17 +488,17 @@ bool SubscriberHistory::find_key(
 
     if ((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
     {
-        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
+        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
         return true;
     }
     else
     {
         for (vit = m_keyedChanges.begin(); vit!= m_keyedChanges.end(); ++vit)
         {
-            if (vit->second.size() == 0)
+            if (vit->second.cache_changes_.size() == 0)
             {
                 m_keyedChanges.erase(vit);
-                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, t_v_Caches())).first;
+                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
                 return true;
             }
         }
@@ -534,13 +534,13 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
             return false;
         }
 
-        for (auto chit = vit->second.begin(); chit != vit->second.end(); ++chit)
+        for (auto chit = vit->second.cache_changes_.begin(); chit != vit->second.cache_changes_.end(); ++chit)
         {
             if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)
             {
                 if (remove_change(change))
                 {
-                    vit->second.erase(chit);
+                    vit->second.cache_changes_.erase(chit);
                     m_isHistoryFull = false;
                     return true;
                 }
@@ -548,5 +548,62 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
         }
         logError(SUBSCRIBER, "Change not found, something is wrong");
     }
+    return false;
+}
+
+bool SubscriberHistory::set_next_deadline(InstanceHandle_t handle, std::chrono::steady_clock::time_point next_deadline_us)
+{
+    if (mp_reader == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        return false;
+    }
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    {
+        next_deadline_us_ = next_deadline_us;
+        return true;
+    }
+    else if (mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    {
+        if (m_keyedChanges.find(handle) == m_keyedChanges.end())
+        {
+            return false;
+        }
+
+        m_keyedChanges[handle].next_deadline_us_ = next_deadline_us;
+        return true;
+    }
+
+    return false;
+}
+
+bool SubscriberHistory::get_next_deadline(InstanceHandle_t &handle, std::chrono::steady_clock::time_point &next_deadline_us)
+{
+    if (mp_reader == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
+        return false;
+    }
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    {
+        next_deadline_us = next_deadline_us_;
+        return true;
+    }
+    else if (mp_subImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    {
+        auto min = std::min_element(m_keyedChanges.begin(),
+                                    m_keyedChanges.end(),
+                                    [](
+                                    const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
+                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs){ return lhs.second.next_deadline_us_ < rhs.second.next_deadline_us_;});
+        handle = min->first;
+        next_deadline_us = min->second.next_deadline_us_;
+        return true;
+    }
+
     return false;
 }

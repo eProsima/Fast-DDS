@@ -165,8 +165,6 @@ private:
     DeadlineTimer deadline_timer_;
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
-    //! A map where keys are instance handles and values are times when instances are due to 'expire', i.e. miss the deadline
-    std::map<InstanceHandle_t, std::chrono::steady_clock::time_point> next_deadline_us_;
     //! The current timer owner, i.e. the instance which started the timer
     InstanceHandle_t timer_owner_;
     //! Requested deadline missed status
