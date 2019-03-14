@@ -15,8 +15,11 @@ In the second one launch: ./DeadlineQoSExample subscriber
 2 - Application behaviour
 -------------------------
 
-With the default options provided in the example, the application will use a topic with three different keys,
-one of which sends a sample only half of the times.
+The application will use a topic with three different keys,
+one of which (the third one) sends a sample only half of the times.
+
+By default the deadline period is set to 2000 ms and the publisher write rate to 1000 ms, so
+that the third instance misses the deadline 50% of the times.
 
 The deadline period can be set by providing a second argument to the binary. For example:
 
