@@ -277,8 +277,13 @@ elseif(NOT EPROSIMA_INSTALLER)
         set(PRIVACY "PRIVATE")
     endif()
 
+    # No need to expose linked libs when shared library is built.
+    if(BUILD_SHARED_LIBS)
+        set(PRIVACY "PRIVATE")
+    endif()
+
     # Link library to external libraries.
-    target_link_libraries(${PROJECT_NAME} PRIVATE fastcdr
+    target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         ${TINYXML2_LIBRARY}
         $<$<BOOL:${SECURITY}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
