@@ -33,7 +33,7 @@ task buildIDLParser(type: GradleBuild) {
 
 task copyResources {
     // Copy platforms file
-    File outputDir = file(new File(buildDir, "resources/main"))
+    File outputDir = file(new File("${project.buildDir}", "resources/main"))
     outputDir.exists() || outputDir.mkdirs()
     project.copy {
         from(file(new File(projectDir, 'resources/platforms')))
