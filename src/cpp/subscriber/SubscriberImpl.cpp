@@ -32,7 +32,7 @@
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
-
+using namespace std::chrono;
 
 namespace eprosima {
 namespace fastrtps {
@@ -57,8 +57,8 @@ SubscriberImpl::SubscriberImpl(
                       att.qos.m_deadline.period,
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
-    , deadline_duration_(att.qos.m_deadline.period)
-    , next_deadline_()
+    , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
+    , next_deadline_us_()
     , deadline_missed_status_()
 {
 }
@@ -184,7 +184,12 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
         mp_rtpsParticipant->updateReader(this->mp_reader, m_att.topic, m_att.qos);
 
         // Update deadline period
-        deadline_duration_ = m_att.qos.m_deadline.period;
+
+        deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+        if (m_att.qos.m_deadline.period == c_TimeInfinite)
+        {
+            deadline_timer_.cancel_timer();
+        }
     }
     return updated;
 }
@@ -213,8 +218,7 @@ void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
     {
         std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
 
-        auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
-        next_deadline_[change->instanceHandle] = now_s + deadline_duration_;
+        next_deadline_us_[change->instanceHandle] = steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_);
 
         if (timer_owner_ == change->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
@@ -245,15 +249,16 @@ void SubscriberImpl::timer_reschedule()
 
     std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
 
-    timer_owner_ = std::min_element(next_deadline_.begin(),
-                                    next_deadline_.end(),
-                                    [](const std::pair<InstanceHandle_t, Time_t>& lhs, const std::pair<InstanceHandle_t, Time_t>& rhs){ return lhs.second < rhs.second; })->first;
+    timer_owner_ = std::min_element(next_deadline_us_.begin(),
+                                    next_deadline_us_.end(),
+                                    [](
+                                    const std::pair<InstanceHandle_t, steady_clock::time_point>& lhs,
+                                    const std::pair<InstanceHandle_t, steady_clock::time_point>& rhs){ return lhs.second < rhs.second; })->first;
 
-    auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
-    auto interval_s = next_deadline_[timer_owner_] - now_s;
+    auto interval_ms = duration_cast<milliseconds>(next_deadline_us_[timer_owner_] - steady_clock::now());
 
     deadline_timer_.cancel_timer();
-    deadline_timer_.update_interval(interval_s);
+    deadline_timer_.update_interval_millisec(interval_ms.count());
     deadline_timer_.restart_timer();
 }
 
@@ -269,8 +274,7 @@ void SubscriberImpl::deadline_missed()
     mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
-    auto now_s = Time_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-3);
-    next_deadline_[timer_owner_] = now_s + deadline_duration_;
+    next_deadline_us_[timer_owner_] = steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_);
 
     timer_reschedule();
 }
