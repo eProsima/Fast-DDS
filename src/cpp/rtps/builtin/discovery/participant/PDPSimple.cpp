@@ -587,14 +587,12 @@ bool PDPSimple::createSPDPEndpoints()
 ReaderProxyData* PDPSimple::addReaderProxyData(
         const GUID_t& reader_guid, 
         GUID_t& participant_guid,
-        std::function<bool(ReaderProxyData*)> initializer_func)
+        std::function<bool(ReaderProxyData*, bool, const ParticipantProxyData&)> initializer_func)
 {
     logInfo(RTPS_PDP, "Adding reader proxy data " << reader_guid);
     ReaderProxyData* ret_val = nullptr;
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-
-    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
 
     for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
             pit!=m_participantProxies.end();++pit)
@@ -609,20 +607,12 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
             {
                 if(rit->guid().entityId == reader_guid.entityId)
                 {
-                    if (!initializer_func(rit))
+                    if (!initializer_func(rit, true, **pit))
                     {
                         return nullptr;
                     }
 
                     ret_val = rit;
-                    // Set locators information if not defined by initializer_func.
-                    if (ret_val->has_locators() == false)
-                    {
-                        ret_val->set_unicast_locators((*pit)->m_defaultUnicastLocatorList, network);
-                        ret_val->set_multicast_locators((*pit)->m_defaultMulticastLocatorList, network);
-                    }
-                    // Set as alive.
-                    ret_val->isAlive(true);
 
                     RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                     if(listener)
@@ -656,19 +646,10 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
                 (*pit)->m_readers.push_back(ret_val);
             }
 
-            if (!initializer_func(ret_val))
+            if (!initializer_func(ret_val, false, **pit))
             {
                 return nullptr;
             }
-
-            // Set locators information if not defined by initializer_func.
-            if (ret_val->has_locators() == false)
-            {
-                ret_val->set_unicast_locators((*pit)->m_defaultUnicastLocatorList, network);
-                ret_val->set_multicast_locators((*pit)->m_defaultMulticastLocatorList, network);
-            }
-            // Set as alive.
-            ret_val->isAlive(true);
 
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
             if(listener)

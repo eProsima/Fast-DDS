@@ -80,8 +80,8 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
 
 ParticipantProxyData::~ParticipantProxyData()
 {
-    logInfo(RTPS_PARTICIPANT, this->m_guid);
-    for(ReaderProxyData* it : this->m_readers)
+    logInfo(RTPS_PARTICIPANT, m_guid);
+    for(ReaderProxyData* it : m_readers)
     {
         delete it;
     }

@@ -134,39 +134,72 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 #endif
         sedp_->subscriptions_reader_.second;
 
-    GUID_t reader_guid = iHandle2GUID(change->instanceHandle);
     if(change->kind == ALIVE)
     {
-        if (reader_guid.guidPrefix == sedp_->mp_RTPSParticipant->getGuid().guidPrefix)
-        {
-            logInfo(RTPS_EDP, "From own RTPSParticipant, ignoring");
-            reader_history->remove_change(change);
-            return;
-        }
-
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
-        auto data_parser_fun = [change_in](ReaderProxyData* data)
+        CDRMessage_t tempMsg(change_in->serializedPayload);
+        temp_reader_data_.clear();
+        if(temp_reader_data_.readFromCDRMessage(&tempMsg))
         {
-            CDRMessage_t temp_msg(change_in->serializedPayload);
-            return data->readFromCDRMessage(&temp_msg);
-        };
+            change->instanceHandle = temp_reader_data_.key();
+            if(temp_reader_data_.guid().guidPrefix == sedp_->mp_RTPSParticipant->getGuid().guidPrefix)
+            {
+                logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring");
+                reader_history->remove_change(change);
+                return;
+            }
 
-        ReaderProxyData* reader_data;
-        GUID_t participant_guid;
-        reader_data = this->sedp_->mp_PDP->addReaderProxyData(reader_guid, participant_guid, data_parser_fun);
-        if(reader_data != nullptr)
-        {
-            // At this point we can release reader lock, cause change is not used
-            reader->getMutex()->unlock();
+            auto copy_data_fun = [this](
+                    ReaderProxyData* data,
+                    bool updating,
+                    const ParticipantProxyData& participant_data)
+            {
+                const NetworkFactory& network = sedp_->mp_RTPSParticipant->network_factory();
+                if (!temp_reader_data_.has_locators())
+                {
+                    temp_reader_data_.set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
+                    temp_reader_data_.set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+                }
 
-            sedp_->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+                if (updating)
+                {
+                    if (data->m_qos.canQosBeUpdated(temp_reader_data_.m_qos))
+                    {
+                        // TODO (Miguel C) use network for locator optimization
+                        data->update(&temp_reader_data_);
+                    }
+                    else
+                    {
+                        logWarning(RTPS_EDP, "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
+                        return false;
+                    }
+                }
+                else
+                {
+                    // TODO (Miguel C) use network for locator optimization
+                    data->copy(&temp_reader_data_);
+                }
+                return true;
+            };
 
-            // Take again the reader lock.
-            reader->getMutex()->lock();
-        }
-        else
-        {
-            logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
+            //LOOK IF IS AN UPDATED INFORMATION
+            GUID_t participant_guid;
+            ReaderProxyData* reader_data =
+                sedp_->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
+            if(reader_data != nullptr) //ADDED NEW DATA
+            {
+                // At this point we can release reader lock, cause change is not used
+                reader->getMutex()->unlock();
+
+                sedp_->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+
+                // Take again the reader lock.
+                reader->getMutex()->lock();
+            }
+            else
+            {
+                logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
+            }
         }
     }
     else
@@ -174,6 +207,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
 
+        GUID_t reader_guid = iHandle2GUID(change->instanceHandle);
         this->sedp_->mp_PDP->removeReaderProxyData(reader_guid);
     }
 
