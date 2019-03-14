@@ -201,7 +201,6 @@ const char* OFFSETD2 = "offsetd2";
 const char* OFFSETD3 = "offsetd3";
 const char* RTPS_PDP_TYPE = "discoveryProtocol";
 const char* NONE = "NONE";
-const char* SIMPLE = "SIMPLE";
 const char* CLIENT = "CLIENT";
 const char* WRITER_LVESS_PROTOCOL = "use_WriterLivelinessProtocol";
 const char* _EDP = "EDP";

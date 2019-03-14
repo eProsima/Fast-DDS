@@ -102,40 +102,47 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     PParam.participantID = ID;
-    int pid = System::GetPID();
-    GuidPrefix_t guidP;
     LocatorList_t loc;
     IPFinder::getIP4Address(&loc);
-    if(loc.size()>0)
-    {
-        guidP.value[0] = c_VendorId_eProsima[0];
-        guidP.value[1] = c_VendorId_eProsima[1];
-        guidP.value[2] = loc.begin()->address[14];
-        guidP.value[3] = loc.begin()->address[15];
-    }
-    else
-    {
-        guidP.value[0] = c_VendorId_eProsima[0];
-        guidP.value[1] = c_VendorId_eProsima[1];
-        guidP.value[2] = 127;
-        guidP.value[3] = 1;
 
-        if (PParam.builtin.initialPeersList.empty())
+    if (loc.empty() && PParam.builtin.initialPeersList.empty())
+    {
+        Locator_t local;
+        IPLocator::setIPv4(local, 127, 0, 0, 1);
+        PParam.builtin.initialPeersList.push_back(local);
+    }
+
+    GuidPrefix_t guidP(PParam.prefix);
+
+    if (guidP == c_GuidPrefix_Unknown)
+    {
+        // Make a new participant GuidPrefix_t up
+        int pid = System::GetPID();
+
+        if (loc.size() > 0)
         {
-            Locator_t local;
-            IPLocator::setIPv4(local, 127, 0, 0, 1);
-            PParam.builtin.initialPeersList.push_back(local);
+            guidP.value[0] = c_VendorId_eProsima[0];
+            guidP.value[1] = c_VendorId_eProsima[1];
+            guidP.value[2] = loc.begin()->address[14];
+            guidP.value[3] = loc.begin()->address[15];
         }
+        else
+        {
+            guidP.value[0] = c_VendorId_eProsima[0];
+            guidP.value[1] = c_VendorId_eProsima[1];
+            guidP.value[2] = 127;
+            guidP.value[3] = 1;
+        }
+        guidP.value[4] = octet(pid);
+        guidP.value[5] = octet(pid >> 8);
+        guidP.value[6] = octet(pid >> 16);
+        guidP.value[7] = octet(pid >> 24);
+        guidP.value[8] = octet(ID);
+        guidP.value[9] = octet(ID >> 8);
+        guidP.value[10] = octet(ID >> 16);
+        guidP.value[11] = octet(ID >> 24);
     }
-    guidP.value[4] = octet(pid);
-    guidP.value[5] = octet(pid >> 8);
-    guidP.value[6] = octet(pid >> 16);
-    guidP.value[7] = octet(pid >> 24);
-    guidP.value[8] = octet(ID);
-    guidP.value[9] = octet(ID >> 8);
-    guidP.value[10] = octet(ID >> 16);
-    guidP.value[11] = octet(ID >> 24);
-
+    
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
 

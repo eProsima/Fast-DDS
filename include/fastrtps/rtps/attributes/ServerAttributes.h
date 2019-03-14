@@ -71,6 +71,7 @@ namespace rtps {
     };
 
     typedef std::list<RemoteServerAttributes> RemoteServerList_t;
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

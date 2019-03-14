@@ -218,7 +218,6 @@ extern const char* OFFSETD2;
 extern const char* OFFSETD3;
 extern const char* RTPS_PDP_TYPE;
 extern const char* NONE;
-extern const char* SIMPLE;
 extern const char* CLIENT;
 extern const char* WRITER_LVESS_PROTOCOL;
 extern const char* _EDP;

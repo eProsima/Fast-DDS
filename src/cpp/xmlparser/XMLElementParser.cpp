@@ -2228,8 +2228,11 @@ XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerA
         logError(XMLPARSER, "getXMLRemoteServer found an invalid server's guidPrefix XML_ERROR!");
             return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (pLU = elem->FirstChildElement(META_UNI_LOC_LIST)) && 
-             nullptr == (pLM = elem->FirstChildElement(META_MULTI_LOC_LIST)))
+    
+    pLU = elem->FirstChildElement(META_UNI_LOC_LIST);
+    pLM = elem->FirstChildElement(META_MULTI_LOC_LIST);
+
+    if ( pLU == nullptr && pLM ==nullptr )
     {
         logError(XMLPARSER, "getXMLRemoteServer couldn't find any server's locator XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -2241,7 +2244,7 @@ XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerA
         return XMLP_ret::XML_ERROR;
     }
 
-    if (pLU && XMLP_ret::XML_OK != getXMLLocatorList(pLU, server.metatrafficMulticastLocatorList, ident))
+    if (pLM && XMLP_ret::XML_OK != getXMLLocatorList(pLM, server.metatrafficMulticastLocatorList, ident))
     {
         logError(XMLPARSER, "getXMLRemoteServer was given a misformatted server's " << META_MULTI_LOC_LIST << " XML_ERROR!");
         return XMLP_ret::XML_ERROR;

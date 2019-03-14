@@ -286,11 +286,17 @@
 	</xs:simpleType>
 	
 	<xs:complexType name="RemoteServerAttributes">
-		<xs:all minOccurs="1">
-            <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
-            <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
-		</xs:all>
-		<xs:attribute name="Prefix" type="guid" use="required"/>
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="1" />
+				<xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" />
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="1" />
+				<xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" />
+			</xs:sequence>			
+		</xs:choice>
+		<xs:attribute name="prefix" type="guid" use="required"/>
 	</xs:complexType>
 	
 	<xs:complexType name="DiscoveryServerList">

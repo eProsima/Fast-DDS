@@ -41,15 +41,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-// Default configuration values for PDP reliable entities.
-const Duration_t pdp_heartbeat_period{ 1, 0 }; // 1 second
-const Duration_t pdp_nack_response_delay{ 0, 400 * 1000 * 1000 }; // ~93 milliseconds
-const Duration_t pdp_nack_supression_duration{ 0, 50 * 1000 * 1000 }; // ~11 milliseconds
-const Duration_t pdp_heartbeat_response_delay{ 0, 50 * 1000 * 1000 }; // ~11 milliseconds
-
-const int32_t pdp_initial_reserved_caches = 20;
-
-
 GUID_t RemoteServerAttributes::GetPDPReader() const
 {
     return GUID_t(guidPrefix, c_EntityId_SPDPReader);
@@ -96,9 +87,9 @@ void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if(!getRTPSParticipant()->getAttributes().builtin.discoveryProtocol != PDPType_t::CLIENT)
+    if(!(getRTPSParticipant()->getAttributes().builtin.discoveryProtocol != PDPType_t::CLIENT))
     {
-        logError(RTPS_PDP, "Using a PDP Server object with another user's settings");
+        logError(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
 
     if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
@@ -152,7 +143,7 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
 
 bool PDPClient::createPDPEndpoints()
 {
-    logInfo(RTPS_PDP,"Beginning PDPServer Endpoints creation");
+    logInfo(RTPS_PDP,"Beginning PDPClient Endpoints creation");
 
     HistoryAttributes hatt;
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
@@ -195,7 +186,7 @@ bool PDPClient::createPDPEndpoints()
     }
     else
     {
-        logError(RTPS_PDP, "PDPServer Reader creation failed");
+        logError(RTPS_PDP, "PDPClient Reader creation failed");
         delete(mp_PDPReaderHistory);
         mp_PDPReaderHistory = nullptr;
         delete(mp_listener);
@@ -247,12 +238,12 @@ bool PDPClient::createPDPEndpoints()
     }
     else
     {
-        logError(RTPS_PDP, "PDPServer Writer creation failed");
+        logError(RTPS_PDP, "PDPClient Writer creation failed");
         delete(mp_PDPWriterHistory);
         mp_PDPWriterHistory = nullptr;
         return false;
     }
-    logInfo(RTPS_PDP,"PDPServer Endpoints creation finished");
+    logInfo(RTPS_PDP,"PDPClient Endpoints creation finished");
     return true;
 }
 

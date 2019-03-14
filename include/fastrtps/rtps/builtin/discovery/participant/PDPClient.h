@@ -34,7 +34,7 @@ class StatefulWriter;
 class StatefulReader;
 
 /**
- * Class PDPServer manages client side of the discovery server mechanism
+ * Class PDPClient manages client side of the discovery server mechanism
  *@ingroup DISCOVERY_MODULE
  */
 class PDPClient : public PDP
@@ -99,8 +99,6 @@ class PDPClient : public PDP
 
     //!Matching server EDP endpoints
     void match_all_server_EDP_endpoints();
-
-    // TODO: see if the liveliness mechanism is compatible with the DATA(p) driven one and make corrections if needed
 
     private:
 

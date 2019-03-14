@@ -140,24 +140,28 @@ inline std::istream& operator>>(std::istream& input, GuidPrefix_t& guiP)
     {
         char point;
         unsigned short hex;
-        std::ios_base::iostate excp_mask;
+        std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {   
-            excp_mask = input.exceptions();
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
             input >> std::hex >> hex;
-            guiP.value[0] = hex;
+
+            if (hex > 255)
+            {
+                input.setstate(std::ios_base::failbit);
+            }
+
+            guiP.value[0] = static_cast<octet>(hex);
 
             for (int i = 1; i < 12; ++i)
             {
-                input >> point;
-                if (point != '.')
+                input >> point >> hex;
+                if ( point != '.' || hex > 255 )
                 {
                     input.setstate(std::ios_base::failbit);
                 }
-                input >> hex;
-                guiP.value[i] = hex;
+                guiP.value[i] = static_cast<octet>(hex);
             }
 
             input >> std::dec;

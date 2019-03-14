@@ -248,6 +248,14 @@ class PDP
 
 };
 
+// configuration values for PDP reliable entities.
+extern const Duration_t pdp_heartbeat_period;
+extern const Duration_t pdp_nack_response_delay;
+extern const Duration_t pdp_nack_supression_duration;
+extern const Duration_t pdp_heartbeat_response_delay;
+
+extern const int32_t pdp_initial_reserved_caches;
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

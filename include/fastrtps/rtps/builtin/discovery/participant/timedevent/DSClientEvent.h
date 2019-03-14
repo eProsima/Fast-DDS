@@ -38,7 +38,7 @@ public:
 
 	/**
 	 * Constructor.
-	 * @param p_PDP Pointer to the PDPServer.
+	 * @param p_PDP Pointer to the PDPClient.
 	 * @param interval Interval in ms.
 	 */
     DSClientEvent(PDPClient* p_PDP,

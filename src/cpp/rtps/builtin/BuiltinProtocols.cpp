@@ -59,8 +59,11 @@ BuiltinProtocols::~BuiltinProtocols() {
     // TODO Auto-generated destructor stub
     if(mp_WLP!=nullptr)
         delete(mp_WLP);
-    if(mp_PDP!=nullptr)
-        delete(mp_PDP);
+
+    if (m_att.discoveryProtocol != PDPType_t::EXTERNAL)
+    {
+        delete(mp_PDP); // responsible for object's lifetime
+    }
 }
 
 
@@ -81,7 +84,7 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
     }
 
     // PDP
-    switch (attributes.discoveryProtocol)
+    switch (m_att.discoveryProtocol)
     {
         case PDPType_t::NONE:
             logError(RTPS_PDP, "No participant discovery protocol specified");
