@@ -92,15 +92,12 @@ void PeriodicHeartbeat::event(
                 for (std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
                     it != mp_SFW->matchedReadersEnd(); ++it)
                 {
-                    if (!unacked_changes)
+                    if ((*it)->thereIsUnacknowledged())
                     {
-                        if ((*it)->thereIsUnacknowledged())
-                        {
-                            unacked_changes = true;
-                        }
+                        unacked_changes = true;
+                        locList.push_back((*it)->m_att.endpoint.remoteLocatorList);
+                        remote_readers.push_back((*it)->m_att.guid);
                     }
-                    locList.push_back((*it)->m_att.endpoint.remoteLocatorList);
-                    remote_readers.push_back((*it)->m_att.guid);
                 }
 
                 if (unacked_changes)

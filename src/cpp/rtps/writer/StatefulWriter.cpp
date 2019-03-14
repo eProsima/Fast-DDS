@@ -185,8 +185,11 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 send_heartbeat_piggyback_nts_(group);
             }
 
-            this->mp_periodicHB->restart_timer();
-            if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
+            if (!is_acked_by_all(change))
+            {
+                this->mp_periodicHB->restart_timer();
+            } 
+            else if (mp_listener != nullptr)
             {
                 mp_listener->onWriterChangeReceivedByAll(this, change);
             }
@@ -483,7 +486,9 @@ void StatefulWriter::send_any_unsent_changes()
     }
 
     if (activateHeartbeatPeriod)
+    {
         this->mp_periodicHB->restart_timer();
+    }
 
     // On VOLATILE writers, remove auto-acked (best effort readers) changes
     check_acked_status();
@@ -536,6 +541,24 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         mp_RTPSParticipant->network_factory().ShrinkLocatorLists({rdata.endpoint.unicastLocatorList});
 
     ReaderProxy* rp = new ReaderProxy(rdata, m_times, this);
+    
+    // Special case for best-effort readers, as durability doesn't apply to them.
+    if (rdata.endpoint.reliabilityKind == BEST_EFFORT)
+    {
+        // Set low mark for best effor readers
+        SequenceNumber_t next_seq = next_sequence_number() - 1;
+        if (next_seq > SequenceNumber_t(0, 0))
+        {
+            ChangeForReader_t changeForReader(next_seq);
+            changeForReader.setStatus(ACKNOWLEDGED);
+            rp->addChange(changeForReader);
+        }
+
+        // Add to list of proxies and early return
+        matched_readers.push_back(rp);
+        return true;
+    }
+
     std::set<SequenceNumber_t> not_relevant_changes;
 
     SequenceNumber_t current_seq = get_seq_num_min();
