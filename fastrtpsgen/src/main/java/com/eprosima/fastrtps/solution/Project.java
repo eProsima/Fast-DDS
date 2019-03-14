@@ -34,63 +34,65 @@ public class Project extends com.eprosima.solution.Project
 		m_projectsrcfiles = new ArrayList();
         m_jnisrcfiles = new ArrayList<String>();
         m_jniincludefiles = new ArrayList<String>();
+		m_idlincludefiles = new ArrayList<String>();
+		m_idlincludefiles.addAll((LinkedHashSet<String>)dependencies);
 	}
-	
+
 	public void addSubscriberSrcFile(String file)
 	{
 		m_subscribersrcfiles.add(file);
 	}
-	
+
 	public ArrayList getSubscriberSrcFiles()
 	{
 		return m_subscribersrcfiles;
 	}
-	
+
 	public void addSubscriberIncludeFile(String file)
 	{
 		m_subscriberincludefiles.add(file);
 	}
-	
+
 	public ArrayList getSubscriberIncludeFiles()
 	{
 		return m_subscriberincludefiles;
 	}
-	
+
 	public void addPublisherSrcFile(String file)
 	{
 		m_publishersrcfiles.add(file);
 	}
-	
+
 	public ArrayList getPublisherSrcFiles()
 	{
 		return m_publishersrcfiles;
 	}
-	
+
 	public void addPublisherIncludeFile(String file)
 	{
 		m_publisherincludefiles.add(file);
 	}
-	
+
 	public ArrayList getPublisherIncludeFiles()
 	{
 		return m_publisherincludefiles;
 	}
-	
+
 	public void addProjectIncludeFile(String file)
 	{
 		m_projectincludefiles.add(file);
 	}
-	
+
 	public ArrayList getProjectIncludeFiles()
 	{
 		return m_projectincludefiles;
 	}
-	
+
 	public void addProjectSrcFile(String file)
 	{
 		m_projectsrcfiles.add(file);
 	}
-	
+
 	public ArrayList getProjectSrcFiles()
 	{
 		return m_projectsrcfiles;
@@ -115,17 +117,17 @@ public class Project extends com.eprosima.solution.Project
     {
         return m_jniincludefiles;
     }
-	
+
 	public boolean getContainsInterfaces()
 	{
 		return m_containsInterfaces;
 	}
-	
+
 	public void setContainsInterfaces(boolean containsInterfaces)
 	{
 		m_containsInterfaces = containsInterfaces;
 	}
-	
+
 	/*!
 	 * @brief Used in string templates.
 	 */
@@ -133,7 +135,7 @@ public class Project extends com.eprosima.solution.Project
 	{
 		return GUIDGenerator.genGUID(getFile() + "Subscriber");
 	}
-	
+
 	/*!
 	 * @brief Used in string templates.
 	 */
@@ -141,7 +143,7 @@ public class Project extends com.eprosima.solution.Project
 	{
 		return GUIDGenerator.genGUID(getFile() + "SubscriberExample");
 	}
-	
+
 	/*!
 	 * @brief Used in string templates.
 	 */
@@ -149,7 +151,7 @@ public class Project extends com.eprosima.solution.Project
 	{
 		return GUIDGenerator.genGUID(getFile() + "Publisher");
 	}
-	
+
 	/*!
 	 * @brief Used in string templates.
 	 */
@@ -157,7 +159,7 @@ public class Project extends com.eprosima.solution.Project
 	{
 		return GUIDGenerator.genGUID(getFile() + "PublisherExample");
 	}
-	
+
 	/*!
 	 * @brief Used in string templates.
 	 */
@@ -178,7 +180,7 @@ public class Project extends com.eprosima.solution.Project
 	{
 		ArrayList<String> deps = new ArrayList<String>(getFullDependencies());
 		ArrayList<String> array = new ArrayList<String>();
-		
+
 		for(int count = 0; count < deps.size(); ++count)
 		{
 			if(!getParent().getOS().contains("Windows") ||
@@ -188,10 +190,10 @@ public class Project extends com.eprosima.solution.Project
 				array.add(GUIDGenerator.genGUID(deps.get(count) + "JNI"));
 			}
 		}
-		
+
 		return array;
 	}
-	
+
 	public boolean getHasStruct()
 	{
 		return m_hasStruct;
@@ -200,17 +202,28 @@ public class Project extends com.eprosima.solution.Project
 	{
 		m_hasStruct = bol;
 	}
-	
+
+    public void addIDLIncludeFile(String file)
+    {
+        m_idlincludefiles.add(file);
+    }
+
+    public ArrayList<String> getIDLIncludeFiles()
+    {
+        return m_idlincludefiles;
+    }
+
 	private boolean m_containsInterfaces = false;
 	private ArrayList m_subscribersrcfiles = null;
 	private ArrayList m_subscriberincludefiles = null;
 	private ArrayList m_publishersrcfiles = null;
 	private ArrayList m_publisherincludefiles = null;
-	
+
 	private ArrayList m_projectsrcfiles = null;
 	private ArrayList m_projectincludefiles = null;
 	private boolean m_hasStruct = false;
 	private ArrayList<String> m_jnisrcfiles = null;
 	private ArrayList<String> m_jniincludefiles = null;
+	private ArrayList<String> m_idlincludefiles = null;
 	String m_guid = null;
 }

@@ -323,9 +323,15 @@ public class fastrtpsgen {
             // Add product library
             solution.addLibrary("fastrtps");
 
-
+            ArrayList<String> includedIDL = new ArrayList<String>();
             for (int count = 0; returnedValue && (count < m_idlFiles.size()); ++count) {
                 Project project = process(m_idlFiles.get(count));
+
+                for (String include : project.getIDLIncludeFiles())
+                {
+                    //System.out.println(ColorMessage.error() + m_idlFiles.get(count) +  " includes " + include);
+                    includedIDL.add(include);
+                }
 
                 if (project != null) {
                     solution.addProject(project);
@@ -333,6 +339,17 @@ public class fastrtpsgen {
                     returnedValue = false;
                 }
             }
+
+            // Add include idl files
+            for (String included : includedIDL)
+            {
+                Project inner = process(included);
+                if (inner != null)
+                {
+                    solution.addProject(inner);
+                }
+            }
+
 
             // Generate solution
             if (returnedValue && (m_exampleOption != null) || m_test) {
@@ -546,6 +563,8 @@ public class fastrtpsgen {
             {
                 // Load test template
                 tmanager.addGroup("SerializationTestSource");
+                tmanager.addGroup("SerializationHeader");
+                tmanager.addGroup("SerializationSource");
             }
 
             // Add JNI sources.
@@ -615,7 +634,16 @@ public class fastrtpsgen {
                     String fileName = m_outputDir + onlyFileName + "SerializationTest.cpp";
                     returnedValue =
                         Utils.writeFile(fileName, maintemplates.getTemplate("SerializationTestSource"), m_replace);
-                    //project.addCommonSrcFile(fileName);
+
+                    System.out.println("Generating Serialization Source file...");
+                    String fileNameS = m_outputDir + onlyFileName + "Serialization.cpp";
+                    returnedValue =
+                        Utils.writeFile(fileNameS, maintemplates.getTemplate("SerializationSource"), m_replace);
+
+                    System.out.println("Generating Serialization Header file...");
+                    String fileNameH = m_outputDir + onlyFileName + "Serialization.h";
+                    returnedValue =
+                        Utils.writeFile(fileNameH, maintemplates.getTemplate("SerializationHeader"), m_replace);
                 }
 
                 // TODO: Uncomment following lines and create templates

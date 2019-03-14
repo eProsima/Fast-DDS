@@ -39,7 +39,6 @@ public class FastRTPSGenTest
         }
 
         //Configure Fast-RTPS for the tests
-        /*
         ArrayList<String[]> commands = new ArrayList<String[]>();
         commands.add(new String[]{"mkdir -p " + OUTPUT_PATH, "."});
         commands.add(new String[]{"rm -rf Fast-RTPS", OUTPUT_PATH});
@@ -55,7 +54,6 @@ public class FastRTPSGenTest
                 System.exit(-1);
             }
         }
-        */
 
         //Configure idl tests
         TestManager tests = new TestManager(TestLevel.RUN, "share/fastrtps/fastrtpsgen", INPUT_PATH, OUTPUT_PATH + "/idls", "x64Linux2.6gcc");

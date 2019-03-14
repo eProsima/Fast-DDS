@@ -44,8 +44,12 @@ target_link_libraries($project.name$ $solution.libraries : {$it$}; separator=" "
 
 $if(test)$
 # $project.name$ Serialization Test
-add_executable($project.name$SerializationTest $project.name$SerializationTest.cpp $project.name$PubSubTypes.cxx)
-target_link_libraries($project.name$SerializationTest $project.name$_lib $solution.libraries : {$it$}; separator=" "$)
+add_executable($project.name$SerializationTest $project.name$SerializationTest.cpp
+        $project.name$Serialization.cpp
+        $project.dependencies : {$it$Serialization.cpp}; separator=" "$
+        $project.name$PubSubTypes.cxx)
+target_link_libraries($project.name$SerializationTest $solution.libraries : {$it$}; separator=" "$
+        $project.name$_lib $project.dependencies : {$it$_lib}; separator=" "$)
 
 $endif$
 
