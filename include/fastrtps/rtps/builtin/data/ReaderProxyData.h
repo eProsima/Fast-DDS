@@ -278,9 +278,12 @@ class ReaderProxyData
         /**
          *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
+         * @param network Reference to network factory for locator validation and transformation
          * @return true on success
          */
-        RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
+        RTPS_DllAPI bool readFromCDRMessage(
+                CDRMessage_t* msg,
+                const NetworkFactory& network);
 
         //!
         bool m_expectsInlineQos;

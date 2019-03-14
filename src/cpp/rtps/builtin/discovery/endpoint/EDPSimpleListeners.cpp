@@ -19,6 +19,7 @@
 
 #include "EDPSimpleListeners.h"
 
+#include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
@@ -141,9 +142,10 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
     if(change->kind == ALIVE)
     {
         //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
+        const NetworkFactory& network = sedp_->mp_RTPSParticipant->network_factory();
         CDRMessage_t tempMsg(change_in->serializedPayload);
         temp_reader_data_.clear();
-        if(temp_reader_data_.readFromCDRMessage(&tempMsg))
+        if(temp_reader_data_.readFromCDRMessage(&tempMsg, network))
         {
             change->instanceHandle = temp_reader_data_.key();
             if(temp_reader_data_.guid().guidPrefix == sedp_->mp_RTPSParticipant->getGuid().guidPrefix)
@@ -153,12 +155,11 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
                 return;
             }
 
-            auto copy_data_fun = [this](
+            auto copy_data_fun = [this, & network](
                     ReaderProxyData* data,
                     bool updating,
                     const ParticipantProxyData& participant_data)
             {
-                const NetworkFactory& network = sedp_->mp_RTPSParticipant->network_factory();
                 if (!temp_reader_data_.has_locators())
                 {
                     temp_reader_data_.set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
@@ -169,7 +170,6 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
                 {
                     if (data->m_qos.canQosBeUpdated(temp_reader_data_.m_qos))
                     {
-                        // TODO (Miguel C) use network for locator optimization
                         data->update(&temp_reader_data_);
                     }
                     else
@@ -180,7 +180,6 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
                 }
                 else
                 {
-                    // TODO (Miguel C) use network for locator optimization
                     data->copy(&temp_reader_data_);
                 }
                 return true;
