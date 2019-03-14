@@ -95,6 +95,18 @@ public:
         collection_.reserve(cfg.initial);
     }
 
+    ResourceLimitedVector& operator = (const ResourceLimitedVector& other)
+    {
+        clear();
+        for (const_reference item : other)
+        {
+            push_back(other);
+        }
+
+        assert(size() == other.size());
+        return *this;
+    }
+
     /**
      * Add element at the end.
      *
