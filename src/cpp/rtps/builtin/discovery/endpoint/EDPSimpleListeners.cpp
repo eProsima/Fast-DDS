@@ -61,35 +61,68 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 
     if(change->kind == ALIVE)
     {
-        //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
-        WriterProxyData writerProxyData;
+        //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
+        const NetworkFactory& network = sedp_->mp_RTPSParticipant->network_factory();
         CDRMessage_t tempMsg(change_in->serializedPayload);
-
-        if(writerProxyData.readFromCDRMessage(&tempMsg))
+        temp_writer_data_.clear();
+        if (temp_writer_data_.readFromCDRMessage(&tempMsg, network))
         {
-            change->instanceHandle = writerProxyData.key();
-            if(writerProxyData.guid().guidPrefix == sedp_->mp_RTPSParticipant->getGuid().guidPrefix)
+            change->instanceHandle = temp_writer_data_.key();
+
+            if (temp_writer_data_.guid().guidPrefix == sedp_->mp_RTPSParticipant->getGuid().guidPrefix)
             {
-                logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring");
+                logInfo(RTPS_EDP, "Message from own RTPSParticipant, ignoring");
                 reader_history->remove_change(change);
                 return;
             }
 
-            //LOOK IF IS AN UPDATED INFORMATION
+            //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
+            auto copy_data_fun = [this, &network](
+                WriterProxyData* data,
+                bool updating,
+                const ParticipantProxyData& participant_data)
+            {
+                if (!temp_writer_data_.has_locators())
+                {
+                    temp_writer_data_.set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
+                    temp_writer_data_.set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+                }
+
+                if (updating)
+                {
+                    if (data->m_qos.canQosBeUpdated(temp_writer_data_.m_qos))
+                    {
+                        data->update(&temp_writer_data_);
+                    }
+                    else
+                    {
+                        logWarning(RTPS_EDP, "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
+                        return false;
+                    }
+                }
+                else
+                {
+                    data->copy(&temp_writer_data_);
+                }
+                return true;
+            };
+
             GUID_t participant_guid;
-            if(this->sedp_->mp_PDP->addWriterProxyData(&writerProxyData, participant_guid)) //ADDED NEW DATA
+            WriterProxyData* writer_data =
+                sedp_->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
+            if (writer_data != nullptr)
             {
                 // At this point we can release reader lock, cause change is not used
                 reader->getMutex()->unlock();
 
-                sedp_->pairing_writer_proxy_with_any_local_reader(participant_guid, &writerProxyData);
+                sedp_->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
 
                 // Take again the reader lock.
                 reader->getMutex()->lock();
             }
             else //NOT ADDED BECAUSE IT WAS ALREADY THERE
             {
-                logWarning(RTPS_EDP,"Received message from UNKNOWN RTPSParticipant, removing");
+                logWarning(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
             }
         }
     }
@@ -97,9 +130,8 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     {
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
-
-        GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
-        this->sedp_->mp_PDP->removeWriterProxyData(auxGUID);
+        GUID_t writer_guid = iHandle2GUID(change->instanceHandle);
+        this->sedp_->mp_PDP->removeWriterProxyData(writer_guid);
     }
 
     //Removing change from history

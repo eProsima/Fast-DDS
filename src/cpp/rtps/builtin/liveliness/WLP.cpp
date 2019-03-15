@@ -329,8 +329,8 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid().entityId = c_EntityId_WriterLivelinessSecure;
         watt.persistence_guid(watt.guid());
-        watt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
-        watt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
+        watt.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
+        watt.set_multicast_locators(pdata.m_metatrafficMulticastLocatorList, network);
         watt.topicKind(WITH_KEY);
         watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         watt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

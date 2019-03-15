@@ -672,8 +672,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
-    temp_writer_proxy_data_.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
+    temp_writer_proxy_data_.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
+    temp_writer_proxy_data_.set_multicast_locators(pdata.m_metatrafficMulticastLocatorList, network);
     temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 

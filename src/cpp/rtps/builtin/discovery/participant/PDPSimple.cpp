@@ -366,12 +366,15 @@ bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rda
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end();++pit)
     {
-        for (ReaderProxyData* rit : (*pit)->m_readers)
+        if ((*pit)->m_guid.guidPrefix == reader.guidPrefix)
         {
-            if(rit->guid() == reader)
+            for (ReaderProxyData* rit : (*pit)->m_readers)
             {
-                rdata.copy(rit);
-                return true;
+                if (rit->guid() == reader)
+                {
+                    rdata.copy(rit);
+                    return true;
+                }
             }
         }
     }
@@ -384,13 +387,15 @@ bool PDPSimple::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wda
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end(); ++pit)
     {
-        for (auto wit = (*pit)->m_writers.begin();
-                wit != (*pit)->m_writers.end(); ++wit)
+        if ((*pit)->m_guid.guidPrefix == writer.guidPrefix)
         {
-            if((*wit)->guid() == writer)
+            for (WriterProxyData* wit : (*pit)->m_writers)
             {
-                wdata.copy(*wit);
-                return true;
+                if (wit->guid() == writer)
+                {
+                    wdata.copy(wit);
+                    return true;
+                }
             }
         }
     }
@@ -405,23 +410,26 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end(); ++pit)
     {
-        for (ReaderProxyData* rit : (*pit)->m_readers)
+        if ((*pit)->m_guid.guidPrefix == reader_guid.guidPrefix)
         {
-            if(rit->guid() == reader_guid)
+            for (ReaderProxyData* rit : (*pit)->m_readers)
             {
-                mp_EDP->unpairReaderProxy((*pit)->m_guid, reader_guid);
-
-                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                if(listener)
+                if (rit->guid() == reader_guid)
                 {
-                    ReaderDiscoveryInfo info;
-                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                    info.info = std::move(*rit);
-                    listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                }
+                    mp_EDP->unpairReaderProxy((*pit)->m_guid, reader_guid);
 
-                rit->clear();
-                return true;
+                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                    if (listener)
+                    {
+                        ReaderDiscoveryInfo info;
+                        info.status = ReaderDiscoveryInfo::REMOVED_READER;
+                        info.info = std::move(*rit);
+                        listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    }
+
+                    rit->clear();
+                    return true;
+                }
             }
         }
     }
@@ -437,25 +445,26 @@ bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid)
     for (auto pit = m_participantProxies.begin();
             pit != m_participantProxies.end(); ++pit)
     {
-        for (auto wit = (*pit)->m_writers.begin();
-                wit != (*pit)->m_writers.end(); ++wit)
+        if ((*pit)->m_guid.guidPrefix == writer_guid.guidPrefix)
         {
-            if((*wit)->guid() == writer_guid)
+            for (WriterProxyData* wit : (*pit)->m_writers)
             {
-                mp_EDP->unpairWriterProxy((*pit)->m_guid, writer_guid);
-
-                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                if(listener)
+                if (wit->guid() == writer_guid)
                 {
-                    WriterDiscoveryInfo info;
-                    info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                    info.info = std::move(**wit);
-                    listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                }
+                    mp_EDP->unpairWriterProxy((*pit)->m_guid, writer_guid);
 
-                delete *wit;
-                (*pit)->m_writers.erase(wit);
-                return true;
+                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                    if (listener)
+                    {
+                        WriterDiscoveryInfo info;
+                        info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                        info.info = std::move(*wit);
+                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    }
+
+                    wit->clear();
+                    return true;
+                }
             }
         }
     }
@@ -667,71 +676,92 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
     return nullptr;
 }
 
-bool PDPSimple::addWriterProxyData(WriterProxyData* wdata, GUID_t& participant_guid)
+WriterProxyData* PDPSimple::addWriterProxyData(
+        const GUID_t& writer_guid,
+        GUID_t& participant_guid,
+        std::function<bool(WriterProxyData*, bool, const ParticipantProxyData&)> initializer_func)
 {
-    logInfo(RTPS_PDP, "Adding writer proxy data " << wdata->guid());
+    logInfo(RTPS_PDP, "Adding reader proxy data " << writer_guid);
+    WriterProxyData* ret_val = nullptr;
 
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
 
-    for(std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
-            pit!=m_participantProxies.end();++pit)
+    for (std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
+        pit != m_participantProxies.end(); ++pit)
     {
-        if((*pit)->m_guid.guidPrefix == wdata->guid().guidPrefix)
+        if ((*pit)->m_guid.guidPrefix == writer_guid.guidPrefix)
         {
-            // Set locators information if not defined by ReaderProxyData.
-            if(wdata->unicastLocatorList().empty() && wdata->multicastLocatorList().empty())
-            {
-                wdata->unicastLocatorList((*pit)->m_defaultUnicastLocatorList);
-                wdata->multicastLocatorList((*pit)->m_defaultMulticastLocatorList);
-            }
-            // Set as alive.
-            wdata->isAlive(true);
-
             // Copy participant data to be used outside.
             participant_guid = (*pit)->m_guid;
 
-            //CHECK THAT IT IS NOT ALREADY THERE:
-            for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
-                    wit!=(*pit)->m_writers.end();++wit)
+            // Check that it is not already there:
+            for (WriterProxyData* wit : (*pit)->m_writers)
             {
-                if((*wit)->guid().entityId == wdata->guid().entityId)
+                if (wit->guid().entityId == writer_guid.entityId)
                 {
-                    (*wit)->update(wdata);
+                    if (!initializer_func(wit, true, **pit))
+                    {
+                        return nullptr;
+                    }
+
+                    ret_val = wit;
 
                     RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                    if(listener)
+                    if (listener)
                     {
                         WriterDiscoveryInfo info;
                         info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
-                        info.info = *wdata;
+                        info.info = *ret_val;
                         listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
-                    return true;
+                    return ret_val;
                 }
             }
 
-            WriterProxyData* newWPD = new WriterProxyData(*wdata);
-            (*pit)->m_writers.push_back(newWPD);
+            // Try to reuse an old entry
+            ret_val = nullptr;
+            for (WriterProxyData* wit : (*pit)->m_writers)
+            {
+                if (wit->guid() == c_Guid_Unknown)
+                {
+                    ret_val = wit;
+                    break;
+                }
+            }
+
+            if (ret_val == nullptr)
+            {
+                // TODO (Miguel C): Resource limits
+                ret_val = new WriterProxyData();
+                // Add to ParticipantProxyData
+                (*pit)->m_writers.push_back(ret_val);
+            }
+
+            if (!initializer_func(ret_val, false, **pit))
+            {
+                return nullptr;
+            }
 
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-            if(listener)
+            if (listener)
             {
                 WriterDiscoveryInfo info;
                 info.status = WriterDiscoveryInfo::DISCOVERED_WRITER;
-                info.info = *wdata;
+                info.info = *ret_val;
                 listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
             }
 
-            return true;
+            return ret_val;
         }
     }
-    return false;
+
+    return nullptr;
 }
 
 void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    logInfo(RTPS_PDP,"For RTPSParticipant: "<<pdata->m_guid.guidPrefix);
+    logInfo(RTPS_PDP,"For RTPSParticipant: "<< pdata->m_guid.guidPrefix);
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
@@ -842,17 +872,20 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
                     }
                 }
             }
-            for(std::vector<WriterProxyData*>::iterator wit = pdata->m_writers.begin();
-                    wit !=pdata->m_writers.end();++wit)
+            for(WriterProxyData* wit : pdata->m_writers)
             {
-                mp_EDP->unpairWriterProxy(partGUID, (*wit)->guid());
-
-                if(listener)
+                GUID_t writer_guid(wit->guid());
+                if (writer_guid != c_Guid_Unknown)
                 {
-                    WriterDiscoveryInfo info;
-                    info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                    info.info = std::move(**wit);
-                    listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    mp_EDP->unpairWriterProxy(partGUID, writer_guid);
+
+                    if (listener)
+                    {
+                        WriterDiscoveryInfo info;
+                        info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                        info.info = std::move(*wit);
+                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    }
                 }
             }
         }
@@ -911,13 +944,12 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
     logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
             <<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
     std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
-    for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
-            wit!=this->m_participantProxies.front()->m_writers.end();++wit)
+    for(WriterProxyData* wit : this->m_participantProxies.front()->m_writers)
     {
-        if((*wit)->m_qos.m_liveliness.kind == kind)
+        if(wit->m_qos.m_liveliness.kind == kind)
         {
-            logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->guid().entityId << " marked as ALIVE");
-            (*wit)->isAlive(true);
+            logInfo(RTPS_LIVELINESS,"Local Writer "<< wit->guid().entityId << " marked as ALIVE");
+            wit->isAlive(true);
         }
     }
 }
@@ -934,12 +966,11 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
     {
         if((*pit)->m_guid.guidPrefix == guidP)
         {
-            for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
-                    wit != (*pit)->m_writers.end();++wit)
+            for(WriterProxyData* wit : (*pit)->m_writers)
             {
-                if((*wit)->m_qos.m_liveliness.kind == kind)
+                if(wit->m_qos.m_liveliness.kind == kind)
                 {
-                    (*wit)->isAlive(true);
+                    wit->isAlive(true);
                     for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
                             rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
                     {
@@ -947,7 +978,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
                         {
                             StatefulReader* sfr = (StatefulReader*)(*rit);
                             WriterProxy* WP;
-                            if(sfr->matched_writer_lookup((*wit)->guid(), &WP))
+                            if(sfr->matched_writer_lookup(wit->guid(), &WP))
                             {
                                 WP->assert_liveliness();
                                 continue;

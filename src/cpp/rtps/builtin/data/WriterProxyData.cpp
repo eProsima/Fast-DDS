@@ -23,6 +23,8 @@
 
 #include <fastrtps/log/Log.h>
 
+#include <fastrtps/rtps/network/NetworkFactory.h>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -32,6 +34,8 @@ WriterProxyData::WriterProxyData()
 #if HAVE_SECURITY
     : security_attributes_(0)
     , plugin_security_attributes_(0)
+    // TODO (Miguel C): Use participant locators allocation policy
+    , remote_locators_(4u, 1u)
     , m_userDefinedId(0)
 #else
     : m_userDefinedId(0)
@@ -52,8 +56,7 @@ WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
 #else
     : m_guid(writerInfo.m_guid)
 #endif
-    , m_unicastLocatorList(writerInfo.m_unicastLocatorList)
-    , m_multicastLocatorList(writerInfo.m_multicastLocatorList)
+    , remote_locators_(writerInfo.remote_locators_)
     , m_key(writerInfo.m_key)
     , m_RTPSParticipantKey(writerInfo.m_RTPSParticipantKey)
     , m_typeName(writerInfo.m_typeName)
@@ -82,8 +85,7 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     plugin_security_attributes_ = writerInfo.plugin_security_attributes_;
 #endif
     m_guid = writerInfo.m_guid;
-    m_unicastLocatorList = writerInfo.m_unicastLocatorList;
-    m_multicastLocatorList = writerInfo.m_multicastLocatorList;
+    remote_locators_ = writerInfo.remote_locators_;
     m_key = writerInfo.m_key;
     m_RTPSParticipantKey = writerInfo.m_RTPSParticipantKey;
     m_typeName = writerInfo.m_typeName;
@@ -108,16 +110,14 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
         if (!ParameterList::writeEncapsulationToCDRMsg(msg)) return false;
     }
 
-    for(LocatorListIterator lit = m_unicastLocatorList.begin();
-            lit!=m_unicastLocatorList.end();++lit)
+    for(const Locator_t& locator : remote_locators_.unicast)
     {
-        ParameterLocator_t p(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        ParameterLocator_t p(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,locator);
         if (!p.addToCDRMessage(msg)) return false;
     }
-    for(LocatorListIterator lit = m_multicastLocatorList.begin();
-            lit!=m_multicastLocatorList.end();++lit)
+    for(const Locator_t& locator : remote_locators_.multicast)
     {
-        ParameterLocator_t p(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        ParameterLocator_t p(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,locator);
         if (!p.addToCDRMessage(msg)) return false;
     }
     {
@@ -249,9 +249,11 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     return CDRMessage::addParameterSentinel(msg);
 }
 
-bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
+bool WriterProxyData::readFromCDRMessage(
+        CDRMessage_t* msg,
+        const NetworkFactory& network)
 {
-    auto param_process = [this](const Parameter_t* param)
+    auto param_process = [this, & network](const Parameter_t* param)
     {
         switch (param->Pid)
         {
@@ -420,14 +422,22 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                m_unicastLocatorList.push_back(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    remote_locators_.add_unicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_MULTICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                m_multicastLocatorList.push_back(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    remote_locators_.add_multicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_KEY_HASH:
@@ -498,8 +508,8 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 void WriterProxyData::clear()
 {
     m_guid = c_Guid_Unknown;
-    m_unicastLocatorList.clear();
-    m_multicastLocatorList.clear();
+    remote_locators_.unicast.clear();
+    remote_locators_.multicast.clear();
     m_key = InstanceHandle_t();
     m_RTPSParticipantKey = InstanceHandle_t();
     m_typeName = "";
@@ -515,8 +525,7 @@ void WriterProxyData::clear()
 void WriterProxyData::copy(WriterProxyData* wdata)
 {
     m_guid = wdata->m_guid;
-    m_unicastLocatorList = wdata->m_unicastLocatorList;
-    m_multicastLocatorList = wdata->m_multicastLocatorList;
+    remote_locators_ = wdata->remote_locators_;
     m_key = wdata->m_key;
     m_RTPSParticipantKey = wdata->m_RTPSParticipantKey;
     m_typeName = wdata->m_typeName;
@@ -538,11 +547,49 @@ void WriterProxyData::copy(WriterProxyData* wdata)
 
 void WriterProxyData::update(WriterProxyData* wdata)
 {
-    m_unicastLocatorList = wdata->m_unicastLocatorList;
-    m_multicastLocatorList = wdata->m_multicastLocatorList;
+    remote_locators_ = wdata->remote_locators_;
     m_qos.setQos(wdata->m_qos,false);
     m_isAlive = wdata->m_isAlive;
+}
 
+void WriterProxyData::add_unicast_locator(const Locator_t& locator)
+{
+    remote_locators_.add_unicast_locator(locator);
+}
+
+void WriterProxyData::set_unicast_locators(
+    const LocatorList_t& locators,
+    const NetworkFactory& network)
+{
+    Locator_t local_locator;
+    remote_locators_.unicast.clear();
+    for (const Locator_t& locator : locators)
+    {
+        if (network.transform_remote_locator(locator, local_locator))
+        {
+            remote_locators_.add_unicast_locator(local_locator);
+        }
+    }
+}
+
+void WriterProxyData::add_multicast_locator(const Locator_t& locator)
+{
+    remote_locators_.add_multicast_locator(locator);
+}
+
+void WriterProxyData::set_multicast_locators(
+    const LocatorList_t& locators,
+    const NetworkFactory& network)
+{
+    Locator_t local_locator;
+    remote_locators_.multicast.clear();
+    for (const Locator_t& locator : locators)
+    {
+        if (network.transform_remote_locator(locator, local_locator))
+        {
+            remote_locators_.add_multicast_locator(locator);
+        }
+    }
 }
 
 RemoteWriterAttributes::RemoteWriterAttributes(const WriterProxyData& data)
@@ -554,8 +601,16 @@ RemoteWriterAttributes::RemoteWriterAttributes(const WriterProxyData& data)
     endpoint.endpointKind = WRITER;
     endpoint.topicKind = data.topicKind();
     endpoint.reliabilityKind = data.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    endpoint.unicastLocatorList = data.unicastLocatorList();
-    endpoint.multicastLocatorList = data.multicastLocatorList();
+    endpoint.unicastLocatorList.clear();
+    for (const Locator_t& locator : data.remote_locators().unicast)
+    {
+        endpoint.unicastLocatorList.push_back(locator);
+    }
+    endpoint.multicastLocatorList.clear();
+    for (const Locator_t& locator : data.remote_locators().multicast)
+    {
+        endpoint.multicastLocatorList.push_back(locator);
+    }
     endpoint.persistence_guid = (data.persistence_guid() == c_Guid_Unknown) ? guid : data.persistence_guid();
 }
 
