@@ -86,8 +86,7 @@ int test$ctx.lastStructure.name$()
 
 int main(void)
 {
-    time_t t;
-    srand((unsigned) time(&t));
+    srand((unsigned) time(NULL));
     return test$ctx.lastStructure.name$() ? 0 : 1;
 }
 
@@ -98,3 +97,9 @@ struct_type(ctx, parent, struct) ::= <<>>
 union_type(ctx, parent, union) ::= <<>>
 
 enum_type(ctx, parent, enum) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<>>

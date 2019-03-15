@@ -24,6 +24,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "SerializationSource.cpp"], descriptio
 #include <stdint.h>
 #include <inttypes.h>
 #include <string.h>
+#include <cassert>
 
 $ctx.directIncludeDependencies:{#include "$it$Serialization.h"}; separator="\n"$
 
@@ -35,104 +36,300 @@ struct_type(ctx, parent, struct) ::= <<
 void print$struct.name$($struct.name$* topic)
 {
     printf("$struct.name$: { \n");
-    $struct.members:{$member_print(typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    $struct.members:{$member_print(ctx=ctx, typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
     printf("}\n");
 }
 
-void initialize$struct.name$($struct.name$* topic)
+void initialize$struct.name$($struct.name$* topic, int idx)
 {
-    $struct.members:{$member_assignment(typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    if (idx == 0)
+    {
+        $struct.members:{$member_assignment(ctx=ctx, typecode=it.typecode, name=it.name, originName=it.name)$}; separator="\n"$
+    }
+    else
+    {
+        $struct.members:{$simply_member_assignment(ctx=ctx, typecode=it.typecode, name=it.name)$}; separator="\n"$
+    }
 }
 
-int compare$struct.name$($struct.name$* a, $struct.name$* b)
+int compare$struct.name$($struct.name$* topic_a, $struct.name$* topic_b)
 {
-    $struct.members:{$member_comparision(typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    $struct.members:{$member_comparision(ctx=ctx, typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    return 1;
+}
+
+$struct.name$ createKey$struct.name$(int idx)
+{
+    $struct.name$ result;
+    initialize$struct.name$(&result, idx+1); // 0 means don't use the idx internally.
+    return result;
+}
+
+>>
+
+union_type(ctx, parent, union) ::= <<
+void print$union.name$($union.name$* topic)
+{
+    topic->_d(static_cast<$union.discriminator.cppTypename$>(0));
+    printf("$union.name$: { \n");
+    $if(union.members)$
+    $member_print(ctx=ctx, typecode=first(union.members).typecode, name=first(union.members).name, originName=first(union.members).name)$
+    $endif$
+    printf("}\n");
+}
+
+void initialize$union.name$($union.name$* topic)
+{
+    topic->_d(static_cast<$union.discriminator.cppTypename$>(0));
+    $if(union.members)$
+    $member_assignment(ctx=ctx, typecode=first(union.members).typecode, name=first(union.members).name, originName=first(union.members).name)$
+    $endif$
+}
+
+int compare$union.name$($union.name$* topic_a, $union.name$* topic_b)
+{
+    topic_a->_d(static_cast<$union.discriminator.cppTypename$>(0));
+    topic_b->_d(static_cast<$union.discriminator.cppTypename$>(0));
+    $if(union.members)$
+    $member_comparision(ctx=ctx, typecode=first(union.members).typecode, name=first(union.members).name, originName=first(union.members).name)$
+    $endif$
     return 1;
 }
 
 >>
 
-union_type(ctx, parent, union) ::= <<>>
-
 enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<
+void print$bitset.name$($bitset.name$* topic)
+{
+    printf("$bitset.name$: { \n");
+    $bitset.bitfields:{$if(it.name)$printf("$it.name$: 0x%" PRIx64 "\n", (uint64_t)topic->$it.name$());$endif$}; separator="\n"$
+}
+
+void initialize$bitset.name$($bitset.name$* topic)
+{
+    $bitset.bitfields:{$if(it.name)$$if(it.spec.typecode.isType_7)$topic->$it.name$(static_cast<$it.spec.typecode.cppTypename$>(rand()%2==1));$elseif(it.spec.typecode.primitive)$topic->$it.name$(static_cast<$it.spec.typecode.cppTypename$>(rand()));$endif$$endif$}; separator="\n"$
+}
+
+int compare$bitset.name$($bitset.name$* topic_a, $bitset.name$* topic_b)
+{
+    $bitset.bitfields:{$if(it.name)$if(topic_a->$it.name$() != topic_b->$it.name$()) return 0;$endif$}; separator="\n"$
+    return 1;
+}
+
+>>
 
 // ========================================================================================
 //                                      ASSIGNMENT
 // ========================================================================================
-member_assignment(typecode, name, originName) ::= <<
+simply_member_assignment(ctx, typecode, name) ::= <<
+// $typecode.cppTypename$ - $typecode.kind$
 $if(typecode.isType_7)$
-topic->$name$(static_cast<$typecode.cTypename$>(rand()%2==1));
+topic->$name$(static_cast<$typecode.cppTypename$>(idx%2==1));
 $elseif(typecode.primitive)$
-topic->$name$(static_cast<$typecode.cTypename$>(rand()));
+topic->$name$(static_cast<$typecode.cppTypename$>(idx));
 $elseif(typecode.isType_d)$
+$if(typecode.isWStringType)$
+topic->$name$(std::to_wstring(idx));
+$else$
+topic->$name$(std::to_string(idx));
+$endif$
+$elseif(typecode.isSequenceType)$
+printf("For testing map's key structs sequences aren't allowed.\n");
+assert(false);
+$elseif(typecode.isType_f)$
+printf("For testing map's key structs arrays aren't allowed.\n");
+assert(false);
+$elseif(typecode.isMapType)$
+printf("For testing map's key structs maps aren't allowed.\n");
+assert(false);
+$else$
+printf("For testing map's key structs $typecode.cppTypename$ aren't allowed.\n");
+assert(false);
+$endif$
+>>
+
+member_assignment(ctx, typecode, name, originName) ::= <<
+// $typecode.cppTypename$ - $typecode.kind$
+$if(typecode.isType_7)$
+topic->$name$(static_cast<$typecode.cppTypename$>(rand()%2==1));
+$elseif(typecode.primitive)$
+topic->$name$(static_cast<$typecode.cppTypename$>(rand()));
+$elseif(typecode.isType_d)$
+$if(typecode.isWStringType)$
+topic->$name$(L"WWWWWW");
+$else$
 topic->$name$("AAAAA");
-$elseif(typecode.isType_e)$
-$sequence_assigment(typecode=typecode, name=name)$
+$endif$
+$elseif(typecode.isSequenceType)$
+$sequence_assigment(ctx=ctx, typecode=typecode, name=name, p="()", loopvar=ctx.newLoopVarName)$
 $elseif(typecode.isType_f)$
-$array_assigment(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$array_assigment(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="()", loopvar=ctx.newLoopVarName)$
+$elseif(typecode.isMapType)$
+$map_assigment(ctx=ctx, typecode=typecode, name=name, originName=originName, p="()", loopvar=ctx.newLoopVarName)$
 $else$
-initialize$typecode.cTypename$(&topic->$name$());
+initialize$typecode.cppTypename$(&topic->$name$());
 $endif$
 >>
 
-array_member_assignment(typecode, name, originName) ::= <<
+array_member_assignment(ctx, typecode, name, originName, loopvar) ::= <<
 $if(typecode.isType_7)$
-topic->$name$ = static_cast<$typecode.cTypename$>(rand()%2==1);
+topic->$name$ = static_cast<$typecode.cppTypename$>(rand()%2==1);
 $elseif(typecode.primitive)$
-topic->$name$ = static_cast<$typecode.cTypename$>(rand());
+topic->$name$ = static_cast<$typecode.cppTypename$>(rand());
 $elseif(typecode.isType_d)$
+$if(typecode.isWStringType)$
+topic->$name$ = L"WWWWWW";
+$else$
 topic->$name$ = "AAAAA";
-$elseif(typecode.isType_e)$
-$sequence_assigment(typecode=typecode, name=name)$
+$endif$
+$elseif(typecode.isSequenceType)$
+$sequence_assigment(ctx=ctx, typecode=typecode, name=name, p="", loopvar=loopvar)$
 $elseif(typecode.isType_f)$
-$array_assigment(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$array_assigment(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="", loopvar=loopvar)$
+$elseif(typecode.isMapType)$
+$map_assigment(ctx=ctx, typecode=typecode, name=name, originName=originName, p="", loopvar=loopvar)$
 $else$
-initialize$typecode.cTypename$(&topic->$name$);
+initialize$typecode.cppTypename$(&topic->$name$);
 $endif$
 >>
 
-sequence_member_assignment(typecode, name, originName) ::= <<
+sequence_member_assignment(ctx, typecode, name, originName, p, loopvar) ::= <<
 $if(typecode.isType_7)$
-topic->$name$().push_back(static_cast<$typecode.cTypename$>(rand()%2==1));
+topic->$name$$p$.push_back(static_cast<$typecode.cppTypename$>(rand()%2==1));
 $elseif(typecode.primitive)$
-topic->$name$().push_back(static_cast<$typecode.cTypename$>(rand()));
+topic->$name$$p$.push_back(static_cast<$typecode.cppTypename$>(rand()));
 $elseif(typecode.isType_d)$
-topic->$name$().push_back("AAAAA");
-$elseif(typecode.isType_e)$
-$sequence_assigment(typecode=typecode, name=name)$
-$elseif(typecode.isType_f)$
-$array_assigment(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$if(typecode.isWStringType)$
+topic->$name$$p$.push_back(L"WWWWWW");
 $else$
-$typecode.cTypename$ aux$typecode.cTypename$_$name$;
-initialize$typecode.cTypename$(&aux$typecode.cTypename$_$name$);
-topic->$name$().push_back(aux$typecode.cTypename$_$name$);
+topic->$name$$p$.push_back("AAAAA");
+$endif$
+$elseif(typecode.isSequenceType)$
+$sequence_assigment(ctx=ctx, typecode=typecode, name=name, loopvar=loopvar, p="")$
+$elseif(typecode.isType_f)$
+$array_assigment(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="", loopvar=loopvar)$
+$elseif(typecode.isMapType)$
+$map_assigment(ctx=ctx, typecode=typecode, name=name, originName=originName, loopvar=loopvar, p="")$
+$else$
+$typecode.cppTypename$ aux$typecode.cppTypename$_$name$;
+initialize$typecode.cppTypename$(&aux$typecode.cppTypename$_$name$);
+topic->$name$$p$.push_back(aux$typecode.cppTypename$_$name$);
 $endif$
 >>
 
-sequence_assigment(typecode, name) ::= <<
-for(int i = 0; i < $typecode.maxsize$; ++i)
+map_member_assignment(ctx, keytypecode, valueTypeCode, name, originName, p, loopvar) ::= <<
+// Key generation
+$if(keytypecode.isType_7)$
+$keytypecode.cppTypename$ $originName$Key$loopvar$ = static_cast<$keytypecode.cppTypename$>(rand()%2==1);
+$map_member_value_assignment(ctx=ctx, valueTypeCode=valueTypeCode, name=name, originName=originName, p=p, loopvar=loopvar)$
+$elseif(keytypecode.primitive)$
+$keytypecode.cppTypename$ $originName$Key$loopvar$ = static_cast<$keytypecode.cppTypename$>(rand());
+$map_member_value_assignment(ctx=ctx, valueTypeCode=valueTypeCode, name=name, originName=originName, p=p, loopvar=loopvar)$
+$elseif(keytypecode.isType_d)$
+$if(keytypecode.isWStringType)$
+$keytypecode.cppTypename$ $originName$Key$loopvar$ = (L"WWWWWW");
+$map_member_value_assignment(ctx=ctx, valueTypeCode=valueTypeCode, name=name, originName=originName, p=p, loopvar=loopvar)$
+$else$
+$keytypecode.cppTypename$ $originName$Key$loopvar$ = ("AAAAA");
+$map_member_value_assignment(ctx=ctx, valueTypeCode=valueTypeCode, name=name, originName=originName, p=p, loopvar=loopvar)$
+$endif$
+$elseif(keytypecode.isSequenceType)$
+printf("Sequences not supported for testing map's key.\n");
+assert(false);
+$elseif(keytypecode.isType_f)$
+printf("Arrays not supported for testing map's key.\n");
+assert(false);
+$elseif(keytypecode.isMapType)$
+printf("Maps not supported for testing map's key.\n");
+assert(false);
+$elseif(keytypecode.isUnionType)$
+printf("Unions not supported for testing map's key.\n");
+assert(false);
+$elseif(keytypecode.isStructType)$
+$keytypecode.cppTypename$ $originName$Key$loopvar$ = createKey$keytypecode.cppTypename$($loopvar$);
+$map_member_value_assignment(ctx=ctx, valueTypeCode=valueTypeCode, name=name, originName=originName, p=p, loopvar=loopvar)$
+$else$
+printf("Unsupported testing map's key type ($keytypecode.cppTypename$).\n");
+assert(false);
+$endif$
+>>
+
+map_member_value_assignment(ctx, valueTypeCode, name, originName, p, loopvar) ::= <<
+// Value assignment
+$if(valueTypeCode.isType_7)$
+topic->$name$$p$[$originName$Key$loopvar$] = static_cast<$valueTypeCode.cppTypename$>(rand()%2==1);
+$elseif(valueTypeCode.primitive)$
+topic->$name$$p$[$originName$Key$loopvar$] = static_cast<$valueTypeCode.cppTypename$>(rand());
+$elseif(valueTypeCode.isType_d)$
+$if(valueTypeCode.isWStringType)$
+topic->$name$$p$[$originName$Key$loopvar$] = L"WWWWWW";
+$else$
+topic->$name$$p$[$originName$Key$loopvar$] = "AAAAA";
+$endif$
+$elseif(valueTypeCode.isSequenceType)$
+$sequence_assigment(ctx=ctx, typecode=valueTypeCode, name=mapName(name=name, p=p, key1=originName, key2=loopvar), loopvar=loopvar, p="")$
+$elseif(valueTypeCode.isType_f)$
+$array_assigment(ctx=ctx, typecode=valueTypeCode, name=mapName(name=name, p=p, key1=originName, key2=loopvar), originName=originName, dimensions=valueTypeCode.dimensions, p="", loopvar=loopvar)$
+$elseif(valueTypeCode.isMapType)$
+$map_assigment(ctx=ctx, typecode=valueTypeCode, name=mapName(name=name, p=p, key1=originName, key2=loopvar), originName=originName,loopvar=loopvar, p="")$
+$else$
+$valueTypeCode.cppTypename$ aux$valueTypeCode.cppTypename$_$name$;
+initialize$valueTypeCode.cppTypename$(&aux$valueTypeCode.cppTypename$_$name$);
+topic->$name$$p$[$originName$Key$loopvar$] = aux$valueTypeCode.cppTypename$_$name$;
+$endif$
+>>
+
+sequence_assigment(ctx, typecode, name, p, loopvar) ::= <<
+for(int $loopvar$ = 0; $loopvar$ < $typecode.maxsize$; ++$loopvar$)
 {
-    $sequence_member_assignment(typecode=typecode.contentTypeCode, name=name, originName=name)$
+    $if(typecode.contentTypeCode.isSequenceType)$
+    $sequence_member_assignment(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=name, p="", loopvar=ctx.nextLoopVarName)$
+    $elseif(typecode.contentTypeCode.isArrayType)$
+    $sequence_member_assignment(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=name, p="", loopvar=ctx.nextLoopVarName)$
+    $else$
+    $sequence_member_assignment(ctx=ctx, typecode=typecode.contentTypeCode, name=name, originName=name, p=p, loopvar=ctx.nextLoopVarName)$
+    $endif$
 }
 >>
 
-array_assigment(typecode, name, originalName, dimensions) ::= <<
-$if(rest(dimensions))$
-for(int i$length(dimensions)$ = 0; i$length(dimensions)$ < topic->$name$().size(); ++i$length(dimensions)$)
+map_assigment(ctx, typecode, name, originName, p, loopvar) ::= <<
+for(int $loopvar$ = 0; $loopvar$ < $typecode.maxsize$; ++$loopvar$)
 {
-    $array_assigment(typecode=typecode, name=indexName(name=name, suffix=length(dimensions)), originName=originName, dimensions=rest(dimensions))$
+    $if(typecode.valueTypeCode.isSequenceType)$
+    $map_member_assignment(ctx=ctx, keytypecode=typecode.keyTypeCode, valueTypeCode=typecode.valueTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, p="", loopvar=ctx.nextLoopVarName)$
+    $elseif(typecode.valueTypeCode.isMapType)$
+    $map_member_assignment(ctx=ctx, keytypecode=typecode.keyTypeCode, valueTypeCode=typecode.valueTypeCode, name=name, originName=originName, p=p, loopvar=ctx.nextLoopVarName)$
+    $elseif(typecode.valueTypeCode.isArrayType)$
+    $map_member_assignment(ctx=ctx, keytypecode=typecode.keyTypeCode, valueTypeCode=typecode.valueTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, p="", loopvar=ctx.nextLoopVarName)$
+    $else$
+    $map_member_assignment(ctx=ctx, keytypecode=typecode.keyTypeCode, valueTypeCode=typecode.valueTypeCode, name=name, originName=originName, p=p, loopvar=ctx.nextLoopVarName)$
+    $endif$
+}
+>>
+
+array_assigment(ctx, typecode, name, originName, dimensions, p, loopvar) ::= <<
+$if(rest(dimensions))$
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
+{
+    $array_assigment(ctx=ctx, typecode=typecode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, dimensions=rest(dimensions), p="", loopvar=ctx.nextLoopVarName)$
 }
 $elseif(typecode.contentTypeCode.primitive)$
-memset(&topic->$name$(), static_cast<$typecode.cTypename$>(rand()), sizeof(topic->$name$()));
+memset(&topic->$name$$p$, static_cast<$typecode.contentTypeCode.cppTypename$>(rand()), sizeof(topic->$name$$p$));
 $elseif(typecode.contentTypeCode.isType_d)$
-for(int i = 0; i < topic->$name$().size(); ++i)
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_assignment(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_assignment(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=name, loopvar=ctx.nextLoopVarName)$
 }
 $else$
-for(int i = 0; i < topic->$name$().size(); ++i)
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_assignment(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_assignment(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=name, loopvar=ctx.nextLoopVarName)$
 }
 $endif$
 >>
@@ -140,85 +337,164 @@ $endif$
 // ========================================================================================
 //                                         PRINT
 // ========================================================================================
-member_print(typecode, name, originName) ::= <<
+member_print(ctx, typecode, name, originName) ::= <<
 $if(typecode.primitive)$
 printf("$name$: 0x%" PRIx64 "\n", (uint64_t)topic->$name$());
 $elseif(typecode.isType_d)$
-printf("$name$: %s\n", topic->$name$().c_str());
-$elseif(typecode.isType_e)$
-$sequence_print(typecode=typecode, name=name)$
-$elseif(typecode.isType_f)$
-$array_print(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$if(typecode.isWStringType)$
+printf("$name$: %S\n", topic->$name$().c_str());
 $else$
-print$typecode.cTypename$(&topic->$name$());
+printf("$name$: %s\n", topic->$name$().c_str());
+$endif$
+$elseif(typecode.isSequenceType)$
+$sequence_print(ctx=ctx, typecode=typecode, name=name, originName=originName, p="()", loopvar=ctx.newLoopVarName)$
+$elseif(typecode.isMapType)$
+$map_print(ctx=ctx, typecode=typecode, name=name, originName=originName, p="()", loopvar=ctx.newLoopVarName)$
+$elseif(typecode.isType_f)$
+$array_print(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="()", loopvar=ctx.newLoopVarName)$
+$else$
+print$typecode.cppTypename$(&topic->$name$());
 $endif$
 >>
 
-array_member_print(typecode, name, originName) ::= <<
+array_member_print(ctx, typecode, name, originName, loopvar) ::= <<
 $if(typecode.primitive)$
 printf("$name$: 0x%" PRIx64 "\n", (uint64_t)topic->$name$);
 $elseif(typecode.isType_d)$
-printf("$name$: %s\n", topic->$name$.c_str());
-$elseif(typecode.isType_e)$
-$sequence_print(typecode=typecode, name=name)$
-$elseif(typecode.isType_f)$
-$array_print(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$if(typecode.isWStringType)$
+printf("$name$: %S\n", topic->$name$.c_str());
 $else$
-print$typecode.cTypename$(&topic->$name$);
+printf("$name$: %s\n", topic->$name$.c_str());
+$endif$
+$elseif(typecode.isSequenceType)$
+$sequence_print(ctx=ctx, typecode=typecode, name=name, originName=originName, p="", loopvar=loopvar)$
+$elseif(typecode.isMapType)$
+$map_print(ctx=ctx, typecode=typecode, name=name, originName=originName, p="", loopvar=loopvar)$
+$elseif(typecode.isType_f)$
+$array_print(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="", loopvar=loopvar)$
+$else$
+print$typecode.cppTypename$(&topic->$name$);
 $endif$
 >>
 
-sequence_print(typecode, name) ::= <<
-printf("$name$_size: 0x%" PRIx64 "\n", (uint64_t)topic->$name$().size());
+map_member_print(ctx, typecode, name, originName, loopvar) ::= <<
+printf("[%" PRIx64 "]: ", (uint64_t)(it_$loopvar$.first));
+$if(typecode.valueTypeCode.primitive)$
+printf("$name$: 0x%" PRIx64 "\n", (uint64_t)topic->$name$);
+$elseif(typecode.valueTypeCode.isType_d)$
+$if(typecode.valueTypeCode.isWStringType)$
+printf("$name$: %S\n", topic->$name$.c_str());
+$else$
+printf("$name$: %s\n", topic->$name$.c_str());
+$endif$
+$elseif(typecode.valueTypeCode.isSequenceType)$
+$sequence_print(ctx=ctx, typecode=typecode.valueTypeCode, name=itMapName(name=name, loopvar=loopvar), originName=originName, p="", loopvar=loopvar)$
+$elseif(typecode.valueTypeCode.isMapType)$
+$map_print(ctx=ctx, typecode=typecode.valueTypeCode, name=itMapName(name=name, loopvar=loopvar), originName=originName, p="", loopvar=loopvar)$
+$elseif(typecode.valueTypeCode.isType_f)$
+$array_print(ctx=ctx, typecode=typecode.valueTypeCode, name=itMapName(name=name, loopvar=loopvar), originName=originName, dimensions=typecode.valueTypeCode.dimensions, p="", loopvar=loopvar)$
+$else$
+print$typecode.valueTypeCode.cppTypename$(&topic->$name$[it_$loopvar$.first]);
+$endif$
+>>
+
+sequence_print(ctx, typecode, name, originName, p, loopvar) ::= <<
+printf("$name$_size: 0x%" PRIx64 "\n", (uint64_t)topic->$name$$p$.size());
 $if(typecode.contentTypeCode.primitive)$
 printf("$name$: ");
-$print_sequence(name)$
+$print_sequence(name=name, p=p, loopvar=loopvar)$
+$elseif(typecode.isMapType)$
+printf("$name$_size: 0x%" PRIx64 "\n", (uint64_t)topic->$name$$p$.size());
+for (auto it_$loopvar$ : topic->$name$$p$)
+{
+    $map_value_print(ctx=ctx, typecode=typecode.valueTypeCode, name=itMapName(name=name, p=p, loopvar=loopvar), p=p, loopvar=loopvar)$
+}
 $else$
 printf("$name$: \n");
-for(int i = 0; i < topic->$name$().size(); ++i)
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_print(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_print(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, loopvar=ctx.nextLoopVarName)$
 }
 $endif$
 >>
 
-array_print(typecode, name, originalName, dimensions) ::= <<
+map_print(ctx, typecode, name, originName, p, loopvar) ::= <<
+printf("$name$_size: 0x%" PRIx64 "\n", (uint64_t)topic->$name$$p$.size());
+for (auto it_$loopvar$ : topic->$name$$p$)
+{
+    $map_value_print(ctx=ctx, typecode=typecode.valueTypeCode, name=itMapName(name=name, p=p, loopvar=loopvar), originName=originName, p="", loopvar=loopvar)$
+}
+>>
+
+map_value_print(ctx, typecode, name, originName, p, loopvar) ::= <<
+$if(typecode.primitive)$
+printf("$name$: ");
+$print_map(name=name, p=p, loopvar=loopvar)$
+$elseif(typecode.isType_d)$
+$if(typecode.isWStringType)$
+printf("[%" PRIx64 "]: %S ", (uint64_t)(it_$loopvar$.first), (uint64_t)topic->$name$$p$.c_str());
+$else$
+printf("[%" PRIx64 "]: %s ", (uint64_t)(it_$loopvar$.first), (uint64_t)topic->$name$$p$.c_str());
+$endif$
+$elseif(typecode.isSequenceType)$
+$sequence_print(ctx=ctx, typecode=typecode, name=name, originName=originName, p="", loopvar=loopvar)$
+$elseif(typecode.isMapType)$
+$map_print(ctx=ctx, typecode=typecode, name=name, originName=originName, p="", loopvar=loopvar)$
+$elseif(typecode.isType_f)$
+$array_print(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="", loopvar=loopvar)$
+$else$
+print$typecode.cppTypename$(&topic->$name$);
+$endif$
+>>
+
+array_print(ctx, typecode, name, originName, dimensions, p, loopvar) ::= <<
 $if(rest(dimensions))$
 printf("$name$: \n");
-for(int i$length(dimensions)$ = 0; i$length(dimensions)$ < topic->$name$().size(); ++i$length(dimensions)$)
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    $array_print(typecode=typecode, name=indexName(name=name, suffix=length(dimensions)), originName=originName, dimensions=rest(dimensions))$
+    $array_print(ctx=ctx, typecode=typecode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, dimensions=rest(dimensions), p="", loopvar=ctx.nextLoopVarName)$
 }
 $elseif(typecode.contentTypeCode.primitive)$
 printf("$name$: ");
-$print_array(name=name)$
+$print_array(name=name, p=p, loopvar=loopvar)$
 $elseif(typecode.contentTypeCode.isType_d)$
 printf("$name$: \n");
-for(int i = 0; i < topic->$name$().size(); ++i)
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_print(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_print(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, loopvar=ctx.nextLoopVarName)$
+}
+$elseif(typecode.isMapType)$
+printf("$name$_size: 0x%" PRIx64 "\n", (uint64_t)topic->$name$$p$.size());
+for (auto it_$loopvar$ : topic->$name$$p$)
+{
+    $map_value_print(ctx=ctx, typecode=typecode, name=itMapName(name=name, p=p, loopvar=loopvar), p=p, loopvar=loopvar)$
 }
 $else$
 printf("$name$: \n");
-for(int i = 0; i < topic->$name$().size(); ++i)
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_print(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_print(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, loopvar=ctx.nextLoopVarName)$
 }
 $endif$
 >>
 
-print_sequence(name) ::= <<
-for(int i = 0; i < topic->$name$().size(); ++i)
+print_sequence(name, p, loopvar) ::= <<
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    printf("%" PRIx64 " ", (uint64_t)topic->$name$()[i]);
+    printf("%" PRIx64 " ", (uint64_t)topic->$name$$p$[$loopvar$]);
 }
 printf("\n");
 >>
 
-print_array(name) ::= <<
-for(int i = 0; i < topic->$name$().size(); ++i)
+print_map(name, p, loopvar) ::= <<
+printf("[%" PRIx64 "]: %" PRIx64 " ", (uint64_t)(it_$loopvar$.first), (uint64_t)topic->$name$$p$);
+printf("\n");
+>>
+
+print_array(name, p, loopvar) ::= <<
+for(int $loopvar$ = 0; $loopvar$ < topic->$name$$p$.size(); ++$loopvar$)
 {
-    printf("%" PRIx64 " ", (uint64_t)topic->$name$()[i]);
+    printf("%" PRIx64 " ", (uint64_t)topic->$name$$p$[$loopvar$]);
 }
 printf("\n");
 >>
@@ -226,58 +502,85 @@ printf("\n");
 // ========================================================================================
 //                                      COMPARISION
 // ========================================================================================
-member_comparision(typecode, name, originName) ::= <<
+member_comparision(ctx, typecode, name, originName) ::= <<
 $if(typecode.primitive)$
-if (a->$name$() != b->$name$()) return 0;
+if (topic_a->$name$() != topic_b->$name$()) return 0;
 $elseif(typecode.isType_d)$
-if (a->$name$() != b->$name$()) return 0;
-$elseif(typecode.isType_e)$
-$sequence_comparision(typecode=typecode, name=name)$
+if (topic_a->$name$() != topic_b->$name$()) return 0;
+$elseif(typecode.isSequenceType)$
+$sequence_comparision(ctx=ctx, typecode=typecode, name=name, p="()", loopvar=ctx.newLoopVarName)$
+$elseif(typecode.isMapType)$
+$map_comparision(ctx=ctx, typecode=typecode, name=name, p="()", loopvar=ctx.newLoopVarName)$
 $elseif(typecode.isType_f)$
-$array_comparision(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$array_comparision(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="()", loopvar=ctx.newLoopVarName)$
 $else$
-if (!compare$typecode.cTypename$(&a->$name$(), &b->$name$())) return 0;
+if (!compare$typecode.cppTypename$(&topic_a->$name$(), &topic_b->$name$())) return 0;
 $endif$
 >>
 
-array_member_comparision(typecode, name, originName) ::= <<
+array_member_comparision(ctx, typecode, name, originName, loopvar) ::= <<
 $if(typecode.primitive)$
-if (a->$name$ != b->$name$) return 0;
+if (topic_a->$name$ != topic_b->$name$) return 0;
 $elseif(typecode.isType_d)$
-if (a->$name$ != b->$name$) return 0;
-$elseif(typecode.isType_e)$
-$sequence_comparision(typecode=typecode, name=name)$
+if (topic_a->$name$ != topic_b->$name$) return 0;
+$elseif(typecode.isSequenceType)$
+$sequence_comparision(ctx=ctx, typecode=typecode, name=name, p="", loopvar=loopvar)$
+$elseif(typecode.isMapType)$
+$map_comparision(ctx=ctx, typecode=typecode, name=name, originName=originName, p="", loopvar=loopvar)$
 $elseif(typecode.isType_f)$
-$array_comparision(typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions)$
+$array_comparision(ctx=ctx, typecode=typecode, name=name, originName=originName, dimensions=typecode.dimensions, p="", loopvar=loopvar)$
 $else$
-if (!compare$typecode.cTypename$(&a->$name$, &b->$name$)) return 0;
+if (!compare$typecode.cppTypename$(&topic_a->$name$, &topic_b->$name$)) return 0;
 $endif$
 >>
 
-sequence_comparision(typecode, name) ::= <<
-for(int i = 0; i < a->$name$().size(); ++i)
+map_member_comparision(ctx, typecode, name, originName, loopvar) ::= <<
+$if(typecode.valueTypeCode.primitive)$
+if (topic_a->$name$ != topic_b->$name$) return 0;
+$elseif(typecode.valueTypeCode.isType_d)$
+if (topic_a->$name$ != topic_b->$name$) return 0;
+$elseif(typecode.valueTypeCode.isSequenceType)$
+$sequence_comparision(ctx=ctx, typecode=typecode.valueTypeCode, name=name, p="", loopvar=loopvar)$
+$elseif(typecode.valueTypeCode.isMapType)$
+$map_comparision(ctx=ctx, typecode=typecode.valueTypeCode, name=name, originName=originName, p="", loopvar=ctx.nextLoopVarName)$
+$elseif(typecode.valueTypeCode.isType_f)$
+$array_comparision(ctx=ctx, typecode=typecode.valueTypeCode, name=name, originName=originName, dimensions=typecode.valueTypeCode.dimensions, p="", loopvar=loopvar)$
+$else$
+if (!compare$typecode.valueTypeCode.cppTypename$(&topic_a->$name$, &topic_b->$name$)) return 0;
+$endif$
+>>
+
+sequence_comparision(ctx, typecode, name, p, loopvar) ::= <<
+for(int $loopvar$ = 0; $loopvar$ < topic_a->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_comparision(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_comparision(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=originName, loopvar=ctx.nextLoopVarName)$
 }
 >>
 
-array_comparision(typecode, name, originalName, dimensions) ::= <<
-$if(rest(dimensions))$
-for(int i$length(dimensions)$ = 0; i$length(dimensions)$ < a->$name$().size(); ++i$length(dimensions)$)
+map_comparision(ctx, typecode, name, originName, p, loopvar) ::= <<
+for(auto it_$loopvar$ : topic_a->$name$$p$)
 {
-    $array_comparision(typecode=typecode, name=indexName(name=name, suffix=length(dimensions)), originName=originName, dimensions=rest(dimensions))$
+    $map_member_comparision(ctx=ctx, typecode=typecode, name=itMapName(name=name, p=p, loopvar=loopvar), originName=originName, loopvar=loopvar)$
+}
+>>
+
+array_comparision(ctx, typecode, name, originName, dimensions, p, loopvar) ::= <<
+$if(rest(dimensions))$
+for(int $loopvar$ = 0; $loopvar$ < topic_a->$name$$p$.size(); ++$loopvar$)
+{
+    $array_comparision(ctx=ctx, typecode=typecode, name=indexName(name=name, loopvar=loopvar, p=p), originName=originName, dimensions=rest(dimensions), p="", loopvar=ctx.nextLoopVarName)$
 }
 $elseif(typecode.contentTypeCode.primitive)$
-if (memcmp(&a->$name$(), &b->$name$(), sizeof(a->$name$())) != 0) return 0;
+if (memcmp(&topic_a->$name$$p$, &topic_b->$name$$p$, sizeof(topic_a->$name$$p$)) != 0) return 0;
 $elseif(typecode.contentTypeCode.isType_d)$
-for(int i = 0; i < a->$name$().size(); ++i)
+for(int $loopvar$ = 0; $loopvar$ < topic_a->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_comparision(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_comparision(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=name, loopvar=ctx.nextLoopVarName)$
 }
 $else$
-for(int i = 0; i < a->$name$().size(); ++i)
+for(int $loopvar$ = 0; $loopvar$ < topic_a->$name$$p$.size(); ++$loopvar$)
 {
-    $array_member_comparision(typecode=typecode.contentTypeCode, name=indexName(name=name), originName=name)$
+    $array_member_comparision(ctx=ctx, typecode=typecode.contentTypeCode, name=indexName(name=name, p=p, loopvar=loopvar), originName=name, loopvar=ctx.nextLoopVarName)$
 }
 $endif$
 >>
@@ -285,4 +588,6 @@ $endif$
 // ========================================================================================
 //                                      AUXILIAR
 // ========================================================================================
-indexName(name, suffix) ::= <<$name$()[i$suffix$]>>
+indexName(name, p, loopvar) ::= <<$name$$p$[$loopvar$]>>
+mapName(name, p, key1, key2) ::= <<$name$$p$[$key1$Key$key2$]>>
+itMapName(name, p, loopvar) ::= <<$name$$p$[it_$loopvar$.first]>>
