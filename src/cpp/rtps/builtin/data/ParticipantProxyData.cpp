@@ -85,10 +85,9 @@ ParticipantProxyData::~ParticipantProxyData()
     {
         delete it;
     }
-    for(std::vector<WriterProxyData*>::iterator it = this->m_writers.begin();
-            it!=this->m_writers.end();++it)
+    for(WriterProxyData* it: m_writers)
     {
-        delete(*it);
+        delete it;
     }
     if(this->mp_leaseDurationTimer != nullptr)
         delete(mp_leaseDurationTimer);

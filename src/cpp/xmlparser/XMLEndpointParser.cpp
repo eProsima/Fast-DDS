@@ -480,7 +480,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
             loc.port = static_cast<uint16_t>(port);
-            wdata->unicastLocatorList().push_back(loc);
+            wdata->add_unicast_locator(loc);
         }
         else if(key == MULTICAST_LOCATOR)
         {
@@ -492,7 +492,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             int port = 0;
             element->QueryIntAttribute(PORT, &port);
             loc.port = static_cast<uint16_t>(port);
-            wdata->multicastLocatorList().push_back(loc);
+            wdata->add_multicast_locator(loc);
         }
         else if(key == TOPIC)
         {

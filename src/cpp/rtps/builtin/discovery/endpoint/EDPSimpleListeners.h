@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/writer/WriterListener.h>
 
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -80,6 +81,8 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
 
         //!Pointer to the EDPSimple
         EDPSimple* sedp_;
+        //!Temporary structure to avoid allocations
+        WriterProxyData temp_writer_data_;
 };
 
 /*!

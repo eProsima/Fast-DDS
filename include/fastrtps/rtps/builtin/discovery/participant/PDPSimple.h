@@ -102,11 +102,16 @@ class PDPSimple
 
     /**
      * Add a WriterProxyData to the correct ParticipantProxyData.
-     * @param wdata Pointer to the WriterProxyData objectr to add.
-     * @param pdata
-     * @return True if correct.
+     * @param [in]  writer_guid       GUID of the writer to add.
+     * @param [out] participant_guid  GUID of the ParticipantProxyData where the writer was added.
+     * @param [in]  initializer_func  Function to be called in order to set the data of the WriterProxyData.
+     *
+     * @return A pointer to the added WriterProxyData (nullptr if it could not be added).
      */
-    bool addWriterProxyData(WriterProxyData* wdata, GUID_t& participant_guid);
+    WriterProxyData* addWriterProxyData(
+            const GUID_t& writer_guid, 
+            GUID_t& participant_guid,
+            std::function<bool(WriterProxyData*, bool, const ParticipantProxyData&)> initializer_func);
 
     /**
      * This method returns a pointer to a ReaderProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).

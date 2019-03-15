@@ -33,11 +33,14 @@
 #include "../../security/accesscontrol/EndpointSecurityAttributes.h"
 #endif
 
+#include "../../common/RemoteLocators.hpp"
+
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 struct CDRMessage_t;
+class NetworkFactory;
 
 /**
  **@ingroup BUILTIN_MODULE
@@ -94,45 +97,27 @@ class WriterProxyData
             return persistence_guid_;
         }
 
-        RTPS_DllAPI void unicastLocatorList(const LocatorList_t& unicastLocatorList)
+        RTPS_DllAPI bool has_locators() const
         {
-            m_unicastLocatorList = unicastLocatorList;
+            return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
         }
 
-        RTPS_DllAPI void unicastLocatorList(LocatorList_t&& unicastLocatorList)
+        RTPS_DllAPI const RemoteLocatorList& remote_locators() const
         {
-            m_unicastLocatorList = std::move(unicastLocatorList);
+            return remote_locators_;
         }
 
-        RTPS_DllAPI LocatorList_t unicastLocatorList() const
-        {
-            return m_unicastLocatorList;
-        }
+        void add_unicast_locator(const Locator_t& locator);
 
-        RTPS_DllAPI LocatorList_t& unicastLocatorList()
-        {
-            return m_unicastLocatorList;
-        }
+        void set_unicast_locators(
+            const LocatorList_t& locators,
+            const NetworkFactory& network);
 
-        RTPS_DllAPI void multicastLocatorList(const LocatorList_t& multicastLocatorList)
-        {
-            m_multicastLocatorList = multicastLocatorList;
-        }
+        void add_multicast_locator(const Locator_t& locator);
 
-        RTPS_DllAPI void multicastLocatorList(LocatorList_t&& multicastLocatorList)
-        {
-            m_multicastLocatorList = std::move(multicastLocatorList);
-        }
-
-        RTPS_DllAPI LocatorList_t multicastLocatorList() const
-        {
-            return m_multicastLocatorList;
-        }
-
-        RTPS_DllAPI LocatorList_t& multicastLocatorList()
-        {
-            return m_multicastLocatorList;
-        }
+        void set_multicast_locators(
+            const LocatorList_t& locators,
+            const NetworkFactory& network);
 
         RTPS_DllAPI void key(const InstanceHandle_t& key)
         {
@@ -339,18 +324,17 @@ class WriterProxyData
         //!Write as a parameter list on a CDRMessage_t
         bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
         //!Read a parameter list from a CDRMessage_t.
-        RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
+        RTPS_DllAPI bool readFromCDRMessage(
+                CDRMessage_t* msg,
+                const NetworkFactory& network);
 
     private:
 
         //!GUID
         GUID_t m_guid;
 
-        //!Unicast locator list
-        LocatorList_t m_unicastLocatorList;
-
-        //!Multicast locator list
-        LocatorList_t m_multicastLocatorList;
+        //!Holds locator information
+        RemoteLocatorList remote_locators_;
 
         //!GUID_t of the Writer converted to InstanceHandle_t
         InstanceHandle_t m_key;
