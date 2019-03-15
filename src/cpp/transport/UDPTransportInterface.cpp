@@ -113,22 +113,15 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
     return true;
 }
 
-bool UDPTransportInterface::CloseOutputChannel(eProsimaUDPSocket& socket)
+void UDPTransportInterface::CloseOutputChannel(eProsimaUDPSocket& socket)
 {
     socket.cancel();
     socket.close();
-
-    return true;
 }
 
 bool UDPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
 {
     return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
-}
-
-bool UDPTransportInterface::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const
-{
-    return true;
 }
 
 bool UDPTransportInterface::init()
@@ -377,11 +370,6 @@ bool UDPTransportInterface::OpenOutputChannel(
     }
 
     return true;
-}
-
-bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&)
-{
-    return false;
 }
 
 void UDPTransportInterface::perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator)

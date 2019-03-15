@@ -40,7 +40,21 @@ enum eSocketErrorCodes
 
 class TCPChannelResource : public ChannelResource
 {
+
 protected:
+
+    enum TCPConnectionStatus
+    {
+        TCP_DISCONNECTED = 0,
+        TCP_CONNECTED = 1
+    };
+
+    enum TCPConnectionType
+    {
+        TCP_ACCEPT_TYPE = 0,
+        TCP_CONNECT_TYPE = 1
+    };
+
     enum eConnectionStatus
     {
         eDisconnected = 0,
@@ -55,7 +69,6 @@ protected:
     TCPTransportInterface* parent_;
     RTCPMessageManager* rtcp_manager_;
     Locator_t locator_;
-    bool input_socket_;
     bool waiting_for_keep_alive_;
     // Must be accessed after lock pending_logical_mutex_
     std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
@@ -77,7 +90,7 @@ public:
 
     bool remove_logical_port(uint16_t port);
 
-    virtual void disable() override;
+    virtual bool disable() override;
 
     std::recursive_mutex& read_mutex()
     {
@@ -91,14 +104,14 @@ public:
 
     inline void rtcp_thread(std::thread* pThread)
     {
+        if(rtcp_thread_)
+        {
+            rtcp_thread_->join();
+            delete rtcp_thread_;
+            rtcp_thread_ = nullptr;
+        }
+
         rtcp_thread_ = pThread;
-    }
-
-    std::thread* release_rtcp_thread();
-
-    inline bool input_socket() const
-    {
-        return input_socket_;
     }
 
     bool is_logical_port_opened(uint16_t port);
@@ -107,6 +120,7 @@ public:
 
     bool connection_established()
     {
+        // TODO Move to atomic.
         std::unique_lock<std::mutex> scoped(status_mutex_);
         return connection_status_ == eConnectionStatus::eEstablished;
     }
@@ -149,9 +163,20 @@ public:
 
     bool wait_until_port_is_open_or_connection_is_closed(uint16_t port);
 
+    TCPConnectionStatus tcp_connection_status() const { return tcp_connection_status_; }
+
+    TCPConnectionType tcp_connection_type() const { return tcp_connection_type_; }
+
+    void tcp_connected()
+    {
+        assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
+        tcp_connection_status_ = TCP_CONNECTED;
+    }
+
     virtual ~TCPChannelResource();
 
 protected:
+
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(
         TCPTransportInterface* parent,
@@ -186,6 +211,10 @@ protected:
     void process_check_logical_ports_response(const TCPTransactionId &transactionId,
         const std::vector<uint16_t> &availablePorts);
 
+    std::atomic<TCPConnectionStatus> tcp_connection_status_;
+
+    TCPConnectionType tcp_connection_type_;
+
     friend class TCPTransportInterface;
     friend class RTCPMessageManager;
     friend class test_RTCPMessageManager;
@@ -194,8 +223,6 @@ private:
     void prepare_send_check_logical_ports_req(uint16_t closedPort);
 
     void send_pending_open_logical_ports();
-
-    void copy_pending_ports_from(TCPChannelResource* from);
 
     void set_all_ports_pending();
 

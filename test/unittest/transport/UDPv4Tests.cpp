@@ -312,12 +312,7 @@ TEST_F(UDPv4Tests, send_to_blocked_interface)
     outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
     IPLocator::setIPv4(outputChannelLocator, 127, 0, 0, 1); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
-
-    // Sending through a BLOCKED IP will NOT work
-    IPLocator::setIPv4(outputChannelLocator, 127, 0, 0, 1);
-    std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), Locator_t()));
+    ASSERT_TRUE(send_resource_list.empty());
 }
 
 TEST_F(UDPv4Tests, send_to_allowed_interface)

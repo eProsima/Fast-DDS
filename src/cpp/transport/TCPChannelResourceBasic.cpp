@@ -50,19 +50,15 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
 
 TCPChannelResourceBasic::~TCPChannelResourceBasic()
 {
-    // Take both mutexes to avoid the situation where
-    // A checked alive and was true
-    // A took mutex
-    // B disables the channel resource
-    // B destroy us
-    // A tries to perform an operation causing calling a virtual method (our parent still lives).
-    std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
-    std::unique_lock<std::recursive_mutex> write_lock(write_mutex());
+    disconnect();
 }
 
 void TCPChannelResourceBasic::connect()
 {
     std::unique_lock<std::mutex> scoped(status_mutex_);
+    assert(TCPConnectionStatus::TCP_DISCONNECTED == tcp_connection_status_);
+    assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
+
     if (connection_status_ == eConnectionStatus::eDisconnected)
     {
         connection_status_ = eConnectionStatus::eConnecting;
@@ -95,7 +91,8 @@ void TCPChannelResourceBasic::connect()
 
 void TCPChannelResourceBasic::disconnect()
 {
-    if (change_status(eConnectionStatus::eDisconnected))
+    if (TCPConnectionStatus::TCP_CONNECTED == tcp_connection_status_ &&
+            change_status(eConnectionStatus::eDisconnected))
     {
         try
         {

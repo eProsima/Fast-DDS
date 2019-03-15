@@ -12,32 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef __TRANSPORT_UDPSENDERRESOURCE_HPP__
-#define __TRANSPORT_UDPSENDERRESOURCE_HPP__
+#ifndef __TRANSPORT_TCPSENDERRESOURCE_HPP__
+#define __TRANSPORT_TCPSENDERRESOURCE_HPP__
 
 #include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/transport/UDPTransportInterface.h>
+#include <fastrtps/transport/TCPTransportInterface.h>
+#include <fastrtps/transport/TCPChannelResource.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class UDPSenderResource : public SenderResource
+class TCPSenderResource : public SenderResource
 {
     public:
 
-        UDPSenderResource(
-                UDPTransportInterface& transport,
-                eProsimaUDPSocket& socket,
-                bool only_multicast_purpose = false)
+        TCPSenderResource(
+                TCPTransportInterface& transport,
+                std::shared_ptr<TCPChannelResource>& channel)
             : SenderResource(transport.kind())
-            , socket_(moveSocket(socket))
-            , only_multicast_purpose_(only_multicast_purpose)
+            , channel_(channel)
         {
             // Implementation functions are bound to the right transport parameters
             clean_up = [this, &transport]()
                 {
-                    transport.CloseOutputChannel(socket_);
+                    transport.CloseOutputChannel(channel_);
                 };
 
             send_lambda_ = [this, &transport] (
@@ -45,11 +44,11 @@ class UDPSenderResource : public SenderResource
                     uint32_t dataSize,
                     const Locator_t& destination)-> bool
                 {
-                    return transport.send(data, dataSize, socket_, destination, only_multicast_purpose_);
+                    return transport.send(data, dataSize, channel_, destination);
                 };
         }
 
-        virtual ~UDPSenderResource()
+        virtual ~TCPSenderResource()
         {
             if (clean_up)
             {
@@ -57,13 +56,15 @@ class UDPSenderResource : public SenderResource
             }
         }
 
-        static UDPSenderResource* cast(TransportInterface& transport, SenderResource* sender_resource)
+        std::shared_ptr<TCPChannelResource>& channel() { return channel_; }
+
+        static TCPSenderResource* cast(TransportInterface& transport, SenderResource* sender_resource)
         {
-            UDPSenderResource* returned_resource = nullptr;
+            TCPSenderResource* returned_resource = nullptr;
 
             if (sender_resource->kind() == transport.kind())
             {
-                returned_resource = dynamic_cast<UDPSenderResource*>(sender_resource);
+                returned_resource = dynamic_cast<TCPSenderResource*>(sender_resource);
             }
 
             return returned_resource;
@@ -71,15 +72,13 @@ class UDPSenderResource : public SenderResource
 
     private:
 
-        UDPSenderResource() = delete;
+        TCPSenderResource() = delete;
 
-        UDPSenderResource(const SenderResource&) = delete;
+        TCPSenderResource(const SenderResource&) = delete;
 
-        UDPSenderResource& operator=(const SenderResource&) = delete;
+        TCPSenderResource& operator=(const SenderResource&) = delete;
 
-        eProsimaUDPSocket socket_;
-
-        bool only_multicast_purpose_;
+        std::shared_ptr<TCPChannelResource> channel_;
 };
 
 } // namespace rtps

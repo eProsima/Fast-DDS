@@ -44,11 +44,10 @@ public:
    virtual bool CloseInputChannel(const Locator_t&) override;
 
    //! Removes all outbound sockets on the given port.
-   bool CloseOutputChannel(eProsimaUDPSocket& socket);
+   void CloseOutputChannel(eProsimaUDPSocket& socket);
 
    //! Reports whether Locators correspond to the same port.
    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
-   virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
    virtual const UDPTransportDescriptor* configuration() const = 0;
 
@@ -64,7 +63,6 @@ public:
    virtual bool OpenOutputChannel(
            SendResourceList& sender_resource_list,
            const Locator_t&) override;
-   virtual bool OpenExtraOutputChannel(const Locator_t&) override;
 
    /**
    * Blocking Receive from the specified channel.

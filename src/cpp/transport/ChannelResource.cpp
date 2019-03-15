@@ -57,17 +57,10 @@ void ChannelResource::clear()
     alive_ = false;
     if (thread_ != nullptr)
     {
-        thread_->join();
+        thread_->detach();
         delete thread_;
         thread_ = nullptr;
     }
-}
-
-std::thread* ChannelResource::release_thread()
-{
-    std::thread* outThread = thread_;
-    thread_ = nullptr;
-    return outThread;
 }
 
 } // namespace rtps

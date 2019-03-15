@@ -19,8 +19,9 @@
 #include <vector>
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/PortParameters.h"
-#include "./TransportDescriptorInterface.h"
-#include "./TransportReceiverInterface.h"
+#include "TransportDescriptorInterface.h"
+#include "TransportReceiverInterface.h"
+#include "../rtps/network/SenderResource.h"
 
 namespace eprosima{
 namespace fastrtps{
@@ -32,7 +33,6 @@ static const uint32_t s_minimumSocketBuffer = 65536;
 static const std::string s_IPv4AddressAny = "0.0.0.0";
 static const std::string s_IPv6AddressAny = "::";
 
-class SenderResource;
 class ChannelResource;
 
 using SendResourceList = std::vector<std::unique_ptr<SenderResource>>;
@@ -86,7 +86,6 @@ public:
     virtual bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
             const Locator_t&) = 0;
-    virtual bool OpenExtraOutputChannel(const Locator_t&) = 0;
 
     virtual bool OpenInputChannel(
         const Locator_t&,
@@ -101,9 +100,6 @@ public:
 
     //! Must report whether two locators map to the same internal channel.
     virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
-
-    //! Must report whether two locators map to the same internal channel.
-    virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 

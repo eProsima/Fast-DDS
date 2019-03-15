@@ -90,13 +90,6 @@ bool MockTransport::DoInputLocatorsMatch(
     return left.port == right.port;
 }
 
-bool MockTransport::DoOutputLocatorsMatch(
-        const Locator_t&,
-        const Locator_t&) const
-{
-    return true;
-}
-
 Locator_t MockTransport::RemoteToMainLocal(const Locator_t& remote) const
 {
     Locator_t mainLocal(remote);

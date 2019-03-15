@@ -37,19 +37,25 @@ public:
 
     inline void thread(std::thread* pThread)
     {
+        if(thread_)
+        {
+            thread_->join();
+            delete thread_;
+            thread_ = nullptr;
+        }
+
         thread_ = pThread;
     }
-
-    std::thread* release_thread();
 
     inline bool alive() const
     {
         return alive_;
     }
 
-    inline virtual void disable()
+    inline virtual bool disable()
     {
         alive_ = false;
+        return true;
     }
 
     inline CDRMessage_t& message_buffer()

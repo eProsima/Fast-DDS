@@ -47,10 +47,11 @@ TCPChannelResource::TCPChannelResource(
     , parent_ (parent)
     , rtcp_manager_(rtcpManager)
     , locator_(locator)
-    , input_socket_(false)
     , waiting_for_keep_alive_(false)
     , rtcp_thread_(nullptr)
     , connection_status_(eConnectionStatus::eDisconnected)
+    , tcp_connection_status_(TCPConnectionStatus::TCP_DISCONNECTED)
+    , tcp_connection_type_(TCPConnectionType::TCP_CONNECT_TYPE)
 {
 }
 
@@ -62,27 +63,41 @@ TCPChannelResource::TCPChannelResource(
     , parent_(parent)
     , rtcp_manager_(rtcpManager)
     , locator_()
-    , input_socket_(true)
     , waiting_for_keep_alive_(false)
     , rtcp_thread_(nullptr)
     , connection_status_(eConnectionStatus::eWaitingForBind)
+    , tcp_connection_status_(TCPConnectionStatus::TCP_CONNECTED)
+    , tcp_connection_type_(TCPConnectionType::TCP_ACCEPT_TYPE)
 {
 }
 
 TCPChannelResource::~TCPChannelResource()
 {
+    alive_ = false;
+    tcp_connection_status_ = TCPConnectionStatus::TCP_DISCONNECTED;
+
     if (rtcp_thread_ != nullptr)
     {
-        rtcp_thread_->join();
+        rtcp_thread_->detach();
         delete(rtcp_thread_);
         rtcp_thread_ = nullptr;
     }
 }
 
-void TCPChannelResource::disable()
+bool TCPChannelResource::disable()
 {
-    ChannelResource::disable();
-    disconnect();
+    bool returned_value = false;
+
+    TCPConnectionStatus code = tcp_connection_status_.exchange(TCPConnectionStatus::TCP_DISCONNECTED,
+            std::memory_order_relaxed);
+
+    if(code == TCPConnectionStatus::TCP_CONNECTED)
+    {
+        disconnect();
+        returned_value = true;
+    }
+
+    return returned_value;
 }
 
 ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)
@@ -90,14 +105,7 @@ ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)
     std::unique_lock<std::mutex> scoped(status_mutex_);
     if (connection_status_ == TCPChannelResource::eConnectionStatus::eWaitingForBind)
     {
-        locator_ = locator;
-        TCPChannelResource* oldChannel = parent_->BindSocket(locator_, this);
-        if (oldChannel != nullptr)
-        {
-            copy_pending_ports_from(oldChannel);
-            parent_->DeleteSocket(oldChannel);
-        }
-
+        locator_ = IPLocator::toPhysicalLocator(locator);
         connection_status_ = eConnectionStatus::eEstablished;
         logInfo(RTPC_MSG, "Connection Stablished");
         return RETCODE_OK;
@@ -127,15 +135,6 @@ void TCPChannelResource::set_all_ports_pending()
     logical_output_ports_.clear();
 }
 
-void TCPChannelResource::copy_pending_ports_from(TCPChannelResource* from)
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
-    std::unique_lock<std::recursive_mutex> fromLock(from->pending_logical_mutex_);
-    pending_logical_output_ports_.insert(pending_logical_output_ports_.end(),
-        from->pending_logical_output_ports_.begin(),
-        from->pending_logical_output_ports_.end());
-}
-
 bool TCPChannelResource::is_logical_port_opened(uint16_t port)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
@@ -160,13 +159,6 @@ bool TCPChannelResource::wait_until_port_is_open_or_connection_is_closed(uint16_
         bConnected = alive_ && connection_status_ == eConnectionStatus::eEstablished;
     }
     return bConnected;
-}
-
-std::thread* TCPChannelResource::release_rtcp_thread()
-{
-    std::thread* outThread = rtcp_thread_;
-    rtcp_thread_ = nullptr;
-    return outThread;
 }
 
 void TCPChannelResource::add_logical_port(uint16_t port)

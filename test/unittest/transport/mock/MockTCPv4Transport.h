@@ -31,22 +31,26 @@ public:
         configuration_ = descriptor;
     }
 
-    virtual bool OpenOutputChannel(const Locator_t& locator) override
+    virtual bool OpenOutputChannel(
+            SendResourceList& send_resource_list,
+            const Locator_t& locator) override
     {
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
-        TCPChannelResource *channel =
+        std::shared_ptr<TCPChannelResource> channel(
 #if TLS_FOUND
             (configuration_.apply_security) ?
                 static_cast<TCPChannelResource*>(
                     new TCPChannelResourceSecure(this, nullptr, io_service_, ssl_context_, physicalLocator, 0)) :
 #endif
                 static_cast<TCPChannelResource*>(
-                    new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0));
+                    new TCPChannelResourceBasic(this, nullptr, io_service_, physicalLocator, 0))
+            );
 
         channel_resources_[physicalLocator] = channel;
         return true;
     }
 
+        /*
     virtual bool CloseOutputChannel(const Locator_t& locator) override
     {
         const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
@@ -58,6 +62,7 @@ public:
         }
         return true;
     }
+        */
 };
 
 } // namespace rtps

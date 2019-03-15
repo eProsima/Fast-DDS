@@ -50,13 +50,13 @@ class MockTransport: public TransportInterface
             TransportReceiverInterface*,
             uint32_t) override;
 
-        virtual bool OpenExtraOutputChannel(const Locator_t&) override { return false; }
-
         virtual bool CloseInputChannel(const Locator_t&) override;
 
         virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
         virtual bool IsLocatorSupported(const Locator_t&)  const override;
+        virtual bool is_locator_allowed(const Locator_t& locator) const override;
+        virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
         virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 

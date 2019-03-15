@@ -793,6 +793,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
             //Push the new items into the ReceiverResource buffer
             m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
             //Create and init the MessageReceiver
+            //TODO Instead of an object, a lambda?
             auto mr = new MessageReceiver(this, size);
             m_receiverResourcelist.back().mp_receiver = mr;
             //Start reception

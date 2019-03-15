@@ -64,9 +64,9 @@ static asio::ip::address_v6::bytes_type locator_to_native(Locator_t& locator)
 }
 
 TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
-    : configuration_(descriptor)
+    : TCPTransportInterface(LOCATOR_KIND_TCPv6)
+    , configuration_(descriptor)
 {
-    transport_kind_ = LOCATOR_KIND_TCPv6;
     for (const auto& interface : descriptor.interfaceWhiteList)
     {
         interface_whitelist_.emplace_back(ip::address_v6::from_string(interface));
@@ -77,6 +77,16 @@ TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
         Locator_t locator(LOCATOR_KIND_TCPv6, port);
         create_acceptor_socket(locator);
     }
+}
+
+TCPv6Transport::TCPv6Transport()
+    : TCPTransportInterface(LOCATOR_KIND_TCPv6)
+{
+}
+
+TCPv6Transport::~TCPv6Transport()
+{
+    clean();
 }
 
 TCPv6TransportDescriptor::TCPv6TransportDescriptor()
@@ -92,16 +102,6 @@ TCPv6TransportDescriptor::TCPv6TransportDescriptor(const TCPv6TransportDescripto
 TransportInterface* TCPv6TransportDescriptor::create_transport() const
 {
     return new TCPv6Transport(*this);
-}
-
-TCPv6Transport::TCPv6Transport()
-{
-    transport_kind_ = LOCATOR_KIND_TCPv6;
-}
-
-TCPv6Transport::~TCPv6Transport()
-{
-    clean();
 }
 
 void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& /*defaultList*/)
