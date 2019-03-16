@@ -617,8 +617,16 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             rp->add_change(changeForReader, false);
             ++current_seq;
         }
-
-        assert(last_seq + 1 == current_seq);
+        // This is to cover the case where the last change has been removed from the history
+        while(current_seq < next_sequence_number())
+        {
+            ChangeForReader_t changeForReader(current_seq);
+            changeForReader.setRelevance(false);
+            not_relevant_changes.insert(current_seq);
+            changeForReader.setStatus(UNACKNOWLEDGED);
+            rp->add_change(changeForReader, false);
+            ++current_seq;
+        }
 
         try
         {

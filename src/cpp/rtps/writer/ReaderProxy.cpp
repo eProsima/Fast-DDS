@@ -213,6 +213,7 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
 bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
 {
     bool isSomeoneWasSetRequested = false;
+    std::vector<SequenceNumber_t> seqNumMissing;
 
     seq_num_set.for_each([&](SequenceNumber_t sit)
     {
@@ -223,11 +224,20 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
             chit->markAllFragmentsAsUnsent();
             isSomeoneWasSetRequested = true;
         }
+        else if(chit == changes_for_reader_.end() && sit > changes_low_mark_)
+        {
+            seqNumMissing.push_back(sit);
+        }
     });
 
     if (isSomeoneWasSetRequested)
     {
         logInfo(RTPS_WRITER, "Requested Changes: " << seq_num_set);
+    }
+    if(!seqNumMissing.empty())
+    {
+        logError(RTPS_WRITER,"Requested Changes: " << seqNumMissing
+                 << " not found (low mark: " << changes_low_mark_ << ") SFW: " << writer_->getGuid());
     }
 
     return isSomeoneWasSetRequested;
