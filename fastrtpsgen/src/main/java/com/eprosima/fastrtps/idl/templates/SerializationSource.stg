@@ -36,7 +36,7 @@ struct_type(ctx, parent, struct) ::= <<
 void $if(struct.hasScope)$$struct.scope$::$endif$print$struct.name$($struct.name$* topic)
 {
     printf("$struct.name$: { \n");
-    $struct.members:{$member_print(ctx=ctx, typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    $struct.allMembers:{$member_print(ctx=ctx, typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
     printf("}\n");
 }
 
@@ -44,17 +44,17 @@ void $if(struct.hasScope)$$struct.scope$::$endif$initialize$struct.name$($struct
 {
     if (idx == 0)
     {
-        $struct.members:{$member_assignment(ctx=ctx, typecode=it.typecode, name=it.name, originName=it.name)$}; separator="\n"$
+        $struct.allMembers:{$member_assignment(ctx=ctx, typecode=it.typecode, name=it.name, originName=it.name)$}; separator="\n"$
     }
     else
     {
-        $struct.members:{$simply_member_assignment(ctx=ctx, typecode=it.typecode, name=it.name)$}; separator="\n"$
+        $struct.allMembers:{$simply_member_assignment(ctx=ctx, typecode=it.typecode, name=it.name)$}; separator="\n"$
     }
 }
 
 int $if(struct.hasScope)$$struct.scope$::$endif$compare$struct.name$($struct.name$* topic_a, $struct.name$* topic_b)
 {
-    $struct.members:{$member_comparision(ctx=ctx, typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
+    $struct.allMembers:{$member_comparision(ctx=ctx, typecode=it.typecode, name=it.name, name=it.name)$}; separator="\n"$
     return 1;
 }
 
@@ -121,17 +121,17 @@ bitset_type(ctx, parent, bitset) ::= <<
 void $if(bitset.hasScope)$$bitset.scope$::$endif$print$bitset.name$($bitset.name$* topic)
 {
     printf("$bitset.name$: { \n");
-    $bitset.bitfields:{$if(it.name)$printf("$it.name$: 0x%" PRIx64 "\n", (uint64_t)topic->$it.name$());$endif$}; separator="\n"$
+    $bitset.allBitfields:{$if(it.name)$printf("$it.name$: 0x%" PRIx64 "\n", (uint64_t)topic->$it.name$());$endif$}; separator="\n"$
 }
 
 void $if(bitset.hasScope)$$bitset.scope$::$endif$initialize$bitset.name$($bitset.name$* topic)
 {
-    $bitset.bitfields:{$if(it.name)$$if(it.spec.typecode.isType_7)$topic->$it.name$(static_cast<$it.spec.typecode.cppTypename$>(rand()%2==1));$elseif(it.spec.typecode.primitive)$topic->$it.name$(static_cast<$it.spec.typecode.cppTypename$>(rand()));$endif$$endif$}; separator="\n"$
+    $bitset.allBitfields:{$if(it.name)$$if(it.spec.typecode.isType_7)$topic->$it.name$(static_cast<$it.spec.typecode.cppTypename$>(rand()%2==1));$elseif(it.spec.typecode.primitive)$topic->$it.name$(static_cast<$it.spec.typecode.cppTypename$>(rand()));$endif$$endif$}; separator="\n"$
 }
 
 int $if(bitset.hasScope)$$bitset.scope$::$endif$compare$bitset.name$($bitset.name$* topic_a, $bitset.name$* topic_b)
 {
-    $bitset.bitfields:{$if(it.name)$if(topic_a->$it.name$() != topic_b->$it.name$()) return 0;$endif$}; separator="\n"$
+    $bitset.allBitfields:{$if(it.name)$if(topic_a->$it.name$() != topic_b->$it.name$()) return 0;$endif$}; separator="\n"$
     return 1;
 }
 
