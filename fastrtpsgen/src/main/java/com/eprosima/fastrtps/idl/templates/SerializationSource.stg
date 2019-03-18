@@ -70,7 +70,7 @@ $if(struct.hasScope)$$struct.scope$::$endif$$struct.name$ $if(struct.hasScope)$$
 union_type(ctx, parent, union) ::= <<
 void $if(union.hasScope)$$union.scope$::$endif$print$union.name$($union.name$* topic)
 {
-    topic->_d(static_cast<$union.discriminator.cppTypename$>(0));
+    topic->_d(static_cast<$union.discriminator.cppTypename$>($first(first(union.members).labels)$));
     printf("$union.name$: { \n");
     $if(union.members)$
     $member_print(ctx=ctx, typecode=first(union.members).typecode, name=first(union.members).name, originName=first(union.members).name)$
@@ -80,7 +80,7 @@ void $if(union.hasScope)$$union.scope$::$endif$print$union.name$($union.name$* t
 
 void $if(union.hasScope)$$union.scope$::$endif$initialize$union.name$($union.name$* topic)
 {
-    topic->_d(static_cast<$union.discriminator.cppTypename$>(0));
+    topic->_d(static_cast<$union.discriminator.cppTypename$>($first(first(union.members).labels)$));
     $if(union.members)$
     $member_assignment(ctx=ctx, typecode=first(union.members).typecode, name=first(union.members).name, originName=first(union.members).name)$
     $endif$
@@ -88,8 +88,8 @@ void $if(union.hasScope)$$union.scope$::$endif$initialize$union.name$($union.nam
 
 int $if(union.hasScope)$$union.scope$::$endif$compare$union.name$($union.name$* topic_a, $union.name$* topic_b)
 {
-    topic_a->_d(static_cast<$union.discriminator.cppTypename$>(0));
-    topic_b->_d(static_cast<$union.discriminator.cppTypename$>(0));
+    topic_a->_d(static_cast<$union.discriminator.cppTypename$>($first(first(union.members).labels)$));
+    topic_b->_d(static_cast<$union.discriminator.cppTypename$>($first(first(union.members).labels)$));
     $if(union.members)$
     $member_comparision(ctx=ctx, typecode=first(union.members).typecode, name=first(union.members).name, originName=first(union.members).name)$
     $endif$
