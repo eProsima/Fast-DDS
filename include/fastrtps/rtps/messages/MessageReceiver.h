@@ -21,16 +21,18 @@
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "../common/all_common.h"
 #include "../../qos/ParameterList.h"
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
 
+#include <mutex>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
+class RTPSParticipantImpl;
+class Endpoint;
 class RTPSWriter;
 class RTPSReader;
 struct SubmessageHeader_t;

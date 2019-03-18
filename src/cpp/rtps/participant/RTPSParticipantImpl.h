@@ -46,6 +46,7 @@
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
 #if HAVE_SECURITY
+#include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include "../security/SecurityManager.h"
 #endif
@@ -462,7 +463,7 @@ private:
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
-        void createSenderResources(LocatorList_t& locator_list);
+        void createSenderResources(const LocatorList_t& locator_list);
 
         bool networkFactoryHasRegisteredTransports() const;
 

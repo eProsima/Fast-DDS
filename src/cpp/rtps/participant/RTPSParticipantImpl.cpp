@@ -813,7 +813,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
     }
 }
 
-void RTPSParticipantImpl::createSenderResources(LocatorList_t& locator_list)
+void RTPSParticipantImpl::createSenderResources(const LocatorList_t& locator_list)
 {
     std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
 

@@ -25,8 +25,6 @@
 #include "../../../qos/ParameterList.h"
 #include "../../../qos/WriterQos.h"
 
-#include "../../attributes/ReaderAttributes.h"
-
 #include "../../../utils/fixed_size_string.hpp"
 
 #if HAVE_SECURITY
@@ -67,7 +65,7 @@ class WriterProxyData
             m_guid = std::move(guid);
         }
 
-        RTPS_DllAPI GUID_t guid() const
+        RTPS_DllAPI const GUID_t& guid() const
         {
             return m_guid;
         }
@@ -107,13 +105,13 @@ class WriterProxyData
             return remote_locators_;
         }
 
-        void add_unicast_locator(const Locator_t& locator);
+        RTPS_DllAPI void add_unicast_locator(const Locator_t& locator);
 
         void set_unicast_locators(
             const LocatorList_t& locators,
             const NetworkFactory& network);
 
-        void add_multicast_locator(const Locator_t& locator);
+        RTPS_DllAPI void add_multicast_locator(const Locator_t& locator);
 
         void set_multicast_locators(
             const LocatorList_t& locators,

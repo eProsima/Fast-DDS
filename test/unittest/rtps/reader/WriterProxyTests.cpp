@@ -35,7 +35,7 @@ namespace eprosima
 
             TEST(WriterProxyTests, MissingChangesUpdate)
             {
-                RemoteWriterAttributes wattr;
+                WriterProxyData wattr;
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
@@ -106,7 +106,7 @@ namespace eprosima
 
             TEST(WriterProxyTests, LostChangesUpdate)
             {
-                RemoteWriterAttributes wattr;
+                WriterProxyData wattr;
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
@@ -155,7 +155,7 @@ namespace eprosima
 
             TEST(WriterProxyTests, ReceivedChangeSet)
             {
-                RemoteWriterAttributes wattr;
+                WriterProxyData wattr;
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
@@ -238,7 +238,7 @@ namespace eprosima
 
             TEST(WriterProxyTests, IrrelevantChangeSet)
             {
-                RemoteWriterAttributes wattr;
+                WriterProxyData wattr;
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
                 wproxy.start(wattr);

@@ -33,7 +33,7 @@ class WriterProxyData
 {
     public:
 
-        GUID_t guid() { return m_guid; }
+        GUID_t guid() const { return m_guid; }
 
 #if HAVE_SECURITY
         security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
