@@ -17,6 +17,8 @@
  *
  */
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+
 #include <fastrtps/rtps/reader/WriterProxy.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
@@ -25,7 +27,6 @@
 
 #include <mutex>
 
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
@@ -128,15 +129,15 @@ WriterProxy::WriterProxy(
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
 }
 
-void WriterProxy::start(const RemoteWriterAttributes& attributes)
+void WriterProxy::start(const WriterProxyData& attributes)
 {
     attributes_ = attributes;
-    guid_as_vector_.push_back(attributes_.guid);
-    guid_prefix_as_vector_.push_back(attributes_.guid.guidPrefix);
+    guid_as_vector_.push_back(attributes_.guid());
+    guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
     is_alive_ = true;
-    if (attributes_.livelinessLeaseDuration < c_TimeInfinite)
+    if (attributes_.m_qos.m_liveliness.lease_duration < c_TimeInfinite)
     {
-        writer_proxy_liveliness_->start(attributes_.guid, attributes_.livelinessLeaseDuration);
+        writer_proxy_liveliness_->start(attributes_.guid(), attributes_.m_qos.m_liveliness.lease_duration);
     }
     initial_acknack_->restart_timer();
 }
@@ -163,7 +164,7 @@ void WriterProxy::loaded_from_storage_nts(const SequenceNumber_t& seq_num)
 
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER,attributes_.guid.entityId<<": changes up to seq_num: " << seq_num <<" missing.");
+    logInfo(RTPS_READER,attributes_.guid().entityId<<": changes up to seq_num: " << seq_num <<" missing.");
     std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check was not removed from container.
@@ -228,7 +229,7 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(
 
 void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER,attributes_.guid.entityId<<": up to seq_num: "<<seq_num);
+    logInfo(RTPS_READER, attributes_.guid().entityId <<": up to seq_num: "<<seq_num);
     std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check was not removed from container.
@@ -257,7 +258,7 @@ void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
 
 bool WriterProxy::received_change_set(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER, attributes_.guid.entityId << ": seq_num: " << seq_num);
+    logInfo(RTPS_READER, attributes_.guid().entityId << ": seq_num: " << seq_num);
     return received_change_set(seq_num, true);
 }
 
@@ -377,7 +378,7 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
 
 void WriterProxy::assert_liveliness()
 {
-    logInfo(RTPS_READER,attributes_.guid.entityId << " Liveliness asserted");
+    logInfo(RTPS_READER,attributes_.guid().entityId << " Liveliness asserted");
 
     //std::lock_guard<std::recursive_mutex> guard(mutex_);
 

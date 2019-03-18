@@ -32,7 +32,7 @@ NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
 {
 }
 
-vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
+vector<SenderResource> NetworkFactory::BuildSenderResources(const Locator_t& local)
 {
     vector<SenderResource> newSenderResources;
     for (auto& transport : mRegisteredTransports)

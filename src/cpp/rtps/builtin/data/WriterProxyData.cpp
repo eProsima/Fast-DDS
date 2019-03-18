@@ -592,30 +592,6 @@ void WriterProxyData::set_multicast_locators(
     }
 }
 
-RemoteWriterAttributes::RemoteWriterAttributes(const WriterProxyData& data)
-{
-    guid = data.guid();
-    livelinessLeaseDuration = data.m_qos.m_liveliness.lease_duration;
-    ownershipStrength = (uint16_t)data.m_qos.m_ownershipStrength.value;
-    endpoint.durabilityKind = data.m_qos.m_durability.durabilityKind();
-    endpoint.endpointKind = WRITER;
-    endpoint.topicKind = data.topicKind();
-    endpoint.reliabilityKind = data.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    endpoint.unicastLocatorList.clear();
-    for (const Locator_t& locator : data.remote_locators().unicast)
-    {
-        endpoint.unicastLocatorList.push_back(locator);
-    }
-    endpoint.multicastLocatorList.clear();
-    for (const Locator_t& locator : data.remote_locators().multicast)
-    {
-        endpoint.multicastLocatorList.push_back(locator);
-    }
-    endpoint.persistence_guid = (data.persistence_guid() == c_Guid_Unknown) ? guid : data.persistence_guid();
-}
-
-}
 } /* namespace rtps */
+}
 } /* namespace eprosima */
-
-

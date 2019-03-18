@@ -26,6 +26,7 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include "../../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/writer/StatefulWriter.h>
 
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/history/WriterHistory.h>

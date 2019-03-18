@@ -1650,60 +1650,68 @@ uint32_t SecurityManager::builtin_endpoints()
 void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& participant_data)
 {
     uint32_t builtin_endpoints = participant_data.m_availableBuiltinEndpoints;
+    const NetworkFactory& network = participant_->network_factory();
 
     if (participant_stateless_message_reader_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_stateless_message_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_reader_->matched_writer_add(watt);
+        temp_writer_proxy_data_.clear();
+        temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_writer_proxy_data_.guid().entityId = participant_stateless_message_writer_entity_id;
+        temp_writer_proxy_data_.persistence_guid(temp_writer_proxy_data_.guid());
+        temp_writer_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_writer_proxy_data_.topicKind(NO_KEY);
+        temp_writer_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_stateless_message_reader_->matched_writer_add(temp_writer_proxy_data_);
     }
 
     if (participant_stateless_message_writer_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_stateless_message_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_writer_->matched_reader_add(ratt);
+        temp_reader_proxy_data_.clear();
+        temp_reader_proxy_data_.m_expectsInlineQos = false;
+        temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_reader_proxy_data_.guid().entityId = participant_stateless_message_reader_entity_id;
+        temp_reader_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_reader_proxy_data_.topicKind(NO_KEY);
+        temp_reader_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_stateless_message_writer_->matched_reader_add(temp_reader_proxy_data_);
     }
 }
 
 void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProxyData& participant_data)
 {
     uint32_t builtin_endpoints = participant_data.m_availableBuiltinEndpoints;
+    const NetworkFactory& network = participant_->network_factory();
 
     if(participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_reader_->matched_writer_add(watt);
+        temp_writer_proxy_data_.clear();
+        temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_writer_proxy_data_.guid().entityId = participant_volatile_message_secure_writer_entity_id;
+        temp_writer_proxy_data_.persistence_guid(temp_writer_proxy_data_.guid());
+        temp_writer_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_writer_proxy_data_.topicKind(NO_KEY);
+        temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        temp_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_volatile_message_secure_reader_->matched_writer_add(temp_writer_proxy_data_);
     }
 
     if(participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_volatile_message_secure_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        ratt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_writer_->matched_reader_add(ratt);
+        temp_reader_proxy_data_.clear();
+        temp_reader_proxy_data_.m_expectsInlineQos = false;
+        temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_reader_proxy_data_.guid().entityId = participant_volatile_message_secure_reader_entity_id;
+        temp_reader_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_reader_proxy_data_.topicKind(NO_KEY);
+        temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        temp_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_volatile_message_secure_writer_->matched_reader_add(temp_reader_proxy_data_);
     }
 }
 

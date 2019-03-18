@@ -71,6 +71,7 @@ void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
     is_active_ = true;
     reader_attributes_ = reader_attributes;
 
+    // TODO (Miguel C): Remove when refactor is complete
     reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
     reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
 

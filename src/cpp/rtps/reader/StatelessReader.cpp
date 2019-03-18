@@ -54,7 +54,7 @@ StatelessReader::StatelessReader(
 bool StatelessReader::matched_writer_add(const WriterProxyData& wdata)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for (const RemoteWriterAttributes& writer : matched_writers_)
+    for (const RemoteWriterGuids_t& writer : matched_writers_)
     {
         if (writer.guid == wdata.guid())
         {
@@ -63,12 +63,15 @@ bool StatelessReader::matched_writer_add(const WriterProxyData& wdata)
         }
     }
 
-    RemoteWriterAttributes* att = matched_writers_.emplace_back(wdata);
+    RemoteWriterGuids_t guids;
+    guids.guid = wdata.guid();
+    guids.persistence_guid = wdata.persistence_guid();
+    RemoteWriterGuids_t* att = matched_writers_.emplace_back(guids);
     if (att != nullptr)
     {
-        add_persistence_guid(*att);
+        add_persistence_guid(guids.guid, guids.persistence_guid);
         m_acceptMessagesFromUnkownWriters = false;
-        logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to " << m_guid.entityId);
+        logInfo(RTPS_READER, "Writer " << guids.guid << " added to " << m_guid.entityId);
         return true;
     }
 
@@ -76,44 +79,17 @@ bool StatelessReader::matched_writer_add(const WriterProxyData& wdata)
     return false;
 }
 
-bool StatelessReader::matched_writer_add(const RemoteWriterAttributes& wdata)
-{
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    for(const RemoteWriterAttributes& writer : matched_writers_)
-    {
-        if (writer.guid == wdata.guid)
-        {
-            logWarning(RTPS_READER, "Attempting to add existing writer");
-            return false;
-        }
-    }
-
-    RemoteWriterAttributes att(wdata);
-    getRTPSParticipant()->createSenderResources(att.endpoint.remoteLocatorList);
-
-    logInfo(RTPS_READER, "Writer " << att.guid << " added to " << m_guid.entityId);
-    if (matched_writers_.push_back(att) != nullptr)
-    {
-        add_persistence_guid(att);
-        m_acceptMessagesFromUnkownWriters = false;
-        return true;
-    }
-
-    logWarning(RTPS_READER, "No space to add writer " << att.guid << " to reader " << m_guid.entityId);
-    return false;
-}
-
 bool StatelessReader::matched_writer_remove(const GUID_t& writer_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    ResourceLimitedVector<RemoteWriterAttributes>::iterator it;
+    ResourceLimitedVector<RemoteWriterGuids_t>::iterator it;
     for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
     {
         if (it->guid == writer_guid)
         {
             logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid.entityId);
-            remove_persistence_guid(*it);
+            remove_persistence_guid(it->guid, it->persistence_guid);
             matched_writers_.erase(it);
             return true;
         }
@@ -126,7 +102,7 @@ bool StatelessReader::matched_writer_is_matched(const GUID_t& writer_guid) const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
-        [writer_guid](const RemoteWriterAttributes& item)
+        [writer_guid](const RemoteWriterGuids_t& item)
         {
             return item.guid == writer_guid;
         });
@@ -362,7 +338,7 @@ bool StatelessReader::acceptMsgFrom(const GUID_t& writerId)
     }
 
     return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
-        [writerId](const RemoteWriterAttributes& writer)
+        [writerId](const RemoteWriterGuids_t& writer)
         {
             return writer.guid == writerId;
         });

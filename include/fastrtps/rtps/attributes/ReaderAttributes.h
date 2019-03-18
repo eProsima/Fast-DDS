@@ -91,47 +91,6 @@ class ReaderAttributes
         ResourceLimitedContainerConfig matched_writers_allocation;
 };
 
-/**
- * Class RemoteWriterAttributes, to define the attributes of a Remote Writer.
- * @ingroup RTPS_ATTRIBUTES_MODULE
- */
-class  RemoteWriterAttributes
-{
-    public:
-        RemoteWriterAttributes() 
-            : livelinessLeaseDuration(c_TimeInfinite)
-            , ownershipStrength(0)
-        {
-            endpoint.endpointKind = WRITER;
-        }
-
-        RemoteWriterAttributes(const WriterProxyData& data);
-
-        virtual ~RemoteWriterAttributes()
-        {
-        }
-
-        std::function<bool(const RemoteWriterAttributes&)> compare_guid_function() const
-        {
-            return [this](const RemoteWriterAttributes& rhs)
-            {
-                return this->guid == rhs.guid;
-            };
-        }
-
-        //!Attributes of the associated endpoint.
-        EndpointAttributes endpoint;
-
-        //!GUID_t of the writer, can be unknown if the reader is best effort.
-        GUID_t guid;
-
-        //!Liveliness lease duration, default value c_TimeInfinite.
-        Duration_t livelinessLeaseDuration;
-
-        //!Ownership Strength of the associated writer.
-        uint16_t ownershipStrength;
-};
-
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

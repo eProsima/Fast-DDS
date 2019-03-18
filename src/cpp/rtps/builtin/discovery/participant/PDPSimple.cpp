@@ -514,13 +514,12 @@ bool PDPSimple::createSPDPEndpoints()
         mp_SPDPReader = dynamic_cast<StatelessReader*>(rout);
         if (mp_SPDPReader != nullptr)
         {
-            RemoteWriterAttributes rwatt;
-            rwatt.guid.guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
-            rwatt.guid.entityId = c_EntityId_SPDPWriter;
-            rwatt.endpoint.remoteLocatorList = mp_builtin->m_initialPeersList;
-            rwatt.endpoint.topicKind = WITH_KEY;
-            rwatt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-            rwatt.endpoint.reliabilityKind = BEST_EFFORT;
+            WriterProxyData rwatt;
+            rwatt.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
+            rwatt.guid().entityId = c_EntityId_SPDPWriter;
+            rwatt.topicKind(WITH_KEY);
+            rwatt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+            rwatt.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
             mp_SPDPReader->matched_writer_add(rwatt);
         }
     }
@@ -762,19 +761,21 @@ WriterProxyData* PDPSimple::addWriterProxyData(
 void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
     logInfo(RTPS_PDP,"For RTPSParticipant: "<< pdata->m_guid.guidPrefix);
+
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if(auxendp!=0)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        watt.guid.entityId = c_EntityId_SPDPWriter;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        watt.endpoint.reliabilityKind = BEST_EFFORT;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        WriterProxyData watt;
+        watt.guid().guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid().entityId = c_EntityId_SPDPWriter;
+        watt.persistence_guid(watt.guid());
+        watt.set_unicast_locators(pdata->m_metatrafficUnicastLocatorList, network);
+        watt.set_multicast_locators(pdata->m_metatrafficMulticastLocatorList, network);
+        watt.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_SPDPReader->matched_writer_add(watt);
     }
     auxendp = endp;

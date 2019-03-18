@@ -45,6 +45,7 @@
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
 #if HAVE_SECURITY
+#include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include "../security/SecurityManager.h"
 #endif
@@ -331,7 +332,7 @@ private:
     /** Checks if there is any sender resource available to reach the given locator.
     @param loc -  Locator we want to check
     */
-    bool checkSenderResource(Locator_t& locator);
+    bool checkSenderResource(const Locator_t& locator);
 
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
@@ -463,7 +464,7 @@ private:
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
-        void createSenderResources(LocatorList_t& locator_list);
+        void createSenderResources(const LocatorList_t& locator_list);
 
         bool networkFactoryHasRegisteredTransports() const;
 

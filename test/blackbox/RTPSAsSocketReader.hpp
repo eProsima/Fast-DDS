@@ -29,6 +29,7 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/utils/IPLocator.h>
 
@@ -253,28 +254,28 @@ class RTPSAsSocketReader
                 //Add remote writer (in this case a reader in the same machine)
                 eprosima::fastrtps::rtps::GUID_t guid = participant_->getGuid();
 
-                eprosima::fastrtps::rtps::RemoteWriterAttributes wattr;
+                eprosima::fastrtps::rtps::WriterProxyData wattr;
                 eprosima::fastrtps::rtps::Locator_t loc;
                 IPLocator::setIPv4(loc, ip_);
                 loc.port = static_cast<uint16_t>(port_);
-                wattr.endpoint.multicastLocatorList.push_back(loc);
-                wattr.endpoint.reliabilityKind = eprosima::fastrtps::rtps::RELIABLE;
-                wattr.guid.guidPrefix.value[0] = guid.guidPrefix.value[0];
-                wattr.guid.guidPrefix.value[1] = guid.guidPrefix.value[1];
-                wattr.guid.guidPrefix.value[2] = guid.guidPrefix.value[2];
-                wattr.guid.guidPrefix.value[3] = guid.guidPrefix.value[3];
-                wattr.guid.guidPrefix.value[4] = guid.guidPrefix.value[4];
-                wattr.guid.guidPrefix.value[5] = guid.guidPrefix.value[5];
-                wattr.guid.guidPrefix.value[6] = guid.guidPrefix.value[6];
-                wattr.guid.guidPrefix.value[7] = guid.guidPrefix.value[7];
-                wattr.guid.guidPrefix.value[8] = 2;
-                wattr.guid.guidPrefix.value[9] = 0;
-                wattr.guid.guidPrefix.value[10] = 0;
-                wattr.guid.guidPrefix.value[11] = 0;
-                wattr.guid.entityId.value[0] = 0;
-                wattr.guid.entityId.value[1] = 0;
-                wattr.guid.entityId.value[2] = 2;
-                wattr.guid.entityId.value[3] = 3;
+                wattr.add_multicast_locator(loc);
+                wattr.m_qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+                wattr.guid().guidPrefix.value[0] = guid.guidPrefix.value[0];
+                wattr.guid().guidPrefix.value[1] = guid.guidPrefix.value[1];
+                wattr.guid().guidPrefix.value[2] = guid.guidPrefix.value[2];
+                wattr.guid().guidPrefix.value[3] = guid.guidPrefix.value[3];
+                wattr.guid().guidPrefix.value[4] = guid.guidPrefix.value[4];
+                wattr.guid().guidPrefix.value[5] = guid.guidPrefix.value[5];
+                wattr.guid().guidPrefix.value[6] = guid.guidPrefix.value[6];
+                wattr.guid().guidPrefix.value[7] = guid.guidPrefix.value[7];
+                wattr.guid().guidPrefix.value[8] = 2;
+                wattr.guid().guidPrefix.value[9] = 0;
+                wattr.guid().guidPrefix.value[10] = 0;
+                wattr.guid().guidPrefix.value[11] = 0;
+                wattr.guid().entityId.value[0] = 0;
+                wattr.guid().entityId.value[1] = 0;
+                wattr.guid().entityId.value[2] = 2;
+                wattr.guid().entityId.value[3] = 3;
                 reader_->matched_writer_add(wattr);
             }
         }

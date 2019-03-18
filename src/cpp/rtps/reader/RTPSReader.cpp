@@ -120,23 +120,27 @@ CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(
     return fragmentedChangePitStop_->find(sequence_number, writer_guid);
 }
 
-void RTPSReader::add_persistence_guid(const RemoteWriterAttributes& wdata)
+void RTPSReader::add_persistence_guid(
+         const GUID_t& guid,
+         const GUID_t& persistence_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    persistence_guid_map_[wdata.guid] = wdata.endpoint.persistence_guid;
-    persistence_guid_count_[wdata.endpoint.persistence_guid]++;
+    persistence_guid_map_[guid] = persistence_guid;
+    persistence_guid_count_[persistence_guid]++;
 }
 
-void RTPSReader::remove_persistence_guid(const RemoteWriterAttributes& wdata)
+void RTPSReader::remove_persistence_guid(
+        const GUID_t& guid,
+        const GUID_t& persistence_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    persistence_guid_map_.erase(wdata.guid);
-    auto count = --persistence_guid_count_[wdata.endpoint.persistence_guid];
+    persistence_guid_map_.erase(guid);
+    auto count = --persistence_guid_count_[persistence_guid];
     if (count == 0)
     {
         if (m_att.durabilityKind < TRANSIENT)
         {
-            history_record_.erase(wdata.endpoint.persistence_guid);
+            history_record_.erase(persistence_guid);
         }
     }
 }

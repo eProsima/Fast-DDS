@@ -61,13 +61,6 @@ public:
     bool matched_writer_add(const WriterProxyData& wdata) override;
 
     /**
-     * Add a matched writer represented by a WriterProxyData object.
-     * @param wdata Pointer to the WPD object to add.
-     * @return True if correctly added.
-     */
-    bool matched_writer_add(const RemoteWriterAttributes& wdata) override;
-
-    /**
      * Remove a WriterProxyData from the matached writers.
      * @param writer_guid GUID of the writer to remove.
      * @return True if correct.
@@ -182,15 +175,19 @@ public:
 
 private:
 
+    struct RemoteWriterGuids_t
+    {
+        GUID_t guid;
+        GUID_t persistence_guid;
+    };
+
     bool acceptMsgFrom(const GUID_t& entityId);
 
     bool thereIsUpperRecordOf(
             const GUID_t& guid, 
             const SequenceNumber_t& seq);
 
-    //!List of GUID_t os matched writers.
-    //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
-    ResourceLimitedVector<RemoteWriterAttributes> matched_writers_;
+    ResourceLimitedVector<RemoteWriterGuids_t> matched_writers_;
 };
 
 } /* namespace rtps */

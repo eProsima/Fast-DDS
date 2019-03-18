@@ -28,6 +28,7 @@
 #include "../attributes/ReaderAttributes.h"
 #include "../messages/RTPSMessageSenderInterface.hpp"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
+#include "../builtin/data/WriterProxyData.h"
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
@@ -73,9 +74,9 @@ public:
 
     /**
      * Activate this proxy associating it to a remote writer.
-     * @param attributes RemoteWriterAttributes of the writer for which to keep state.
+     * @param attributes WriterProxyData of the writer for which to keep state.
      */
-    void start(const RemoteWriterAttributes& attributes);
+    void start(const WriterProxyData& attributes);
 
     /**
      * Disable this proxy.
@@ -152,7 +153,7 @@ public:
      * Get the attributes of the writer represented by this proxy.
      * @return const reference to the attributes of the writer represented by this proxy.
      */
-    inline const RemoteWriterAttributes& attributes() const
+    inline const WriterProxyData& attributes() const
     {
         return attributes_;
     }
@@ -163,27 +164,27 @@ public:
      */
     inline const GUID_t& guid() const
     {
-        return attributes_.guid;
+        return attributes_.guid();
     }
 
     /**
      * Get the ownership strength of the writer represented by this proxy.
      * @return ownership strength of the writer represented by this proxy.
      */
-    inline uint16_t ownership_strength() const
+    inline uint32_t ownership_strength() const
     {
-        return attributes_.ownershipStrength;
+        return attributes_.m_qos.m_ownershipStrength.value;
     }
 
     /**
      * Get the locators that should be used to send data to the writer represented by this proxy.
      * @return the locators that should be used to send data to the writer represented by this proxy.
      */
-    inline const LocatorList_t& remote_locators_shrinked() const
+    inline const ResourceLimitedVector<Locator_t>& remote_locators_shrinked() const
     {
-        return attributes_.endpoint.unicastLocatorList.empty() ?
-            attributes_.endpoint.multicastLocatorList :
-            attributes_.endpoint.unicastLocatorList;
+        return attributes_.remote_locators().unicast.empty() ?
+            attributes_.remote_locators().multicast :
+            attributes_.remote_locators().unicast;
     }
 
     /**
@@ -335,7 +336,7 @@ private:
     //! Pointer to associated StatefulReader.
     StatefulReader* reader_;
     //! Parameters of the WriterProxy
-    RemoteWriterAttributes attributes_;
+    WriterProxyData attributes_;
     //!Timed event to postpone the heartbeatResponse.
     HeartbeatResponseDelay* heartbeat_response_;
     //!To check the liveliness Status periodically.

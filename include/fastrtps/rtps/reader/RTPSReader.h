@@ -70,14 +70,7 @@ public:
      * @param wdata Attributes of the writer to add.
      * @return True if correctly added.
      */
-    virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
-
-    /**
-     * Add a matched writer represented by its attributes.
-     * @param wdata Attributes of the writer to add.
-     * @return True if correctly added.
-     */
-    RTPS_DllAPI virtual bool matched_writer_add(const RemoteWriterAttributes& wdata) = 0;
+    RTPS_DllAPI virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
 
     /**
      * Remove a writer represented by its attributes from the matched writers.
@@ -239,22 +232,28 @@ protected:
 
     /*!
      * @brief Add a remote writer to the persistence_guid map
-     * @param wdata Info of the remote writer
+     * @param guid GUID of the remote writer
+     * @param persistence_guid Persistence GUID of the remote writer
      */
-    void add_persistence_guid(const RemoteWriterAttributes& wdata);
+    void add_persistence_guid(
+            const GUID_t& guid,
+            const GUID_t& persistence_guid);
 
     /*!
-    * @brief Remove a remote writer from the persistence_guid map
-    * @param wdata Info of the remote writer
-    */
-    void remove_persistence_guid(const RemoteWriterAttributes& wdata);
+     * @brief Remove a remote writer from the persistence_guid map
+     * @param guid GUID of the remote writer
+     * @param persistence_guid Persistence GUID of the remote writer
+     */
+    void remove_persistence_guid(
+            const GUID_t& guid,
+            const GUID_t& persistence_guid);
 
     /*!
-    * @brief Get the last notified sequence for a RTPS guid
-    * @param guid The RTPS guid to query
-    * @return Last notified sequence number for input guid
-    * @remarks Takes persistence_guid into consideration
-    */
+     * @brief Get the last notified sequence for a RTPS guid
+     * @param guid The RTPS guid to query
+     * @return Last notified sequence number for input guid
+     * @remarks Takes persistence_guid into consideration
+     */
     SequenceNumber_t get_last_notified(const GUID_t& guid) const;
 
     /*!

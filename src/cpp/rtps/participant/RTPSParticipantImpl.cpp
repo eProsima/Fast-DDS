@@ -810,7 +810,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
     }
 }
 
-bool RTPSParticipantImpl::checkSenderResource(Locator_t& locator)
+bool RTPSParticipantImpl::checkSenderResource(const Locator_t& locator)
 {
     for (auto it = m_senderResourceList.begin(); it != m_senderResourceList.end(); ++it)
     {
@@ -823,7 +823,7 @@ bool RTPSParticipantImpl::checkSenderResource(Locator_t& locator)
     return false;
 }
 
-void RTPSParticipantImpl::createSenderResources(LocatorList_t& locator_list)
+void RTPSParticipantImpl::createSenderResources(const LocatorList_t& locator_list)
 {
     std::vector<SenderResource> buffer;
     for (auto it_loc = locator_list.begin(); it_loc != locator_list.end(); ++it_loc)
