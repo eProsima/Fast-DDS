@@ -31,6 +31,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "SerializationTest.cpp"], description=
 int test$ctx.lastStructure.name$()
 {
     using eprosima::fastrtps::rtps::SerializedPayload_t;
+    $if(ctx.lastStructure.hasScope)$    using namespace $ctx.lastStructure.scope$;$endif$
 
     $ctx.lastStructure.name$ $ctx.lastStructure.name$_serialization_topic;
     $ctx.lastStructure.name$ $ctx.lastStructure.name$_deserialization_topic;
@@ -103,3 +104,9 @@ typedef_decl(ctx, parent, typedefs) ::= <<>>
 bitmask_type(ctx, parent, bitmask) ::= <<>>
 
 bitset_type(ctx, parent, bitset) ::= <<>>
+
+annotation(ctx, annotation) ::= <<>>
+
+module(ctx, parent, module, definition_list) ::= <<>>
+
+definition_list(definitions) ::= <<>>

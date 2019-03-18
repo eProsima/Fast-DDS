@@ -54,3 +54,18 @@ void initialize$bitset.name$($bitset.name$* topic);
 int compare$bitset.name$($bitset.name$* a, $bitset.name$* b);
 
 >>
+
+annotation(ctx, annotation) ::= <<>>
+
+module(ctx, parent, module, definition_list) ::= <<
+namespace $module.name$
+{
+    $definition_list$
+}
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+fwd_decl(ctx, parent, type) ::= <<>>

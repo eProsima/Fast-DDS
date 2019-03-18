@@ -122,6 +122,11 @@ void $struct.scopedname$::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 
 >>
 
+fwd_decl(ctx, parent, type) ::= <<
+class $type.name$;
+
+>>
+
 boolean_converter ::= [
     "true":"true",
     default:

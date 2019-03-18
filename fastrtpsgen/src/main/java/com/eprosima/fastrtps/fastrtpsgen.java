@@ -448,6 +448,7 @@ public class fastrtpsgen {
         System.out.print("\t\t-typeobject: generates TypeObject files to automatically register the types as");
         System.out.println(" dynamic.");
         System.out.println("\t\t-exportsymbols: exports PubSub symbols.");
+        System.out.println("\t\t-test: executes FastRTPSGen tests.");
         System.out.println("\tand the supported input files are:");
         System.out.println("\t* IDL files.");
 
