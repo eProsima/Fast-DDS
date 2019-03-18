@@ -26,8 +26,11 @@
 #include "../../common/Locator.h"
 #include "../../common/Guid.h"
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 class WriterQos;
 
@@ -183,6 +186,9 @@ private:
      */
     bool createSecureEndpoints();
 #endif
+
+    ReaderProxyData temp_reader_proxy_data_;
+    WriterProxyData temp_writer_proxy_data_;
 };
 
 }
