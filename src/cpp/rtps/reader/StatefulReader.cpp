@@ -214,8 +214,8 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
-        // Check if CacheChange was received.
-        if(!pWP->change_was_received(change->sequenceNumber))
+        // Check if CacheChange was received or is framework data
+        if(!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
@@ -286,7 +286,8 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
+    // TODO: see if we need manage framework fragmented DATA message
+    if(acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
         // Check if CacheChange was received.
         if(!pWP->change_was_received(incomingChange->sequenceNumber))
@@ -356,7 +357,7 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    if(acceptMsgFrom(writerGUID, &pWP))
+    if(acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
         std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
 
@@ -404,7 +405,7 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
 
     std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
 
-    if(acceptMsgFrom(writerGUID, &pWP))
+    if(acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
         std::lock_guard<std::recursive_mutex> guardWriterProxy(*pWP->getMutex());
         SequenceNumber_t auxSN;
@@ -439,6 +440,13 @@ bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
         }
     }
 
+    // Check if it's a framework's one
+    if (writerId.entityId == m_trustedWriterEntityId)
+    {
+        *wp = nullptr;
+        return true;
+    }
+
     return false;
 }
 
@@ -451,8 +459,9 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
         wp->setNotValid(a_change->sequenceNumber);
         return true;
     }
-    else
+    else if( a_change->writerGUID.entityId != this->m_trustedWriterEntityId )
     {
+        // trusted entities messages mean no havoc
         logError(RTPS_READER," You should always find the WP associated with a change, something is very wrong");
     }
     return false;
@@ -465,8 +474,33 @@ bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
     {
         if(!findWriterProxy(a_change->writerGUID, &prox))
         {
-            logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID <<" not matched to this Reader "<< m_guid.entityId);
-            return false;
+            // discard non framework messages from unknown writer
+            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            {
+                logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);
+                return false;
+            }
+            else
+            {
+                // handle framework messages in a stateless fashion
+                // Only make visible the change if there is not other with bigger sequence number.
+                if (get_last_notified(a_change->writerGUID) < a_change->sequenceNumber)
+                {
+                    if (mp_history->received_change(a_change, 0))
+                    {
+                        update_last_notified(a_change->writerGUID, a_change->sequenceNumber);
+                        if (getListener() != nullptr)
+                        {
+                            getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
+                        }
+
+                        mp_history->postSemaphore();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 
