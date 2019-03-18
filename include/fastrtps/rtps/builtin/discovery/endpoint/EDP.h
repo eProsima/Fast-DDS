@@ -209,7 +209,7 @@ class EDP
                 const ReaderProxyData& /*remote_reader_data*/) { return false; }
 #endif
 
-        //! Pointer to the PDPSimple object that contains the endpoint discovery protocol.
+        //! Pointer to the PDP object that contains the endpoint discovery protocol.
         PDP* mp_PDP;
         //! Pointer to the RTPSParticipant.
         RTPSParticipantImpl* mp_RTPSParticipant;

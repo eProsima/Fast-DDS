@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	virtual ~PDPListener() {}
+	~PDPListener() override {}
 	//!Pointer to the associated mp_SPDP;
 	PDP* mp_PDP;
 	/**

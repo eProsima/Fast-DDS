@@ -43,7 +43,9 @@ class RemoteParticipantLeaseDuration;
 class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;
+class ReaderListener;
 class PDPListener;
+class PDPServerListener;
 
 
 /**
@@ -55,6 +57,8 @@ class PDP
 {
     friend class RemoteRTPSParticipantLeaseDuration;
     friend class PDPListener;
+    friend class PDPServerListener;
+
     public:
     /**
      * Constructor
@@ -238,7 +242,7 @@ class PDP
     //!Variable to indicate if any parameter has changed.
     bool m_hasChangedLocalPDP;
     //!Listener for the SPDP messages.
-    PDPListener* mp_listener;
+    ReaderListener* mp_listener;
     //!WriterHistory
     WriterHistory* mp_PDPWriterHistory;
     //!Reader History

@@ -51,7 +51,7 @@ class EDPSimple : public EDP
 
     /**
      * Constructor.
-     * @param p Pointer to the PDPSimple
+     * @param p Pointer to the PDP
      * @param part Pointer to the RTPSParticipantImpl
      */
     EDPSimple(PDP* p,RTPSParticipantImpl* part);
@@ -134,7 +134,7 @@ class EDPSimple : public EDP
      * Create local SEDP Endpoints based on the DiscoveryAttributes.
      * @return True if correct.
      */
-    bool createSEDPEndpoints();
+    virtual bool createSEDPEndpoints();
 
 #if HAVE_SECURITY
     bool create_sedp_secure_endpoints();
@@ -147,6 +147,15 @@ class EDPSimple : public EDP
 #endif
 
 };
+
+// Default configuration values for EDP entities.
+extern const Duration_t edp_heartbeat_period; 
+extern const Duration_t edp_nack_response_delay;
+extern const Duration_t edp_nack_supression_duration;
+extern const Duration_t edp_heartbeat_response_delay;
+
+extern const int32_t edp_initial_reserved_caches;
+
 
 }
 } /* namespace rtps */

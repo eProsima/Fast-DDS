@@ -715,9 +715,9 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp, LocatorList
 {
     /* Note:
        The previous version of this function associated (or created) ListenResources and added the endpoint to them.
-       It then requested the list of Locators the Listener is listening to and appended to the LocatorList_t from the paremeters.
+       It then requested the list of Locators the Listener is listening to and appended to the LocatorList_t from the parameters.
 
-       This has been removed becuase it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
+       This has been removed because it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
        one of the supported Locators is needed to make the match, and the case of new ListenResources being created has been removed
        since its the NetworkFactory the one that takes care of Resource creation.
        */
