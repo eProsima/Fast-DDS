@@ -132,7 +132,7 @@ bool History::get_earliest_change(CacheChange_t **change)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     if (m_changes.empty())
     {
