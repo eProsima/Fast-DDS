@@ -28,7 +28,7 @@
 #include "../attributes/ReaderAttributes.h"
 #include "../messages/RTPSMessageSenderInterface.hpp"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
-#include "../builtin/data/WriterProxyData.h"
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>

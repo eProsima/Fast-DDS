@@ -20,6 +20,7 @@
 #define _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/RemoteLocators.hpp>
 #include <fastrtps/qos/WriterQos.h>
 
 #if HAVE_SECURITY
@@ -36,7 +37,11 @@ class WriterProxyData
 {
     public:
 
-        GUID_t guid() const { return m_guid; }
+        WriterProxyData() : remote_locators_(4u, 1u) { }
+
+        const GUID_t& guid() const { return m_guid; }
+
+        GUID_t& guid() { return m_guid; }
 
         void clear() { }
 
@@ -45,6 +50,11 @@ class WriterProxyData
         void set_unicast_locators(const LocatorList_t& /*locators*/, const NetworkFactory& /*network*/) { }
 
         void topicKind (int /*kind*/) { }
+
+        const RemoteLocatorList& remote_locators() const
+        {
+            return remote_locators_;
+        }
 
 #if HAVE_SECURITY
         security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
@@ -56,6 +66,7 @@ class WriterProxyData
     private:
 
         GUID_t m_guid;
+        RemoteLocatorList remote_locators_;
 };
 
 } // namespace rtps
