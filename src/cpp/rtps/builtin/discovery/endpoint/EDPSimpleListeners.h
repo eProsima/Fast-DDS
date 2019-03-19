@@ -55,7 +55,7 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
          */
         void onNewCacheChangeAdded(
                 RTPSReader* reader,
-                const CacheChange_t* const  change) override;
+                CacheChange_t* const  change) override;
 
 
         /*!
@@ -101,7 +101,7 @@ class EDPSimpleSUBListener : public ReaderListener, public WriterListener
          */
         void onNewCacheChangeAdded(
                 RTPSReader* reader,
-                const CacheChange_t* const change) override;
+                CacheChange_t* const change) override;
 
         /*!
          * This method is called when all the readers matched with this Writer acknowledge that a cache 

@@ -44,7 +44,7 @@ namespace rtps {
 
 
 
-void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)(change_in);
     logInfo(RTPS_PDP,"SPDP Message received");
