@@ -27,7 +27,6 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-//#include "../participant/ParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
@@ -212,7 +211,9 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
     return updated;
 }
 
-void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t * const change_in)
+void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(
+        RTPSReader* /*reader*/,
+        CacheChange_t * const change_in)
 {
     if (mp_subscriberImpl->onNewCacheChangeAdded(change_in))
     {
@@ -232,7 +233,7 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
-bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
+bool SubscriberImpl::onNewCacheChangeAdded(CacheChange_t* const change_in)
 {
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
