@@ -23,14 +23,15 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
-
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include "../participant/ParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
-
+using namespace std::chrono;
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,6 +52,11 @@ SubscriberImpl::SubscriberImpl(
     , m_readerListener(this)
     , mp_userSubscriber(nullptr)
     , mp_rtpsParticipant(nullptr)
+    , lifespan_timer_(std::bind(&SubscriberImpl::lifespan_expired, this),
+                      m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
     {
 
     }
@@ -87,7 +93,8 @@ bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
     return this->m_history.readNextData(data,info);
 }
 
-bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info) {
+bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info)
+{
     return this->m_history.takeNextData(data,info);
 }
 
@@ -176,15 +183,27 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
         //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
         mp_rtpsParticipant->updateReader(this->mp_reader, m_att.topic, m_att.qos);
     }
+
+    // Update lifespan
+    if (m_att.qos.m_lifespan.duration == c_TimeInfinite)
+    {
+        lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+        lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+        lifespan_timer_.restart_timer();
+    }
+
     return updated;
 }
 
-void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t* const /*change*/)
+void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, CacheChange_t * const change)
 {
-    if(mp_subscriberImpl->mp_listener != nullptr)
+    if (mp_subscriberImpl->onNewCacheChangeAdded(change))
     {
-        //cout << "FIRST BYTE: "<< (int)change->serializedPayload.data[0] << endl;
-        mp_subscriberImpl->mp_listener->onNewDataMessage(mp_subscriberImpl->mp_userSubscriber);
+        if(mp_subscriberImpl->mp_listener != nullptr)
+        {
+            //cout << "FIRST BYTE: "<< (int)change->serializedPayload.data[0] << endl;
+            mp_subscriberImpl->mp_listener->onNewDataMessage(mp_subscriberImpl->mp_userSubscriber);
+        }
     }
 }
 
@@ -194,6 +213,29 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     {
         mp_subscriberImpl->mp_listener->onSubscriptionMatched(mp_subscriberImpl->mp_userSubscriber,info);
     }
+}
+
+bool SubscriberImpl::onNewCacheChangeAdded(CacheChange_t * const change)
+{
+    // Check if the added change has expired due to lifespan
+    // If so, remove it from the history
+    // Otherwise start the lifespan timer
+
+    steady_clock::time_point source_timestamp = steady_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+    steady_clock::time_point now = steady_clock::now();
+
+    if (now - source_timestamp >= lifespan_duration_us_)
+    {
+        // Change expired
+        m_history.remove_change_sub(change);
+        return false;
+    }
+
+    steady_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+
+    lifespan_timer_.update_interval_millisec(interval.count() * 1e-6);
+    lifespan_timer_.restart_timer();
+    return true;
 }
 
 /*!
@@ -210,6 +252,28 @@ bool SubscriberImpl::isInCleanState() const
 uint64_t SubscriberImpl::getUnreadCount() const
 {
     return m_history.getUnreadCount();
+}
+
+void SubscriberImpl::lifespan_expired()
+{
+    CacheChange_t* earliest_change;
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+    m_history.remove_change_sub(earliest_change);
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+
+    steady_clock::time_point source_timestamp = steady_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    steady_clock::time_point now = steady_clock::now();
+
+    // Calculate when the next earliest change is due to expire and restart the timer
+    steady_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+    lifespan_timer_.update_interval_millisec(interval.count() * 1e-6);
+    lifespan_timer_.restart_timer();
 }
 
 } /* namespace fastrtps */
