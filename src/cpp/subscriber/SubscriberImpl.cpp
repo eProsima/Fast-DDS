@@ -217,22 +217,42 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
 
 bool SubscriberImpl::onNewCacheChangeAdded(CacheChange_t * const change)
 {
-    // Check if the added change has expired due to lifespan
-    // If so, remove it from the history
-    // Otherwise start the lifespan timer
+    if (m_att.qos.m_lifespan.duration == c_TimeInfinite)
+    {
+        return true;
+    }
 
     steady_clock::time_point source_timestamp = steady_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
     steady_clock::time_point now = steady_clock::now();
 
+    // The new change could have expired if it arrived too late
+    // If so, remove it from the history and return false to avoid notifying the listener
     if (now - source_timestamp >= lifespan_duration_us_)
     {
-        // Change expired
         m_history.remove_change_sub(change);
         return false;
     }
 
+    CacheChange_t* earliest_change;
+    if (m_history.get_earliest_change(&earliest_change))
+    {
+        if (earliest_change == change)
+        {
+            // The new change has been added at the begining of the the history
+            // As the history is sorted by timestamp, this means that the new change has the smallest timestamp
+            // We have to stop the timer as this will be the next change to expire
+            lifespan_timer_.cancel_timer();
+        }
+    }
+    else
+    {
+        logError(SUBSCRIBER, "A change was added to history that could not be retrieved");
+    }
+
     steady_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
 
+    // Update and restart the timer
+    // If the timer is already running this will not have any effect
     lifespan_timer_.update_interval_millisec(interval.count() * 1e-6);
     lifespan_timer_.restart_timer();
     return true;
