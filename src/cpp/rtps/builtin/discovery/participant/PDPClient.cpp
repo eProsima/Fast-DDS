@@ -127,7 +127,10 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
         return false;
     }
 
-    //INIT EDP
+    /* We keep using EPDSimple notwithstanding its method EDPSimple::assignRemoteEndpoints regards all server EDPs as TRANSIENT_LOCAL.
+       Server builtin Writers are actually TRANSIENT. Currently this mistake is not an issue but must be kept in mind if further development
+       justifies the creation of an EDPClient class.
+    */
     mp_EDP = (EDP*)(new EDPSimple(this,mp_RTPSParticipant));
     if(!mp_EDP->initEDP(m_discovery))
     {
@@ -294,7 +297,7 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
             watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
             watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
             watt.endpoint.reliabilityKind = RELIABLE;
-            watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+            watt.endpoint.durabilityKind = TRANSIENT;
             watt.endpoint.topicKind = WITH_KEY;
 
             mp_PDPReader->matched_writer_remove(watt);
