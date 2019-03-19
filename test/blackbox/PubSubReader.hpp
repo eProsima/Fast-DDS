@@ -149,10 +149,20 @@ class PubSubReader
 
     public:
 
-        PubSubReader(const std::string& topic_name) : participant_listener_(*this), listener_(*this),
-        participant_(nullptr), subscriber_(nullptr), topic_name_(topic_name), initialized_(false),
-        matched_(0), participant_matched_(0), receiving_(false), current_received_count_(0),
-        number_samples_expected_(0), discovery_result_(false), onDiscovery_(nullptr)
+        PubSubReader(const std::string& topic_name)
+            : participant_listener_(*this)
+            , listener_(*this)
+            , participant_(nullptr)
+            , subscriber_(nullptr)
+            , topic_name_(topic_name)
+            , initialized_(false)
+            , matched_(0)
+            , participant_matched_(0)
+            , receiving_(false)
+            , current_received_count_(0)
+            , number_samples_expected_(0)
+            , discovery_result_(false)
+            , onDiscovery_(nullptr)
 #if HAVE_SECURITY
         , authorized_(0), unauthorized_(0)
 #endif
@@ -351,6 +361,12 @@ class PubSubReader
         PubSubReader& reliability(const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
         {
             subscriber_attr_.qos.m_reliability.kind = kind;
+            return *this;
+        }
+
+        PubSubReader& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
+        {
+            subscriber_attr_.qos.m_lifespan.duration = lifespan_period;
             return *this;
         }
 
@@ -621,6 +637,16 @@ class PubSubReader
         bool is_matched() const
         {
             return matched_ > 0;
+        }
+
+        bool takeNextData(void* data, eprosima::fastrtps::SampleInfo_t* info)
+        {
+            if (subscriber_->takeNextData(data, info))
+            {
+                current_received_count_++;
+                return true;
+            }
+            return false;
         }
 
     private:
