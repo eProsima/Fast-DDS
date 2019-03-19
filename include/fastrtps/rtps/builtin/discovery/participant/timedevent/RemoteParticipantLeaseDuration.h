@@ -36,7 +36,7 @@ class ParticipantProxyData;
  * announce its liveliness each leaseDuration period.
  *@ingroup DISCOVERY_MODULE
  */
-class RemoteParticipantLeaseDuration:public TimedEvent
+class RTPS_DllAPI RemoteParticipantLeaseDuration : public TimedEvent // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 {
 public:
 	/**

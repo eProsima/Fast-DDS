@@ -53,7 +53,7 @@ class PDPServerListener;
  * It also keeps the Participant Discovery Data and provides interfaces to access it
  *@ingroup DISCOVERY_MODULE
  */
-class PDP
+class RTPS_DllAPI PDP  // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 {
     friend class RemoteRTPSParticipantLeaseDuration;
     friend class PDPListener;
@@ -252,13 +252,15 @@ class PDP
 
 };
 
-// configuration values for PDP reliable entities.
-extern const Duration_t pdp_heartbeat_period;
-extern const Duration_t pdp_nack_response_delay;
-extern const Duration_t pdp_nack_supression_duration;
-extern const Duration_t pdp_heartbeat_response_delay;
+// TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 
-extern const int32_t pdp_initial_reserved_caches;
+// configuration values for PDP reliable entities.
+RTPS_DllAPI extern const Duration_t pdp_heartbeat_period;
+RTPS_DllAPI extern const Duration_t pdp_nack_response_delay;
+RTPS_DllAPI extern const Duration_t pdp_nack_supression_duration;
+RTPS_DllAPI extern const Duration_t pdp_heartbeat_response_delay;
+
+RTPS_DllAPI extern const int32_t pdp_initial_reserved_caches;
 
 }
 } /* namespace rtps */

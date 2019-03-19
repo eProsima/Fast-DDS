@@ -40,7 +40,7 @@ class EDPListener;
  * Inherits from EDP class.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPSimple : public EDP
+class RTPS_DllAPI EDPSimple : public EDP  // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 {
     typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;
     typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
@@ -146,13 +146,15 @@ class EDPSimple : public EDP
 
 };
 
-// Default configuration values for EDP entities.
-extern const Duration_t edp_heartbeat_period; 
-extern const Duration_t edp_nack_response_delay;
-extern const Duration_t edp_nack_supression_duration;
-extern const Duration_t edp_heartbeat_response_delay;
+// TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 
-extern const int32_t edp_initial_reserved_caches;
+// Default configuration values for EDP entities.
+RTPS_DllAPI extern const Duration_t edp_heartbeat_period;
+RTPS_DllAPI extern const Duration_t edp_nack_response_delay;
+RTPS_DllAPI extern const Duration_t edp_nack_supression_duration;
+RTPS_DllAPI extern const Duration_t edp_heartbeat_response_delay;
+
+RTPS_DllAPI extern const int32_t edp_initial_reserved_caches;
 
 
 }

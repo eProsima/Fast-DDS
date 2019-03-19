@@ -39,7 +39,7 @@ namespace rtps {
      * @ingroup RTPS_ATTRIBUTES_MODULE
      */
 
-    class RemoteServerAttributes
+    class RTPS_DllAPI RemoteServerAttributes 
     {
     public:
         inline bool operator==(const RemoteServerAttributes & r) const { return guidPrefix == r.guidPrefix; }

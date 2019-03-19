@@ -60,8 +60,8 @@ class ParameterList_t
  * ParameterList class has static methods to update or read a ParameterList_t
  * @ingroup PARAMETER_MODULE
  */
-
-class ParameterList
+ 
+class RTPS_DllAPI ParameterList // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 {
     public:
 

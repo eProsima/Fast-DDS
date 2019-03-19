@@ -35,7 +35,7 @@ class TimedEventImpl;
  * Timed Event class used to define any timed events.
  * @ingroup MANAGEMENT_MODULE
  */
-class TimedEvent {
+class RTPS_DllAPI TimedEvent { // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 public:
 
 	/**

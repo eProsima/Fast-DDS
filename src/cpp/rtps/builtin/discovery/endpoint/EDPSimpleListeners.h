@@ -37,9 +37,13 @@ struct CacheChange_t;
  * @ingroup DISCOVERY_MODULE
  */
 
-class EDPListener : public ReaderListener, public WriterListener
+class RTPS_DllAPI  EDPListener : public ReaderListener, public WriterListener // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 {
-
+public:
+    /**
+     * @param change
+     */
+        bool computeKey(CacheChange_t* change);
 };
 
 /*!
@@ -77,12 +81,6 @@ class EDPSimplePUBListener : public EDPListener
         void onWriterChangeReceivedByAll(
                 RTPSWriter* writer,
                 CacheChange_t* change) override;
-
-        /**
-         * Compute the Key from a CacheChange_t
-         * @param change Pointer to the change.
-         */
-        bool computeKey(CacheChange_t* change);
 
     private:
 
@@ -122,11 +120,6 @@ class EDPSimpleSUBListener : public EDPListener
         void onWriterChangeReceivedByAll(
                 RTPSWriter* writer,
                 CacheChange_t* change) override;
-
-        /**
-         * @param change
-         */
-        bool computeKey(CacheChange_t* change);
 
     private:
 
