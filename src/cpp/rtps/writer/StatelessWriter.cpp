@@ -286,21 +286,14 @@ void StatelessWriter::send_any_unsent_changes()
  */
 bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
 {
-    // TODO (Miguel C): Pending refactor for locator shrink
-    RemoteReaderAttributes tmp(data);
-    return matched_reader_add(tmp);
-}
-
-bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attributes)
-{
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
-    assert(reader_attributes.guid != c_Guid_Unknown);
+    assert(data.guid() != c_Guid_Unknown);
 
     bool addGuid = !has_builtin_guid();
     for(const ReaderLocator& reader : matched_readers_)
     {
-        if(reader.remote_guid() == reader_attributes.guid)
+        if(reader.remote_guid() == data.guid())
         {
             logWarning(RTPS_WRITER, "Attempting to add existing reader");
             return false;
@@ -311,10 +304,10 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attribut
     ReaderLocator* new_reader = nullptr;
     for (ReaderLocator& reader : matched_readers_)
     {
-        if (reader.start(reader_attributes.guid,
-            reader_attributes.endpoint.unicastLocatorList,
-            reader_attributes.endpoint.multicastLocatorList,
-            reader_attributes.expectsInlineQos))
+        if (reader.start(data.guid(),
+            data.remote_locators().unicast,
+            data.remote_locators().multicast,
+            data.m_expectsInlineQos))
         {
             new_reader = &reader;
             break;
@@ -326,10 +319,10 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attribut
         new_reader = matched_readers_.emplace_back(getRTPSParticipant(), 4u, 1u);
         if (new_reader != nullptr)
         {
-            new_reader->start(reader_attributes.guid,
-                reader_attributes.endpoint.unicastLocatorList,
-                reader_attributes.endpoint.multicastLocatorList,
-                reader_attributes.expectsInlineQos);
+            new_reader->start(data.guid(),
+                data.remote_locators().unicast,
+                data.remote_locators().multicast,
+                data.m_expectsInlineQos);
         }
         else
         {
@@ -347,14 +340,14 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attribut
 
     update_cached_info_nts();
 
-    is_inline_qos_expected_ |= reader_attributes.expectsInlineQos;
+    is_inline_qos_expected_ |= data.m_expectsInlineQos;
 
     if (addGuid)
     {
         compute_selected_guids();
     }
 
-    if (reader_attributes.endpoint.durabilityKind >= TRANSIENT_LOCAL)
+    if (data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
     {
         unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
         AsyncWriterThread::wakeUp(this);
@@ -363,7 +356,7 @@ bool StatelessWriter::matched_reader_add(RemoteReaderAttributes& reader_attribut
     // TODO (Miguel C): refactor with locator selector
     getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList);
 
-    logInfo(RTPS_READER,"Reader " << reader_attributes.guid << " added to "<<m_guid.entityId);
+    logInfo(RTPS_READER,"Reader " << data.guid() << " added to "<<m_guid.entityId);
     return true;
 }
 

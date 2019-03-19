@@ -40,8 +40,6 @@ class RTPSWriter : public Endpoint
 
         virtual bool matched_reader_add(const ReaderProxyData& ratt) = 0;
 
-        virtual bool matched_reader_add(const RemoteReaderAttributes& ratt) = 0;
-
         virtual bool matched_reader_remove(const GUID_t& ratt) = 0;
 
         MOCK_METHOD3(new_change, CacheChange_t*(const std::function<uint32_t()>&,

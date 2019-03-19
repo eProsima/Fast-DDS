@@ -29,6 +29,7 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/rtps_fwd.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <fastcdr/FastBuffer.h>
@@ -188,33 +189,33 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
             //Add remote reader (in this case a reader in the same machine)
             eprosima::fastrtps::rtps::GUID_t guid = participant_->getGuid();
 
-            eprosima::fastrtps::rtps::RemoteReaderAttributes rattr;
+            eprosima::fastrtps::rtps::ReaderProxyData rattr;
             eprosima::fastrtps::rtps::Locator_t loc;
             IPLocator::setIPv4(loc, ip_);
             loc.port = static_cast<uint16_t>(port_);
-            rattr.endpoint.multicastLocatorList.push_back(loc);
+            rattr.add_unicast_locator(loc);
 
             if(writer_attr_.endpoint.reliabilityKind == eprosima::fastrtps::rtps::RELIABLE)
             {
-                rattr.endpoint.reliabilityKind = eprosima::fastrtps::rtps::RELIABLE;
+                rattr.m_qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
             }
 
-            rattr.guid.guidPrefix.value[0] = guid.guidPrefix.value[0];
-            rattr.guid.guidPrefix.value[1] = guid.guidPrefix.value[1];
-            rattr.guid.guidPrefix.value[2] = guid.guidPrefix.value[2];
-            rattr.guid.guidPrefix.value[3] = guid.guidPrefix.value[3];
-            rattr.guid.guidPrefix.value[4] = guid.guidPrefix.value[4];
-            rattr.guid.guidPrefix.value[5] = guid.guidPrefix.value[5];
-            rattr.guid.guidPrefix.value[6] = guid.guidPrefix.value[6];
-            rattr.guid.guidPrefix.value[7] = guid.guidPrefix.value[7];
-            rattr.guid.guidPrefix.value[8] = 1;
-            rattr.guid.guidPrefix.value[9] = 0;
-            rattr.guid.guidPrefix.value[10] = 0;
-            rattr.guid.guidPrefix.value[11] = 0;
-            rattr.guid.entityId.value[0] = 0;
-            rattr.guid.entityId.value[1] = 0;
-            rattr.guid.entityId.value[2] = 1;
-            rattr.guid.entityId.value[3] = 4;
+            rattr.guid().guidPrefix.value[0] = guid.guidPrefix.value[0];
+            rattr.guid().guidPrefix.value[1] = guid.guidPrefix.value[1];
+            rattr.guid().guidPrefix.value[2] = guid.guidPrefix.value[2];
+            rattr.guid().guidPrefix.value[3] = guid.guidPrefix.value[3];
+            rattr.guid().guidPrefix.value[4] = guid.guidPrefix.value[4];
+            rattr.guid().guidPrefix.value[5] = guid.guidPrefix.value[5];
+            rattr.guid().guidPrefix.value[6] = guid.guidPrefix.value[6];
+            rattr.guid().guidPrefix.value[7] = guid.guidPrefix.value[7];
+            rattr.guid().guidPrefix.value[8] = 1;
+            rattr.guid().guidPrefix.value[9] = 0;
+            rattr.guid().guidPrefix.value[10] = 0;
+            rattr.guid().guidPrefix.value[11] = 0;
+            rattr.guid().entityId.value[0] = 0;
+            rattr.guid().entityId.value[1] = 0;
+            rattr.guid().entityId.value[2] = 1;
+            rattr.guid().entityId.value[3] = 4;
 
             writer_->matched_reader_add(rattr);
         }

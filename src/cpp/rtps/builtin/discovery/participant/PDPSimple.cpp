@@ -561,23 +561,28 @@ bool PDPSimple::createSPDPEndpoints()
         {
             mp_SPDPWriter->set_fixed_locators(mp_builtin->m_initialPeersList);
 
-            RemoteReaderAttributes rratt;
-            rratt.guid.guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
-            rratt.guid.entityId = c_EntityId_SPDPReader;
+            ReaderProxyData rratt;
+            const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+            Locator_t local_locator;
+            rratt.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
+            rratt.guid().entityId = c_EntityId_SPDPReader;
             for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)
             {
-                if (IPLocator::isMulticast(*it))
+                if (network.transform_remote_locator(*it, local_locator))
                 {
-                    rratt.endpoint.multicastLocatorList.push_back(*it);
-                }
-                else
-                {
-                    rratt.endpoint.unicastLocatorList.push_back(*it);
+                    if (IPLocator::isMulticast(local_locator))
+                    {
+                        rratt.add_multicast_locator(local_locator);
+                    }
+                    else
+                    {
+                        rratt.add_unicast_locator(local_locator);
+                    }
                 }
             }
-            rratt.endpoint.topicKind = WITH_KEY;
-            rratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-            rratt.endpoint.reliabilityKind = BEST_EFFORT;
+            rratt.topicKind(WITH_KEY);
+            rratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+            rratt.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
             mp_SPDPWriter->matched_reader_add(rratt);
         }
     }
@@ -782,14 +787,14 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     if(auxendp!=0)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = c_EntityId_SPDPReader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
-        ratt.endpoint.reliabilityKind = BEST_EFFORT;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ReaderProxyData ratt;
+        ratt.m_expectsInlineQos = false;
+        ratt.guid().guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid().entityId = c_EntityId_SPDPReader;
+        ratt.set_unicast_locators(pdata->m_metatrafficUnicastLocatorList, network);
+        ratt.set_multicast_locators(pdata->m_metatrafficMulticastLocatorList, network);
+        ratt.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        ratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_SPDPWriter->matched_reader_add(ratt);
     }
 

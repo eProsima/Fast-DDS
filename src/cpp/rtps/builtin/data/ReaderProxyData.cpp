@@ -594,26 +594,6 @@ void ReaderProxyData::set_multicast_locators(
     }
 }
 
-RemoteReaderAttributes::RemoteReaderAttributes(const ReaderProxyData& data)
-{
-    guid = data.guid();
-    expectsInlineQos = data.m_expectsInlineQos;
-    endpoint.durabilityKind = data.m_qos.m_durability.durabilityKind();
-    endpoint.endpointKind = READER;
-    endpoint.topicKind = data.topicKind();
-    endpoint.reliabilityKind = data.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    endpoint.unicastLocatorList.clear();
-    for (const Locator_t& locator : data.remote_locators().unicast)
-    {
-        endpoint.unicastLocatorList.push_back(locator);
-    }
-    endpoint.multicastLocatorList.clear();
-    for (const Locator_t& locator : data.remote_locators().multicast)
-    {
-        endpoint.multicastLocatorList.push_back(locator);
-    }
-}
-
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

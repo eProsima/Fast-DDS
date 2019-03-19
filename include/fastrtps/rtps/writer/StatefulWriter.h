@@ -120,13 +120,6 @@ public:
     bool matched_reader_add(const ReaderProxyData& data) override;
 
     /**
-     * Add a matched reader.
-     * @param ratt Attributes of the reader to add.
-     * @return True if added.
-     */
-    bool matched_reader_add(RemoteReaderAttributes& ratt) override;
-
-    /**
      * Remove a matched reader.
      * @param reader_guid GUID of the reader to remove.
      * @return True if removed.

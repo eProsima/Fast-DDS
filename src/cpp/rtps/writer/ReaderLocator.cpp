@@ -42,8 +42,8 @@ ReaderLocator::ReaderLocator(
 
 bool ReaderLocator::start(
         const GUID_t& remote_guid,
-        const LocatorList_t& unicast_locators,
-        const LocatorList_t& multicast_locators,
+        const ResourceLimitedVector<Locator_t>& unicast_locators,
+        const ResourceLimitedVector<Locator_t>& multicast_locators,
         bool expects_inline_qos)
 {
     if (locator_info_.remote_guid == c_Guid_Unknown)

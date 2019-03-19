@@ -60,32 +60,28 @@ ReaderProxy::~ReaderProxy()
 {
 }
 
-void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
+void ReaderProxy::start(const ReaderProxyData& reader_attributes)
 {
     locator_info_.start(
-        reader_attributes.guid,
-        reader_attributes.endpoint.unicastLocatorList,
-        reader_attributes.endpoint.multicastLocatorList,
-        reader_attributes.expectsInlineQos);
+        reader_attributes.guid(),
+        reader_attributes.remote_locators().unicast,
+        reader_attributes.remote_locators().multicast,
+        reader_attributes.m_expectsInlineQos);
 
     is_active_ = true;
     reader_attributes_ = reader_attributes;
 
-    // TODO (Miguel C): Remove when refactor is complete
-    reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
-    reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
-
-    nack_supression_event_->reader_guid(reader_attributes_.guid);
-    timers_enabled_ = (reader_attributes_.endpoint.reliabilityKind == RELIABLE);
+    nack_supression_event_->reader_guid(reader_attributes_.guid());
+    timers_enabled_ = (reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS);
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
 }
 
 void ReaderProxy::stop()
 {
-    locator_info_.stop(reader_attributes_.guid);
+    locator_info_.stop(reader_attributes_.guid());
     is_active_ = false;
-    reader_attributes_.guid = c_Guid_Unknown;
+    reader_attributes_.guid(c_Guid_Unknown);
     disable_timers();
 
     changes_for_reader_.clear();
@@ -132,7 +128,7 @@ void ReaderProxy::add_change(
         // This should never happen
         assert(false);
         logError(RTPS_WRITER, "Error adding change " << change.getSequenceNumber() << " to reader proxy " << \
-            reader_attributes_.guid);
+            reader_attributes_.guid());
     }
 }
 
@@ -402,7 +398,7 @@ bool ReaderProxy::process_nack_frag(
         const SequenceNumber_t& seq_num,
         const FragmentNumberSet_t& fragments_state)
 {
-    if (reader_attributes_.guid == reader_guid)
+    if (reader_attributes_.guid() == reader_guid)
     {
         if (last_nackfrag_count_ < nack_count)
         {

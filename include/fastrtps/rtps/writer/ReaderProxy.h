@@ -27,6 +27,7 @@
 #include "../common/CacheChange.h"
 #include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
+#include "../builtin/data/ReaderProxyData.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 #include "ReaderLocator.h"
 
@@ -59,9 +60,9 @@ public:
 
     /**
      * Activate this proxy associating it to a remote reader.
-     * @param reader_attributes RemoteReaderAttributes of the reader for which to keep state.
+     * @param reader_attributes ReaderProxyData of the reader for which to keep state.
      */
-    void start(const RemoteReaderAttributes& reader_attributes);
+    void start(const ReaderProxyData& reader_attributes);
 
     /**
      * Disable this proxy.
@@ -208,7 +209,7 @@ public:
      */
     inline const GUID_t& guid() const
     {
-        return reader_attributes_.guid;
+        return reader_attributes_.guid();
     }
 
     /**
@@ -217,7 +218,7 @@ public:
      */
     inline DurabilityKind_t durability_kind() const
     {
-        return reader_attributes_.endpoint.durabilityKind;
+        return reader_attributes_.m_qos.m_durability.durabilityKind();
     }
 
     /**
@@ -226,7 +227,7 @@ public:
      */
     inline bool expects_inline_qos() const
     {
-        return reader_attributes_.expectsInlineQos;
+        return reader_attributes_.m_expectsInlineQos;
     }
 
     /**
@@ -235,14 +236,14 @@ public:
      */
     inline bool is_reliable() const
     {
-        return reader_attributes_.endpoint.reliabilityKind == RELIABLE;
+        return reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
     }
 
     /**
      * Get the attributes of the reader represented by this proxy.
      * @return the attributes of the reader represented by this proxy.
      */
-    inline const RemoteReaderAttributes& reader_attributes() const
+    inline const ReaderProxyData& reader_attributes() const
     {
         return reader_attributes_;
     }
@@ -319,7 +320,7 @@ private:
     //!Reader locator information
     ReaderLocator locator_info_;
     //!Attributes of the Remote Reader
-    RemoteReaderAttributes reader_attributes_;
+    ReaderProxyData reader_attributes_;
     //!Pointer to the associated StatefulWriter.
     StatefulWriter* writer_;
     //!Set of the changes and its state.

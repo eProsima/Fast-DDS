@@ -111,43 +111,6 @@ class  WriterAttributes
         ResourceLimitedContainerConfig matched_readers_allocation;
 };
 
-/**
- * Class RemoteReaderAttributes, to define the attributes of a Remote Reader.
- * @ingroup RTPS_ATTRIBUTES_MODULE
- */
-class  RemoteReaderAttributes
-{
-    public:
-
-        RemoteReaderAttributes() : expectsInlineQos(false)
-        {
-            endpoint.endpointKind = READER;
-        }
-
-        RemoteReaderAttributes(const ReaderProxyData& data);
-
-        virtual ~RemoteReaderAttributes()
-        {
-
-        }
-
-        std::function<bool(const RemoteReaderAttributes&)> compare_guid_function() const
-        {
-            return [this](const RemoteReaderAttributes& rhs)
-            {
-                return this->guid == rhs.guid;
-            };
-        }
-
-        //!Attributes of the associated endpoint.
-        EndpointAttributes endpoint;
-
-        //!GUID_t of the reader.
-        GUID_t guid;
-
-        //!Expects inline QOS.
-        bool expectsInlineQos;
-};
 }
 }
 }

@@ -27,6 +27,8 @@
 #include "fastrtps/rtps/attributes/WriterAttributes.h"
 #include "fastrtps/rtps/attributes/HistoryAttributes.h"
 
+#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
+
 #include "fastrtps/rtps/history/WriterHistory.h"
 #include "fastrtps/utils/IPLocator.h"
 
@@ -71,12 +73,12 @@ bool TestWriterSocket::init(std::string ip, uint32_t port)
 		return false;
 
 	//ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
-	RemoteReaderAttributes ratt;
-    ratt.guid = mp_participant->getGuid();
+	ReaderProxyData ratt;
+    ratt.guid(mp_participant->getGuid());
 	Locator_t loc;
 	IPLocator::setIPv4(loc, ip);
 	loc.port = static_cast<uint16_t>(port);
-	ratt.endpoint.multicastLocatorList.push_back(loc);
+	ratt.add_unicast_locator(loc);
 	mp_writer->matched_reader_add(ratt);
 	return true;
 }
