@@ -21,9 +21,9 @@
 #define _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include "../../../qos/WriterQos.h"
 #include "../../../attributes/TopicAttributes.h"
 #include "../../../qos/ParameterList.h"
-#include "../../../qos/WriterQos.h"
 
 #include "../../../utils/fixed_size_string.hpp"
 
