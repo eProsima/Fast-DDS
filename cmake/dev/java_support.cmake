@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-macro(gradle_build directory)
+macro(gradle_build directory command_build)
     find_package(Java 1.6 COMPONENTS Runtime REQUIRED)
     if(WIN32)
         find_program(GRADLE_EXE NAMES gradle gradle.exe gradle.bat)
@@ -29,7 +29,7 @@ macro(gradle_build directory)
 
     if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION} VERSION_LESS 3.1.3)
         add_custom_target(java ALL
-            COMMAND "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
+            COMMAND "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} ${command_build}
             WORKING_DIRECTORY ${directory}
             COMMENT "Generating Java application" VERBATIM)
     else()
@@ -46,7 +46,7 @@ macro(gradle_build directory)
             COMMAND ${CMAKE_COMMAND} -E env
             --unset=JAVA_HOME
             "PATH=${Java_JAVA_EXECUTABLE_DIR_NATIVE}${delimiter_}$<JOIN:$ENV{PATH},${delimiter_}>"
-            "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} build
+            "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} ${command_build}
             WORKING_DIRECTORY ${directory}
             COMMENT "Generating Java application" VERBATIM)
     endif()

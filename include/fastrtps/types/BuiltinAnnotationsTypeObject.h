@@ -24,11 +24,12 @@
 
 
 #include <fastrtps/types/TypeObject.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <map>
 
 using namespace eprosima::fastrtps::types;
 
-void register_builtin_annotations_types();
+void register_builtin_annotations_types(TypeObjectFactory* factory);
 
 const TypeIdentifier* GetidIdentifier(bool complete = false);
 const TypeObject* GetidObject(bool complete = false);

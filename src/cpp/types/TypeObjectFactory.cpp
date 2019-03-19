@@ -47,6 +47,7 @@ TypeObjectFactory* TypeObjectFactory::get_instance()
     if (g_instance == nullptr)
     {
         g_instance = new TypeObjectFactory();
+        g_instance->create_builtin_annotations();
     }
     return g_instance;
 }
@@ -62,7 +63,7 @@ ResponseCode TypeObjectFactory::delete_instance()
     return ResponseCode::RETCODE_ERROR;
 }
 
-TypeObjectFactory::TypeObjectFactory()
+TypeObjectFactory::TypeObjectFactory() : builtinAnnotationInitilized_(false)
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // Generate basic TypeIdentifiers
@@ -131,8 +132,6 @@ TypeObjectFactory::TypeObjectFactory()
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
-
-    create_builtin_annotations();
 }
 
 TypeObjectFactory::~TypeObjectFactory()
@@ -181,7 +180,7 @@ TypeObjectFactory::~TypeObjectFactory()
 
 void TypeObjectFactory::create_builtin_annotations()
 {
-    register_builtin_annotations_types();
+    register_builtin_annotations_types(g_instance);
 }
 
 void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)

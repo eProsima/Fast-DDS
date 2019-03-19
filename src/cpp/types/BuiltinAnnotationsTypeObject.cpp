@@ -29,7 +29,6 @@ namespace { char dummy; }
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastcdr/FastBuffer.h>
@@ -37,9 +36,8 @@ namespace { char dummy; }
 
 using namespace eprosima::fastrtps::rtps;
 
-void register_builtin_annotations_types()
+void register_builtin_annotations_types(TypeObjectFactory* factory)
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
     factory->add_type_object("id", GetidIdentifier(true), GetidObject(true));
     factory->add_type_object("id", GetidIdentifier(false), GetidObject(false));
 

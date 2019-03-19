@@ -245,6 +245,7 @@ endif()
 # Java application
 ###############################################################################
 option(BUILD_JAVA "Activate the compilation of the Java application" OFF)
+option(TEST_JAVA "Perform testing when compile the Java application" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(BUILD_JAVA ON)
@@ -253,7 +254,13 @@ endif()
 if(BUILD_JAVA)
     include(${PROJECT_SOURCE_DIR}/cmake/dev/java_support.cmake)
 
-    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen
+    if(TEST_JAVA)
+        set(CMD_JAVA "build")
+    else()
+        set(CMD_JAVA "assemble")
+    endif()
+
+    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen ${CMD_JAVA}
         THIRDPARTY_DEPENDENCY idl
         THIRDPARTY_DEPENDENCY fastcdr
         )

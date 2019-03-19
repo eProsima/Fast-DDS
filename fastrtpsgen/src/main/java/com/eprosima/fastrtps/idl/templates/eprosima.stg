@@ -47,21 +47,9 @@ bitset_inherit_copy_init(parent) ::= <<$parent.scopedname$(x)>>
 bitset_inherit_move_init(parent) ::= <<$parent.scopedname$(std::move(x))>>
 
 member_default_init(member) ::= <<
-$if(member.typecode.forwarded)$
-m_$member.name$ = new $member.typecode.cppTypename$();
-$else$
-$if(member.typecode.primitive)$
-m_$member.name$ = $member.typecode.initialValue$;
-$elseif(member.typecode.isType_f)$$if(member.typecode.contentTypeCode.primitive)$
-memset(&m_$member.name$, 0, $member.typecode.size$ * $member.typecode.contentTypeCode.size$);
-$endif$$endif$$endif$
->>
+$if(member.typecode.forwarded)$m_$member.name$ = new $member.typecode.cppTypename$($if(member.annotationDefault)$$member.annotationDefaultValue$$endif$);$else$$if(member.typecode.primitive)$m_$member.name$ = $if(member.annotationDefault)$$member.annotationDefaultValue$$else$$member.typecode.initialValue$$endif$;$elseif(member.typecode.isType_f)$$if(member.typecode.contentTypeCode.primitive)$memset(&m_$member.name$, $if(member.annotationDefault)$$member.annotationDefaultValue$$else$0$endif$, $member.typecode.size$ * $member.typecode.contentTypeCode.size$);$endif$$endif$$endif$>>
 
-member_destructor(member) ::= <<
-$if(member.typecode.forwarded)$
-delete m_$member.name$;
-$endif$
->>
+member_destructor(member) ::= <<$if(member.typecode.forwarded)$delete m_$member.name$;$endif$>>
 
 getTypenameOperation(operation, suffix, varname) ::= <<
 $varname$ = $operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::get_typename();

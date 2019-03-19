@@ -90,6 +90,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${DYNAMIC_TYPES_SOURCE}
         )
 
+        set(DYNAMIC_TYPES_4_2_TEST_SOURCE
+            DynamicTypes_4_2_Tests.cpp
+            idl/new_features_4_2.cxx
+            idl/new_features_4_2PubSubTypes.cxx
+            idl/new_features_4_2TypeObject.cxx
+            ${DYNAMIC_TYPES_SOURCE}
+        )
+
         include_directories(mock/)
 
         add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
@@ -125,6 +133,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             fastcdr
         )
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
+
+
+        add_executable(DynamicTypes_4_2_Tests ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
+        target_compile_definitions(DynamicTypes_4_2_Tests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(DynamicTypes_4_2_Tests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(DynamicTypes_4_2_Tests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            ${TINYXML2_LIBRARY}
+            fastcdr
+        )
+        add_gtest(DynamicTypes_4_2_Tests SOURCES ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
 
     endif()
 endif()
