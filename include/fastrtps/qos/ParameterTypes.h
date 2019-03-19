@@ -130,15 +130,17 @@ enum ParameterId_t	: uint16_t
 class Parameter_t
 {
 public:
-    RTPS_DllAPI Parameter_t();
+
+    RTPS_DllAPI Parameter_t() : Pid(PID_PAD), length(0) { }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
      * @param length Its associated length
      */
-    RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length);
+    RTPS_DllAPI Parameter_t(ParameterId_t pid,uint16_t length) : Pid(pid), length(length) {}
 
-    virtual RTPS_DllAPI ~Parameter_t();
+    virtual RTPS_DllAPI ~Parameter_t() { }
 
     bool operator==(const Parameter_t& b) const
     {

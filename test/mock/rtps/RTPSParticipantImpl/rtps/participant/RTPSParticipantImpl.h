@@ -31,6 +31,7 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -81,6 +82,8 @@ class RTPSParticipantImpl
         MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+
+        MOCK_CONST_METHOD0(network_factory, const NetworkFactory&());
 
 #if HAVE_SECURITY
         MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes&());

@@ -20,6 +20,7 @@
 #define _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/qos/WriterQos.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
@@ -29,16 +30,28 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class NetworkFactory;
+
 class WriterProxyData
 {
     public:
 
         GUID_t guid() const { return m_guid; }
 
+        void clear() { }
+
+        void persistence_guid(const GUID_t& /*guid*/) { }
+
+        void set_unicast_locators(const LocatorList_t& /*locators*/, const NetworkFactory& /*network*/) { }
+
+        void topicKind (int /*kind*/) { }
+
 #if HAVE_SECURITY
         security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
         security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif
+
+        WriterQos m_qos;
 
     private:
 
