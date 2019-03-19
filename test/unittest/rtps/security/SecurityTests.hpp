@@ -71,6 +71,7 @@ class SecurityTest : public ::testing::Test
 
         virtual void SetUp()
         {
+            ::testing::DefaultValue<const NetworkFactory&>::Set(network);
             SecurityPluginFactory::set_auth_plugin(auth_plugin_);
             SecurityPluginFactory::set_crypto_plugin(crypto_plugin_);
             fill_participant_key(guid);
@@ -360,6 +361,7 @@ class SecurityTest : public ::testing::Test
 
 
         // Default Values
+        NetworkFactory network;
         RTPSParticipantAttributes pattr;
         GUID_t guid;
         CDRMessage_t default_cdr_message;

@@ -18,6 +18,7 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/log/Log.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;

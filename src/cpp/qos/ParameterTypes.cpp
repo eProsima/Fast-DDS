@@ -24,11 +24,6 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-// PARAMETER
-Parameter_t::Parameter_t():Pid(PID_PAD), length(0) { }
-Parameter_t::~Parameter_t(){}
-Parameter_t::Parameter_t(ParameterId_t pid,uint16_t in_length):Pid(pid),length(in_length) {}
-
 // PARAMETER LOCATOR
 bool ParameterLocator_t::addToCDRMessage(CDRMessage_t* msg)
 {

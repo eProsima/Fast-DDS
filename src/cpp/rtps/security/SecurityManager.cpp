@@ -24,6 +24,7 @@
 #include <fastrtps/log/Log.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/reader/StatelessReader.h>
