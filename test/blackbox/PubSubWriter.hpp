@@ -394,6 +394,7 @@ class PubSubWriter
         return *this;
     }
 
+<<<<<<< HEAD
     PubSubWriter& deadline_period(const eprosima::fastrtps::rtps::Duration_t deadline_period)
     {
         publisher_attr_.qos.m_deadline.period = deadline_period;
@@ -409,6 +410,8 @@ class PubSubWriter
         return *this;
     }
 
+=======
+>>>>>>> Refs #4939 Adding two blackbox tests for lifespan
     PubSubWriter& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
     {
         publisher_attr_.qos.m_lifespan.duration = lifespan_period;
