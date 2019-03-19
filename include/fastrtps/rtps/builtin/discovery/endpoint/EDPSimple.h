@@ -31,11 +31,9 @@ class StatefulReader;
 class StatefulWriter;
 class RTPSWriter;
 class RTPSReader;
-class EDPSimplePUBListener;
-class EDPSimpleSUBListener;
 class ReaderHistory;
 class WriterHistory;
-
+class EDPListener;
 
 /**
  * Class EDPSimple, implements the Simple Endpoint Discovery Protocol defined in the RTPS specification.
@@ -78,10 +76,10 @@ class EDPSimple : public EDP
 #endif
 
     //!Pointer to the listener associated with PubReader and PubWriter.
-    EDPSimplePUBListener* publications_listener_;
+    EDPListener* publications_listener_;
 
     //!Pointer to the listener associated with SubReader and SubWriter.
-    EDPSimpleSUBListener* subscriptions_listener_;
+    EDPListener* subscriptions_listener_;
 
     /**
      * Initialization method.

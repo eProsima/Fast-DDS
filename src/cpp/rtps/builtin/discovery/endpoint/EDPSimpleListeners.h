@@ -33,10 +33,20 @@ class RTPSReader;
 struct CacheChange_t;
 
 /*!
+ * Placeholder class EDPListener 
+ * @ingroup DISCOVERY_MODULE
+ */
+
+class EDPListener : public ReaderListener, public WriterListener
+{
+
+};
+
+/*!
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimplePUBListener : public ReaderListener, public WriterListener
+class EDPSimplePUBListener : public EDPListener
 {
     public:
 
@@ -84,7 +94,7 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimpleSUBListener : public ReaderListener, public WriterListener
+class EDPSimpleSUBListener : public EDPListener
 {
     public:
 
