@@ -36,13 +36,13 @@ public:
 
     /** Constructor
      * @param callback A callback to invoke when the timer expires
-     * @param period Interval of the TimedCallback in milliseconds
+     * @param milliseconds Interval of the timed callback
      * @param service IO service to run the event
      * @param event_thread starting thread for identification.
      */
     TimedCallback(
             std::function<void()> callback,
-            Duration_t period,
+            double milliseconds,
             asio::io_service &service,
             const std::thread& event_thread);
 

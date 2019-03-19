@@ -30,6 +30,7 @@
 #include <fastrtps/publisher/PublisherHistory.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastrtps/rtps/resources/TimedCallback.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -157,6 +158,16 @@ class PublisherImpl
 	rtps::RTPSParticipant* mp_rtpsParticipant;
 
     uint32_t high_mark_for_frag_;
+
+    //! A timed callback to remove expired samples
+    rtps::TimedCallback lifespan_timer_;
+    //! The lifespan duration, in microseconds
+    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+
+    /**
+     * @brief A method to remove expired samples, invoked when the lifespan timer expires
+     */
+    void lifespan_expired();
 };
 
 

@@ -123,6 +123,26 @@ bool History::get_change(const SequenceNumber_t& seq, const GUID_t& guid,CacheCh
     }
     return false;
 }
+
+bool History::get_earliest_change(CacheChange_t **change)
+{
+    if (mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY,"You need to create a RTPS Entity with this History before using it");
+        return false;
+    }
+
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    if (m_changes.empty())
+    {
+        return false;
+    }
+
+    *change = m_changes.front();
+    return true;
+}
+
 }
 }
 }

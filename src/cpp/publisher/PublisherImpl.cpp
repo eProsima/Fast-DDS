@@ -31,9 +31,12 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
+
+using namespace std::chrono;
 
 PublisherImpl::PublisherImpl(
         ParticipantImpl* p,
@@ -58,6 +61,11 @@ PublisherImpl::PublisherImpl(
     , mp_userPublisher(nullptr)
     , mp_rtpsParticipant(nullptr)
     , high_mark_for_frag_(0)
+    , lifespan_timer_(std::bind(&PublisherImpl::lifespan_expired, this),
+                      m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
 }
 
@@ -189,6 +197,15 @@ bool PublisherImpl::create_new_change_with_params(
 
             return true;
         }
+
+        if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
+        {
+            lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+            lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+            lifespan_timer_.restart_timer();
+        }
+
+        return true;
     }
 
     return false;
@@ -291,6 +308,12 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
     }
 
+    // Update lifespan period
+    lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+    if (m_att.qos.m_lifespan.duration == c_TimeInfinite)
+    {
+        lifespan_timer_.cancel_timer();
+    }
 
     return updated;
 }
@@ -316,4 +339,28 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
+}
+
+void PublisherImpl::lifespan_expired()
+{
+    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+
+    CacheChange_t* earliest_change;
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+    m_history.remove_change_g(earliest_change);
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+
+    steady_clock::time_point sourceTimestamp = steady_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    steady_clock::duration interval_ns = std::chrono::duration_cast<nanoseconds>(sourceTimestamp - steady_clock::now()) + duration_cast<nanoseconds>(lifespan_duration_us_);
+
+    assert(interval_ns.count() > 0);
+
+    lifespan_timer_.update_interval_millisec(interval_ns.count() * 1e-6);
+    lifespan_timer_.restart_timer();
 }
