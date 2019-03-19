@@ -564,16 +564,9 @@ void StatefulWriter::send_any_unsent_changes()
 /*
  *	MATCHED_READER-RELATED METHODS
  */
-bool StatefulWriter::matched_reader_add(const ReaderProxyData& data)
+bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
 {
-    // TODO (Miguel C): Pending refactor for locator shrink
-    RemoteReaderAttributes tmp(data);
-    return matched_reader_add(tmp);
-}
-
-bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
-{
-    if (rdata.guid == c_Guid_Unknown)
+    if (rdata.guid() == c_Guid_Unknown)
     {
         logError(RTPS_WRITER, "Reliable Writer need GUID_t of matched readers");
         return false;
@@ -584,7 +577,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     // Check if it is already matched.
     for(ReaderProxy* it : matched_readers_)
     {
-        if(it->guid() == rdata.guid)
+        if(it->guid() == rdata.guid())
         {
             logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
             return false;
@@ -702,8 +695,8 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
     matched_readers_.push_back(rp);
 
     logInfo(RTPS_WRITER, "Reader Proxy "<< rp->guid()<< " added to " << this->m_guid.entityId << " with "
-            <<rp->reader_attributes().endpoint.unicastLocatorList.size()<<"(u)-"
-            <<rp->reader_attributes().endpoint.multicastLocatorList.size()<<"(m) locators");
+            << rp->reader_attributes().remote_locators().unicast.size()<<"(u)-"
+            <<rp->reader_attributes().remote_locators().multicast.size()<<"(m) locators");
 
     return true;
 }
