@@ -57,10 +57,9 @@ SubscriberImpl::SubscriberImpl(
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
-    {
+{
 
-    }
-
+}
 
 SubscriberImpl::~SubscriberImpl()
 {
@@ -72,7 +71,6 @@ SubscriberImpl::~SubscriberImpl()
     RTPSDomain::removeRTPSReader(mp_reader);
     delete(this->mp_userSubscriber);
 }
-
 
 void SubscriberImpl::waitForUnreadMessage()
 {
@@ -86,8 +84,6 @@ void SubscriberImpl::waitForUnreadMessage()
     }
 }
 
-
-
 bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
 {
     return this->m_history.readNextData(data,info);
@@ -98,13 +94,10 @@ bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info)
     return this->m_history.takeNextData(data,info);
 }
 
-
-
-const GUID_t& SubscriberImpl::getGuid(){
+const GUID_t& SubscriberImpl::getGuid()
+{
     return mp_reader->getGuid();
 }
-
-
 
 bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
 {
@@ -276,6 +269,8 @@ uint64_t SubscriberImpl::getUnreadCount() const
 
 void SubscriberImpl::lifespan_expired()
 {
+    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+
     CacheChange_t* earliest_change;
     if (!m_history.get_earliest_change(&earliest_change))
     {
