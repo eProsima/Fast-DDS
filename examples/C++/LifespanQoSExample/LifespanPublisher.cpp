@@ -92,6 +92,8 @@ void LifespanPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/, Ma
 
 void LifespanPublisher::run(uint32_t samples, uint32_t write_sleep_ms, uint32_t sleep_ms)
 {
+    std::cout << "Publisher running" << std::endl;
+
     samples = ( samples == 0 ) ? 10 : samples;
     for( uint32_t i = 0; i < samples; ++i )
     {
@@ -107,7 +109,7 @@ void LifespanPublisher::run(uint32_t samples, uint32_t write_sleep_ms, uint32_t 
     }
 
     // Wait and try to clear history
-    std::cout << std::endl << "Publisher waiting for " << sleep_ms << " milliseconds" << std::endl;
+    std::cout << std::endl << "Publisher waiting for " << sleep_ms << " milliseconds" << std::endl << std::endl;
     eClock::my_sleep(sleep_ms);
 
     size_t removed = 0;

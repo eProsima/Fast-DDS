@@ -71,7 +71,7 @@ LifespanSubscriber::~LifespanSubscriber()
     Domain::removeParticipant(mp_participant);
 }
 
-void LifespanSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info)
+void LifespanSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
     {
@@ -100,14 +100,14 @@ void LifespanSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 
 void LifespanSubscriber::run(uint32_t number, uint32_t sleep_ms)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
+    std::cout << "Subscriber running until "<< number << " samples have been received"<<std::endl;
     while( number > this->m_listener.n_samples )
     {
         eClock::my_sleep(500);
     }
 
     // Now wait and try to remove from history
-    std::cout << std::endl << "Subscriber waiting for " << sleep_ms << " milliseconds" << std::endl;
+    std::cout << std::endl << "Subscriber waiting for " << sleep_ms << " milliseconds" << std::endl << std::endl;
     eClock::my_sleep(sleep_ms);
 
     LifespanType::type data;

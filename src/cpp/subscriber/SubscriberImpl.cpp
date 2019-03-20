@@ -178,11 +178,14 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
     }
 
     // Update lifespan
-    if (m_att.qos.m_lifespan.duration == c_TimeInfinite)
+    if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
     {
         lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
         lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
-        lifespan_timer_.restart_timer();
+    }
+    else
+    {
+        lifespan_timer_.cancel_timer();
     }
 
     return updated;
@@ -282,11 +285,13 @@ void SubscriberImpl::lifespan_expired()
         return;
     }
 
+    // Calculate when the next change is due to expire and restart the timer
     steady_clock::time_point source_timestamp = steady_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
     steady_clock::time_point now = steady_clock::now();
-
-    // Calculate when the next earliest change is due to expire and restart the timer
     steady_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+
+    assert(interval.count() > 0);
+
     lifespan_timer_.update_interval_millisec(interval.count() * 1e-6);
     lifespan_timer_.restart_timer();
 }
