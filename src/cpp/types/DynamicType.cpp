@@ -450,13 +450,13 @@ uint32_t DynamicType::get_total_bounds() const
 bool DynamicType::has_children() const
 {
     return kind_ == TK_ANNOTATION || kind_ == TK_ARRAY || kind_ == TK_MAP || kind_ == TK_SEQUENCE
-        || kind_ == TK_STRUCTURE || kind_ == TK_UNION;
+        || kind_ == TK_STRUCTURE || kind_ == TK_UNION || kind_ == TK_BITSET;
 }
 
 bool DynamicType::is_complex_kind() const
 {
     return kind_ == TK_ANNOTATION || kind_ == TK_ARRAY || kind_ == TK_BITMASK || kind_ == TK_ENUM
-        || kind_ == TK_MAP || kind_ == TK_SEQUENCE || kind_ == TK_STRUCTURE || kind_ == TK_UNION;
+        || kind_ == TK_MAP || kind_ == TK_SEQUENCE || kind_ == TK_STRUCTURE || kind_ == TK_UNION || kind_ == TK_BITSET;
 }
 
 bool DynamicType::is_consistent() const
@@ -483,6 +483,33 @@ void DynamicType::set_name(const std::string& name)
         descriptor_->set_name(name);
     }
     name_ = name;
+}
+
+size_t DynamicType::get_size() const
+{
+    switch(kind_)
+    {
+        case TK_BOOLEAN: case TK_BYTE: case TK_CHAR8: return 1;
+        case TK_INT16: case TK_UINT16: case TK_CHAR16:  return 2;
+        case TK_INT32: case TK_UINT32: case TK_FLOAT32: return 4;
+        case TK_INT64: case TK_UINT64: case TK_FLOAT64: return 8;
+        case TK_FLOAT128: return 16;
+        case TK_BITMASK: case TK_ENUM:
+        {
+            size_t bits = descriptor_->get_bounds(0);
+
+            if (bits % 8 == 0)
+            {
+                return bits / 8;
+            }
+            else
+            {
+                return (bits / 8) + 1;
+            }
+        }
+    }
+    logError(DYN_TYPES, "Called get_size() within a non primitive type! This is a program's logic error.");
+    return 0;
 }
 
 } // namespace types

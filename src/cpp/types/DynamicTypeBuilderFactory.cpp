@@ -602,11 +602,11 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_string_builder(uint32_t bo
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_child_struct_builder(DynamicTypeBuilder* parent_type)
 {
-    if (parent_type != nullptr && parent_type->get_kind() == TK_STRUCTURE)
+    if (parent_type != nullptr && (parent_type->get_kind() == TK_STRUCTURE || parent_type->get_kind() == TK_BITSET))
     {
         TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_STRUCTURE;
-        pDescriptor.name_ = GenerateTypeName(get_type_name(TK_STRUCTURE));
+        pDescriptor.kind_ = parent_type->get_kind();
+        pDescriptor.name_ = GenerateTypeName(get_type_name(parent_type->get_kind()));
         pDescriptor.base_type_ = create_type(parent_type);
 
         DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
@@ -1004,7 +1004,8 @@ void DynamicTypeBuilderFactory::build_type_identifier(
 void DynamicTypeBuilderFactory::build_type_object(
         const DynamicType_ptr type,
         TypeObject& object,
-        bool complete) const
+        bool complete,
+        bool force) const
 {
     const TypeDescriptor* descriptor = type->get_type_descriptor();
 
@@ -1016,16 +1017,20 @@ void DynamicTypeBuilderFactory::build_type_object(
         members.push_back(it.second->get_descriptor());
     }
 
-    build_type_object(descriptor, object, &members, complete);
+    build_type_object(descriptor, object, &members, complete, force);
 }
 
 void DynamicTypeBuilderFactory::build_type_object(
         const TypeDescriptor* descriptor,
         TypeObject& object,
         const std::vector<const MemberDescriptor*> *members,
-        bool complete) const
+        bool complete,
+        bool force) const
 {
-    const TypeObject* obj2 = TypeObjectFactory::get_instance()->get_type_object(descriptor->get_name(), complete);
+    const TypeObject* obj2 = (force)
+        ? nullptr
+        : TypeObjectFactory::get_instance()->get_type_object(descriptor->get_name(), complete);
+
     if (obj2 != nullptr)
     {
         object = *obj2;
@@ -1342,7 +1347,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         for (const MemberDescriptor* member : members)
         {
             CompleteStructMember msm;
-            msm.common().member_id(member->get_id());
+            msm.common().member_id(member->get_index());
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1437,7 +1442,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         for (const MemberDescriptor* member : members)
         {
             MinimalStructMember msm;
-            msm.common().member_id(member->get_id());
+            msm.common().member_id(member->get_index());
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1555,7 +1560,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         for (const MemberDescriptor* member : members)
         {
             CompleteUnionMember mum;
-            mum.common().member_id(member->get_id());
+            mum.common().member_id(member->get_index());
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);
@@ -1656,7 +1661,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         for (const MemberDescriptor* member : members)
         {
             MinimalUnionMember mum;
-            mum.common().member_id(member->get_id());
+            mum.common().member_id(member->get_index());
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);
@@ -1751,8 +1756,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         for (const MemberDescriptor* member : members)
         {
             CompleteBitfield msm;
-            msm.common().position(member->get_id());
-            //msm.common().bitcount(member->type_->get_bounds()); // Use this?
+            msm.common().position(member->annotation_get_position()); // Position stored as annotation
+            msm.common().bitcount(member->annotation_get_bit_bound()); // Bitcount stored as bit_bound annotation
             msm.common().holder_type(member->type_->get_kind());
             msm.detail().name(member->get_name());
 
@@ -1818,8 +1823,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         for (const MemberDescriptor* member : members)
         {
             MinimalBitfield msm;
-            msm.common().position(member->get_id());
-            //msm.common().bitcount(member->type_->get_bounds()); // Use this?
+            msm.common().position(member->annotation_get_position()); // Position stored as annotation
+            msm.common().bitcount(member->annotation_get_bit_bound()); // Bitcount stored as bit_bound annotation
             msm.common().holder_type(member->type_->get_kind());
             MD5 parent_bitfield_hash(member->get_name());
             for(int i = 0; i < 4; ++i)
@@ -1892,7 +1897,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         for (const MemberDescriptor* member : members)
         {
             CompleteBitflag msm;
-            msm.common().position(member->get_id());
+            msm.common().position(member->annotation_get_position()); // Position stored as annotation
             msm.detail().name(member->get_name());
 
             // Apply member annotations
@@ -1947,7 +1952,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         for (const MemberDescriptor* member : members)
         {
             MinimalBitflag msm;
-            msm.common().position(member->get_id());
+            msm.common().position(member->annotation_get_position()); // Position stored as annotation
             MD5 parent_bitfield_hash(member->get_name());
             for(int i = 0; i < 4; ++i)
             {

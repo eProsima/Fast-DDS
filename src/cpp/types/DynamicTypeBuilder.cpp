@@ -100,7 +100,7 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
     {
         if (descriptor_->get_kind() == TK_ANNOTATION || descriptor_->get_kind() == TK_BITMASK
             || descriptor_->get_kind() == TK_ENUM || descriptor_->get_kind() == TK_STRUCTURE
-            || descriptor_->get_kind() == TK_UNION)
+            || descriptor_->get_kind() == TK_UNION || descriptor_->get_kind() == TK_BITSET)
         {
             if (!exists_member_by_name(descriptor->get_name()))
             {
@@ -161,6 +161,16 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
         }
         return ResponseCode::RETCODE_BAD_PARAMETER;
     }
+}
+
+RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(const std::string& name) const
+{
+    auto it = member_by_name_.find(name);
+    if (it != member_by_name_.end())
+    {
+        return it->second->get_id();
+    }
+    return MEMBER_ID_INVALID;
 }
 
 ResponseCode DynamicTypeBuilder::add_member(
@@ -403,7 +413,8 @@ bool DynamicTypeBuilder::is_discriminator_type() const
 
 void DynamicTypeBuilder::refresh_member_ids()
 {
-    if (descriptor_->get_kind() == TK_STRUCTURE && descriptor_->get_base_type() != nullptr)
+    if ((descriptor_->get_kind() == TK_STRUCTURE || descriptor_->get_kind() == TK_BITSET) &&
+            descriptor_->get_base_type() != nullptr)
     {
         current_member_id_ = descriptor_->get_base_type()->get_members_count();
     }

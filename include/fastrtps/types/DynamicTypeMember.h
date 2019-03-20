@@ -30,7 +30,6 @@ class DynamicTypeMember
 protected:
     DynamicType* parent_;
     MemberDescriptor descriptor_;
-    std::vector<AnnotationDescriptor*> annotation_;
     MemberId id_;
 
     uint32_t get_index() const;

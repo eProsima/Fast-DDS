@@ -562,7 +562,7 @@ const TypeObject* GetCompleteNewAliasesObject()
                     annParam.paramname_hash()[i] = message_hash.digest[i];
                 }
                 AnnotationParameterValue paramValue;
-                paramValue._d(TypeObjectFactory::get_instance()->get_type_kind(""));
+                paramValue._d();
                 paramValue.from_string("555");
                 annParam.value(paramValue);
                 ann.param_seq().push_back(annParam);
@@ -599,7 +599,7 @@ const TypeObject* GetCompleteNewAliasesObject()
                     annParam.paramname_hash()[i] = message_hash.digest[i];
                 }
                 AnnotationParameterValue paramValue;
-                paramValue._d(TypeObjectFactory::get_instance()->get_type_kind("TK_BOOLEAN"));
+                paramValue._d(TK_BOOLEAN);
                 paramValue.from_string("true");
                 annParam.value(paramValue);
                 ann.param_seq().push_back(annParam);
@@ -1510,6 +1510,46 @@ const TypeObject* GetCompleteParentBitsetObject()
     cbf_parent_bitfield.common().holder_type(TK_UINT32);
     cbf_parent_bitfield.detail().name("parent_bitfield");
 
+    // Position annotation always present
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(0);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_parent_bitfield.detail().ann_custom().push_back(ann);
+    }
+
+    // Use bit_bound as bitcount.
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(17);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_parent_bitfield.detail().ann_custom().push_back(ann);
+    }
+
     type_object->complete().bitset_type().field_seq().emplace_back(cbf_parent_bitfield);
 
 
@@ -1747,6 +1787,46 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_a.common().holder_type(TK_CHAR8);
     cbf_a.detail().name("a");
 
+    // Position annotation always present
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(0);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_a.detail().ann_custom().push_back(ann);
+    }
+
+    // Use bit_bound as bitcount.
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(3);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_a.detail().ann_custom().push_back(ann);
+    }
+
     type_object->complete().bitset_type().field_seq().emplace_back(cbf_a);
     CompleteBitfield cbf_b;
     cbf_b.common().flags().TRY_CONSTRUCT1(false);
@@ -1760,6 +1840,46 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_b.common().bitcount(1);
     cbf_b.common().holder_type(TK_BOOLEAN);
     cbf_b.detail().name("b");
+
+    // Position annotation always present
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(3);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_b.detail().ann_custom().push_back(ann);
+    }
+
+    // Use bit_bound as bitcount.
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(1);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_b.detail().ann_custom().push_back(ann);
+    }
 
     type_object->complete().bitset_type().field_seq().emplace_back(cbf_b);
 
@@ -1776,6 +1896,46 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_c.common().holder_type(TK_UINT16);
     cbf_c.detail().name("c");
 
+    // Position annotation always present
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(8);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_c.detail().ann_custom().push_back(ann);
+    }
+
+    // Use bit_bound as bitcount.
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(10);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_c.detail().ann_custom().push_back(ann);
+    }
+
     type_object->complete().bitset_type().field_seq().emplace_back(cbf_c);
     CompleteBitfield cbf_d;
     cbf_d.common().flags().TRY_CONSTRUCT1(false);
@@ -1789,6 +1949,46 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_d.common().bitcount(12);
     cbf_d.common().holder_type(TK_INT16);
     cbf_d.detail().name("d");
+
+    // Position annotation always present
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(18);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_d.detail().ann_custom().push_back(ann);
+    }
+
+    // Use bit_bound as bitcount.
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(12);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_d.detail().ann_custom().push_back(ann);
+    }
 
     type_object->complete().bitset_type().field_seq().emplace_back(cbf_d);
     CompleteBitfield cbf_e;
@@ -1804,6 +2004,46 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_e.common().holder_type(TK_INT16);
     cbf_e.detail().name("e");
 
+    // Position annotation always present
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(30);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_e.detail().ann_custom().push_back(ann);
+    }
+
+    // Use bit_bound as bitcount.
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(12);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_e.detail().ann_custom().push_back(ann);
+    }
+
     type_object->complete().bitset_type().field_seq().emplace_back(cbf_e);
     CompleteBitfield cbf_f;
     cbf_f.common().flags().TRY_CONSTRUCT1(false);
@@ -1817,6 +2057,46 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_f.common().bitcount(12);
     cbf_f.common().holder_type(TK_INT16);
     cbf_f.detail().name("f");
+
+    // Position annotation always present
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(42);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_f.detail().ann_custom().push_back(ann);
+    }
+
+    // Use bit_bound as bitcount.
+    {
+        // Position
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(12);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_f.detail().ann_custom().push_back(ann);
+    }
 
     type_object->complete().bitset_type().field_seq().emplace_back(cbf_f);
 
@@ -2033,25 +2313,47 @@ const TypeObject* GetCompleteMyBitMaskObject()
     cbf_flag0.common().position(0);
     cbf_flag0.detail().name("flag0");
 
+    // Position annotation always present
     {
         AppliedAnnotation ann;
-        //ann.annotation_typeid(GetpositionIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-            {
-                AppliedAnnotationParameter annParam;
-                MD5 message_hash("value");
-                for(int i = 0; i < 4; ++i)
-                {
-                    annParam.paramname_hash()[i] = message_hash.digest[i];
-                }
-                AnnotationParameterValue paramValue;
-                paramValue._d(TypeObjectFactory::get_instance()->get_type_kind("TK_INT16"));
-                paramValue.from_string("0");
-                annParam.value(paramValue);
-                ann.param_seq().push_back(annParam);
-            }
-            
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(0);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
         cbf_flag0.detail().ann_custom().push_back(ann);
+    }
+
+    {
+        if (std::strcmp("position", "position") != 0)
+        {
+            AppliedAnnotation ann;
+            //ann.annotation_typeid(GetpositionIdentifier(true));
+            ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+                    {
+                        AppliedAnnotationParameter annParam;
+                        MD5 message_hash("value");
+                        for(int i = 0; i < 4; ++i)
+                        {
+                            annParam.paramname_hash()[i] = message_hash.digest[i];
+                        }
+                        AnnotationParameterValue paramValue;
+                        paramValue._d(TK_UINT16);
+                        paramValue.from_string("0");
+                        annParam.value(paramValue);
+                        ann.param_seq().push_back(annParam);
+                    }
+                    
+            cbf_flag0.detail().ann_custom().push_back(ann);
+        }
     }
 
     type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_flag0);
@@ -2067,25 +2369,47 @@ const TypeObject* GetCompleteMyBitMaskObject()
     cbf_flag1.common().position(1);
     cbf_flag1.detail().name("flag1");
 
+    // Position annotation always present
     {
         AppliedAnnotation ann;
-        //ann.annotation_typeid(GetpositionIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-            {
-                AppliedAnnotationParameter annParam;
-                MD5 message_hash("value");
-                for(int i = 0; i < 4; ++i)
-                {
-                    annParam.paramname_hash()[i] = message_hash.digest[i];
-                }
-                AnnotationParameterValue paramValue;
-                paramValue._d(TypeObjectFactory::get_instance()->get_type_kind("TK_INT16"));
-                paramValue.from_string("1");
-                annParam.value(paramValue);
-                ann.param_seq().push_back(annParam);
-            }
-            
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(1);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
         cbf_flag1.detail().ann_custom().push_back(ann);
+    }
+
+    {
+        if (std::strcmp("position", "position") != 0)
+        {
+            AppliedAnnotation ann;
+            //ann.annotation_typeid(GetpositionIdentifier(true));
+            ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+                    {
+                        AppliedAnnotationParameter annParam;
+                        MD5 message_hash("value");
+                        for(int i = 0; i < 4; ++i)
+                        {
+                            annParam.paramname_hash()[i] = message_hash.digest[i];
+                        }
+                        AnnotationParameterValue paramValue;
+                        paramValue._d(TK_UINT16);
+                        paramValue.from_string("1");
+                        annParam.value(paramValue);
+                        ann.param_seq().push_back(annParam);
+                    }
+                    
+            cbf_flag1.detail().ann_custom().push_back(ann);
+        }
     }
 
     type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_flag1);
@@ -2101,25 +2425,47 @@ const TypeObject* GetCompleteMyBitMaskObject()
     cbf_flag4.common().position(4);
     cbf_flag4.detail().name("flag4");
 
+    // Position annotation always present
     {
         AppliedAnnotation ann;
-        //ann.annotation_typeid(GetpositionIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-            {
-                AppliedAnnotationParameter annParam;
-                MD5 message_hash("value");
-                for(int i = 0; i < 4; ++i)
-                {
-                    annParam.paramname_hash()[i] = message_hash.digest[i];
-                }
-                AnnotationParameterValue paramValue;
-                paramValue._d(TypeObjectFactory::get_instance()->get_type_kind("TK_INT16"));
-                paramValue.from_string("4");
-                annParam.value(paramValue);
-                ann.param_seq().push_back(annParam);
-            }
-            
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(4);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
         cbf_flag4.detail().ann_custom().push_back(ann);
+    }
+
+    {
+        if (std::strcmp("position", "position") != 0)
+        {
+            AppliedAnnotation ann;
+            //ann.annotation_typeid(GetpositionIdentifier(true));
+            ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+                    {
+                        AppliedAnnotationParameter annParam;
+                        MD5 message_hash("value");
+                        for(int i = 0; i < 4; ++i)
+                        {
+                            annParam.paramname_hash()[i] = message_hash.digest[i];
+                        }
+                        AnnotationParameterValue paramValue;
+                        paramValue._d(TK_UINT16);
+                        paramValue.from_string("4");
+                        annParam.value(paramValue);
+                        ann.param_seq().push_back(annParam);
+                    }
+                    
+            cbf_flag4.detail().ann_custom().push_back(ann);
+        }
     }
 
     type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_flag4);
@@ -2135,25 +2481,47 @@ const TypeObject* GetCompleteMyBitMaskObject()
     cbf_flag6.common().position(6);
     cbf_flag6.detail().name("flag6");
 
+    // Position annotation always present
     {
         AppliedAnnotation ann;
-        //ann.annotation_typeid(GetpositionIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-            {
-                AppliedAnnotationParameter annParam;
-                MD5 message_hash("value");
-                for(int i = 0; i < 4; ++i)
-                {
-                    annParam.paramname_hash()[i] = message_hash.digest[i];
-                }
-                AnnotationParameterValue paramValue;
-                paramValue._d(TypeObjectFactory::get_instance()->get_type_kind("TK_INT16"));
-                paramValue.from_string("6");
-                annParam.value(paramValue);
-                ann.param_seq().push_back(annParam);
-            }
-            
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(6);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
         cbf_flag6.detail().ann_custom().push_back(ann);
+    }
+
+    {
+        if (std::strcmp("position", "position") != 0)
+        {
+            AppliedAnnotation ann;
+            //ann.annotation_typeid(GetpositionIdentifier(true));
+            ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+                    {
+                        AppliedAnnotationParameter annParam;
+                        MD5 message_hash("value");
+                        for(int i = 0; i < 4; ++i)
+                        {
+                            annParam.paramname_hash()[i] = message_hash.digest[i];
+                        }
+                        AnnotationParameterValue paramValue;
+                        paramValue._d(TK_UINT16);
+                        paramValue.from_string("6");
+                        annParam.value(paramValue);
+                        ann.param_seq().push_back(annParam);
+                    }
+                    
+            cbf_flag6.detail().ann_custom().push_back(ann);
+        }
     }
 
     type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_flag6);
@@ -2168,6 +2536,25 @@ const TypeObject* GetCompleteMyBitMaskObject()
     cbf_flag7.common().flags().IS_DEFAULT(false);
     cbf_flag7.common().position(7);
     cbf_flag7.detail().name("flag7");
+
+    // Position annotation always present
+    {
+        AppliedAnnotation ann;
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter annParam;
+        MD5 message_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            annParam.paramname_hash()[i] = message_hash.digest[i];
+        }
+        AnnotationParameterValue paramValue;
+        paramValue._d(TK_UINT16);
+        paramValue.uint_16_value(7);
+        annParam.value(paramValue);
+        ann.param_seq().push_back(annParam);
+
+        cbf_flag7.detail().ann_custom().push_back(ann);
+    }
 
     type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_flag7);
 

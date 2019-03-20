@@ -23,6 +23,7 @@ namespace fastrtps{
 namespace types{
 
 class DynamicType;
+class AnnotationDescriptor;
 
 class MemberDescriptor
 {
@@ -34,6 +35,8 @@ protected:
     uint32_t index_;                    // Definition order of the member inside it's parent.
     std::vector<uint64_t> labels_;      // Case Labels for unions.
     bool default_label_;                // TRUE if it's the default option of a union.
+
+    std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
 
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
@@ -92,7 +95,12 @@ public:
 
     RTPS_DllAPI std::string get_default_value() const
     {
-        return default_value_;
+        if (!default_value_.empty())
+        {
+            return default_value_;
+        }
+        // Try annotation
+        return annotation_get_default();
     }
 
     RTPS_DllAPI bool is_default_union_value() const;
@@ -116,6 +124,15 @@ public:
         default_value_ = value;
     }
 
+    // Annotations
+    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+
+    ResponseCode apply_annotation(
+            const std::string& key,
+            const std::string& value);
+
+    AnnotationDescriptor* get_annotation(const std::string& name) const;
+
     // Annotations application
     RTPS_DllAPI bool annotation_is_optional() const;
 
@@ -131,10 +148,18 @@ public:
 
     RTPS_DllAPI bool annotation_is_position() const;
 
+    RTPS_DllAPI bool annotation_is_bit_bound() const;
+
     // Annotations getters
+    RTPS_DllAPI bool annotation_get_key() const;
+
     RTPS_DllAPI std::string annotation_get_value() const;
 
+    RTPS_DllAPI std::string annotation_get_default() const;
+
     RTPS_DllAPI uint16_t annotation_get_position() const;
+
+    RTPS_DllAPI uint16_t annotation_get_bit_bound() const;
 
     // Annotations setters
     RTPS_DllAPI void annotation_set_optional(bool optional);
@@ -147,9 +172,13 @@ public:
 
     RTPS_DllAPI void annotation_set_value(const std::string& value);
 
+    RTPS_DllAPI void annotation_set_default(const std::string& default_value);
+
     RTPS_DllAPI void annotation_set_default_literal();
 
     RTPS_DllAPI void annotation_set_position(uint16_t position);
+
+    RTPS_DllAPI void annotation_set_bit_bound(uint16_t bit_bound);
 };
 
 } // namespace types

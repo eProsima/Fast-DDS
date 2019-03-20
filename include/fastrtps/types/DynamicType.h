@@ -145,6 +145,8 @@ public:
 
     bool is_discriminator_type() const;
 
+    size_t get_size() const;
+
 };
 
 } // namespace types

@@ -254,13 +254,15 @@ public:
     RTPS_DllAPI void build_type_object(
             const DynamicType_ptr type,
             TypeObject& object,
-            bool complete = true) const;
+            bool complete = true,
+            bool force = false) const;
 
     RTPS_DllAPI void build_type_object(
             const TypeDescriptor* descriptor,
             TypeObject& object,
             const std::vector<const MemberDescriptor*>* members = nullptr,
-            bool complete = true) const;
+            bool complete = true,
+            bool force = false) const;
 
     RTPS_DllAPI bool is_empty() const;
 };

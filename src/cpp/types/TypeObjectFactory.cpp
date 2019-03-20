@@ -983,7 +983,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         case TK_STRUCTURE:
         {
             const TypeIdentifier* aux = &object->complete().struct_type().header().base_type();
-            if (aux->_d() == TK_STRUCTURE)
+            if (aux->_d() == EK_COMPLETE)
             {
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
@@ -1066,6 +1066,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         }
         case TK_BITMASK:
         {
+            descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
+            descriptor.bound_.emplace_back(static_cast<uint32_t>(
+                object->complete().bitmask_type().header().common().bit_bound()));
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_bool_type();
+
             DynamicTypeBuilder_ptr bitmask_type =
                 DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
 
@@ -1075,19 +1080,17 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
             {
-                MemberDescriptor memDesc;
-                memDesc.id_ = member->common().position();
-                memDesc.set_name(member->detail().name());
-                bitmask_type->add_member(&memDesc);
-                apply_member_annotations(bitmask_type, member->common().position(), member->detail().ann_custom());
+                bitmask_type->add_empty_member(member->common().position(), member->detail().name());
+                MemberId m_id = bitmask_type->get_member_id_by_name(member->detail().name());
+                // member->common().position() should be already an annotation
+                apply_member_annotations(bitmask_type, m_id, member->detail().ann_custom());
             }
             return bitmask_type->build();
         }
         case TK_BITSET:
         {
-            /*
             const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
-            if (aux->_d() == TK_BITSET)
+            if (aux->_d() == EK_COMPLETE)
             {
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
@@ -1110,20 +1113,20 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                         << (int)member->common().holder_type());
                 }
                 MemberDescriptor memDesc;
-                memDesc.id_ = member->common().position();
+                //memDesc.id_ = order++;
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 memDesc.set_name(member->detail().name());
-                // TODO Add bitbound!!
-                // memDesc.type_->set_bound(member->common().bitcount());
                 // bounds are meant for string, arrays, sequences, maps, but not for bitset!
                 // Lack in the standard?
                 bitsetType->add_member(&memDesc);
-                apply_member_annotations(bitsetType, member->common().position(), member->detail().ann_custom());
+                MemberId m_id = bitsetType->get_member_id_by_name(memDesc.get_name());
+                // member->common().position() and member->common().bitcount() should be annotations
+                apply_member_annotations(bitsetType, m_id, member->detail().ann_custom());
             }
             return bitsetType->build();
-            */
-            logError(XTYPES, "Bitset isn't supported by DynamicType");
-            return nullptr;
+
+            //logError(XTYPES, "Bitset isn't supported by DynamicType");
+            //return nullptr;
         }
         case TK_UNION:
         {

@@ -143,6 +143,8 @@ public:
 
     RTPS_DllAPI std::string get_name() const;
 
+    RTPS_DllAPI MemberId get_member_id_by_name(const std::string& name) const;
+
     const TypeDescriptor* get_type_descriptor() const
     {
         return descriptor_;

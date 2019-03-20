@@ -137,6 +137,8 @@ public:
      */
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
+    bool operator==(const ExtendedAnnotationParameterValue&) const { return true; }
+
 private:
 };
 /*!
@@ -592,6 +594,8 @@ public:
      */
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
+    bool operator==(const AnnotationParameterValue& other) const;
+
     /**
      * Aux method to return value as its string representation.
      */
@@ -600,7 +604,7 @@ public:
         switch(m__d)
         {
             case TK_BOOLEAN:
-                return std::to_string(m_boolean_value);
+                return (m_boolean_value) ? "true" : "false";
             case TK_BYTE:
                 return std::to_string(m_byte_value);
             case TK_INT16:
@@ -922,6 +926,8 @@ public:
      */
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
+    bool operator==(const AppliedAnnotationParameter& other) const;
+
 private:
     NameHash m_paramname_hash;
     AnnotationParameterValue m_value;
@@ -1002,6 +1008,8 @@ public:
     static bool isKeyDefined();
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
+    bool operator==(const AppliedAnnotation& other) const;
+
 private:
     TypeIdentifier m_annotation_typeid;
     AppliedAnnotationParameterSeq m_param_seq;
@@ -1048,6 +1056,8 @@ public:
     static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
     static bool isKeyDefined();
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+    bool operator==(const AppliedVerbatimAnnotation& other) const;
 
 private:
     std::string m_placement;
@@ -1100,6 +1110,8 @@ public:
     static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
     static bool isKeyDefined();
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+    bool operator==(const AppliedBuiltinMemberAnnotations& other) const;
 
 private:
     std::string m_unit;

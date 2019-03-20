@@ -1843,10 +1843,10 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     {
         if (strncmp(memberTopicKey, "true", 5) == 0)
         {
-            memberBuilder->apply_annotation("@Key", "true");
+            memberBuilder->apply_annotation(ANNOTATION_KEY_ID, "true");
             if (p_dynamictype != nullptr)
             {
-                p_dynamictype->apply_annotation("@Key", "true");
+                p_dynamictype->apply_annotation(ANNOTATION_KEY_ID, "true");
             }
         }
     }

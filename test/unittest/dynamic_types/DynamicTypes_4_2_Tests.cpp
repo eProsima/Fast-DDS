@@ -114,21 +114,41 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     const TypeIdentifier* identifier = GetStructTestIdentifier(true);
     const TypeObject* object = GetCompleteStructTestObject();
 
-    DynamicType_ptr dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
+    DynamicType_ptr dyn_type =
+        TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
 
     TypeIdentifier conv_identifier;
     TypeObject conv_object;
+    DynamicTypeBuilderFactory::get_instance()->build_type_object(dyn_type, conv_object, true, true); // Avoid factory
     DynamicTypeBuilderFactory::get_instance()->build_type_identifier(dyn_type, conv_identifier, true);
-    DynamicTypeBuilderFactory::get_instance()->build_type_object(dyn_type, conv_object, true);
 
-    //ASSERT_TRUE(memcmp(object, &conv_object, sizeof(TypeObject)) == 0);
-    ASSERT_TRUE(identifier->_d() == conv_identifier._d());
-    ASSERT_TRUE(memcmp(identifier->equivalence_hash(), conv_identifier.equivalence_hash(), 14) == 0);
+    ASSERT_TRUE(*identifier == conv_identifier);
+    ASSERT_TRUE(*object == conv_object);
 
-    //ASSERT_TRUE(memcmp(identifier, &conv_identifier, sizeof(TypeIdentifier)) == 0);
+    // Serialize static <-> dynamic
 
-    //StructTest struct_test;
+    StructTest struct_test;
+    DynamicData_ptr dyn_data = DynamicDataFactory::get_instance()->create_data(dyn_type);
 
+    DynamicPubSubType pst_dynamic(dyn_type);
+    uint32_t payload_dyn_size = static_cast<uint32_t>(pst_dynamic.getSerializedSizeProvider(dyn_data.get())());
+    SerializedPayload_t payload(payload_dyn_size);
+    ASSERT_TRUE(pst_dynamic.serialize(dyn_data.get(), &payload));
+    ASSERT_TRUE(payload.length == payload_dyn_size);
+
+    StructTestPubSubType pst_static;
+    uint32_t payload_size = static_cast<uint32_t>(pst_static.getSerializedSizeProvider(&struct_test)());
+    SerializedPayload_t st_payload(payload_size);
+    ASSERT_TRUE(pst_static.serialize(&struct_test, &st_payload));
+    ASSERT_TRUE(st_payload.length == payload_size);
+
+    DynamicData_ptr dyn_data_from_dynamic = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    ASSERT_TRUE(pst_dynamic.deserialize(&payload, dyn_data_from_dynamic.get()));
+
+    types::DynamicData_ptr dyn_data_from_static = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    ASSERT_TRUE(pst_dynamic.deserialize(&st_payload, dyn_data_from_static.get()));
+
+    ASSERT_TRUE(dyn_data_from_static->equals(dyn_data_from_dynamic.get()));
 }
 
 int main(int argc, char **argv)

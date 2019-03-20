@@ -111,7 +111,7 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
                     newData = create_data(pType->get_base_type());
                     newData->set_type_name(pType->get_name());
                 }
-                else if (pType->get_kind() == TK_STRUCTURE)
+                else if (pType->get_kind() == TK_STRUCTURE || pType->get_kind() == TK_BITSET)
                 {
                     newData = new DynamicData(pType);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
@@ -180,7 +180,7 @@ ResponseCode DynamicDataFactory::create_members(
     if (pType != nullptr && pData != nullptr)
     {
         pData->create_members(pType);
-        if (pType->get_kind() == TK_STRUCTURE && pType->get_base_type() != nullptr)
+        if ((pType->get_kind() == TK_STRUCTURE || pType->get_kind() == TK_BITSET) && pType->get_base_type() != nullptr)
         {
             create_members(pData, pType->get_base_type());
         }
