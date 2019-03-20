@@ -35,9 +35,12 @@ LifespanType::LifespanType() {
     key_buffer = (unsigned char*)malloc(Lifespan::getKeyMaxCdrSerializedSize()>16 ? Lifespan::getKeyMaxCdrSerializedSize() : 16);
 }
 
-LifespanType::~LifespanType() {
+LifespanType::~LifespanType()
+{
     if(key_buffer!=nullptr)
+    {
         free(key_buffer);
+    }
 }
 
 bool LifespanType::serialize(void *data, SerializedPayload_t *payload) {
@@ -101,6 +104,7 @@ bool LifespanType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) 
     if(!m_isGetKeyDefined)
         return false;
     Lifespan* p_type = (Lifespan*) data;
+
     eprosima::fastcdr::FastBuffer fastbuffer((char*)key_buffer,Lifespan::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
     p_type->serializeKey(ser);
