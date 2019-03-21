@@ -250,6 +250,7 @@ bool PDPClient::createPDPEndpoints()
     return true;
 }
 
+// the ParticipantProxyData* pdata must be the one kept in PDP database
 void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
     // Verify if this participant is a server

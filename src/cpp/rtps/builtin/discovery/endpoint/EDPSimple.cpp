@@ -487,8 +487,6 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
 
         if(change !=nullptr)
         {
-            rdata->toParameterList();
-
             CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
