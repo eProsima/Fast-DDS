@@ -823,6 +823,13 @@ void RTPSParticipantImpl::createSenderResources(const LocatorList_t& locator_lis
     }
 }
 
+void RTPSParticipantImpl::createSenderResources(const Locator_t& locator)
+{
+    std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
+    
+    m_network_Factory.build_send_resources(send_resource_list_, locator);
+}
+
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
 {
     m_receiverResourcelistMutex.lock();

@@ -108,7 +108,7 @@ void StatelessWriter::unsent_change_added_to_history(
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
-    if (!mAllShrinkedLocatorList.empty())
+    if (!fixed_locators_.empty() || locator_selector_.selected_size() > 0)
     {
 #if HAVE_SECURITY
         encrypt_cachechange(change);
@@ -375,8 +375,11 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
         AsyncWriterThread::wakeUp(this);
     }
 
-    // TODO (Miguel C): refactor with locator selector
-    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList);
+    RTPSParticipantImpl* part = getRTPSParticipant();
+    locator_selector_.for_each([part](const Locator_t& loc)
+    {
+        part->createSenderResources(loc);
+    });
 
     logInfo(RTPS_READER,"Reader " << data.guid() << " added to "<<m_guid.entityId);
     return true;

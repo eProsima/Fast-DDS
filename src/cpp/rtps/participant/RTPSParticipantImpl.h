@@ -464,6 +464,7 @@ private:
           */
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
         void createSenderResources(const LocatorList_t& locator_list);
+        void createSenderResources(const Locator_t& locator);
 
         bool networkFactoryHasRegisteredTransports() const;
 
