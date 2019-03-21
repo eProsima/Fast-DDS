@@ -20,7 +20,8 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
     set(EPROSIMA_BUILD_TESTS ON)
 endif()
 
-set(MEMORYCHECK_SUPPRESSIONS_FILE "${PROJECT_SOURCE_DIR}/valgrind.supp" CACHE FILEPATH "Valgrind suppresions file" FORCE)
+file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE_TMP)
+set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FILEPATH "Valgrind suppresions file" FORCE)
 
 ###############################################################################
 # Testing
