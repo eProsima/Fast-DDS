@@ -71,12 +71,14 @@ class PDPSimple : public PDP
     void resetParticipantAnnouncement() override;
 
     /**
-     * This method assigns remtoe endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
+     * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
     void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
 
     void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
+
+    void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
 
     private:
 

@@ -355,6 +355,14 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     }
 }
 
+void PDPSimple::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
+{
+    //Inform EDP of new RTPSParticipant data:
+    if (mp_EDP != nullptr)
+        mp_EDP->assignRemoteEndpoints(pdata);
+    if (mp_builtin->mp_WLP != nullptr)
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */

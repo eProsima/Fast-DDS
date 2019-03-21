@@ -151,7 +151,7 @@ class RTPS_DllAPI PDP  // TODO: remove RTPS_DllAPI when discovery server incorpo
      */
     virtual void assignRemoteEndpoints(ParticipantProxyData* pdata) = 0;
 
-    void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata);
+    virtual void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) = 0;
 
     /**
      * Remove remote endpoints from the participant discovery protocol

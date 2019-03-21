@@ -547,15 +547,6 @@ bool PDP::addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData& pdata
     return false;
 }
 
-void PDP::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
-{
-    //Inform EDP of new RTPSParticipant data:
-    if(mp_EDP!=nullptr)
-        mp_EDP->assignRemoteEndpoints(pdata);
-    if(mp_builtin->mp_WLP !=nullptr)
-        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
-}
-
 bool PDP::removeRemoteParticipant(GUID_t& partGUID)
 {
     logInfo(RTPS_PDP, partGUID);

@@ -96,6 +96,7 @@ class PDPClient : public PDP
      */
     void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
     void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
+    void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
 
     //!Matching server EDP endpoints
     void match_all_server_EDP_endpoints();

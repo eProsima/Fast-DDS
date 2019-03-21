@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -261,6 +262,15 @@ void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
             svr.proxy = pdata;
         }
     }
+
+    notifyAboveRemoteEndpoints(*pdata);
+}
+
+void PDPClient::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
+{
+    // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
+    if (mp_builtin->mp_WLP != nullptr)
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
 }
 
 
