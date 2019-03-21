@@ -27,6 +27,7 @@
 #include "../../transport/TransportInterface.h"
 #include "../resources/ResourceManagement.h"
 #include "../../utils/fixed_size_string.hpp"
+#include "RTPSParticipantAllocationAttributes.hpp"
 
 #include <memory>
 
@@ -268,6 +269,8 @@ class RTPSParticipantAttributes
         std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
         //!Set as false to disable the default UDPv4 implementation.
         bool useBuiltinTransports;
+        //!Holds allocation limits affecting collections managed by a participant.
+        RTPSParticipantAllocationAttributes allocation;
 
         //! Property policies
         PropertyPolicy properties;
