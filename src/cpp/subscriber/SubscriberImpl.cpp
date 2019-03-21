@@ -218,8 +218,8 @@ bool SubscriberImpl::onNewCacheChangeAdded(CacheChange_t * const change)
         return true;
     }
 
-    steady_clock::time_point source_timestamp = steady_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
-    steady_clock::time_point now = steady_clock::now();
+    system_clock::time_point source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+    system_clock::time_point now = system_clock::now();
 
     // The new change could have expired if it arrived too late
     // If so, remove it from the history and return false to avoid notifying the listener
@@ -245,7 +245,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(CacheChange_t * const change)
         logError(SUBSCRIBER, "A change was added to history that could not be retrieved");
     }
 
-    steady_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+    system_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
 
     // Update and restart the timer
     // If the timer is already running this will not have any effect
@@ -286,9 +286,9 @@ void SubscriberImpl::lifespan_expired()
     }
 
     // Calculate when the next change is due to expire and restart the timer
-    steady_clock::time_point source_timestamp = steady_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    steady_clock::time_point now = steady_clock::now();
-    steady_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+    system_clock::time_point source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    system_clock::time_point now = system_clock::now();
+    system_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
 
     assert(interval.count() > 0);
 

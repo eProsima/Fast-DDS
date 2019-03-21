@@ -50,7 +50,6 @@ bool ReaderHistory::received_change(CacheChange_t* change, size_t)
 
 bool ReaderHistory::add_change(CacheChange_t* a_change)
 {
-
     if(mp_reader == nullptr || mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY,"You need to create a Reader with this History before adding any changes");
@@ -81,7 +80,6 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 
 bool ReaderHistory::remove_change(CacheChange_t* a_change)
 {
-
     if(mp_reader == nullptr || mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY,"You need to create a Reader with this History before removing any changes");
@@ -130,12 +128,18 @@ bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
             bool matches = true;
             unsigned int size = a_guid.guidPrefix.size;
             if( !std::equal( (*chit)->writerGUID.guidPrefix.value , (*chit)->writerGUID.guidPrefix.value + size -1, a_guid.guidPrefix.value ) )
+            {
                 matches = false;
+            }
             size = a_guid.entityId.size;
             if( !std::equal( (*chit)->writerGUID.entityId.value , (*chit)->writerGUID.entityId.value + size -1, a_guid.entityId.value ) )
-                    matches = false;
+            {
+                matches = false;
+            }
             if(matches)
+            {
                 changes_to_remove.push_back( (*chit) );
+            }
         }
     }//End lock scope
 

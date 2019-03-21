@@ -20,7 +20,7 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
-#include "fastrtps/rtps/common/WriteParams.h"
+#include <fastrtps/rtps/common/WriteParams.h>
 
 #include <mutex>
 
@@ -85,7 +85,7 @@ bool WriterHistory::add_change_(CacheChange_t* a_change, WriteParams &wparams,
 
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
-    a_change->sourceTimestamp = Time_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() * 1e-9);
+    a_change->sourceTimestamp = Time_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-9);
 
     a_change->write_params = wparams;
     // Updated sample identity

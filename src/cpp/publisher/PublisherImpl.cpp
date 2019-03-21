@@ -361,9 +361,9 @@ void PublisherImpl::lifespan_expired()
     }
 
     // Calculate when the next change is due to expire and restart the timer
-    steady_clock::time_point sourceTimestamp = steady_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    steady_clock::time_point now = steady_clock::now();
-    steady_clock::duration interval = sourceTimestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+    system_clock::time_point sourceTimestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    system_clock::time_point now = system_clock::now();
+    system_clock::duration interval = sourceTimestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
 
     assert(interval.count() > 0);
 
