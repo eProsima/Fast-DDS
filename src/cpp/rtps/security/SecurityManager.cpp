@@ -1553,8 +1553,9 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
     }
 }
 
-void SecurityManager::ParticipantStatelessMessageListener::onNewCacheChangeAdded(RTPSReader* reader,
-        const CacheChange_t* const change)
+void SecurityManager::ParticipantStatelessMessageListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        CacheChange_t* const change)
 {
     manager_.process_participant_stateless_message(change);
 
@@ -1563,8 +1564,9 @@ void SecurityManager::ParticipantStatelessMessageListener::onNewCacheChangeAdded
     history->remove_change((CacheChange_t*)change);
 }
 
-void SecurityManager::ParticipantVolatileMessageListener::onNewCacheChangeAdded(RTPSReader* reader,
-        const CacheChange_t* const change)
+void SecurityManager::ParticipantVolatileMessageListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        CacheChange_t* const change)
 {
     manager_.process_participant_volatile_message_secure(change);
 
