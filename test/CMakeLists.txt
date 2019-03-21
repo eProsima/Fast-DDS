@@ -20,15 +20,14 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
     set(EPROSIMA_BUILD_TESTS ON)
 endif()
 
+set(MEMORYCHECK_SUPPRESSIONS_FILE "${PROJECT_SOURCE_DIR}/valgrind.supp" CACHE FILEPATH "Valgrind suppresions file" FORCE)
+
 ###############################################################################
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
-    set_property(GLOBAL PROPERTY MEMORYCHECK_SUPPRESSIONS_FILE "${PROJECT_SOURCE_DIR}/valgrind.supp")
-
     add_subdirectory(blackbox)
     add_subdirectory(communication)
-
     add_subdirectory(unittest)
 endif()
 
