@@ -132,6 +132,8 @@ namespace eprosima
 
                 bool wait_for_all_acked(const Duration_t& max_wait) override;
 
+                bool all_readers_updated();
+
                 /**
                 * Remove the change with the minimum SequenceNumber
                 * @return True if removed.
