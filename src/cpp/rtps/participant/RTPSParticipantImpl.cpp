@@ -756,22 +756,7 @@ bool RTPSParticipantImpl::createSendResources(Endpoint *pend)
     }
 
     //Output locators have been specified, create them
-    for (auto it = pend->m_att.remoteLocatorList.begin(); it != pend->m_att.remoteLocatorList.end(); ++it)
-    {
-        SendersBuffer = m_network_Factory.BuildSenderResources((*it));
-        for (auto mit = SendersBuffer.begin(); mit != SendersBuffer.end(); ++mit)
-        {
-            newSenders.push_back(std::move(*mit));
-        }
-        //newSenders.insert(newSenders.end(), SendersBuffer.begin(), SendersBuffer.end());
-        SendersBuffer.clear();
-    }
-
-    std::lock_guard<std::mutex> guard(m_send_resources_mutex);
-    for (auto mit = newSenders.begin(); mit != newSenders.end(); ++mit)
-    {
-        m_senderResourceList.push_back(std::move(*mit));
-    }
+    createSenderResources(pend->m_att.remoteLocatorList);
 
     return true;
 }
@@ -823,22 +808,19 @@ bool RTPSParticipantImpl::checkSenderResource(const Locator_t& locator)
     return false;
 }
 
+void RTPSParticipantImpl::createSenderResources(const Locator_t& locator)
+{
+    if (!checkSenderResource(locator))
+    {
+        m_network_Factory.BuildSenderResources(locator, m_senderResourceList, m_send_resources_mutex);
+    }
+}
+
 void RTPSParticipantImpl::createSenderResources(const LocatorList_t& locator_list)
 {
-    std::vector<SenderResource> buffer;
-    for (auto it_loc = locator_list.begin(); it_loc != locator_list.end(); ++it_loc)
+    for (const Locator_t& it_loc : locator_list)
     {
-        if (!checkSenderResource(*it_loc))
-        {
-            buffer = m_network_Factory.BuildSenderResources(*it_loc);
-            for (auto it_buffer = buffer.begin(); it_buffer != buffer.end(); ++it_buffer)
-            {
-                std::lock_guard<std::mutex> lock(m_send_resources_mutex);
-                //Push the new items into the SenderResource buffer
-                m_senderResourceList.push_back(std::move(*it_buffer));
-            }
-            buffer.clear();
-        }
+        createSenderResources(it_loc);
     }
 }
 

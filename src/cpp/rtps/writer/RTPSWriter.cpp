@@ -201,14 +201,6 @@ void RTPSWriter::update_cached_info_nts()
 {
     locator_selector_.reset(true);
     mp_RTPSParticipant->network_factory().select_locators(locator_selector_);
-
-    // TODO (Miguel C): Remove when RTPSMessageGroup refactor is complete
-    mAllShrinkedLocatorList.clear();
-    locator_selector_.for_each(
-        [this](const Locator_t& locator)
-        {
-            mAllShrinkedLocatorList.push_back(locator);
-        });
 }
 
 #if HAVE_SECURITY

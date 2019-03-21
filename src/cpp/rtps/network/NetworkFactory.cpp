@@ -32,19 +32,23 @@ NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
 {
 }
 
-vector<SenderResource> NetworkFactory::BuildSenderResources(const Locator_t& local)
+void NetworkFactory::BuildSenderResources(
+        const Locator_t& local,
+        std::vector<SenderResource>& resources,
+        std::mutex& resources_mutex)
 {
-    vector<SenderResource> newSenderResources;
     for (auto& transport : mRegisteredTransports)
     {
         if (transport->IsLocatorSupported(local) && !transport->IsOutputChannelOpen(local))
         {
             SenderResource newSenderResource(*transport, local);
             if (newSenderResource.mValid)
-                newSenderResources.push_back(move(newSenderResource));
+            {
+                std::lock_guard<std::mutex> lock(resources_mutex);
+                resources.push_back(std::move(newSenderResource));
+            }
         }
     }
-    return newSenderResources;
 }
 
 bool NetworkFactory::BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize,

@@ -298,7 +298,6 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
     //!Separate sending activated
     bool m_separateSendingEnabled;
 
-    LocatorList_t mAllShrinkedLocatorList;
     LocatorSelector locator_selector_;
 
     ResourceLimitedVector<GUID_t> all_remote_readers_;

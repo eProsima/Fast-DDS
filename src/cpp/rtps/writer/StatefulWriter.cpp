@@ -538,7 +538,11 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
     update_cached_info_nts();
     compute_selected_guids();
 
-    getRTPSParticipant()->createSenderResources(mAllShrinkedLocatorList);
+    RTPSParticipantImpl* part = getRTPSParticipant();
+    locator_selector_.for_each([part](const Locator_t& loc)
+    {
+        part->createSenderResources(loc);
+    });
 
     std::set<SequenceNumber_t> not_relevant_changes;
 

@@ -64,7 +64,9 @@ TEST_F(NetworkTests, BuildSenderResource_returns_send_resource_for_a_kind_compat
    kindCompatibleLocator.kind = ArbitraryKind;
 
    // When
-   auto resources = networkFactoryUnderTest.BuildSenderResources(kindCompatibleLocator);
+   std::vector<SenderResource> resources;
+   std::mutex mtx;
+   networkFactoryUnderTest.BuildSenderResources(kindCompatibleLocator, resources, mtx);
 
    // Then
    ASSERT_EQ(1u, resources.size());
@@ -118,7 +120,9 @@ TEST_F(NetworkTests, BuildSenderResource_returns_multiple_resources_if_multiple_
    locatorCompatibleWithTwoTransports.kind = 2;
 
    // When
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locatorCompatibleWithTwoTransports);
+   std::vector<SenderResource> resources;
+   std::mutex mtx;
+   networkFactoryUnderTest.BuildSenderResources(locatorCompatibleWithTwoTransports, resources, mtx);
 
    // Then
    ASSERT_EQ(2u, resources.size());
@@ -134,7 +138,9 @@ TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_t
    locator.kind = ArbitraryKind;
 
    // When
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+   std::vector<SenderResource> resources;
+   std::mutex mtx;
+   networkFactoryUnderTest.BuildSenderResources(locator, resources, mtx);
 
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
@@ -171,7 +177,9 @@ TEST_F(NetworkTests, destroying_a_send_resource_will_close_all_channels_mapped_t
 
     // TODO review why clear is crashing but end of scope don't.
    { // Destroyed by end of scope but...
-      auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+       std::vector<SenderResource> resources;
+       std::mutex mtx;
+       networkFactoryUnderTest.BuildSenderResources(locator, resources, mtx);
    }
    // When (End of scope)
 
@@ -214,7 +222,9 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_
    locatorOfDifferentKind.kind = 2;
 
    // When
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locatorOfDifferentKind);
+   std::vector<SenderResource> resources;
+   std::mutex mtx;
+   networkFactoryUnderTest.BuildSenderResources(locatorOfDifferentKind, resources, mtx);
 
    // Then
    ASSERT_TRUE(resources.empty());
@@ -227,13 +237,16 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
    Locator_t locator;
    locator.kind = ArbitraryKind;
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+   std::vector<SenderResource> resources;
+   std::mutex mtx;
+   networkFactoryUnderTest.BuildSenderResources(locator, resources, mtx);
 
    // When
    // We do it again for a locator that maps to the same channel
    locator.address[0]++; // Address can differ, since they map to the same port
 
-   auto secondBatchResources = networkFactoryUnderTest.BuildSenderResources(locator);
+   std::vector<SenderResource> secondBatchResources;
+   networkFactoryUnderTest.BuildSenderResources(locator, secondBatchResources, mtx);
 
    // Then
    ASSERT_TRUE(secondBatchResources.empty());
@@ -268,7 +281,9 @@ TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
    Locator_t locator;
    locator.kind = ArbitraryKind;
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+   std::vector<SenderResource> resources;
+   std::mutex mtx;
+   networkFactoryUnderTest.BuildSenderResources(locator, resources, mtx);
    auto& resource = resources.back();
 
    // Then
@@ -288,7 +303,9 @@ TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_out
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
    Locator_t locator;
    locator.kind = ArbitraryKind;
-   auto resources = networkFactoryUnderTest.BuildSenderResources(locator);
+   std::vector<SenderResource> resources;
+   std::mutex mtx;
+   networkFactoryUnderTest.BuildSenderResources(locator, resources, mtx);
    auto& senderResource = resources.back();
 
    // When
