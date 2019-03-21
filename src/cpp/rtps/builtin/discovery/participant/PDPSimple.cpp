@@ -144,6 +144,12 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     return true;
 }
 
+// EDPStatic requires matching on ParticipantProxyData property updates
+bool PDPSimple::updateInfoMatchesEDP()
+{
+    return dynamic_cast<EDPStatic*>(mp_EDP) != nullptr;
+}
+
 void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 {
     PDP::announceParticipantState(new_change, dispose);

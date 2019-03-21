@@ -381,6 +381,8 @@ void PDPClient::match_all_server_EDP_endpoints()
     // PDP must have been initialize
     assert(mp_EDP);
 
+    std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
+
     for (auto svr : mp_builtin->m_DiscoveryServers)
     {
         // We should have received the discovery info

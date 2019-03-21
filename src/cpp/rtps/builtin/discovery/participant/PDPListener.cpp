@@ -113,7 +113,8 @@ void PDPListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t*
                 pdata->isAlive = true;
                 lock.unlock();
 
-                mp_PDP->mp_EDP->assignRemoteEndpoints(*pdata);
+                if(mp_PDP->updateInfoMatchesEDP())
+                    mp_PDP->mp_EDP->assignRemoteEndpoints(*pdata);
             }
 
             auto listener = this->mp_PDP->getRTPSParticipant()->getListener();

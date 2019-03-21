@@ -78,7 +78,7 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 * @return True if correct.
 	 */
-	bool assignRemoteEndpoints(const ParticipantProxyData& pdata);
+    RTPS_DllAPI bool assignRemoteEndpoints(const ParticipantProxyData& pdata);  // TODO: remove RTPS_DllAPI when discovery server is incorporated into fast RTPS library
 	/**
 	 * Remove remote endpoints from the liveliness protocol.
 	 * @param pdata Pointer to the ParticipantProxyData to remove

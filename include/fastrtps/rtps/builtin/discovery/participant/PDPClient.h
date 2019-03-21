@@ -66,12 +66,14 @@ class PDPClient : public PDP
 
     /**
      * Check if all servers have acknowledge the client PDP data
+     * This method must be called from a mutex protected context.
      * @return True if all can reach the client
      */
     bool all_servers_acknowledge_PDP();
 
     /**
      * Check if we have our PDP received data updated
+     * This method must be called from a mutex protected context.
      * @return True if we known all the participants the servers are aware of
      */
     bool is_all_servers_PDPdata_updated();

@@ -59,6 +59,12 @@ class PDPSimple : public PDP
     bool initPDP(RTPSParticipantImpl* part) override;
 
     /**
+     * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
+     * @return true if EDP endpoinst must be match
+     */
+    bool updateInfoMatchesEDP() override;
+
+    /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED

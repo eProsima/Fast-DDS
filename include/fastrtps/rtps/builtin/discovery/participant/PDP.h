@@ -151,7 +151,17 @@ class RTPS_DllAPI PDP  // TODO: remove RTPS_DllAPI when discovery server incorpo
      */
     virtual void assignRemoteEndpoints(ParticipantProxyData* pdata) = 0;
 
+    /**
+     * Override to match additional endpoints to PDP. Like EDP or WLP.
+     * @param pdata Pointer to the ParticipantProxyData object.
+     */
     virtual void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) = 0;
+
+    /**
+     * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic 
+     * @return true if EDP endpoinst must be match
+     */
+    virtual bool updateInfoMatchesEDP() { return false; }
 
     /**
      * Remove remote endpoints from the participant discovery protocol

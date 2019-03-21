@@ -132,7 +132,7 @@ namespace eprosima
 
                 bool wait_for_all_acked(const Duration_t& max_wait) override;
 
-                bool all_readers_updated();
+                RTPS_DllAPI bool all_readers_updated(); // TODO: remove RTPS_DllAPI when discovery server is incorporated into fast RTPS library
 
                 /**
                 * Remove the change with the minimum SequenceNumber
