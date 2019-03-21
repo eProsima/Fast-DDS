@@ -49,7 +49,9 @@ class ReaderProxyData
 {
     public:
 
-        RTPS_DllAPI ReaderProxyData();
+        RTPS_DllAPI ReaderProxyData(
+                const size_t max_unicast_locators,
+                const size_t max_multicast_locators);
 
         RTPS_DllAPI virtual ~ReaderProxyData();
 

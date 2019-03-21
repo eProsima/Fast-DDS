@@ -36,6 +36,11 @@ class ReaderProxyData
 {
     public:
 
+        ReaderProxyData(
+                size_t /*max_unicast_locators*/,
+                size_t /*max_multicast_locators*/)
+        { }
+
         GUID_t guid() { return m_guid; }
 
         void clear () { }

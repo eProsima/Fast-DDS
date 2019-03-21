@@ -73,7 +73,7 @@ bool TestWriterSocket::init(std::string ip, uint32_t port)
 		return false;
 
 	//ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
-	ReaderProxyData ratt;
+	ReaderProxyData ratt(4u, 1u);
     ratt.guid(mp_participant->getGuid());
 	Locator_t loc;
 	IPLocator::setIPv4(loc, ip);

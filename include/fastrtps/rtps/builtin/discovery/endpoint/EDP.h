@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/RTPSParticipantAttributes.h"
+#include "../../../builtin/data/ReaderProxyData.h"
 #include "../../../common/Guid.h"
 
 namespace eprosima {
@@ -42,7 +43,6 @@ class PDPSimple;
 class ParticipantProxyData;
 class RTPSWriter;
 class RTPSReader;
-class ReaderProxyData;
 class WriterProxyData;
 class RTPSParticipantImpl;
 
@@ -230,6 +230,8 @@ class EDP
 
         bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
                 const eprosima::fastrtps::types::TypeIdentifier * rti) const;
+
+        ReaderProxyData temp_reader_proxy_data_;
 };
 
 }

@@ -62,6 +62,9 @@ WLP::WLP(BuiltinProtocols* p)
     , mp_builtinWriterSecureHistory(nullptr)
     , mp_builtinReaderSecureHistory(nullptr)
 #endif
+    , temp_reader_proxy_data_(
+            p->mp_participantImpl->getAttributes().allocation.locators.max_unicast_locators,
+            p->mp_participantImpl->getAttributes().allocation.locators.max_multicast_locators)
 {
 }
 
@@ -295,6 +298,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
+    temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_reader_proxy_data_.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
