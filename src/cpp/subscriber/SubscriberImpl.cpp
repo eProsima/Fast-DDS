@@ -213,7 +213,7 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
 
 void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(
         RTPSReader* /*reader*/,
-        CacheChange_t * const change_in)
+        const CacheChange_t * const change_in)
 {
     if (mp_subscriberImpl->onNewCacheChangeAdded(change_in))
     {
@@ -233,7 +233,7 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
-bool SubscriberImpl::onNewCacheChangeAdded(CacheChange_t* const change_in)
+bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
 {
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
