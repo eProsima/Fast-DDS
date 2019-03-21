@@ -62,18 +62,21 @@ namespace fastrtps{
 namespace rtps {
 
 
-PDPSimple::PDPSimple(BuiltinProtocols* built):
-    mp_builtin(built),
-    mp_RTPSParticipant(nullptr),
-    mp_SPDPWriter(nullptr),
-    mp_SPDPReader(nullptr),
-    mp_EDP(nullptr),
-    m_hasChangedLocalPDP(true),
-    mp_resendParticipantTimer(nullptr),
-    mp_listener(nullptr),
-    mp_SPDPWriterHistory(nullptr),
-    mp_SPDPReaderHistory(nullptr),
-    mp_mutex(new std::recursive_mutex())
+PDPSimple::PDPSimple (BuiltinProtocols* built)
+    : mp_builtin(built)
+    , mp_RTPSParticipant(nullptr)
+    , mp_SPDPWriter(nullptr)
+    , mp_SPDPReader(nullptr)
+    , mp_EDP(nullptr)
+    , m_hasChangedLocalPDP(true)
+    , mp_resendParticipantTimer(nullptr)
+    , mp_listener(nullptr)
+    , mp_SPDPWriterHistory(nullptr)
+    , mp_SPDPReaderHistory(nullptr)
+    , temp_reader_data_(
+            built->mp_participantImpl->getAttributes().allocation.locators.max_unicast_locators,
+            built->mp_participantImpl->getAttributes().allocation.locators.max_multicast_locators)
+    , mp_mutex(new std::recursive_mutex())
     {
 
     }
@@ -360,6 +363,26 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 
 }
 
+bool PDPSimple::has_reader_proxy_data(const GUID_t& reader)
+{
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    for (auto pit = m_participantProxies.begin();
+        pit != m_participantProxies.end(); ++pit)
+    {
+        if ((*pit)->m_guid.guidPrefix == reader.guidPrefix)
+        {
+            for (ReaderProxyData* rit : (*pit)->m_readers)
+            {
+                if (rit->guid() == reader)
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 bool PDPSimple::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -421,9 +444,8 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
                     RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                     if (listener)
                     {
-                        ReaderDiscoveryInfo info;
+                        ReaderDiscoveryInfo info(std::move(*rit));
                         info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                        info.info = std::move(*rit);
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
@@ -561,29 +583,29 @@ bool PDPSimple::createSPDPEndpoints()
         {
             mp_SPDPWriter->set_fixed_locators(mp_builtin->m_initialPeersList);
 
-            ReaderProxyData rratt;
             const NetworkFactory& network = mp_RTPSParticipant->network_factory();
             Locator_t local_locator;
-            rratt.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
-            rratt.guid().entityId = c_EntityId_SPDPReader;
+            temp_reader_data_.clear();
+            temp_reader_data_.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
+            temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
             for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)
             {
                 if (network.transform_remote_locator(*it, local_locator))
                 {
                     if (IPLocator::isMulticast(local_locator))
                     {
-                        rratt.add_multicast_locator(local_locator);
+                        temp_reader_data_.add_multicast_locator(local_locator);
                     }
                     else
                     {
-                        rratt.add_unicast_locator(local_locator);
+                        temp_reader_data_.add_unicast_locator(local_locator);
                     }
                 }
             }
-            rratt.topicKind(WITH_KEY);
-            rratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-            rratt.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-            mp_SPDPWriter->matched_reader_add(rratt);
+            temp_reader_data_.topicKind(WITH_KEY);
+            temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+            temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+            mp_SPDPWriter->matched_reader_add(temp_reader_data_);
         }
     }
     else
@@ -630,9 +652,8 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
                     RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                     if(listener)
                     {
-                        ReaderDiscoveryInfo info;
+                        ReaderDiscoveryInfo info(*ret_val);
                         info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
-                        info.info = *ret_val;
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
@@ -654,7 +675,9 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
             if (ret_val == nullptr)
             {
                 // TODO (Miguel C): Resource limits
-                ret_val = new ReaderProxyData();
+                ret_val = new ReaderProxyData(
+                        mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
+                        mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators);
                 // Add to ParticipantProxyData
                 (*pit)->m_readers.push_back(ret_val);
             }
@@ -667,9 +690,8 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
             if(listener)
             {
-                ReaderDiscoveryInfo info;
+                ReaderDiscoveryInfo info(*ret_val);
                 info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
-                info.info = *ret_val;
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
             }
 
@@ -787,15 +809,15 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     if(auxendp!=0)
     {
-        ReaderProxyData ratt;
-        ratt.m_expectsInlineQos = false;
-        ratt.guid().guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid().entityId = c_EntityId_SPDPReader;
-        ratt.set_unicast_locators(pdata->m_metatrafficUnicastLocatorList, network);
-        ratt.set_multicast_locators(pdata->m_metatrafficMulticastLocatorList, network);
-        ratt.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-        ratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-        mp_SPDPWriter->matched_reader_add(ratt);
+        temp_reader_data_.clear();
+        temp_reader_data_.m_expectsInlineQos = false;
+        temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
+        temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
+        temp_reader_data_.set_unicast_locators(pdata->m_metatrafficUnicastLocatorList, network);
+        temp_reader_data_.set_multicast_locators(pdata->m_metatrafficMulticastLocatorList, network);
+        temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        mp_SPDPWriter->matched_reader_add(temp_reader_data_);
     }
 
 #if HAVE_SECURITY
@@ -871,9 +893,8 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
 
                     if (listener)
                     {
-                        ReaderDiscoveryInfo info;
+                        ReaderDiscoveryInfo info(std::move(*rit));
                         info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                        info.info = std::move(*rit);
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
                 }

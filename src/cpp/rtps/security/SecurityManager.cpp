@@ -69,27 +69,30 @@ bool usleep_bool()
     return true;
 }
 
-SecurityManager::SecurityManager(RTPSParticipantImpl *participant) :
-    participant_stateless_message_listener_(*this),
-    participant_volatile_message_secure_listener_(*this),
-    participant_(participant),
-    participant_stateless_message_writer_(nullptr),
-    participant_stateless_message_writer_history_(nullptr),
-    participant_stateless_message_reader_(nullptr),
-    participant_stateless_message_reader_history_(nullptr),
-    participant_volatile_message_secure_writer_(nullptr),
-    participant_volatile_message_secure_writer_history_(nullptr),
-    participant_volatile_message_secure_reader_(nullptr),
-    participant_volatile_message_secure_reader_history_(nullptr),
-    authentication_plugin_(nullptr),
-    access_plugin_(nullptr),
-    crypto_plugin_(nullptr),
-    domain_id_(0),
-    local_identity_handle_(nullptr),
-    local_permissions_handle_(nullptr),
-    local_participant_crypto_handle_(nullptr),
-    auth_last_sequence_number_(1),
-    crypto_last_sequence_number_(1)
+SecurityManager::SecurityManager(RTPSParticipantImpl *participant) 
+    : participant_stateless_message_listener_(*this)
+    , participant_volatile_message_secure_listener_(*this)
+    , participant_(participant)
+    , participant_stateless_message_writer_(nullptr)
+    , participant_stateless_message_writer_history_(nullptr)
+    , participant_stateless_message_reader_(nullptr)
+    , participant_stateless_message_reader_history_(nullptr)
+    , participant_volatile_message_secure_writer_(nullptr)
+    , participant_volatile_message_secure_writer_history_(nullptr)
+    , participant_volatile_message_secure_reader_(nullptr)
+    , participant_volatile_message_secure_reader_history_(nullptr)
+    , authentication_plugin_(nullptr)
+    , access_plugin_(nullptr)
+    , crypto_plugin_(nullptr)
+    , domain_id_(0)
+    , local_identity_handle_(nullptr)
+    , local_permissions_handle_(nullptr)
+    , local_participant_crypto_handle_(nullptr)
+    , auth_last_sequence_number_(1)
+    , crypto_last_sequence_number_(1)
+    , temp_reader_proxy_data_(
+            participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
     assert(participant != nullptr);
 }
@@ -1438,7 +1441,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // Search remote writer handle.
         mutex_.lock();
         GUID_t writer_guid;
-        ReaderProxyData reader_data;
+        ReaderProxyData* reader_data = nullptr;
         auto wr_it = writer_handles_.find(message.destination_endpoint_key());
 
         if(wr_it != writer_handles_.end())
@@ -1455,7 +1458,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
                             exception))
                 {
                     writer_guid = wr_it->first;
-                    reader_data = std::get<0>(rd_it->second);
+                    reader_data = &(std::get<0>(rd_it->second));
                 }
                 else
                 {
@@ -1477,7 +1480,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         if(writer_guid != GUID_t::unknown())
         {
             participant_->pairing_remote_reader_with_local_writer_after_security(writer_guid,
-                    reader_data);
+                    *reader_data);
         }
     }
     else if(message.message_class_id().compare(GMCLASSID_SECURITY_WRITER_CRYPTO_TOKENS) == 0)
@@ -2728,7 +2731,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                         }
 
                         GUID_t local_writer_guid;
-                        ReaderProxyData reader_data;
+                        ReaderProxyData* reader_data = nullptr;
 
                         // Get local reader crypto tokens.
                         DatareaderCryptoTokenSeq local_reader_crypto_tokens;
@@ -2758,7 +2761,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                                             exception))
                                         {
                                             local_writer_guid = local_writer->first;
-                                            reader_data = std::get<0>(remote_reader->second);
+                                            reader_data = &(std::get<0>(remote_reader->second));
                                         }
                                         else
                                         {
@@ -2860,7 +2863,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                         if (local_writer_guid != GUID_t::unknown())
                         {
                             participant_->pairing_remote_reader_with_local_writer_after_security(
-                                    local_writer_guid, reader_data);
+                                    local_writer_guid, *reader_data);
                         }
 
                         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.

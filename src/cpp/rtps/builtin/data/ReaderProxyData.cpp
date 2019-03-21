@@ -30,14 +30,15 @@ namespace fastrtps{
 namespace rtps {
 
 
-ReaderProxyData::ReaderProxyData()
+ReaderProxyData::ReaderProxyData (
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators)
     : m_expectsInlineQos(false)
 #if HAVE_SECURITY
     , security_attributes_(0UL)
     , plugin_security_attributes_(0UL)
 #endif
-    // TODO (Miguel C): Use participant locators allocation policy
-    , remote_locators_(4u, 1u)
+    , remote_locators_(max_unicast_locators, max_multicast_locators)
     , m_userDefinedId(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)

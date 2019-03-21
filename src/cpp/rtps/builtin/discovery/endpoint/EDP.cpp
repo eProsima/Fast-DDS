@@ -50,8 +50,16 @@ namespace fastrtps{
 namespace rtps {
 
 
-EDP::EDP(PDPSimple* p,RTPSParticipantImpl* part): mp_PDP(p),
-    mp_RTPSParticipant(part) { }
+EDP::EDP(
+        PDPSimple* p,
+        RTPSParticipantImpl* part)
+    : mp_PDP(p)
+    , mp_RTPSParticipant(part)
+    , temp_reader_proxy_data_(
+            part->getAttributes().allocation.locators.max_unicast_locators,
+            part->getAttributes().allocation.locators.max_multicast_locators)
+{
+}
 
 EDP::~EDP()
 {
@@ -929,10 +937,9 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(const GUID_t& participant_g
         (*rit)->getMutex()->lock();
         readerGUID = (*rit)->getGuid();
         (*rit)->getMutex()->unlock();
-        ReaderProxyData rdata;
-        if(mp_PDP->lookupReaderProxyData(readerGUID, rdata))
+        if(mp_PDP->lookupReaderProxyData(readerGUID, temp_reader_proxy_data_))
         {
-            bool valid = validMatching(&rdata, wdata);
+            bool valid = validMatching(&temp_reader_proxy_data_, wdata);
 
             if(valid)
             {
@@ -997,10 +1004,9 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
 
         if(local_reader == readerGUID)
         {
-            ReaderProxyData rdata;
-            if(mp_PDP->lookupReaderProxyData(readerGUID, rdata))
+            if(mp_PDP->lookupReaderProxyData(readerGUID, temp_reader_proxy_data_))
             {
-                bool valid = validMatching(&rdata, &wdata);
+                bool valid = validMatching(&temp_reader_proxy_data_, &wdata);
 
                 if(valid)
                 {

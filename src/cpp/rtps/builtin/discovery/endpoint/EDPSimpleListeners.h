@@ -27,6 +27,8 @@
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
+#include "rtps/participant/RTPSParticipantImpl.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -97,7 +99,12 @@ class EDPSimpleSUBListener : public ReaderListener, public WriterListener
           Constructor
          * @param sedp Pointer to the EDPSimple associated with this listener.
          */
-        EDPSimpleSUBListener(EDPSimple* sedp) : sedp_(sedp){}
+        EDPSimpleSUBListener(EDPSimple* sedp) 
+            : sedp_(sedp)
+            , temp_reader_data_(
+                    sedp->mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
+                    sedp->mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators)
+        {}
 
         virtual ~EDPSimpleSUBListener(){}
         /**

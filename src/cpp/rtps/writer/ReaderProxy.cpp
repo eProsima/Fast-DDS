@@ -38,11 +38,11 @@ namespace rtps {
 
 ReaderProxy::ReaderProxy(
         const WriterTimes& times, 
+        const RemoteLocatorsAllocationAttributes& loc_alloc,
         StatefulWriter* writer) 
     : is_active_(false)
-    // TODO (Miguel C): Use participant locators allocation policy
-    , locator_info_(writer->getRTPSParticipant(), 4u, 1u)
-    , reader_attributes_()
+    , locator_info_(writer->getRTPSParticipant(), loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , reader_attributes_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
     , writer_(writer)
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_supression_event_(nullptr)

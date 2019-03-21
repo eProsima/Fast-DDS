@@ -189,7 +189,7 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
             //Add remote reader (in this case a reader in the same machine)
             eprosima::fastrtps::rtps::GUID_t guid = participant_->getGuid();
 
-            eprosima::fastrtps::rtps::ReaderProxyData rattr;
+            eprosima::fastrtps::rtps::ReaderProxyData rattr(4u, 1u);
             eprosima::fastrtps::rtps::Locator_t loc;
             IPLocator::setIPv4(loc, ip_);
             loc.port = static_cast<uint16_t>(port_);

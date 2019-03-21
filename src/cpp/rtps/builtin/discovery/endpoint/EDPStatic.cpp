@@ -179,9 +179,8 @@ void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         {
             if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status=="ALIVE")
             {
-                ReaderProxyData rdata;
                 GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                if(!this->mp_PDP->lookupReaderProxyData(guid ,rdata))//IF NOT FOUND, we CREATE AND PAIR IT
+                if(!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
                     newRemoteReader(pdata, staticproperty.m_userId,staticproperty.m_entityId);
                 }

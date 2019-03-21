@@ -71,12 +71,13 @@ StatefulWriter::StatefulWriter(
         (guid.entityId == c_EntityId_WriterLiveliness) ? c_EntityId_ReaderLiveliness :
                                                          c_EntityId_Unknown;
 
+    const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
     nack_response_event_ = new NackResponseDelay(this, TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)
     {
-        matched_readers_pool_.push_back(new ReaderProxy(m_times, this));
+        matched_readers_pool_.push_back(new ReaderProxy(m_times, part_att.allocation.locators, this));
     }
 }
 
@@ -516,7 +517,8 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
         size_t max_readers = matched_readers_pool_.max_size();
         if (matched_readers_.size() + matched_readers_pool_.size() < max_readers)
         {
-            rp = new ReaderProxy(m_times, this);
+            const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
+            rp = new ReaderProxy(m_times, part_att.allocation.locators, this);
         }
         else
         {

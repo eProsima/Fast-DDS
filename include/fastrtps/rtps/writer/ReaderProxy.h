@@ -27,6 +27,7 @@
 #include "../common/CacheChange.h"
 #include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
+#include "../attributes/RTPSParticipantAllocationAttributes.hpp"
 #include "../builtin/data/ReaderProxyData.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 #include "ReaderLocator.h"
@@ -52,10 +53,12 @@ public:
     /**
      * Constructor.
      * @param times WriterTimes to use in the ReaderProxy.
+     * @param loc_alloc Maximum number of remote locators to keep in the ReaderProxy.
      * @param writer Pointer to the StatefulWriter creating the reader proxy.
      */
     ReaderProxy(
             const WriterTimes& times, 
+            const RemoteLocatorsAllocationAttributes& loc_alloc,
             StatefulWriter* writer);
 
     /**

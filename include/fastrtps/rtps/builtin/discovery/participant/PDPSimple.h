@@ -27,6 +27,7 @@
 
 #include "../../../common/Guid.h"
 #include "../../../attributes/RTPSParticipantAttributes.h"
+#include "../../../builtin/data/ReaderProxyData.h"
 #include "../../../../qos/QosPolicies.h"
 
 
@@ -113,6 +114,12 @@ class PDPSimple
             GUID_t& participant_guid,
             std::function<bool(WriterProxyData*, bool, const ParticipantProxyData&)> initializer_func);
 
+    /**
+     * This method returns whether a ReaderProxyDataObject exitst among the registered RTPSParticipants (including the local RTPSParticipant).
+     * @param[in] reader GUID_t of the reader we are looking for.
+     * @return True if found.
+     */
+    bool has_reader_proxy_data(const GUID_t& reader);
     /**
      * This method returns a pointer to a ReaderProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
      * @param[in] reader GUID_t of the reader we are looking for.
@@ -254,6 +261,7 @@ class PDPSimple
     WriterHistory* mp_SPDPWriterHistory;
     //!Reader History
     ReaderHistory* mp_SPDPReaderHistory;
+    ReaderProxyData temp_reader_data_;
 
     /**
      * Create the SPDP Writer and Reader
