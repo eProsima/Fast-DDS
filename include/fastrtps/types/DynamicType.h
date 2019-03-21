@@ -61,6 +61,7 @@ protected:
     ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
 
     ResponseCode apply_annotation(
+            const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
@@ -70,6 +71,7 @@ protected:
 
     ResponseCode apply_annotation_to_member(
             MemberId id,
+            const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 

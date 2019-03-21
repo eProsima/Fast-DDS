@@ -378,11 +378,12 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_char16_builder()
     return pNewTypeBuilder;
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive()
+DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(const std::string& name)
 {
     TypeDescriptor pEnumDescriptor;
     pEnumDescriptor.kind_ = TK_ANNOTATION;
-    pEnumDescriptor.name_ = GenerateTypeName(get_type_name(TK_ANNOTATION));
+    //pEnumDescriptor.name_ = GenerateTypeName(get_type_name(TK_ANNOTATION));
+    pEnumDescriptor.name_ = name;
 
     DynamicType_ptr pNewType = new DynamicType(&pEnumDescriptor);
     return pNewType;

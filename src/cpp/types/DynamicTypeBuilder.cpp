@@ -91,6 +91,15 @@ ResponseCode DynamicTypeBuilder::add_empty_member(
         const std::string& name)
 {
     MemberDescriptor descriptor(index, name);
+    if (descriptor_->get_kind() == TK_BITMASK)
+    {
+        if (index >= descriptor_->get_bounds(0))
+        {
+            logWarning(DYN_TYPES, "Error adding member, out of bounds.");
+            return ResponseCode::RETCODE_BAD_PARAMETER;
+        }
+        descriptor.annotation_set_position(static_cast<uint16_t>(descriptor.get_index()));
+    }
     return add_member(&descriptor);
 }
 
@@ -250,10 +259,11 @@ ResponseCode DynamicTypeBuilder::apply_annotation(AnnotationDescriptor& descript
 }
 
 ResponseCode DynamicTypeBuilder::apply_annotation(
+        const std::string& annotation_name,
         const std::string& key,
         const std::string& value)
 {
-    return descriptor_->apply_annotation(key, value);
+    return descriptor_->apply_annotation(annotation_name, key, value);
 }
 
 ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
@@ -265,10 +275,11 @@ ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
 
 ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
         MemberId id,
+        const std::string& annotation_name,
         const std::string& key,
         const std::string& value)
 {
-    return _apply_annotation_to_member(id, key, value);
+    return _apply_annotation_to_member(id, annotation_name, key, value);
 }
 
 DynamicType_ptr DynamicTypeBuilder::build()
@@ -457,13 +468,14 @@ ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
 
 ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
         MemberId id,
+        const std::string& annotation_name,
         const std::string& key,
         const std::string& value)
 {
     auto it = member_by_id_.find(id);
     if (it != member_by_id_.end())
     {
-        it->second->apply_annotation(key, value);
+        it->second->apply_annotation(annotation_name, key, value);
         return ResponseCode::RETCODE_OK;
     }
     else

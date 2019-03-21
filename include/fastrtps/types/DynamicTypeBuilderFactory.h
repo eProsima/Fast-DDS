@@ -193,7 +193,7 @@ public:
 
     RTPS_DllAPI DynamicTypeBuilder* create_union_builder(DynamicType_ptr discriminator_type);
 
-    RTPS_DllAPI DynamicType_ptr create_annotation_primitive();
+    RTPS_DllAPI DynamicType_ptr create_annotation_primitive(const std::string& name);
 
     RTPS_DllAPI DynamicType_ptr create_type(
             const TypeDescriptor* descriptor,

@@ -360,7 +360,6 @@ bool MemberDescriptor::is_default_value_consistent(const std::string& sDefaultVa
                 (void)value;
             }
             break;
-            case TK_BITSET:
             case TK_BITMASK:
             {
                 int value(0);
@@ -555,7 +554,7 @@ void MemberDescriptor::annotation_set_optional(bool optional)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_OPTIONAL_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_OPTIONAL_ID);
@@ -569,7 +568,7 @@ void MemberDescriptor::annotation_set_key(bool key)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_KEY_ID);
@@ -583,7 +582,8 @@ void MemberDescriptor::annotation_set_must_understand(bool must_understand)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUST_UNDERSTAND_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
@@ -597,7 +597,8 @@ void MemberDescriptor::annotation_set_non_serialized(bool non_serialized)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
@@ -611,7 +612,7 @@ void MemberDescriptor::annotation_set_value(const std::string& value)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_string_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_VALUE_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_VALUE_ID);
@@ -625,7 +626,8 @@ void MemberDescriptor::annotation_set_default_literal()
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_DEFAULT_LITERAL_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_DEFAULT_LITERAL_ID);
@@ -639,7 +641,7 @@ void MemberDescriptor::annotation_set_position(uint16_t position)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_uint16_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_POSITION_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_POSITION_ID);
@@ -653,7 +655,7 @@ void MemberDescriptor::annotation_set_default(const std::string& default_value)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_string_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_DEFAULT_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_DEFAULT_ID);
@@ -686,7 +688,7 @@ void MemberDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_uint16_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
@@ -710,21 +712,24 @@ ResponseCode MemberDescriptor::apply_annotation(AnnotationDescriptor& descriptor
     }
 }
 
-ResponseCode MemberDescriptor::apply_annotation(const std::string& key, const std::string& value)
+ResponseCode MemberDescriptor::apply_annotation(
+        const std::string& annotation_name,
+        const std::string& key,
+        const std::string& value)
 {
-    auto it = annotation_.begin();
-    if (it != annotation_.end())
+    AnnotationDescriptor* ann = get_annotation(annotation_name);
+    if (ann != nullptr)
     {
-        (*it)->set_value(key, value);
+        ann->set_value(key, value);
     }
     else
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive());
+        pNewDescriptor->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-
     return ResponseCode::RETCODE_OK;
 }
 

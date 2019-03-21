@@ -57,6 +57,9 @@ void registernew_features_4_2Types()
     factory->add_type_object("StructTest", GetStructTestIdentifier(true), GetStructTestObject(true));
     factory->add_type_object("StructTest", GetStructTestIdentifier(false), GetStructTestObject(false));
 
+    factory->add_type_object("NoBitsetStructTest", GetNoBitsetStructTestIdentifier(true), GetNoBitsetStructTestObject(true));
+    factory->add_type_object("NoBitsetStructTest", GetNoBitsetStructTestIdentifier(false), GetNoBitsetStructTestObject(false));
+
 }
 
 const TypeIdentifier* GetNewAliasesIdentifier(bool complete)
@@ -2990,6 +2993,246 @@ const TypeObject* GetCompleteBM2Object()
     return TypeObjectFactory::get_instance()->get_type_object("BM2", true);
 }
 
+const TypeIdentifier* GetNoBitsetIdentifier(bool complete)
+{
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("NoBitset", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetNoBitsetObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("NoBitset", complete);
+}
+
+const TypeObject* GetNoBitsetObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("NoBitset", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteNoBitsetObject();
+    }
+    //else
+    return GetMinimalNoBitsetObject();
+}
+
+const TypeObject* GetMinimalNoBitsetObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("NoBitset", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_STRUCTURE);
+
+    type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
+
+    MemberId memberId = 0;
+    MinimalStructMember mst_mybitmask;
+    mst_mybitmask.common().member_id(memberId++);
+    mst_mybitmask.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_mybitmask.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_mybitmask.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_mybitmask.common().member_flags().IS_OPTIONAL(false);
+    mst_mybitmask.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_mybitmask.common().member_flags().IS_KEY(false);
+    mst_mybitmask.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_mybitmask.common().member_type_id(*GetMyBitMaskIdentifier(false));
+    MD5 mybitmask_hash("mybitmask");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_mybitmask.detail().name_hash()[i] = mybitmask_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_mybitmask);
+
+    MinimalStructMember mst_two;
+    mst_two.common().member_id(memberId++);
+    mst_two.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_two.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_two.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_two.common().member_flags().IS_OPTIONAL(false);
+    mst_two.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_two.common().member_flags().IS_KEY(false);
+    mst_two.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_two.common().member_type_id(*GetMyBitMaskIdentifier(false));
+    MD5 two_hash("two");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_two.detail().name_hash()[i] = two_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_two);
+
+    MinimalStructMember mst_mylong;
+    mst_mylong.common().member_id(memberId++);
+    mst_mylong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_mylong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_mylong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_mylong.common().member_flags().IS_OPTIONAL(false);
+    mst_mylong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_mylong.common().member_flags().IS_KEY(false);
+    mst_mylong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    {
+        std::string cppType = "int32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        mst_mylong.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+    }
+
+    MD5 mylong_hash("mylong");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_mylong.detail().name_hash()[i] = mylong_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_mylong);
+
+
+    // Header
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("NoBitset", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("NoBitset", false);
+}
+
+const TypeObject* GetCompleteNoBitsetObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("NoBitset", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_mybitmask;
+    cst_mybitmask.common().member_id(memberId++);
+    cst_mybitmask.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_mybitmask.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_mybitmask.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_mybitmask.common().member_flags().IS_OPTIONAL(false);
+    cst_mybitmask.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_mybitmask.common().member_flags().IS_KEY(false);
+    cst_mybitmask.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_mybitmask.common().member_type_id(*GetMyBitMaskIdentifier(true));
+    cst_mybitmask.detail().name("mybitmask");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_mybitmask);
+
+    CompleteStructMember cst_two;
+    cst_two.common().member_id(memberId++);
+    cst_two.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_two.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_two.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_two.common().member_flags().IS_OPTIONAL(false);
+    cst_two.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_two.common().member_flags().IS_KEY(false);
+    cst_two.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_two.common().member_type_id(*GetMyBitMaskIdentifier(true));
+    cst_two.detail().name("two");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_two);
+
+    CompleteStructMember cst_mylong;
+    cst_mylong.common().member_id(memberId++);
+    cst_mylong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_mylong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_mylong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_mylong.common().member_flags().IS_OPTIONAL(false);
+    cst_mylong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_mylong.common().member_flags().IS_KEY(false);
+    cst_mylong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    {
+        std::string cppType = "int32_t";
+        if (cppType == "long double")
+        {
+            cppType = "longdouble";
+        }
+        cst_mylong.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+    }
+
+    cst_mylong.detail().name("mylong");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_mylong);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("NoBitset");
+    // TODO inheritance
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("NoBitset", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("NoBitset", true);
+}
+
 const TypeIdentifier* GetStructTestIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructTest", complete);
@@ -3245,4 +3488,261 @@ const TypeObject* GetCompleteStructTestObject()
     TypeObjectFactory::get_instance()->add_type_object("StructTest", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("StructTest", true);
+}
+
+const TypeIdentifier* GetNoBitsetStructTestIdentifier(bool complete)
+{
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("NoBitsetStructTest", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetNoBitsetStructTestObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("NoBitsetStructTest", complete);
+}
+
+const TypeObject* GetNoBitsetStructTestObject(bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("NoBitsetStructTest", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteNoBitsetStructTestObject();
+    }
+    //else
+    return GetMinimalNoBitsetStructTestObject();
+}
+
+const TypeObject* GetMinimalNoBitsetStructTestObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("NoBitsetStructTest", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_STRUCTURE);
+
+    type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
+    type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
+
+    MemberId memberId = 0;
+    MinimalStructMember mst_charUnion;
+    mst_charUnion.common().member_id(memberId++);
+    mst_charUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_charUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_charUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_charUnion.common().member_flags().IS_OPTIONAL(false);
+    mst_charUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_charUnion.common().member_flags().IS_KEY(false);
+    mst_charUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_charUnion.common().member_type_id(*GetWCharUnionIdentifier(false));
+    MD5 charUnion_hash("charUnion");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_charUnion.detail().name_hash()[i] = charUnion_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_charUnion);
+
+    MinimalStructMember mst_octetUnion;
+    mst_octetUnion.common().member_id(memberId++);
+    mst_octetUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_octetUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_octetUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_octetUnion.common().member_flags().IS_OPTIONAL(false);
+    mst_octetUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_octetUnion.common().member_flags().IS_KEY(false);
+    mst_octetUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_octetUnion.common().member_type_id(*GetOctetUnionIdentifier(false));
+    MD5 octetUnion_hash("octetUnion");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_octetUnion.detail().name_hash()[i] = octetUnion_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_octetUnion);
+
+    MinimalStructMember mst_int8Union;
+    mst_int8Union.common().member_id(memberId++);
+    mst_int8Union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_int8Union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_int8Union.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_int8Union.common().member_flags().IS_OPTIONAL(false);
+    mst_int8Union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_int8Union.common().member_flags().IS_KEY(false);
+    mst_int8Union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_int8Union.common().member_type_id(*GetInt8UnionIdentifier(false));
+    MD5 int8Union_hash("int8Union");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_int8Union.detail().name_hash()[i] = int8Union_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_int8Union);
+
+    MinimalStructMember mst_myStructBits;
+    mst_myStructBits.common().member_id(memberId++);
+    mst_myStructBits.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_myStructBits.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_myStructBits.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_myStructBits.common().member_flags().IS_OPTIONAL(false);
+    mst_myStructBits.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_myStructBits.common().member_flags().IS_KEY(false);
+    mst_myStructBits.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_myStructBits.common().member_type_id(*GetNoBitsetIdentifier(false));
+    MD5 myStructBits_hash("myStructBits");
+    for(int i = 0; i < 4; ++i)
+    {
+        mst_myStructBits.detail().name_hash()[i] = myStructBits_hash.digest[i];
+    }
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_myStructBits);
+
+
+    // Header
+    // TODO Inheritance
+    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
+    type_object->minimal().struct_type().header().base_type(*GetNewAliasesIdentifier(false));
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("NoBitsetStructTest", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("NoBitsetStructTest", false);
+}
+
+const TypeObject* GetCompleteNoBitsetStructTestObject()
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("NoBitsetStructTest", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_STRUCTURE);
+
+    type_object->complete().struct_type().struct_flags().IS_FINAL(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_NESTED(false);
+    type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
+
+    MemberId memberId = 0;
+    CompleteStructMember cst_charUnion;
+    cst_charUnion.common().member_id(memberId++);
+    cst_charUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_charUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_charUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_charUnion.common().member_flags().IS_OPTIONAL(false);
+    cst_charUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_charUnion.common().member_flags().IS_KEY(false);
+    cst_charUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_charUnion.common().member_type_id(*GetWCharUnionIdentifier(true));
+    cst_charUnion.detail().name("charUnion");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_charUnion);
+
+    CompleteStructMember cst_octetUnion;
+    cst_octetUnion.common().member_id(memberId++);
+    cst_octetUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_octetUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_octetUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_octetUnion.common().member_flags().IS_OPTIONAL(false);
+    cst_octetUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_octetUnion.common().member_flags().IS_KEY(false);
+    cst_octetUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_octetUnion.common().member_type_id(*GetOctetUnionIdentifier(true));
+    cst_octetUnion.detail().name("octetUnion");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_octetUnion);
+
+    CompleteStructMember cst_int8Union;
+    cst_int8Union.common().member_id(memberId++);
+    cst_int8Union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_int8Union.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_int8Union.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_int8Union.common().member_flags().IS_OPTIONAL(false);
+    cst_int8Union.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_int8Union.common().member_flags().IS_KEY(false);
+    cst_int8Union.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_int8Union.common().member_type_id(*GetInt8UnionIdentifier(true));
+    cst_int8Union.detail().name("int8Union");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_int8Union);
+
+    CompleteStructMember cst_myStructBits;
+    cst_myStructBits.common().member_id(memberId++);
+    cst_myStructBits.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_myStructBits.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_myStructBits.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_myStructBits.common().member_flags().IS_OPTIONAL(false);
+    cst_myStructBits.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_myStructBits.common().member_flags().IS_KEY(false);
+    cst_myStructBits.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_myStructBits.common().member_type_id(*GetNoBitsetIdentifier(true));
+    cst_myStructBits.detail().name("myStructBits");
+
+    type_object->complete().struct_type().member_seq().emplace_back(cst_myStructBits);
+
+
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("NoBitsetStructTest");
+    // TODO inheritance
+    type_object->complete().struct_type().header().base_type(*GetNewAliasesIdentifier(true));
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("NoBitsetStructTest", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("NoBitsetStructTest", true);
 }

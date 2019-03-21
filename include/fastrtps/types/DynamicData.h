@@ -87,6 +87,8 @@ protected:
     // Serializes and deserializes the Dynamic Data.
     bool deserialize(eprosima::fastcdr::Cdr& cdr);
 
+    bool deserialize_discriminator(eprosima::fastcdr::Cdr& cdr);
+
     static size_t getCdrSerializedSize(
             const DynamicData* data,
             size_t current_alignment = 0);
@@ -104,6 +106,8 @@ protected:
             size_t current_alignment = 0);
 
     void serialize(eprosima::fastcdr::Cdr& cdr) const;
+
+    void serialize_discriminator(eprosima::fastcdr::Cdr& cdr) const;
 
     void serializeKey(eprosima::fastcdr::Cdr& cdr) const;
 
@@ -136,6 +140,7 @@ protected:
     uint64_t union_label_;
     MemberId union_id_;
     DynamicData* union_discriminator_;
+    uint64_t discriminator_value_;
 
     friend class DynamicDataFactory;
     friend class DynamicPubSubType;
@@ -616,6 +621,21 @@ public:
             throw RETCODE_BAD_PARAMETER;
         }
         return value;
+    }
+
+    RTPS_DllAPI uint64_t get_discriminator_value() const
+    {
+        return discriminator_value_;
+    }
+
+    RTPS_DllAPI void get_discriminator_value(uint64_t& outValue) const
+    {
+        outValue = discriminator_value_;
+    }
+
+    RTPS_DllAPI void set_discriminator_value(uint64_t value)
+    {
+        discriminator_value_ = value;
     }
 };
 

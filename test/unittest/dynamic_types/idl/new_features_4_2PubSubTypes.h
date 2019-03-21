@@ -103,6 +103,27 @@ namespace bitmodule
         MD5 m_md5;
         unsigned char* m_keyBuffer;
     };
+    /*!
+     * @brief This class represents the TopicDataType of the type NoBitset defined by the user in the IDL file.
+     * @ingroup NEW_FEATURES_4_2
+     */
+    class NoBitsetPubSubType : public eprosima::fastrtps::TopicDataType {
+    public:
+        typedef NoBitset type;
+
+    NoBitsetPubSubType();
+
+    virtual ~NoBitsetPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+            bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+        MD5 m_md5;
+        unsigned char* m_keyBuffer;
+    };
 }
 /*!
  * @brief This class represents the TopicDataType of the type StructTest defined by the user in the IDL file.
@@ -115,6 +136,27 @@ public:
 StructTestPubSubType();
 
 virtual ~StructTestPubSubType();
+virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+virtual void* createData() override;
+virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+};
+/*!
+ * @brief This class represents the TopicDataType of the type NoBitsetStructTest defined by the user in the IDL file.
+ * @ingroup NEW_FEATURES_4_2
+ */
+class NoBitsetStructTestPubSubType : public eprosima::fastrtps::TopicDataType {
+public:
+    typedef NoBitsetStructTest type;
+
+NoBitsetStructTestPubSubType();
+
+virtual ~NoBitsetStructTestPubSubType();
 virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
 virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
 virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;

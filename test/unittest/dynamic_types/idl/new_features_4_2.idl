@@ -74,6 +74,13 @@ module bitmodule
 		MyBitMask two;
 		long mylong;
 	};
+
+	struct NoBitset
+	{
+		MyBitMask mybitmask;
+		MyBitMask two;
+		long mylong;
+	};
 };
 
 struct StructTest : NewAliases
@@ -82,4 +89,12 @@ struct StructTest : NewAliases
 	OctetUnion octetUnion;
 	Int8Union int8Union;
 	bitmodule::BM2 myStructBits;
+};
+
+struct NoBitsetStructTest : NewAliases
+{
+	WCharUnion charUnion;
+	OctetUnion octetUnion;
+	Int8Union int8Union;
+	bitmodule::NoBitset myStructBits;
 };

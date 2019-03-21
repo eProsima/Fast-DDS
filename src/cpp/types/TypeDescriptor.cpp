@@ -283,21 +283,24 @@ ResponseCode TypeDescriptor::apply_annotation(AnnotationDescriptor& descriptor)
     }
 }
 
-ResponseCode TypeDescriptor::apply_annotation(const std::string& key, const std::string& value)
+ResponseCode TypeDescriptor::apply_annotation(
+        const std::string& annotation_name,
+        const std::string& key,
+        const std::string& value)
 {
-    auto it = annotation_.begin();
-    if (it != annotation_.end())
+    AnnotationDescriptor* ann = get_annotation(annotation_name);
+    if (ann != nullptr)
     {
-        (*it)->set_value(key, value);
+        ann->set_value(key, value);
     }
     else
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive());
+        pNewDescriptor->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-
     return ResponseCode::RETCODE_OK;
 }
 
@@ -482,7 +485,8 @@ void TypeDescriptor::annotation_set_extensibility(const std::string& extensibili
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_string_type());
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_EXTENSIBILITY_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
@@ -496,7 +500,7 @@ void TypeDescriptor::annotation_set_mutable()
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUTABLE_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_MUTABLE_ID);
@@ -510,7 +514,7 @@ void TypeDescriptor::annotation_set_final()
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_FINAL_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_FINAL_ID);
@@ -524,7 +528,7 @@ void TypeDescriptor::annotation_set_appendable()
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_APPENDABLE_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_APPENDABLE_ID);
@@ -538,7 +542,7 @@ void TypeDescriptor::annotation_set_nested(bool nested)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NESTED_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_NESTED_ID);
@@ -552,7 +556,7 @@ void TypeDescriptor::annotation_set_key(bool key)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_KEY_ID);
@@ -566,7 +570,7 @@ void TypeDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_uint16_type());
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
@@ -580,7 +584,8 @@ void TypeDescriptor::annotation_set_non_serialized(bool non_serialized)
     if (ann == nullptr)
     {
         ann = new AnnotationDescriptor();
-        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_bool_type());
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
         apply_annotation(*ann);
         delete ann;
         ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);

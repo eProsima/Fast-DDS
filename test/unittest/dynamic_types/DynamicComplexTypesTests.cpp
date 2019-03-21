@@ -135,10 +135,10 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
     {
         DynamicTypeBuilder_ptr keyedStruct_builder = m_factory->create_struct_builder();
         DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-        octet_builder->apply_annotation(ANNOTATION_KEY_ID, "true");
+        octet_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
         keyedStruct_builder->add_member(0, "key", octet_builder->build());
         keyedStruct_builder->add_member(1, "basic", GetBasicStructType());
-        keyedStruct_builder->apply_annotation(ANNOTATION_KEY_ID, "true");
+        keyedStruct_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
         keyedStruct_builder->set_name("KeyedStruct");
         m_KeyedStructType = keyedStruct_builder->build();
     }

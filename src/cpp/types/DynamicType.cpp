@@ -92,22 +92,25 @@ ResponseCode DynamicType::apply_annotation(AnnotationDescriptor& descriptor)
     }
 }
 
-ResponseCode DynamicType::apply_annotation(const std::string& key, const std::string& value)
+ResponseCode DynamicType::apply_annotation(
+        const std::string& annotation_name,
+        const std::string& key,
+        const std::string& value)
 {
-    auto it = descriptor_->annotation_.begin();
-    if (it != descriptor_->annotation_.end())
+    AnnotationDescriptor* ann = descriptor_->get_annotation(annotation_name);
+    if (ann != nullptr)
     {
-        (*it)->set_value(key, value);
+        ann->set_value(key, value);
     }
     else
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
-        pNewDescriptor->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive());
+        pNewDescriptor->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
         pNewDescriptor->set_value(key, value);
         descriptor_->annotation_.push_back(pNewDescriptor);
         is_key_defined_ = key_annotation();
     }
-
     return ResponseCode::RETCODE_OK;
 }
 
@@ -138,13 +141,14 @@ ResponseCode DynamicType::apply_annotation_to_member(
 
 ResponseCode DynamicType::apply_annotation_to_member(
         MemberId id,
+        const std::string& annotation_name,
         const std::string& key,
         const std::string& value)
 {
     auto it = member_by_id_.find(id);
     if (it != member_by_id_.end())
     {
-        it->second->apply_annotation(key, value);
+        it->second->apply_annotation(annotation_name, key, value);
         return ResponseCode::RETCODE_OK;
     }
     else

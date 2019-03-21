@@ -56,6 +56,7 @@ protected:
 
     ResponseCode _apply_annotation_to_member(
             MemberId id,
+            const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
@@ -118,6 +119,7 @@ public:
     RTPS_DllAPI ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
 
     RTPS_DllAPI ResponseCode apply_annotation(
+            const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
@@ -127,6 +129,7 @@ public:
 
     RTPS_DllAPI ResponseCode apply_annotation_to_member(
             MemberId id,
+            const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 

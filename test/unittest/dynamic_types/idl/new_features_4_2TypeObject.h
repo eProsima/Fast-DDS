@@ -99,10 +99,20 @@ eProsima_user_DllExport const TypeObject* GetBM2Object(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalBM2Object();
 eProsima_user_DllExport const TypeObject* GetCompleteBM2Object();
 
+eProsima_user_DllExport const TypeIdentifier* GetNoBitsetIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetNoBitsetObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalNoBitsetObject();
+eProsima_user_DllExport const TypeObject* GetCompleteNoBitsetObject();
+
 eProsima_user_DllExport const TypeIdentifier* GetStructTestIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetStructTestObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalStructTestObject();
 eProsima_user_DllExport const TypeObject* GetCompleteStructTestObject();
+
+eProsima_user_DllExport const TypeIdentifier* GetNoBitsetStructTestIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetNoBitsetStructTestObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalNoBitsetStructTestObject();
+eProsima_user_DllExport const TypeObject* GetCompleteNoBitsetStructTestObject();
 
 
 #endif // _NEW_FEATURES_4_2_TYPE_OBJECT_H_

@@ -57,10 +57,13 @@ ResponseCode DynamicTypeMember::apply_annotation(AnnotationDescriptor& descripto
     return descriptor_.apply_annotation(descriptor);
 }
 
-ResponseCode DynamicTypeMember::apply_annotation(const std::string& key, const std::string& value)
+ResponseCode DynamicTypeMember::apply_annotation(
+        const std::string& annotation_name,
+        const std::string& key,
+        const std::string& value)
 {
     // Update the annotations on the member Dynamic Type.
-    return descriptor_.apply_annotation(key, value);
+    return descriptor_.apply_annotation(annotation_name, key, value);
 }
 
 bool DynamicTypeMember::equals(const DynamicTypeMember* other) const

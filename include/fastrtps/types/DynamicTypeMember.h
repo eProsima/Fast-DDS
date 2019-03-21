@@ -56,6 +56,7 @@ public:
     ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
 
     ResponseCode apply_annotation(
+            const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
