@@ -24,6 +24,84 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
 
+XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
+        tinyxml2::XMLElement* elem,
+        rtps::RTPSParticipantAllocationAttributes& allocation,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="rtpsParticipantAllocationAttributesType">
+            <xs:all minOccurs="0">
+                <xs:element name="remote_locators" type="remoteLocatorsAllocationConfigType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, REMOTE_LOCATORS) == 0)
+        {
+            // leaseDuration - durationType
+            if (XMLP_ret::XML_OK != getXMLRemoteLocatorsAllocationAttributes(p_aux0, allocation.locators, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'rtpsParticipantAllocationAttributesType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLRemoteLocatorsAllocationAttributes(
+        tinyxml2::XMLElement* elem,
+        rtps::RemoteLocatorsAllocationAttributes& allocation,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="remoteLocatorsAllocationConfigType">
+            <xs:all minOccurs="0">
+                <xs:element name="max_unicast_locators" type="uint32Type" minOccurs="0"/>
+                <xs:element name="max_multicast_locators" type="uint32Type" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    uint32_t tmp;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, MAX_UNICAST_LOCATORS) == 0)
+        {
+            // max_unicast_locators - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+                return XMLP_ret::XML_ERROR;
+            allocation.max_unicast_locators = tmp;
+        }
+        else if (strcmp(name, MAX_MULTICAST_LOCATORS) == 0)
+        {
+            // max_multicast_locators - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+                return XMLP_ret::XML_ERROR;
+            allocation.max_multicast_locators = tmp;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'remoteLocatorsAllocationConfigType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
 {
     /*
