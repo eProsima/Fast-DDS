@@ -44,7 +44,9 @@ public:
         void onNewCacheChangeAdded(
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
-        void onReaderMatched(eprosima::fastrtps::rtps::RTPSReader*, eprosima::fastrtps::rtps::MatchingInfo& info)
+        void onReaderMatched(
+                eprosima::fastrtps::rtps::RTPSReader*,
+                eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if(info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING) n_matched++;
         };
