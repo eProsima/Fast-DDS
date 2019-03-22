@@ -125,7 +125,7 @@ public:
      * @param change The cache change that has been added
      * @return True if the change has not expired due to lifespan QoS
      */
-    bool onNewCacheChangeAdded(rtps::CacheChange_t* const change);
+    bool onNewCacheChangeAdded(const CacheChange_t * const change);
 
 private:
 	//!Participant
@@ -146,8 +146,12 @@ private:
     public:
         SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
         virtual ~SubscriberReaderListener() {}
-        void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
-        void onNewCacheChangeAdded(rtps::RTPSReader * reader, rtps::CacheChange_t* const change);
+        void onReaderMatched(
+                rtps::RTPSReader* reader,
+                rtps::MatchingInfo& info);
+        void onNewCacheChangeAdded(
+                rtps::RTPSReader* reader,
+                const rtps::CacheChange_t* const change) override;
         SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
 

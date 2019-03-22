@@ -57,7 +57,7 @@ public:
      * @param reader
      * @param change
      */
-    void onNewCacheChangeAdded(RTPSReader* reader, CacheChange_t* const change) override;
+    void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change) override;
     /**
      * Process a new added cache with this method.
      * @return True on success

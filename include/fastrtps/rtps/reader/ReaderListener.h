@@ -64,7 +64,7 @@ class RTPS_DllAPI ReaderListener
          */
         virtual void onNewCacheChangeAdded(
                 RTPSReader* reader,
-                CacheChange_t* const change)
+                const CacheChange_t* const change)
         {
             (void)reader;
             (void)change;

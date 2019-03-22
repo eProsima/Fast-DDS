@@ -40,7 +40,9 @@ public:
     public:
         MyListener():m_received(0){};
         ~MyListener(){};
-        void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* reader, eprosima::fastrtps::rtps::CacheChange_t* const change) override;
+        void onNewCacheChangeAdded(
+                eprosima::fastrtps::rtps::RTPSReader* reader,
+                const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
         uint32_t m_received;
     }m_listener;
 

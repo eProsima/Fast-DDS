@@ -1555,7 +1555,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
 
 void SecurityManager::ParticipantStatelessMessageListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        CacheChange_t* const change)
+        const CacheChange_t* const change)
 {
     manager_.process_participant_stateless_message(change);
 
@@ -1566,7 +1566,7 @@ void SecurityManager::ParticipantStatelessMessageListener::onNewCacheChangeAdded
 
 void SecurityManager::ParticipantVolatileMessageListener::onNewCacheChangeAdded(
         RTPSReader* reader,
-        CacheChange_t* const change)
+        const CacheChange_t* const change)
 {
     manager_.process_participant_volatile_message_secure(change);
 
