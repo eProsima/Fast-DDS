@@ -184,6 +184,10 @@ bool PDPClient::createPDPEndpoints()
             rwatt.endpoint.durabilityKind = TRANSIENT; // Server Information must be persistent
             rwatt.endpoint.reliabilityKind = RELIABLE;
 
+            // TODO: remove the join when Reader and Writer match functions are updated
+            rwatt.endpoint.remoteLocatorList.push_back(it->metatrafficMulticastLocatorList);
+            rwatt.endpoint.remoteLocatorList.push_back(it->metatrafficUnicastLocatorList);
+
             mp_PDPReader->matched_writer_add(rwatt);
         }
        
@@ -235,6 +239,10 @@ bool PDPClient::createPDPEndpoints()
             rratt.endpoint.topicKind = WITH_KEY;
             rratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rratt.endpoint.reliabilityKind = RELIABLE;
+
+            // TODO: remove the join when Reader and Writer match functions are updated
+            rratt.endpoint.remoteLocatorList.push_back(it->metatrafficMulticastLocatorList);
+            rratt.endpoint.remoteLocatorList.push_back(it->metatrafficUnicastLocatorList);
 
             mp_PDPWriter->matched_reader_add(rratt);
         }

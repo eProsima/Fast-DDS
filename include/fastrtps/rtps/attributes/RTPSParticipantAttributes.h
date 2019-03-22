@@ -264,7 +264,7 @@ class RTPSParticipantAttributes
 
         /**
          * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
-         * that it was defined with NO UnicastLocators. This is usually left empty.
+         * that it was defined with NO MulticastLocators. This is usually left empty.
          */
         LocatorList_t defaultMulticastLocatorList;
 
