@@ -62,6 +62,7 @@ const char* DATA_WRITER = "data_writer";
 const char* DATA_READER = "data_reader";
 
 /// RTPS Participant attributes
+const char* ALLOCATION = "allocation";
 const char* DEF_UNI_LOC_LIST = "defaultUnicastLocatorList";
 const char* DEF_MULTI_LOC_LIST = "defaultMulticastLocatorList";
 const char* SEND_SOCK_BUF_SIZE = "sendSocketBufferSize";
@@ -78,6 +79,9 @@ const char* USER_TRANS = "userTransports";
 const char* USE_BUILTIN_TRANS = "useBuiltinTransports";
 const char* PROPERTIES_POLICY = "propertiesPolicy";
 const char* NAME = "name";
+const char* REMOTE_LOCATORS = "remote_locators";
+const char* MAX_UNICAST_LOCATORS = "max_unicast_locators";
+const char* MAX_MULTICAST_LOCATORS = "max_multicast_locators";
 
 /// Publisher-subscriber attributes
 const char* TOPIC = "topic";

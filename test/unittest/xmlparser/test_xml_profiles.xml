@@ -3,6 +3,12 @@
 
     <participant profile_name="test_participant_profile" is_default_profile="true">
         <rtps>
+            <allocation>
+                <remote_locators>
+                    <max_unicast_locators>4</max_unicast_locators>
+                    <max_multicast_locators>1</max_multicast_locators>
+                </remote_locators>
+            </allocation>
             <defaultUnicastLocatorList>
                 <locator>
                     <udpv4>

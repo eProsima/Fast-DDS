@@ -309,6 +309,19 @@
             <xs:element name="increment" type="uint32Type" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
+    
+    <xs:complexType name="remoteLocatorsAllocationConfigType">
+        <xs:all minOccurs="0">
+            <xs:element name="max_unicast_locators" type="uint32Type" minOccurs="0"/>
+            <xs:element name="max_multicast_locators" type="uint32Type" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="rtpsParticipantAllocationAttributesType">
+        <xs:all minOccurs="0">
+            <xs:element name="remote_locators" type="remoteLocatorsAllocationConfigType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
 
     <xs:simpleType name="historyQosKindType">
         <xs:restriction base="xs:string">
@@ -565,6 +578,7 @@
 
     <xs:complexType name="rtpsParticipantAttributesType">
         <xs:all minOccurs="0">
+            <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
             <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>

@@ -77,6 +77,7 @@ extern const char* DATA_WRITER;
 extern const char* DATA_READER;
 
 /// RTPS Participant attributes
+extern const char* ALLOCATION;
 extern const char* DEF_UNI_LOC_LIST;
 extern const char* DEF_MULTI_LOC_LIST;
 extern const char* SEND_SOCK_BUF_SIZE;
@@ -95,6 +96,9 @@ extern const char* USER_TRANS;
 extern const char* USE_BUILTIN_TRANS;
 extern const char* PROPERTIES_POLICY;
 extern const char* NAME;
+extern const char* REMOTE_LOCATORS;
+extern const char* MAX_UNICAST_LOCATORS;
+extern const char* MAX_MULTICAST_LOCATORS;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;
