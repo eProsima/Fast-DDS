@@ -245,11 +245,11 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     registernew_features_4_2Types();
 
     // TODO Bitset serialization isn't compatible.
-    const TypeIdentifier* identifier = GetNoBitsetStructTestIdentifier(true);
-    const TypeObject* object = GetCompleteNoBitsetStructTestObject();
+    const TypeIdentifier* identifier = GetStructTestIdentifier(true);
+    const TypeObject* object = GetCompleteStructTestObject();
 
     DynamicType_ptr dyn_type =
-        TypeObjectFactory::get_instance()->build_dynamic_type("NoBitsetStructTest", identifier, object);
+        TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
 
     TypeIdentifier conv_identifier;
     TypeObject conv_object;
@@ -261,7 +261,7 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
 
     // Serialize static <-> dynamic
 
-    NoBitsetStructTest struct_test;
+    StructTest struct_test;
     DynamicData_ptr dyn_data = DynamicDataFactory::get_instance()->create_data(dyn_type);
 
     DynamicPubSubType pst_dynamic(dyn_type);
@@ -270,7 +270,7 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     ASSERT_TRUE(pst_dynamic.serialize(dyn_data.get(), &payload));
     ASSERT_TRUE(payload.length == payload_dyn_size);
 
-    NoBitsetStructTestPubSubType pst_static;
+    StructTestPubSubType pst_static;
     uint32_t payload_size = static_cast<uint32_t>(pst_static.getSerializedSizeProvider(&struct_test)());
     SerializedPayload_t st_payload(payload_size);
     ASSERT_TRUE(pst_static.serialize(&struct_test, &st_payload));
@@ -300,22 +300,19 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     ASSERT_TRUE(dyn_data_from_static->equals(dyn_data_from_dynamic.get()));
 }
 
-
-
 TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
 {
     registernew_features_4_2Types();
 
-    // TODO Bitset serialization isn't compatible.
-    const TypeIdentifier* identifier = GetNoBitsetStructTestIdentifier(true);
-    const TypeObject* object = GetCompleteNoBitsetStructTestObject();
+    const TypeIdentifier* identifier = GetStructTestIdentifier(true);
+    const TypeObject* object = GetCompleteStructTestObject();
 
     DynamicType_ptr dyn_type =
-        TypeObjectFactory::get_instance()->build_dynamic_type("NoBitsetStructTest", identifier, object);
+        TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
 
     // Serialize static initialization with values
-    NoBitsetStructTest struct_test;
-    NoBitsetStructTestPubSubType pst_static;
+    StructTest struct_test;
+    StructTestPubSubType pst_static;
 
     struct_test.int8_(-8);
     struct_test.uint8_(8);
@@ -329,6 +326,13 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     struct_test.charUnion().case_one(11111);
     struct_test.octetUnion().case_seven(77777);
     struct_test.int8Union().case_three(33333);
+    struct_test.myStructBits().mybitset().parent_bitfield(2121);
+    struct_test.myStructBits().mybitset().a(5);
+    struct_test.myStructBits().mybitset().b(true);
+    struct_test.myStructBits().mybitset().c(333);
+    struct_test.myStructBits().mybitset().d(4000);
+    struct_test.myStructBits().mybitset().e(4001);
+    struct_test.myStructBits().mybitset().f(3001);
     struct_test.myStructBits().mybitmask(
         static_cast<bitmodule::MyBitMask>(bitmodule::MyBitMask::flag0 | bitmodule::MyBitMask::flag4));
     struct_test.myStructBits().two(
@@ -353,7 +357,7 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     ASSERT_TRUE(dyn_payload.length == payload_dyn_size);
 
     // Static deserialization from dynamic
-    NoBitsetStructTest struct_test_from_dynamic;
+    StructTest struct_test_from_dynamic;
     ASSERT_TRUE(pst_static.deserialize(&dyn_payload, &struct_test_from_dynamic));
 
     // Check values
@@ -369,6 +373,13 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     ASSERT_TRUE(struct_test_from_dynamic.charUnion().case_one() == struct_test.charUnion().case_one());
     ASSERT_TRUE(struct_test_from_dynamic.octetUnion().case_seven() == struct_test.octetUnion().case_seven());
     ASSERT_TRUE(struct_test_from_dynamic.int8Union().case_three() == struct_test.int8Union().case_three());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().parent_bitfield() == struct_test.myStructBits().mybitset().parent_bitfield());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().a() == struct_test.myStructBits().mybitset().a());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().b() == struct_test.myStructBits().mybitset().b());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().c() == struct_test.myStructBits().mybitset().c());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().d() == struct_test.myStructBits().mybitset().d());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().e() == struct_test.myStructBits().mybitset().e());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().f() == struct_test.myStructBits().mybitset().f());
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitmask() == struct_test.myStructBits().mybitmask());
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().two() == struct_test.myStructBits().two());
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mylong() == struct_test.myStructBits().mylong());
@@ -400,6 +411,24 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     dyn_data->return_loaned_value(int8Union);
 
     DynamicData* myStructBits = dyn_data->loan_value(dyn_data->get_member_id_by_name("myStructBits"));
+    DynamicData* mybitset = myStructBits->loan_value(myStructBits->get_member_id_by_name("mybitset"));
+
+    ASSERT_TRUE(mybitset->get_uint32_value(mybitset->get_member_id_by_name("parent_bitfield"))
+        == struct_test.myStructBits().mybitset().parent_bitfield());
+    ASSERT_TRUE(mybitset->get_char8_value(mybitset->get_member_id_by_name("a"))
+        == struct_test.myStructBits().mybitset().a());
+    ASSERT_TRUE(mybitset->get_bool_value(mybitset->get_member_id_by_name("b"))
+        == struct_test.myStructBits().mybitset().b());
+    ASSERT_TRUE(mybitset->get_uint16_value(mybitset->get_member_id_by_name("c"))
+        == struct_test.myStructBits().mybitset().c());
+    ASSERT_TRUE(mybitset->get_int16_value(mybitset->get_member_id_by_name("d"))
+        == struct_test.myStructBits().mybitset().d());
+    ASSERT_TRUE(mybitset->get_int16_value(mybitset->get_member_id_by_name("e"))
+        == struct_test.myStructBits().mybitset().e());
+    ASSERT_TRUE(mybitset->get_int16_value(mybitset->get_member_id_by_name("f"))
+        == struct_test.myStructBits().mybitset().f());
+
+    myStructBits->return_loaned_value(mybitset);
     ASSERT_TRUE(myStructBits->get_uint64_value(myStructBits->get_member_id_by_name("mybitmask")) ==
         struct_test.myStructBits().mybitmask());
     ASSERT_TRUE(myStructBits->get_uint64_value(myStructBits->get_member_id_by_name("two")) ==

@@ -1472,8 +1472,8 @@ size_t bitmodule::ParentBitset::getMaxCdrSerializedSize(size_t current_alignment
     size_t initial_alignment = current_alignment;
 
 
-    // TODO Check if this returns the primitive size that hold the bitset
-    current_alignment += sizeof(m_bitset);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     return current_alignment - initial_alignment;
 }
@@ -1483,8 +1483,7 @@ size_t bitmodule::ParentBitset::getCdrSerializedSize(const bitmodule::ParentBits
     size_t initial_alignment = current_alignment;
 
 
-    // TODO Check if this returns the primitive size that hold the bitset
-    current_alignment += sizeof(m_bitset);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     return current_alignment - initial_alignment;
 }
@@ -1492,17 +1491,15 @@ size_t bitmodule::ParentBitset::getCdrSerializedSize(const bitmodule::ParentBits
 void bitmodule::ParentBitset::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
 
-    // TODO Serializing as uint64_t, but should adjust the size to an optimum primitive?
-    scdr << static_cast<uint64_t>(m_bitset.to_ullong());
+    scdr << static_cast<uint32_t>(parent_bitfield());
 }
 
 void bitmodule::ParentBitset::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
 
-    // TODO Serializing as uint64_t, but should adjust the size to an optimum primitive?
-    uint64_t temp = 0;
-    dcdr >> temp;
-    m_bitset = temp;
+    uint32_t aux_parent_bitfield;
+    dcdr >> aux_parent_bitfield;
+    parent_bitfield(aux_parent_bitfield);
 }
 
 
@@ -1573,8 +1570,25 @@ size_t bitmodule::MyBitset::getMaxCdrSerializedSize(size_t current_alignment)
 
     current_alignment += bitmodule::ParentBitset::getMaxCdrSerializedSize(current_alignment); 
 
-    // TODO Check if this returns the primitive size that hold the bitset
-    current_alignment += sizeof(m_bitset);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
 
     return current_alignment - initial_alignment;
 }
@@ -1585,8 +1599,19 @@ size_t bitmodule::MyBitset::getCdrSerializedSize(const bitmodule::MyBitset& data
 
     current_alignment += bitmodule::ParentBitset::getCdrSerializedSize(data, current_alignment); 
 
-    // TODO Check if this returns the primitive size that hold the bitset
-    current_alignment += sizeof(m_bitset);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
 
     return current_alignment - initial_alignment;
 }
@@ -1595,18 +1620,38 @@ void bitmodule::MyBitset::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     bitmodule::ParentBitset::serialize(scdr); 
 
-    // TODO Serializing as uint64_t, but should adjust the size to an optimum primitive?
-    scdr << static_cast<uint64_t>(m_bitset.to_ullong());
+    scdr << static_cast<char>(a());
+    scdr << static_cast<bool>(b());
+
+    scdr << static_cast<uint16_t>(c());
+    scdr << static_cast<int16_t>(d());
+    scdr << static_cast<int16_t>(e());
+    scdr << static_cast<int16_t>(f());
 }
 
 void bitmodule::MyBitset::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     bitmodule::ParentBitset::deserialize(dcdr); 
 
-    // TODO Serializing as uint64_t, but should adjust the size to an optimum primitive?
-    uint64_t temp = 0;
-    dcdr >> temp;
-    m_bitset = temp;
+    char aux_a;
+    dcdr >> aux_a;
+    a(aux_a);
+    bool aux_b;
+    dcdr >> aux_b;
+    b(aux_b);
+
+    uint16_t aux_c;
+    dcdr >> aux_c;
+    c(aux_c);
+    int16_t aux_d;
+    dcdr >> aux_d;
+    d(aux_d);
+    int16_t aux_e;
+    dcdr >> aux_e;
+    e(aux_e);
+    int16_t aux_f;
+    dcdr >> aux_f;
+    f(aux_f);
 }
 
 
@@ -2089,222 +2134,6 @@ void bitmodule::BM2::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 	 
 }
 
-bitmodule::NoBitset::NoBitset()
-{
-    m_mybitmask = static_cast<bitmodule::MyBitMask>(0);
-    m_two = static_cast<bitmodule::MyBitMask>(0);
-    m_mylong = 0;
-
-    // Just to register all known types
-    registernew_features_4_2Types();
-}
-
-bitmodule::NoBitset::~NoBitset()
-{
-
-
-
-}
-
-bitmodule::NoBitset::NoBitset(const NoBitset &x)
-{
-    m_mybitmask = x.m_mybitmask;
-    m_two = x.m_two;
-    m_mylong = x.m_mylong;
-}
-
-bitmodule::NoBitset::NoBitset(NoBitset &&x)
-{
-    m_mybitmask = x.m_mybitmask;
-    m_two = x.m_two;
-    m_mylong = x.m_mylong;
-}
-
-bitmodule::NoBitset& bitmodule::NoBitset::operator=(const NoBitset &x)
-{
-
-    m_mybitmask = x.m_mybitmask;
-    m_two = x.m_two;
-    m_mylong = x.m_mylong;
-
-    return *this;
-}
-
-bitmodule::NoBitset& bitmodule::NoBitset::operator=(NoBitset &&x)
-{
-
-    m_mybitmask = x.m_mybitmask;
-    m_two = x.m_two;
-    m_mylong = x.m_mylong;
-
-    return *this;
-}
-
-size_t bitmodule::NoBitset::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t bitmodule::NoBitset::getCdrSerializedSize(const bitmodule::NoBitset& data, size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-
-    return current_alignment - initial_alignment;
-}
-
-void bitmodule::NoBitset::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-
-    scdr << (uint8_t)m_mybitmask;
-    scdr << (uint8_t)m_two;
-    scdr << m_mylong;
-}
-
-void bitmodule::NoBitset::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-
-    {
-        uint8_t enum_value = 0;
-        dcdr >> enum_value;
-        m_mybitmask = (bitmodule::MyBitMask)enum_value;
-    }
-    {
-        uint8_t enum_value = 0;
-        dcdr >> enum_value;
-        m_two = (bitmodule::MyBitMask)enum_value;
-    }
-    dcdr >> m_mylong;
-}
-
-/*!
- * @brief This function sets a value in member mybitmask
- * @param _mybitmask New value for member mybitmask
- */
-void bitmodule::NoBitset::mybitmask(bitmodule::MyBitMask _mybitmask)
-{
-m_mybitmask = _mybitmask;
-}
-
-/*!
- * @brief This function returns the value of member mybitmask
- * @return Value of member mybitmask
- */
-bitmodule::MyBitMask bitmodule::NoBitset::mybitmask() const
-{
-    return m_mybitmask;
-}
-
-/*!
- * @brief This function returns a reference to member mybitmask
- * @return Reference to member mybitmask
- */
-bitmodule::MyBitMask& bitmodule::NoBitset::mybitmask()
-{
-    return m_mybitmask;
-}
-/*!
- * @brief This function sets a value in member two
- * @param _two New value for member two
- */
-void bitmodule::NoBitset::two(bitmodule::MyBitMask _two)
-{
-m_two = _two;
-}
-
-/*!
- * @brief This function returns the value of member two
- * @return Value of member two
- */
-bitmodule::MyBitMask bitmodule::NoBitset::two() const
-{
-    return m_two;
-}
-
-/*!
- * @brief This function returns a reference to member two
- * @return Reference to member two
- */
-bitmodule::MyBitMask& bitmodule::NoBitset::two()
-{
-    return m_two;
-}
-/*!
- * @brief This function sets a value in member mylong
- * @param _mylong New value for member mylong
- */
-void bitmodule::NoBitset::mylong(int32_t _mylong)
-{
-m_mylong = _mylong;
-}
-
-/*!
- * @brief This function returns the value of member mylong
- * @return Value of member mylong
- */
-int32_t bitmodule::NoBitset::mylong() const
-{
-    return m_mylong;
-}
-
-/*!
- * @brief This function returns a reference to member mylong
- * @return Reference to member mylong
- */
-int32_t& bitmodule::NoBitset::mylong()
-{
-    return m_mylong;
-}
-
-size_t bitmodule::NoBitset::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-
-
-
-
-
-    return current_align;
-}
-
-bool bitmodule::NoBitset::isKeyDefined()
-{
-   return false;
-}
-
-void bitmodule::NoBitset::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-	 
-	 
-	 
-}
-
 
 StructTest::StructTest() : NewAliases() 
 {
@@ -2577,286 +2406,6 @@ bool StructTest::isKeyDefined()
 }
 
 void StructTest::serializeKey(eprosima::fastcdr::Cdr &scdr) const
-{
-	(void) scdr;
-    NewAliases::serializeKey(scdr); 
-	 
-	 
-	 
-	 
-}
-
-NoBitsetStructTest::NoBitsetStructTest() : NewAliases() 
-{
-
-
-
-
-
-    // Just to register all known types
-    registernew_features_4_2Types();
-}
-
-NoBitsetStructTest::~NoBitsetStructTest()
-{
-
-
-
-
-}
-
-NoBitsetStructTest::NoBitsetStructTest(const NoBitsetStructTest &x) : NewAliases(x) 
-{
-    m_charUnion = x.m_charUnion;
-    m_octetUnion = x.m_octetUnion;
-    m_int8Union = x.m_int8Union;
-    m_myStructBits = x.m_myStructBits;
-}
-
-NoBitsetStructTest::NoBitsetStructTest(NoBitsetStructTest &&x) : NewAliases(std::move(x)) 
-{
-    m_charUnion = std::move(x.m_charUnion);
-    m_octetUnion = std::move(x.m_octetUnion);
-    m_int8Union = std::move(x.m_int8Union);
-    m_myStructBits = std::move(x.m_myStructBits);
-}
-
-NoBitsetStructTest& NoBitsetStructTest::operator=(const NoBitsetStructTest &x)
-{
-    NewAliases::operator=(x); 
-
-    m_charUnion = x.m_charUnion;
-    m_octetUnion = x.m_octetUnion;
-    m_int8Union = x.m_int8Union;
-    m_myStructBits = x.m_myStructBits;
-
-    return *this;
-}
-
-NoBitsetStructTest& NoBitsetStructTest::operator=(NoBitsetStructTest &&x)
-{
-    NewAliases::operator=(std::move(x)); 
-
-    m_charUnion = std::move(x.m_charUnion);
-    m_octetUnion = std::move(x.m_octetUnion);
-    m_int8Union = std::move(x.m_int8Union);
-    m_myStructBits = std::move(x.m_myStructBits);
-
-    return *this;
-}
-
-size_t NoBitsetStructTest::getMaxCdrSerializedSize(size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += NewAliases::getMaxCdrSerializedSize(current_alignment); 
-
-    current_alignment += WCharUnion::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += OctetUnion::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += Int8Union::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += bitmodule::NoBitset::getMaxCdrSerializedSize(current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
-size_t NoBitsetStructTest::getCdrSerializedSize(const NoBitsetStructTest& data, size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += NewAliases::getCdrSerializedSize(data, current_alignment); 
-
-    current_alignment += WCharUnion::getCdrSerializedSize(data.charUnion(), current_alignment);
-    current_alignment += OctetUnion::getCdrSerializedSize(data.octetUnion(), current_alignment);
-    current_alignment += Int8Union::getCdrSerializedSize(data.int8Union(), current_alignment);
-    current_alignment += bitmodule::NoBitset::getCdrSerializedSize(data.myStructBits(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
-void NoBitsetStructTest::serialize(eprosima::fastcdr::Cdr &scdr) const
-{
-    NewAliases::serialize(scdr); 
-
-    scdr << m_charUnion;
-    scdr << m_octetUnion;
-    scdr << m_int8Union;
-    scdr << m_myStructBits;
-}
-
-void NoBitsetStructTest::deserialize(eprosima::fastcdr::Cdr &dcdr)
-{
-    NewAliases::deserialize(dcdr); 
-
-    dcdr >> m_charUnion;
-    dcdr >> m_octetUnion;
-    dcdr >> m_int8Union;
-    dcdr >> m_myStructBits;
-}
-
-/*!
- * @brief This function copies the value in member charUnion
- * @param _charUnion New value to be copied in member charUnion
- */
-void NoBitsetStructTest::charUnion(const WCharUnion &_charUnion)
-{
-m_charUnion = _charUnion;
-}
-
-/*!
- * @brief This function moves the value in member charUnion
- * @param _charUnion New value to be moved in member charUnion
- */
-void NoBitsetStructTest::charUnion(WCharUnion &&_charUnion)
-{
-m_charUnion = std::move(_charUnion);
-}
-
-/*!
- * @brief This function returns a constant reference to member charUnion
- * @return Constant reference to member charUnion
- */
-const WCharUnion& NoBitsetStructTest::charUnion() const
-{
-    return m_charUnion;
-}
-
-/*!
- * @brief This function returns a reference to member charUnion
- * @return Reference to member charUnion
- */
-WCharUnion& NoBitsetStructTest::charUnion()
-{
-    return m_charUnion;
-}
-/*!
- * @brief This function copies the value in member octetUnion
- * @param _octetUnion New value to be copied in member octetUnion
- */
-void NoBitsetStructTest::octetUnion(const OctetUnion &_octetUnion)
-{
-m_octetUnion = _octetUnion;
-}
-
-/*!
- * @brief This function moves the value in member octetUnion
- * @param _octetUnion New value to be moved in member octetUnion
- */
-void NoBitsetStructTest::octetUnion(OctetUnion &&_octetUnion)
-{
-m_octetUnion = std::move(_octetUnion);
-}
-
-/*!
- * @brief This function returns a constant reference to member octetUnion
- * @return Constant reference to member octetUnion
- */
-const OctetUnion& NoBitsetStructTest::octetUnion() const
-{
-    return m_octetUnion;
-}
-
-/*!
- * @brief This function returns a reference to member octetUnion
- * @return Reference to member octetUnion
- */
-OctetUnion& NoBitsetStructTest::octetUnion()
-{
-    return m_octetUnion;
-}
-/*!
- * @brief This function copies the value in member int8Union
- * @param _int8Union New value to be copied in member int8Union
- */
-void NoBitsetStructTest::int8Union(const Int8Union &_int8Union)
-{
-m_int8Union = _int8Union;
-}
-
-/*!
- * @brief This function moves the value in member int8Union
- * @param _int8Union New value to be moved in member int8Union
- */
-void NoBitsetStructTest::int8Union(Int8Union &&_int8Union)
-{
-m_int8Union = std::move(_int8Union);
-}
-
-/*!
- * @brief This function returns a constant reference to member int8Union
- * @return Constant reference to member int8Union
- */
-const Int8Union& NoBitsetStructTest::int8Union() const
-{
-    return m_int8Union;
-}
-
-/*!
- * @brief This function returns a reference to member int8Union
- * @return Reference to member int8Union
- */
-Int8Union& NoBitsetStructTest::int8Union()
-{
-    return m_int8Union;
-}
-/*!
- * @brief This function copies the value in member myStructBits
- * @param _myStructBits New value to be copied in member myStructBits
- */
-void NoBitsetStructTest::myStructBits(const bitmodule::NoBitset &_myStructBits)
-{
-m_myStructBits = _myStructBits;
-}
-
-/*!
- * @brief This function moves the value in member myStructBits
- * @param _myStructBits New value to be moved in member myStructBits
- */
-void NoBitsetStructTest::myStructBits(bitmodule::NoBitset &&_myStructBits)
-{
-m_myStructBits = std::move(_myStructBits);
-}
-
-/*!
- * @brief This function returns a constant reference to member myStructBits
- * @return Constant reference to member myStructBits
- */
-const bitmodule::NoBitset& NoBitsetStructTest::myStructBits() const
-{
-    return m_myStructBits;
-}
-
-/*!
- * @brief This function returns a reference to member myStructBits
- * @return Reference to member myStructBits
- */
-bitmodule::NoBitset& NoBitsetStructTest::myStructBits()
-{
-    return m_myStructBits;
-}
-
-size_t NoBitsetStructTest::getKeyMaxCdrSerializedSize(size_t current_alignment)
-{
-	size_t current_align = current_alignment;
-
-    current_alignment += NewAliases::getKeyMaxCdrSerializedSize(current_alignment); 
-
-
-
-
-
-
-    return current_align;
-}
-
-bool NoBitsetStructTest::isKeyDefined()
-{
-    if (NewAliases::isKeyDefined())
-        return true;
-    return false;
-}
-
-void NoBitsetStructTest::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
     NewAliases::serializeKey(scdr); 

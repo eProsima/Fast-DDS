@@ -5212,7 +5212,7 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr& cdr)
         break;
     }
     case TK_STRUCTURE:
-    case TK_BITSET: // TODO Serializing as an structure, but should serialize only a primitive with declared bits.
+    case TK_BITSET:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         //uint32_t size(static_cast<uint32_t>(complex_values_.size())), memberId(MEMBER_ID_INVALID);
@@ -5607,7 +5607,7 @@ size_t DynamicData::getCdrSerializedSize(
         break;
     }
     case TK_STRUCTURE:
-    case TK_BITSET: // TODO Serializing as an structure, but should serialize only a primitive with declared bits.
+    case TK_BITSET:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         //for (auto it = data->complex_values_.begin(); it != data->complex_values_.end(); ++it)
@@ -5828,7 +5828,7 @@ size_t DynamicData::getMaxCdrSerializedSize(
         break;
     }
     case TK_STRUCTURE:
-    case TK_BITSET: // TODO Serializing as an structure, but should serialize only a primitive with declared bits.
+    case TK_BITSET:
     {
         for (auto it = type->member_by_id_.begin(); it != type->member_by_id_.end(); ++it)
         {
@@ -6108,7 +6108,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr& cdr) const
         break;
     }
     case TK_STRUCTURE:
-    case TK_BITSET: // TODO Serializing as an structure, but should serialize only a primitive with declared bits.
+    case TK_BITSET:
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         for (uint32_t idx = 0; idx < static_cast<uint32_t>(complex_values_.size()); ++idx)
@@ -6380,7 +6380,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(
         break;
     }
     case TK_STRUCTURE:
-    case TK_BITSET: // TODO Serializing as an structure, but should serialize only a primitive with declared bits.
+    case TK_BITSET:
     {
         for (auto it = type->member_by_id_.begin(); it != type->member_by_id_.end(); ++it)
         {
@@ -6538,7 +6538,7 @@ void DynamicData::serialize_empty_data(
             break;
         }
         case TK_STRUCTURE:
-        case TK_BITSET: // TODO Serializing as an structure, but should serialize only a primitive with declared bits.
+        case TK_BITSET:
         {
             for (uint32_t idx = 0; idx < pType->member_by_id_.size(); ++idx)
             {
