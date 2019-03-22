@@ -384,6 +384,40 @@ public:
             octet value,
             MemberId id = MEMBER_ID_INVALID);
 
+    RTPS_DllAPI ResponseCode get_int8_value(
+            int8_t& value,
+            MemberId id) const
+    {
+        octet aux;
+        ResponseCode result = get_byte_value(aux, id);
+        value = static_cast<int8_t>(aux);
+        return result;
+    }
+
+    RTPS_DllAPI ResponseCode set_int8_value(
+            int8_t value,
+            MemberId id = MEMBER_ID_INVALID)
+    {
+        return set_byte_value(static_cast<octet>(value), id);
+    }
+
+    RTPS_DllAPI ResponseCode get_uint8_value(
+            uint8_t& value,
+            MemberId id) const
+    {
+        octet aux;
+        ResponseCode result = get_byte_value(aux, id);
+        value = static_cast<uint8_t>(aux);
+        return result;
+    }
+
+    RTPS_DllAPI ResponseCode set_uint8_value(
+            uint8_t value,
+            MemberId id = MEMBER_ID_INVALID)
+    {
+        return set_byte_value(static_cast<octet>(value), id);
+    }
+
     RTPS_DllAPI ResponseCode get_bool_value(
             bool& value,
             MemberId id) const;
@@ -557,6 +591,26 @@ public:
     {
         octet value;
         if (get_byte_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI int8_t get_int8_value(MemberId id) const
+    {
+        int8_t value;
+        if (get_int8_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI uint8_t get_uint8_value(MemberId id) const
+    {
+        uint8_t value;
+        if (get_uint8_value(value, id) != RETCODE_OK)
         {
             throw RETCODE_BAD_PARAMETER;
         }

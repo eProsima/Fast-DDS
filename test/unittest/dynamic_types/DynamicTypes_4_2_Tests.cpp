@@ -27,11 +27,13 @@
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/log/Log.h>
+#include <fastcdr/exceptions/BadParamException.h>
 #include "idl/new_features_4_2PubSubTypes.h"
 #include "idl/new_features_4_2TypeObject.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastcdr::exception;
 
 class DynamicTypes_4_2_Tests: public ::testing::Test
 {
@@ -60,6 +62,63 @@ TEST_F(DynamicTypes_4_2_Tests, Inheritance_And_Default_Value)
     StructTest struct_test;
     ASSERT_TRUE(struct_test.uint64_() == 555);
     ASSERT_TRUE(struct_test.int64_() == 0);
+}
+
+TEST_F(DynamicTypes_4_2_Tests, Bitmask)
+{
+    using namespace bitmodule;
+    MyBitMask bitmask;
+
+    ASSERT_TRUE(bitmask == static_cast<MyBitMask>(0));
+    bitmask = MyBitMask::flag0;
+    ASSERT_TRUE(bitmask == static_cast<MyBitMask>(1));
+    bitmask = MyBitMask::flag1;
+    ASSERT_TRUE(bitmask == static_cast<MyBitMask>(2));
+    bitmask = MyBitMask::flag4;
+    ASSERT_TRUE(bitmask == static_cast<MyBitMask>(16));
+    bitmask = MyBitMask::flag6;
+    ASSERT_TRUE(bitmask == static_cast<MyBitMask>(64));
+    bitmask = MyBitMask::flag7;
+    ASSERT_TRUE(bitmask == static_cast<MyBitMask>(128));
+
+    bitmask = static_cast<MyBitMask>(MyBitMask::flag0 | MyBitMask::flag4);
+    ASSERT_TRUE(bitmask == static_cast<MyBitMask>(17));
+
+    bitmask = static_cast<MyBitMask>(9);
+    ASSERT_TRUE(bitmask & MyBitMask::flag0);
+    ASSERT_FALSE(bitmask & MyBitMask::flag1);
+    ASSERT_FALSE(bitmask & MyBitMask::flag4);
+}
+
+TEST_F(DynamicTypes_4_2_Tests, Bitset)
+{
+    using namespace bitmodule;
+    MyBitset mybitset;
+
+    ASSERT_TRUE(mybitset.a() == 0);
+    ASSERT_TRUE(mybitset.b() == 0);
+    ASSERT_TRUE(mybitset.c() == 0);
+    ASSERT_TRUE(mybitset.d() == 0);
+    ASSERT_TRUE(mybitset.e() == 0);
+    ASSERT_TRUE(mybitset.f() == 0);
+    ASSERT_TRUE(mybitset.parent_bitfield() == 0);
+
+    mybitset.a(static_cast<char>(15));    // 00001111
+    ASSERT_TRUE(mybitset.a() == 7);       // 00000111
+    ASSERT_TRUE(mybitset.b() == 0);       // b unaffected
+    ASSERT_FALSE(mybitset.b());
+    mybitset.b(true);
+    ASSERT_TRUE(mybitset.b());
+    mybitset.c(static_cast<uint16_t>(-1));// 1111111111111111
+    ASSERT_TRUE(mybitset.c() == 1023);    // 0000001111111111 (2^10 - 1)
+    mybitset.d(-1);                       // 1111111111111111
+    mybitset.e(5555);                     // 0001010110110011 (The most significant bit is not stored)
+    mybitset.f(3851);
+    ASSERT_TRUE(mybitset.d() == 4095);    // 0000111111111111 (2^12 - 1)
+    ASSERT_TRUE(mybitset.e() == 1459);    // 0000010110110011 (The most significant bit is not stored)
+    ASSERT_TRUE(mybitset.f() == 3851);
+    mybitset.parent_bitfield(-1);                       // 11111111111111111111111111111111
+    ASSERT_TRUE(mybitset.parent_bitfield() == 131071);  // 00000000000000111111111111111111 (2^17 - 1)
 }
 
 TEST_F(DynamicTypes_4_2_Tests, Non_Serialized_Annotation)
@@ -101,6 +160,84 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
     ASSERT_TRUE(sizeof(struct_test.int8Union()._d()) == 1);
     ASSERT_TRUE(sizeof(struct_test.octetUnion()._d()) == 1);
     ASSERT_TRUE(sizeof(struct_test.charUnion()._d()) == sizeof(wchar_t));
+
+    // int8Union
+    struct_test.int8Union().case_three(333);
+    struct_test.int8Union().case_six(666);
+
+    struct_test.int8Union()._d() = 3;
+    ASSERT_TRUE(struct_test.int8Union().case_three() == 333);
+    try
+    {
+        ASSERT_FALSE(struct_test.int8Union().case_six() == 666);
+        ASSERT_TRUE(false);
+    }
+    catch(const BadParamException&)
+    {
+    }
+
+    struct_test.int8Union()._d() = 6;
+    try
+    {
+        ASSERT_FALSE(struct_test.int8Union().case_three() == 333);
+        ASSERT_TRUE(false);
+    }
+    catch(const BadParamException&)
+    {
+    }
+    ASSERT_TRUE(struct_test.int8Union().case_six() == 666);
+
+    // octetUnion
+    struct_test.octetUnion().case_five(555);
+    struct_test.octetUnion().case_seven(777);
+
+    struct_test.octetUnion()._d() = 5;
+    ASSERT_TRUE(struct_test.octetUnion().case_five() == 555);
+    try
+    {
+        ASSERT_FALSE(struct_test.octetUnion().case_seven() == 777);
+        ASSERT_TRUE(false);
+    }
+    catch(const BadParamException&)
+    {
+    }
+
+    struct_test.octetUnion()._d() = 7;
+    try
+    {
+        ASSERT_FALSE(struct_test.octetUnion().case_five() == 555);
+        ASSERT_TRUE(false);
+    }
+    catch(const BadParamException&)
+    {
+    }
+    ASSERT_TRUE(struct_test.octetUnion().case_seven() == 777);
+
+    // charUnion
+    struct_test.charUnion().case_zero(111);
+    struct_test.charUnion().case_one(222);
+
+    struct_test.charUnion()._d() = L'a';
+    ASSERT_TRUE(struct_test.charUnion().case_zero() == 111);
+    try
+    {
+        ASSERT_FALSE(struct_test.charUnion().case_one() == 222);
+        ASSERT_TRUE(false);
+    }
+    catch(const BadParamException&)
+    {
+    }
+
+    struct_test.charUnion()._d() = L'b';
+    try
+    {
+        ASSERT_FALSE(struct_test.charUnion().case_zero() == 111);
+        ASSERT_TRUE(false);
+    }
+    catch(const BadParamException&)
+    {
+    }
+    ASSERT_TRUE(struct_test.charUnion().case_one() == 222);
 }
 
 TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
@@ -161,6 +298,115 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     std::cout << "--------------------------" << std::endl;
     */
     ASSERT_TRUE(dyn_data_from_static->equals(dyn_data_from_dynamic.get()));
+}
+
+
+
+TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
+{
+    registernew_features_4_2Types();
+
+    // TODO Bitset serialization isn't compatible.
+    const TypeIdentifier* identifier = GetNoBitsetStructTestIdentifier(true);
+    const TypeObject* object = GetCompleteNoBitsetStructTestObject();
+
+    DynamicType_ptr dyn_type =
+        TypeObjectFactory::get_instance()->build_dynamic_type("NoBitsetStructTest", identifier, object);
+
+    // Serialize static initialization with values
+    NoBitsetStructTest struct_test;
+    NoBitsetStructTestPubSubType pst_static;
+
+    struct_test.int8_(-8);
+    struct_test.uint8_(8);
+    struct_test.int16_(-16);
+    struct_test.uint16_(16);
+    struct_test.int32_(-32);
+    struct_test.uint32_(32);
+    struct_test.int64_(-64);
+    struct_test.uint64_(64);
+    struct_test.local_string("DON'T_SERIALIZE");
+    struct_test.charUnion().case_one(11111);
+    struct_test.octetUnion().case_seven(77777);
+    struct_test.int8Union().case_three(33333);
+    struct_test.myStructBits().mybitmask(
+        static_cast<bitmodule::MyBitMask>(bitmodule::MyBitMask::flag0 | bitmodule::MyBitMask::flag4));
+    struct_test.myStructBits().two(
+        static_cast<bitmodule::MyBitMask>(bitmodule::MyBitMask::flag1 | bitmodule::MyBitMask::flag6));
+    struct_test.myStructBits().mylong(static_cast<uint32_t>(struct_test.myStructBits().two()));
+
+    // Static serialization
+    uint32_t payload_size = static_cast<uint32_t>(pst_static.getSerializedSizeProvider(&struct_test)());
+    SerializedPayload_t st_payload(payload_size);
+    ASSERT_TRUE(pst_static.serialize(&struct_test, &st_payload));
+    ASSERT_TRUE(st_payload.length == payload_size);
+
+    // Dynamic deserialization from static
+    DynamicPubSubType pst_dynamic(dyn_type);
+    DynamicData_ptr dyn_data = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    ASSERT_TRUE(pst_dynamic.deserialize(&st_payload, dyn_data.get()));
+
+    // Dynamic serialization
+    uint32_t payload_dyn_size = static_cast<uint32_t>(pst_dynamic.getSerializedSizeProvider(dyn_data.get())());
+    SerializedPayload_t dyn_payload(payload_dyn_size);
+    ASSERT_TRUE(pst_dynamic.serialize(dyn_data.get(), &dyn_payload));
+    ASSERT_TRUE(dyn_payload.length == payload_dyn_size);
+
+    // Static deserialization from dynamic
+    NoBitsetStructTest struct_test_from_dynamic;
+    ASSERT_TRUE(pst_static.deserialize(&dyn_payload, &struct_test_from_dynamic));
+
+    // Check values
+    ASSERT_TRUE(struct_test_from_dynamic.int8_() == struct_test.int8_());
+    ASSERT_TRUE(struct_test_from_dynamic.uint8_() == struct_test.uint8_());
+    ASSERT_TRUE(struct_test_from_dynamic.int16_() == struct_test.int16_());
+    ASSERT_TRUE(struct_test_from_dynamic.uint16_() == struct_test.uint16_());
+    ASSERT_TRUE(struct_test_from_dynamic.int32_() == struct_test.int32_());
+    ASSERT_TRUE(struct_test_from_dynamic.uint32_() == struct_test.uint32_());
+    ASSERT_TRUE(struct_test_from_dynamic.int64_() == struct_test.int64_());
+    ASSERT_TRUE(struct_test_from_dynamic.uint64_() == struct_test.uint64_());
+    ASSERT_FALSE(struct_test_from_dynamic.local_string() == struct_test.local_string()); // Non serialized
+    ASSERT_TRUE(struct_test_from_dynamic.charUnion().case_one() == struct_test.charUnion().case_one());
+    ASSERT_TRUE(struct_test_from_dynamic.octetUnion().case_seven() == struct_test.octetUnion().case_seven());
+    ASSERT_TRUE(struct_test_from_dynamic.int8Union().case_three() == struct_test.int8Union().case_three());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitmask() == struct_test.myStructBits().mybitmask());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().two() == struct_test.myStructBits().two());
+    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mylong() == struct_test.myStructBits().mylong());
+
+    ASSERT_TRUE(dyn_data->get_int8_value(dyn_data->get_member_id_by_name("int8_")) == struct_test.int8_());
+    ASSERT_TRUE(dyn_data->get_uint8_value(dyn_data->get_member_id_by_name("uint8_")) == struct_test.uint8_());
+    ASSERT_TRUE(dyn_data->get_int16_value(dyn_data->get_member_id_by_name("int16_")) == struct_test.int16_());
+    ASSERT_TRUE(dyn_data->get_uint16_value(dyn_data->get_member_id_by_name("uint16_")) == struct_test.uint16_());
+    ASSERT_TRUE(dyn_data->get_int32_value(dyn_data->get_member_id_by_name("int32_")) == struct_test.int32_());
+    ASSERT_TRUE(dyn_data->get_uint32_value(dyn_data->get_member_id_by_name("uint32_")) == struct_test.uint32_());
+    ASSERT_TRUE(dyn_data->get_int64_value(dyn_data->get_member_id_by_name("int64_")) == struct_test.int64_());
+    ASSERT_TRUE(dyn_data->get_uint64_value(dyn_data->get_member_id_by_name("uint64_")) == struct_test.uint64_());
+    ASSERT_FALSE(dyn_data->get_string_value(dyn_data->get_member_id_by_name("local_string")) ==
+        struct_test.local_string()); // Non serialized
+
+    DynamicData* charUnion = dyn_data->loan_value(dyn_data->get_member_id_by_name("charUnion"));
+    ASSERT_TRUE(charUnion->get_int32_value(charUnion->get_member_id_by_name("case_one")) ==
+        struct_test.charUnion().case_one());
+    dyn_data->return_loaned_value(charUnion);
+
+    DynamicData* octetUnion = dyn_data->loan_value(dyn_data->get_member_id_by_name("octetUnion"));
+    ASSERT_TRUE(octetUnion->get_int32_value(octetUnion->get_member_id_by_name("case_seven")) ==
+        struct_test.octetUnion().case_seven());
+    dyn_data->return_loaned_value(octetUnion);
+
+    DynamicData* int8Union = dyn_data->loan_value(dyn_data->get_member_id_by_name("int8Union"));
+    ASSERT_TRUE(int8Union->get_int32_value(int8Union->get_member_id_by_name("case_three")) ==
+        struct_test.int8Union().case_three());
+    dyn_data->return_loaned_value(int8Union);
+
+    DynamicData* myStructBits = dyn_data->loan_value(dyn_data->get_member_id_by_name("myStructBits"));
+    ASSERT_TRUE(myStructBits->get_uint64_value(myStructBits->get_member_id_by_name("mybitmask")) ==
+        struct_test.myStructBits().mybitmask());
+    ASSERT_TRUE(myStructBits->get_uint64_value(myStructBits->get_member_id_by_name("two")) ==
+        struct_test.myStructBits().two());
+    ASSERT_TRUE(myStructBits->get_int32_value(myStructBits->get_member_id_by_name("mylong")) ==
+        struct_test.myStructBits().mylong());
+    dyn_data->return_loaned_value(myStructBits);
 }
 
 int main(int argc, char **argv)

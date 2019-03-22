@@ -1510,9 +1510,9 @@ void bitmodule::ParentBitset::parent_bitfield(uint32_t _parent_bitfield)
 {
     int base = 0;
     int size = 17;
-    for (int i = base + size - 1; i >= base; --i)
+    for (int i = base; i < base + size; ++i)
     {
-        m_bitset.set(i, _parent_bitfield | 0x01);
+        m_bitset.set(i, _parent_bitfield & 0x01);
         _parent_bitfield = _parent_bitfield >> 1;
     }
 }
@@ -1522,7 +1522,7 @@ uint32_t bitmodule::ParentBitset::parent_bitfield() const
     int base = 0;
     int size = 17;
     std::bitset<17> aux;
-    for (int i = size - 1; i >= 0; --i)
+    for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
     }
@@ -1614,9 +1614,9 @@ void bitmodule::MyBitset::a(char _a)
 {
     int base = 0;
     int size = 3;
-    for (int i = base + size - 1; i >= base; --i)
+    for (int i = base; i < base + size; ++i)
     {
-        m_bitset.set(i, _a | 0x01);
+        m_bitset.set(i, _a & 0x01);
         _a = _a >> 1;
     }
 }
@@ -1626,7 +1626,7 @@ char bitmodule::MyBitset::a() const
     int base = 0;
     int size = 3;
     std::bitset<3> aux;
-    for (int i = size - 1; i >= 0; --i)
+    for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
     }
@@ -1648,9 +1648,9 @@ void bitmodule::MyBitset::c(uint16_t _c)
 {
     int base = 8;
     int size = 10;
-    for (int i = base + size - 1; i >= base; --i)
+    for (int i = base; i < base + size; ++i)
     {
-        m_bitset.set(i, _c | 0x01);
+        m_bitset.set(i, _c & 0x01);
         _c = _c >> 1;
     }
 }
@@ -1660,7 +1660,7 @@ uint16_t bitmodule::MyBitset::c() const
     int base = 8;
     int size = 10;
     std::bitset<10> aux;
-    for (int i = size - 1; i >= 0; --i)
+    for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
     }
@@ -1670,9 +1670,9 @@ void bitmodule::MyBitset::d(int16_t _d)
 {
     int base = 18;
     int size = 12;
-    for (int i = base + size - 1; i >= base; --i)
+    for (int i = base; i < base + size; ++i)
     {
-        m_bitset.set(i, _d | 0x01);
+        m_bitset.set(i, _d & 0x01);
         _d = _d >> 1;
     }
 }
@@ -1682,7 +1682,7 @@ int16_t bitmodule::MyBitset::d() const
     int base = 18;
     int size = 12;
     std::bitset<12> aux;
-    for (int i = size - 1; i >= 0; --i)
+    for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
     }
@@ -1692,9 +1692,9 @@ void bitmodule::MyBitset::e(int16_t _e)
 {
     int base = 30;
     int size = 12;
-    for (int i = base + size - 1; i >= base; --i)
+    for (int i = base; i < base + size; ++i)
     {
-        m_bitset.set(i, _e | 0x01);
+        m_bitset.set(i, _e & 0x01);
         _e = _e >> 1;
     }
 }
@@ -1704,7 +1704,7 @@ int16_t bitmodule::MyBitset::e() const
     int base = 30;
     int size = 12;
     std::bitset<12> aux;
-    for (int i = size - 1; i >= 0; --i)
+    for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
     }
@@ -1714,9 +1714,9 @@ void bitmodule::MyBitset::f(int16_t _f)
 {
     int base = 42;
     int size = 12;
-    for (int i = base + size - 1; i >= base; --i)
+    for (int i = base; i < base + size; ++i)
     {
-        m_bitset.set(i, _f | 0x01);
+        m_bitset.set(i, _f & 0x01);
         _f = _f >> 1;
     }
 }
@@ -1726,7 +1726,7 @@ int16_t bitmodule::MyBitset::f() const
     int base = 42;
     int size = 12;
     std::bitset<12> aux;
-    for (int i = size - 1; i >= 0; --i)
+    for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
     }
