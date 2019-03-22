@@ -58,21 +58,21 @@ class DynamicTypes_4_2_Tests: public ::testing::Test
 TEST_F(DynamicTypes_4_2_Tests, Inheritance_And_Default_Value)
 {
     StructTest struct_test;
-    ASSERT_TRUE(struct_test._uint64() == 555);
-    ASSERT_TRUE(struct_test._int64() == 0);
+    ASSERT_TRUE(struct_test.uint64_() == 555);
+    ASSERT_TRUE(struct_test.int64_() == 0);
 }
 
 TEST_F(DynamicTypes_4_2_Tests, Non_Serialized_Annotation)
 {
     NewAliases struct_test;
-    struct_test._int8(-8);
-    struct_test._uint8(8);
-    struct_test._int16(-16);
-    struct_test._uint16(16);
-    struct_test._int32(-32);
-    struct_test._uint32(32);
-    struct_test._int64(-64);
-    struct_test._uint64(64);
+    struct_test.int8_(-8);
+    struct_test.uint8_(8);
+    struct_test.int16_(-16);
+    struct_test.uint16_(16);
+    struct_test.int32_(-32);
+    struct_test.uint32_(32);
+    struct_test.int64_(-64);
+    struct_test.uint64_(64);
     struct_test.local_string("DON'T_SERIALIZE");
 
     NewAliasesPubSubType pst;
@@ -83,14 +83,14 @@ TEST_F(DynamicTypes_4_2_Tests, Non_Serialized_Annotation)
     pst.serialize(&struct_test, &payload);
     pst.deserialize(&payload, &destination);
 
-    ASSERT_TRUE(destination._int8() == -8);
-    ASSERT_TRUE(destination._uint8() == 8);
-    ASSERT_TRUE(destination._int16() == -16);
-    ASSERT_TRUE(destination._uint16() == 16);
-    ASSERT_TRUE(destination._int32() == -32);
-    ASSERT_TRUE(destination._uint32() == 32);
-    ASSERT_TRUE(destination._int64() == -64);
-    ASSERT_TRUE(destination._uint64() == 64);
+    ASSERT_TRUE(destination.int8_() == -8);
+    ASSERT_TRUE(destination.uint8_() == 8);
+    ASSERT_TRUE(destination.int16_() == -16);
+    ASSERT_TRUE(destination.uint16_() == 16);
+    ASSERT_TRUE(destination.int32_() == -32);
+    ASSERT_TRUE(destination.uint32_() == 32);
+    ASSERT_TRUE(destination.int64_() == -64);
+    ASSERT_TRUE(destination.uint64_() == 64);
     ASSERT_FALSE(destination.local_string() == "DON'T_SERIALIZE"); // Is non_serialized annotated
 }
 

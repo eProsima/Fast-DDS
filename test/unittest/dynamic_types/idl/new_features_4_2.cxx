@@ -35,14 +35,14 @@ using namespace eprosima::fastcdr::exception;
 
 NewAliases::NewAliases()
 {
-    m__int8 = 0;
-    m__uint8 = 0;
-    m__int16 = 0;
-    m__uint16 = 0;
-    m__int32 = 0;
-    m__uint32 = 0;
-    m__int64 = 0;
-    m__uint64 = 555;
+    m_int8_ = 0;
+    m_uint8_ = 0;
+    m_int16_ = 0;
+    m_uint16_ = 0;
+    m_int32_ = 0;
+    m_uint32_ = 0;
+    m_int64_ = 0;
+    m_uint64_ = 555;
 
 
     // Just to register all known types
@@ -64,41 +64,41 @@ NewAliases::~NewAliases()
 
 NewAliases::NewAliases(const NewAliases &x)
 {
-    m__int8 = x.m__int8;
-    m__uint8 = x.m__uint8;
-    m__int16 = x.m__int16;
-    m__uint16 = x.m__uint16;
-    m__int32 = x.m__int32;
-    m__uint32 = x.m__uint32;
-    m__int64 = x.m__int64;
-    m__uint64 = x.m__uint64;
+    m_int8_ = x.m_int8_;
+    m_uint8_ = x.m_uint8_;
+    m_int16_ = x.m_int16_;
+    m_uint16_ = x.m_uint16_;
+    m_int32_ = x.m_int32_;
+    m_uint32_ = x.m_uint32_;
+    m_int64_ = x.m_int64_;
+    m_uint64_ = x.m_uint64_;
     m_local_string = x.m_local_string;
 }
 
 NewAliases::NewAliases(NewAliases &&x)
 {
-    m__int8 = x.m__int8;
-    m__uint8 = x.m__uint8;
-    m__int16 = x.m__int16;
-    m__uint16 = x.m__uint16;
-    m__int32 = x.m__int32;
-    m__uint32 = x.m__uint32;
-    m__int64 = x.m__int64;
-    m__uint64 = x.m__uint64;
+    m_int8_ = x.m_int8_;
+    m_uint8_ = x.m_uint8_;
+    m_int16_ = x.m_int16_;
+    m_uint16_ = x.m_uint16_;
+    m_int32_ = x.m_int32_;
+    m_uint32_ = x.m_uint32_;
+    m_int64_ = x.m_int64_;
+    m_uint64_ = x.m_uint64_;
     m_local_string = std::move(x.m_local_string);
 }
 
 NewAliases& NewAliases::operator=(const NewAliases &x)
 {
 
-    m__int8 = x.m__int8;
-    m__uint8 = x.m__uint8;
-    m__int16 = x.m__int16;
-    m__uint16 = x.m__uint16;
-    m__int32 = x.m__int32;
-    m__uint32 = x.m__uint32;
-    m__int64 = x.m__int64;
-    m__uint64 = x.m__uint64;
+    m_int8_ = x.m_int8_;
+    m_uint8_ = x.m_uint8_;
+    m_int16_ = x.m_int16_;
+    m_uint16_ = x.m_uint16_;
+    m_int32_ = x.m_int32_;
+    m_uint32_ = x.m_uint32_;
+    m_int64_ = x.m_int64_;
+    m_uint64_ = x.m_uint64_;
     m_local_string = x.m_local_string;
 
     return *this;
@@ -107,14 +107,14 @@ NewAliases& NewAliases::operator=(const NewAliases &x)
 NewAliases& NewAliases::operator=(NewAliases &&x)
 {
 
-    m__int8 = x.m__int8;
-    m__uint8 = x.m__uint8;
-    m__int16 = x.m__int16;
-    m__uint16 = x.m__uint16;
-    m__int32 = x.m__int32;
-    m__uint32 = x.m__uint32;
-    m__int64 = x.m__int64;
-    m__uint64 = x.m__uint64;
+    m_int8_ = x.m_int8_;
+    m_uint8_ = x.m_uint8_;
+    m_int16_ = x.m_int16_;
+    m_uint16_ = x.m_uint16_;
+    m_int32_ = x.m_int32_;
+    m_uint32_ = x.m_uint32_;
+    m_int64_ = x.m_int64_;
+    m_uint64_ = x.m_uint64_;
     m_local_string = std::move(x.m_local_string);
 
     return *this;
@@ -192,238 +192,238 @@ size_t NewAliases::getCdrSerializedSize(const NewAliases& data, size_t current_a
 void NewAliases::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
 
-    scdr << m__int8;
-    scdr << m__uint8;
-    scdr << m__int16;
-    scdr << m__uint16;
-    scdr << m__int32;
-    scdr << m__uint32;
-    scdr << m__int64;
-    scdr << m__uint64;
+    scdr << m_int8_;
+    scdr << m_uint8_;
+    scdr << m_int16_;
+    scdr << m_uint16_;
+    scdr << m_int32_;
+    scdr << m_uint32_;
+    scdr << m_int64_;
+    scdr << m_uint64_;
 
 }
 
 void NewAliases::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
 
-    dcdr >> m__int8;
-    dcdr >> m__uint8;
-    dcdr >> m__int16;
-    dcdr >> m__uint16;
-    dcdr >> m__int32;
-    dcdr >> m__uint32;
-    dcdr >> m__int64;
-    dcdr >> m__uint64;
+    dcdr >> m_int8_;
+    dcdr >> m_uint8_;
+    dcdr >> m_int16_;
+    dcdr >> m_uint16_;
+    dcdr >> m_int32_;
+    dcdr >> m_uint32_;
+    dcdr >> m_int64_;
+    dcdr >> m_uint64_;
 
 }
 
 /*!
- * @brief This function sets a value in member _int8
- * @param __int8 New value for member _int8
+ * @brief This function sets a value in member int8_
+ * @param _int8_ New value for member int8_
  */
-void NewAliases::_int8(int8_t __int8)
+void NewAliases::int8_(int8_t _int8_)
 {
-m__int8 = __int8;
+m_int8_ = _int8_;
 }
 
 /*!
- * @brief This function returns the value of member _int8
- * @return Value of member _int8
+ * @brief This function returns the value of member int8_
+ * @return Value of member int8_
  */
-int8_t NewAliases::_int8() const
+int8_t NewAliases::int8_() const
 {
-    return m__int8;
+    return m_int8_;
 }
 
 /*!
- * @brief This function returns a reference to member _int8
- * @return Reference to member _int8
+ * @brief This function returns a reference to member int8_
+ * @return Reference to member int8_
  */
-int8_t& NewAliases::_int8()
+int8_t& NewAliases::int8_()
 {
-    return m__int8;
+    return m_int8_;
 }
 /*!
- * @brief This function sets a value in member _uint8
- * @param __uint8 New value for member _uint8
+ * @brief This function sets a value in member uint8_
+ * @param _uint8_ New value for member uint8_
  */
-void NewAliases::_uint8(uint8_t __uint8)
+void NewAliases::uint8_(uint8_t _uint8_)
 {
-m__uint8 = __uint8;
-}
-
-/*!
- * @brief This function returns the value of member _uint8
- * @return Value of member _uint8
- */
-uint8_t NewAliases::_uint8() const
-{
-    return m__uint8;
+m_uint8_ = _uint8_;
 }
 
 /*!
- * @brief This function returns a reference to member _uint8
- * @return Reference to member _uint8
+ * @brief This function returns the value of member uint8_
+ * @return Value of member uint8_
  */
-uint8_t& NewAliases::_uint8()
+uint8_t NewAliases::uint8_() const
 {
-    return m__uint8;
-}
-/*!
- * @brief This function sets a value in member _int16
- * @param __int16 New value for member _int16
- */
-void NewAliases::_int16(int16_t __int16)
-{
-m__int16 = __int16;
+    return m_uint8_;
 }
 
 /*!
- * @brief This function returns the value of member _int16
- * @return Value of member _int16
+ * @brief This function returns a reference to member uint8_
+ * @return Reference to member uint8_
  */
-int16_t NewAliases::_int16() const
+uint8_t& NewAliases::uint8_()
 {
-    return m__int16;
+    return m_uint8_;
+}
+/*!
+ * @brief This function sets a value in member int16_
+ * @param _int16_ New value for member int16_
+ */
+void NewAliases::int16_(int16_t _int16_)
+{
+m_int16_ = _int16_;
 }
 
 /*!
- * @brief This function returns a reference to member _int16
- * @return Reference to member _int16
+ * @brief This function returns the value of member int16_
+ * @return Value of member int16_
  */
-int16_t& NewAliases::_int16()
+int16_t NewAliases::int16_() const
 {
-    return m__int16;
-}
-/*!
- * @brief This function sets a value in member _uint16
- * @param __uint16 New value for member _uint16
- */
-void NewAliases::_uint16(uint16_t __uint16)
-{
-m__uint16 = __uint16;
+    return m_int16_;
 }
 
 /*!
- * @brief This function returns the value of member _uint16
- * @return Value of member _uint16
+ * @brief This function returns a reference to member int16_
+ * @return Reference to member int16_
  */
-uint16_t NewAliases::_uint16() const
+int16_t& NewAliases::int16_()
 {
-    return m__uint16;
+    return m_int16_;
+}
+/*!
+ * @brief This function sets a value in member uint16_
+ * @param _uint16_ New value for member uint16_
+ */
+void NewAliases::uint16_(uint16_t _uint16_)
+{
+m_uint16_ = _uint16_;
 }
 
 /*!
- * @brief This function returns a reference to member _uint16
- * @return Reference to member _uint16
+ * @brief This function returns the value of member uint16_
+ * @return Value of member uint16_
  */
-uint16_t& NewAliases::_uint16()
+uint16_t NewAliases::uint16_() const
 {
-    return m__uint16;
-}
-/*!
- * @brief This function sets a value in member _int32
- * @param __int32 New value for member _int32
- */
-void NewAliases::_int32(int32_t __int32)
-{
-m__int32 = __int32;
+    return m_uint16_;
 }
 
 /*!
- * @brief This function returns the value of member _int32
- * @return Value of member _int32
+ * @brief This function returns a reference to member uint16_
+ * @return Reference to member uint16_
  */
-int32_t NewAliases::_int32() const
+uint16_t& NewAliases::uint16_()
 {
-    return m__int32;
+    return m_uint16_;
+}
+/*!
+ * @brief This function sets a value in member int32_
+ * @param _int32_ New value for member int32_
+ */
+void NewAliases::int32_(int32_t _int32_)
+{
+m_int32_ = _int32_;
 }
 
 /*!
- * @brief This function returns a reference to member _int32
- * @return Reference to member _int32
+ * @brief This function returns the value of member int32_
+ * @return Value of member int32_
  */
-int32_t& NewAliases::_int32()
+int32_t NewAliases::int32_() const
 {
-    return m__int32;
-}
-/*!
- * @brief This function sets a value in member _uint32
- * @param __uint32 New value for member _uint32
- */
-void NewAliases::_uint32(uint32_t __uint32)
-{
-m__uint32 = __uint32;
+    return m_int32_;
 }
 
 /*!
- * @brief This function returns the value of member _uint32
- * @return Value of member _uint32
+ * @brief This function returns a reference to member int32_
+ * @return Reference to member int32_
  */
-uint32_t NewAliases::_uint32() const
+int32_t& NewAliases::int32_()
 {
-    return m__uint32;
+    return m_int32_;
+}
+/*!
+ * @brief This function sets a value in member uint32_
+ * @param _uint32_ New value for member uint32_
+ */
+void NewAliases::uint32_(uint32_t _uint32_)
+{
+m_uint32_ = _uint32_;
 }
 
 /*!
- * @brief This function returns a reference to member _uint32
- * @return Reference to member _uint32
+ * @brief This function returns the value of member uint32_
+ * @return Value of member uint32_
  */
-uint32_t& NewAliases::_uint32()
+uint32_t NewAliases::uint32_() const
 {
-    return m__uint32;
-}
-/*!
- * @brief This function sets a value in member _int64
- * @param __int64 New value for member _int64
- */
-void NewAliases::_int64(int64_t __int64)
-{
-m__int64 = __int64;
+    return m_uint32_;
 }
 
 /*!
- * @brief This function returns the value of member _int64
- * @return Value of member _int64
+ * @brief This function returns a reference to member uint32_
+ * @return Reference to member uint32_
  */
-int64_t NewAliases::_int64() const
+uint32_t& NewAliases::uint32_()
 {
-    return m__int64;
+    return m_uint32_;
+}
+/*!
+ * @brief This function sets a value in member int64_
+ * @param _int64_ New value for member int64_
+ */
+void NewAliases::int64_(int64_t _int64_)
+{
+m_int64_ = _int64_;
 }
 
 /*!
- * @brief This function returns a reference to member _int64
- * @return Reference to member _int64
+ * @brief This function returns the value of member int64_
+ * @return Value of member int64_
  */
-int64_t& NewAliases::_int64()
+int64_t NewAliases::int64_() const
 {
-    return m__int64;
-}
-/*!
- * @brief This function sets a value in member _uint64
- * @param __uint64 New value for member _uint64
- */
-void NewAliases::_uint64(uint64_t __uint64)
-{
-m__uint64 = __uint64;
+    return m_int64_;
 }
 
 /*!
- * @brief This function returns the value of member _uint64
- * @return Value of member _uint64
+ * @brief This function returns a reference to member int64_
+ * @return Reference to member int64_
  */
-uint64_t NewAliases::_uint64() const
+int64_t& NewAliases::int64_()
 {
-    return m__uint64;
+    return m_int64_;
+}
+/*!
+ * @brief This function sets a value in member uint64_
+ * @param _uint64_ New value for member uint64_
+ */
+void NewAliases::uint64_(uint64_t _uint64_)
+{
+m_uint64_ = _uint64_;
 }
 
 /*!
- * @brief This function returns a reference to member _uint64
- * @return Reference to member _uint64
+ * @brief This function returns the value of member uint64_
+ * @return Value of member uint64_
  */
-uint64_t& NewAliases::_uint64()
+uint64_t NewAliases::uint64_() const
 {
-    return m__uint64;
+    return m_uint64_;
+}
+
+/*!
+ * @brief This function returns a reference to member uint64_
+ * @return Reference to member uint64_
+ */
+uint64_t& NewAliases::uint64_()
+{
+    return m_uint64_;
 }
 /*!
  * @brief This function copies the value in member local_string

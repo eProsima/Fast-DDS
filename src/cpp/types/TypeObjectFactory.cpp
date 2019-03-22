@@ -63,7 +63,7 @@ ResponseCode TypeObjectFactory::delete_instance()
     return ResponseCode::RETCODE_ERROR;
 }
 
-TypeObjectFactory::TypeObjectFactory() : builtinAnnotationInitilized_(false)
+TypeObjectFactory::TypeObjectFactory()
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // Generate basic TypeIdentifiers

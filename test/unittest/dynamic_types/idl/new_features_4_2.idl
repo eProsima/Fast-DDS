@@ -1,13 +1,13 @@
 struct NewAliases
 {
-	int8 _int8;
-	uint8 _uint8;
-	int16 _int16;
-	uint16 _uint16;
-	int32 _int32;
-	uint32 _uint32;
-	int64 _int64;
-	@default(555) uint64 _uint64;
+	int8 int8_;
+	uint8 uint8_;
+	int16 int16_;
+	uint16 uint16_;
+	int32 int32_;
+	uint32 uint32_;
+	int64 int64_;
+	@default(555) uint64 uint64_;
 	@non_serialized string local_string;
 };
 

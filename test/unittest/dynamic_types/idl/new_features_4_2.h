@@ -106,141 +106,141 @@ public:
     eProsima_user_DllExport NewAliases& operator=(NewAliases &&x);
 
     /*!
-     * @brief This function sets a value in member _int8
-     * @param __int8 New value for member _int8
+     * @brief This function sets a value in member int8_
+     * @param _int8_ New value for member int8_
      */
-    eProsima_user_DllExport void _int8(int8_t __int8);
+    eProsima_user_DllExport void int8_(int8_t _int8_);
 
     /*!
-     * @brief This function returns the value of member _int8
-     * @return Value of member _int8
+     * @brief This function returns the value of member int8_
+     * @return Value of member int8_
      */
-    eProsima_user_DllExport int8_t _int8() const;
+    eProsima_user_DllExport int8_t int8_() const;
 
     /*!
-     * @brief This function returns a reference to member _int8
-     * @return Reference to member _int8
+     * @brief This function returns a reference to member int8_
+     * @return Reference to member int8_
      */
-    eProsima_user_DllExport int8_t& _int8();
+    eProsima_user_DllExport int8_t& int8_();
     /*!
-     * @brief This function sets a value in member _uint8
-     * @param __uint8 New value for member _uint8
+     * @brief This function sets a value in member uint8_
+     * @param _uint8_ New value for member uint8_
      */
-    eProsima_user_DllExport void _uint8(uint8_t __uint8);
+    eProsima_user_DllExport void uint8_(uint8_t _uint8_);
 
     /*!
-     * @brief This function returns the value of member _uint8
-     * @return Value of member _uint8
+     * @brief This function returns the value of member uint8_
+     * @return Value of member uint8_
      */
-    eProsima_user_DllExport uint8_t _uint8() const;
+    eProsima_user_DllExport uint8_t uint8_() const;
 
     /*!
-     * @brief This function returns a reference to member _uint8
-     * @return Reference to member _uint8
+     * @brief This function returns a reference to member uint8_
+     * @return Reference to member uint8_
      */
-    eProsima_user_DllExport uint8_t& _uint8();
+    eProsima_user_DllExport uint8_t& uint8_();
     /*!
-     * @brief This function sets a value in member _int16
-     * @param __int16 New value for member _int16
+     * @brief This function sets a value in member int16_
+     * @param _int16_ New value for member int16_
      */
-    eProsima_user_DllExport void _int16(int16_t __int16);
+    eProsima_user_DllExport void int16_(int16_t _int16_);
 
     /*!
-     * @brief This function returns the value of member _int16
-     * @return Value of member _int16
+     * @brief This function returns the value of member int16_
+     * @return Value of member int16_
      */
-    eProsima_user_DllExport int16_t _int16() const;
+    eProsima_user_DllExport int16_t int16_() const;
 
     /*!
-     * @brief This function returns a reference to member _int16
-     * @return Reference to member _int16
+     * @brief This function returns a reference to member int16_
+     * @return Reference to member int16_
      */
-    eProsima_user_DllExport int16_t& _int16();
+    eProsima_user_DllExport int16_t& int16_();
     /*!
-     * @brief This function sets a value in member _uint16
-     * @param __uint16 New value for member _uint16
+     * @brief This function sets a value in member uint16_
+     * @param _uint16_ New value for member uint16_
      */
-    eProsima_user_DllExport void _uint16(uint16_t __uint16);
+    eProsima_user_DllExport void uint16_(uint16_t _uint16_);
 
     /*!
-     * @brief This function returns the value of member _uint16
-     * @return Value of member _uint16
+     * @brief This function returns the value of member uint16_
+     * @return Value of member uint16_
      */
-    eProsima_user_DllExport uint16_t _uint16() const;
+    eProsima_user_DllExport uint16_t uint16_() const;
 
     /*!
-     * @brief This function returns a reference to member _uint16
-     * @return Reference to member _uint16
+     * @brief This function returns a reference to member uint16_
+     * @return Reference to member uint16_
      */
-    eProsima_user_DllExport uint16_t& _uint16();
+    eProsima_user_DllExport uint16_t& uint16_();
     /*!
-     * @brief This function sets a value in member _int32
-     * @param __int32 New value for member _int32
+     * @brief This function sets a value in member int32_
+     * @param _int32_ New value for member int32_
      */
-    eProsima_user_DllExport void _int32(int32_t __int32);
+    eProsima_user_DllExport void int32_(int32_t _int32_);
 
     /*!
-     * @brief This function returns the value of member _int32
-     * @return Value of member _int32
+     * @brief This function returns the value of member int32_
+     * @return Value of member int32_
      */
-    eProsima_user_DllExport int32_t _int32() const;
+    eProsima_user_DllExport int32_t int32_() const;
 
     /*!
-     * @brief This function returns a reference to member _int32
-     * @return Reference to member _int32
+     * @brief This function returns a reference to member int32_
+     * @return Reference to member int32_
      */
-    eProsima_user_DllExport int32_t& _int32();
+    eProsima_user_DllExport int32_t& int32_();
     /*!
-     * @brief This function sets a value in member _uint32
-     * @param __uint32 New value for member _uint32
+     * @brief This function sets a value in member uint32_
+     * @param _uint32_ New value for member uint32_
      */
-    eProsima_user_DllExport void _uint32(uint32_t __uint32);
+    eProsima_user_DllExport void uint32_(uint32_t _uint32_);
 
     /*!
-     * @brief This function returns the value of member _uint32
-     * @return Value of member _uint32
+     * @brief This function returns the value of member uint32_
+     * @return Value of member uint32_
      */
-    eProsima_user_DllExport uint32_t _uint32() const;
+    eProsima_user_DllExport uint32_t uint32_() const;
 
     /*!
-     * @brief This function returns a reference to member _uint32
-     * @return Reference to member _uint32
+     * @brief This function returns a reference to member uint32_
+     * @return Reference to member uint32_
      */
-    eProsima_user_DllExport uint32_t& _uint32();
+    eProsima_user_DllExport uint32_t& uint32_();
     /*!
-     * @brief This function sets a value in member _int64
-     * @param __int64 New value for member _int64
+     * @brief This function sets a value in member int64_
+     * @param _int64_ New value for member int64_
      */
-    eProsima_user_DllExport void _int64(int64_t __int64);
+    eProsima_user_DllExport void int64_(int64_t _int64_);
 
     /*!
-     * @brief This function returns the value of member _int64
-     * @return Value of member _int64
+     * @brief This function returns the value of member int64_
+     * @return Value of member int64_
      */
-    eProsima_user_DllExport int64_t _int64() const;
+    eProsima_user_DllExport int64_t int64_() const;
 
     /*!
-     * @brief This function returns a reference to member _int64
-     * @return Reference to member _int64
+     * @brief This function returns a reference to member int64_
+     * @return Reference to member int64_
      */
-    eProsima_user_DllExport int64_t& _int64();
+    eProsima_user_DllExport int64_t& int64_();
     /*!
-     * @brief This function sets a value in member _uint64
-     * @param __uint64 New value for member _uint64
+     * @brief This function sets a value in member uint64_
+     * @param _uint64_ New value for member uint64_
      */
-    eProsima_user_DllExport void _uint64(uint64_t __uint64);
+    eProsima_user_DllExport void uint64_(uint64_t _uint64_);
 
     /*!
-     * @brief This function returns the value of member _uint64
-     * @return Value of member _uint64
+     * @brief This function returns the value of member uint64_
+     * @return Value of member uint64_
      */
-    eProsima_user_DllExport uint64_t _uint64() const;
+    eProsima_user_DllExport uint64_t uint64_() const;
 
     /*!
-     * @brief This function returns a reference to member _uint64
-     * @return Reference to member _uint64
+     * @brief This function returns a reference to member uint64_
+     * @return Reference to member uint64_
      */
-    eProsima_user_DllExport uint64_t& _uint64();
+    eProsima_user_DllExport uint64_t& uint64_();
     /*!
      * @brief This function copies the value in member local_string
      * @param _local_string New value to be copied in member local_string
@@ -316,14 +316,14 @@ public:
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
 private:
-    int8_t m__int8;
-    uint8_t m__uint8;
-    int16_t m__int16;
-    uint16_t m__uint16;
-    int32_t m__int32;
-    uint32_t m__uint32;
-    int64_t m__int64;
-    uint64_t m__uint64;
+    int8_t m_int8_;
+    uint8_t m_uint8_;
+    int16_t m_int16_;
+    uint16_t m_uint16_;
+    int32_t m_int32_;
+    uint32_t m_uint32_;
+    int64_t m_int64_;
+    uint64_t m_uint64_;
     std::string m_local_string;
 };
 /*!

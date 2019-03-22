@@ -665,7 +665,7 @@ void MemberDescriptor::annotation_set_default(const std::string& default_value)
 
 bool MemberDescriptor::annotation_is_bit_bound() const
 {
-    return annotation_is_bit_bound();
+    return get_annotation(ANNOTATION_BIT_BOUND_ID) != nullptr;
 }
 
 uint16_t MemberDescriptor::annotation_get_bit_bound() const

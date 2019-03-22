@@ -30,7 +30,6 @@ class TypeObjectFactory
 private:
     mutable std::recursive_mutex m_MutexIdentifiers;
     mutable std::recursive_mutex m_MutexObjects;
-    bool builtinAnnotationInitilized_;
 
 protected:
     TypeObjectFactory();

@@ -108,205 +108,205 @@ const TypeObject* GetMinimalNewAliasesObject()
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
-    MinimalStructMember mst__int8;
-    mst__int8.common().member_id(memberId++);
-    mst__int8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__int8.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__int8.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__int8.common().member_flags().IS_OPTIONAL(false);
-    mst__int8.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__int8.common().member_flags().IS_KEY(false);
-    mst__int8.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_int8_;
+    mst_int8_.common().member_id(memberId++);
+    mst_int8_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_int8_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_int8_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_int8_.common().member_flags().IS_OPTIONAL(false);
+    mst_int8_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_int8_.common().member_flags().IS_KEY(false);
+    mst_int8_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int8_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__int8.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_int8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _int8_hash("_int8");
+    MD5 int8__hash("int8_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__int8.detail().name_hash()[i] = _int8_hash.digest[i];
+        mst_int8_.detail().name_hash()[i] = int8__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__int8);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_int8_);
 
-    MinimalStructMember mst__uint8;
-    mst__uint8.common().member_id(memberId++);
-    mst__uint8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__uint8.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__uint8.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__uint8.common().member_flags().IS_OPTIONAL(false);
-    mst__uint8.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__uint8.common().member_flags().IS_KEY(false);
-    mst__uint8.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_uint8_;
+    mst_uint8_.common().member_id(memberId++);
+    mst_uint8_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_uint8_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_uint8_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_uint8_.common().member_flags().IS_OPTIONAL(false);
+    mst_uint8_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_uint8_.common().member_flags().IS_KEY(false);
+    mst_uint8_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint8_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__uint8.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_uint8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _uint8_hash("_uint8");
+    MD5 uint8__hash("uint8_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__uint8.detail().name_hash()[i] = _uint8_hash.digest[i];
+        mst_uint8_.detail().name_hash()[i] = uint8__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__uint8);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_uint8_);
 
-    MinimalStructMember mst__int16;
-    mst__int16.common().member_id(memberId++);
-    mst__int16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__int16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__int16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__int16.common().member_flags().IS_OPTIONAL(false);
-    mst__int16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__int16.common().member_flags().IS_KEY(false);
-    mst__int16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_int16_;
+    mst_int16_.common().member_id(memberId++);
+    mst_int16_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_int16_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_int16_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_int16_.common().member_flags().IS_OPTIONAL(false);
+    mst_int16_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_int16_.common().member_flags().IS_KEY(false);
+    mst_int16_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int16_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_int16_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _int16_hash("_int16");
+    MD5 int16__hash("int16_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__int16.detail().name_hash()[i] = _int16_hash.digest[i];
+        mst_int16_.detail().name_hash()[i] = int16__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__int16);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_int16_);
 
-    MinimalStructMember mst__uint16;
-    mst__uint16.common().member_id(memberId++);
-    mst__uint16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__uint16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__uint16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__uint16.common().member_flags().IS_OPTIONAL(false);
-    mst__uint16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__uint16.common().member_flags().IS_KEY(false);
-    mst__uint16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_uint16_;
+    mst_uint16_.common().member_id(memberId++);
+    mst_uint16_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_uint16_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_uint16_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_uint16_.common().member_flags().IS_OPTIONAL(false);
+    mst_uint16_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_uint16_.common().member_flags().IS_KEY(false);
+    mst_uint16_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint16_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_uint16_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _uint16_hash("_uint16");
+    MD5 uint16__hash("uint16_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__uint16.detail().name_hash()[i] = _uint16_hash.digest[i];
+        mst_uint16_.detail().name_hash()[i] = uint16__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__uint16);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_uint16_);
 
-    MinimalStructMember mst__int32;
-    mst__int32.common().member_id(memberId++);
-    mst__int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__int32.common().member_flags().IS_OPTIONAL(false);
-    mst__int32.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__int32.common().member_flags().IS_KEY(false);
-    mst__int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_int32_;
+    mst_int32_.common().member_id(memberId++);
+    mst_int32_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_int32_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_int32_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_int32_.common().member_flags().IS_OPTIONAL(false);
+    mst_int32_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_int32_.common().member_flags().IS_KEY(false);
+    mst_int32_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int32_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_int32_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _int32_hash("_int32");
+    MD5 int32__hash("int32_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__int32.detail().name_hash()[i] = _int32_hash.digest[i];
+        mst_int32_.detail().name_hash()[i] = int32__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__int32);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_int32_);
 
-    MinimalStructMember mst__uint32;
-    mst__uint32.common().member_id(memberId++);
-    mst__uint32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__uint32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__uint32.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__uint32.common().member_flags().IS_OPTIONAL(false);
-    mst__uint32.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__uint32.common().member_flags().IS_KEY(false);
-    mst__uint32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_uint32_;
+    mst_uint32_.common().member_id(memberId++);
+    mst_uint32_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_uint32_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_uint32_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_uint32_.common().member_flags().IS_OPTIONAL(false);
+    mst_uint32_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_uint32_.common().member_flags().IS_KEY(false);
+    mst_uint32_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint32_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_uint32_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _uint32_hash("_uint32");
+    MD5 uint32__hash("uint32_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__uint32.detail().name_hash()[i] = _uint32_hash.digest[i];
+        mst_uint32_.detail().name_hash()[i] = uint32__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__uint32);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_uint32_);
 
-    MinimalStructMember mst__int64;
-    mst__int64.common().member_id(memberId++);
-    mst__int64.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__int64.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__int64.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__int64.common().member_flags().IS_OPTIONAL(false);
-    mst__int64.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__int64.common().member_flags().IS_KEY(false);
-    mst__int64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_int64_;
+    mst_int64_.common().member_id(memberId++);
+    mst_int64_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_int64_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_int64_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_int64_.common().member_flags().IS_OPTIONAL(false);
+    mst_int64_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_int64_.common().member_flags().IS_KEY(false);
+    mst_int64_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int64_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_int64_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _int64_hash("_int64");
+    MD5 int64__hash("int64_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__int64.detail().name_hash()[i] = _int64_hash.digest[i];
+        mst_int64_.detail().name_hash()[i] = int64__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__int64);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_int64_);
 
-    MinimalStructMember mst__uint64;
-    mst__uint64.common().member_id(memberId++);
-    mst__uint64.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst__uint64.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst__uint64.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst__uint64.common().member_flags().IS_OPTIONAL(false);
-    mst__uint64.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst__uint64.common().member_flags().IS_KEY(false);
-    mst__uint64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    MinimalStructMember mst_uint64_;
+    mst_uint64_.common().member_id(memberId++);
+    mst_uint64_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_uint64_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_uint64_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_uint64_.common().member_flags().IS_OPTIONAL(false);
+    mst_uint64_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_uint64_.common().member_flags().IS_KEY(false);
+    mst_uint64_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint64_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        mst__uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        mst_uint64_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    MD5 _uint64_hash("_uint64");
+    MD5 uint64__hash("uint64_");
     for(int i = 0; i < 4; ++i)
     {
-        mst__uint64.detail().name_hash()[i] = _uint64_hash.digest[i];
+        mst_uint64_.detail().name_hash()[i] = uint64__hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst__uint64);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_uint64_);
 
     MinimalStructMember mst_local_string;
     mst_local_string.common().member_id(memberId++);
@@ -379,179 +379,179 @@ const TypeObject* GetCompleteNewAliasesObject()
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
-    CompleteStructMember cst__int8;
-    cst__int8.common().member_id(memberId++);
-    cst__int8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__int8.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__int8.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__int8.common().member_flags().IS_OPTIONAL(false);
-    cst__int8.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__int8.common().member_flags().IS_KEY(false);
-    cst__int8.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_int8_;
+    cst_int8_.common().member_id(memberId++);
+    cst_int8_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_int8_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_int8_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_int8_.common().member_flags().IS_OPTIONAL(false);
+    cst_int8_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_int8_.common().member_flags().IS_KEY(false);
+    cst_int8_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int8_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__int8.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_int8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__int8.detail().name("_int8");
+    cst_int8_.detail().name("int8_");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__int8);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_int8_);
 
-    CompleteStructMember cst__uint8;
-    cst__uint8.common().member_id(memberId++);
-    cst__uint8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__uint8.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__uint8.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__uint8.common().member_flags().IS_OPTIONAL(false);
-    cst__uint8.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__uint8.common().member_flags().IS_KEY(false);
-    cst__uint8.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_uint8_;
+    cst_uint8_.common().member_id(memberId++);
+    cst_uint8_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_uint8_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_uint8_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_uint8_.common().member_flags().IS_OPTIONAL(false);
+    cst_uint8_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_uint8_.common().member_flags().IS_KEY(false);
+    cst_uint8_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint8_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__uint8.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_uint8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__uint8.detail().name("_uint8");
+    cst_uint8_.detail().name("uint8_");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__uint8);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_uint8_);
 
-    CompleteStructMember cst__int16;
-    cst__int16.common().member_id(memberId++);
-    cst__int16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__int16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__int16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__int16.common().member_flags().IS_OPTIONAL(false);
-    cst__int16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__int16.common().member_flags().IS_KEY(false);
-    cst__int16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_int16_;
+    cst_int16_.common().member_id(memberId++);
+    cst_int16_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_int16_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_int16_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_int16_.common().member_flags().IS_OPTIONAL(false);
+    cst_int16_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_int16_.common().member_flags().IS_KEY(false);
+    cst_int16_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int16_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__int16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_int16_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__int16.detail().name("_int16");
+    cst_int16_.detail().name("int16_");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__int16);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_int16_);
 
-    CompleteStructMember cst__uint16;
-    cst__uint16.common().member_id(memberId++);
-    cst__uint16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__uint16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__uint16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__uint16.common().member_flags().IS_OPTIONAL(false);
-    cst__uint16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__uint16.common().member_flags().IS_KEY(false);
-    cst__uint16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_uint16_;
+    cst_uint16_.common().member_id(memberId++);
+    cst_uint16_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_uint16_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_uint16_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_uint16_.common().member_flags().IS_OPTIONAL(false);
+    cst_uint16_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_uint16_.common().member_flags().IS_KEY(false);
+    cst_uint16_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint16_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__uint16.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_uint16_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__uint16.detail().name("_uint16");
+    cst_uint16_.detail().name("uint16_");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__uint16);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_uint16_);
 
-    CompleteStructMember cst__int32;
-    cst__int32.common().member_id(memberId++);
-    cst__int32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__int32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__int32.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__int32.common().member_flags().IS_OPTIONAL(false);
-    cst__int32.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__int32.common().member_flags().IS_KEY(false);
-    cst__int32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_int32_;
+    cst_int32_.common().member_id(memberId++);
+    cst_int32_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_int32_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_int32_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_int32_.common().member_flags().IS_OPTIONAL(false);
+    cst_int32_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_int32_.common().member_flags().IS_KEY(false);
+    cst_int32_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int32_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__int32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_int32_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__int32.detail().name("_int32");
+    cst_int32_.detail().name("int32_");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__int32);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_int32_);
 
-    CompleteStructMember cst__uint32;
-    cst__uint32.common().member_id(memberId++);
-    cst__uint32.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__uint32.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__uint32.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__uint32.common().member_flags().IS_OPTIONAL(false);
-    cst__uint32.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__uint32.common().member_flags().IS_KEY(false);
-    cst__uint32.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_uint32_;
+    cst_uint32_.common().member_id(memberId++);
+    cst_uint32_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_uint32_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_uint32_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_uint32_.common().member_flags().IS_OPTIONAL(false);
+    cst_uint32_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_uint32_.common().member_flags().IS_KEY(false);
+    cst_uint32_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint32_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__uint32.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_uint32_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__uint32.detail().name("_uint32");
+    cst_uint32_.detail().name("uint32_");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__uint32);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_uint32_);
 
-    CompleteStructMember cst__int64;
-    cst__int64.common().member_id(memberId++);
-    cst__int64.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__int64.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__int64.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__int64.common().member_flags().IS_OPTIONAL(false);
-    cst__int64.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__int64.common().member_flags().IS_KEY(false);
-    cst__int64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_int64_;
+    cst_int64_.common().member_id(memberId++);
+    cst_int64_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_int64_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_int64_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_int64_.common().member_flags().IS_OPTIONAL(false);
+    cst_int64_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_int64_.common().member_flags().IS_KEY(false);
+    cst_int64_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "int64_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__int64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_int64_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__int64.detail().name("_int64");
+    cst_int64_.detail().name("int64_");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__int64);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_int64_);
 
-    CompleteStructMember cst__uint64;
-    cst__uint64.common().member_id(memberId++);
-    cst__uint64.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst__uint64.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst__uint64.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst__uint64.common().member_flags().IS_OPTIONAL(false);
-    cst__uint64.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst__uint64.common().member_flags().IS_KEY(false);
-    cst__uint64.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    CompleteStructMember cst_uint64_;
+    cst_uint64_.common().member_id(memberId++);
+    cst_uint64_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_uint64_.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_uint64_.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_uint64_.common().member_flags().IS_OPTIONAL(false);
+    cst_uint64_.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_uint64_.common().member_flags().IS_KEY(false);
+    cst_uint64_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
     {
         std::string cppType = "uint64_t";
         if (cppType == "long double")
         {
             cppType = "longdouble";
         }
-        cst__uint64.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
+        cst_uint64_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
-    cst__uint64.detail().name("_uint64");
+    cst_uint64_.detail().name("uint64_");
 
     {
         AppliedAnnotation ann;
@@ -571,10 +571,10 @@ const TypeObject* GetCompleteNewAliasesObject()
                 ann.param_seq().push_back(annParam);
             }
             
-        cst__uint64.detail().ann_custom().push_back(ann);
+        cst_uint64_.detail().ann_custom().push_back(ann);
     }
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst__uint64);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_uint64_);
 
     CompleteStructMember cst_local_string;
     cst_local_string.common().member_id(memberId++);
