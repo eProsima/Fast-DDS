@@ -159,7 +159,7 @@ private:
                 rtps::RTPSReader* reader,
                 rtps::MatchingInfo& info);
         void onNewCacheChangeAdded(
-                rtps::RTPSReader * reader,
+                rtps::RTPSReader* reader,
                 const rtps::CacheChange_t* const change) override;
         SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
