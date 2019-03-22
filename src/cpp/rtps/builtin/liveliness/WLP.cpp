@@ -63,8 +63,11 @@ WLP::WLP(BuiltinProtocols* p)
     , mp_builtinReaderSecureHistory(nullptr)
 #endif
     , temp_reader_proxy_data_(
-            p->mp_participantImpl->getAttributes().allocation.locators.max_unicast_locators,
-            p->mp_participantImpl->getAttributes().allocation.locators.max_multicast_locators)
+            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+    , temp_writer_proxy_data_(
+            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+            p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
 }
 
@@ -478,19 +481,18 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId
             <<" from Liveliness Protocol");
     t_WIT wToEraseIt;
-    WriterProxyData wdata;
-    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), wdata))
+    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), temp_writer_proxy_data_))
     {
+        LivelinessQosPolicyKind liveliness_kind = temp_writer_proxy_data_.m_qos.m_liveliness.kind;
         bool found = false;
-        if(wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+        if(liveliness_kind == AUTOMATIC_LIVELINESS_QOS)
         {
             m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
             for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
             {
-                WriterProxyData wdata2;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2))
+                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), temp_writer_proxy_data_))
                 {
-                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
+                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(temp_writer_proxy_data_.m_qos.m_liveliness.announcement_period));
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;
@@ -519,15 +521,14 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 }
             }
         }
-        else if(wdata.m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        else if(liveliness_kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
         {
             m_minManRTPSParticipant_MilliSec = std::numeric_limits<double>::max();
             for(t_WIT it= m_livManRTPSParticipantWriters.begin();it!=m_livManRTPSParticipantWriters.end();++it)
             {
-                WriterProxyData wdata2;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2))
+                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), temp_writer_proxy_data_))
                 {
-                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
+                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(temp_writer_proxy_data_.m_qos.m_liveliness.announcement_period));
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;

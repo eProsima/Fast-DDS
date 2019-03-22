@@ -93,6 +93,9 @@ SecurityManager::SecurityManager(RTPSParticipantImpl *participant)
     , temp_reader_proxy_data_(
             participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
             participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+    , temp_writer_proxy_data_(
+            participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
     assert(participant != nullptr);
 }
@@ -1509,7 +1512,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // Search remote writer handle.
         mutex_.lock();
         GUID_t reader_guid;
-        WriterProxyData writer_data;
+        WriterProxyData* writer_data = nullptr;
         auto rd_it = reader_handles_.find(message.destination_endpoint_key());
 
         if(rd_it != reader_handles_.end())
@@ -1526,7 +1529,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
                             exception))
                 {
                     reader_guid = rd_it->first;
-                    writer_data = std::get<0>(wr_it->second);
+                    writer_data = &(std::get<0>(wr_it->second));
                 }
                 else
                 {
@@ -1547,8 +1550,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
         if(reader_guid != GUID_t::unknown())
         {
-            participant_->pairing_remote_writer_with_local_reader_after_security(reader_guid,
-                    writer_data);
+            participant_->pairing_remote_writer_with_local_reader_after_security(reader_guid, *writer_data);
         }
     }
     else
@@ -2423,7 +2425,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                         }
 
                         GUID_t local_reader_guid;
-                        WriterProxyData writer_data;
+                        WriterProxyData* writer_data = nullptr;
 
                         // Get local writer crypto tokens.
                         DatawriterCryptoTokenSeq local_writer_crypto_tokens;
@@ -2453,7 +2455,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                                             exception))
                                         {
                                             local_reader_guid = local_reader->first;
-                                            writer_data = std::get<0>(remote_writer->second);
+                                            writer_data = &(std::get<0>(remote_writer->second));
                                         }
                                         else
                                         {
@@ -2554,7 +2556,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                         if (local_reader_guid != GUID_t::unknown())
                         {
                             participant_->pairing_remote_writer_with_local_reader_after_security(
-                                    local_reader_guid, writer_data);
+                                    local_reader_guid, *writer_data);
                         }
 
                         // If writer was found and setting of crypto tokens works, then tell core to match writer and reader.

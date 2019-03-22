@@ -424,11 +424,46 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
 
 XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata)
 {
-    WriterProxyData* wdata = new WriterProxyData();
+    LocatorList_t unicast_locators;
+    LocatorList_t multicast_locators;
 
     tinyxml2::XMLNode* xml_endpoint_child = xml_endpoint;
     tinyxml2::XMLElement* element = xml_endpoint_child->FirstChildElement();
 
+    while(element != nullptr)
+    {
+        std::string key(element->Name());
+        if (key == UNICAST_LOCATOR)
+        {
+            Locator_t loc;
+            loc.kind = 1;
+            const char *address = element->Attribute(ADDRESS);
+            std::string auxString(address ? address : "");
+            IPLocator::setIPv4(loc, auxString);
+            int port = 0;
+            element->QueryIntAttribute(PORT, &port);
+            loc.port = static_cast<uint16_t>(port);
+            unicast_locators.push_back(loc);
+        }
+        else if (key == MULTICAST_LOCATOR)
+        {
+            Locator_t loc;
+            loc.kind = 1;
+            const char *address = element->Attribute(ADDRESS);
+            std::string auxString(address ? address : "");
+            IPLocator::setIPv4(loc, auxString);
+            int port = 0;
+            element->QueryIntAttribute(PORT, &port);
+            loc.port = static_cast<uint16_t>(port);
+            multicast_locators.push_back(loc);
+        }
+        element = element->NextSiblingElement();
+    }
+
+    WriterProxyData* wdata = new WriterProxyData(unicast_locators.size(), multicast_locators.size());
+
+    xml_endpoint_child = xml_endpoint;
+    element = xml_endpoint_child->FirstChildElement();
     while(element != nullptr)
     {
         std::string key(element->Name());
@@ -505,27 +540,9 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
         }
         else if(key == UNICAST_LOCATOR)
         {
-            Locator_t loc;
-            loc.kind = 1;
-            const char *address = element->Attribute(ADDRESS);
-            std::string auxString(address ? address : "");
-            IPLocator::setIPv4(loc, auxString);
-            int port = 0;
-            element->QueryIntAttribute(PORT, &port);
-            loc.port = static_cast<uint16_t>(port);
-            wdata->add_unicast_locator(loc);
         }
         else if(key == MULTICAST_LOCATOR)
         {
-            Locator_t loc;
-            loc.kind = 1;
-            const char *address = element->Attribute(ADDRESS);
-            std::string auxString(address ? address : "");
-            IPLocator::setIPv4(loc, auxString);
-            int port = 0;
-            element->QueryIntAttribute(PORT, &port);
-            loc.port = static_cast<uint16_t>(port);
-            wdata->add_multicast_locator(loc);
         }
         else if(key == TOPIC)
         {
@@ -630,12 +647,24 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
 
         element = element->NextSiblingElement();
     }
+
     if(wdata->userDefinedId() == 0)
     {
         logError(RTPS_EDP,"Writer XML endpoint with NO ID defined");
         delete(wdata);
         return XMLP_ret::XML_ERROR;
     }
+
+    for (const Locator_t& loc : unicast_locators)
+    {
+        wdata->add_unicast_locator(loc);
+    }
+
+    for (const Locator_t& loc : multicast_locators)
+    {
+        wdata->add_multicast_locator(loc);
+    }
+
     pdata->m_writers.push_back(wdata);
     return XMLP_ret::XML_OK;
 }

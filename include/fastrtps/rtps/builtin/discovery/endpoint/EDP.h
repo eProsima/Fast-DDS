@@ -23,6 +23,7 @@
 
 #include "../../../attributes/RTPSParticipantAttributes.h"
 #include "../../../builtin/data/ReaderProxyData.h"
+#include "../../../builtin/data/WriterProxyData.h"
 #include "../../../common/Guid.h"
 
 namespace eprosima {
@@ -232,6 +233,7 @@ class EDP
                 const eprosima::fastrtps::types::TypeIdentifier * rti) const;
 
         ReaderProxyData temp_reader_proxy_data_;
+        WriterProxyData temp_writer_proxy_data_;
 };
 
 }

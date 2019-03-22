@@ -49,10 +49,14 @@ StatelessWriter::StatelessWriter(
 {
     get_builtin_guid();
 
+    const RemoteLocatorsAllocationAttributes& loc_alloc = 
+        participant->getRTPSParticipantAttributes().allocation.locators;
     for (size_t i = 0; i < attributes.matched_readers_allocation.initial; ++i)
     {
-        // TODO (Miguel C): Use participant locators allocation policy
-        matched_readers_.emplace_back(getRTPSParticipant(), 4u, 1u);
+        matched_readers_.emplace_back(
+            mp_RTPSParticipant,
+            loc_alloc.max_unicast_locators, 
+            loc_alloc.max_multicast_locators);
     }
 }
 
@@ -315,8 +319,12 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
     }
     if (new_reader == nullptr)
     {
-        // TODO (Miguel C): Use participant locators allocation policy
-        new_reader = matched_readers_.emplace_back(getRTPSParticipant(), 4u, 1u);
+        const RemoteLocatorsAllocationAttributes& loc_alloc =
+            mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;
+        new_reader = matched_readers_.emplace_back(
+            mp_RTPSParticipant,
+            loc_alloc.max_unicast_locators,
+            loc_alloc.max_multicast_locators);
         if (new_reader != nullptr)
         {
             new_reader->start(data.guid(),
@@ -353,7 +361,7 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
         AsyncWriterThread::wakeUp(this);
     }
 
-    RTPSParticipantImpl* part = getRTPSParticipant();
+    RTPSParticipantImpl* part = mp_RTPSParticipant;
     locator_selector_.for_each([part](const Locator_t& loc)
     {
         part->createSenderResources(loc);
@@ -377,7 +385,7 @@ bool StatelessWriter::set_fixed_locators(const LocatorList_t& locator_list)
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
     fixed_locators_.push_back(locator_list);
-    getRTPSParticipant()->createSenderResources(fixed_locators_);
+    mp_RTPSParticipant->createSenderResources(fixed_locators_);
 
     return true;
 }
@@ -447,7 +455,7 @@ void StatelessWriter::send(CDRMessage_t* message) const
     RTPSWriter::send(message);
     for (const Locator_t& locator : fixed_locators_)
     {
-        getRTPSParticipant()->sendSync(message, locator);
+        mp_RTPSParticipant->sendSync(message, locator);
     }
 }
 

@@ -30,12 +30,13 @@ namespace fastrtps{
 namespace rtps {
 
 
-WriterProxyData::WriterProxyData()
+WriterProxyData::WriterProxyData(
+        const size_t max_unicast_locators,
+        const size_t max_multicast_locators)
 #if HAVE_SECURITY
     : security_attributes_(0)
     , plugin_security_attributes_(0)
-    // TODO (Miguel C): Use participant locators allocation policy
-    , remote_locators_(4u, 1u)
+    , remote_locators_(max_unicast_locators, max_multicast_locators)
     , m_userDefinedId(0)
 #else
     : m_userDefinedId(0)

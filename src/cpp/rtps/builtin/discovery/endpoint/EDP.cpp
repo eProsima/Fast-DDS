@@ -56,8 +56,11 @@ EDP::EDP(
     : mp_PDP(p)
     , mp_RTPSParticipant(part)
     , temp_reader_proxy_data_(
-            part->getAttributes().allocation.locators.max_unicast_locators,
-            part->getAttributes().allocation.locators.max_multicast_locators)
+            part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+            part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+    , temp_writer_proxy_data_(
+        part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+        part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
 }
 
@@ -781,10 +784,9 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(const GUID_t& participant_g
         (*wit)->getMutex()->lock();
         GUID_t writerGUID = (*wit)->getGuid();
         (*wit)->getMutex()->unlock();
-        WriterProxyData wdata;
-        if(mp_PDP->lookupWriterProxyData(writerGUID, wdata))
+        if(mp_PDP->lookupWriterProxyData(writerGUID, temp_writer_proxy_data_))
         {
-            bool valid = validMatching(&wdata, rdata);
+            bool valid = validMatching(&temp_writer_proxy_data_, rdata);
 
             if(valid)
             {
@@ -849,10 +851,9 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
 
         if(local_writer == writerGUID)
         {
-            WriterProxyData wdata;
-            if(mp_PDP->lookupWriterProxyData(writerGUID, wdata))
+            if(mp_PDP->lookupWriterProxyData(writerGUID, temp_writer_proxy_data_))
             {
-                bool valid = validMatching(&wdata, &rdata);
+                bool valid = validMatching(&temp_writer_proxy_data_, &rdata);
 
                 if(valid)
                 {

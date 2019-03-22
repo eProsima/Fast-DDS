@@ -37,7 +37,11 @@ class WriterProxyData
 {
     public:
 
-        WriterProxyData() : remote_locators_(4u, 1u) { }
+        WriterProxyData(
+                size_t max_unicast_locators,
+                size_t max_multicast_locators) 
+            : remote_locators_(max_unicast_locators, max_multicast_locators)
+        { }
 
         const GUID_t& guid() const { return m_guid; }
 

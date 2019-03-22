@@ -47,7 +47,9 @@ class WriterProxyData
 {
     public:
 
-        RTPS_DllAPI WriterProxyData();
+        RTPS_DllAPI WriterProxyData(
+                const size_t max_unicast_locators,
+                const size_t max_multicast_locators);
 
         virtual RTPS_DllAPI ~WriterProxyData();
 
