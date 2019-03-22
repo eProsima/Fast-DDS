@@ -49,7 +49,12 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
           Constructor
          * @param sedp Pointer to the EDPSimple associated with this listener.
          */
-        EDPSimplePUBListener(EDPSimple* sedp) : sedp_(sedp) {}
+        EDPSimplePUBListener(EDPSimple* sedp)
+            : sedp_(sedp) 
+            , temp_writer_data_(
+                    sedp->mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
+                    sedp->mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators)
+        {}
 
         virtual ~EDPSimplePUBListener() {}
 

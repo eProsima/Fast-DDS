@@ -187,9 +187,8 @@ void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
             }
             else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
             {
-                WriterProxyData wdata;
                 GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                if(!this->mp_PDP->lookupWriterProxyData(guid,wdata))//IF NOT FOUND, we CREATE AND PAIR IT
+                if(!this->mp_PDP->has_writer_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
                     newRemoteWriter(pdata,staticproperty.m_userId,staticproperty.m_entityId);
                 }

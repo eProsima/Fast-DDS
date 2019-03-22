@@ -26,6 +26,7 @@
 #include "../common/Locator.h"
 #include "../common/CacheChange.h"
 #include "../attributes/ReaderAttributes.h"
+#include "../attributes/RTPSParticipantAllocationAttributes.hpp"
 #include "../messages/RTPSMessageSenderInterface.hpp"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
@@ -70,6 +71,7 @@ public:
      */
     WriterProxy(
             StatefulReader* reader,
+            const RemoteLocatorsAllocationAttributes& loc_alloc,
             const ResourceLimitedContainerConfig& changes_allocation);
 
     /**

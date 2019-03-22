@@ -35,9 +35,9 @@ namespace eprosima
 
             TEST(WriterProxyTests, MissingChangesUpdate)
             {
-                WriterProxyData wattr;
+                WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
+                WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Update MISSING changes util sequence number 3.
@@ -106,9 +106,9 @@ namespace eprosima
 
             TEST(WriterProxyTests, LostChangesUpdate)
             {
-                WriterProxyData wattr;
+                WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
+                WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Update LOST changes util sequence number 3.
@@ -155,9 +155,9 @@ namespace eprosima
 
             TEST(WriterProxyTests, ReceivedChangeSet)
             {
-                WriterProxyData wattr;
+                WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
+                WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Set received change with sequence number 3.
@@ -238,9 +238,9 @@ namespace eprosima
 
             TEST(WriterProxyTests, IrrelevantChangeSet)
             {
-                WriterProxyData wattr;
+                WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
-                WriterProxy wproxy(&readerMock, ResourceLimitedContainerConfig());
+                WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
                 wproxy.start(wattr);
 
                 // Set irrelevant change with sequence number 3.
