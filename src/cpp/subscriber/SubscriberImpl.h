@@ -148,7 +148,7 @@ private:
         virtual ~SubscriberReaderListener() {}
         void onReaderMatched(
                 rtps::RTPSReader* reader,
-                rtps::MatchingInfo& info);
+                rtps::MatchingInfo& info) override;
         void onNewCacheChangeAdded(
                 rtps::RTPSReader* reader,
                 const rtps::CacheChange_t* const change) override;

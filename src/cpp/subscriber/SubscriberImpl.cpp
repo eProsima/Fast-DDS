@@ -220,8 +220,8 @@ bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t * const change_in
         return true;
     }
 
-    system_clock::time_point source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
-    system_clock::time_point now = system_clock::now();
+    auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+    auto now = system_clock::now();
 
     // The new change could have expired if it arrived too late
     // If so, remove it from the history and return false to avoid notifying the listener
@@ -281,20 +281,36 @@ void SubscriberImpl::lifespan_expired()
     {
         return;
     }
+
+    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    auto now = system_clock::now();
+
+    // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
+    if (now - source_timestamp < lifespan_duration_us_)
+    {
+        auto interval = source_timestamp - now + lifespan_duration_us_;
+        lifespan_timer_.update_interval_millisec(duration_cast<milliseconds>(interval).count());
+        lifespan_timer_.restart_timer();
+        return;
+    }
+
+    // The earliest change has expired
     m_history.remove_change_sub(earliest_change);
+
+    // Set the timer for the next change if there is one
     if (!m_history.get_earliest_change(&earliest_change))
     {
         return;
     }
 
-    // Calculate when the next change is due to expire and restart the timer
-    system_clock::time_point source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    system_clock::time_point now = system_clock::now();
-    system_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+    // Calculate when the next change is due to expire and restart
+    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    now = system_clock::now();
+    auto interval = source_timestamp - now + lifespan_duration_us_;
 
     assert(interval.count() > 0);
 
-    lifespan_timer_.update_interval_millisec(interval.count() * 1e-6);
+    lifespan_timer_.update_interval_millisec(duration_cast<milliseconds>(interval).count());
     lifespan_timer_.restart_timer();
 }
 
