@@ -349,8 +349,13 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
     return true;
 }
 
-bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag)
+bool StatefulReader::processHeartbeatMsg(
+        GUID_t &writerGUID,
+        uint32_t hbCount,
+        SequenceNumber_t &firstSN,
+        SequenceNumber_t &lastSN,
+        bool finalFlag,
+        bool livelinessFlag)
 {
     WriterProxy *pWP = nullptr;
 

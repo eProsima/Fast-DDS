@@ -101,8 +101,13 @@ class StatefulReader:public RTPSReader
          *
          * @return true if the reader accepts messages.
          */
-        bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-                SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
+        bool processHeartbeatMsg(
+                GUID_t &writerGUID,
+                uint32_t hbCount,
+                SequenceNumber_t &firstSN,
+                SequenceNumber_t &lastSN,
+                bool finalFlag,
+                bool livelinessFlag);
 
         bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList);
 

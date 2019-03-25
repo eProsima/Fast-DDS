@@ -55,15 +55,18 @@ StatefulWriter::StatefulWriter(
         WriterListener* listen)
     : RTPSWriter(pimpl, guid, att, hist, listen)
     , mp_periodicHB(nullptr)
+    , m_heartbeatCount(0)
     , m_times(att.times)
     , matched_readers_(att.matched_readers_allocation)
     , matched_readers_pool_(att.matched_readers_allocation)
     , all_acked_(false)
+    , may_remove_change_cond_()
     , may_remove_change_(0)
     , nack_response_event_(nullptr)
     , disableHeartbeatPiggyback_(att.disableHeartbeatPiggyback)
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
     , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
+    , m_controllers()
 {
     m_heartbeatCount = 0;
     m_HBReaderEntityId = 
@@ -174,8 +177,13 @@ void StatefulWriter::unsent_change_added_to_history(
                 //At this point we are sure all information was stores. We now can send data.
                 if (!m_separateSendingEnabled)
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                            max_blocking_time);
+                    RTPSMessageGroup group(
+                                mp_RTPSParticipant,
+                                this,
+                                RTPSMessageGroup::WRITER,
+                                m_cdrmessages,
+                                max_blocking_time);
+
                     if (!group.add_data(*change, all_remote_readers_, mAllShrinkedLocatorList, expectsInlineQos))
                     {
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
@@ -376,11 +384,15 @@ void StatefulWriter::send_any_unsent_changes()
         {
             // Clear all relevant changes through the local controllers first
             for (std::unique_ptr<FlowController>& controller : m_controllers)
+            {
                 (*controller)(relevantChanges);
+            }
 
             // Clear all relevant changes through the parent controllers
             for (std::unique_ptr<FlowController>& controller : mp_RTPSParticipant->getFlowControllers())
+            {
                 (*controller)(relevantChanges);
+            }
 
             try
             {
@@ -510,7 +522,9 @@ void StatefulWriter::send_any_unsent_changes()
     }
 
     if (activateHeartbeatPeriod)
+    {
         this->mp_periodicHB->restart_timer();
+    }
 
     // On VOLATILE writers, remove auto-acked (best effort readers) changes
     check_acked_status();
@@ -624,7 +638,13 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         {
             const std::vector<GUID_t>& guids = rp->guid_as_vector();
             const LocatorList_t& locatorsList = rp->remote_locators_shrinked();
-            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages, locatorsList, guids);
+            RTPSMessageGroup group(
+                        mp_RTPSParticipant,
+                        this,
+                        RTPSMessageGroup::WRITER,
+                        m_cdrmessages,
+                        locatorsList,
+                        guids);
 
             // Send initial heartbeat
             send_heartbeat_nts_(guids, locatorsList, group, false);
@@ -1023,8 +1043,14 @@ void StatefulWriter::send_heartbeat_nts_(
     incrementHBCount();
 
     // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-    message_group.add_heartbeat(remote_readers,
-            firstSeq, lastSeq, m_heartbeatCount, final, false, locators);
+    message_group.add_heartbeat(
+                remote_readers,
+                firstSeq,
+                lastSeq,
+                m_heartbeatCount,
+                final,
+                false,
+                locators);
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
 

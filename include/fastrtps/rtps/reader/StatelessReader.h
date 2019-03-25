@@ -40,9 +40,15 @@ class StatelessReader: public RTPSReader
 
 public:
     virtual ~StatelessReader();
+
 protected:
-    StatelessReader(RTPSParticipantImpl*,GUID_t& guid,
-            ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
+
+    StatelessReader(
+            RTPSParticipantImpl*,
+            GUID_t& guid,
+            ReaderAttributes& att,
+            ReaderHistory* hist,
+            ReaderListener* listen=nullptr);
 public:
     /**
      * Add a matched writer represented by a WriterProxyData object.
@@ -94,8 +100,13 @@ public:
      *
      * @return true if the reader accepts messages from the.
      */
-    bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
+    bool processHeartbeatMsg(
+            GUID_t &writerGUID,
+            uint32_t hbCount,
+            SequenceNumber_t &firstSN,
+            SequenceNumber_t &lastSN,
+            bool finalFlag,
+            bool livelinessFlag);
 
     bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList);
 

@@ -41,7 +41,7 @@ class StatelessWriter : public RTPSWriter
 {
     friend class RTPSParticipantImpl;
 
-    protected:
+protected:
 
     StatelessWriter(
             RTPSParticipantImpl* participant,
@@ -50,7 +50,7 @@ class StatelessWriter : public RTPSWriter
             WriterHistory* history,
             WriterListener* listener = nullptr);
 
-    public:
+public:
 
     virtual ~StatelessWriter();
 
@@ -124,7 +124,7 @@ class StatelessWriter : public RTPSWriter
 
     void add_flow_controller(std::unique_ptr<FlowController> controller) override;
 
-    private:
+private:
 
     void get_builtin_guid(ResourceLimitedVector<GUID_t>& guid_vector);
 
