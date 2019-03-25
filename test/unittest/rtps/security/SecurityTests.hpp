@@ -82,7 +82,6 @@ class SecurityTest : public ::testing::Test
             SecurityPluginFactory::release_auth_plugin();
             SecurityPluginFactory::release_crypto_plugin();
 
-            ::testing::DefaultValue<const RTPSParticipantAttributes&>::Clear();
             ::testing::DefaultValue<const GUID_t&>::Clear();
             ::testing::DefaultValue<CDRMessage_t>::Clear();
             ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Clear();
@@ -110,7 +109,6 @@ class SecurityTest : public ::testing::Test
 
         void initialization_ok()
         {
-            ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
             ::testing::DefaultValue<const GUID_t&>::Set(guid);
             ::testing::DefaultValue<CDRMessage_t>::Set(default_cdr_message);
             ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
@@ -139,7 +137,6 @@ class SecurityTest : public ::testing::Test
         {
             SecurityPluginFactory::release_crypto_plugin();
 
-            ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
             ::testing::DefaultValue<const GUID_t&>::Set(guid);
             ::testing::DefaultValue<CDRMessage_t>::Set(default_cdr_message);
             ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
@@ -362,9 +359,21 @@ class SecurityTest : public ::testing::Test
 
         // Default Values
         NetworkFactory network;
-        RTPSParticipantAttributes pattr;
         GUID_t guid;
         CDRMessage_t default_cdr_message;
 };
+
+struct SecurityTestsGlobalDefaultValues
+{
+    // Default Values
+    RTPSParticipantAttributes pattr;
+
+    SecurityTestsGlobalDefaultValues()
+    {
+        ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
+    }
+};
+
+static SecurityTestsGlobalDefaultValues g_security_default_values_;
 
 #endif // __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
