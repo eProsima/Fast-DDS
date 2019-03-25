@@ -426,6 +426,18 @@ public:
             bool value,
             MemberId id = MEMBER_ID_INVALID);
 
+    RTPS_DllAPI ResponseCode set_bool_value(
+            bool value,
+            const std::string& name)
+    {
+        MemberId id = get_member_id_by_name(name);
+        if (id != MEMBER_ID_INVALID)
+        {
+            return set_bool_value(value, id);
+        }
+        return RETCODE_BAD_PARAMETER;
+    }
+
     RTPS_DllAPI ResponseCode get_string_value(
             std::string& value,
             MemberId id) const;
@@ -458,13 +470,19 @@ public:
             const uint32_t& value,
             MemberId id = MEMBER_ID_INVALID);
 
-    RTPS_DllAPI ResponseCode get_bitmask_value(
-            const std::string& name,
-            bool& value) const;
+    RTPS_DllAPI ResponseCode get_bitmask_value(uint64_t& value) const;
 
-    RTPS_DllAPI ResponseCode set_bitmask_value(
-            bool value,
-            const std::string& name);
+    RTPS_DllAPI uint64_t get_bitmask_value() const
+    {
+        uint64_t value;
+        if (get_bitmask_value(value) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
+    RTPS_DllAPI ResponseCode set_bitmask_value(uint64_t value);
 
     RTPS_DllAPI ResponseCode get_complex_value(
             DynamicData** value,
@@ -627,6 +645,17 @@ public:
         return value;
     }
 
+    RTPS_DllAPI bool get_bool_value(const std::string& name) const
+    {
+        MemberId id = get_member_id_by_name(name);
+        bool value;
+        if (get_bool_value(value, id) != RETCODE_OK)
+        {
+            throw RETCODE_BAD_PARAMETER;
+        }
+        return value;
+    }
+
     RTPS_DllAPI std::string get_string_value(MemberId id) const
     {
         std::string value;
@@ -651,16 +680,6 @@ public:
     {
         std::string value;
         if (get_enum_value(value, id) != RETCODE_OK)
-        {
-            throw RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
-
-    RTPS_DllAPI bool get_bitmask_value(const std::string& name) const
-    {
-        bool value;
-        if (get_bitmask_value(name, value) != RETCODE_OK)
         {
             throw RETCODE_BAD_PARAMETER;
         }

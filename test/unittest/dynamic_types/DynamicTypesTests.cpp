@@ -2159,14 +2159,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
         ASSERT_TRUE(base_type_builder != nullptr);
-        base_type_builder->apply_annotation(ANNOTATION_BIT_BOUND_ID, "value", "2");
-        base_type_builder->apply_annotation(ANNOTATION_POSITION_ID, "value", "0");
         auto base_type = base_type_builder->build();
 
         DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
         ASSERT_TRUE(base_type_builder2 != nullptr);
-        base_type_builder2->apply_annotation(ANNOTATION_BIT_BOUND_ID, "value", "20");
-        base_type_builder2->apply_annotation(ANNOTATION_POSITION_ID, "value", "10"); // 8 bits empty
         auto base_type2 = base_type_builder2->build();
 
         DynamicTypeBuilder_ptr bitset_type_builder =
@@ -2176,6 +2172,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         // Add members to the struct.
         ASSERT_TRUE(bitset_type_builder->add_member(0, "int2", base_type) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(bitset_type_builder->add_member(1, "int20", base_type2) == ResponseCode::RETCODE_OK);
+        bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); // 8 bits empty
 
         auto bitset_type = bitset_type_builder->build();
         ASSERT_TRUE(bitset_type != nullptr);
@@ -2190,46 +2190,23 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         ASSERT_TRUE(bitset_data->set_byte_value(test1, 0) == ResponseCode::RETCODE_OK);
         octet test2(0);
         ASSERT_TRUE(bitset_data->get_byte_value(test2, 0) == ResponseCode::RETCODE_OK);
-        ASSERT_TRUE(test1 == test2);
-        uint32_t test3(234);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
         ASSERT_TRUE(bitset_data->set_uint32_value(test3, 1) == ResponseCode::RETCODE_OK);
         uint32_t test4(0);
         ASSERT_TRUE(bitset_data->get_uint32_value(test4, 1) == ResponseCode::RETCODE_OK);
-        ASSERT_TRUE(test3 == test4);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
 
-        /* // Bitset serialization standard?
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(bitset_type);
-        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(bitset_data)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(bitset_data, &payload));
-        ASSERT_TRUE(payload.length == payloadSize);
 
-        types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(bitset_type);
-        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
-        ASSERT_TRUE(data2->equals(bitset_data));
 
-        // SERIALIZATION TEST
-        StructStruct seq;
-        StructStructPubSubType seqpb;
-
-        uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(bitset_data)());
-        SerializedPayload_t dynamic_payload(payloadSize3);
-        ASSERT_TRUE(pubsubType.serialize(bitset_data, &dynamic_payload));
-        ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
-
-        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-        SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-        ASSERT_TRUE(static_payload.length == static_payloadSize);
-        types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(bitset_type);
-        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-        ASSERT_TRUE(data3->equals(bitset_data));
-
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ResponseCode::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ResponseCode::RETCODE_OK);
-        */
+        // Bitset serialization
+        // Tested in DynamicTypes_4_2_Tests
 
         // Delete the structure
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(bitset_data) == ResponseCode::RETCODE_OK);
@@ -2287,10 +2264,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
         ASSERT_TRUE(test1 == test2);
         ASSERT_TRUE(data->get_bool_value(test2, testId) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
-        bool test3 = data->get_bitmask_value("TEST");
+        bool test3 = data->get_bool_value("TEST");
         ASSERT_TRUE(test1 == test3);
-        ASSERT_TRUE(data->set_bitmask_value(true, "TEST4") == ResponseCode::RETCODE_OK);
-        bool test4 = data->get_bitmask_value("TEST4");
+        ASSERT_TRUE(data->set_bool_value(true, "TEST4") == ResponseCode::RETCODE_OK);
+        bool test4 = data->get_bool_value("TEST4");
         ASSERT_TRUE(test4 == true);
 
         test1 = false;
@@ -2298,6 +2275,9 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
         ASSERT_TRUE(data->get_bool_value(test2, test2Id) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(data->get_bool_value(test2, testId) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
+        data->set_bitmask_value(55);
+        uint64_t value = data->get_bitmask_value();
+        ASSERT_TRUE(value == 55);
 
         ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
