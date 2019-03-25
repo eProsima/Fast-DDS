@@ -29,9 +29,9 @@ if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
 
-find_package(asio QUIET)
+find_package(Asio QUIET)
 
-if(asio_FOUND)
+if(Asio_FOUND)
     message(STATUS "Found Asio")
 else()
     find_path(ASIO_INCLUDE_DIR NAMES asio.hpp)
