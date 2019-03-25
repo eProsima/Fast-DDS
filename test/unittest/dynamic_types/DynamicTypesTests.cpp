@@ -2275,9 +2275,16 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
         ASSERT_TRUE(data->get_bool_value(test2, test2Id) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(data->get_bool_value(test2, testId) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
-        data->set_bitmask_value(55);
+        data->set_bitmask_value(55); // 00110111
         uint64_t value = data->get_bitmask_value();
         ASSERT_TRUE(value == 55);
+        ASSERT_TRUE(data->get_bool_value("TEST"));
+        ASSERT_TRUE(data->get_bool_value("TEST2"));
+        ASSERT_TRUE(data->get_bool_value("TEST4"));
+        data->set_bitmask_value(37); // 00100101
+        ASSERT_TRUE(data->get_bool_value("TEST"));
+        ASSERT_FALSE(data->get_bool_value("TEST2"));
+        ASSERT_FALSE(data->get_bool_value("TEST4"));
 
         ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
