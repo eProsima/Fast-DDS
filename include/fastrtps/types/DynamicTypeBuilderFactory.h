@@ -173,7 +173,7 @@ public:
 
     RTPS_DllAPI DynamicTypeBuilder* create_bitmask_builder(uint32_t bound);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_bitset_builder(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* create_bitset_builder();
 
     RTPS_DllAPI DynamicTypeBuilder* create_alias_builder(
             DynamicTypeBuilder* base_type,

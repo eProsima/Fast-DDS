@@ -313,24 +313,16 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitmask_builder(uint32_t b
     return nullptr;
 }
 
-DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitset_builder(uint32_t bound)
+DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitset_builder()
 {
-    if (bound <= MAX_BITMASK_LENGTH)
-    {
-        TypeDescriptor pDescriptor;
-        pDescriptor.kind_ = TK_BITSET;
-        // TODO Review on implementation for IDL
-        pDescriptor.name_ = GenerateTypeName(get_type_name(TK_BITSET));
-        pDescriptor.bound_.push_back(bound);
+    TypeDescriptor pDescriptor;
+    pDescriptor.kind_ = TK_BITSET;
+    // TODO Review on implementation for IDL
+    pDescriptor.name_ = GenerateTypeName(get_type_name(TK_BITSET));
 
-        DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
-        add_builder_to_list(pNewTypeBuilder);
-        return pNewTypeBuilder;
-    }
-    else
-    {
-        logError(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
-    }
+    DynamicTypeBuilder* pNewTypeBuilder = new DynamicTypeBuilder(&pDescriptor);
+    add_builder_to_list(pNewTypeBuilder);
+    return pNewTypeBuilder;
     return nullptr;
 }
 

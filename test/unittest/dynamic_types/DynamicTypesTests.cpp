@@ -2166,7 +2166,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         auto base_type2 = base_type_builder2->build();
 
         DynamicTypeBuilder_ptr bitset_type_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_bitset_builder(32); // to hold 2+10+20
+            DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
         ASSERT_TRUE(bitset_type_builder != nullptr);
 
         // Add members to the struct.
