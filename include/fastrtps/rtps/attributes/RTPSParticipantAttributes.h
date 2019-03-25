@@ -34,7 +34,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class PDP;
 
 //!PDP subclass choice
 typedef enum PDPType
@@ -60,6 +59,25 @@ typedef enum PDPType
     SERVER
 
 } PDPType_t;
+
+//! PDP factory for EXTERNAL type
+class PDP;
+class BuiltinProtocols;
+
+typedef struct _PDPFactory
+{
+    // Pointer to the PDP creator
+    PDP * (*CreatePDPInstance)(BuiltinProtocols*);
+    // Pointer to the PDP destructor
+    void (*ReleasePDPInstance)(PDP*);
+
+    bool operator==(const struct _PDPFactory &e) const
+    {
+        return (CreatePDPInstance == e.CreatePDPInstance)
+            && (ReleasePDPInstance == e.ReleasePDPInstance);
+    }
+
+} PDPFactory;
 
 /**
  * Class SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
@@ -147,8 +165,8 @@ class BuiltinAttributes{
         //! Initial peers.
         LocatorList_t initialPeersList;
 
-        //! PDP subclass object to use on discovery (only if EXTERNAL selected)
-        PDP * m_PDP;
+        //! function that returns a PDP object (only if EXTERNAL selected)
+        PDPFactory m_PDPfactory{};
         /**
          * The period for the RTPSParticipant to:
          *  send its Discovery Message to its servers
@@ -171,7 +189,6 @@ class BuiltinAttributes{
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
             discoveryServer_client_syncperiod.seconds = 1;
-            m_PDP = nullptr;
             m_staticEndpointXMLFilename = "";
             domainId = 0;
             leaseDuration.seconds = 130;
@@ -189,7 +206,7 @@ class BuiltinAttributes{
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
                    (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
-                   (this->m_PDP == b.m_PDP) &&
+                   (this->m_PDPfactory == b.m_PDPfactory) &&
                    (this->domainId == b.domainId) &&
                    (this->leaseDuration == b.leaseDuration) &&
                    (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&

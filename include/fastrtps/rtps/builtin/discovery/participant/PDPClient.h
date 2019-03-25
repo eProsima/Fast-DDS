@@ -85,10 +85,10 @@ class PDPClient : public PDP
      */
     void announceParticipantState(bool new_change, bool dispose = false) override;
 
-    //! Not currently needed for DSClientEvent announcement
+    //! Not currently need for DSClientEvent announcement
     void stopParticipantAnnouncement() override {};
 
-    //! Not currently needed for DSClientEvent announcement
+    //! Not currently need for DSClientEvent announcement
     void resetParticipantAnnouncement() override {};
 
     /**

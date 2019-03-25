@@ -60,7 +60,14 @@ BuiltinProtocols::~BuiltinProtocols() {
     if(mp_WLP!=nullptr)
         delete(mp_WLP);
 
-    if (m_att.discoveryProtocol != PDPType_t::EXTERNAL)
+    if (m_att.discoveryProtocol == PDPType_t::EXTERNAL)
+    {
+        PDPFactory & f = m_att.m_PDPfactory;
+
+        assert(f.ReleasePDPInstance);
+        (*f.ReleasePDPInstance)(mp_PDP);
+    }
+    else
     {
         delete(mp_PDP); // responsible for object's lifetime
     }
@@ -95,9 +102,13 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
             break;
 
         case PDPType_t::EXTERNAL:
-            assert(attributes.m_PDP);
-            mp_PDP = attributes.m_PDP;
-            break;
+        {
+            PDPFactory & f = attributes.m_PDPfactory;
+            assert(f.CreatePDPInstance);
+            mp_PDP = (*f.CreatePDPInstance)(this);
+            assert(mp_PDP);
+        }
+                break;
 
         case PDPType_t::CLIENT:
             mp_PDP = new PDPClient(this);
