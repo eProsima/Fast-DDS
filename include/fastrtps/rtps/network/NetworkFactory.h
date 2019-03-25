@@ -108,8 +108,6 @@ class NetworkFactory
          */
         void select_locators(LocatorSelector& selector) const;
 
-        LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) const;
-
         bool is_local_locator(const Locator_t& locator) const;
 
         size_t numberOfRegisteredTransports() const;

@@ -1311,51 +1311,6 @@ void TCPTransportInterface::select_locators(LocatorSelector& selector) const
     }
 }
 
-LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
-{
-    LocatorList_t unicastResult;
-    for (const LocatorList_t& locatorList : locatorLists)
-    {
-        LocatorListConstIterator it = locatorList.begin();
-        LocatorList_t pendingUnicast;
-
-        while (it != locatorList.end())
-        {
-            if ((*it).kind != transport_kind_)
-            {
-                ++it;
-                continue;
-            }
-
-            // Check is local interface.
-            auto localInterface = current_interfaces_.begin();
-            for (; localInterface != current_interfaces_.end(); ++localInterface)
-            {
-                if (compare_locator_ip(localInterface->locator, *it))
-                {
-                    // Loopback locator
-                    Locator_t loopbackLocator;
-                    fill_local_ip(loopbackLocator);
-                    IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
-                    IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
-                    pendingUnicast.push_back(loopbackLocator);
-                    break;
-                }
-            }
-
-            if (localInterface == current_interfaces_.end())
-                pendingUnicast.push_back(*it);
-
-            ++it;
-        }
-
-        unicastResult.push_back(pendingUnicast);
-    }
-
-    LocatorList_t result(std::move(unicastResult));
-    return result;
-}
-
 void TCPTransportInterface::SocketAccepted(
         TCPAcceptorBasic* acceptor,
         Locator_t acceptor_locator, // The locator may be deleted while in this method. We want a copy of the locator.

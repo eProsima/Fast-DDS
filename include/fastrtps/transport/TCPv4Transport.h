@@ -154,8 +154,6 @@ public:
      * @param [in, out] selector Locator selector.
      */
     virtual void select_locators(LocatorSelector& selector) const override;
-
-    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 };
 
 } // namespace rtps

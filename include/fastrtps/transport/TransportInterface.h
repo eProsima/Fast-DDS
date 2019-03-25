@@ -168,8 +168,6 @@ public:
      */
     virtual void select_locators(LocatorSelector& selector) const = 0;
 
-    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
-
     virtual bool is_local_locator(const Locator_t& locator) const = 0;
 
     virtual TransportDescriptorInterface* get_configuration() = 0;

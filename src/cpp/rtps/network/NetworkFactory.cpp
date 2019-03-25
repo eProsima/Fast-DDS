@@ -159,18 +159,6 @@ void NetworkFactory::select_locators(LocatorSelector& selector) const
     }
 }
 
-LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) const
-{
-    LocatorList_t returnedList;
-
-    for(auto& transport : mRegisteredTransports)
-    {
-        returnedList.push_back(transport->ShrinkLocatorLists(locatorLists));
-    }
-
-    return returnedList;
-}
-
 bool NetworkFactory::is_local_locator(const Locator_t& locator) const
 {
     for(auto& transport : mRegisteredTransports)

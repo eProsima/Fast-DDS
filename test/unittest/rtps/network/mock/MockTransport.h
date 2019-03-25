@@ -101,8 +101,6 @@ class MockTransport: public TransportInterface
          */
         virtual void select_locators(LocatorSelector& selector) const override;
 
-        virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
-
         virtual bool is_local_locator(const Locator_t&) const override { return false; }
 
         virtual TransportDescriptorInterface* get_configuration() override { return nullptr; };

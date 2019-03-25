@@ -416,12 +416,6 @@ struct ShrinkLocatorCase_t
         }
     }
 
-    void perform_test(const NetworkFactory& network) const
-    {
-        LocatorList_t result = network.ShrinkLocatorLists(input);
-        ASSERT_EQ(result, output) << "on test " << name;
-    }
-
     void perform_selector_test(const NetworkFactory& network)
     {
         LocatorSelector selector(ResourceLimitedContainerConfig::fixed_size_configuration(SHRINK_TEST_MAX_ENTRIES));
@@ -616,22 +610,6 @@ void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
 }
 
 TEST_F(NetworkTests, LocatorShrink)
-{
-    std::vector<ShrinkLocatorCase_t> test_cases;
-    fill_blackbox_locators_test_cases(test_cases);
-
-    NetworkFactory f;
-    UDPv4TransportDescriptor udpv4;
-    f.RegisterTransport(&udpv4);
-    // TODO: Register more transports
-
-    for (const ShrinkLocatorCase_t& test : test_cases)
-    {
-        test.perform_test(f);
-    }
-}
-
-TEST_F(NetworkTests, LocatorShrinkRefactored)
 {
     std::vector<ShrinkLocatorCase_t> test_cases;
     fill_blackbox_locators_test_cases(test_cases);
