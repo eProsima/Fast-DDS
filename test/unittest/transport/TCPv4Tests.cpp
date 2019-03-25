@@ -15,16 +15,15 @@
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/transport/TCPv4Transport.h>
 #include "mock/MockTCPv4Transport.h"
+#include <gtest/gtest.h>
+#include <thread>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/log/Log.h>
-#include <MockReceiverResource.h>
-#include "../../../src/cpp/transport/TCPSenderResource.hpp"
-
 #include <memory>
 #include <asio.hpp>
-#include <gtest/gtest.h>
-#include <thread>
+#include <MockReceiverResource.h>
+
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -70,7 +69,6 @@ class TCPv4Tests: public ::testing::Test
     public:
         TCPv4Tests()
         {
-            Log::SetVerbosity(Log::Kind::Info);
             HELPER_SetDescriptorDefaults();
         }
 
@@ -116,15 +114,14 @@ TEST_F(TCPv4Tests, opening_and_closing_output_channel)
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     genericOutputChannelLocator.port = g_output_port; // arbitrary
     IPLocator::setLogicalPort(genericOutputChannelLocator, g_output_port);
-    SendResourceList send_resource_list;
 
     // Then
-    ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, genericOutputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
-    ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
-    send_resource_list.clear();
-    //ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
 }
 
 // This test checks that opening a listening port, never bound by an input channel,
@@ -140,15 +137,14 @@ TEST_F(TCPv4Tests, opening_and_closing_output_channel_with_listener)
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     genericOutputChannelLocator.port = g_output_port; // arbitrary
     IPLocator::setLogicalPort(genericOutputChannelLocator, g_output_port);
-    SendResourceList send_resource_list;
 
     // Then
-    ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, genericOutputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
-    ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
-    send_resource_list.clear();
-    //ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
 }
 
 TEST_F(TCPv4Tests, opening_and_closing_input_channel)
@@ -200,39 +196,41 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     outputLocator.port = g_default_port;
     IPLocator::setLogicalPort(outputLocator, 7410);
 
-    MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
-    ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
-
-    SendResourceList send_resource_list;
-    ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-    ASSERT_FALSE(send_resource_list.empty());
-    octet message[5] = { 'H','e','l','l','o' };
-
-    Semaphore sem;
-    std::function<void()> recCallback = [&]()
     {
-        EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-        sem.post();
-    };
+        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-    msg_recv->setCallback(recCallback);
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
+        octet message[5] = { 'H','e','l','l','o' };
 
-    auto sendThreadFunction = [&]()
-    {
-        bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
-        while (!sent)
+        Semaphore sem;
+        std::function<void()> recCallback = [&]()
         {
-            sent = send_resource_list.at(0)->send(message, 5, inputLocator);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        EXPECT_TRUE(sent);
-    };
+            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+            sem.post();
+        };
 
-    senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    senderThread->join();
-    sem.wait();
+        msg_recv->setCallback(recCallback);
+
+        auto sendThreadFunction = [&]()
+        {
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+            while (!sent)
+            {
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            EXPECT_TRUE(sent);
+            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+        };
+
+        senderThread.reset(new std::thread(sendThreadFunction));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        senderThread->join();
+        sem.wait();
+    }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 #endif
 
@@ -246,9 +244,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     genericOutputChannelLocator.port = g_output_port;
     IPLocator::setLogicalPort(genericOutputChannelLocator, 7400);
-    SendResourceList send_resource_list;
-    transportUnderTest.OpenOutputChannel(send_resource_list, genericOutputChannelLocator);
-    ASSERT_FALSE(send_resource_list.empty());
+    transportUnderTest.OpenOutputChannel(genericOutputChannelLocator);
 
     Locator_t destinationLocator;
     destinationLocator.kind = LOCATOR_KIND_TCPv4;
@@ -257,8 +253,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-    ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
-            destinationLocator));
+    ASSERT_FALSE(transportUnderTest.send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(), genericOutputChannelLocator, destinationLocator));
 }
 
 TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -309,15 +304,13 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setLogicalPort(outputChannelLocator, 7400);
     IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
-    SendResourceList send_resource_list;
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     Locator_t wrongLocator(outputChannelLocator);
     IPLocator::setIPv4(wrongLocator, 111,111,111,111);
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), wrongLocator));
+    ASSERT_FALSE(transportUnderTest.send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
 }
 
 TEST_F(TCPv4Tests, send_to_blocked_interface)
@@ -331,15 +324,13 @@ TEST_F(TCPv4Tests, send_to_blocked_interface)
     outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setLogicalPort(outputChannelLocator, 7400);
     IPLocator::setIPv4(outputChannelLocator, 127, 0, 0, 1); // Loopback
-    SendResourceList send_resource_list;
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     Locator_t wrongLocator(outputChannelLocator);
     IPLocator::setIPv4(wrongLocator, 111, 111, 111, 111);
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), wrongLocator));
+    ASSERT_FALSE(transportUnderTest.send(message.data(), (uint32_t)message.size(), outputChannelLocator, wrongLocator));
 }
 
 #ifndef __APPLE__
@@ -393,9 +384,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                 MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
                 ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-                SendResourceList send_resource_list;
-                ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-                ASSERT_FALSE(send_resource_list.empty());
+                ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
                 octet message[5] = { 'H','e','l','l','o' };
                 bool bOk = false;
                 std::function<void()> recCallback = [&]()
@@ -409,10 +398,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                 bool bFinish(false);
                 auto sendThreadFunction = [&]()
                 {
-                    bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                    bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                     while (!bFinish && !sent)
                     {
-                        sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                        sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_TRUE(sent);
@@ -425,6 +414,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                 senderThread->join();
                 ASSERT_TRUE(bOk);
             }
+            ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
         }
     }
 }
@@ -477,9 +467,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        SendResourceList send_resource_list;
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
 
         Semaphore sem;
@@ -493,10 +481,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -508,6 +496,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
         senderThread->join();
         sem.wait();
     }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
@@ -564,9 +553,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        SendResourceList send_resource_list;
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
 
         Semaphore sem;
@@ -580,10 +567,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5,  inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -595,6 +582,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
         senderThread->join();
         sem.wait();
     }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 
 TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
@@ -653,9 +641,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        SendResourceList send_resource_list;
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
 
         Semaphore sem;
@@ -669,10 +655,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -684,6 +670,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
         senderThread->join();
         sem.wait();
     }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 
 TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
@@ -742,9 +729,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        SendResourceList send_resource_list;
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
 
         Semaphore sem;
@@ -759,11 +744,11 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             int count = 0;
             while (!sent && count < 30)
             {
-                sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ++count;
             }
@@ -777,6 +762,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
         senderThread->join();
         sem.wait();
     }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 
 TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
@@ -835,9 +821,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        SendResourceList send_resource_list;
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
 
         Semaphore sem;
@@ -851,10 +835,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -865,6 +849,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
         senderThread->join();
         sem.wait();
     }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 /*
 TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
@@ -956,7 +941,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
     ASSERT_TRUE(sendTransportUnderTest2.CloseOutputChannel(outputLocator));
 }
 */
-
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 {
     Log::SetVerbosity(Log::Kind::Info);
@@ -1009,9 +993,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        SendResourceList send_resource_list;
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
 
         Semaphore sem;
@@ -1026,11 +1008,11 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             int count = 0;
             while (!sent && count < 30)
             {
-                sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ++count;
             }
@@ -1044,6 +1026,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
         senderThread->join();
         sem.wait();
     }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 #endif //TLS_FOUND
 
@@ -1082,9 +1065,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
         MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-        SendResourceList send_resource_list;
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-        ASSERT_FALSE(send_resource_list.empty());
+        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
         octet message[5] = { 'H','e','l','l','o' };
         bool bOk = false;
         std::function<void()> recCallback = [&]()
@@ -1098,10 +1079,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
         bool bFinish(false);
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
             while (!bFinish && !sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -1114,6 +1095,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
         senderThread->join();
         ASSERT_TRUE(bOk);
     }
+    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
 }
 
 TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
@@ -1166,9 +1148,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                 MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
                 ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
-                SendResourceList send_resource_list;
-                ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
-                ASSERT_FALSE(send_resource_list.empty());
+                ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
                 octet message[5] = { 'H','e','l','l','o' };
                 bool bOk = false;
                 std::function<void()> recCallback = [&]()
@@ -1182,10 +1162,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                 bool bFinished(false);
                 auto sendThreadFunction = [&]()
                 {
-                    bool sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                    bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                     while (!bFinished && !sent)
                     {
-                        sent = send_resource_list.at(0)->send(message, 5, inputLocator);
+                        sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_FALSE(sent);
@@ -1198,250 +1178,12 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                 senderThread->join();
                 ASSERT_FALSE(bOk);
             }
+            ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
         }
     }
 }
 
 #endif
-
-TEST_F(TCPv4Tests, shrink_locator_lists)
-{
-    std::vector<IPFinder::info_IP> localInterfaces;
-    GetIP4s(localInterfaces, false);
-
-    MockTCPv4Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
-
-    LocatorList_t result, list1;
-    Locator_t locator, locator2, locator3;
-    Locator_t openConn1, openConn2;
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port;
-    locator3.kind = LOCATOR_KIND_TCPv4;
-    locator3.port = g_default_port;
-
-    // Check shrink of only one locator list unicast.
-    IPLocator::setIPv4(locator, 192,168,1,4);
-    IPLocator::setIPv4(locator2, 192,168,1,4);
-    list1.push_back(locator);
-    IPLocator::setIPv4(locator, 192,168,2,5);
-    IPLocator::setIPv4(locator3, 192,168,2,5);
-    list1.push_back(locator);
-
-    // Open connections (fake)
-    openConn1 = locator2;
-    openConn2 = locator3;
-    SendResourceList send_resource_list;
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn1);
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn2);
-
-    result = transportUnderTest.ShrinkLocatorLists({list1});
-    ASSERT_EQ(result.size(), 2u);
-    for (auto it = result.begin(); it != result.end(); ++it)
-    {
-        ASSERT_TRUE(*it == locator2 || *it == locator3);
-    }
-    list1.clear();
-
-    // Shrink Two Localhosts and return localhost.
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    IPLocator::setIPv4(locator, 127, 0, 0, 1);
-    list1.push_back(locator);
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port;
-    IPLocator::setIPv4(locator2, 127, 0, 0, 1);
-    list1.push_back(locator2);
-    result = transportUnderTest.ShrinkLocatorLists({ list1 });
-    ASSERT_EQ(result.size(), 1u);
-    ASSERT_TRUE(*result.begin() == locator);
-    list1.clear();
-    send_resource_list.clear();
-
-    // Shrink Several Local addresses and return localhost.
-    if (localInterfaces.size() > 0)
-    {
-        locator.kind = LOCATOR_KIND_TCPv4;
-        locator.port = g_default_port;
-        IPLocator::setIPv4(locator, 127, 0, 0, 1);
-        locator2.kind = LOCATOR_KIND_TCPv4;
-        locator2.port = g_default_port;
-        IPLocator::setIPv4(locator2, localInterfaces.begin()->locator);
-        list1.push_back(locator2);
-        if (localInterfaces.size() > 1)
-        {
-            IPLocator::setIPv4(locator2, localInterfaces[1].locator);
-            list1.push_back(locator2);
-        }
-
-        result = transportUnderTest.ShrinkLocatorLists({ list1 });
-        ASSERT_EQ(result.size(), 1u);
-        ASSERT_TRUE(*result.begin() == locator);
-        list1.clear();
-    }
-
-    // Shrink two WAN Adresses ( Same as mine ) With same LAN Address and same Logical Port and Same Physical Port and return only one.
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    IPLocator::setIPv4(locator, 192, 168, 0, 1);
-    IPLocator::setWan(locator, g_test_wan_address);
-    list1.push_back(locator);
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port;
-    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
-    IPLocator::setWan(locator2, g_test_wan_address);
-    list1.push_back(locator2);
-
-    // Open connections (fake)
-    openConn1.port = g_default_port;
-    IPLocator::setIPv4(openConn1, g_test_wan_address);
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn1);
-
-    result = transportUnderTest.ShrinkLocatorLists({ list1 });
-    ASSERT_EQ(result.size(), 1u);
-    ASSERT_TRUE(*result.begin() == locator);
-
-    list1.clear();
-    send_resource_list.clear();
-
-    // Shrink two WAN Adresses ( Same as mine ) With same LAN Address and same Logical Port and Different Physical Port and return both.
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    IPLocator::setIPv4(locator, 192, 168, 0, 1);
-    IPLocator::setWan(locator, g_test_wan_address);
-    list1.push_back(locator);
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port + 1;
-    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
-    IPLocator::setWan(locator2, g_test_wan_address);
-    list1.push_back(locator2);
-
-    // Open connections (fake)
-    openConn1.port = g_default_port;
-    openConn2.port = g_default_port + 1;
-    IPLocator::setIPv4(openConn1, g_test_wan_address);
-    IPLocator::setIPv4(openConn2, g_test_wan_address);
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn1);
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn2);
-
-    result = transportUnderTest.ShrinkLocatorLists({ list1 });
-    ASSERT_EQ(result.size(), 2u);
-    for (auto it = result.begin(); it != result.end(); ++it)
-    {
-        ASSERT_TRUE(*it == locator || *it == locator2);
-    }
-
-    list1.clear();
-
-    //Shrink two WAN Adresses ( Same as mine ) With different LAN Address and same Logical Port and same Physical Port and return both.
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    IPLocator::setIPv4(locator, 192, 168, 0, 1);
-    IPLocator::setWan(locator, g_test_wan_address);
-    list1.push_back(locator);
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port;
-    IPLocator::setIPv4(locator2, 192, 168, 0, 2);
-    IPLocator::setWan(locator2, g_test_wan_address);
-    list1.push_back(locator2);
-
-    // Open connections (fake)
-    openConn1.port = g_default_port;
-    IPLocator::setIPv4(openConn1, g_test_wan_address);
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn1);
-
-    result = transportUnderTest.ShrinkLocatorLists({ list1 });
-    ASSERT_EQ(result.size(), 2u);
-    for (auto it = result.begin(); it != result.end(); ++it)
-    {
-        ASSERT_TRUE(*it == locator || *it == locator2);
-    }
-
-    list1.clear();
-    send_resource_list.clear();
-
-    //Shrink two WAN Adresses ( different than mine ) With different LAN Address and same Logical Port and same Physical Port and return both.
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    IPLocator::setIPv4(locator, 192, 168, 0, 1);
-    IPLocator::setWan(locator, "88.88.88.90");
-    list1.push_back(locator);
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port;
-    IPLocator::setIPv4(locator2, 192, 168, 0, 2);
-    IPLocator::setWan(locator2, "88.88.88.90");
-    list1.push_back(locator2);
-
-    // Open connections (fake)
-    openConn1.port = g_default_port;
-    IPLocator::setIPv4(openConn1, "88.88.88.90");
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn1);
-
-    result = transportUnderTest.ShrinkLocatorLists({ list1 });
-    ASSERT_EQ(result.size(), 2u);
-    for (auto it = result.begin(); it != result.end(); ++it)
-    {
-        ASSERT_TRUE(*it == locator || *it == locator2);
-    }
-
-    list1.clear();
-    send_resource_list.clear();
-
-    //Shrink two WAN Adresses ( different than mine ) With same LAN Address and same Logical Port and same Physical Port and return only one.
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    IPLocator::setIPv4(locator, 192, 168, 0, 1);
-    IPLocator::setWan(locator, "88.88.88.90");
-    list1.push_back(locator);
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port;
-    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
-    IPLocator::setWan(locator2, "88.88.88.90");
-    list1.push_back(locator2);
-
-    // Open connections (fake)
-    openConn1.port = g_default_port;
-    IPLocator::setIPv4(openConn1, "88.88.88.90");
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn1);
-
-    result = transportUnderTest.ShrinkLocatorLists({ list1 });
-    ASSERT_EQ(result.size(), 1u);
-    ASSERT_TRUE(*result.begin() == locator);
-
-    list1.clear();
-    send_resource_list.empty();
-
-    //Shrink two WAN Adresses ( different than mine ) With same LAN Address and different Logical Port and same Physical Port and return both.
-    locator.kind = LOCATOR_KIND_TCPv4;
-    locator.port = g_default_port;
-    IPLocator::setIPv4(locator, 192, 168, 0, 1);
-    IPLocator::setWan(locator, "88.88.88.90");
-    IPLocator::setLogicalPort(locator, 3333);
-    list1.push_back(locator);
-    locator2.kind = LOCATOR_KIND_TCPv4;
-    locator2.port = g_default_port;
-    IPLocator::setIPv4(locator2, 192, 168, 0, 1);
-    IPLocator::setWan(locator2, "88.88.88.90");
-    IPLocator::setLogicalPort(locator2, 4444);
-    list1.push_back(locator2);
-
-    // Open connections (fake)
-    openConn1.port = g_default_port;
-    IPLocator::setIPv4(openConn1, "88.88.88.90");
-    transportUnderTest.OpenOutputChannel(send_resource_list, openConn1);
-
-    result = transportUnderTest.ShrinkLocatorLists({ list1 });
-    ASSERT_EQ(result.size(), 2u);
-    for (auto it = result.begin(); it != result.end(); ++it)
-    {
-        ASSERT_TRUE(*it == locator || *it == locator2);
-    }
-
-    list1.clear();
-    send_resource_list.clear();
-}
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {

@@ -321,8 +321,6 @@ public:
      */
     virtual void select_locators(LocatorSelector& selector) const override;
 
-    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
-
     //! Callback called each time that an incomming connection is accepted.
     void SocketAccepted(
             std::shared_ptr<asio::ip::tcp::socket> socket,
