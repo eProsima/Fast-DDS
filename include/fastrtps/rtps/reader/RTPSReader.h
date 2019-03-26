@@ -189,6 +189,11 @@ namespace eprosima
                 */
                 virtual bool isInCleanState() const = 0;
 
+                inline void enableMessagesFromUnkownWriters(bool enable) 
+                {
+                    m_acceptMessagesFromUnkownWriters = enable;
+                }
+
                 protected:
                 void setTrustedWriter(EntityId_t writer)
                 {

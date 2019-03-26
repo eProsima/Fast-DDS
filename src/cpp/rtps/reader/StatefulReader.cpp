@@ -441,7 +441,8 @@ bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
     }
 
     // Check if it's a framework's one
-    if (writerId.entityId == m_trustedWriterEntityId)
+    if (m_acceptMessagesFromUnkownWriters 
+        && (writerId.entityId == m_trustedWriterEntityId))
     {
         *wp = nullptr;
         return true;
