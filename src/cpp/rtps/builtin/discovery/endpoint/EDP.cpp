@@ -92,8 +92,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         if (reader->getAttributes().multicastLocatorList.empty() &&
             reader->getAttributes().unicastLocatorList.empty())
         {
-            rpd->set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-            rpd->set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+            rpd->set_locators(participant_data.default_locators, network, true);
         }
         else
         {
@@ -204,8 +203,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
         if (writer->getAttributes().multicastLocatorList.empty() &&
             writer->getAttributes().unicastLocatorList.empty())
         {
-            wpd->set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-            wpd->set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+            wpd->set_locators(participant_data.default_locators, network, true);
         }
         else
         {
@@ -309,8 +307,7 @@ bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, con
         if (reader->getAttributes().multicastLocatorList.empty() &&
             reader->getAttributes().unicastLocatorList.empty())
         {
-            rdata->set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-            rdata->set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+            rdata->set_locators(participant_data.default_locators, network, true);
         }
         else
         {
@@ -350,8 +347,7 @@ bool EDP::updatedLocalWriter(RTPSWriter* writer, const TopicAttributes& att, con
         if (writer->getAttributes().multicastLocatorList.empty() &&
             writer->getAttributes().unicastLocatorList.empty())
         {
-            wdata->set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-            wdata->set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+            wdata->set_locators(participant_data.default_locators, network, true);
         }
         else
         {

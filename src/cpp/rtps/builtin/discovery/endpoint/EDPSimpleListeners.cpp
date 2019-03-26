@@ -84,8 +84,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             {
                 if (!temp_writer_data_.has_locators())
                 {
-                    temp_writer_data_.set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-                    temp_writer_data_.set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+                    temp_writer_data_.set_locators(participant_data.default_locators, network, true);
                 }
 
                 if (updating)
@@ -189,8 +188,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             {
                 if (!temp_reader_data_.has_locators())
                 {
-                    temp_reader_data_.set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-                    temp_reader_data_.set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+                    temp_reader_data_.set_locators(participant_data.default_locators, network, true);
                 }
 
                 if (updating)

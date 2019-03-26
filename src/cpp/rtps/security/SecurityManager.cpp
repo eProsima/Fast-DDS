@@ -1187,7 +1187,8 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
 
         const GUID_t remote_participant_key(message.message_identity().source_guid().guidPrefix, c_EntityId_RTPSParticipant);
         DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
-        ParticipantProxyData participant_data;
+        // TODO (Miguel C): participant allocation QOS
+        ParticipantProxyData participant_data(c_default_RTPSParticipantAllocationAttributes);
 
         mutex_.lock();
         auto dp_it = discovered_participants_.find(remote_participant_key);
@@ -1665,7 +1666,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
         temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_writer_proxy_data_.guid().entityId = participant_stateless_message_writer_entity_id;
         temp_writer_proxy_data_.persistence_guid(temp_writer_proxy_data_.guid());
-        temp_writer_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_writer_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
         temp_writer_proxy_data_.topicKind(NO_KEY);
         temp_writer_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
@@ -1679,7 +1680,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
         temp_reader_proxy_data_.m_expectsInlineQos = false;
         temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_reader_proxy_data_.guid().entityId = participant_stateless_message_reader_entity_id;
-        temp_reader_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_reader_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
         temp_reader_proxy_data_.topicKind(NO_KEY);
         temp_reader_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
@@ -1699,7 +1700,7 @@ void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProx
         temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_writer_proxy_data_.guid().entityId = participant_volatile_message_secure_writer_entity_id;
         temp_writer_proxy_data_.persistence_guid(temp_writer_proxy_data_.guid());
-        temp_writer_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_writer_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
         temp_writer_proxy_data_.topicKind(NO_KEY);
         temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         temp_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
@@ -1713,7 +1714,7 @@ void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProx
         temp_reader_proxy_data_.m_expectsInlineQos = false;
         temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_reader_proxy_data_.guid().entityId = participant_volatile_message_secure_reader_entity_id;
-        temp_reader_proxy_data_.set_unicast_locators(participant_data.m_metatrafficUnicastLocatorList, network);
+        temp_reader_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
         temp_reader_proxy_data_.topicKind(NO_KEY);
         temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         temp_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;

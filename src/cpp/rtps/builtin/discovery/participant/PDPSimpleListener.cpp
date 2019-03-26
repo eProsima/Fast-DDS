@@ -57,22 +57,29 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             return;
         }
     }
+
+    GUID_t guid;
+    iHandle2GUID(guid, change->instanceHandle);
+
+    // TODO (Miguel C): participant allocation QOS
+    ParticipantProxyData participant_data(c_default_RTPSParticipantAllocationAttributes);
+
     if(change->kind == ALIVE)
     {
+        //CHECK IF IS THE SAME RTPSParticipant
+        if (guid == mp_SPDP->getRTPSParticipant()->getGuid())
+        {
+            logInfo(RTPS_PDP, "Message from own RTPSParticipant, removing");
+            this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
+            return;
+        }
+        
         //LOAD INFORMATION IN TEMPORAL RTPSParticipant PROXY DATA
-        ParticipantProxyData participant_data;
         CDRMessage_t msg(change->serializedPayload);
         if(participant_data.readFromCDRMessage(&msg))
         {
             //AFTER CORRECTLY READING IT
-            //CHECK IF IS THE SAME RTPSParticipant
             change->instanceHandle = participant_data.m_key;
-            if(participant_data.m_guid == mp_SPDP->getRTPSParticipant()->getGuid())
-            {
-                logInfo(RTPS_PDP,"Message from own RTPSParticipant, removing");
-                this->mp_SPDP->mp_SPDPReaderHistory->remove_change(change);
-                return;
-            }
 
             // At this point we can release reader lock.
             reader->getMutex()->unlock();
@@ -82,7 +89,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             std::unique_lock<std::recursive_mutex> lock(*mp_SPDP->getMutex());
             for (ParticipantProxyData* it : mp_SPDP->participant_proxies_)
             {
-                if(participant_data.m_key == it->m_key)
+                if(participant_data.m_guid == it->m_guid)
                 {
                     pdata = it;
                     break;
@@ -95,7 +102,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             if(pdata == nullptr)
             {
                 //IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
-                pdata = this->mp_SPDP->add_participant_proxy_data();
+                pdata = mp_SPDP->add_participant_proxy_data(participant_data.m_guid);
                 if (pdata != nullptr)
                 {
                     pdata->copy(participant_data);
@@ -125,9 +132,8 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 auto listener = this->mp_SPDP->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
-                    ParticipantDiscoveryInfo info;
+                    ParticipantDiscoveryInfo info(participant_data);
                     info.status = status;
-                    info.info = participant_data;
 
                     listener->onParticipantDiscovery(this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
                 }
@@ -139,13 +145,11 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
     }
     else
     {
-        GUID_t guid;
-        iHandle2GUID(guid, change->instanceHandle);
 
-        ParticipantDiscoveryInfo info;
+        this->mp_SPDP->lookupParticipantProxyData(guid, participant_data);
+
+        ParticipantDiscoveryInfo info(participant_data);
         info.status = ParticipantDiscoveryInfo::REMOVED_PARTICIPANT;
-
-        this->mp_SPDP->lookupParticipantProxyData(guid, info.info);
 
         if(this->mp_SPDP->removeRemoteParticipant(guid))
         {

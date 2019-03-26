@@ -20,6 +20,7 @@
 #define _RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/RemoteLocators.hpp>
 #include <fastrtps/qos/ReaderQos.h>
 
 #if HAVE_SECURITY
@@ -46,6 +47,11 @@ class ReaderProxyData
         void clear () { }
 
         void set_unicast_locators(const LocatorList_t& /*locators*/, const NetworkFactory& /*network*/) { }
+
+        void set_locators(
+                const RemoteLocatorList& /*locators*/,
+                const NetworkFactory& /*network*/,
+                bool /*use_multicast*/) { }
 
         void topicKind(int /*kind*/) { }
 
