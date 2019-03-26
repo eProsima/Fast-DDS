@@ -27,7 +27,7 @@
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/resources/DeadlineTimer.h>
-#include <fastrtps/qos/RequestedDeadlineMissedStatus.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
 
 namespace eprosima {
 namespace fastrtps {

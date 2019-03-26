@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,30 +13,30 @@
 // limitations under the License.
 
 /**
- * @file OfferedDeadlineMissedStatus.h
+ * @file DeadlineMissedStatus.h
 */
 
-#ifndef _OFFERED_DEADLINE_MISSED_STATUS_H_
-#define _OFFERED_DEADLINE_MISSED_STATUS_H_
+#ifndef _DEADLINE_MISSED_STATUS_H_
+#define _DEADLINE_MISSED_STATUS_H_
 
 #include <fastrtps/rtps/common/InstanceHandle.h>
 
 namespace eprosima {
 namespace fastrtps {
 
-//! @brief A struct storing the status of the offered deadline
+//! @brief A struct storing the deadline status
 //! @ingroup DEADLINE_MODULE
-struct OfferedDeadlineMissedStatus
+struct DeadlineMissedStatus
 {
     //! @brief Constructor
-    OfferedDeadlineMissedStatus()
+    DeadlineMissedStatus()
         : total_count()
         , total_count_change()
         , last_instance_handle()
     {}
 
     //! @brief Destructor
-    ~OfferedDeadlineMissedStatus()
+    ~DeadlineMissedStatus()
     {}
 
     //! @brief Total cumulative number of offered deadline periods epased during which a writer failed to provide data
@@ -49,7 +49,11 @@ struct OfferedDeadlineMissedStatus
     //! @brief Handle to the last instance missing the deadline
     rtps::InstanceHandle_t last_instance_handle;
 };
+
+typedef DeadlineMissedStatus OfferedDeadlineMissedStatus;
+typedef DeadlineMissedStatus RequestedDeadlineMissedStatus;
+
 } //end of namespace
 } //end of namespace eprosima
 
-#endif /* _OFFERED_DEADLINE_MISSED_STATUS_H_ */
+#endif /* _DEADLINE_MISSED_STATUS_H_ */

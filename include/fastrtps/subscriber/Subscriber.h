@@ -22,7 +22,7 @@
 
 #include "../rtps/common/Guid.h"
 #include "../attributes/SubscriberAttributes.h"
-#include "../qos/RequestedDeadlineMissedStatus.h"
+#include "../qos/DeadlineMissedStatus.h"
 
 namespace eprosima {
 namespace fastrtps {

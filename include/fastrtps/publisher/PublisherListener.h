@@ -21,7 +21,7 @@
 
 #include "../rtps/common/Types.h"
 #include "../rtps/common/MatchingInfo.h"
-#include "../qos/OfferedDeadlineMissedStatus.h"
+#include "../qos/DeadlineMissedStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -58,7 +58,7 @@ public:
      */
     virtual void on_offered_deadline_missed(
             Publisher* pub,
-            OfferedDeadlineMissedStatus& status)
+            const OfferedDeadlineMissedStatus& status)
     {
         (void)pub;
         (void)status;

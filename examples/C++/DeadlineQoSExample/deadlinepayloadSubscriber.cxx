@@ -97,7 +97,7 @@ void deadlinepayloadSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 
 void deadlinepayloadSubscriber::SubListener::on_requested_deadline_missed(
         Subscriber* sub,
-        RequestedDeadlineMissedStatus& status)
+        const RequestedDeadlineMissedStatus &status)
 {
     (void)sub;
     std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;

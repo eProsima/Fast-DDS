@@ -86,7 +86,7 @@ void deadlinepayloadPublisher::PubListener::onPublicationMatched(Publisher* /*pu
 
 void deadlinepayloadPublisher::PubListener::on_offered_deadline_missed(
         Publisher* pub,
-        OfferedDeadlineMissedStatus& status)
+        const OfferedDeadlineMissedStatus &status)
 {
     (void)pub;
     std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;

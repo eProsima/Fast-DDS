@@ -31,7 +31,7 @@
 
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/resources/DeadlineTimer.h>
-#include <fastrtps/qos/OfferedDeadlineMissedStatus.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
 
 namespace eprosima {
 namespace fastrtps{

@@ -63,7 +63,7 @@ private:
                 eprosima::fastrtps::rtps::MatchingInfo& info) override;
         void on_offered_deadline_missed(
                 eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override;
+                const eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override;
         int n_matched;
     } m_listener;
 

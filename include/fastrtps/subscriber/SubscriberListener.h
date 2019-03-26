@@ -20,7 +20,7 @@
 #define SUBLISTENER_H_
 
 #include "../fastrtps_dll.h"
-#include "../qos/RequestedDeadlineMissedStatus.h"
+#include "../qos/DeadlineMissedStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -66,7 +66,7 @@ class RTPS_DllAPI SubscriberListener
          */
         virtual void on_requested_deadline_missed(
                 Subscriber* /*sub*/,
-                RequestedDeadlineMissedStatus& /*status*/)
+                const RequestedDeadlineMissedStatus& /*status*/)
         {}
 };
 

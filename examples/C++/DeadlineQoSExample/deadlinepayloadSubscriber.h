@@ -71,7 +71,7 @@ private:
         void onNewDataMessage(eprosima::fastrtps::Subscriber* sub) override;
         void on_requested_deadline_missed(
                 eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override;
+                const eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override;
         eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         int n_msg;
