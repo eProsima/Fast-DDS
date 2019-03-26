@@ -320,6 +320,9 @@
     <xs:complexType name="rtpsParticipantAllocationAttributesType">
         <xs:all minOccurs="0">
             <xs:element name="remote_locators" type="remoteLocatorsAllocationConfigType" minOccurs="0"/>
+            <xs:element name="total_participants" type="containerAllocationConfigType" minOccurs="0"/>
+            <xs:element name="total_readers" type="containerAllocationConfigType" minOccurs="0"/>
+            <xs:element name="total_writers" type="containerAllocationConfigType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 

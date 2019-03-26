@@ -99,6 +99,9 @@ extern const char* NAME;
 extern const char* REMOTE_LOCATORS;
 extern const char* MAX_UNICAST_LOCATORS;
 extern const char* MAX_MULTICAST_LOCATORS;
+extern const char* TOTAL_PARTICIPANTS;
+extern const char* TOTAL_READERS;
+extern const char* TOTAL_WRITERS;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;

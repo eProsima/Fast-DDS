@@ -8,6 +8,21 @@
                     <max_unicast_locators>4</max_unicast_locators>
                     <max_multicast_locators>1</max_multicast_locators>
                 </remote_locators>
+                <total_participants>
+                    <initial>10</initial>
+                    <maximum>20</maximum>
+                    <increment>2</increment>
+                </total_participants>
+                <total_readers>
+                    <initial>10</initial>
+                    <maximum>20</maximum>
+                    <increment>2</increment>
+                </total_readers>
+                <total_writers>
+                    <initial>10</initial>
+                    <maximum>20</maximum>
+                    <increment>2</increment>
+                </total_writers>
             </allocation>
             <defaultUnicastLocatorList>
                 <locator>

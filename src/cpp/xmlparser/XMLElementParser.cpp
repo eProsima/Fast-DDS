@@ -33,6 +33,9 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         <xs:complexType name="rtpsParticipantAllocationAttributesType">
             <xs:all minOccurs="0">
                 <xs:element name="remote_locators" type="remoteLocatorsAllocationConfigType" minOccurs="0"/>
+                <xs:element name="total_participants" type="containerAllocationConfigType" minOccurs="0"/>
+                <xs:element name="total_readers" type="containerAllocationConfigType" minOccurs="0"/>
+                <xs:element name="total_writers" type="containerAllocationConfigType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
     */
@@ -46,6 +49,24 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         {
             // leaseDuration - durationType
             if (XMLP_ret::XML_OK != getXMLRemoteLocatorsAllocationAttributes(p_aux0, allocation.locators, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, TOTAL_PARTICIPANTS) == 0)
+        {
+            // total_participants - containerAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.participants, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, TOTAL_READERS) == 0)
+        {
+            // total_readers - containerAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.readers, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, TOTAL_WRITERS) == 0)
+        {
+            // total_writers - containerAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.writers, ident))
                 return XMLP_ret::XML_ERROR;
         }
         else

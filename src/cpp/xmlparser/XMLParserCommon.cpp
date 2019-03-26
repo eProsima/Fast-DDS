@@ -82,6 +82,9 @@ const char* NAME = "name";
 const char* REMOTE_LOCATORS = "remote_locators";
 const char* MAX_UNICAST_LOCATORS = "max_unicast_locators";
 const char* MAX_MULTICAST_LOCATORS = "max_multicast_locators";
+const char* TOTAL_PARTICIPANTS = "total_participants";
+const char* TOTAL_READERS = "total_readers";
+const char* TOTAL_WRITERS = "total_writers";
 
 /// Publisher-subscriber attributes
 const char* TOPIC = "topic";
