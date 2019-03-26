@@ -43,8 +43,8 @@ public:
      * @param event_thread starting thread for identification.
      */
     DeadlineTimer(
-            std::function<void()> callback,
-            Duration_t period,
+            const std::function<void()>& callback,
+            const Duration_t& period,
             asio::io_service &service,
             const std::thread& event_thread);
 

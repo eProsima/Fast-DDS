@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/resources/ResourceManagement.h>
 #include "../rtps/history/ReaderHistory.h"
 #include "../qos/QosPolicies.h"
+#include "../KeyedChanges.h"
 #include "SampleInfo.h"
 
 namespace eprosima {
@@ -134,36 +135,6 @@ class SubscriberHistory: public rtps::ReaderHistory
                 std::chrono::steady_clock::time_point& next_deadline_us);
 
     private:
-
-        /**
-         * @brief A struct storing a vector of cache changes and the next deadline that will happen in the group
-         * @ingroup FASTRTPS_MODULE
-         */
-        struct KeyedChanges
-        {
-            //! Default constructor
-            KeyedChanges()
-                : cache_changes()
-                , next_deadline_us()
-            {}
-
-            //! Copy constructor
-            KeyedChanges(const KeyedChanges& other)
-                : cache_changes(other.cache_changes)
-                , next_deadline_us(other.next_deadline_us)
-            {
-            }
-
-            //! Destructor
-            ~KeyedChanges()
-            {
-            }
-
-            //! A vector of cache changes
-            std::vector<CacheChange_t*> cache_changes;
-            //! The time point when the next deadline will occur
-            std::chrono::steady_clock::time_point next_deadline_us;
-        };
 
         typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
 

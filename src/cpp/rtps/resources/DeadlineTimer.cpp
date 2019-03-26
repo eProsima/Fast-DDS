@@ -25,10 +25,10 @@ namespace fastrtps{
 namespace rtps {
 
 DeadlineTimer::DeadlineTimer(
-        std::function<void()> callback,
-        Duration_t period,
+        const std::function<void()>& callback,
+        const Duration_t& period,
         asio::io_service &service,
-        const std::thread &event_thread)
+        const std::thread& event_thread)
     : TimedEvent(service, event_thread, period.to_ns() * 1e-6)
     , callback_(callback)
 {
