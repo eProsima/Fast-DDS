@@ -533,7 +533,7 @@ bool UDPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t 
     }
     catch (const std::exception& error)
     {
-        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
+        logWarning(RTPS_MSG_OUT, error.what());
         return false;
     }
 
