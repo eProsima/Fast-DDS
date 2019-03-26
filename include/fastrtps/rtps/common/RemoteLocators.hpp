@@ -26,8 +26,17 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+/**
+ * Holds information about the locators of a remote entity.
+ */
 struct RemoteLocatorList
 {
+    /**
+     * Construct a RemoteLocatorList.
+     *
+     * @param max_unicast_locators Maximum number of unicast locators to hold.
+     * @param max_multicast_locators Maximum number of multicast locators to hold.
+     */
     RemoteLocatorList(
             size_t max_unicast_locators,
             size_t max_multicast_locators)
@@ -36,11 +45,27 @@ struct RemoteLocatorList
     {
     }
 
+    /**
+     * Copy-construct a RemoteLocatorList.
+     *
+     * @param other RemoteLocatorList to copy data from.
+     */
     RemoteLocatorList(const RemoteLocatorList& other)
+        : unicast(ResourceLimitedContainerConfig::fixed_size_configuration(other.unicast.max_size()))
+        , multicast(ResourceLimitedContainerConfig::fixed_size_configuration(other.multicast.max_size()))
     {
         *this = other;
     }
 
+    /**
+     * Assign locator values from other RemoteLocatorList.
+     *
+     * @param other RemoteLocatorList to copy data from.
+     *
+     * @remarks Using the assignment operator is different from copy-constructing as in the first case the
+     * configuration with the maximum number of locators is not copied. This means that, for two lists with
+     * different maximum number of locators, the expression `(a = b) == b` may not be true.
+     */
     RemoteLocatorList& operator = (const RemoteLocatorList& other)
     {
         unicast.clear();
@@ -58,6 +83,14 @@ struct RemoteLocatorList
         return *this;
     }
 
+    /**
+     * Adds a locator to the unicast list.
+     *
+     * If the locator already exists in the unicast list, or the maximum number of unicast locators has been reached,
+     * the new locator is silently discarded.
+     *
+     * @param locator Unicast locator to be added.
+     */
     void add_unicast_locator(const Locator_t& locator)
     {
         for (const Locator_t& loc : unicast)
@@ -71,6 +104,14 @@ struct RemoteLocatorList
         unicast.push_back(locator);
     }
 
+    /**
+     * Adds a locator to the multicast list.
+     *
+     * If the locator already exists in the multicast list, or the maximum number of multicast locators has been reached,
+     * the new locator is silently discarded.
+     *
+     * @param locator Multicast locator to be added.
+     */
     void add_multicast_locator(const Locator_t& locator)
     {
         for (const Locator_t& loc : multicast)
@@ -84,7 +125,9 @@ struct RemoteLocatorList
         multicast.push_back(locator);
     }
 
+    //! List of unicast locators
     ResourceLimitedVector<Locator_t> unicast;
+    //! List of multicast locators
     ResourceLimitedVector<Locator_t> multicast;
 };
 
