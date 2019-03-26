@@ -319,6 +319,10 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
             watt.endpoint.durabilityKind = TRANSIENT;
             watt.endpoint.topicKind = WITH_KEY;
 
+            // TODO remove the join when Reader and Writer match functions are updated
+            watt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficUnicastLocatorList);
+            watt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficMulticastLocatorList);
+
             mp_PDPReader->matched_writer_remove(watt);
             mp_PDPReader->matched_writer_add(watt);
 
@@ -339,6 +343,10 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
             ratt.endpoint.reliabilityKind = RELIABLE;
             ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             ratt.endpoint.topicKind = WITH_KEY;
+
+            // TODO remove the join when Reader and Writer match functions are updated
+            ratt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficUnicastLocatorList);
+            ratt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficMulticastLocatorList);
 
             mp_PDPWriter->matched_reader_remove(ratt);
             mp_PDPWriter->matched_reader_add(ratt);

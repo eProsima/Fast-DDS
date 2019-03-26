@@ -679,6 +679,11 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
+        // TODO remove the join when Reader and Writer match functions are updated
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficUnicastLocatorList);
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficMulticastLocatorList);
+
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         publications_reader_.first->matched_writer_add(watt);
@@ -697,6 +702,11 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
+        // TODO remove the join when Reader and Writer match functions are updated
+        ratt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficUnicastLocatorList);
+        ratt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficMulticastLocatorList);
+
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         publications_writer_.first->matched_reader_add(ratt);
@@ -715,6 +725,11 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
+        // TODO remove the join when Reader and Writer match functions are updated
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficUnicastLocatorList);
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficMulticastLocatorList);
+
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         subscriptions_reader_.first->matched_writer_add(watt);
@@ -733,6 +748,11 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
+        // TODO remove the join when Reader and Writer match functions are updated
+        ratt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficUnicastLocatorList);
+        ratt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficMulticastLocatorList);
+
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         subscriptions_writer_.first->matched_reader_add(ratt);
