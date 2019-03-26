@@ -56,7 +56,7 @@ TCPChannelResourceBasic::~TCPChannelResourceBasic()
 void TCPChannelResourceBasic::connect()
 {
     std::unique_lock<std::mutex> scoped(status_mutex_);
-    assert(TCPConnectionStatus::TCP_DISCONNECTED == tcp_connection_status_);
+    assert(TCPConnectionStatus::TCP_CONNECTED != tcp_connection_status_);
     assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
 
     if (connection_status_ == eConnectionStatus::eDisconnected)
@@ -91,7 +91,7 @@ void TCPChannelResourceBasic::connect()
 
 void TCPChannelResourceBasic::disconnect()
 {
-    if (TCPConnectionStatus::TCP_CONNECTED == tcp_connection_status_ &&
+    if (TCPConnectionStatus::TCP_DISCONNECTED != tcp_connection_status_ &&
             change_status(eConnectionStatus::eDisconnected))
     {
         try

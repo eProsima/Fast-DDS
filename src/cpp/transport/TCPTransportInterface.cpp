@@ -16,9 +16,6 @@
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
 #include "TCPSenderResource.hpp"
-#include <utility>
-#include <cstring>
-#include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
@@ -28,6 +25,12 @@
 #include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPAcceptorSecure.h>
 #endif
+#include "TCPKeepAliveEvent.hpp"
+
+#include <asio/steady_timer.hpp>
+#include <utility>
+#include <cstring>
+#include <algorithm>
 
 using namespace std;
 using namespace asio;
@@ -36,8 +39,8 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps {
 
-static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
-static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
+static const int s_default_keep_alive_frequency = 100; // 10 SECONDS
+static const int s_default_keep_alive_timeout = 50000; // 50 SECONDS
 static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
 
@@ -160,7 +163,6 @@ void TCPTransportInterface::clean()
 
             channel_resource.second->disable();
             channel_resource.second->thread(nullptr);
-            channel_resource.second->rtcp_thread(nullptr);
         }
         channel_resources_.clear();
     }
@@ -177,13 +179,9 @@ void TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-    auto channel_resource = channel_resources_.find(channel->locator());
-    assert(channel_resource == channel_resources_.end());
-    if (channel_resource == channel_resources_.end())
-    {
-        channel_resources_[channel->locator()] = channel;
-    }
+    channel_resources_[channel->locator()] = channel;
 }
+
 bool TCPTransportInterface::check_crc(
         const TCPHeader &header,
         const octet *data,
@@ -395,6 +393,14 @@ bool TCPTransportInterface::init()
     auto ioServiceFunction = [&]()
     {
         io_service::work work(io_service_);
+        TCPKeepAliveEvent keep_alive_event(*this, io_service_, *io_service_thread_.get(),
+                configuration()->keep_alive_frequency_ms);
+
+        if (0 < configuration()->keep_alive_frequency_ms)
+        {
+            keep_alive_event.restart_timer();
+        }
+
         io_service_.run();
     };
     io_service_thread_.reset(new std::thread(ioServiceFunction));
@@ -489,6 +495,7 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
             }
 
             receiver_in_use->cv.wait(scopedLock, [&]() { return receiver_in_use->in_use == false; });
+            std::cout << "ClosePort for " << locator << std::endl;
             delete receiver_in_use;
         }
     }
@@ -502,23 +509,14 @@ void TCPTransportInterface::close_tcp_socket(
 {
     if(channel->disable())
     {
-
         if (TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel->tcp_connection_type())
         {
             channel->set_all_ports_pending();
             channel->connect();
         }
-        else
-        {
-            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-            auto channel_resource = channel_resources_.find(channel->locator());
-
-            if(channel_resource != channel_resources_.end())
-            {
-                channel_resources_.erase(channel_resource);
-            }
-        }
     }
+
+    channel.reset();
 }
 
 
@@ -634,6 +632,7 @@ bool TCPTransportInterface::OpenInputChannel(
                 std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
                 receiver_resources_[logicalPort] = std::pair<TransportReceiverInterface*, ReceiverInUseCV*>
                     (receiver, new ReceiverInUseCV());
+                std::cout << "OpenPort for " << locator << std::endl;
             }
 
             logInfo(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << \
@@ -643,9 +642,20 @@ bool TCPTransportInterface::OpenInputChannel(
     return success;
 }
 
-void TCPTransportInterface::perform_rtcp_management_thread(
-        std::shared_ptr<TCPChannelResource> channel)
+void TCPTransportInterface::keep_alive()
 {
+    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
+
+    for (auto channel_resource : channel_resources_)
+    {
+        if (channel_resource.second->connection_established())
+        {
+            rtcp_message_manager_->sendKeepAliveRequest(channel_resource.second);
+        }
+    }
+    //TODO Check timeout.
+
+    /*
     const TCPTransportDescriptor* config = configuration(); // Keep a copy for us.
 
     std::chrono::time_point<std::chrono::system_clock> time_now = std::chrono::system_clock::now();
@@ -654,14 +664,6 @@ void TCPTransportInterface::perform_rtcp_management_thread(
     std::chrono::time_point<std::chrono::system_clock> timeout_time =
         time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
 
-/*
-    logInfo(RTCP, "START perform_rtcp_management_thread " << IPLocator::toIPv4string(channel->locator()) \
-            << ":" << IPLocator::getPhysicalPort(channel->locator()) << " (" \
-            << channel->socket()->local_endpoint().address() << ":" \
-            << channel->socket()->local_endpoint().port() << "->" \
-            << channel->socket()->remote_endpoint().address() << ":" \
-            << channel->socket()->remote_endpoint().port() << ")");
-*/
     while (channel && TCPChannelResource::TCPConnectionStatus::TCP_CONNECTED == channel->tcp_connection_status())
     {
         if (channel->connection_established())
@@ -684,7 +686,6 @@ void TCPTransportInterface::perform_rtcp_management_thread(
                 {
                     // Disable the socket to erase it after the reception.
                     close_tcp_socket(channel);
-                    channel.reset();
                 }
             }
         }
@@ -693,6 +694,7 @@ void TCPTransportInterface::perform_rtcp_management_thread(
         eClock::my_sleep(100);
     }
     logInfo(RTCP, "End perform_rtcp_management_thread " << channel->locator());
+    */
 }
 
 void TCPTransportInterface::perform_listen_operation(
@@ -808,7 +810,6 @@ bool TCPTransportInterface::Receive(
                 logWarning(DEBUG, "Error reading TCP header: " << ec.message());
             }
             close_tcp_socket(channel);
-            channel.reset();
             success = false;
         }
         else
@@ -821,7 +822,6 @@ bool TCPTransportInterface::Receive(
             {
                 logError(RTCP_MSG_IN, "Bad RTCP header identifier, closing connection.");
                 close_tcp_socket(channel);
-                channel.reset();
                 success = false;
             }
             else
@@ -871,7 +871,6 @@ bool TCPTransportInterface::Receive(
                                 if (responseCode != RETCODE_OK)
                                 {
                                     close_tcp_socket(channel);
-                                    channel.reset();
                                 }
                                 success = false;
                             }
@@ -879,7 +878,6 @@ bool TCPTransportInterface::Receive(
                             {
                                 success = false;
                                 close_tcp_socket(channel);
-                                channel.reset();
                             }
 
                         }
@@ -903,7 +901,6 @@ bool TCPTransportInterface::Receive(
             logError(RTCP_MSG_IN, "ASIO [RECEIVE]: " << code.message());
             //channel->ConnectionLost();
             close_tcp_socket(channel);
-            channel.reset();
         }
         success = false;
     }
@@ -914,7 +911,6 @@ bool TCPTransportInterface::Receive(
         logError(RTCP_MSG_IN, "ASIO SYSTEM_ERROR [RECEIVE]: " << error.what());
         //channel->ConnectionLost();
         close_tcp_socket(channel);
-        channel.reset();
         success = false;
     }
 
@@ -938,6 +934,18 @@ bool TCPTransportInterface::send(
     }
 
     bool success = false;
+
+    /* TODO Verify when cable is removed
+    if(TCPChannelResource::TCPConnectionStatus::TCP_DISCONNECTED == channel->tcp_connection_status() &&
+        TCPChannelResource::TCPConnectionType::TCP_ACCEPT_TYPE == channel->tcp_connection_type())
+    {
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        auto channel_resource = channel_resources_.find(channel->locator());
+        if (channel_resource != channel_resources_.end() && channel != channel_resource->second)
+        {
+            channel = channel_resource->second;
+        }
+    }*/
 
     if (channel->connection_established())
     {
@@ -1067,9 +1075,6 @@ void TCPTransportInterface::SocketAccepted(
 
             channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
                 channel));
-            channel->rtcp_thread(new std::thread(&TCPTransportInterface::perform_rtcp_management_thread,
-                this, channel));
-
 
             logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor_locator)
                 << ", remote: " << channel->remote_endpoint().address()
@@ -1130,9 +1135,6 @@ void TCPTransportInterface::SecureSocketAccepted(
             secure_channel->set_options(configuration());
             secure_channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
                 secure_channel));
-            secure_channel->rtcp_thread(new std::thread(&TCPTransportInterface::perform_rtcp_management_thread,
-                this, secure_channel));
-
 
             logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor_locator)
                 << ", remote: " << secure_channel->remote_endpoint().address()
@@ -1192,8 +1194,6 @@ void TCPTransportInterface::SocketConnected(
 
                 channel->thread(
                     new std::thread(&TCPTransportInterface::perform_listen_operation, this, channel));
-                channel->rtcp_thread(
-                    new std::thread(&TCPTransportInterface::perform_rtcp_management_thread, this, channel));
 
                 // RTCP Control Message
                 rtcp_message_manager_->sendConnectionRequest(channel);

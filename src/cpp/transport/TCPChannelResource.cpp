@@ -48,7 +48,6 @@ TCPChannelResource::TCPChannelResource(
     , rtcp_manager_(rtcpManager)
     , locator_(locator)
     , waiting_for_keep_alive_(false)
-    , rtcp_thread_(nullptr)
     , connection_status_(eConnectionStatus::eDisconnected)
     , tcp_connection_status_(TCPConnectionStatus::TCP_DISCONNECTED)
     , tcp_connection_type_(TCPConnectionType::TCP_CONNECT_TYPE)
@@ -64,7 +63,6 @@ TCPChannelResource::TCPChannelResource(
     , rtcp_manager_(rtcpManager)
     , locator_()
     , waiting_for_keep_alive_(false)
-    , rtcp_thread_(nullptr)
     , connection_status_(eConnectionStatus::eWaitingForBind)
     , tcp_connection_status_(TCPConnectionStatus::TCP_CONNECTED)
     , tcp_connection_type_(TCPConnectionType::TCP_ACCEPT_TYPE)
@@ -75,20 +73,13 @@ TCPChannelResource::~TCPChannelResource()
 {
     alive_ = false;
     tcp_connection_status_ = TCPConnectionStatus::TCP_DISCONNECTED;
-
-    if (rtcp_thread_ != nullptr)
-    {
-        rtcp_thread_->detach();
-        delete(rtcp_thread_);
-        rtcp_thread_ = nullptr;
-    }
 }
 
 bool TCPChannelResource::disable()
 {
     bool returned_value = false;
 
-    TCPConnectionStatus code = tcp_connection_status_.exchange(TCPConnectionStatus::TCP_DISCONNECTED,
+    TCPConnectionStatus code = tcp_connection_status_.exchange(TCPConnectionStatus::TCP_BROKEN,
             std::memory_order_relaxed);
 
     if(code == TCPConnectionStatus::TCP_CONNECTED)

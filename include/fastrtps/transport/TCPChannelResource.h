@@ -46,7 +46,8 @@ protected:
     enum TCPConnectionStatus
     {
         TCP_DISCONNECTED = 0,
-        TCP_CONNECTED = 1
+        TCP_CONNECTED = 1,
+        TCP_BROKEN = 2
     };
 
     enum TCPConnectionType
@@ -73,7 +74,6 @@ protected:
     // Must be accessed after lock pending_logical_mutex_
     std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
     std::map<TCPTransactionId, uint16_t> last_checked_logical_port_;
-    std::thread* rtcp_thread_;
     std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
     std::vector<uint16_t> logical_output_ports_;
     std::recursive_mutex read_mutex_;
@@ -100,18 +100,6 @@ public:
     std::recursive_mutex& write_mutex()
     {
         return write_mutex_;
-    }
-
-    inline void rtcp_thread(std::thread* pThread)
-    {
-        if(rtcp_thread_)
-        {
-            rtcp_thread_->join();
-            delete rtcp_thread_;
-            rtcp_thread_ = nullptr;
-        }
-
-        rtcp_thread_ = pThread;
     }
 
     bool is_logical_port_opened(uint16_t port);

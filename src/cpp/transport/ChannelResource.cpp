@@ -57,7 +57,7 @@ void ChannelResource::clear()
     alive_ = false;
     if (thread_ != nullptr)
     {
-        thread_->detach();
+        thread_->join();
         delete thread_;
         thread_ = nullptr;
     }

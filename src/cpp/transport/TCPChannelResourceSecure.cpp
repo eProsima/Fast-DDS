@@ -63,7 +63,7 @@ void TCPChannelResourceSecure::connect()
     using asio::ip::tcp;
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
     std::unique_lock<std::mutex> scoped(status_mutex_);
-    assert(TCPConnectionStatus::TCP_DISCONNECTED == tcp_connection_status_);
+    assert(TCPConnectionStatus::TCP_CONNECTED != tcp_connection_status_);
     assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
 
     if (connection_status_ == eConnectionStatus::eDisconnected)

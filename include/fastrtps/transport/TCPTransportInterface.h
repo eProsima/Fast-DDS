@@ -139,8 +139,6 @@ protected:
     //! Functions to be called from new threads, which takes cares of performing a blocking receive
     void perform_listen_operation(
             std::shared_ptr<TCPChannelResource> channel);
-    void perform_rtcp_management_thread(
-            std::shared_ptr<TCPChannelResource> channel);
 
     bool read_body(
         octet* receive_buffer,
@@ -357,6 +355,8 @@ public:
         uint64_t milliseconds);
 
     void remove_socket_to_cancel(TCPChannelResource* socket);
+
+    void keep_alive();
 };
 
 } // namespace rtps
