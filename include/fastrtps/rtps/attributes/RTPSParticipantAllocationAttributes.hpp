@@ -19,6 +19,8 @@
 #ifndef _FASTRTPS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_
 #define _FASTRTPS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_
 
+#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -54,6 +56,12 @@ struct RTPSParticipantAllocationAttributes
 {
     //! Holds limits for collections of remote locators.
     RemoteLocatorsAllocationAttributes locators;
+    //! Define the allocation behaviour for collections dependent on the total number of participants.
+    ResourceLimitedContainerConfig participants;
+    //! Define the allocation behaviour for collections dependent on the total number of readers.
+    ResourceLimitedContainerConfig readers;
+    //! Define the allocation behaviour for collections dependent on the total number of writers.
+    ResourceLimitedContainerConfig writers;
 };
 
 } /* namespace rtps */
