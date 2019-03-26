@@ -152,7 +152,10 @@ class ParticipantProxyData
          */
         bool readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation=true);
 
-        //!Clear the data (restore to default state.)
+        //! Reset data to construction state.
+        void reset();
+
+        //! Clear the data (restore to default state).
         void clear();
 
         /**

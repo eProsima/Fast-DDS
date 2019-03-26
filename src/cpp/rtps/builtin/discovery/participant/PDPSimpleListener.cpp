@@ -80,12 +80,11 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             //LOOK IF IS AN UPDATED INFORMATION
             ParticipantProxyData* pdata = nullptr;
             std::unique_lock<std::recursive_mutex> lock(*mp_SPDP->getMutex());
-            for (auto it = mp_SPDP->m_participantProxies.begin();
-                    it != mp_SPDP->m_participantProxies.end();++it)
+            for (ParticipantProxyData* it : mp_SPDP->participant_proxies_)
             {
-                if(participant_data.m_key == (*it)->m_key)
+                if(participant_data.m_key == it->m_key)
                 {
-                    pdata = (*it);
+                    pdata = it;
                     break;
                 }
             }
@@ -96,17 +95,20 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             if(pdata == nullptr)
             {
                 //IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
-                pdata = new ParticipantProxyData(participant_data);
-                pdata->isAlive = true;
-                pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
+                pdata = this->mp_SPDP->add_participant_proxy_data();
+                if (pdata != nullptr)
+                {
+                    pdata->copy(participant_data);
+                    pdata->isAlive = true;
+                    pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
                         pdata,
                         TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
-                pdata->mp_leaseDurationTimer->restart_timer();
-                this->mp_SPDP->m_participantProxies.push_back(pdata);
-                lock.unlock();
+                    pdata->mp_leaseDurationTimer->restart_timer();
+                    lock.unlock();
 
-                mp_SPDP->announceParticipantState(false);
-                mp_SPDP->assignRemoteEndpoints(&participant_data);
+                    mp_SPDP->announceParticipantState(false);
+                    mp_SPDP->assignRemoteEndpoints(&participant_data);
+                }
             }
             else
             {
@@ -118,14 +120,17 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                     mp_SPDP->mp_EDP->assignRemoteEndpoints(participant_data);
             }
 
-            auto listener = this->mp_SPDP->getRTPSParticipant()->getListener();
-            if (listener != nullptr)
+            if (pdata != nullptr)
             {
-                ParticipantDiscoveryInfo info;
-                info.status = status;
-                info.info = participant_data;
+                auto listener = this->mp_SPDP->getRTPSParticipant()->getListener();
+                if (listener != nullptr)
+                {
+                    ParticipantDiscoveryInfo info;
+                    info.status = status;
+                    info.info = participant_data;
 
-                listener->onParticipantDiscovery(this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
+                    listener->onParticipantDiscovery(this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
+                }
             }
 
             // Take again the reader lock

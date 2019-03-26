@@ -649,7 +649,7 @@ bool EDP::pairingReader(RTPSReader* R, const GUID_t& participant_guid, const Rea
     logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    for(ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for(WriterProxyData* wdatait : (*pit)->m_writers)
@@ -712,7 +712,7 @@ bool EDP::pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const Wri
     logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    for(ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for(ReaderProxyData* rdatait : (*pit)->m_readers)

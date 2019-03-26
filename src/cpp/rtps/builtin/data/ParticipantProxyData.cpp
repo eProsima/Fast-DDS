@@ -81,16 +81,30 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) :
 ParticipantProxyData::~ParticipantProxyData()
 {
     logInfo(RTPS_PARTICIPANT, m_guid);
-    for(ReaderProxyData* it : m_readers)
+    reset();
+}
+
+void ParticipantProxyData::reset()
+{
+    clear();
+
+    for (ReaderProxyData* it : m_readers)
     {
         delete it;
     }
-    for(WriterProxyData* it: m_writers)
+    m_readers.clear();
+
+    for (WriterProxyData* it : m_writers)
     {
         delete it;
     }
-    if(this->mp_leaseDurationTimer != nullptr)
-        delete(mp_leaseDurationTimer);
+    m_writers.clear();
+
+    if (mp_leaseDurationTimer != nullptr)
+    {
+        delete mp_leaseDurationTimer;
+        mp_leaseDurationTimer = nullptr;
+    }
 }
 
 bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation)
