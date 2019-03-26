@@ -171,8 +171,16 @@ bool EDPSimple::createSEDPEndpoints()
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            watt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        watt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            watt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.heartbeatPeriod = edp_heartbeat_period;
@@ -208,8 +216,16 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            ratt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        ratt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            ratt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
@@ -242,8 +258,16 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            ratt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        ratt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            ratt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
@@ -270,8 +294,16 @@ bool EDPSimple::createSEDPEndpoints()
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            watt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        watt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            watt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.heartbeatPeriod= edp_heartbeat_period;
@@ -322,8 +354,16 @@ bool EDPSimple::create_sedp_secure_endpoints()
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            watt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        watt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            watt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.heartbeatPeriod = edp_heartbeat_period;
@@ -363,8 +403,16 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            ratt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        ratt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            ratt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
@@ -402,8 +450,16 @@ bool EDPSimple::create_sedp_secure_endpoints()
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            ratt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        ratt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            ratt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
@@ -439,8 +495,16 @@ bool EDPSimple::create_sedp_secure_endpoints()
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.unicast)
+        {
+            watt.endpoint.unicastLocatorList.push_back(loc);
+        }
+        watt.endpoint.multicastLocatorList.clear();
+        for (const Locator_t& loc : this->mp_PDP->getLocalParticipantProxyData()->metatraffic_locators.multicast)
+        {
+            watt.endpoint.multicastLocatorList.push_back(loc);
+        }
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.times.heartbeatPeriod = edp_heartbeat_period;
@@ -682,16 +746,14 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
-    temp_reader_proxy_data_.set_multicast_locators(pdata.m_metatrafficMulticastLocatorList, network);
+    temp_reader_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
     temp_reader_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
     temp_writer_proxy_data_.clear();
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.set_unicast_locators(pdata.m_metatrafficUnicastLocatorList, network);
-    temp_writer_proxy_data_.set_multicast_locators(pdata.m_metatrafficMulticastLocatorList, network);
+    temp_writer_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
     temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 

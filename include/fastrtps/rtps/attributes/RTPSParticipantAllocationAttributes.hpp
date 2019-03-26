@@ -64,6 +64,8 @@ struct RTPSParticipantAllocationAttributes
     ResourceLimitedContainerConfig writers;
 };
 
+const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAttributes = RTPSParticipantAllocationAttributes();
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

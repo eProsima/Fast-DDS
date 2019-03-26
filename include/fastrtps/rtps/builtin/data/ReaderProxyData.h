@@ -101,6 +101,11 @@ class ReaderProxyData
                 const LocatorList_t& locators,
                 const NetworkFactory& network);
 
+        void set_locators(
+                const RemoteLocatorList& locators,
+                const NetworkFactory& network,
+                bool use_multicast_locators);
+
         RTPS_DllAPI void key(const InstanceHandle_t& key)
         {
             m_key = key;

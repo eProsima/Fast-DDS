@@ -39,6 +39,7 @@ namespace rtps {
 
 struct CDRMessage_t;
 class NetworkFactory;
+class ParticipantProxyData;
 
 /**
  **@ingroup BUILTIN_MODULE
@@ -118,6 +119,11 @@ class WriterProxyData
         void set_multicast_locators(
             const LocatorList_t& locators,
             const NetworkFactory& network);
+
+        void set_locators(
+                const RemoteLocatorList& remote_locators,
+                const NetworkFactory& network,
+                bool use_multicast_locators);
 
         RTPS_DllAPI void key(const InstanceHandle_t& key)
         {
@@ -327,6 +333,18 @@ class WriterProxyData
         RTPS_DllAPI bool readFromCDRMessage(
                 CDRMessage_t* msg,
                 const NetworkFactory& network);
+
+        /**
+         * Initialize this writer proxy data from a participant proxy data.
+         *
+         * @param participant_data        Participant proxy data from where data will be copied.
+         * @param entity_id               Entity id to set for this writer proxy data.
+         * @param use_multicast_locators  Multicast locators will be copied when true.
+         */
+        void set_from_participant(
+                const ParticipantProxyData& participant_data,
+                const EntityId_t& entity_id,
+                bool use_multicast_locators);
 
     private:
 

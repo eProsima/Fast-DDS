@@ -63,9 +63,8 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
                 << mp_participantProxyData->m_guid);
 
         // This assignment must be before removeRemoteParticipant because mp_participantProxyData is deleted there.
-        ParticipantDiscoveryInfo info;
+        ParticipantDiscoveryInfo info(*mp_participantProxyData);
         info.status = ParticipantDiscoveryInfo::DROPPED_PARTICIPANT;
-        info.info.copy(*mp_participantProxyData);
 
         // Set pointer to null because this call will be delete itself.
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;

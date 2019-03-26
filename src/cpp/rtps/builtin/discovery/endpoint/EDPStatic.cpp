@@ -246,8 +246,7 @@ bool EDPStatic::newRemoteReader(const ParticipantProxyData& pdata, uint16_t user
             if (!newRPD->has_locators())
             {
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                newRPD->set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-                newRPD->set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+                newRPD->set_locators(participant_data.default_locators, network, true);
             }
 
             return true;
@@ -294,8 +293,7 @@ bool EDPStatic::newRemoteWriter(const ParticipantProxyData& pdata,uint16_t userI
             if (!newWPD->has_locators())
             {
                 const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                newWPD->set_multicast_locators(participant_data.m_defaultMulticastLocatorList, network);
-                newWPD->set_unicast_locators(participant_data.m_defaultUnicastLocatorList, network);
+                newWPD->set_locators(participant_data.default_locators, network, true);
             }
 
             return true;

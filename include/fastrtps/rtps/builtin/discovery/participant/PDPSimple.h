@@ -296,7 +296,7 @@ private:
      * May use one of the entries present in the pool.
      * @return pointer to the currently inserted entry, nullptr if allocation limits were reached.
      */
-    ParticipantProxyData* add_participant_proxy_data();
+    ParticipantProxyData* add_participant_proxy_data(const GUID_t& participant_guid);
 
     void initializeParticipantProxyData(ParticipantProxyData* participant_data);
 

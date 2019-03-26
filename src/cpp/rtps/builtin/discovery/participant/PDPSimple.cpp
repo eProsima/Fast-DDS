@@ -83,7 +83,7 @@ PDPSimple::PDPSimple (
 {
     for (size_t i = 0; i < allocation.participants.initial; ++i)
     {
-        participant_proxies_pool_.push_back(new ParticipantProxyData());
+        participant_proxies_pool_.push_back(new ParticipantProxyData(allocation));
     }
 }
 
@@ -117,7 +117,7 @@ PDPSimple::~PDPSimple()
     delete(mp_mutex);
 }
 
-ParticipantProxyData* PDPSimple::add_participant_proxy_data()
+ParticipantProxyData* PDPSimple::add_participant_proxy_data(const GUID_t& participant_guid)
 {
     ParticipantProxyData* ret_val = nullptr;
 
@@ -128,7 +128,7 @@ ParticipantProxyData* PDPSimple::add_participant_proxy_data()
         if (participant_proxies_.size() < max_proxies)
         {
             // Pool is empty but limit has not been reached, so we create a new entry.
-            ret_val = new ParticipantProxyData();
+            ret_val = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
         }
         else
         {
@@ -145,6 +145,7 @@ ParticipantProxyData* PDPSimple::add_participant_proxy_data()
     }
 
     // Add returned entry to the collection
+    ret_val->m_guid = participant_guid;
     participant_proxies_.push_back(ret_val);
 
     return ret_val;
@@ -208,8 +209,14 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
     participant_data->m_availableBuiltinEndpoints |= mp_RTPSParticipant->security_manager().builtin_endpoints();
 #endif
 
-    participant_data->m_defaultUnicastLocatorList = mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList;
-    participant_data->m_defaultMulticastLocatorList = mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList;
+    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultUnicastLocatorList)
+    {
+        participant_data->default_locators.add_unicast_locator(loc);
+    }
+    for (const Locator_t& loc : mp_RTPSParticipant->getAttributes().defaultMulticastLocatorList)
+    {
+        participant_data->default_locators.add_multicast_locator(loc);
+    }
     participant_data->m_expectsInlineQos = false;
     participant_data->m_guid = mp_RTPSParticipant->getGuid();
     for(uint8_t i = 0; i<16; ++i)
@@ -221,8 +228,16 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
     }
 
 
-    participant_data->m_metatrafficMulticastLocatorList = this->mp_builtin->m_metatrafficMulticastLocatorList;
-    participant_data->m_metatrafficUnicastLocatorList = this->mp_builtin->m_metatrafficUnicastLocatorList;
+    participant_data->metatraffic_locators.multicast.clear();
+    for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+    { 
+        participant_data->metatraffic_locators.add_multicast_locator(loc);
+    }
+    participant_data->metatraffic_locators.unicast.clear();
+    for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
+    {
+        participant_data->metatraffic_locators.add_unicast_locator(loc);
+    }
 
     participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
 
@@ -269,7 +284,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     }
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_SPDPReader->getAttributes().unicastLocatorList);
-    ParticipantProxyData* pdata = add_participant_proxy_data();
+    ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid());
     if (pdata == nullptr)
     {
         return false;
@@ -856,8 +871,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_writer_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
         temp_writer_data_.persistence_guid(temp_writer_data_.guid());
-        temp_writer_data_.set_unicast_locators(pdata->m_metatrafficUnicastLocatorList, network);
-        temp_writer_data_.set_multicast_locators(pdata->m_metatrafficMulticastLocatorList, network);
+        temp_writer_data_.set_locators(pdata->metatraffic_locators, network, true);
         temp_writer_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_SPDPReader->matched_writer_add(temp_writer_data_);
@@ -870,8 +884,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_reader_data_.m_expectsInlineQos = false;
         temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
-        temp_reader_data_.set_unicast_locators(pdata->m_metatrafficUnicastLocatorList, network);
-        temp_reader_data_.set_multicast_locators(pdata->m_metatrafficMulticastLocatorList, network);
+        temp_reader_data_.set_locators(pdata->metatraffic_locators, network, true);
         temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_SPDPWriter->matched_reader_add(temp_reader_data_);
@@ -1078,7 +1091,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 
 bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
-    ParticipantProxyData pdata;
+    ParticipantProxyData pdata(c_default_RTPSParticipantAllocationAttributes);
     if(lookupParticipantProxyData(pguid, pdata))
     {
         if(kind == WRITER)

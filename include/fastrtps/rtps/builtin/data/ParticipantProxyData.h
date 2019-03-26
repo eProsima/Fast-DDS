@@ -24,9 +24,11 @@
 #include <mutex>
 #include "../../../qos/ParameterList.h"
 
+#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include "../../attributes/WriterAttributes.h"
 #include "../../attributes/ReaderAttributes.h"
 #include "../../common/Token.h"
+#include "../../common/RemoteLocators.hpp"
 
 #if HAVE_SECURITY
 #include "../../security/accesscontrol/ParticipantSecurityAttributes.h"
@@ -78,7 +80,7 @@ class ParticipantProxyData
 {
     public:
 
-        ParticipantProxyData();
+        ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation);
 
         ParticipantProxyData(const ParticipantProxyData& pdata);
 
@@ -94,14 +96,10 @@ class ParticipantProxyData
         bool m_expectsInlineQos;
         //!Available builtin endpoints
         BuiltinEndpointSet_t m_availableBuiltinEndpoints;
-        //!Metatraffic unicast locator list
-        LocatorList_t m_metatrafficUnicastLocatorList;
-        //!Metatraffic multicast locator list
-        LocatorList_t m_metatrafficMulticastLocatorList;
-        //!Default unicast locator list
-        LocatorList_t m_defaultUnicastLocatorList;
-        //!Default multicast locator list
-        LocatorList_t m_defaultMulticastLocatorList;
+        //!Metatraffic locators
+        RemoteLocatorList metatraffic_locators;
+        //!Default locators
+        RemoteLocatorList default_locators;
         //!Manual liveliness count
         Count_t m_manualLivelinessCount;
         //!Participant name

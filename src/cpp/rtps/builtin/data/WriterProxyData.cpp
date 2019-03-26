@@ -574,8 +574,8 @@ void WriterProxyData::add_unicast_locator(const Locator_t& locator)
 }
 
 void WriterProxyData::set_unicast_locators(
-    const LocatorList_t& locators,
-    const NetworkFactory& network)
+        const LocatorList_t& locators,
+        const NetworkFactory& network)
 {
     Locator_t local_locator;
     remote_locators_.unicast.clear();
@@ -594,8 +594,8 @@ void WriterProxyData::add_multicast_locator(const Locator_t& locator)
 }
 
 void WriterProxyData::set_multicast_locators(
-    const LocatorList_t& locators,
-    const NetworkFactory& network)
+        const LocatorList_t& locators,
+        const NetworkFactory& network)
 {
     Locator_t local_locator;
     remote_locators_.multicast.clear();
@@ -608,6 +608,35 @@ void WriterProxyData::set_multicast_locators(
     }
 }
 
-} /* namespace rtps */
+void WriterProxyData::set_locators(
+        const RemoteLocatorList& locators,
+        const NetworkFactory& network,
+        bool use_multicast_locators)
+{
+    Locator_t local_locator;
+    remote_locators_.unicast.clear();
+    remote_locators_.multicast.clear();
+
+    for (const Locator_t& locator : locators.unicast)
+    {
+        if (network.transform_remote_locator(locator, local_locator))
+        {
+            remote_locators_.add_unicast_locator(local_locator);
+        }
+    }
+
+    if (use_multicast_locators)
+    {
+        for (const Locator_t& locator : locators.multicast)
+        {
+            if (network.transform_remote_locator(locator, local_locator))
+            {
+                remote_locators_.add_multicast_locator(locator);
+            }
+        }
+    }
 }
+
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

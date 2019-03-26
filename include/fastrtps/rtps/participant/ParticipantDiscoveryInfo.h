@@ -43,7 +43,10 @@ struct ParticipantDiscoveryInfo
         DROPPED_PARTICIPANT
     };
 
-    ParticipantDiscoveryInfo(): status(DISCOVERED_PARTICIPANT) {}
+    ParticipantDiscoveryInfo(const ParticipantProxyData& data)
+        : status(DISCOVERED_PARTICIPANT)
+        , info(data)
+    {}
 
     virtual ~ParticipantDiscoveryInfo() {}
 
