@@ -31,7 +31,7 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/rtps/resources/DeadlineTimer.h>
+#include <fastrtps/rtps/timedevent//DeadlineTimer.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <functional>

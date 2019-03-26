@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/rtps/resources/DeadlineTimer.h>
+#include <fastrtps/rtps/timedevent/DeadlineTimer.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {

@@ -30,7 +30,7 @@
 #include <fastrtps/publisher/PublisherHistory.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/resources/DeadlineTimer.h>
+#include <fastrtps/rtps/timedevent/DeadlineTimer.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
 namespace eprosima {
