@@ -2161,6 +2161,8 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, PDPType_t * e, uint8_
                 <xs:enumeration value="NONE"/>
                 <xs:enumeration value="SIMPLE"/>
                 <xs:enumeration value="CLIENT"/>
+                <xs:enumeration value="SERVER"/>
+                <xs:enumeration value="BACKUP"/>
             </xs:restriction>
         </xs:simpleType>
     */
@@ -2188,6 +2190,14 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, PDPType_t * e, uint8_
     else if (strcmp(text, CLIENT) == 0)
     {
         *e = PDPType_t::CLIENT;
+    }
+    else if (strcmp(text, SERVER) == 0)
+    {
+        *e = PDPType_t::SERVER;
+    }
+    else if (strcmp(text, BACKUP) == 0)
+    {
+        *e = PDPType_t::BACKUP;
     }
     else
     {

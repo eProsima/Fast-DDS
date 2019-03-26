@@ -248,7 +248,7 @@ void PDP::announceParticipantState(bool new_change, bool dispose)
                 {
                     change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-                    mp_PDPWriterHistory->add_change(change);
+                   mp_PDPWriterHistory->add_change(change);
                 }
                 else
                 {

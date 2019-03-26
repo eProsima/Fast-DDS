@@ -116,6 +116,11 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
 
         case PDPType_t::SERVER:
             assert(0); // currently unavailable
+            // mp_PDP = new PDPServer(this);
+            break;
+        case PDPType_t::BACKUP:
+            assert(0); // currently unavailable
+            // mp_PDP = new PDPServer(this,true);
             break;
     }
 

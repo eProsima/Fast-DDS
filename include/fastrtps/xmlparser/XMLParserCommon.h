@@ -219,6 +219,8 @@ extern const char* OFFSETD3;
 extern const char* RTPS_PDP_TYPE;
 extern const char* NONE;
 extern const char* CLIENT;
+extern const char* SERVER;
+extern const char* BACKUP;
 extern const char* WRITER_LVESS_PROTOCOL;
 extern const char* _EDP;
 extern const char* DOMAIN_ID;

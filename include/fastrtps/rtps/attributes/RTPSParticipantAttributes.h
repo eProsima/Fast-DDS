@@ -56,7 +56,8 @@ typedef enum PDPType
         Discovery is managed by well-known devoted servers. Only client behaviour is currently available.
     */
     CLIENT,
-    SERVER
+    SERVER,
+    BACKUP
 
 } PDPType_t;
 
