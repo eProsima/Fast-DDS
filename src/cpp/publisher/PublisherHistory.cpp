@@ -111,7 +111,7 @@ bool PublisherHistory::add_pub_change(
             bool add = false;
             if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if((int32_t)vit->second.cache_changes_.size() < m_resourceLimitsQos.max_samples_per_instance)
+                if((int32_t)vit->second.cache_changes.size() < m_resourceLimitsQos.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -122,13 +122,13 @@ bool PublisherHistory::add_pub_change(
             }
             else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if(vit->second.cache_changes_.size() < (size_t)m_historyQos.depth)
+                if(vit->second.cache_changes.size() < (size_t)m_historyQos.depth)
                 {
                     add = true;
                 }
                 else
                 {
-                    if(remove_change_pub(vit->second.cache_changes_.front()))
+                    if(remove_change_pub(vit->second.cache_changes.front()))
                     {
                         add = true;
                     }
@@ -142,7 +142,7 @@ bool PublisherHistory::add_pub_change(
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
                             << " and "<<change->serializedPayload.length<< " bytes");
-                    vit->second.cache_changes_.push_back(change);
+                    vit->second.cache_changes.push_back(change);
                     returnedValue =  true;
                 }
             }
@@ -158,26 +158,26 @@ bool PublisherHistory::find_key(
         t_m_Inst_Caches::iterator* vit_out)
 {
     t_m_Inst_Caches::iterator vit;
-    vit = m_keyedChanges.find(a_change->instanceHandle);
-    if (vit != m_keyedChanges.end())
+    vit = keyed_changes_.find(a_change->instanceHandle);
+    if (vit != keyed_changes_.end())
     {
         *vit_out = vit;
         return true;
     }
 
-    if ((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
+    if ((int)keyed_changes_.size() < m_resourceLimitsQos.max_instances)
     {
-        *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+        *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
         return true;
     }
     else
     {
-        for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
+        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
         {
-            if (vit->second.cache_changes_.size() == 0)
+            if (vit->second.cache_changes.size() == 0)
             {
-                m_keyedChanges.erase(vit);
-                *vit_out = m_keyedChanges.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+                keyed_changes_.erase(vit);
+                *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
                 return true;
             }
         }
@@ -250,14 +250,14 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
             return false;
         }
 
-        for(auto chit = vit->second.cache_changes_.begin(); chit!= vit->second.cache_changes_.end(); ++chit)
+        for(auto chit = vit->second.cache_changes.begin(); chit!= vit->second.cache_changes.end(); ++chit)
         {
             if( ((*chit)->sequenceNumber == change->sequenceNumber)
                     && ((*chit)->writerGUID == change->writerGUID) )
             {
                 if(remove_change(change))
                 {
-                    vit->second.cache_changes_.erase(chit);
+                    vit->second.cache_changes.erase(chit);
                     m_isHistoryFull = false;
                     return true;
                 }
@@ -273,7 +273,9 @@ bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
     return remove_change_pub(a_change);
 }
 
-bool PublisherHistory::set_next_deadline(InstanceHandle_t handle, std::chrono::steady_clock::time_point next_deadline_us)
+bool PublisherHistory::set_next_deadline(
+        const InstanceHandle_t& handle,
+        const std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if(mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -289,19 +291,21 @@ bool PublisherHistory::set_next_deadline(InstanceHandle_t handle, std::chrono::s
     }
     else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
-        if (m_keyedChanges.find(handle) == m_keyedChanges.end())
+        if (keyed_changes_.find(handle) == keyed_changes_.end())
         {
             return false;
         }
 
-        m_keyedChanges[handle].next_deadline_us_ = next_deadline_us;
+        keyed_changes_[handle].next_deadline_us = next_deadline_us;
         return true;
     }
 
     return false;
 }
 
-bool PublisherHistory::get_next_deadline(InstanceHandle_t &handle, std::chrono::steady_clock::time_point &next_deadline_us)
+bool PublisherHistory::get_next_deadline(
+        InstanceHandle_t &handle,
+        std::chrono::steady_clock::time_point &next_deadline_us)
 {
     if(mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -312,14 +316,14 @@ bool PublisherHistory::get_next_deadline(InstanceHandle_t &handle, std::chrono::
 
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
-        auto min = std::min_element(m_keyedChanges.begin(),
-                                    m_keyedChanges.end(),
+        auto min = std::min_element(keyed_changes_.begin(),
+                                    keyed_changes_.end(),
                                     [](
                                     const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs){ return lhs.second.next_deadline_us_ < rhs.second.next_deadline_us_;});
+                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs){ return lhs.second.next_deadline_us < rhs.second.next_deadline_us;});
 
         handle = min->first;
-        next_deadline_us = min->second.next_deadline_us_;
+        next_deadline_us = min->second.next_deadline_us;
         return true;
     }
     else if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)

@@ -99,7 +99,9 @@ class PublisherHistory:public rtps::WriterHistory
          * @param next_deadline_us The time point when the deadline will occur
          * @return True if deadline was set successfully
          */
-        bool set_next_deadline(InstanceHandle_t handle, std::chrono::steady_clock::time_point next_deadline_us);
+        bool set_next_deadline(
+                const InstanceHandle_t& handle,
+                const std::chrono::steady_clock::time_point& next_deadline_us);
 
         /**
          * @brief Returns the deadline for the instance that is next going to 'expire'
@@ -119,15 +121,15 @@ private:
         {
             //! Default constructor
             KeyedChanges()
-                : cache_changes_()
-                , next_deadline_us_()
+                : cache_changes()
+                , next_deadline_us()
             {
             }
 
             //! Copy constructor
             KeyedChanges(const KeyedChanges& other)
-                : cache_changes_(other.cache_changes_)
-                , next_deadline_us_(other.next_deadline_us_)
+                : cache_changes(other.cache_changes)
+                , next_deadline_us(other.next_deadline_us)
             {
             }
 
@@ -137,15 +139,15 @@ private:
             }
 
             //! A vector of cache changes
-            std::vector<CacheChange_t*> cache_changes_;
+            std::vector<CacheChange_t*> cache_changes;
             //! The time when the group will miss the deadline
-            std::chrono::steady_clock::time_point next_deadline_us_;
+            std::chrono::steady_clock::time_point next_deadline_us;
         };
 
         typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
 
         //!Map where keys are instance handles and values are vectors of cache changes associated
-        t_m_Inst_Caches m_keyedChanges;
+        t_m_Inst_Caches keyed_changes_;
         //!Time point when the next deadline will occur (only used for topics with no key)
         std::chrono::steady_clock::time_point next_deadline_us_;
         //!HistoryQosPolicy values.

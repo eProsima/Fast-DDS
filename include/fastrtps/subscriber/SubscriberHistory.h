@@ -119,7 +119,9 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @param next_deadline_us The time point when the deadline will occur
          * @return True if the deadline was set correctly
          */
-        bool set_next_deadline(InstanceHandle_t handle, std::chrono::steady_clock::time_point next_deadline_us);
+        bool set_next_deadline(
+                const InstanceHandle_t& handle,
+                const std::chrono::steady_clock::time_point& next_deadline_us);
 
         /**
          * @brief A method to get the next instance handle that will miss the deadline and the time when the deadline will occur
@@ -127,7 +129,9 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @param next_deadline_us The time point when the instance will miss the deadline
          * @return True if the deadline was retrieved successfully
          */
-        bool get_next_deadline(InstanceHandle_t& handle, std::chrono::steady_clock::time_point& next_deadline_us);
+        bool get_next_deadline(
+                InstanceHandle_t& handle,
+                std::chrono::steady_clock::time_point& next_deadline_us);
 
     private:
 
@@ -139,14 +143,14 @@ class SubscriberHistory: public rtps::ReaderHistory
         {
             //! Default constructor
             KeyedChanges()
-                : cache_changes_()
-                , next_deadline_us_()
+                : cache_changes()
+                , next_deadline_us()
             {}
 
             //! Copy constructor
             KeyedChanges(const KeyedChanges& other)
-                : cache_changes_(other.cache_changes_)
-                , next_deadline_us_(other.next_deadline_us_)
+                : cache_changes(other.cache_changes)
+                , next_deadline_us(other.next_deadline_us)
             {
             }
 
@@ -156,9 +160,9 @@ class SubscriberHistory: public rtps::ReaderHistory
             }
 
             //! A vector of cache changes
-            std::vector<CacheChange_t*> cache_changes_;
+            std::vector<CacheChange_t*> cache_changes;
             //! The time point when the next deadline will occur
-            std::chrono::steady_clock::time_point next_deadline_us_;
+            std::chrono::steady_clock::time_point next_deadline_us;
         };
 
         typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
@@ -166,7 +170,7 @@ class SubscriberHistory: public rtps::ReaderHistory
         //!Number of unread CacheChange_t.
         uint64_t m_unreadCacheCount;
         //!Map where keys are instance handles and values vectors of cache changes
-        t_m_Inst_Caches m_keyedChanges;
+        t_m_Inst_Caches keyed_changes_;
         //!Time point when the next deadline will occur (only used for topics with no key)
         std::chrono::steady_clock::time_point next_deadline_us_;
         //!HistoryQosPolicy values.
