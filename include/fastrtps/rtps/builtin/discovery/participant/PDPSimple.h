@@ -30,11 +30,10 @@
 #include "../../../builtin/data/ReaderProxyData.h"
 #include "../../../builtin/data/WriterProxyData.h"
 #include "../../../../qos/QosPolicies.h"
-
-
+#include "../../../../utils/collections/ResourceLimitedVector.hpp"
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class StatelessWriter;
@@ -54,22 +53,26 @@ class PDPSimpleListener;
 
 /**
  * Class PDPSimple that implements the SimpleRTPSParticipantDiscoveryProtocol as defined in the RTPS specification.
- *@ingroup DISCOVERY_MODULE
+ * @ingroup DISCOVERY_MODULE
  */
 class PDPSimple 
 {
     friend class ResendRTPSParticipantProxyDataPeriod;
     friend class RemoteRTPSParticipantLeaseDuration;
     friend class PDPSimpleListener;
-    public:
+
+public:
+
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
+     * @param allocation Participant allocation parameters.
      */
-    PDPSimple(BuiltinProtocols* builtin);
-    virtual ~PDPSimple();
+    PDPSimple(
+            BuiltinProtocols* builtin,
+            const RTPSParticipantAllocationAttributes& allocation);
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+    virtual ~PDPSimple();
 
     /**
      * Initialize the PDP.
@@ -190,7 +193,7 @@ class PDPSimple
      */
     ParticipantProxyData* getLocalParticipantProxyData()
     {
-        return m_participantProxies.front();
+        return participant_proxies_.front();
     }
     /**
      * Get a pointer to the EDP object.
@@ -198,15 +201,22 @@ class PDPSimple
      */
     inline EDP* getEDP(){return mp_EDP;}
     /**
-     * Get a cons_iterator to the beginning of the RTPSParticipant Proxies.
+     * Get a const_iterator to the beginning of the RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesBegin(){return m_participantProxies.begin();};
+    ResourceLimitedVector<ParticipantProxyData*>::const_iterator ParticipantProxiesBegin()
+    {
+        return participant_proxies_.begin();
+    }
+
     /**
-     * Get a cons_iterator to the end RTPSParticipant Proxies.
+     * Get a const_iterator to the end of the RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
+    ResourceLimitedVector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd()
+    {
+        return participant_proxies_.end();
+    }
 
     /**
      * Assert the liveliness of a Remote Participant.
@@ -248,7 +258,8 @@ class PDPSimple
 
     CDRMessage_t get_participant_proxy_data_serialized(Endianness_t endian);
 
-    private:
+private:
+
     //!Pointer to the local RTPSParticipant.
     RTPSParticipantImpl* mp_RTPSParticipant;
     //!Discovery attributes.
@@ -260,7 +271,9 @@ class PDPSimple
     //!Pointer to the EDP object.
     EDP* mp_EDP;
     //!Registered RTPSParticipants (including the local one, that is the first one.)
-    std::vector<ParticipantProxyData*> m_participantProxies;
+    ResourceLimitedVector<ParticipantProxyData*> participant_proxies_;
+    //!Pool of participant proxy data objects ready for reuse
+    ResourceLimitedVector<ParticipantProxyData*> participant_proxies_pool_;
     //!Variable to indicate if any parameter has changed.
     bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.
@@ -276,12 +289,22 @@ class PDPSimple
     //!WriterProxyData to allow preallocation of remote locators
     WriterProxyData temp_writer_data_;
 
+    std::recursive_mutex* mp_mutex;
+
+    /**
+     * Adds an entry to the collection of participant proxy information.
+     * May use one of the entries present in the pool.
+     * @return pointer to the currently inserted entry, nullptr if allocation limits were reached.
+     */
+    ParticipantProxyData* add_participant_proxy_data();
+
+    void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+
     /**
      * Create the SPDP Writer and Reader
      * @return True if correct.
      */
     bool createSPDPEndpoints();
-    std::recursive_mutex* mp_mutex;
 
 
 
