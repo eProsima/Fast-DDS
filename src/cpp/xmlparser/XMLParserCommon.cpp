@@ -276,6 +276,8 @@ const char* UNION = "union";
 const char* SEQUENCE = "sequence";
 const char* MAP = "map";
 const char* TYPEDEF = "typedef";
+const char* BITSET = "bitset";
+const char* BITMASK = "bitmask";
 const char* ENUM = "enum";
 const char* CASE = "case";
 const char* DEFAULT = "default";
@@ -291,6 +293,11 @@ const char* NON_BASIC_TYPE = "nonBasic";
 const char* NON_BASIC_TYPE_NAME = "nonBasicTypeName";
 const char* KEY = "key";
 const char* MEMBER = "member";
+const char* BITFIELD = "bitfield";
+const char* BIT_VALUE = "bit_value";
+const char* POSITION = "position";
+const char* BIT_BOUND = "bit_bound";
+const char* BASE_TYPE = "baseType";
 
 // LOG
 const char* USE_DEFAULT = "use_default";

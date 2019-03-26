@@ -4761,22 +4761,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
 {
     using namespace xmlparser;
@@ -4837,6 +4821,84 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
         ASSERT_TRUE(static_payload.length == static_payloadSize);
         ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ResponseCode::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ResponseCode::RETCODE_OK);
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
+
+        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+
+        DynamicTypeBuilder_ptr a_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr b_builder = m_factory->create_bool_builder();
+        DynamicTypeBuilder_ptr empty_builder = m_factory->create_byte_builder();
+        DynamicTypeBuilder_ptr c_builder = m_factory->create_uint16_builder();
+        DynamicTypeBuilder_ptr d_builder = m_factory->create_int16_builder();
+        auto a_type = a_builder->build();
+        auto b_type = b_builder->build();
+        auto e_type = empty_builder->build();
+        auto c_type = c_builder->build();
+        auto d_type = d_builder->build();
+
+        // Bitset
+        DynamicTypeBuilder_ptr builder_ptr = m_factory->create_bitset_builder();
+        builder_ptr->add_member(0, "a", a_type);
+        builder_ptr->add_member(1, "b", b_type);
+        builder_ptr->add_member(2, "", e_type);
+        builder_ptr->add_member(3, "c", c_type);
+        builder_ptr->add_member(4, "d", d_type);
+        builder_ptr->add_member(5, "", e_type); // Test more than one empty member. Trailing shouldn't affect equallity.
+        builder_ptr->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "3");
+        builder_ptr->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        builder_ptr->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "1");
+        builder_ptr->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "3");
+        // The member doesn't exist so the annotation application will fail, and isn't needed.
+        //builder_ptr->apply_annotation_to_member(2, ANNOTATION_BIT_BOUND_ID, "value", "4");
+        //builder_ptr->apply_annotation_to_member(2, ANNOTATION_POSITION_ID, "value", "4");
+        builder_ptr->apply_annotation_to_member(3, ANNOTATION_BIT_BOUND_ID, "value", "10");
+        builder_ptr->apply_annotation_to_member(3, ANNOTATION_POSITION_ID, "value", "8"); // 4 empty
+        builder_ptr->apply_annotation_to_member(4, ANNOTATION_BIT_BOUND_ID, "value", "12");
+        builder_ptr->apply_annotation_to_member(4, ANNOTATION_POSITION_ID, "value", "18");
+        builder_ptr->set_name("MyBitSet");
+
+        ASSERT_TRUE(pbType->GetDynamicType()->equals(builder_ptr->build().get()));
+
+        delete(pbType);
+        XMLProfileManager::DeleteInstance();
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    {
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
+
+        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+
+        // Bitset
+        DynamicTypeBuilder_ptr builder_ptr = m_factory->create_bitmask_builder(8);
+        builder_ptr->add_empty_member(0, "flag0");
+        builder_ptr->add_empty_member(1, "flag1");
+        builder_ptr->add_empty_member(2, "flag2");
+        builder_ptr->add_empty_member(5, "flag5");
+        builder_ptr->set_name("MyBitMask");
+
+        ASSERT_TRUE(pbType->GetDynamicType()->equals(builder_ptr->build().get()));
 
         delete(pbType);
         XMLProfileManager::DeleteInstance();

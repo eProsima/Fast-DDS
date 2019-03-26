@@ -984,6 +984,8 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
                     <xs:element name="union" type="unionDcl" minOccurs="0"/>
                     <xs:element name="enum" type="enumDcl" minOccurs="0"/>
                     <xs:element name="typedef" type="typedefDcl" minOccurs="0"/>
+                    <xs:element name="bitset" type="bitsetDcl" minOccurs="0"/>
+                    <xs:element name="bitmask" type="bitmaskDcl" minOccurs="0"/>
                 </xs:choice>
             </xs:sequence>
         </xs:group>
@@ -1008,6 +1010,14 @@ XMLP_ret XMLParser::parseXMLDynamicType(tinyxml2::XMLElement* p_root)
         else if (type.compare(TYPEDEF) == 0)
         {
             ret = parseXMLAliasDynamicType(p_aux0);
+        }
+        else if (type.compare(BITSET) == 0)
+        {
+            ret = parseXMLBitsetDynamicType(p_aux0);
+        }
+        else if (type.compare(BITMASK) == 0)
+        {
+            ret = parseXMLBitmaskDynamicType(p_aux0);
         }
         else
         {
@@ -1174,6 +1184,322 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLBitsetDynamicType(tinyxml2::XMLElement* p_root)
+{
+    /*
+        <bitset name="MyBitSet">
+            <bitfield name="a" bit_bound="3"/>
+            <bitfield name="b" bit_bound="1"/>
+            <bitfield bit_bound="4"/>
+            <bitfield name="c" bit_bound="10"/>
+            <bitfield name="d" bit_bound="12" type="short"/>
+        </bitset>
+
+        <xs:complexType name="bitsetDcl">
+            <xs:sequence>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="bitfield" type="bitfieldDcl" minOccurs="1"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="name" type="stringType" use="required"/>
+            <xs:attribute name="baseType" type="stringType" use="optional"/>
+        </xs:complexType>
+    */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    p_dynamictypebuilder_t typeBuilder;
+    uint32_t mId = 0;
+
+    const char* name = p_root->Attribute(NAME);
+
+    const char* baseType = p_root->Attribute(BASE_TYPE);
+    if (baseType != nullptr)
+    {
+        p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
+        if (parentType != nullptr && parentType->get_kind() == TK_BITSET)
+        {
+            typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(parentType);
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid baseType found into 'bitsetDcl'. Name: " << baseType);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    else
+    {
+        typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+    }
+    typeBuilder->set_name(name);
+
+    const char* element_name = nullptr;
+    uint16_t position = 0;
+    for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
+            p_element != nullptr; p_element = p_element->NextSiblingElement())
+    {
+        element_name = p_element->Name();
+        if (strcmp(element_name, BITFIELD) == 0)
+        {
+            p_dynamictypebuilder_t mType = parseXMLBitfieldDynamicType(p_element, typeBuilder, mId++, position);
+            if (mType == nullptr)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'bitsetDcl'. Name: " << element_name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+    return ret;
+}
+
+p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
+        tinyxml2::XMLElement* p_root,
+        p_dynamictypebuilder_t p_dynamictype,
+        MemberId mId,
+        uint16_t& position)
+{
+    /*
+        <xs:complexType name="bitfieldDcl">
+            <xs:attribute name="name" type="stringType" use="optional"/>
+            <xs:attribute name="type" type="stringType" use="optional"/>
+            <xs:attribute name="bit_bound" type="int16Type" use="required"/>
+        </xs:complexType>
+    */
+    if (p_root == nullptr)
+    {
+        logError(XMLPARSER, "Error parsing bitfield: Node not found.");
+        return nullptr;
+    }
+
+    const char* memberType = p_root->Attribute(TYPE);
+    const char* memberName = p_root->Attribute(NAME);
+    const char* bit_bound = p_root->Attribute(BIT_BOUND);
+
+    if (bit_bound == nullptr && p_dynamictype != nullptr)
+    {
+        logError(XMLPARSER, "Error parsing bitfield bit_bound: Not found.");
+        return nullptr;
+    }
+
+    if (memberName == nullptr)
+    {
+        memberName = "";
+    }
+
+    types::DynamicTypeBuilder* memberBuilder = nullptr;
+    types::DynamicTypeBuilderFactory* factory = types::DynamicTypeBuilderFactory::get_instance();
+
+    if (memberType == nullptr)
+    {
+        try
+        {
+            uint16_t size = atoi(bit_bound);
+            if (size == 1)
+            {
+                memberType = BOOLEAN;
+            }
+            else if (size <= 8)
+            {
+                memberType = CHAR;
+            }
+            else if (size <= 16)
+            {
+                memberType = USHORT;
+            }
+            else if (size <= 32)
+            {
+                memberType = ULONG;
+            }
+            else if (size <= 64)
+            {
+                memberType = ULONGLONG;
+            }
+            else
+            {
+                logError(XMLPARSER, "Failed creating bitfield, size too big: " << bit_bound);
+                return nullptr;
+            }
+        }
+        catch(...)
+        {
+            logError(XMLPARSER, "Failed creating bitfield, invalid bit_bound (must be an unsigned short): "
+                << bit_bound);
+            return nullptr;
+        }
+    }
+
+    if (strncmp(memberType, BOOLEAN, 8) == 0)
+    {
+        memberBuilder = factory->create_bool_builder();
+    }
+    else if (strncmp(memberType, CHAR, 5) == 0)
+    {
+        memberBuilder = factory->create_char8_builder();
+    }
+    else if (strncmp(memberType, WCHAR, 6) == 0)
+    {
+        memberBuilder = factory->create_char16_builder();
+    }
+    else if (strncmp(memberType, TBYTE, 6) == 0)
+    {
+        memberBuilder = factory->create_byte_builder();
+    }
+    else if (strncmp(memberType, SHORT, 6) == 0)
+    {
+        memberBuilder = factory->create_int16_builder();
+    }
+    else if (strncmp(memberType, LONG, 5) == 0)
+    {
+        memberBuilder = factory->create_int32_builder();
+    }
+    else if (strncmp(memberType, ULONG, 13) == 0)
+    {
+        memberBuilder = factory->create_uint32_builder();
+    }
+    else if (strncmp(memberType, USHORT, 14) == 0)
+    {
+        memberBuilder = factory->create_uint16_builder();
+    }
+    else if (strncmp(memberType, LONGLONG, 9) == 0)
+    {
+        memberBuilder = factory->create_int64_builder();
+    }
+    else if (strncmp(memberType, ULONGLONG, 17) == 0)
+    {
+        memberBuilder = factory->create_uint64_builder();
+    }
+    else // Unsupported type?
+    {
+        logError(XMLPARSER, "Failed creating bitfield " << memberName << ": Type " << memberType << " unsupported.");
+    }
+
+
+    if (memberBuilder == nullptr)
+    {
+        logError(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
+    }
+
+    if (p_dynamictype != nullptr)
+    {
+        p_dynamictype->add_member(mId, memberName, memberBuilder);
+        if (!std::string(memberName).empty())
+        {
+            p_dynamictype->apply_annotation_to_member(mId, ANNOTATION_BIT_BOUND_ID, "value", bit_bound);
+            //position += static_cast<uint16_t>(mId);
+            p_dynamictype->apply_annotation_to_member(mId, ANNOTATION_POSITION_ID, "value", std::to_string(position));
+        }
+        position += static_cast<uint16_t>(atoi(bit_bound));
+    }
+
+    return memberBuilder;
+}
+
+XMLP_ret XMLParser::parseXMLBitmaskDynamicType(tinyxml2::XMLElement* p_root)
+{
+    /*
+        <bitmask name="MyBitMask" bit_bound="8">
+            <bit_value name="flag0" position="0"/>
+            <bit_value name="flag1"/>
+            <bit_value name="flag2" position="2"/>
+            <bit_value name="flag5" position="5"/>
+        </bitmask>
+
+        <xs:complexType name="bitmaskDcl">
+            <xs:sequence>
+                <xs:element name="bit_value" type="bit_valueType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="bit_bound" use="optional"/>
+        </xs:complexType>
+    */
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    uint16_t bit_bound = 32;
+    const char* anno_bit_bound = p_root->Attribute(BIT_BOUND);
+    if (anno_bit_bound != nullptr)
+    {
+        bit_bound = static_cast<uint16_t>(std::atoi(anno_bit_bound));
+    }
+
+    const char* name = p_root->Attribute(NAME);
+    p_dynamictypebuilder_t typeBuilder =
+        types::DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(bit_bound);
+    typeBuilder->set_name(name);
+    uint16_t position = 0;
+
+    const char* element_name = nullptr;
+    for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
+            p_element != nullptr; p_element = p_element->NextSiblingElement())
+    {
+        element_name = p_element->Name();
+        if (strcmp(element_name, BIT_VALUE) == 0)
+        {
+            if (parseXMLBitvalueDynamicType(p_element, typeBuilder, position) != XMLP_ret::XML_OK)
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'bitmaskDcl'. Name: " << element_name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
+        tinyxml2::XMLElement* p_root,
+        p_dynamictypebuilder_t p_dynamictype,
+        uint16_t& field_position)
+{
+    /*
+        <xs:complexType name="bit_valueType">
+            <xs:attribute name="name" type="stringType" use="required"/>
+            <xs:attribute name="position" type="int16Type" use="optional"/>
+        </xs:complexType>
+    */
+    if (p_root == nullptr)
+    {
+        logError(XMLPARSER, "Error parsing bitmask: Node not found.");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    const char* memberName = p_root->Attribute(NAME);
+    const char* position = p_root->Attribute(POSITION);
+
+    if (position != nullptr)
+    {
+        try
+        {
+            field_position = static_cast<uint16_t>(std::atoi(position));
+        }
+        catch(...)
+        {
+            logError(XMLPARSER, "Error parsing bit_value position: Invalid (must be an unsigned short).");
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    if (memberName == nullptr && p_dynamictype != nullptr)
+    {
+        logError(XMLPARSER, "Error parsing bit_value name: Not found.");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    p_dynamictype->add_empty_member(field_position, memberName);
+    //p_dynamictype->apply_annotation_to_member(
+    //    p_dynamictype->get_member_id_by_name(memberName), ANNOTATION_POSITION_ID, "value", position);
+    ++field_position;
+
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
 {
     /*
@@ -1227,13 +1553,35 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
                 </xs:choice>
             </xs:sequence>
             <xs:attribute name="name" type="string" use="required"/>
+            <xs:attribute name="baseType" type="stringType" use="optional"/>
         </xs:complexType>
     */
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* name = p_root->Attribute(NAME);
-    p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-    typeBuilder->set_name(name);
+    p_dynamictypebuilder_t typeBuilder; // = types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    //typeBuilder->set_name(name);
     uint32_t mId = 0;
+
+    const char* baseType = p_root->Attribute(BASE_TYPE);
+    if (baseType != nullptr)
+    {
+        p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
+        if (parentType != nullptr && parentType->get_kind() == TK_STRUCTURE)
+        {
+            typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(parentType);
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid baseType found into 'structDcl'. Name: " << baseType);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    else
+    {
+        typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    }
+    typeBuilder->set_name(name);
+
     const char* element_name = nullptr;
     for (tinyxml2::XMLElement *p_element = p_root->FirstChildElement();
             p_element != nullptr; p_element = p_element->NextSiblingElement())

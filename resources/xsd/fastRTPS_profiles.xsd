@@ -652,8 +652,8 @@
             <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
@@ -827,9 +827,29 @@
                 <xs:element name="union" type="unionDcl" minOccurs="0"/>
                 <xs:element name="enum" type="enumDcl" minOccurs="0"/>
                 <xs:element name="typedef" type="typedefDcl" minOccurs="0"/>
+                <xs:element name="bitset" type="bitsetDcl" minOccurs="0"/>
+                <xs:element name="bitmask" type="bitmaskDcl" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>
+
+    <xs:complexType name="bitsetDcl">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="bitfield" type="bitfieldDcl" minOccurs="1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="stringType" use="required"/>
+        <xs:attribute name="baseType" type="stringType" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="bitmaskDcl">
+        <xs:sequence>
+            <xs:element name="bit_value" type="bit_valueType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="bit_bound" use="optional"/>
+    </xs:complexType>
 
     <xs:complexType name="structDcl">
         <xs:sequence>
@@ -838,6 +858,7 @@
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="name" type="stringType" use="required"/>
+        <xs:attribute name="baseType" type="stringType" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="unionDcl">
@@ -865,6 +886,11 @@
         <xs:attribute name="value" type="stringType" use="optional"/>
     </xs:complexType>
 
+    <xs:complexType name="bit_valueType">
+        <xs:attribute name="name" type="stringType" use="required"/>
+        <xs:attribute name="position" type="int16Type" use="optional"/>
+    </xs:complexType>
+
     <xs:complexType name="enumDcl">
         <xs:sequence>
             <xs:element name="enumerator" type="enumeratorType" minOccurs="0" maxOccurs="unbounded"/>
@@ -882,6 +908,12 @@
         <xs:attribute name="nonBasic" type="string" use="optional"/>
         <xs:attribute name="sequenceMaxLength" type="string" use="optional"/>
         <xs:attribute name="mapMaxLength" type="string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="bitfieldDcl">
+        <xs:attribute name="name" type="stringType" use="optional"/>
+        <xs:attribute name="type" type="stringType" use="optional"/>
+        <xs:attribute name="bit_bound" type="int16Type" use="required"/>
     </xs:complexType>
 
 </xs:schema>

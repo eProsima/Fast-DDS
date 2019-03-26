@@ -212,6 +212,21 @@ class XMLParser
 
     RTPS_DllAPI static XMLP_ret parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root);
 
+    RTPS_DllAPI static XMLP_ret parseXMLBitsetDynamicType(tinyxml2::XMLElement* p_root);
+
+    RTPS_DllAPI static XMLP_ret parseXMLBitmaskDynamicType(tinyxml2::XMLElement* p_root);
+
+    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLBitfieldDynamicType(
+        tinyxml2::XMLElement* p_root,
+        p_dynamictypebuilder_t p_dynamictype,
+        MemberId mId,
+        uint16_t& position);
+
+    RTPS_DllAPI static XMLP_ret parseXMLBitvalueDynamicType(
+        tinyxml2::XMLElement* p_root,
+        p_dynamictypebuilder_t p_dynamictype,
+        uint16_t& position);
+
     RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype,

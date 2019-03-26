@@ -111,7 +111,8 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
             || descriptor_->get_kind() == TK_ENUM || descriptor_->get_kind() == TK_STRUCTURE
             || descriptor_->get_kind() == TK_UNION || descriptor_->get_kind() == TK_BITSET)
         {
-            if (!exists_member_by_name(descriptor->get_name()))
+            if (!exists_member_by_name(descriptor->get_name()) ||
+                    (kind_ == TK_BITSET && descriptor->get_name().empty())) // Bitsets allow multiple empty members.
             {
                 if (check_union_configuration(descriptor))
                 {
@@ -134,8 +135,15 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
                         }
                     }
 
-                    member_by_id_.insert(std::make_pair(current_member_id_, newMember));
-                    member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
+                    if (!descriptor->get_name().empty()) // Don't store empty bitset members.
+                    {
+                        member_by_id_.insert(std::make_pair(current_member_id_, newMember));
+                        member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
+                    }
+                    else
+                    {
+                        delete newMember;
+                    }
                     ++current_member_id_;
                     return ResponseCode::RETCODE_OK;
                 }
