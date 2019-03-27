@@ -570,15 +570,16 @@ bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid)
 }
 
 
-bool PDPSimple::lookupParticipantProxyData(const GUID_t& pguid, ParticipantProxyData& pdata)
+bool PDPSimple::lookup_participant_name(
+        const GUID_t& guid, 
+        string_255& name)
 {
-    logInfo(RTPS_PDP,pguid);
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-    for(ParticipantProxyData* pit : participant_proxies_)
+    for (ParticipantProxyData* pit : participant_proxies_)
     {
-        if(pit->m_guid == pguid)
+        if (pit->m_guid == guid)
         {
-            pdata.copy(*pit);
+            name = pit->m_participantName;
             return true;
         }
     }
@@ -929,7 +930,9 @@ void PDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
     }
 }
 
-bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
+bool PDPSimple::remove_remote_participant(
+        const GUID_t& partGUID,
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
     logInfo(RTPS_PDP,partGUID );
     ParticipantProxyData* pdata = nullptr;
@@ -1006,6 +1009,14 @@ bool PDPSimple::removeRemoteParticipant(GUID_t& partGUID)
             }
         }
         this->mp_SPDPReaderHistory->getMutex()->unlock();
+
+        auto listener =  mp_RTPSParticipant->getListener();
+        if (listener != nullptr)
+        {
+            ParticipantDiscoveryInfo info(*pdata);
+            info.status = reason;
+            listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+        }
 
         this->mp_mutex->lock();
         pdata->reset();
@@ -1091,13 +1102,13 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
 
 bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind)
 {
-    ParticipantProxyData pdata(c_default_RTPSParticipantAllocationAttributes);
-    if(lookupParticipantProxyData(pguid, pdata))
+    string_255 pname;
+    if(lookup_participant_name(pguid, pname))
     {
         if(kind == WRITER)
-            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata,userDefinedId);
+            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pguid, pname,userDefinedId);
         else
-            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata,userDefinedId);
+            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pguid, pname,userDefinedId);
     }
     return false;
 }

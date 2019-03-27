@@ -369,6 +369,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
     };
 
     uint32_t qos_size;
+    clear();
     return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
 }
 

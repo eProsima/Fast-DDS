@@ -1187,8 +1187,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
 
         const GUID_t remote_participant_key(message.message_identity().source_guid().guidPrefix, c_EntityId_RTPSParticipant);
         DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
-        // TODO (Miguel C): participant allocation QOS
-        ParticipantProxyData participant_data(c_default_RTPSParticipantAllocationAttributes);
+        const ParticipantProxyData* participant_data = nullptr;
 
         mutex_.lock();
         auto dp_it = discovered_participants_.find(remote_participant_key);
@@ -1196,7 +1195,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
         if(dp_it != discovered_participants_.end())
         {
             remote_participant_info = dp_it->second.get_auth();
-            participant_data = dp_it->second.participant_data();
+            participant_data = &(dp_it->second.participant_data());
         }
         else
         {
@@ -1323,7 +1322,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 return;
             }
 
-            on_process_handshake(participant_data, remote_participant_info,
+            on_process_handshake(*participant_data, remote_participant_info,
                     std::move(message.message_identity()), std::move(message.message_data().at(0)));
 
             restore_discovered_participant_info(remote_participant_key, remote_participant_info);

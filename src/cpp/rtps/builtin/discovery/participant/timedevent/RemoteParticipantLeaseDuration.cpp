@@ -59,23 +59,12 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 
     if(code == EVENT_SUCCESS)
     {
-        logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
-                << mp_participantProxyData->m_guid);
-
-        // This assignment must be before removeRemoteParticipant because mp_participantProxyData is deleted there.
-        ParticipantDiscoveryInfo info(*mp_participantProxyData);
-        info.status = ParticipantDiscoveryInfo::DROPPED_PARTICIPANT;
+        const GUID_t& guid = mp_participantProxyData->m_guid;
+        logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: " << guid);
 
         // Set pointer to null because this call will be delete itself.
         mp_participantProxyData->mp_leaseDurationTimer = nullptr;
-        if(mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid))
-        {
-            if(mp_PDP->getRTPSParticipant()->getListener()!=nullptr)
-            {
-                mp_PDP->getRTPSParticipant()->getListener()->onParticipantDiscovery(
-                        mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
-            }
-        }
+        mp_PDP->remove_remote_participant(guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
     }
     else if(code == EVENT_ABORT)
     {

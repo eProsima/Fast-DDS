@@ -22,36 +22,32 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../reader/ReaderListener.h"
-#include "../../../../qos/ParameterList.h"
 #include "../../data/ParticipantProxyData.h"
 
+#include <mutex>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class PDPSimple;
-class DiscoveredParticipantData;
-class RTPSReader;
-
 
 /**
  * Class PDPSimpleListener, specification of SubscriberListener used by the SPDP to perform the History check when a new message is received.
  * This class is implemented in order to use the same structure than with any other RTPSReader.
- *@ingroup DISCOVERY_MODULE
+ * @ingroup DISCOVERY_MODULE
  */
-class PDPSimpleListener: public ReaderListener {
+class PDPSimpleListener: public ReaderListener
+{
+
 public:
     /**
-    * @param in_SPDP
-    */
-    PDPSimpleListener(PDPSimple* in_SPDP) : mp_SPDP(in_SPDP)
-    {
-    }
+     * @param parent Pointer to object creating this object
+     */
+    PDPSimpleListener(PDPSimple* parent);
 
-    virtual ~PDPSimpleListener() {}
-    //!Pointer to the associated mp_SPDP;
-    PDPSimple* mp_SPDP;
+    virtual ~PDPSimpleListener() = default;
+
     /**
      * New added cache
      * @param reader
@@ -60,24 +56,27 @@ public:
     void onNewCacheChangeAdded(
             RTPSReader* reader,
             const CacheChange_t* const change) override;
-    /**
-     * Process a new added cache with this method.
-     * @return True on success
-     */
-    bool newAddedCache();
+
+private:
+
     /**
      * Get the key of a CacheChange_t
      * @param change Pointer to the CacheChange_t
      * @return True on success
      */
-    bool getKey(CacheChange_t* change);
-    //!Auxiliary message.
-    CDRMessage_t aux_msg;
+    bool get_key(CacheChange_t* change);
+
+    //!Pointer to the associated mp_SPDP;
+    PDPSimple* parent_pdp_;
+    //!Temporary data to avoid reallocations.
+    ParticipantProxyData temp_participant_data_;
+    //!Mutex to protect temp_participant_data.
+    std::mutex mutex_;
 };
 
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif
