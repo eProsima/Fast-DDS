@@ -24,13 +24,13 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-Participant::Participant():
-    mp_impl(nullptr)
-    {
+Participant::Participant()
+    : mp_impl(nullptr)
+{
+}
 
-    }
-
-Participant::~Participant() {
+Participant::~Participant()
+{
     // TODO Auto-generated destructor stub
 }
 
@@ -62,9 +62,4 @@ bool Participant::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyDa
 bool Participant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
-}
-
-ResourceEvent& Participant::get_resource_event() const
-{
-    return mp_impl->get_resource_event();
 }
