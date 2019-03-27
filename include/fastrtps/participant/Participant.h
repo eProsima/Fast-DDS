@@ -88,11 +88,6 @@ class RTPS_DllAPI Participant
 
     bool get_remote_reader_info(const rtps::GUID_t& readerGuid, rtps::ReaderProxyData& returnedInfo);
 
-    /**
-     * Get the resource event for this participant
-     */
-    rtps::ResourceEvent& get_resource_event() const;
-
 };
 
 }
