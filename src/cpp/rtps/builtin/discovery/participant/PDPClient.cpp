@@ -300,6 +300,7 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
         {
             svr.proxy = nullptr; // reasign when we receive again server DATA(p)
             is_server = true;
+            mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
         }
     }
 
@@ -349,10 +350,6 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
             ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             ratt.endpoint.topicKind = WITH_KEY;
 
-            // TODO remove the join when Reader and Writer match functions are updated
-            ratt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficUnicastLocatorList);
-            ratt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficMulticastLocatorList);
-
             mp_PDPWriter->matched_reader_remove(ratt);
             mp_PDPWriter->matched_reader_add(ratt);
         }
@@ -397,20 +394,25 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose)
     }
 }
 
-void PDPClient::match_all_server_EDP_endpoints()
+bool PDPClient::match_all_server_EDP_endpoints()
 {
     // PDP must have been initialize
     assert(mp_EDP);
 
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
+    bool all = true; // have all servers been discovered?
 
     for (auto & svr : mp_builtin->m_DiscoveryServers)
     {
+        all &= (svr.proxy != nullptr);
+
         if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
         {
             mp_EDP->assignRemoteEndpoints(*svr.proxy);
         }
     }
+
+    return all;
 }
 
 } /* namespace rtps */
