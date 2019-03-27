@@ -266,7 +266,7 @@ void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
     // Verify if this participant is a server
-    for (auto svr : mp_builtin->m_DiscoveryServers)
+    for (auto & svr : mp_builtin->m_DiscoveryServers)
     {
         if (svr.guidPrefix == pdata->m_guid.guidPrefix)
         {
@@ -294,7 +294,7 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
     // Verify if this participant is a server
     bool is_server = false;
-    for (auto svr : mp_builtin->m_DiscoveryServers)
+    for (auto & svr : mp_builtin->m_DiscoveryServers)
     {
         if (svr.guidPrefix == pdata->m_guid.guidPrefix)
         {
@@ -404,7 +404,7 @@ void PDPClient::match_all_server_EDP_endpoints()
 
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-    for (auto svr : mp_builtin->m_DiscoveryServers)
+    for (auto & svr : mp_builtin->m_DiscoveryServers)
     {
         if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
         {
