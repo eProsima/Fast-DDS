@@ -362,7 +362,7 @@ void PublisherImpl::lifespan_expired()
     if (now - source_timestamp < lifespan_duration_us_)
     {
         auto interval = source_timestamp - now + lifespan_duration_us_;
-        lifespan_timer_.update_interval_millisec(duration_cast<milliseconds>(interval).count());
+        lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
         lifespan_timer_.restart_timer();
         return;
     }
@@ -383,6 +383,6 @@ void PublisherImpl::lifespan_expired()
 
     assert(interval.count() > 0);
 
-    lifespan_timer_.update_interval_millisec(duration_cast<milliseconds>(interval).count());
+    lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     lifespan_timer_.restart_timer();
 }

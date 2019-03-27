@@ -71,9 +71,11 @@ LifespanSubscriber::~LifespanSubscriber()
     Domain::removeParticipant(participant_);
 }
 
-void LifespanSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
+void LifespanSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& matching_info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if(matching_info.status == MATCHED_MATCHING)
     {
         n_matched++;
         std::cout << "Subscriber matched"<<std::endl;

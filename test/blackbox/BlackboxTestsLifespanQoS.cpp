@@ -113,7 +113,7 @@ BLACKBOXTEST(LifespanQos, ShortLifespan)
     // so we should not be able to remove them anymore
     size_t removed_pub = 0;
     writer.remove_all_changes(&removed_pub);
-    EXPECT_EQ(removed_pub, 0);
+    EXPECT_EQ(removed_pub, 0u);
 
     // On the reader side we should not be able to take the data
     HelloWorldType::type msg;
