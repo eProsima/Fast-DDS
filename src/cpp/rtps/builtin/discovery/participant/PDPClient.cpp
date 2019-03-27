@@ -263,6 +263,8 @@ bool PDPClient::createPDPEndpoints()
 // the ParticipantProxyData* pdata must be the one kept in PDP database
 void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
+    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
     // Verify if this participant is a server
     for (auto svr : mp_builtin->m_DiscoveryServers)
     {
@@ -285,6 +287,8 @@ void PDPClient::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
 
 void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
+    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
     // EDP endpoints have been already unmatch by the associated listener
     assert(!mp_EDP->areRemoteEndpointsMatched(pdata));
 
@@ -398,13 +402,10 @@ void PDPClient::match_all_server_EDP_endpoints()
     // PDP must have been initialize
     assert(mp_EDP);
 
-    std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
+    std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
     for (auto svr : mp_builtin->m_DiscoveryServers)
     {
-        // We should have received the discovery info
-        assert(svr.proxy);
-
         if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
         {
             mp_EDP->assignRemoteEndpoints(*svr.proxy);
