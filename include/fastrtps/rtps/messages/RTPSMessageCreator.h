@@ -35,7 +35,7 @@ namespace rtps{
  * @brief Class RTPSMessageCreator, allows the generation of serialized CDR RTPS Messages.
  * @ingroup MANAGEMENT_MODULE
  */
-class RTPSMessageCreator
+class RTPS_DllAPI RTPSMessageCreator // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 {
     public:
 
