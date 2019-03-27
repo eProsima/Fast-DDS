@@ -31,6 +31,7 @@
 #include "../../../builtin/data/WriterProxyData.h"
 #include "../../../../qos/QosPolicies.h"
 #include "../../../../utils/collections/ResourceLimitedVector.hpp"
+#include "../../../participant/ParticipantDiscoveryInfo.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -147,13 +148,17 @@ public:
      * @return True if found.
      */
     bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata);
+
     /**
-     * This method returns a pointer to a RTPSParticipantProxyData object if it is found among the registered RTPSParticipants.
-     * @param[in] pguid GUID_t of the RTPSParticipant we are looking for.
-     * @param pdata Copy information on ParticipantProxyData object.
+     * This method returns the name of a participant if it is found among the registered RTPSParticipants.
+     * @param[in] guid GUID_t of the RTPSParticipant we are looking for.
+     * @param[out] name Copy of name on ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupParticipantProxyData(const GUID_t& pguid, ParticipantProxyData& pdata);
+    bool lookup_participant_name(
+            const GUID_t& guid,
+            string_255& name);
+
     /**
      * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
      * @return true if found and deleted.
@@ -181,10 +186,14 @@ public:
 
     /**
      * This method removes a remote RTPSParticipant and all its writers and readers.
-     * @param partGUID GUID_t of the remote RTPSParticipant.
+     * @param participant_guid GUID_t of the remote RTPSParticipant.
+     * @param reason Why the participant is being removed (dropped vs removed)
      * @return true if correct.
      */
-    bool removeRemoteParticipant(GUID_t& partGUID);
+    bool remove_remote_participant(
+            const GUID_t& participant_guid,
+            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason);
+
     //!Pointer to the builtin protocols object.
     BuiltinProtocols* mp_builtin;
     /**
