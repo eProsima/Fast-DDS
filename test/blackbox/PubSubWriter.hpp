@@ -156,7 +156,7 @@ class PubSubWriter
 
             void on_offered_deadline_missed(
                     eprosima::fastrtps::Publisher* pub,
-                    eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
+                    const eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
             {
                 (void)pub;
                 times_deadline_missed_ = status.total_count;

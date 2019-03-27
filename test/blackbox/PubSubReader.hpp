@@ -144,7 +144,7 @@ private:
 
         void on_requested_deadline_missed(
                 eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override
+                const eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override
         {
             (void)sub;
 
