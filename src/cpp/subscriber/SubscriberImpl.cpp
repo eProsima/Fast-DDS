@@ -247,7 +247,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t * const change_in
         logError(SUBSCRIBER, "A change was added to history that could not be retrieved");
     }
 
-    system_clock::duration interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
+    auto interval = source_timestamp - now + duration_cast<nanoseconds>(lifespan_duration_us_);
 
     // Update and restart the timer
     // If the timer is already running this will not have any effect
