@@ -32,7 +32,6 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
     , service_(service)
-    , socket_(std::make_shared<asio::ip::tcp::socket>(service))
 {
 }
 
@@ -73,6 +72,8 @@ void TCPChannelResourceBasic::connect()
                 IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(locator_),
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
+            socket_ = std::make_shared<asio::ip::tcp::socket>(service_);
+
             asio::async_connect(
                 *socket_,
                 endpoints,
@@ -91,8 +92,7 @@ void TCPChannelResourceBasic::connect()
 
 void TCPChannelResourceBasic::disconnect()
 {
-    if (TCPConnectionStatus::TCP_DISCONNECTED != tcp_connection_status_ &&
-            change_status(eConnectionStatus::eDisconnected))
+    if (change_status(eConnectionStatus::eDisconnected))
     {
         try
         {

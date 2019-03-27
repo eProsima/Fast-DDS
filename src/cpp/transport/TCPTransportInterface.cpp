@@ -25,7 +25,7 @@
 #include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPAcceptorSecure.h>
 #endif
-#include "TCPKeepAliveEvent.hpp"
+#include "timedevent/TCPKeepAliveEvent.hpp"
 
 #include <asio/steady_timer.hpp>
 #include <utility>
@@ -135,6 +135,8 @@ TCPTransportInterface::~TCPTransportInterface()
 
 void TCPTransportInterface::clean()
 {
+    assert(receiver_resources_.size() == 0);
+
     if (io_service_thread_)
     {
         io_service_.stop();
@@ -153,6 +155,12 @@ void TCPTransportInterface::clean()
             }
         }
         socket_acceptors_.clear();
+
+        for (auto& unbound_channel_resource : unbound_channel_resources_)
+        {
+            unbound_channel_resource->disable();
+            unbound_channel_resource->thread(nullptr);
+        }
 
         for (auto& channel_resource : channel_resources_)
         {
@@ -179,7 +187,15 @@ void TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+
+    auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
+    assert(it_remove != unbound_channel_resources_.end());
+    if(it_remove != unbound_channel_resources_.end())
+    {
+        unbound_channel_resources_.erase(it_remove);
+    }
     channel_resources_[channel->locator()] = channel;
+    channel->make_thread_joinable();
 }
 
 bool TCPTransportInterface::check_crc(
@@ -393,6 +409,7 @@ bool TCPTransportInterface::init()
     auto ioServiceFunction = [&]()
     {
         io_service::work work(io_service_);
+        io_service_.run();
         TCPKeepAliveEvent keep_alive_event(*this, io_service_, *io_service_thread_.get(),
                 configuration()->keep_alive_frequency_ms);
 
@@ -401,9 +418,8 @@ bool TCPTransportInterface::init()
             keep_alive_event.restart_timer();
         }
 
-        io_service_.run();
     };
-    io_service_thread_.reset(new std::thread(ioServiceFunction));
+    io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
 
     return true;
 }
@@ -495,7 +511,6 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
             }
 
             receiver_in_use->cv.wait(scopedLock, [&]() { return receiver_in_use->in_use == false; });
-            std::cout << "ClosePort for " << locator << std::endl;
             delete receiver_in_use;
         }
     }
@@ -632,7 +647,6 @@ bool TCPTransportInterface::OpenInputChannel(
                 std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
                 receiver_resources_[logicalPort] = std::pair<TransportReceiverInterface*, ReceiverInUseCV*>
                     (receiver, new ReceiverInUseCV());
-                std::cout << "OpenPort for " << locator << std::endl;
             }
 
             logInfo(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << \
@@ -1072,9 +1086,10 @@ void TCPTransportInterface::SocketAccepted(
                 io_service_, acceptor->move_socket(), configuration()->maxMessageSize));
 
             channel->set_options(configuration());
-
             channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                channel));
+                channel), false);
+
+            unbound_channel_resources_.push_back(channel);
 
             logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor_locator)
                 << ", remote: " << channel->remote_endpoint().address()
@@ -1135,6 +1150,8 @@ void TCPTransportInterface::SecureSocketAccepted(
             secure_channel->set_options(configuration());
             secure_channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
                 secure_channel));
+
+            unbound_channel_resources_.push_back(secure_channel);
 
             logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor_locator)
                 << ", remote: " << secure_channel->remote_endpoint().address()

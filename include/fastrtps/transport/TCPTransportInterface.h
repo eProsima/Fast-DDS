@@ -85,6 +85,7 @@ protected:
     std::map<uint16_t, std::vector<TCPAcceptor*>> socket_acceptors_; // The Key is the "Physical Port"
     std::vector<TCPAcceptor*> deleted_acceptors_;
     std::map<Locator_t, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
+    std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;
     // The key is the logical port
     std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
 

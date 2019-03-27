@@ -35,7 +35,7 @@ public:
 
     virtual void clear();
 
-    inline void thread(std::thread* pThread)
+    inline void thread(std::thread* pThread, bool thread_joinable = true)
     {
         if(thread_)
         {
@@ -45,6 +45,12 @@ public:
         }
 
         thread_ = pThread;
+        thread_joinable_ = thread_joinable;
+    }
+
+    void make_thread_joinable()
+    {
+        thread_joinable_ = true;
     }
 
     inline bool alive() const
@@ -69,6 +75,7 @@ protected:
 
     std::atomic<bool> alive_;
     std::thread* thread_;
+    bool thread_joinable_;
 };
 
 } // namespace rtps

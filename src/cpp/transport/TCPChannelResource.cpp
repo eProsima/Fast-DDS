@@ -79,7 +79,7 @@ bool TCPChannelResource::disable()
 {
     bool returned_value = false;
 
-    TCPConnectionStatus code = tcp_connection_status_.exchange(TCPConnectionStatus::TCP_BROKEN,
+    TCPConnectionStatus code = tcp_connection_status_.exchange(TCPConnectionStatus::TCP_DISCONNECTED,
             std::memory_order_relaxed);
 
     if(code == TCPConnectionStatus::TCP_CONNECTED)

@@ -33,9 +33,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
-    , secure_socket_(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(service_, ssl_context_))
 {
-    set_tls_verify_mode(parent->configuration());
 }
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
@@ -80,6 +78,8 @@ void TCPChannelResourceSecure::connect()
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             TCPTransportInterface* parent = parent_;
+            secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(service_, ssl_context_);
+            set_tls_verify_mode(parent->configuration());
             std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket = secure_socket_;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
@@ -128,14 +128,11 @@ void TCPChannelResourceSecure::connect()
 
 void TCPChannelResourceSecure::disconnect()
 {
-    if (TCPConnectionStatus::TCP_CONNECTED == tcp_connection_status_ &&
-            change_status(eConnectionStatus::eDisconnected))
+    if (change_status(eConnectionStatus::eDisconnected))
     {
         try
         {
             asio::error_code ec;
-            //secure_socket_->next_layer().cancel();
-            //secure_socket_->shutdown();
             secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
             secure_socket_->lowest_layer().cancel();
 

@@ -46,8 +46,7 @@ protected:
     enum TCPConnectionStatus
     {
         TCP_DISCONNECTED = 0,
-        TCP_CONNECTED = 1,
-        TCP_BROKEN = 2
+        TCP_CONNECTED = 1
     };
 
     enum TCPConnectionType
