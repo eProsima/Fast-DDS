@@ -33,8 +33,8 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 Lifespan::Lifespan()
-    : m_index(0)
-    , m_message()
+    : index_(0)
+    , message_()
 {
 }
 
@@ -44,28 +44,28 @@ Lifespan::~Lifespan()
 
 Lifespan::Lifespan(const Lifespan &x)
 {
-    m_index = x.m_index;
-    m_message = x.m_message;
+    index_ = x.index_;
+    message_ = x.message_;
 }
 
 Lifespan::Lifespan(Lifespan &&x)
 {
-    m_index = x.m_index;
-    m_message = std::move(x.m_message);
+    index_ = x.index_;
+    message_ = std::move(x.message_);
 }
 
 Lifespan& Lifespan::operator=(const Lifespan &x)
 {
-    m_index = x.m_index;
-    m_message = x.m_message;
+    index_ = x.index_;
+    message_ = x.message_;
     
     return *this;
 }
 
 Lifespan& Lifespan::operator=(Lifespan &&x)
 {
-    m_index = x.m_index;
-    m_message = std::move(x.m_message);
+    index_ = x.index_;
+    message_ = std::move(x.message_);
     
     return *this;
 }
@@ -88,14 +88,14 @@ size_t Lifespan::getCdrSerializedSize(const Lifespan& data, size_t current_align
 
 void Lifespan::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << m_index;
-    scdr << m_message;
+    scdr << index_;
+    scdr << message_;
 }
 
 void Lifespan::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> m_index;
-    dcdr >> m_message;
+    dcdr >> index_;
+    dcdr >> message_;
 }
 
 size_t Lifespan::getKeyMaxCdrSerializedSize(size_t current_alignment)

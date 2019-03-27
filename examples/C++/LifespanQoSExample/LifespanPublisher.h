@@ -29,30 +29,73 @@
 
 class LifespanPublisher {
 public:
+
+    /**
+     * @brief LifespanPublisher
+     */
 	LifespanPublisher();
+
+    /**
+     * @brief ~LifespanPublisher
+     */
 	virtual ~LifespanPublisher();
-	//!Initialize
+
+    /**
+     * @brief Initialises the publisher
+     * @param lifespan_ms The lifespan in ms
+     * @return True if initialization was successful
+     */
 	bool init(uint32_t lifespan_ms);
-	//!Publish a sample
-	bool publish(bool waitForListener = true);
-	//!Run for number samples
-	void run(uint32_t number, uint32_t write_sleep_ms, uint32_t sleep_ms);
+
+    /**
+     * @brief Publishes a new sample
+     * @param waitForListener True to wait until a listener exists
+     * @return True if sample was written succesfully
+     */
+    bool publish(bool waitForListener = true);
+
+    /**
+     * @brief Runs the publisher
+     * @param number The number of samples to write
+     * @param write_sleep_ms Time to sleep between samples
+     * @param sleep_ms Time to sleep after sending all the samples
+     */
+    void run(
+            uint32_t number,
+            uint32_t write_sleep_ms,
+            uint32_t sleep_ms);
 private:
-	Lifespan m_Hello;
-	eprosima::fastrtps::Participant* mp_participant;
-	eprosima::fastrtps::Publisher* mp_publisher;
+
+    Lifespan hello_;
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Publisher* publisher_;
 	bool stop;
 	class PubListener:public eprosima::fastrtps::PublisherListener
 	{
 	public:
-		PubListener():n_matched(0),firstConnected(false){};
-		~PubListener(){};
-		void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+        PubListener()
+            : n_matched(0)
+            , first_connected(false)
+        {
+        }
+
+        ~PubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
+
 		int n_matched;
-        bool firstConnected;
-	}m_listener;
-	void runThread(uint32_t number, uint32_t sleep);
-	LifespanType m_type;
+        bool first_connected;
+    }listener;
+
+    void runThread(
+            uint32_t number,
+            uint32_t sleep);
+
+    LifespanType type_;
 };
 
 

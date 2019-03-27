@@ -30,20 +30,29 @@
  * @brief This class represents the TopicDataType of the type Lifespan defined by the user in the IDL file.
  * @ingroup HELLOWORLD
  */
-class LifespanType : public  eprosima::fastrtps::TopicDataType {
+class LifespanType : public  eprosima::fastrtps::TopicDataType
+{
 public:
-        typedef Lifespan type;
+    typedef Lifespan type;
 
 	LifespanType();
 	virtual ~LifespanType();
-	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
+
+    bool serialize(
+            void *data,
+            eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t *payload,
+            void *data);
+    std::function<uint32_t()> getSerializedSizeProvider(void* data);
+    bool getKey(
+            void *data,
+            eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+            bool force_md5);
 	void* createData();
 	void deleteData(void * data);
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    MD5 md5;
+    unsigned char* key_buffer;
 };
 
 #endif // _Lifespan_PUBSUBTYPE_H_

@@ -31,27 +31,27 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 LifespanPublisher::LifespanPublisher()
-    : mp_participant(nullptr)
-    , mp_publisher(nullptr)
+    : participant_(nullptr)
+    , publisher_(nullptr)
 {
 }
 
 bool LifespanPublisher::init(uint32_t lifespan_ms)
 {
-    m_Hello.index(0);
-    m_Hello.message("Lifespan");
+    hello_.index(0);
+    hello_.message("Lifespan");
 
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
-    mp_participant = Domain::createParticipant(PParam);
-    if( mp_participant == nullptr )
+    participant_ = Domain::createParticipant(PParam);
+    if( participant_ == nullptr )
     {
         return false;
     }
 
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(participant_,&type_);
 
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
@@ -61,8 +61,8 @@ bool LifespanPublisher::init(uint32_t lifespan_ms)
     Wparam.topic.historyQos.depth = 30;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_lifespan.duration = lifespan_ms * 1e-3;
-    mp_publisher = Domain::createPublisher(mp_participant, Wparam, (PublisherListener*) &m_listener);
-    if( mp_publisher == nullptr )
+    publisher_ = Domain::createPublisher(participant_, Wparam, (PublisherListener*) &listener);
+    if( publisher_ == nullptr )
     {
         return false;
     }
@@ -72,7 +72,7 @@ bool LifespanPublisher::init(uint32_t lifespan_ms)
 
 LifespanPublisher::~LifespanPublisher()
 {
-    Domain::removeParticipant(mp_participant);
+    Domain::removeParticipant(participant_);
 }
 
 void LifespanPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
@@ -80,7 +80,7 @@ void LifespanPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/, Ma
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        firstConnected = true;
+        first_connected = true;
         std::cout << "Publisher matched"<<std::endl;
     }
     else
@@ -103,7 +103,7 @@ void LifespanPublisher::run(uint32_t samples, uint32_t write_sleep_ms, uint32_t 
         }
         else
         {
-            std::cout << "Message with index: " << m_Hello.index() << " SENT" << std::endl;
+            std::cout << "Message with index: " << hello_.index() << " SENT" << std::endl;
         }
         eClock::my_sleep(write_sleep_ms);
     }
@@ -113,7 +113,7 @@ void LifespanPublisher::run(uint32_t samples, uint32_t write_sleep_ms, uint32_t 
     eClock::my_sleep(sleep_ms);
 
     size_t removed = 0;
-    mp_publisher->removeAllChange(&removed);
+    publisher_->removeAllChange(&removed);
 
     std::cout << "Publisher removed " << removed << " samples from its history" << std::endl;
 
@@ -123,10 +123,10 @@ void LifespanPublisher::run(uint32_t samples, uint32_t write_sleep_ms, uint32_t 
 
 bool LifespanPublisher::publish(bool waitForListener)
 {
-    if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if(listener.first_connected || !waitForListener || listener.n_matched>0)
     {
-        m_Hello.index(m_Hello.index()+1);
-        mp_publisher->write((void*)&m_Hello);
+        hello_.index(hello_.index()+1);
+        publisher_->write((void*)&hello_);
         return true;
     }
     return false;

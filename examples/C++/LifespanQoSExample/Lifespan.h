@@ -109,7 +109,7 @@ public:
      */
     inline eProsima_user_DllExport void index(uint32_t _index)
     {
-        m_index = _index;
+        index_ = _index;
     }
 
     /*!
@@ -118,7 +118,7 @@ public:
      */
     inline eProsima_user_DllExport uint32_t index() const
     {
-        return m_index;
+        return index_;
     }
 
     /*!
@@ -127,7 +127,7 @@ public:
      */
     inline eProsima_user_DllExport uint32_t& index()
     {
-        return m_index;
+        return index_;
     }
     /*!
      * @brief This function copies the value in member message
@@ -135,7 +135,7 @@ public:
      */
     inline eProsima_user_DllExport void message(const std::string &_message)
     {
-        m_message = _message;
+        message_ = _message;
     }
 
     /*!
@@ -144,7 +144,7 @@ public:
      */
     inline eProsima_user_DllExport void message(std::string &&_message)
     {
-        m_message = std::move(_message);
+        message_ = std::move(_message);
     }
 
     /*!
@@ -153,7 +153,7 @@ public:
      */
     inline eProsima_user_DllExport const std::string& message() const
     {
-        return m_message;
+        return message_;
     }
 
     /*!
@@ -162,7 +162,7 @@ public:
      */
     inline eProsima_user_DllExport std::string& message()
     {
-        return m_message;
+        return message_;
     }
     
     /*!
@@ -216,8 +216,8 @@ public:
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
     
 private:
-    uint32_t m_index;
-    std::string m_message;
+    uint32_t index_;
+    std::string message_;
 };
 
 #endif // _Lifespan_H_

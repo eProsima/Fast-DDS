@@ -30,30 +30,62 @@
 
 class LifespanSubscriber {
 public:
+    /**
+     * @brief LifespanSubscriber
+     */
 	LifespanSubscriber();
+
+    /**
+     * @brief ~LifespanSubscriber
+     */
 	virtual ~LifespanSubscriber();
-	//!Initialize the subscriber
+
+    /**
+     * @brief Initialises the subscriber
+     * @param lifespan_ms The lifespan in ms
+     * @return True if initialisation was successful
+     */
     bool init(uint32_t lifespan_ms);
-	//!Run the subscriber until number samples have been recevied.
-	void run(uint32_t number, uint32_t sleep_ms);
+
+    /**
+     * @brief Runs the subscriber
+     * @param number The number of samples the subscriber expects to receive
+     * @param sleep_ms Time to sleep after receiving all the samples
+     */
+    void run(
+            uint32_t number,
+            uint32_t sleep_ms);
+
 private:
-	eprosima::fastrtps::Participant* mp_participant;
-	eprosima::fastrtps::Subscriber* mp_subscriber;
+
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Subscriber* subscriber_;
+    LifespanType type_;
+
 public:
 	class SubListener:public eprosima::fastrtps::SubscriberListener
 	{
 	public:
-		SubListener():n_matched(0),n_samples(0){};
-		~SubListener(){};
-		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+        SubListener()
+            : n_matched(0)
+            , n_samples(0)
+        {
+        }
+
+        ~SubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
 		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-		Lifespan m_Hello;
-		eprosima::fastrtps::SampleInfo_t m_info;
+
+        Lifespan hello;
+        eprosima::fastrtps::SampleInfo_t info;
 		int n_matched;
 		uint32_t n_samples;
-	}m_listener;
-private:
-	LifespanType m_type;
+    }listener;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */
