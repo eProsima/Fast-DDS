@@ -552,8 +552,10 @@ bool PDP::removeRemoteParticipant(GUID_t& partGUID)
     logInfo(RTPS_PDP, partGUID);
     ParticipantProxyData* pdata = nullptr;
 
+    std::lock_guard<std::recursive_mutex> lock(*getMutex()); // subclasses keep ParticipantProxyData references outside m_participantProxies
+
     //Remove it from our vector or RTPSParticipantProxies:
-    this->mp_mutex->lock();
+
     for (std::vector<ParticipantProxyData*>::iterator pit = m_participantProxies.begin();
         pit != m_participantProxies.end(); ++pit)
     {
@@ -564,7 +566,7 @@ bool PDP::removeRemoteParticipant(GUID_t& partGUID)
             break;
         }
     }
-    this->mp_mutex->unlock();
+
 
     if (pdata != nullptr)
     {
