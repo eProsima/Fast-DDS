@@ -25,7 +25,7 @@
 
 #include "../rtps/history/WriterHistory.h"
 #include "../qos/QosPolicies.h"
-#include "../KeyedChanges.h"
+#include "../common/KeyedChanges.h"
 
 namespace eprosima {
 namespace fastrtps {

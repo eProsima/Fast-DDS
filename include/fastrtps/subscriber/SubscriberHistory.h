@@ -24,7 +24,7 @@
 #include <fastrtps/rtps/resources/ResourceManagement.h>
 #include "../rtps/history/ReaderHistory.h"
 #include "../qos/QosPolicies.h"
-#include "../KeyedChanges.h"
+#include "../common/KeyedChanges.h"
 #include "SampleInfo.h"
 
 namespace eprosima {

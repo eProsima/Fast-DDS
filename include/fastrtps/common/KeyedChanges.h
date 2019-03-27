@@ -20,7 +20,7 @@
 #ifndef KEYEDCHANGES_H_
 #define KEYEDCHANGES_H_
 
-#include "rtps/common/CacheChange.h"
+#include "../rtps/common/CacheChange.h"
 #include <chrono>
 
 namespace eprosima{
