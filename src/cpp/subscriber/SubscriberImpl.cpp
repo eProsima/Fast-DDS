@@ -266,7 +266,7 @@ void SubscriberImpl::timer_reschedule()
     auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
 
     deadline_timer_.cancel_timer();
-    deadline_timer_.update_interval_millisec(interval_ms.count());
+    deadline_timer_.update_interval_millisec((double)interval_ms.count());
     deadline_timer_.restart_timer();
 }
 

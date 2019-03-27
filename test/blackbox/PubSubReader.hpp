@@ -114,7 +114,7 @@ private:
 
         ~Listener(){}
 
-        void onNewDataMessage(eprosima::fastrtps::Subscriber *sub)
+        void onNewDataMessage(eprosima::fastrtps::Subscriber *sub) override
         {
             ASSERT_NE(sub, nullptr);
 
@@ -128,7 +128,7 @@ private:
             }
         }
 
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
@@ -151,7 +151,7 @@ private:
             times_deadline_missed_ = status.total_count;
         }
 
-        int missed_deadlines() const
+        unsigned int missed_deadlines() const
         {
             return times_deadline_missed_;
         }
@@ -162,7 +162,7 @@ private:
 
         PubSubReader& reader_;
 
-        int times_deadline_missed_;
+        unsigned int times_deadline_missed_;
 
     } listener_;
 
@@ -673,7 +673,7 @@ public:
         return matched_ > 0;
     }
 
-    int missed_deadlines() const
+    unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
     }

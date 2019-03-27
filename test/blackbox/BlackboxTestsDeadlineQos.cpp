@@ -67,8 +67,8 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicLongDeadline)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
 
-    EXPECT_EQ(writer.missed_deadlines(), 0);
-    EXPECT_EQ(reader.missed_deadlines(), 0);
+    EXPECT_EQ(writer.missed_deadlines(), 0u);
+    EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
 BLACKBOXTEST(DeadlineQos, NoKeyTopicShortDeadline)
@@ -163,8 +163,8 @@ BLACKBOXTEST(DeadlineQos, KeyedTopicLongDeadline)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
 
-    EXPECT_EQ(writer.missed_deadlines(), 0);
-    EXPECT_EQ(reader.missed_deadlines(), 0);
+    EXPECT_EQ(writer.missed_deadlines(), 0u);
+    EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
 BLACKBOXTEST(DeadlineQos, KeyedTopicShortDeadline)

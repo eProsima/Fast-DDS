@@ -140,7 +140,7 @@ class PubSubWriter
 
             ~Listener(){};
 
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
+            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info) override
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {
@@ -162,7 +162,7 @@ class PubSubWriter
                 times_deadline_missed_ = status.total_count;
             }
 
-            int missed_deadlines() const
+            unsigned int missed_deadlines() const
             {
                 return times_deadline_missed_;
             }
@@ -173,7 +173,7 @@ class PubSubWriter
 
             PubSubWriter &writer_;
 
-            int times_deadline_missed_;
+            unsigned int times_deadline_missed_;
 
     } listener_;
 
@@ -706,7 +706,7 @@ class PubSubWriter
         return matched_ > 0;
     }
 
-    int missed_deadlines() const
+    unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
     }

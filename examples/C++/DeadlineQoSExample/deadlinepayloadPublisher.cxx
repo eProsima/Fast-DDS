@@ -92,7 +92,7 @@ void deadlinepayloadPublisher::PubListener::on_offered_deadline_missed(
     std::cout << "Deadline missed for instance: " << status.last_instance_handle << std::endl;
 }
 
-void deadlinepayloadPublisher::run(double sleep_ms, int samples)
+void deadlinepayloadPublisher::run(uint32_t sleep_ms, int samples)
 {
     while(m_listener.n_matched == 0)
     {
