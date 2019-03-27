@@ -140,7 +140,8 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
     }
 
     mp_sync = new DSClientEvent(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
- 
+    mp_sync->restart_timer();
+
     return true;
 }
 
