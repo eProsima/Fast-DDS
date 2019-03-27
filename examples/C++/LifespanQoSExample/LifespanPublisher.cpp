@@ -60,6 +60,7 @@ bool LifespanPublisher::init(uint32_t lifespan_ms)
     Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     Wparam.qos.m_lifespan.duration = lifespan_ms * 1e-3;
     publisher_ = Domain::createPublisher(participant_, Wparam, (PublisherListener*) &listener);
     if( publisher_ == nullptr )
