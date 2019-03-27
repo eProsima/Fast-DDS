@@ -79,7 +79,7 @@ class PDPClient : public PDP
     bool is_all_servers_PDPdata_updated();
 
     /**
-     * Force the sending of our local DPD to all servers 
+     * Force the sending of our local PDP to all servers 
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
@@ -104,7 +104,7 @@ class PDPClient : public PDP
     * Matching server EDP endpoints
     * @return true if all servers have been discovered
     */
-    bool match_all_server_EDP_endpoints();
+    bool match_servers_EDP_endpoints();
 
     private:
 

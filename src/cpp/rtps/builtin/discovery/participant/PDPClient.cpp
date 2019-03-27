@@ -394,7 +394,7 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose)
     }
 }
 
-bool PDPClient::match_all_server_EDP_endpoints()
+bool PDPClient::match_servers_EDP_endpoints()
 {
     // PDP must have been initialize
     assert(mp_EDP);
