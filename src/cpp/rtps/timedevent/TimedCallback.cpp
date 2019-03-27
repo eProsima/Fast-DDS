@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/rtps/resources/TimedCallback.h>
+#include <fastrtps/rtps/timedevent//TimedCallback.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {

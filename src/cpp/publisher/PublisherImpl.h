@@ -30,7 +30,7 @@
 #include <fastrtps/publisher/PublisherHistory.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/resources/TimedCallback.h>
+#include <fastrtps/rtps/timedevent//TimedCallback.h>
 
 namespace eprosima {
 namespace fastrtps{

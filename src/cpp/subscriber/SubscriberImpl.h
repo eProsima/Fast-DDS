@@ -26,7 +26,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/resources/TimedCallback.h>
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
 
 namespace eprosima {
 namespace fastrtps {

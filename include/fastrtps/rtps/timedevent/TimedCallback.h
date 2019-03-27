@@ -20,7 +20,7 @@
 #ifndef TIMEDCALLBACK_H_
 #define TIMEDCALLBACK_H_
 
-#include "TimedEvent.h"
+#include "../resources//TimedEvent.h"
 #include <functional>
 
 namespace eprosima {
