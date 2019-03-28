@@ -26,22 +26,20 @@ namespace rtps {
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         const Locator_t& locator,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
+    : TCPChannelResource(parent, locator, maxMsgSize)
     , service_(service)
 {
 }
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         std::shared_ptr<asio::ip::tcp::socket> socket,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, rtcpManager, maxMsgSize)
+    : TCPChannelResource(parent, maxMsgSize)
     , service_(service)
     , socket_(socket)
 {

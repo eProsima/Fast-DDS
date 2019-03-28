@@ -33,7 +33,6 @@ public:
     // Constructor called when trying to connect to a remote server (secure version)
     TCPChannelResourceSecure(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
         const Locator_t& locator,
@@ -42,7 +41,6 @@ public:
     // Constructor called when local server accepted connection (secure version)
     TCPChannelResourceSecure(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
@@ -56,7 +54,7 @@ public:
 
     uint32_t read(
         octet* buffer,
-        std::size_t size,
+        const std::size_t size,
         asio::error_code& ec) override;
 
     uint32_t send(

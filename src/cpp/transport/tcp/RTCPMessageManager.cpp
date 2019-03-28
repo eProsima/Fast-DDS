@@ -372,7 +372,7 @@ TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(
 }
 
 TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(
-        TCPChannelResource* channel,
+        std::shared_ptr<TCPChannelResource>& channel,
         LogicalPortIsClosedRequest_t &request)
 {
     SerializedPayload_t payload(static_cast<uint32_t>(
@@ -386,12 +386,12 @@ TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(
 }
 
 TCPTransactionId RTCPMessageManager::sendLogicalPortIsClosedRequest(
-        TCPChannelResource *p_channel_resource,
+        std::shared_ptr<TCPChannelResource>& channel,
         uint16_t port)
 {
     LogicalPortIsClosedRequest_t request;
     request.logicalPort(port);
-    return sendLogicalPortIsClosedRequest(p_channel_resource, request);
+    return sendLogicalPortIsClosedRequest(channel, request);
 }
 
 TCPTransactionId RTCPMessageManager::sendUnbindConnectionRequest(
@@ -560,7 +560,7 @@ ResponseCode RTCPMessageManager::processBindConnectionResponse(
     {
         logInfo(RTCP, "Connection established (Resp) (physical: "
                 << IPLocator::getPhysicalPort(channel->locator()) << ")");
-        channel->change_status(TCPChannelResource::eConnectionStatus::eEstablished);
+        channel->change_status(TCPChannelResource::eConnectionStatus::eEstablished, this);
         removeTransactionId(transaction_id);
         //logError(DEBUG, "Received Connection Response with locator: " << response.locator());
         return RETCODE_OK;
@@ -579,7 +579,7 @@ ResponseCode RTCPMessageManager::processCheckLogicalPortsResponse(
 {
     if (findTransactionId(transaction_id))
     {
-        channel->process_check_logical_ports_response(transaction_id, response.availableLogicalPorts());
+        channel->process_check_logical_ports_response(transaction_id, response.availableLogicalPorts(), this);
         removeTransactionId(transaction_id);
         return RETCODE_OK;
     }
@@ -601,12 +601,12 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
         {
         case RETCODE_OK:
         {
-            channel->add_logical_port_response(transaction_id, true);
+            channel->add_logical_port_response(transaction_id, true, this);
         }
         break;
         case RETCODE_INVALID_PORT:
         {
-            channel->add_logical_port_response(transaction_id, false);
+            channel->add_logical_port_response(transaction_id, false, this);
         }
         break;
         default:

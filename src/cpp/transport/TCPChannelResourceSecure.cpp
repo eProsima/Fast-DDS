@@ -25,12 +25,11 @@ using namespace asio;
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
         const Locator_t& locator,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, rtcpManager, locator, maxMsgSize)
+    : TCPChannelResource(parent, locator, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
 {
@@ -38,12 +37,11 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         asio::ssl::context& ssl_context,
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, rtcpManager, maxMsgSize)
+    : TCPChannelResource(parent, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
     , secure_socket_(socket)
@@ -132,6 +130,8 @@ void TCPChannelResourceSecure::disconnect()
     {
         try
         {
+            secure_socket_->shutdown();
+            /*
             asio::error_code ec;
             secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
             secure_socket_->lowest_layer().cancel();
@@ -140,23 +140,39 @@ void TCPChannelResourceSecure::disconnect()
 #if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
             secure_socket_->lowest_layer().release();
 #endif
+            */
         }
         catch (std::exception&)
         {
             // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
         }
-        secure_socket_->lowest_layer().close();
+        //secure_socket_->lowest_layer().close();
     }
 }
 
 uint32_t TCPChannelResourceSecure::read(
         octet* buffer,
-        std::size_t size,
+        const std::size_t size,
         asio::error_code& ec)
 {
     std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
+    size_t bytes_readed = 0, bytes_to_read = 0;
 
-    return static_cast<uint32_t>(secure_socket_->read_some(asio::buffer(buffer, size), ec));
+    while ((bytes_to_read = size - bytes_readed) > 0)
+    {
+        bytes_to_read = secure_socket_->read_some(asio::buffer(buffer + bytes_readed, bytes_to_read), ec);
+
+        if(bytes_to_read > 0)
+        {
+            bytes_readed += bytes_to_read;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return static_cast<uint32_t>(bytes_readed);
 }
 
 uint32_t TCPChannelResourceSecure::send(

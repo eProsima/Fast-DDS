@@ -40,12 +40,10 @@ static uint16_t GetBaseAutoPort(uint16_t currentPort)
 
 TCPChannelResource::TCPChannelResource(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         const Locator_t& locator,
         uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
     , parent_ (parent)
-    , rtcp_manager_(rtcpManager)
     , locator_(locator)
     , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eDisconnected)
@@ -56,11 +54,9 @@ TCPChannelResource::TCPChannelResource(
 
 TCPChannelResource::TCPChannelResource(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
     , parent_(parent)
-    , rtcp_manager_(rtcpManager)
     , locator_()
     , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eWaitingForBind)
@@ -109,14 +105,6 @@ ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)
     return RETCODE_SERVER_ERROR;
 }
 
-void TCPChannelResource::input_port_closed(uint16_t port)
-{
-    if (connection_established())
-    {
-        rtcp_manager_->sendLogicalPortIsClosedRequest(this, port);
-    }
-}
-
 void TCPChannelResource::set_all_ports_pending()
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
@@ -152,7 +140,7 @@ bool TCPChannelResource::wait_until_port_is_open_or_connection_is_closed(uint16_
     return bConnected;
 }
 
-void TCPChannelResource::add_logical_port(uint16_t port)
+void TCPChannelResource::add_logical_port(uint16_t port, RTCPMessageManager* rtcp_manager)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     // Already opened?
@@ -169,7 +157,7 @@ void TCPChannelResource::add_logical_port(uint16_t port)
             pending_logical_output_ports_.emplace_back(port);
             if (connection_established())
             {
-                TCPTransactionId id = rtcp_manager_->sendOpenLogicalPortRequest(this, port);
+                TCPTransactionId id = rtcp_manager->sendOpenLogicalPortRequest(this, port);
                 negotiating_logical_ports_[id] = port;
             }
         }
@@ -177,14 +165,14 @@ void TCPChannelResource::add_logical_port(uint16_t port)
 
 }
 
-void TCPChannelResource::send_pending_open_logical_ports()
+void TCPChannelResource::send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     if (!pending_logical_output_ports_.empty())
     {
         for (uint16_t port : pending_logical_output_ports_)
         {
-            TCPTransactionId id = rtcp_manager_->sendOpenLogicalPortRequest(this, port);
+            TCPTransactionId id = rtcp_manager->sendOpenLogicalPortRequest(this, port);
             negotiating_logical_ports_[id] = port;
             eClock::my_sleep(100);
         }
@@ -193,7 +181,8 @@ void TCPChannelResource::send_pending_open_logical_ports()
 
 void TCPChannelResource::add_logical_port_response(
         const TCPTransactionId &id,
-        bool success)
+        bool success,
+        RTCPMessageManager* rtcp_manager)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     auto it = negotiating_logical_ports_.find(id);
@@ -213,7 +202,7 @@ void TCPChannelResource::add_logical_port_response(
             }
             else
             {
-                prepare_send_check_logical_ports_req(port);
+                prepare_send_check_logical_ports_req(port, rtcp_manager);
             }
         }
         else
@@ -229,7 +218,9 @@ void TCPChannelResource::add_logical_port_response(
     }
 }
 
-void TCPChannelResource::prepare_send_check_logical_ports_req(uint16_t closedPort)
+void TCPChannelResource::prepare_send_check_logical_ports_req(
+        uint16_t closedPort,
+        RTCPMessageManager* rtcp_manager)
 {
     std::vector<uint16_t> candidatePorts;
     uint16_t base_port = GetBaseAutoPort(closedPort); // The first failed port
@@ -258,14 +249,15 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(uint16_t closedPor
     }
     else
     {
-        TCPTransactionId id = rtcp_manager_->sendCheckLogicalPortsRequest(this, candidatePorts);
+        TCPTransactionId id = rtcp_manager->sendCheckLogicalPortsRequest(this, candidatePorts);
         last_checked_logical_port_[id] = candidatePorts.back();
     }
 }
 
 void TCPChannelResource::process_check_logical_ports_response(
         const TCPTransactionId &transactionId,
-        const std::vector<uint16_t> &availablePorts)
+        const std::vector<uint16_t> &availablePorts,
+        RTCPMessageManager* rtcp_manager)
 {
     auto it = last_checked_logical_port_.find(transactionId);
     if (it != last_checked_logical_port_.end())
@@ -274,11 +266,11 @@ void TCPChannelResource::process_check_logical_ports_response(
         last_checked_logical_port_.erase(it);
         if (availablePorts.empty())
         {
-            prepare_send_check_logical_ports_req(lastPort);
+            prepare_send_check_logical_ports_req(lastPort, rtcp_manager);
         }
         else
         {
-            add_logical_port(availablePorts.front());
+            add_logical_port(availablePorts.front(), rtcp_manager);
         }
     }
     else

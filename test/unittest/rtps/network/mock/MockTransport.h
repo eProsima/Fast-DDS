@@ -26,7 +26,22 @@ namespace rtps{
 
 class MockTransportDescriptor;
 
-class MockTransport: public TransportInterface
+class MockSenderResource : public SenderResource
+{
+    public:
+
+        MockSenderResource(Locator_t locator)
+            : SenderResource(locator.kind)
+            , locator_(locator) {}
+
+        const Locator_t& locator() const { return locator_; }
+
+    private:
+
+        Locator_t locator_;
+};
+
+class MockTransport : public TransportInterface
 {
     public:
 
@@ -112,7 +127,6 @@ class MockTransport: public TransportInterface
         // For the mock, port + direction tuples will have a 1:1 relatonship with channels
 
         typedef uint32_t Port;
-        std::vector<Port> mockOpenOutputChannels;
         std::vector<Port> mockOpenInputChannels;
 
         const static int DefaultKind = 1;

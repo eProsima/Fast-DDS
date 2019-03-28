@@ -68,10 +68,24 @@ bool MockTransport::is_locator_allowed(const Locator_t& /*locator*/) const
 }
 
 bool MockTransport::OpenOutputChannel(
-        SendResourceList& sender_resource_list,
+        SendResourceList& send_resource_list,
         const Locator_t& locator)
 {
-    mockOpenOutputChannels.push_back(locator.port);
+    if (!IsLocatorSupported(locator))
+    {
+        return false;
+    }
+
+    for (auto& send_resource : send_resource_list)
+    {
+        MockSenderResource* mock_send_resource = dynamic_cast<MockSenderResource*>(send_resource.get());
+        if (mock_send_resource->locator().port == locator.port)
+        {
+            return true;
+        }
+    }
+
+    send_resource_list.emplace_back(static_cast<SenderResource*>(new MockSenderResource(locator)));
     return true;
 }
 

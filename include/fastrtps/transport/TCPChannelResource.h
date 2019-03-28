@@ -67,7 +67,6 @@ protected:
     };
 
     TCPTransportInterface* parent_;
-    RTCPMessageManager* rtcp_manager_;
     Locator_t locator_;
     bool waiting_for_keep_alive_;
     // Must be accessed after lock pending_logical_mutex_
@@ -83,7 +82,10 @@ protected:
     std::mutex status_mutex_;
 
 public:
-    void add_logical_port(uint16_t port);
+
+    void add_logical_port(
+            uint16_t port,
+            RTCPMessageManager* rtcp_manager);
 
     void set_logical_port_pending(uint16_t port);
 
@@ -116,8 +118,6 @@ public:
     {
         return locator_;
     }
-
-    void input_port_closed(uint16_t port);
 
     ResponseCode process_bind_request(const Locator_t& locator);
 
@@ -167,17 +167,15 @@ protected:
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         const Locator_t& locator,
         uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
     TCPChannelResource(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         uint32_t maxMsgSize);
 
-    inline bool change_status(eConnectionStatus s)
+    inline bool change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
     {
         std::unique_lock<std::mutex> scoped(status_mutex_);
         if (connection_status_ != s)
@@ -185,7 +183,8 @@ protected:
             connection_status_ = s;
             if (connection_status_ == eEstablished)
             {
-                send_pending_open_logical_ports();
+                assert(rtcp_manager != nullptr);
+                send_pending_open_logical_ports(rtcp_manager);
             }
             negotiation_condition_.notify_all();
             return true;
@@ -193,10 +192,12 @@ protected:
         return false;
     }
 
-    void add_logical_port_response(const TCPTransactionId &id, bool success);
+    void add_logical_port_response(const TCPTransactionId &id, bool success, RTCPMessageManager* rtcp_manager);
 
-    void process_check_logical_ports_response(const TCPTransactionId &transactionId,
-        const std::vector<uint16_t> &availablePorts);
+    void process_check_logical_ports_response(
+            const TCPTransactionId &transactionId,
+            const std::vector<uint16_t> &availablePorts,
+            RTCPMessageManager* rtcp_manager);
 
     std::atomic<TCPConnectionStatus> tcp_connection_status_;
 
@@ -204,12 +205,12 @@ protected:
 
     friend class TCPTransportInterface;
     friend class RTCPMessageManager;
-    friend class test_RTCPMessageManager;
 
 private:
-    void prepare_send_check_logical_ports_req(uint16_t closedPort);
 
-    void send_pending_open_logical_ports();
+    void prepare_send_check_logical_ports_req(uint16_t closedPort, RTCPMessageManager* rtcp_manager);
+
+    void send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager);
 
     void set_all_ports_pending();
 

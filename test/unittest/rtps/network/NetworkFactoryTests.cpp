@@ -113,7 +113,7 @@ TEST_F(NetworkTests, build_sender_resource_returns_multiple_resources_if_multipl
    ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locatorCompatibleWithTwoTransports));
 
    // Then
-   ASSERT_EQ(2u, send_resource_list.size());
+   ASSERT_EQ(1u, send_resource_list.size());
 }
 
 /*
@@ -212,7 +212,7 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_
    locatorOfDifferentKind.kind = 2;
 
    // When
-   ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locatorOfDifferentKind));
+   ASSERT_FALSE(networkFactoryUnderTest.build_send_resources(send_resource_list, locatorOfDifferentKind));
 
    // Then
    ASSERT_TRUE(send_resource_list.empty());

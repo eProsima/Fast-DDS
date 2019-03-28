@@ -78,7 +78,9 @@ protected:
     asio::ssl::context ssl_context_;
 #endif
     std::shared_ptr<std::thread> io_service_thread_;
-    RTCPMessageManager* rtcp_message_manager_;
+    std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
+    std::mutex rtcp_message_manager_mutex_;
+    std::condition_variable rtcp_message_manager_cv_;
     mutable std::mutex sockets_map_mutex_;
     std::atomic<bool> send_retry_active_;
 
@@ -139,7 +141,8 @@ protected:
 
     //! Functions to be called from new threads, which takes cares of performing a blocking receive
     void perform_listen_operation(
-            std::shared_ptr<TCPChannelResource> channel);
+            std::shared_ptr<TCPChannelResource> channel,
+            std::weak_ptr<RTCPMessageManager> rtcp_manager);
 
     bool read_body(
         octet* receive_buffer,
@@ -267,6 +270,7 @@ public:
     * @param[out] remote_locator associated remote locator.
     */
     bool Receive(
+        std::weak_ptr<RTCPMessageManager>& rtcp_manager,
         std::shared_ptr<TCPChannelResource>& channel,
         octet* receive_buffer,
         uint32_t receive_buffer_capacity,

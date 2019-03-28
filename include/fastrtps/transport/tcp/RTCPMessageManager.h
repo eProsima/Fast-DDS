@@ -78,11 +78,11 @@ public:
             std::shared_ptr<TCPChannelResource>& channel);
 
     TCPTransactionId sendLogicalPortIsClosedRequest(
-            TCPChannelResource* channel,
+            std::shared_ptr<TCPChannelResource>& channel,
             LogicalPortIsClosedRequest_t& request);
 
     TCPTransactionId sendLogicalPortIsClosedRequest(
-            TCPChannelResource* channel,
+            std::shared_ptr<TCPChannelResource>& channel,
             uint16_t port);
 
     TCPTransactionId sendUnbindConnectionRequest(

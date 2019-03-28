@@ -30,7 +30,6 @@ public:
     // Constructor called when trying to connect to a remote server
     TCPChannelResourceBasic(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         const Locator_t& locator,
         uint32_t maxMsgSize);
@@ -38,7 +37,6 @@ public:
     // Constructor called when local server accepted connection
     TCPChannelResourceBasic(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         std::shared_ptr<asio::ip::tcp::socket> socket,
         uint32_t maxMsgSize);
