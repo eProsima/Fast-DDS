@@ -100,11 +100,13 @@ class History
          * @return Iterator to the beginning of the vector.
          */
         RTPS_DllAPI std::vector<CacheChange_t*>::iterator changesBegin(){ return m_changes.begin(); }
+        RTPS_DllAPI std::vector<CacheChange_t*>::reverse_iterator changesRbegin() { return m_changes.rbegin(); }
         /**
          * Get the end of the changes history iterator.
          * @return Iterator to the end of the vector.
          */
         RTPS_DllAPI std::vector<CacheChange_t*>::iterator changesEnd(){ return m_changes.end(); }
+        RTPS_DllAPI std::vector<CacheChange_t*>::reverse_iterator changesRend() { return m_changes.rend(); }
         /**
          * Get the minimum CacheChange_t.
          * @param min_change Pointer to pointer to the minimum change.
