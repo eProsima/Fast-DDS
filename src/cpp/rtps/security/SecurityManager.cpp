@@ -868,6 +868,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.topicKind = NO_KEY;
+    watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     if(participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
             participant_->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
@@ -919,6 +920,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
     ratt.endpoint.multicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
     ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
+    ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     RTPSReader* rout = nullptr;
     if(participant_->createReader(&rout, ratt, participant_stateless_message_reader_history_, &participant_stateless_message_listener_,
@@ -988,6 +990,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
     watt.endpoint.security_attributes().is_submessage_protected = true;
     watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
     // TODO(Ricardo) Study keep_all
 
     if(participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
@@ -1040,6 +1043,7 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
     ratt.endpoint.security_attributes().is_submessage_protected = true;
     ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     RTPSReader* rout = nullptr;
     if(participant_->createReader(&rout, ratt, participant_volatile_message_secure_reader_history_, &participant_volatile_message_secure_listener_,
