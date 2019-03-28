@@ -589,11 +589,24 @@ bool PDPSimple::lookup_participant_name(
 bool PDPSimple::createSPDPEndpoints()
 {
     logInfo(RTPS_PDP,"Beginning");
-    //SPDP BUILTIN RTPSParticipant WRITER
+
+    const RTPSParticipantAllocationAttributes& allocation =
+        mp_RTPSParticipant->getRTPSParticipantAttributes().allocation;
+
+    //SPDP BUILTIN RTPSParticipant READER
     HistoryAttributes hatt;
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-    hatt.initialReservedCaches = 25;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
+    hatt.initialReservedCaches = 25;
+    if (allocation.participants.initial > 0)
+    {
+        hatt.initialReservedCaches = (int32_t)allocation.participants.initial;
+    }
+    if (allocation.participants.maximum < std::numeric_limits<size_t>::max())
+    {
+        hatt.maximumReservedCaches = (int32_t)allocation.participants.maximum;
+    }
+
     mp_SPDPReaderHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -601,6 +614,7 @@ bool PDPSimple::createSPDPEndpoints()
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
+    ratt.matched_writers_allocation = allocation.participants;
     mp_listener = new PDPSimpleListener(this);
     RTPSReader* rout;
     if (mp_RTPSParticipant->createReader(&rout, ratt, mp_SPDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false))
@@ -630,8 +644,10 @@ bool PDPSimple::createSPDPEndpoints()
         return false;
     }
 
+    //SPDP BUILTIN RTPSParticipant WRITER
     hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
-    hatt.initialReservedCaches = 20;
+    hatt.initialReservedCaches = 1;
+    hatt.maximumReservedCaches = 1;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_SPDPWriterHistory = new WriterHistory(hatt);
     WriterAttributes watt;
@@ -640,6 +656,7 @@ bool PDPSimple::createSPDPEndpoints()
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+    watt.matched_readers_allocation = allocation.participants;
 
     if (mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
         mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
