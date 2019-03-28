@@ -40,7 +40,7 @@ RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP
         ParticipantProxyData* pdata,
         double interval):
     TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
+            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
     mp_PDP(p_SPDP),
     mp_participantProxyData(pdata)
     {
@@ -62,8 +62,6 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
         const GUID_t& guid = mp_participantProxyData->m_guid;
         logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: " << guid);
 
-        // Set pointer to null because this call will be delete itself.
-        mp_participantProxyData->mp_leaseDurationTimer = nullptr;
         mp_PDP->remove_remote_participant(guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
     }
     else if(code == EVENT_ABORT)

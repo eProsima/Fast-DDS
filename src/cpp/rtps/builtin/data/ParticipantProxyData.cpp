@@ -102,8 +102,7 @@ void ParticipantProxyData::reset()
 
     if (mp_leaseDurationTimer != nullptr)
     {
-        delete mp_leaseDurationTimer;
-        mp_leaseDurationTimer = nullptr;
+        mp_leaseDurationTimer->cancel_timer();
     }
 }
 
