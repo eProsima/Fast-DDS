@@ -114,6 +114,7 @@ bool WLP::createEndpoints()
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     watt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
+    watt.matched_readers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
     //	Wparam.topic.topicName = "DCPSRTPSParticipantMessage";
     //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
     watt.endpoint.topicKind = WITH_KEY;
@@ -147,6 +148,7 @@ bool WLP::createEndpoints()
     ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     ratt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
+    ratt.matched_writers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
     //Rparam.topic.topicName = "DCPSRTPSParticipantMessage";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
     ratt.endpoint.topicKind = WITH_KEY;
@@ -184,6 +186,7 @@ bool WLP::createSecureEndpoints()
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    watt.matched_readers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
     //	Wparam.topic.topicName = "DCPSParticipantMessageSecure";
     //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
     watt.endpoint.topicKind = WITH_KEY;
@@ -230,6 +233,7 @@ bool WLP::createSecureEndpoints()
     ratt.expectsInlineQos = true;
     ratt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
+    ratt.matched_writers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
     //Rparam.topic.topicName = "DCPSParticipantMessageSecure";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
     ratt.endpoint.topicKind = WITH_KEY;
