@@ -174,7 +174,7 @@ class RTPS_DllAPI PDP  // TODO: remove RTPS_DllAPI when discovery server incorpo
      * @param partGUID GUID_t of the remote RTPSParticipant.
      * @return true if correct.
      */
-    bool removeRemoteParticipant(GUID_t& partGUID);
+    virtual bool removeRemoteParticipant(GUID_t& partGUID);
 
     //!Pointer to the builtin protocols object.
     BuiltinProtocols* mp_builtin;
