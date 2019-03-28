@@ -22,6 +22,12 @@
                         <maximum>2</maximum>
                         <increment>0</increment>
                     </total_participants>
+                    <!-- Only one reader in our system -->
+                    <total_readers>
+                        <initial>1</initial>
+                        <maximum>1</maximum>
+                        <increment>0</increment>
+                    </total_readers>
                 </allocation>
                 <name>test_alloc_participant</name>
                 <builtin>
