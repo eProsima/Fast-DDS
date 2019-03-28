@@ -44,6 +44,8 @@ namespace rtps {
     public:
         inline bool operator==(const RemoteServerAttributes & r) const { return guidPrefix == r.guidPrefix; }
 
+        GUID_t GetParticipant() const;
+
         GUID_t GetPDPReader() const;
         GUID_t GetPDPWriter() const;
 

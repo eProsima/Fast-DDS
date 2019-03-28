@@ -42,6 +42,11 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+GUID_t RemoteServerAttributes::GetParticipant() const
+{
+    return GUID_t(guidPrefix, c_EntityId_RTPSParticipant);
+}
+
 GUID_t RemoteServerAttributes::GetPDPReader() const
 {
     return GUID_t(guidPrefix, c_EntityId_SPDPReader);
