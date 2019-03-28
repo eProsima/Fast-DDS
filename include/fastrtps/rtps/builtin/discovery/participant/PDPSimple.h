@@ -285,6 +285,10 @@ private:
     ResourceLimitedVector<ParticipantProxyData*> participant_proxies_;
     //!Pool of participant proxy data objects ready for reuse
     ResourceLimitedVector<ParticipantProxyData*> participant_proxies_pool_;
+    //!Number of reader proxy data objects created 
+    size_t reader_proxies_number_;
+    //!Pool of reader proxy data objects ready for reuse
+    ResourceLimitedVector<ReaderProxyData*> reader_proxies_pool_;
     //!Variable to indicate if any parameter has changed.
     bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.

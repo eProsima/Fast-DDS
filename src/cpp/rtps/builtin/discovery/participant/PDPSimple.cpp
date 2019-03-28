@@ -73,6 +73,8 @@ PDPSimple::PDPSimple (
     , participant_proxies_number_(allocation.participants.initial)
     , participant_proxies_(allocation.participants)
     , participant_proxies_pool_(allocation.participants)
+    , reader_proxies_number_(allocation.readers.initial)
+    , reader_proxies_pool_(allocation.readers)
     , m_hasChangedLocalPDP(true)
     , mp_resendParticipantTimer(nullptr)
     , mp_listener(nullptr)
@@ -82,9 +84,17 @@ PDPSimple::PDPSimple (
     , temp_writer_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , mp_mutex(new std::recursive_mutex())
 {
+    size_t max_unicast_locators = allocation.locators.max_unicast_locators;
+    size_t max_multicast_locators = allocation.locators.max_multicast_locators;
+
     for (size_t i = 0; i < allocation.participants.initial; ++i)
     {
         participant_proxies_pool_.push_back(new ParticipantProxyData(allocation));
+    }
+
+    for (size_t i = 0; i < allocation.readers.initial; ++i)
+    {
+        reader_proxies_pool_.push_back(new ReaderProxyData(max_unicast_locators, max_multicast_locators));
     }
 }
 
@@ -111,6 +121,11 @@ PDPSimple::~PDPSimple()
         delete it;
     }
     for (ParticipantProxyData* it : participant_proxies_pool_)
+    {
+        delete it;
+    }
+
+    for (ReaderProxyData* it : reader_proxies_pool_)
     {
         delete it;
     }
@@ -538,7 +553,10 @@ bool PDPSimple::removeReaderProxyData(const GUID_t& reader_guid)
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
+                    // Clear reader proxy data and move to pool in order to allow reuse
                     rit->clear();
+                    pit->m_readers.remove(rit);
+                    reader_proxies_pool_.push_back(rit);
                     return true;
                 }
             }
@@ -764,26 +782,34 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
                 }
             }
 
-            // Try to reuse an old entry
-            ret_val = nullptr;
-            for (ReaderProxyData* rit : pit->m_readers)
+            // Try to take one entry from the pool
+            if (reader_proxies_pool_.empty())
             {
-                if (rit->guid() == c_Guid_Unknown)
+                size_t max_proxies = reader_proxies_pool_.max_size();
+                if (reader_proxies_number_ < max_proxies)
                 {
-                    ret_val = rit;
-                    break;
-                }
-            }
-
-            if (ret_val == nullptr)
-            {
-                // TODO (Miguel C): Resource limits
-                ret_val = new ReaderProxyData(
+                    // Pool is empty but limit has not been reached, so we create a new entry.
+                    ++reader_proxies_number_;
+                    ret_val = new ReaderProxyData(
                         mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
                         mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators);
-                // Add to ParticipantProxyData
-                pit->m_readers.push_back(ret_val);
+                }
+                else
+                {
+                    logWarning(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies << \
+                        ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
+                    return nullptr;
+                }
             }
+            else
+            {
+                // Pool is not empty, use entry from pool
+                ret_val = reader_proxies_pool_.back();
+                reader_proxies_pool_.pop_back();
+            }
+
+            // Add to ParticipantProxyData
+            pit->m_readers.push_back(ret_val);
 
             if (!initializer_func(ret_val, false, *pit))
             {
