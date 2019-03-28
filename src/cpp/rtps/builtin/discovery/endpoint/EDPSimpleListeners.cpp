@@ -67,7 +67,6 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
         //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
         const NetworkFactory& network = sedp_->mp_RTPSParticipant->network_factory();
         CDRMessage_t tempMsg(change_in->serializedPayload);
-        temp_writer_data_.clear();
         if (temp_writer_data_.readFromCDRMessage(&tempMsg, network))
         {
             change->instanceHandle = temp_writer_data_.key();
