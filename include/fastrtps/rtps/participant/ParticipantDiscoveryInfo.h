@@ -54,7 +54,7 @@ struct ParticipantDiscoveryInfo
     DISCOVERY_STATUS status;
 
     //! Participant discovery info
-    ParticipantProxyData info;
+    const ParticipantProxyData& info;
 };
 
 #if HAVE_SECURITY
