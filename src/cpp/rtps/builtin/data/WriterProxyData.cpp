@@ -493,6 +493,7 @@ bool WriterProxyData::readFromCDRMessage(
     };
 
     uint32_t qos_size;
+    clear();
     if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
     {
         if (m_guid.entityId.value[3] == 0x03)
