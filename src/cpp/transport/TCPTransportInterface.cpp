@@ -1360,7 +1360,7 @@ void TCPTransportInterface::SocketAccepted(
     }
     else
     {
-        logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+        logInfo(RTCP, " Accepting connection (" << error.message() << ")");
         eClock::my_sleep(200); // Wait a little to accept again.
     }
 
@@ -1424,7 +1424,7 @@ void TCPTransportInterface::SecureSocketAccepted(
     }
     else
     {
-        logError(RTCP, " Accepting connection failed (error: " << error.message() << ")");
+        logError(RTCP, " Accepting connection failed (" << error.message() << ")");
         eClock::my_sleep(200); // Wait a little to accept again.
     }
 
