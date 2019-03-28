@@ -279,6 +279,8 @@ private:
     StatelessReader* mp_SPDPReader;
     //!Pointer to the EDP object.
     EDP* mp_EDP;
+    //!Number of participant proxy data objects created 
+    size_t participant_proxies_number_;
     //!Registered RTPSParticipants (including the local one, that is the first one.)
     ResourceLimitedVector<ParticipantProxyData*> participant_proxies_;
     //!Pool of participant proxy data objects ready for reuse

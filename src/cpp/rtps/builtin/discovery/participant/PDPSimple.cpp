@@ -70,6 +70,7 @@ PDPSimple::PDPSimple (
     , mp_SPDPWriter(nullptr)
     , mp_SPDPReader(nullptr)
     , mp_EDP(nullptr)
+    , participant_proxies_number_(allocation.participants.initial)
     , participant_proxies_(allocation.participants)
     , participant_proxies_pool_(allocation.participants)
     , m_hasChangedLocalPDP(true)
@@ -125,9 +126,10 @@ ParticipantProxyData* PDPSimple::add_participant_proxy_data(const GUID_t& partic
     if (participant_proxies_pool_.empty())
     {
         size_t max_proxies = participant_proxies_.max_size();
-        if (participant_proxies_.size() < max_proxies)
+        if (participant_proxies_number_ < max_proxies)
         {
             // Pool is empty but limit has not been reached, so we create a new entry.
+            ++participant_proxies_number_;
             ret_val = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
             if (participant_guid != mp_RTPSParticipant->getGuid())
             {
