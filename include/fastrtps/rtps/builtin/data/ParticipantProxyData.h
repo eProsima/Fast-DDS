@@ -127,7 +127,7 @@ class ParticipantProxyData
         //!
         RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
         //!
-        std::vector<ReaderProxyData*> m_readers;
+        ResourceLimitedVector<ReaderProxyData*> m_readers;
         //!
         std::vector<WriterProxyData*> m_writers;
 

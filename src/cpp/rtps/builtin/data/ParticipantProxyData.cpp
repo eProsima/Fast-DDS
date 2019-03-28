@@ -50,6 +50,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
 #endif
     , isAlive(false)
     , mp_leaseDurationTimer(nullptr)
+    , m_readers(allocation.readers)
     {
     }
 
