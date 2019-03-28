@@ -63,7 +63,9 @@ StatefulWriter::StatefulWriter(
     , may_remove_change_cond_()
     , may_remove_change_(0)
     , nack_response_event_(nullptr)
-    , disableHeartbeatPiggyback_(att.disableHeartbeatPiggyback)
+    , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
+    , disable_positive_ACKs_(att.disable_positive_ACKs)
+    , keep_duration_ms_()
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
     , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
     , m_controllers()
@@ -1063,7 +1065,7 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
     RTPSMessageGroup& message_group,
     uint32_t& last_bytes_processed)
 {
-    if (!disableHeartbeatPiggyback_)
+    if (!disable_heartbeat_piggyback_)
     {
         if (mp_history->isFull())
         {

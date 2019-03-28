@@ -81,8 +81,11 @@ class  WriterAttributes
 {
     public:
 
-        WriterAttributes() : mode(SYNCHRONOUS_WRITER),
-            disableHeartbeatPiggyback(false)
+        WriterAttributes()
+            : mode(SYNCHRONOUS_WRITER)
+            , disable_heartbeat_piggyback(false)
+            , disable_positive_ACKs(false)
+            , keep_duration_(c_TimeInfinite)
         {
             endpoint.endpointKind = WRITER;
             endpoint.durabilityKind = TRANSIENT_LOCAL;
@@ -104,10 +107,16 @@ class  WriterAttributes
         ThroughputControllerDescriptor throughputController;
 
         //! Disable the sending of heartbeat piggybacks.
-        bool disableHeartbeatPiggyback;
+        bool disable_heartbeat_piggyback;
 
         //! Define the allocation behaviour for matched-reader-dependent collections.
         ResourceLimitedContainerConfig matched_readers_allocation;
+
+        //! Disable the sending of positive ACKs
+        bool disable_positive_ACKs;
+
+        //! Keep duration to keep a sample before considering it has been acked
+        Duration_t keep_duration_;
 };
 
 /**

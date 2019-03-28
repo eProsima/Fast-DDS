@@ -274,7 +274,12 @@ private:
 
     void check_acked_status();
 
-    bool disableHeartbeatPiggyback_;
+    //! True to disable piggyback heartbeats
+    bool disable_heartbeat_piggyback_;
+    //! True to disable positive ACKs
+    bool disable_positive_ACKs_;
+    //! Keep duration for disable positive ACKs QoS, in milliseconds
+    double keep_duration_ms_;
 
     const uint32_t sendBufferSize_;
 

@@ -198,6 +198,8 @@ class StatefulReader:public RTPSReader
         ReaderTimes m_times;
         //! Vector containing pointers to the matched writers.
         std::vector<WriterProxy*> matched_writers;
+        //! True to disable positive ACKs
+        bool disable_positive_ACKs_;
 };
 
 }
