@@ -391,11 +391,27 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose)
 {
     PDP::announceParticipantState(new_change, dispose);
 
-    if (!(dispose || new_change))
+    // Add the write params to the sample
+    if (!dispose)
     {
-        StatefulWriter * pW = dynamic_cast<StatefulWriter *>(mp_PDPWriter);
-        assert(pW);
-        pW->send_any_unacknowledge_changes();
+        if (new_change)
+        {
+            CacheChange_t * pPD;
+            if (mp_PDPWriterHistory->get_min_change(&pPD))
+            {
+                SampleIdentity local;
+                local.writer_guid(mp_PDPWriter->getGuid());
+                local.sequence_number(mp_PDPWriterHistory->next_sequence_number() - 1);
+                pPD->write_params.sample_identity(local);
+                // pPD->write_params.related_sample_identity(local);
+            }
+        }
+        else
+        {
+            StatefulWriter * pW = dynamic_cast<StatefulWriter *>(mp_PDPWriter);
+            assert(pW);
+            pW->send_any_unacknowledge_changes();
+        }
     }
 }
 
