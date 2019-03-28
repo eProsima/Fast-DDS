@@ -38,7 +38,9 @@ class EDPSimplePUBListener;
 class EDPSimpleSUBListener;
 class ReaderHistory;
 class WriterHistory;
-
+class HistoryAttributes;
+class ReaderAttributes;
+class WriterAttributes;
 
 /**
  * Class EDPSimple, implements the Simple Endpoint Discovery Protocol defined in the RTPS specification.
@@ -131,6 +133,34 @@ class EDPSimple : public EDP
     private:
 
     /**
+     * Initialization of history attributes for EDP built-in readers
+     *
+     * @param [out] attributes History attributes to initialize
+     */
+    void set_builtin_reader_history_attributes(HistoryAttributes& attributes);
+
+    /**
+     * Initialization of history attributes for EDP built-in writers
+     *
+     * @param [out] attributes History attributes to initialize
+     */
+    void set_builtin_writer_history_attributes(HistoryAttributes& attributes);
+
+    /**
+     * Initialization of reader attributes for EDP built-in readers
+     *
+     * @param [out] attributes Reader attributes to initialize
+     */
+    void set_builtin_reader_attributes(ReaderAttributes& attributes);
+
+    /**
+     * Initialization of writer attributes for EDP built-in writers
+     *
+     * @param [out] attributes Writer attributes to initialize
+     */
+    void set_builtin_writer_attributes(WriterAttributes& attributes);
+
+    /**
      * Create local SEDP Endpoints based on the DiscoveryAttributes.
      * @return True if correct.
      */
@@ -150,8 +180,8 @@ class EDPSimple : public EDP
     WriterProxyData temp_writer_proxy_data_;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif
