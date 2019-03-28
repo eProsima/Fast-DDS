@@ -59,7 +59,7 @@ struct WriterDiscoveryInfo
         DISCOVERY_STATUS status;
 
         //! Participant discovery info
-        WriterProxyData info;
+        const WriterProxyData& info;
 };
 
 }

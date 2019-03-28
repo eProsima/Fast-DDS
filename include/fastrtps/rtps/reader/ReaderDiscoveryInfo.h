@@ -59,7 +59,7 @@ struct ReaderDiscoveryInfo
         DISCOVERY_STATUS status;
 
         //! Participant discovery info
-        ReaderProxyData info;
+        const ReaderProxyData& info;
 };
 
 }
