@@ -129,6 +129,10 @@ ParticipantProxyData* PDPSimple::add_participant_proxy_data(const GUID_t& partic
         {
             // Pool is empty but limit has not been reached, so we create a new entry.
             ret_val = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
+            if (participant_guid != mp_RTPSParticipant->getGuid())
+            {
+                ret_val->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(this, ret_val, 0.0);
+            }
         }
         else
         {
@@ -290,6 +294,12 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
         return false;
     }
     initializeParticipantProxyData(pdata);
+
+    // Create lease events on already created proxy data objects
+    for (ParticipantProxyData* pool_item : participant_proxies_pool_)
+    {
+        pool_item->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(this, pool_item, 0.0);
+    }
 
     //INIT EDP
     if(m_discovery.use_STATIC_EndpointDiscoveryProtocol)
