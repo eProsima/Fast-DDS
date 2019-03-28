@@ -28,6 +28,12 @@
                         <maximum>1</maximum>
                         <increment>0</increment>
                     </total_readers>
+                    <!-- Only one writer in our system -->
+                    <total_writers>
+                        <initial>1</initial>
+                        <maximum>1</maximum>
+                        <increment>0</increment>
+                    </total_writers>
                 </allocation>
                 <name>test_alloc_participant</name>
                 <builtin>
