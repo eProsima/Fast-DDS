@@ -35,7 +35,6 @@ namespace rtps
 {
     class WriterProxyData;
     class ReaderProxyData;
-    class ResourceEvent;
 }
 
 /**
