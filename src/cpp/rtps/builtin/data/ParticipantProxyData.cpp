@@ -51,6 +51,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , isAlive(false)
     , mp_leaseDurationTimer(nullptr)
     , m_readers(allocation.readers)
+    , m_writers(allocation.writers)
     {
     }
 
@@ -82,28 +83,20 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
 ParticipantProxyData::~ParticipantProxyData()
 {
     logInfo(RTPS_PARTICIPANT, m_guid);
-    reset();
-}
-
-void ParticipantProxyData::reset()
-{
-    clear();
 
     for (ReaderProxyData* it : m_readers)
     {
         delete it;
     }
-    m_readers.clear();
 
     for (WriterProxyData* it : m_writers)
     {
         delete it;
     }
-    m_writers.clear();
 
     if (mp_leaseDurationTimer != nullptr)
     {
-        mp_leaseDurationTimer->cancel_timer();
+        delete mp_leaseDurationTimer;
     }
 }
 

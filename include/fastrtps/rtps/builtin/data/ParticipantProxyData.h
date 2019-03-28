@@ -129,7 +129,7 @@ class ParticipantProxyData
         //!
         ResourceLimitedVector<ReaderProxyData*> m_readers;
         //!
-        std::vector<WriterProxyData*> m_writers;
+        ResourceLimitedVector<WriterProxyData*> m_writers;
 
         /**
          * Update the data.
@@ -149,9 +149,6 @@ class ParticipantProxyData
          * @return True on success
          */
         bool readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation=true);
-
-        //! Reset data to construction state.
-        void reset();
 
         //! Clear the data (restore to default state).
         void clear();

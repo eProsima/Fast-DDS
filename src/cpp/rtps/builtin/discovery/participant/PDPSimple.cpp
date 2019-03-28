@@ -75,6 +75,8 @@ PDPSimple::PDPSimple (
     , participant_proxies_pool_(allocation.participants)
     , reader_proxies_number_(allocation.readers.initial)
     , reader_proxies_pool_(allocation.readers)
+    , writer_proxies_number_(allocation.writers.initial)
+    , writer_proxies_pool_(allocation.writers)
     , m_hasChangedLocalPDP(true)
     , mp_resendParticipantTimer(nullptr)
     , mp_listener(nullptr)
@@ -96,6 +98,11 @@ PDPSimple::PDPSimple (
     {
         reader_proxies_pool_.push_back(new ReaderProxyData(max_unicast_locators, max_multicast_locators));
     }
+
+    for (size_t i = 0; i < allocation.writers.initial; ++i)
+    {
+        writer_proxies_pool_.push_back(new WriterProxyData(max_unicast_locators, max_multicast_locators));
+    }
 }
 
 PDPSimple::~PDPSimple()
@@ -116,16 +123,23 @@ PDPSimple::~PDPSimple()
     delete(mp_SPDPReaderHistory);
 
     delete(mp_listener);
+
     for(ParticipantProxyData* it : participant_proxies_)
     {
         delete it;
     }
+
     for (ParticipantProxyData* it : participant_proxies_pool_)
     {
         delete it;
     }
 
     for (ReaderProxyData* it : reader_proxies_pool_)
+    {
+        delete it;
+    }
+
+    for (WriterProxyData* it : writer_proxies_pool_)
     {
         delete it;
     }
@@ -589,7 +603,10 @@ bool PDPSimple::removeWriterProxyData(const GUID_t& writer_guid)
                         listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
+                    // Clear writer proxy data and move to pool in order to allow reuse
                     wit->clear();
+                    pit->m_writers.remove(wit);
+                    writer_proxies_pool_.push_back(wit);
                     return true;
                 }
             }
@@ -872,26 +889,34 @@ WriterProxyData* PDPSimple::addWriterProxyData(
                 }
             }
 
-            // Try to reuse an old entry
-            ret_val = nullptr;
-            for (WriterProxyData* wit : pit->m_writers)
+            // Try to take one entry from the pool
+            if (writer_proxies_pool_.empty())
             {
-                if (wit->guid() == c_Guid_Unknown)
+                size_t max_proxies = writer_proxies_pool_.max_size();
+                if (writer_proxies_number_ < max_proxies)
                 {
-                    ret_val = wit;
-                    break;
-                }
-            }
-
-            if (ret_val == nullptr)
-            {
-                // TODO (Miguel C): Resource limits
-                ret_val = new WriterProxyData(
+                    // Pool is empty but limit has not been reached, so we create a new entry.
+                    ++writer_proxies_number_;
+                    ret_val = new WriterProxyData(
                         mp_RTPSParticipant->getAttributes().allocation.locators.max_unicast_locators,
                         mp_RTPSParticipant->getAttributes().allocation.locators.max_multicast_locators);
-                // Add to ParticipantProxyData
-                pit->m_writers.push_back(ret_val);
+                }
+                else
+                {
+                    logWarning(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies << \
+                        ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
+                    return nullptr;
+                }
             }
+            else
+            {
+                // Pool is not empty, use entry from pool
+                ret_val = writer_proxies_pool_.back();
+                writer_proxies_pool_.pop_back();
+            }
+
+            // Add to ParticipantProxyData
+            pit->m_writers.push_back(ret_val);
 
             if (!initializer_func(ret_val, false, *pit))
             {
@@ -1074,8 +1099,31 @@ bool PDPSimple::remove_remote_participant(
         }
 
         this->mp_mutex->lock();
-        pdata->reset();
+
+        // Return reader proxy objects to pool
+        for (ReaderProxyData* rit : pdata->m_readers)
+        {
+            reader_proxies_pool_.push_back(rit);
+        }
+        pdata->m_readers.clear();
+
+        // Return writer proxy objects to pool
+        for (WriterProxyData* wit : pdata->m_writers)
+        {
+            writer_proxies_pool_.push_back(wit);
+        }
+        pdata->m_writers.clear();
+
+        // Cancel lease event
+        if (pdata->mp_leaseDurationTimer != nullptr)
+        {
+            pdata->mp_leaseDurationTimer->cancel_timer();
+        }
+
+        // Return proxy object to pool
+        pdata->clear();
         participant_proxies_pool_.push_back(pdata);
+
         this->mp_mutex->unlock();
         return true;
     }
