@@ -26,21 +26,26 @@ namespace eprosima_profiling
 {
 
 /**
- * Used to run callgrind with --zero-before=callgrind_zero_count. 
+ * Used to run callgrind with --zero-before=callgrind_zero_count.
  * See http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.activity
  */
 void callgrind_zero_count();
 
 /**
- * Used to run callgrind with --dump-before=callgrind_dump. 
+ * Used to run callgrind with --dump-before=callgrind_dump.
  * See http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.activity
  */
 void callgrind_dump();
 
 /**
  * Called when entities have been created. Memory profiling should begin.
+ *
+ * @param print_alloc_traces    Indicates whether to print backtrace for allocations
+ * @param print_dealloc_traces  Indicates whether to print backtrace for deallocations
  */
-void entities_created();
+void entities_created(
+        bool print_alloc_traces = false,
+        bool print_dealloc_traces = false);
 
 /**
  * Called after remote entity has been discovered. Data exchange will start.
@@ -65,9 +70,11 @@ void undiscovery_finished();
 /**
  * Print memory profiling results.
  */
-void print_results(const std::string& file_prefix, const std::string& entity, const std::string& config);
+void print_results(
+        const std::string& file_prefix,
+        const std::string& entity,
+        const std::string& config);
 
 }   // namespace eprosima_profiling
 
 #endif   // FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
-

@@ -38,6 +38,9 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.sh
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
     )
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test_with_memory_tool.sh
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+    )
 
 add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
 target_link_libraries(AllocationTest fastrtps fastcdr foonathan_memory osrf_testing_tools_cpp::memory_tools)
