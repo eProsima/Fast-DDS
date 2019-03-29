@@ -142,7 +142,7 @@ class BuiltinAttributes{
             use_WriterLivelinessProtocol = true;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
-            mutation_tries = 100;
+            mutation_tries = 100u;
         }
         virtual ~BuiltinAttributes() {}
 
