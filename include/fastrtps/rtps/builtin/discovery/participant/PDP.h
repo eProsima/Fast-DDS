@@ -80,8 +80,9 @@ class RTPS_DllAPI PDP  // TODO: remove RTPS_DllAPI when discovery server incorpo
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
+     * @param wparams allows to identify the change
      */
-    virtual void announceParticipantState(bool new_change, bool dispose = false);
+    virtual void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);
 
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
     virtual void stopParticipantAnnouncement() = 0;

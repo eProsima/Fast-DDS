@@ -150,9 +150,9 @@ bool PDPSimple::updateInfoMatchesEDP()
     return dynamic_cast<EDPStatic*>(mp_EDP) != nullptr;
 }
 
-void PDPSimple::announceParticipantState(bool new_change, bool dispose)
+void PDPSimple::announceParticipantState(bool new_change, bool dispose, WriteParams & wp)
 {
-    PDP::announceParticipantState(new_change, dispose);
+    PDP::announceParticipantState(new_change, dispose, wp);
 
     if (!(dispose || new_change))
     {

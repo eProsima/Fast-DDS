@@ -211,7 +211,7 @@ bool PDP::initPDP(RTPSParticipantImpl* part)
 }
 
 
-void PDP::announceParticipantState(bool new_change, bool dispose)
+void PDP::announceParticipantState(bool new_change, bool dispose, WriteParams& wparams)
 {
     logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")");
     CacheChange_t* change = nullptr;
@@ -248,7 +248,7 @@ void PDP::announceParticipantState(bool new_change, bool dispose)
                 {
                     change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-                   mp_PDPWriterHistory->add_change(change);
+                   mp_PDPWriterHistory->add_change(change, wparams);
                 }
                 else
                 {
@@ -286,7 +286,7 @@ void PDP::announceParticipantState(bool new_change, bool dispose)
             {
                 change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-                mp_PDPWriterHistory->add_change(change);
+                mp_PDPWriterHistory->add_change(change, wparams);
             }
             else
             {

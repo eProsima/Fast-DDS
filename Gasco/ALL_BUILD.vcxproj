@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B2AF596C-3490-34D8-A187-B9DAEC269F02}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.13\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\TestBigEndian.cmake;C:\Program Files\CMake\share\cmake-3.13\Templates\CPackConfig.cmake.in;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config-version.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-debug.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-release.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Config.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets-release.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets.cmake;C:\ProgramData\chocolatey\lib\asio\share\cmake\AsioConfig.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCXXCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeRCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeSystem.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\check_configuration.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\eprosima_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindAsio.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindTinyXML2.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\eProsimaPackaging.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\NSISPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\WindowsPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.13\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\TestBigEndian.cmake;C:\Program Files\CMake\share\cmake-3.13\Templates\CPackConfig.cmake.in;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config-version.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-debug.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-release.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Config.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets-release.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets.cmake;C:\ProgramData\chocolatey\lib\asio\share\cmake\AsioConfig.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCXXCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeRCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeSystem.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\check_configuration.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\eprosima_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindAsio.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindTinyXML2.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\eProsimaPackaging.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\NSISPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\WindowsPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.13\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\TestBigEndian.cmake;C:\Program Files\CMake\share\cmake-3.13\Templates\CPackConfig.cmake.in;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config-version.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-debug.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-release.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Config.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets-release.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets.cmake;C:\ProgramData\chocolatey\lib\asio\share\cmake\AsioConfig.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCXXCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeRCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeSystem.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\check_configuration.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\eprosima_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindAsio.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindTinyXML2.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\eProsimaPackaging.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\NSISPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\WindowsPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTest.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestTargets.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CTestUseLaunchers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\DartConfiguration.tcl.in;C:\Program Files\CMake\share\cmake-3.13\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\TestBigEndian.cmake;C:\Program Files\CMake\share\cmake-3.13\Templates\CPackConfig.cmake.in;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config-version.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-config.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-debug.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets-release.cmake;C:\Program Files\fastcdr\share\fastcdr\cmake\fastcdr-targets.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Config.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets-release.cmake;C:\Program Files\tinyxml2\lib\cmake\tinyxml2\tinyxml2Targets.cmake;C:\ProgramData\chocolatey\lib\asio\share\cmake\AsioConfig.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeCXXCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeRCCompiler.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\3.13.2\CMakeSystem.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\check_configuration.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\common\eprosima_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindAsio.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\modules\FindTinyXML2.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\eProsimaPackaging.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\NSISPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\windows\WindowsPackaging.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\ZERO_CHECK.vcxproj">
+      <Project>{28DCEA71-DDD6-325F-9461-759946F81C39}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\Benchmark\Benchmark.vcxproj">
+      <Project>{64D65AAC-B4C5-39C8-8ABA-D2945BA9D042}</Project>
+      <Name>Benchmark</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\ClientServerTest\ClientServerTest.vcxproj">
+      <Project>{C24B3E33-5A53-3940-96F0-7E0E1ADE2906}</Project>
+      <Name>ClientServerTest</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\DeadlineQoSExample\DeadlineQoSExample.vcxproj">
+      <Project>{975A98FF-DA73-3E40-BA3D-99FD8EB2CD57}</Project>
+      <Name>DeadlineQoSExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\DynamicHelloWorldExample\DynamicHelloWorldExample.vcxproj">
+      <Project>{FFAD2C45-29DD-3E9C-A511-AF2C5F7C58EA}</Project>
+      <Name>DynamicHelloWorldExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\Filtering\FilteringExample.vcxproj">
+      <Project>{900A8948-1031-3601-A5C2-579B4B2D3E3E}</Project>
+      <Name>FilteringExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\FlowControlExample\FlowControlExample.vcxproj">
+      <Project>{546E76D3-DD19-36FC-8F35-728F48267DE2}</Project>
+      <Name>FlowControlExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\HelloWorldExample\HelloWorldExample.vcxproj">
+      <Project>{27671435-39FC-3D1C-8A96-7D370E5D6B71}</Project>
+      <Name>HelloWorldExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\HelloWorldExampleTCP\HelloWorldExampleTCP.vcxproj">
+      <Project>{B234F8CD-7AD4-3690-AA40-E78CA37F9AF0}</Project>
+      <Name>HelloWorldExampleTCP</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\OwnershipStrengthQoSExample\OwnershipStrengthQoSExample.vcxproj">
+      <Project>{0CDA8074-E361-3D2A-9A2D-B101E490B8EA}</Project>
+      <Name>OwnershipStrengthQoSExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\RTPSTest_as_socket\RTPSTest_as_socket.vcxproj">
+      <Project>{8414AEAA-72C0-33C9-B8E0-59D550FC4267}</Project>
+      <Name>RTPSTest_as_socket</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\RTPSTest_persistent\RTPSTest_persistent.vcxproj">
+      <Project>{45AEFF00-7FB9-3648-A72D-C08C42767743}</Project>
+      <Name>RTPSTest_persistent</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\RTPSTest_registered\RTPSTest_registered.vcxproj">
+      <Project>{26ADE0BC-A8DC-3D09-88C1-CEAE054CECCF}</Project>
+      <Name>RTPSTest_registered</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\test\communication\SimpleCommunicationPublisher.vcxproj">
+      <Project>{E255C1BE-B051-38BB-929B-47D834C30D1F}</Project>
+      <Name>SimpleCommunicationPublisher</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\test\communication\SimpleCommunicationSubscriber.vcxproj">
+      <Project>{6BDC1055-B797-359E-B63D-86BEA13FB05E}</Project>
+      <Name>SimpleCommunicationSubscriber</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\StaticHelloWorldExample\StaticHelloWorldExample.vcxproj">
+      <Project>{F732A6BE-27F1-3E55-9C8E-D61B978FA864}</Project>
+      <Name>StaticHelloWorldExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\Configurability\UseCasePublisher.vcxproj">
+      <Project>{F2DC003D-BB7B-316F-AF03-A881BCFA7FB5}</Project>
+      <Name>UseCasePublisher</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\Configurability\UseCaseSubscriber.vcxproj">
+      <Project>{064870A7-0C1C-31AF-8AE0-F21B424E7D6B}</Project>
+      <Name>UseCaseSubscriber</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\UserDefinedTransportExample\UserDefinedTransportExample.vcxproj">
+      <Project>{768F8933-9D3C-3535-BA45-7873EA7E9531}</Project>
+      <Name>UserDefinedTransportExample</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\XMLProfiles\XMLProfiles.vcxproj">
+      <Project>{7FABA652-9BF9-3B4A-A73D-FD7C4AD5E2E3}</Project>
+      <Name>XMLProfiles</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\fastrtps.vcxproj">
+      <Project>{EBEFAB8B-D98C-3D52-96FC-112D1CD633AF}</Project>
+      <Name>fastrtps</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\HistoryKind\historykind.vcxproj">
+      <Project>{FA8B57B3-4972-39AA-AE43-C9CAA15B11B0}</Project>
+      <Name>historykind</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\Keys\keys.vcxproj">
+      <Project>{555B9F14-A92C-3502-89CD-07FFDE7A5CAB}</Project>
+      <Name>keys</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\LateJoiners\latejoiners.vcxproj">
+      <Project>{A2B79B5F-4A3B-3451-BFC8-1FFDED8DAEFC}</Project>
+      <Name>latejoiners</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\SampleConfig_Controller\sampleconfig_controller.vcxproj">
+      <Project>{1D0F9F2E-D7C9-37E3-B24D-AAF03EA55260}</Project>
+      <Name>sampleconfig_controller</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\SampleConfig_Events\sampleconfig_events.vcxproj">
+      <Project>{DD9BEBFC-9D4F-3743-AF80-68CB2BECD4F3}</Project>
+      <Name>sampleconfig_events</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\examples\C++\SampleConfig_Multimedia\sampleconfig_multimedia.vcxproj">
+      <Project>{B07A1BD5-E2A5-31EE-9E20-1A17470ACB76}</Project>
+      <Name>sampleconfig_multimedia</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

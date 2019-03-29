@@ -1,0 +1,440 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\log\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\log\StdoutConsumer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\log\FileConsumer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\eClock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\IPFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\md5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\StringMatching.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\IPLocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\System.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\ResourceEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\TimedEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\TimedEventImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\AsyncWriterThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\AsyncInterestTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\Endpoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\RTPSWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatefulWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\ReaderProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatelessWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\ReaderLocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\timedevent\PeriodicHeartbeat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\timedevent\NackResponseDelay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\timedevent\NackSupressionDuration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\CacheChangePool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\History.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\WriterHistory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\ReaderHistory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\timedevent\HeartbeatResponseDelay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\timedevent\WriterProxyLiveliness.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\timedevent\InitialAckNack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\WriterProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatefulReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatelessReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\RTPSReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\FragmentedChangePitStop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\CDRMessagePool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\RTPSMessageCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\RTPSMessageGroup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\MessageReceiver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\network\NetworkFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\network\SenderResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\network\ReceiverResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\participant\RTPSParticipant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\participant\RTPSParticipantImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\RTPSDomain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\Domain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\participant\Participant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\participant\ParticipantImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\publisher\Publisher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\publisher\PublisherImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\publisher\PublisherHistory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\subscriber\Subscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\subscriber\SubscriberImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\subscriber\SubscriberHistory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\timedevent\CleanTCPSocketsEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\ChannelResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPChannelResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPChannelResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPChannelResourceBasic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPAcceptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPAcceptorBasic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPv4Transport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPTransportInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPTransportInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPv4Transport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPv6Transport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPv6Transport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\test_UDPv4Transport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\tcp\TCPControlMessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\tcp\RTCPMessageManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\tcp\test_RTCPMessageManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\AnnotationDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\AnnotationParameterValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicDataFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicPubSubType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypePtr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicDataPtr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeBuilderPtr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeBuilderFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeMember.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\MemberDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeIdentifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeIdentifierTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeObjectHashId.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeObjectFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeNamesGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypesBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\attributes\TopicAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\ParameterList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\ParameterTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\QosPolicies.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\WriterQos.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\ReaderQos.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\BuiltinProtocols.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\PDPSimple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\PDPSimpleListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\timedevent\RemoteParticipantLeaseDuration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\timedevent\ResendParticipantProxyDataPeriod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimpleListeners.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPStatic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\liveliness\WLP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\liveliness\WLPListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\data\ParticipantProxyData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\data\WriterProxyData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\data\ReaderProxyData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\flowcontrol\ThroughputController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\flowcontrol\ThroughputControllerDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\flowcontrol\FlowController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\exceptions\Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\attributes\PropertyPolicy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\common\Token.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLParserCommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLElementParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLEndpointParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLProfileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\PersistentWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatelessPersistentWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatefulPersistentWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatelessPersistentReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatefulPersistentReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\persistence\PersistenceFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\persistence\SQLite3PersistenceService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\persistence\sqlite3.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPChannelResourceSecure.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPAcceptorSecure.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2\tinyxml2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\AckNackMsg.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\DataMsg.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\GapMsg.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\HeartbeatMsg.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\fastrtps.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2191AEA5-0200-3BB6-AB4F-0DE218D77042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{39E8501E-FDE9-3C5F-971F-0219F5544FD0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\OwnershipStrengthQoSExample\OwnershipStrength.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\OwnershipStrengthQoSExample\OwnershipStrengthPubSubMain.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\OwnershipStrengthQoSExample\OwnershipStrengthPubSubTypes.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\OwnershipStrengthQoSExample\OwnershipStrengthPublisher.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\OwnershipStrengthQoSExample\OwnershipStrengthSubscriber.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\OwnershipStrengthQoSExample\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{39E8501E-FDE9-3C5F-971F-0219F5544FD0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

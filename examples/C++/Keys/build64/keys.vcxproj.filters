@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\Keys\sample.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\Keys\samplePubSubTypes.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\Keys\keys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\Keys\sample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\Keys\samplePubSubTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\examples\C++\Keys\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3A725284-03D7-3324-8EB3-FF1FF2DA717B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4E06AE1B-B5BA-3CD3-9C85-961B0AF97A71}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

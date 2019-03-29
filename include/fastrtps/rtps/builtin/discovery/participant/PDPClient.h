@@ -83,7 +83,7 @@ class PDPClient : public PDP
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
-    void announceParticipantState(bool new_change, bool dispose = false) override;
+    void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     //! Not currently need for DSClientEvent announcement
     void stopParticipantAnnouncement() override {};

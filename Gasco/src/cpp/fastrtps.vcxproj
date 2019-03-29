@@ -1,0 +1,473 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EBEFAB8B-D98C-3D52-96FC-112D1CD633AF}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>fastrtps</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fastrtps.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fastrtpsd-1.7</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fastrtps.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fastrtps-1.7</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">fastrtps.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">fastrtps</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">fastrtps.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">fastrtps-1.7</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR="Debug";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR=\"Debug\";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>C:\Program Files\fastcdr\lib\fastcdrd-1.0.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libssl64MDd.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libcrypto64MDd.lib;iphlpapi.lib;Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/Debug/fastrtpsd-1.7.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/Debug/fastrtpsd-1.7.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR="Release";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR=\"Release\";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>C:\Program Files\fastcdr\lib\fastcdr-1.0.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libssl64MD.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libcrypto64MD.lib;iphlpapi.lib;Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/Release/fastrtps-1.7.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/Release/fastrtps-1.7.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR="MinSizeRel";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR=\"MinSizeRel\";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>C:\Program Files\fastcdr\lib\fastcdrd-1.0.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libssl64MD.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libcrypto64MD.lib;iphlpapi.lib;Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/MinSizeRel/fastrtps.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/MinSizeRel/fastrtps.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR="RelWithDebInfo";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;FASTRTPS_SOURCE;BOOST_ASIO_STANDALONE;ASIO_STANDALONE;__INTERNALDEBUG;_WIN32_WINNT=0x0601;FASTRTPS_DYN_LINK;FASTCDR_DYN_LINK;CMAKE_INTDIR=\"RelWithDebInfo\";fastrtps_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\MiguelBarro\Documents\Fast-RTPS\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\include\fastrtps;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp;C:\ProgramData\chocolatey\lib\asio\include;C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2;C:\Program Files\fastcdr\include;C:\Program Files\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>C:\Program Files\fastcdr\lib\fastcdrd-1.0.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libssl64MD.lib;C:\Program Files\OpenSSL-Win64\lib\VC\libcrypto64MD.lib;iphlpapi.lib;Shlwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/RelWithDebInfo/fastrtps-1.7.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/RelWithDebInfo/fastrtps-1.7.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\generate_msvc_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\set_sources.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\Config.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\config.h.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\generate_msvc_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\set_sources.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\Config.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\config.h.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\generate_msvc_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\set_sources.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\Config.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\config.h.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/MiguelBarro/Documents/Fast-RTPS -BC:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco --check-stamp-file C:/Users/MiguelBarro/Documents/Fast-RTPS/Gasco/src/cpp/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:/Users/MiguelBarro/Documents/Fast-RTPS/src/cpp/CMakeLists.txt;C:\Program Files\CMake\share\cmake-3.13\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.13\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.13\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\generate_msvc_libraries.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\dev\set_sources.cmake;C:\Users\MiguelBarro\Documents\Fast-RTPS\cmake\packaging\Config.cmake.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\config.h.in;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\src\cpp\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\log\Log.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\log\StdoutConsumer.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\log\FileConsumer.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\eClock.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\IPFinder.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\md5.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\StringMatching.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\IPLocator.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\utils\System.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\ResourceEvent.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\TimedEvent.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\TimedEventImpl.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\AsyncWriterThread.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\resources\AsyncInterestTree.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\Endpoint.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\RTPSWriter.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatefulWriter.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\ReaderProxy.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatelessWriter.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\ReaderLocator.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\timedevent\PeriodicHeartbeat.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\timedevent\NackResponseDelay.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\timedevent\NackSupressionDuration.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\CacheChangePool.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\History.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\WriterHistory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\history\ReaderHistory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\timedevent\HeartbeatResponseDelay.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\timedevent\WriterProxyLiveliness.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\timedevent\InitialAckNack.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\WriterProxy.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatefulReader.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatelessReader.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\RTPSReader.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\FragmentedChangePitStop.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\CDRMessagePool.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\RTPSMessageCreator.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\RTPSMessageGroup.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\MessageReceiver.cpp" />
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\AckNackMsg.hpp" />
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\DataMsg.hpp" />
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\GapMsg.hpp" />
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\messages\submessages\HeartbeatMsg.hpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\network\NetworkFactory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\network\SenderResource.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\network\ReceiverResource.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\participant\RTPSParticipant.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\participant\RTPSParticipantImpl.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\RTPSDomain.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\Domain.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\participant\Participant.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\participant\ParticipantImpl.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\publisher\Publisher.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\publisher\PublisherImpl.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\publisher\PublisherHistory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\subscriber\Subscriber.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\subscriber\SubscriberImpl.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\subscriber\SubscriberHistory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\timedevent\CleanTCPSocketsEvent.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\ChannelResource.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPChannelResource.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPChannelResource.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPChannelResourceBasic.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPAcceptor.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPAcceptorBasic.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPv4Transport.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPTransportInterface.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPTransportInterface.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPv4Transport.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\UDPv6Transport.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPv6Transport.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\test_UDPv4Transport.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\tcp\TCPControlMessage.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\tcp\RTCPMessageManager.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\tcp\test_RTCPMessageManager.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\AnnotationDescriptor.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\AnnotationParameterValue.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicData.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicDataFactory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicType.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicPubSubType.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypePtr.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicDataPtr.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeBuilder.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeBuilderPtr.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeBuilderFactory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\DynamicTypeMember.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\MemberDescriptor.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeDescriptor.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeIdentifier.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeIdentifierTypes.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeObject.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeObjectHashId.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeObjectFactory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypeNamesGenerator.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\types\TypesBase.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\attributes\TopicAttributes.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\ParameterList.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\ParameterTypes.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\QosPolicies.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\WriterQos.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\qos\ReaderQos.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\BuiltinProtocols.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\PDPSimple.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\PDPSimpleListener.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\timedevent\RemoteParticipantLeaseDuration.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\timedevent\ResendParticipantProxyDataPeriod.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDP.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimple.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimpleListeners.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPStatic.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\liveliness\WLP.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\liveliness\WLPListener.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\liveliness\timedevent\WLivelinessPeriodicAssertion.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\data\ParticipantProxyData.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\data\WriterProxyData.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\data\ReaderProxyData.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\flowcontrol\ThroughputController.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\flowcontrol\ThroughputControllerDescriptor.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\flowcontrol\FlowController.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\exceptions\Exception.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\attributes\PropertyPolicy.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\common\Token.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLParserCommon.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLElementParser.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLEndpointParser.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLParser.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\xmlparser\XMLProfileManager.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\PersistentWriter.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatelessPersistentWriter.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\writer\StatefulPersistentWriter.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatelessPersistentReader.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\reader\StatefulPersistentReader.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\persistence\PersistenceFactory.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\persistence\SQLite3PersistenceService.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\persistence\sqlite3.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPChannelResourceSecure.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\transport\TCPAcceptorSecure.cpp" />
+    <ResourceCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\fastrtps.rc" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\thirdparty\tinyxml2\tinyxml2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\Gasco\ZERO_CHECK.vcxproj">
+      <Project>{28DCEA71-DDD6-325F-9461-759946F81C39}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
