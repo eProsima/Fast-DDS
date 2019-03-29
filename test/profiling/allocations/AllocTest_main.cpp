@@ -28,6 +28,7 @@
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
+
 int main(int argc, char** argv)
 {
     std::cout << "Starting "<< std::endl;
@@ -93,7 +94,9 @@ int main(int argc, char** argv)
                 break;
             }
     }
+
     Domain::stopAll();
     Log::Reset();
+
     return 0;
 }

@@ -23,18 +23,5 @@
 #   - callgrind.out.args.4   events during endpoint unmatching
 ############################################################################################
 
-# Concatenate all arguments using '_' as separator
-old="$IFS"
-IFS='_'
-str="$*"
-IFS=$old
-
-# Run 'AllocationTest' under callgrind using the correct parameters:
-#   --dump-before          to force dump when callgrind_dump() is called
-#   --zero-before          to reset the counters when callgrind_zero_count() is called
-#   --callgrind-out-file   to include the arguments on the name of the generated files
-valgrind --tool=callgrind --dump-before=*callgrind_dump* --zero-before=*callgrind_zero_count* --callgrind-out-file=callgrind.out.$str ./AllocationTest $* true
-
-# Remove the base dump file, as we only want the explicitly created dumps
-rm callgrind.out.$str
-
+# Run 'AllocationTest' using the memory_tools_interpose library:
+LD_PRELOAD=/usr/local/lib/libmemory_tools_interpose.so:/usr/local/lib/libmemory_tools.so ./AllocationTest $* true

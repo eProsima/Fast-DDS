@@ -31,16 +31,23 @@ namespace eprosima_profiling
 {
 
 /**
- * Used to run callgrind with --zero-before=*callgrind_zero_count. 
+ * Used to run callgrind with --zero-before=*callgrind_zero_count.
  * See http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.activity
  */
-void callgrind_zero_count() {}
+void callgrind_zero_count()
+{
+}
 
 /**
- * Used to run callgrind with --dump-before=*callgrind_dump. 
+ * Used to run callgrind with --dump-before=*callgrind_dump.
  * See http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.activity
  */
-void callgrind_dump() {}
+void callgrind_dump()
+{
+}
+
+static bool g_print_alloc_traces = false;
+static bool g_print_dealloc_traces = false;
 
 static std::atomic_size_t g_allocations[4];
 static std::atomic_size_t g_deallocations[4];
@@ -49,22 +56,36 @@ static std::atomic_size_t g_phase(0u);
 static std::atomic<std::atomic_size_t*> g_allocationsPtr(g_allocations);
 static std::atomic<std::atomic_size_t*> g_deallocationsPtr(g_deallocations);
 
-static void allocation_account (MemoryToolsService & service)
+const std::regex is_fastrtps("fastrtps");
+
+static void allocation_account(MemoryToolsService & service)
 {
-    (*g_allocationsPtr.load())++;
+    // It makes no sense to track allocations if they don't come from our library
+    auto stack = service.get_stack_trace();
+    if (stack != nullptr && stack->matches_any_object_function(is_fastrtps))
+    {
+        (*g_allocationsPtr.load())++;
+        if (g_print_alloc_traces) service.print_backtrace();
+    }
     service.ignore();
 }
 
-static void deallocation_account (MemoryToolsService & service)
+static void deallocation_account(MemoryToolsService & service)
 {
-    (*g_deallocationsPtr.load())++;
+    // It makes no sense to track allocations if they don't come from our library
+    auto stack = service.get_stack_trace();
+    if (stack != nullptr && stack->matches_any_object_function(is_fastrtps))
+    {
+        (*g_deallocationsPtr.load())++;
+        if (g_print_dealloc_traces) service.print_backtrace();
+    }
     service.ignore();
 }
 
-static void next_phase ()
+static void next_phase()
 {
     size_t new_phase = ++g_phase;
-    if(new_phase < 4)
+    if (new_phase < 4)
     {
         g_allocationsPtr.store(&g_allocations[new_phase]);
         g_deallocationsPtr.store(&g_deallocations[new_phase]);
@@ -74,8 +95,13 @@ static void next_phase ()
 /**
  * Called when entities have been created. Memory profiling should begin.
  */
-void entities_created() 
+void entities_created(
+        bool print_alloc_traces,
+        bool print_dealloc_traces)
 {
+    g_print_alloc_traces = print_alloc_traces;
+    g_print_dealloc_traces = print_dealloc_traces;
+
     // Initialize profiling library
     osrf_testing_tools_cpp::memory_tools::initialize();
 
@@ -89,7 +115,7 @@ void entities_created()
     osrf_testing_tools_cpp::memory_tools::enable_monitoring_in_all_threads();
     EXPECT_NO_MEMORY_OPERATIONS_BEGIN();
 
-    if(!osrf_testing_tools_cpp::memory_tools::is_working())
+    if (!osrf_testing_tools_cpp::memory_tools::is_working())
     {
         std::cerr << "Memory profiler not working!" << std::endl;
     }
@@ -98,30 +124,42 @@ void entities_created()
 /**
  * Called after remote entity has been discovered. Data exchange will start.
  */
-void discovery_finished() { next_phase(); }
+void discovery_finished()
+{
+    next_phase();
+}
 
 /**
  * Called after first sample has been sent/received.
  */
-void first_sample_exchanged() { next_phase(); }
+void first_sample_exchanged()
+{
+    next_phase();
+}
 
 /**
  * Called after all samples have been sent/received. Undiscovery will begin.
  */
-void all_samples_exchanged() { next_phase(); }
+void all_samples_exchanged()
+{
+    next_phase();
+}
 
 /**
  * Called after remote entity has been undiscovered. Memory profiling should end.
  */
-void undiscovery_finished() 
-{ 
+void undiscovery_finished()
+{
     EXPECT_NO_MEMORY_OPERATIONS_END();
 }
 
 /**
  * Print memory profiling results.
  */
-void print_results(const std::string& file_prefix, const std::string& entity, const std::string& config) 
+void print_results(
+        const std::string& file_prefix,
+        const std::string& entity,
+        const std::string& config)
 {
     std::string output_filename = file_prefix;
     if (file_prefix.length() == 0)
@@ -137,7 +175,7 @@ void print_results(const std::string& file_prefix, const std::string& entity, co
 
     std::stringstream output_stream;
 
-    if(pos == 0)
+    if (pos == 0)
     {
         output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
             << " \"Phase 1 Allocations\", \"Phase 1 Deallocations\","
@@ -145,7 +183,7 @@ void print_results(const std::string& file_prefix, const std::string& entity, co
             << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"\n";
     }
 
-    for(size_t i = 0; i < 4; i++)
+    for (size_t i = 0; i < 4; i++)
     {
         size_t allocs = g_allocations[i].load();
         size_t deallocs = g_deallocations[i].load();
@@ -163,4 +201,3 @@ void print_results(const std::string& file_prefix, const std::string& entity, co
 }
 
 }   // namespace eprosima_profiling
-
