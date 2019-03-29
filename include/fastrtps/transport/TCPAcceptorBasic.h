@@ -61,7 +61,9 @@ public:
     }
 
     //! Method to start the accepting process.
-    void accept(TCPTransportInterface* parent);
+    void accept(
+            TCPTransportInterface* parent,
+            const std::shared_ptr<TCPAcceptorBasic>& myself);
 
     std::shared_ptr<asio::ip::tcp::socket> move_socket()
     {

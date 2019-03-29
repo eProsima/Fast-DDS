@@ -58,10 +58,9 @@ public:
         return alive_;
     }
 
-    inline virtual bool disable()
+    inline virtual void disable()
     {
         alive_ = false;
-        return true;
     }
 
     inline CDRMessage_t& message_buffer()

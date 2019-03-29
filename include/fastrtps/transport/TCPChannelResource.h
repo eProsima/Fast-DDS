@@ -43,12 +43,6 @@ class TCPChannelResource : public ChannelResource
 
 protected:
 
-    enum TCPConnectionStatus
-    {
-        TCP_DISCONNECTED = 0,
-        TCP_CONNECTED = 1
-    };
-
     enum TCPConnectionType
     {
         TCP_ACCEPT_TYPE = 0,
@@ -74,12 +68,10 @@ protected:
     std::map<TCPTransactionId, uint16_t> last_checked_logical_port_;
     std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
     std::vector<uint16_t> logical_output_ports_;
-    std::recursive_mutex read_mutex_;
-    std::recursive_mutex write_mutex_;
+    std::mutex read_mutex_;
+    std::mutex write_mutex_;
     std::recursive_mutex pending_logical_mutex_;
-    std::condition_variable negotiation_condition_;
-    eConnectionStatus connection_status_;
-    std::mutex status_mutex_;
+    std::atomic<eConnectionStatus> connection_status_;
 
 public:
 
@@ -91,17 +83,7 @@ public:
 
     bool remove_logical_port(uint16_t port);
 
-    virtual bool disable() override;
-
-    std::recursive_mutex& read_mutex()
-    {
-        return read_mutex_;
-    }
-
-    std::recursive_mutex& write_mutex()
-    {
-        return write_mutex_;
-    }
+    virtual void disable() override;
 
     bool is_logical_port_opened(uint16_t port);
 
@@ -109,9 +91,12 @@ public:
 
     bool connection_established()
     {
-        // TODO Move to atomic.
-        std::unique_lock<std::mutex> scoped(status_mutex_);
         return connection_status_ == eConnectionStatus::eEstablished;
+    }
+
+    eConnectionStatus connection_status()
+    {
+        return connection_status_;
     }
 
     inline const Locator_t& locator() const
@@ -122,7 +107,8 @@ public:
     ResponseCode process_bind_request(const Locator_t& locator);
 
     // Socket related methods
-    virtual void connect() = 0;
+    virtual void connect(
+            const std::shared_ptr<TCPChannelResource>& myself) = 0;
 
     virtual void disconnect() = 0;
 
@@ -131,10 +117,13 @@ public:
         std::size_t size,
         asio::error_code& ec) = 0;
 
-    virtual uint32_t send(
+    virtual size_t send(
+        const octet* header,
+        size_t header_size,
         const octet* buffer,
         size_t size,
-        asio::error_code& ec) = 0;
+        asio::error_code& ec,
+        bool blocking = true) = 0;
 
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
 
@@ -148,17 +137,7 @@ public:
 
     virtual void shutdown(asio::socket_base::shutdown_type what) = 0;
 
-    bool wait_until_port_is_open_or_connection_is_closed(uint16_t port);
-
-    TCPConnectionStatus tcp_connection_status() const { return tcp_connection_status_; }
-
     TCPConnectionType tcp_connection_type() const { return tcp_connection_type_; }
-
-    void tcp_connected()
-    {
-        assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
-        tcp_connection_status_ = TCP_CONNECTED;
-    }
 
     virtual ~TCPChannelResource();
 
@@ -177,16 +156,15 @@ protected:
 
     inline bool change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
     {
-        std::unique_lock<std::mutex> scoped(status_mutex_);
-        if (connection_status_ != s)
+        eConnectionStatus old = connection_status_.exchange(s);
+
+        if (old != s)
         {
-            connection_status_ = s;
-            if (connection_status_ == eEstablished)
+            if (s == eEstablished)
             {
                 assert(rtcp_manager != nullptr);
                 send_pending_open_logical_ports(rtcp_manager);
             }
-            negotiation_condition_.notify_all();
             return true;
         }
         return false;
@@ -198,8 +176,6 @@ protected:
             const TCPTransactionId &transactionId,
             const std::vector<uint16_t> &availablePorts,
             RTCPMessageManager* rtcp_manager);
-
-    std::atomic<TCPConnectionStatus> tcp_connection_status_;
 
     TCPConnectionType tcp_connection_type_;
 

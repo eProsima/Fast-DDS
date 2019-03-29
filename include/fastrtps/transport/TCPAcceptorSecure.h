@@ -64,6 +64,7 @@ public:
     //! Method to start the accepting process.
     void accept(
         TCPTransportInterface* parent,
+        const std::shared_ptr<TCPAcceptorSecure>& myself,
         asio::ssl::context&);
 
     std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> move_socket()

@@ -171,21 +171,24 @@ protected:
 
     size_t sendMessage(
             TCPChannelResource* channel,
-            const CDRMessage_t &msg) const;
+            const CDRMessage_t &msg,
+            bool blocking = true) const;
 
     bool sendData(
             std::shared_ptr<TCPChannelResource>& channel,
             TCPCPMKind kind,
             const TCPTransactionId &transactionId,
             const SerializedPayload_t *payload = nullptr,
-            const ResponseCode respCode = RETCODE_VOID);
+            const ResponseCode respCode = RETCODE_VOID,
+            bool blocking = true);
 
     bool sendData(
             TCPChannelResource* channel,
             TCPCPMKind kind,
             const TCPTransactionId &transactionId,
             const SerializedPayload_t *payload = nullptr,
-            const ResponseCode respCode = RETCODE_VOID);
+            const ResponseCode respCode = RETCODE_VOID,
+            bool blocking = true);
 
     void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, TCPControlMsgHeader &retCtrlHeader,
         TCPHeader &header, const SerializedPayload_t *payload = nullptr, const ResponseCode *respCode = nullptr);

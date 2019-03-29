@@ -50,20 +50,16 @@ TCPChannelResourceBasic::~TCPChannelResourceBasic()
     disconnect();
 }
 
-void TCPChannelResourceBasic::connect()
+void TCPChannelResourceBasic::connect(
+            const std::shared_ptr<TCPChannelResource>& myself)
 {
-    std::unique_lock<std::mutex> scoped(status_mutex_);
-    assert(TCPConnectionStatus::TCP_CONNECTED != tcp_connection_status_);
     assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
+    eConnectionStatus expected = eConnectionStatus::eDisconnected;
 
-    if (connection_status_ == eConnectionStatus::eDisconnected)
+    if (connection_status_.compare_exchange_strong(expected, eConnectionStatus::eConnecting))
     {
-        connection_status_ = eConnectionStatus::eConnecting;
-
         try
         {
-            Locator_t locator = locator_;
-
             ip::tcp::resolver resolver(service_);
 
             auto endpoints = resolver.resolve(
@@ -71,13 +67,14 @@ void TCPChannelResourceBasic::connect()
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             socket_ = std::make_shared<asio::ip::tcp::socket>(service_);
+            const auto channel = myself;
 
             asio::async_connect(
                 *socket_,
                 endpoints,
-                [this, locator](std::error_code ec, ip::tcp::endpoint)
+                [this, channel](std::error_code ec, ip::tcp::endpoint)
                 {
-                    parent_->SocketConnected(locator, ec);
+                    parent_->SocketConnected(channel, ec);
                 }
             );
         }
@@ -116,19 +113,38 @@ uint32_t TCPChannelResourceBasic::read(
         std::size_t size,
         asio::error_code& ec)
 {
-    std::unique_lock<std::recursive_mutex> read_lock(read_mutex());
+    std::unique_lock<std::mutex> read_lock(read_mutex_);
 
     return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, size), transfer_exactly(size), ec));
 }
 
-uint32_t TCPChannelResourceBasic::send(
+size_t TCPChannelResourceBasic::send(
+        const octet* header,
+        size_t header_size,
         const octet* data,
         size_t size,
-        asio::error_code& ec)
+        asio::error_code& ec,
+        bool)
 {
-    std::unique_lock<std::recursive_mutex> write_lock(write_mutex());
+    size_t bytes_sent = 0;
 
-    return static_cast<uint32_t>(socket_->send(asio::buffer(data, size), 0, ec));
+    if (eConnecting < connection_status_)
+    {
+        std::unique_lock<std::mutex> write_lock(write_mutex_);
+
+
+        if (header_size > 0)
+        {
+            bytes_sent = socket_->send(asio::buffer(header, header_size), 0, ec);
+        }
+
+        if (!ec)
+        {
+            bytes_sent += socket_->send(asio::buffer(data, size), 0, ec);
+        }
+    }
+
+    return  bytes_sent;
 }
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint() const

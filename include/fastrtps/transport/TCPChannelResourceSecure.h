@@ -25,62 +25,73 @@ namespace rtps{
 
 class TCPChannelResourceSecure : public TCPChannelResource
 {
-    asio::io_service& service_;
-    asio::ssl::context& ssl_context_;
-    std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
+    public:
+        // Constructor called when trying to connect to a remote server (secure version)
+        TCPChannelResourceSecure(
+                TCPTransportInterface* parent,
+                asio::io_service& service,
+                asio::ssl::context& ssl_context,
+                const Locator_t& locator,
+                uint32_t maxMsgSize);
 
-public:
-    // Constructor called when trying to connect to a remote server (secure version)
-    TCPChannelResourceSecure(
-        TCPTransportInterface* parent,
-        asio::io_service& service,
-        asio::ssl::context& ssl_context,
-        const Locator_t& locator,
-        uint32_t maxMsgSize);
+        // Constructor called when local server accepted connection (secure version)
+        TCPChannelResourceSecure(
+                TCPTransportInterface* parent,
+                asio::io_service& service,
+                asio::ssl::context& ssl_context,
+                std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
+                uint32_t maxMsgSize);
 
-    // Constructor called when local server accepted connection (secure version)
-    TCPChannelResourceSecure(
-        TCPTransportInterface* parent,
-        asio::io_service& service,
-        asio::ssl::context& ssl_context,
-        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
-        uint32_t maxMsgSize);
+        virtual ~TCPChannelResourceSecure();
 
-    virtual ~TCPChannelResourceSecure();
+        void connect(
+                const std::shared_ptr<TCPChannelResource>& myself) override;
 
-    void connect() override;
+        void disconnect() override;
 
-    void disconnect() override;
+        uint32_t read(
+                octet* buffer,
+                const std::size_t size,
+                asio::error_code& ec) override;
 
-    uint32_t read(
-        octet* buffer,
-        const std::size_t size,
-        asio::error_code& ec) override;
+        size_t send(
+                const octet* header,
+                size_t header_size,
+                const octet* data,
+                size_t size,
+                asio::error_code& ec,
+                bool blocking = true) override;
 
-    uint32_t send(
-        const octet* data,
-        size_t size,
-        asio::error_code& ec) override;
+        asio::ip::tcp::endpoint remote_endpoint() const override;
+        asio::ip::tcp::endpoint local_endpoint() const override;
 
-    asio::ip::tcp::endpoint remote_endpoint() const override;
-    asio::ip::tcp::endpoint local_endpoint() const override;
+        void set_options(const TCPTransportDescriptor* options) override;
 
-    void set_options(const TCPTransportDescriptor* options) override;
+        void set_tls_verify_mode(const TCPTransportDescriptor* options);
 
-    void set_tls_verify_mode(const TCPTransportDescriptor* options);
+        void cancel() override;
+        void close() override;
+        void shutdown(asio::socket_base::shutdown_type what) override;
 
-    void cancel() override;
-    void close() override;
-    void shutdown(asio::socket_base::shutdown_type what) override;
+        inline std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket()
+        {
+            return secure_socket_;
+        }
 
-    inline std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket()
-    {
-        return secure_socket_;
-    }
+    private:
 
-private:
-    TCPChannelResourceSecure(const TCPChannelResource&) = delete;
-    TCPChannelResourceSecure& operator=(const TCPChannelResource&) = delete;
+        TCPChannelResourceSecure(const TCPChannelResource&) = delete;
+        TCPChannelResourceSecure& operator=(const TCPChannelResource&) = delete;
+
+        asio::io_service& service_;
+        asio::ssl::context& ssl_context_;
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
+
+        bool read_done_;
+        std::condition_variable read_cv_;
+
+        bool write_in_process_;
+        std::condition_variable write_cv_;
 };
 
 

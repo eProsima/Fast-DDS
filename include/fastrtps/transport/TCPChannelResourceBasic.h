@@ -43,7 +43,8 @@ public:
 
     virtual ~TCPChannelResourceBasic();
 
-    void connect() override;
+    void connect(
+            const std::shared_ptr<TCPChannelResource>& myself) override;
 
     void disconnect() override;
 
@@ -52,10 +53,13 @@ public:
         std::size_t size,
         asio::error_code& ec) override;
 
-    uint32_t send(
+    size_t send(
+        const octet* header,
+        size_t header_size,
         const octet* data,
         size_t size,
-        asio::error_code& ec) override;
+        asio::error_code& ec,
+        bool blocking = true) override;
 
     asio::ip::tcp::endpoint remote_endpoint() const override;
     asio::ip::tcp::endpoint local_endpoint() const override;

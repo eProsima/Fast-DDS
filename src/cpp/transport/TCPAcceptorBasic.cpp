@@ -39,22 +39,24 @@ TCPAcceptorBasic::TCPAcceptorBasic(
         IPLocator::getPhysicalPort(locator_));
 }
 
-void TCPAcceptorBasic::accept(TCPTransportInterface* parent)
+void TCPAcceptorBasic::accept(
+        TCPTransportInterface* parent,
+        const std::shared_ptr<TCPAcceptorBasic>& myself)
 {
-    Locator_t locator = locator_;
     using asio::ip::tcp;
+    const auto acceptor = myself;
 
     acceptor_.async_accept(
-        [this, locator, parent](const std::error_code& error, tcp::socket socket)
+        [acceptor, parent](const std::error_code& error, tcp::socket socket)
         {
             if (!error)
             {
-                socket_ = std::make_shared<tcp::socket>(std::move(socket));
-                parent->SocketAccepted(this, locator, error);
+                acceptor->socket_ = std::make_shared<tcp::socket>(std::move(socket));
+                parent->SocketAccepted(acceptor, error);
             }
             else
             {
-                parent->SocketAccepted(this, locator, error); // Only manage the error
+                parent->SocketAccepted(acceptor, error); // Only manage the error
             }
 
         });

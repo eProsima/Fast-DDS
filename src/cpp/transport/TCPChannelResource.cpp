@@ -47,7 +47,6 @@ TCPChannelResource::TCPChannelResource(
     , locator_(locator)
     , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eDisconnected)
-    , tcp_connection_status_(TCPConnectionStatus::TCP_DISCONNECTED)
     , tcp_connection_type_(TCPConnectionType::TCP_CONNECT_TYPE)
 {
 }
@@ -60,7 +59,6 @@ TCPChannelResource::TCPChannelResource(
     , locator_()
     , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eWaitingForBind)
-    , tcp_connection_status_(TCPConnectionStatus::TCP_CONNECTED)
     , tcp_connection_type_(TCPConnectionType::TCP_ACCEPT_TYPE)
 {
 }
@@ -68,36 +66,23 @@ TCPChannelResource::TCPChannelResource(
 TCPChannelResource::~TCPChannelResource()
 {
     alive_ = false;
-    tcp_connection_status_ = TCPConnectionStatus::TCP_DISCONNECTED;
 }
 
-bool TCPChannelResource::disable()
+void TCPChannelResource::disable()
 {
-    bool returned_value = false;
-
-    TCPConnectionStatus code = tcp_connection_status_.exchange(TCPConnectionStatus::TCP_DISCONNECTED,
-            std::memory_order_relaxed);
-
-    if(code == TCPConnectionStatus::TCP_CONNECTED)
-    {
-        disconnect();
-        returned_value = true;
-    }
-
-    return returned_value;
+    disconnect();
 }
 
 ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)
 {
-    std::unique_lock<std::mutex> scoped(status_mutex_);
-    if (connection_status_ == TCPChannelResource::eConnectionStatus::eWaitingForBind)
+    eConnectionStatus expected = TCPChannelResource::eConnectionStatus::eWaitingForBind;
+    if(connection_status_.compare_exchange_strong(expected, eConnectionStatus::eEstablished))
     {
         locator_ = IPLocator::toPhysicalLocator(locator);
-        connection_status_ = eConnectionStatus::eEstablished;
-        logInfo(RTPC_MSG, "Connection Stablished");
+        logInfo(RTCP_MSG, "Connection Stablished");
         return RETCODE_OK;
     }
-    else if (connection_status_ == eConnectionStatus::eEstablished)
+    else if (expected == eConnectionStatus::eEstablished)
     {
         return RETCODE_EXISTING_CONNECTION;
     }
@@ -126,18 +111,6 @@ bool TCPChannelResource::is_logical_port_added(uint16_t port)
     return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end()
         || std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
         != pending_logical_output_ports_.end();
-}
-
-bool TCPChannelResource::wait_until_port_is_open_or_connection_is_closed(uint16_t port)
-{
-    std::unique_lock<std::mutex> scoped(status_mutex_);
-    bool bConnected = alive_ && connection_status_ == eConnectionStatus::eEstablished;
-    while (bConnected && !is_logical_port_opened(port))
-    {
-        negotiation_condition_.wait(scoped);
-        bConnected = alive_ && connection_status_ == eConnectionStatus::eEstablished;
-    }
-    return bConnected;
 }
 
 void TCPChannelResource::add_logical_port(uint16_t port, RTCPMessageManager* rtcp_manager)
@@ -197,7 +170,6 @@ void TCPChannelResource::add_logical_port_response(
             if (success)
             {
                 logical_output_ports_.push_back(port);
-                negotiation_condition_.notify_all();
                 logInfo(RTCP, "OpenedLogicalPort: " << port);
             }
             else

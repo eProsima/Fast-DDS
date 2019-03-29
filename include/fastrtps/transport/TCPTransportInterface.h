@@ -44,6 +44,7 @@ namespace rtps{
 
 class RTCPMessageManager;
 class TCPChannelResource;
+class TCPKeepAliveEvent;
 
 /**
  * This is a default TCP Interface implementation.
@@ -82,20 +83,16 @@ protected:
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;
     mutable std::mutex sockets_map_mutex_;
-    std::atomic<bool> send_retry_active_;
 
-    std::map<uint16_t, std::vector<TCPAcceptor*>> socket_acceptors_; // The Key is the "Physical Port"
-    std::vector<TCPAcceptor*> deleted_acceptors_;
     std::map<Locator_t, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
     std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;
     // The key is the logical port
     std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
 
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
-    bool stop_socket_canceller_;
-    std::mutex canceller_mutex_;
     eClock my_clock_;
-    std::thread socket_canceller_thread_;
+
+    TCPKeepAliveEvent* keep_alive_event_;
 
     TCPTransportInterface(int32_t transport_kind);
 
@@ -174,8 +171,6 @@ protected:
      * Aux method to retrieve cert password as a callback
      */
     std::string get_password() const;
-
-    void socket_canceller();
 
 public:
     friend class RTCPMessageManager;
@@ -295,22 +290,20 @@ public:
 
     //! Callback called each time that an incomming connection is accepted.
     void SocketAccepted(
-        TCPAcceptorBasic* acceptor,
-        Locator_t acceptor_locator,
+        const std::shared_ptr<TCPAcceptorBasic>& acceptor,
         const asio::error_code& error);
 
 #if TLS_FOUND
     //! Callback called each time that an incomming connection is accepted (secure).
     void SecureSocketAccepted(
-        TCPAcceptorSecure* acceptor,
-        Locator_t acceptor_locator,
+        const std::shared_ptr<TCPAcceptorSecure>& acceptor,
         const asio::error_code& error);
 #endif
 
     //! Callback called each time that an outgoing connection is established.
     void SocketConnected(
-        Locator_t locator,
-        const asio::error_code& error);
+            const std::shared_ptr<TCPChannelResource>& channel,
+            const asio::error_code& error);
 
     /**
     * Method to get a list of interfaces to bind the socket associated to the given locator.
@@ -354,12 +347,6 @@ public:
     virtual const TCPTransportDescriptor* configuration() const = 0;
 
     virtual TCPTransportDescriptor* configuration() = 0;
-
-    void add_socket_to_cancel(
-        TCPChannelResource* socket,
-        uint64_t milliseconds);
-
-    void remove_socket_to_cancel(TCPChannelResource* socket);
 
     void keep_alive();
 };

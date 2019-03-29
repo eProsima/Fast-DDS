@@ -73,7 +73,8 @@ RTCPMessageManager::~RTCPMessageManager()
 
 size_t RTCPMessageManager::sendMessage(
         TCPChannelResource* channel,
-        const CDRMessage_t &msg) const
+        const CDRMessage_t &msg,
+        bool blocking) const
 {
     if (!alive())
     {
@@ -81,10 +82,10 @@ size_t RTCPMessageManager::sendMessage(
     }
 
     asio::error_code ec;
-    size_t send = channel->send(msg.buffer, msg.length, ec);
+    size_t send = channel->send(nullptr, 0, msg.buffer, msg.length, ec, blocking);
     if (send != msg.length)
     {
-        logError(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes: " << ec.message());
+        logInfo(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes: " << ec.message());
     }
     //logInfo(RTCP, "Sent " << send << " bytes");
     return send;
@@ -95,9 +96,22 @@ bool RTCPMessageManager::sendData(
         TCPCPMKind kind,
         const TCPTransactionId& transaction_id,
         const SerializedPayload_t* payload,
-        const ResponseCode respCode)
+        const ResponseCode respCode,
+        bool blocking)
 {
-    return sendData(channel.get(), kind, transaction_id, payload, respCode);
+    if(0 < sendData(channel.get(), kind, transaction_id, payload, respCode, blocking))
+    {
+        return true;
+    }
+
+    if(TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel->tcp_connection_type() &&
+            TCPChannelResource::eConnectionStatus::eDisconnected == channel->connection_status())
+    {
+        channel->set_all_ports_pending();
+        channel->connect(channel);
+    }
+
+    return false;
 }
 
 bool RTCPMessageManager::sendData(
@@ -105,7 +119,8 @@ bool RTCPMessageManager::sendData(
         TCPCPMKind kind,
         const TCPTransactionId &transaction_id,
         const SerializedPayload_t *payload,
-        const ResponseCode respCode)
+        const ResponseCode respCode,
+        bool blocking)
 {
     if (!alive())
     {
@@ -133,7 +148,7 @@ bool RTCPMessageManager::sendData(
         RTPSMessageCreator::addCustomContent(&msg, payload->data, payload->length); // Data
     }
 
-    return sendMessage(channel, msg) > 0;
+    return sendMessage(channel, msg, blocking) > 0;
 }
 
 uint32_t& RTCPMessageManager::addToCRC(
@@ -299,13 +314,13 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
 
     logInfo(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator));
     //logError(DEBUG, "Sending Connection Request with locator: " << IPLocator::to_string(request.transportLocator()));
+    channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBindResponse);
     TCPTransactionId id = getTransactionId();
     bool success = sendData(channel, BIND_CONNECTION_REQUEST, id, &payload);
     if (!success)
     {
         logError(RTCP, "Failed sending Connection Request");
     }
-    channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBindResponse);
     return id;
 }
 
@@ -359,7 +374,7 @@ TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(
     request.serialize(&payload);
     logInfo(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST]");
     TCPTransactionId id = getTransactionId();
-    sendData(channel, KEEP_ALIVE_REQUEST, id, &payload);
+    sendData(channel, KEEP_ALIVE_REQUEST, id, &payload, RETCODE_VOID, false);
     return id;
 }
 
