@@ -37,7 +37,7 @@ class PublisherImpl;
  * This class is created by the PublisherImpl and should not be used by the user directly.
  * @ingroup FASTRTPS_MODULE
  */
-class PublisherHistory:public rtps::WriterHistory
+class PublisherHistory : public rtps::WriterHistory
 {
     public:
         /**

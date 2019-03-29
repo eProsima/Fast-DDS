@@ -35,12 +35,16 @@ namespace fastrtps{
 namespace rtps {
 
 
-WriterProxyLiveliness::WriterProxyLiveliness(WriterProxy* p_WP,double interval):
-TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
-p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
-mp_WP(p_WP)
+WriterProxyLiveliness::WriterProxyLiveliness(
+        WriterProxy* p_WP,
+        double interval)
+    : TimedEvent(
+          p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
+          p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(),
+          interval,
+          TimedEvent::ON_SUCCESS)
+    , mp_WP(p_WP)
 {
-
 }
 
 WriterProxyLiveliness::~WriterProxyLiveliness()
@@ -50,7 +54,6 @@ WriterProxyLiveliness::~WriterProxyLiveliness()
 
 void WriterProxyLiveliness::event(EventCode code, const char* msg)
 {
-
     // Unused in release mode.
     (void)msg;
 

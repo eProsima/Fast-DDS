@@ -144,10 +144,13 @@ bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
     }//End lock scope
 
     for(std::vector<CacheChange_t*>::iterator chit = changes_to_remove.begin(); chit != changes_to_remove.end(); ++chit)
-        if(!remove_change( (*chit) )){
+    {
+        if(!remove_change(*chit))
+        {
             logError(RTPS_HISTORY,"One of the cachechanged in the GUID removal bulk could not be removed");
             return false;
         }
+    }
     return true;
 }
 
@@ -185,7 +188,9 @@ void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario se
     return mp_semaphore->wait();
 }
 
-bool ReaderHistory::get_min_change_from(CacheChange_t** min_change, const GUID_t& writerGuid)
+bool ReaderHistory::get_min_change_from(
+        CacheChange_t** min_change,
+        const GUID_t& writerGuid)
 {
     bool ret = false;
     *min_change = nullptr;

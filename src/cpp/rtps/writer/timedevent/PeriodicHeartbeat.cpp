@@ -44,10 +44,13 @@ PeriodicHeartbeat::~PeriodicHeartbeat()
 PeriodicHeartbeat::PeriodicHeartbeat(
         StatefulWriter* p_SFW,
         double interval)
-    : TimedEvent(p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval)
-    , m_cdrmessages(p_SFW->getRTPSParticipant()->getMaxMessageSize(),
-            p_SFW->getRTPSParticipant()->getGuid().guidPrefix)
+    : TimedEvent(
+          p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+          p_SFW->getRTPSParticipant()->getEventResource().getThread(),
+          interval)
+    , m_cdrmessages(
+          p_SFW->getRTPSParticipant()->getMaxMessageSize(),
+          p_SFW->getRTPSParticipant()->getGuid().guidPrefix)
     , mp_SFW(p_SFW)
 {
 

@@ -256,8 +256,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
 
         for(auto chit = vit->second.cache_changes.begin(); chit!= vit->second.cache_changes.end(); ++chit)
         {
-            if( ((*chit)->sequenceNumber == change->sequenceNumber)
-                    && ((*chit)->writerGUID == change->writerGUID) )
+            if( ((*chit)->sequenceNumber == change->sequenceNumber) && ((*chit)->writerGUID == change->writerGUID) )
             {
                 if(remove_change(change))
                 {
