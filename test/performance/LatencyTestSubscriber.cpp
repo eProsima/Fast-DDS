@@ -166,7 +166,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.times.heartbeatPeriod.nanosec = 100000000;
 
     if (!reliable)
     {

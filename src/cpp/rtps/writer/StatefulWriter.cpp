@@ -841,7 +841,7 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 
     if(!all_acked_)
     {
-        std::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(max_wait));
+        std::chrono::microseconds max_w(::TimeConv::Duration_t2MicroSecondsInt64(max_wait));
         all_acked_cond_.wait_for(all_acked_lock, max_w, [&]() { return all_acked_; });
     }
 

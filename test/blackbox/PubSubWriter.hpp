@@ -215,9 +215,9 @@ class PubSubWriter
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         publisher_attr_.times.heartbeatPeriod.seconds = 0;
-        publisher_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+        publisher_attr_.times.heartbeatPeriod.nanosec = 100000000;
         publisher_attr_.times.nackResponseDelay.seconds = 0;
-        publisher_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
+        publisher_attr_.times.nackResponseDelay.nanosec = 100000000;
     }
 
     ~PubSubWriter()
@@ -509,9 +509,9 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& heartbeat_period_fraction(uint32_t frac)
+    PubSubWriter& heartbeat_period_nanosec(uint32_t nanosec)
     {
-        publisher_attr_.times.heartbeatPeriod.fraction = frac;
+        publisher_attr_.times.heartbeatPeriod.nanosec = nanosec;
         return *this;
     }
 

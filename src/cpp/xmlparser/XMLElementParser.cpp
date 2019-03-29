@@ -1653,7 +1653,7 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
         <xs:complexType name="durationType">
             <xs:all>
                 <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" minOccurs="0"/>
-                <xs:element name="fraction" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
+                <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
     */
@@ -1688,7 +1688,7 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, FRACTION) == 0)
+        else if (strcmp(name, NANOSECONDS) == 0)
         {
             /*
                 <xs:simpleType name="nonNegativeInteger_Duration_NSEC">
@@ -1700,14 +1700,14 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
-                logError(XMLPARSER, "Node 'FRACTION' without content");
+                logError(XMLPARSER, "Node 'NANOSECONDS' without content");
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, DURATION_INFINITY) == 0)
                 duration = c_TimeInfinite;
             else if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
-                duration.fraction = c_TimeInfinite.fraction;
-            else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.fraction, ident))
+                duration.nanosec = c_TimeInfinite.fraction;
+            else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
             {
                 logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
                 return XMLP_ret::XML_ERROR;

@@ -109,7 +109,7 @@ bool HelloWorldPublisher::init(
     wparam.topic.resourceLimitsQos.max_samples = 50;
     wparam.topic.resourceLimitsQos.allocated_samples = 20;
     wparam.times.heartbeatPeriod.seconds = 2;
-    wparam.times.heartbeatPeriod.fraction = 200 * 1000 * 1000;
+    wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     publisher_ = Domain::createPublisher(participant_, wparam, (PublisherListener*)&listener_);
     if (publisher_ == nullptr)

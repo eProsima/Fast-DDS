@@ -461,8 +461,10 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    logInfo(RTPS_LIVELINESS,W->getGuid().entityId	<<" to Liveliness Protocol")
-        double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
+    logInfo(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
+
+    double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
+
     if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
     {
         if(mp_livelinessAutomatic == nullptr)
@@ -532,7 +534,9 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 WriterProxyData wdata2;
                 if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
                 {
-                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
+                    double mintimeWIT(TimeConv::Duration_t2MilliSecondsDouble(
+                        wdata2.m_qos.m_liveliness.announcement_period));
+
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;
@@ -570,7 +574,8 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 WriterProxyData wdata2;
                 if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
                 {
-                    double mintimeWIT(TimeConv::Time_t2MilliSecondsDouble(wdata2.m_qos.m_liveliness.announcement_period));
+                    double mintimeWIT(TimeConv::Duration_t2MilliSecondsDouble(
+                        wdata2.m_qos.m_liveliness.announcement_period));
                     if(W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;
@@ -616,8 +621,8 @@ bool WLP::updateLocalWriter(RTPSWriter* W, const WriterQos& wqos)
     (void)W;
 
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    logInfo(RTPS_LIVELINESS,W->getGuid().entityId);
-    double wAnnouncementPeriodMilliSec(TimeConv::Time_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
+    logInfo(RTPS_LIVELINESS, W->getGuid().entityId);
+    double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
     if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
     {
         if(mp_livelinessAutomatic == nullptr)

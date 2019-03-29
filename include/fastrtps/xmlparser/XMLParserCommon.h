@@ -146,7 +146,7 @@ extern const char* DURATION_INFINITY;
 extern const char* DURATION_INFINITE_SEC;
 extern const char* DURATION_INFINITE_NSEC;
 extern const char* SECONDS;
-extern const char* FRACTION;
+extern const char* NANOSECONDS;
 extern const char* SHARED;
 extern const char* EXCLUSIVE;
 

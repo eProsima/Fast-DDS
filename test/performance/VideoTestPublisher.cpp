@@ -91,7 +91,7 @@ VideoTestPublisher::~VideoTestPublisher()
 
 bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
         const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time, 
+        const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time,
         int forced_domain, int videoWidth, int videoHeight, int videoFrameRate)
 {
     large_data = true;
@@ -188,7 +188,7 @@ bool VideoTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid,
     pt << pid << "_PUB2SUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.times.heartbeatPeriod.nanosec = 100000000;
 
     mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
     if (mp_datapub == nullptr)

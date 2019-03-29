@@ -100,7 +100,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(
                 pdata->isAlive = true;
                 pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
                         pdata,
-                        TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
+                        TimeConv::Duration_t2MilliSecondsDouble(pdata->m_leaseDuration));
                 pdata->mp_leaseDurationTimer->restart_timer();
                 this->mp_SPDP->m_participantProxies.push_back(pdata);
                 lock.unlock();

@@ -32,7 +32,7 @@ namespace TimeConv{
 
 /**
 * Convert Time_t to seconds as a double
-*/ 
+*/
 inline double Time_t2SecondsDouble(const Time_t& t)
 {
 	return (double)t.seconds + (double)(t.fraction/pow(2.0,32));
@@ -40,15 +40,23 @@ inline double Time_t2SecondsDouble(const Time_t& t)
 
 /**
 * Convert Time_t to seconds as an int64
-*/ 
+*/
 inline int64_t Time_t2MicroSecondsInt64(const Time_t& t)
 {
 	return (int64_t)(t.fraction/pow(2.0,32)*pow(10.0,6))+t.seconds*(int64_t)pow(10.0,6);
 }
 
 /**
+* Convert Duration_t to seconds as an int64
+*/
+inline int64_t Duration_t2MicroSecondsInt64(const Duration_t& t)
+{
+	return (int64_t)(t.nanosec/1000.0)+t.seconds*(int64_t)pow(10.0,6);
+}
+
+/**
 * Convert Time_t to microseconds as a double
-*/ 
+*/
 inline double Time_t2MicroSecondsDouble(const Time_t& t)
 {
 	return ((double)t.fraction/pow(2.0,32)*pow(10.0,6))+(double)t.seconds*pow(10.0,6);
@@ -56,7 +64,7 @@ inline double Time_t2MicroSecondsDouble(const Time_t& t)
 
 /**
 * Convert Time_t to milliseconds as an int64
-*/ 
+*/
 inline int64_t Time_t2MilliSecondsInt64(const Time_t& t)
 {
 	return (int64_t)(t.fraction/pow(2.0,32)*pow(10.0,3))+t.seconds*(int64_t)pow(10.0,3);
@@ -64,15 +72,23 @@ inline int64_t Time_t2MilliSecondsInt64(const Time_t& t)
 
 /**
 * Convert Time_t to milliseconds as a double
-*/ 
+*/
 inline double Time_t2MilliSecondsDouble(const Time_t& t)
 {
 	return ((double)t.fraction/pow(2.0,32)*pow(10.0,3))+(double)t.seconds*pow(10.0,3);
 }
 
 /**
+* Convert Duration_t to milliseconds as a double
+*/
+inline double Duration_t2MilliSecondsDouble(const Duration_t& t)
+{
+	return ((double)t.nanosec/1000000.0)+(double)t.seconds*pow(10.0,3);
+}
+
+/**
 * Convert milliseconds to Time_t
-*/ 
+*/
 inline Time_t MilliSeconds2Time_t(double millisec)
 {
 	Time_t t;

@@ -318,8 +318,279 @@ const Time_t c_TimeInfinite(0x7fffffff,0xffffffff);
 const Time_t c_TimeZero(0,0);
 const Time_t c_TimeInvalid(-1,0xffffffff);
 
-typedef Time_t Duration_t;
+//typedef Time_t Duration_t;
+struct Duration_t
+{
+    int32_t seconds;
+    uint32_t nanosec;
 
+    //! Default constructor. Sets values to zero.
+    Duration_t()
+    {
+        seconds = 0;
+        nanosec = 0;
+    }
+
+    //! Constructor from a Time_t
+    Duration_t(const Time_t& time)
+    {
+        seconds = time.seconds;
+        if (time.fraction == c_TimeInfinite.fraction)
+        {
+            nanosec = time.fraction;
+        }
+        else
+        {
+            nanosec = time.nanosec();
+        }
+    }
+
+    /**
+    * @param sec Seconds
+    * @param nsec Nanoseconds
+    */
+    Duration_t(
+            int32_t sec,
+            uint32_t nsec)
+    {
+        seconds = sec;
+        nanosec = nsec;
+    }
+
+    Duration_t(long double sec)
+    {
+        seconds = static_cast<int32_t>(sec);
+        nanosec = static_cast<uint32_t>((sec - seconds) * 1000000000ULL);
+    }
+
+    Time_t to_time() const
+    {
+        Time_t time;
+        time.seconds = seconds;
+        if (time.fraction == c_TimeInfinite.fraction)
+        {
+            time.fraction = nanosec;
+        }
+        else
+        {
+            time.nanosec(nanosec);
+        }
+        return time;
+    }
+};
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Comparison assignment
+ * @param t1 First Duration_t to compare
+ * @param t2 Second Duration_t to compare
+ * @return True if equal
+ */
+static inline bool operator==(
+        const Duration_t& t1,
+        const Duration_t& t2)
+{
+    if(t1.seconds != t2.seconds)
+    {
+        return false;
+    }
+    if(t1.nanosec != t2.nanosec)
+    {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Comparison assignment
+ * @param t1 First Duration_t to compare
+ * @param t2 Second Duration_t to compare
+ * @return True if not equal
+ */
+static inline bool operator!=(
+        const Duration_t& t1,
+        const Duration_t& t2)
+{
+    if (t1.seconds != t2.seconds)
+    {
+        return true;
+    }
+    if (t1.nanosec != t2.nanosec)
+    {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Checks if a Duration_t is less than other.
+ * @param t1 First Duration_t to compare
+ * @param t2 Second Duration_t to compare
+ * @return True if the first Duration_t is less than the second
+ */
+static inline bool operator<(
+        const Duration_t& t1,
+        const Duration_t& t2)
+{
+    if (t1.seconds < t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds > t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec < t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Duration_t is greather than other.
+ * @param t1 First Duration_t to compare
+ * @param t2 Second Duration_t to compare
+ * @return True if the first Duration_t is greather than the second
+ */
+static inline bool operator>(
+        const Duration_t& t1,
+        const Duration_t& t2)
+{
+    if (t1.seconds > t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds < t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec > t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Duration_t is less or equal than other.
+ * @param t1 First Duration_t to compare
+ * @param t2 Second Duration_t to compare
+ * @return True if the first Duration_t is less or equal than the second
+ */
+static inline bool operator<=(
+        const Duration_t& t1,
+        const Duration_t& t2)
+{
+    if (t1.seconds < t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds > t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec <= t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Duration_t is greather or equal than other.
+ * @param t1 First Duration_t to compare
+ * @param t2 Second Duration_t to compare
+ * @return True if the first Duration_t is greather or equal than the second
+ */
+static inline bool operator>=(
+        const Duration_t& t1,
+        const Duration_t& t2)
+{
+    if (t1.seconds > t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds < t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec >= t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+inline std::ostream& operator<<(
+        std::ostream& output,
+        const Duration_t& t)
+{
+    return output << t.seconds << "." << t.nanosec;
+}
+
+/**
+ * Adds two Duration_t.
+ * @param ta First Duration_t to add
+ * @param tb Second Duration_t to add
+ * @return A new Duration_t with the result.
+ */
+static inline Duration_t operator+(
+        const Duration_t &ta,
+        const Duration_t &tb)
+{
+    Duration_t result(ta.seconds + tb.seconds, ta.nanosec + tb.nanosec);
+    if (result.nanosec < ta.nanosec) // Overflow is detected by any of them
+    {
+        ++result.seconds;
+    }
+    return result;
+}
+
+/**
+ * Substracts two Duration_t.
+ * @param ta First Duration_t to substract
+ * @param tb Second Duration_t to substract
+ * @return A new Duration_t with the result.
+ */
+static inline Duration_t operator-(
+        const Duration_t &ta,
+        const Duration_t &tb)
+{
+    Duration_t result(ta.seconds - tb.seconds, ta.nanosec - tb.nanosec);
+    if (result.nanosec > ta.nanosec) // Overflow is detected by ta
+    {
+        --result.seconds;
+    }
+    return result;
+}
+
+#endif
 
 }
 }
