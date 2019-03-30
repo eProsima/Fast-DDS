@@ -680,6 +680,11 @@ void TCPTransportInterface::perform_listen_operation(
         // RTCP Control Message
         rtcp_message_manager_->sendConnectionRequest(channel);
     }
+    else
+    {
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        unbound_channel_resources_.push_back(channel);
+    }
 
     while (channel)
     {
@@ -1036,8 +1041,6 @@ void TCPTransportInterface::SocketAccepted(
         channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
             channel, rtcp_manager_weak_ptr), false);
 
-        unbound_channel_resources_.push_back(channel);
-
         logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor->locator())
             << ", remote: " << channel->remote_endpoint().address()
             << ":" << channel->remote_endpoint().port() << ")");
@@ -1069,8 +1072,6 @@ void TCPTransportInterface::SecureSocketAccepted(
         std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
         secure_channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
             secure_channel, rtcp_manager_weak_ptr));
-
-        unbound_channel_resources_.push_back(secure_channel);
 
         logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor->locator())
             << ", remote: " << secure_channel->remote_endpoint().address()

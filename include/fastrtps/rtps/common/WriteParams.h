@@ -31,14 +31,14 @@ namespace eprosima
              * @brief This class contains additional information of a CacheChange.
              * @ingroup COMMON_MODULE
              */
-            class RTPS_DllAPI WriteParams
+            class WriteParams
             {
                 public:
 
                     /*!
                      * @brief Default constructor.
                      */
-                    WriteParams()
+                    RTPS_DllAPI WriteParams()
                         : max_blocking_time_point_(std::chrono::steady_clock::now() + std::chrono::hours(24))
                     {
                     }
@@ -46,7 +46,7 @@ namespace eprosima
                     /*!
                      * @brief Copy constructor.
                      */
-                    WriteParams(const WriteParams &wparam)
+                    RTPS_DllAPI WriteParams(const WriteParams &wparam)
                         : sample_identity_(wparam.sample_identity_)
                         , related_sample_identity_(wparam.related_sample_identity_)
                         , max_blocking_time_point_(wparam.max_blocking_time_point_)
@@ -56,7 +56,7 @@ namespace eprosima
                     /*!
                      * @brief Move constructor.
                      */
-                    WriteParams(WriteParams &&wparam)
+                    RTPS_DllAPI WriteParams(WriteParams &&wparam)
                         : sample_identity_(std::move(wparam.sample_identity_))
                         , related_sample_identity_(std::move(wparam.related_sample_identity_))
                         , max_blocking_time_point_(std::move(wparam.max_blocking_time_point_))
@@ -66,7 +66,7 @@ namespace eprosima
                     /*!
                      * @brief Assignment operator
                      */
-                    WriteParams& operator=(const WriteParams &wparam)
+                    RTPS_DllAPI WriteParams& operator=(const WriteParams &wparam)
                     {
                         sample_identity_ = wparam.sample_identity_;
                         related_sample_identity_ = wparam.related_sample_identity_;
@@ -77,7 +77,7 @@ namespace eprosima
                     /*!
                      * @brief Assignment operator
                      */
-                    WriteParams& operator=(WriteParams &&wparam)
+                    RTPS_DllAPI WriteParams& operator=(WriteParams &&wparam)
                     {
                         sample_identity_ = std::move(wparam.sample_identity_);
                         related_sample_identity_ = std::move(wparam.related_sample_identity_);
@@ -85,46 +85,46 @@ namespace eprosima
                         return *this;
                     }
 
-                    WriteParams& sample_identity(const SampleIdentity &sample_id)
+                    RTPS_DllAPI WriteParams& sample_identity(const SampleIdentity &sample_id)
                     {
                         sample_identity_ = sample_id;
                         return *this;
                     }
 
-                    WriteParams& sample_identity(SampleIdentity &&sample_id)
+                    RTPS_DllAPI WriteParams& sample_identity(SampleIdentity &&sample_id)
                     {
                         sample_identity_ = std::move(sample_id);
                         return *this;
                     }
 
-                    const SampleIdentity& sample_identity() const
+                    RTPS_DllAPI const SampleIdentity& sample_identity() const
                     {
                         return sample_identity_;
                     }
 
-                    SampleIdentity& sample_identity()
+                    RTPS_DllAPI SampleIdentity& sample_identity()
                     {
                         return sample_identity_;
                     }
 
-                    WriteParams& related_sample_identity(const SampleIdentity &sample_id)
+                    RTPS_DllAPI WriteParams& related_sample_identity(const SampleIdentity &sample_id)
                     {
                         related_sample_identity_ = sample_id;
                         return *this;
                     }
 
-                    WriteParams& related_sample_identity(SampleIdentity &&sample_id)
+                    RTPS_DllAPI WriteParams& related_sample_identity(SampleIdentity &&sample_id)
                     {
                         related_sample_identity_ = std::move(sample_id);
                         return *this;
                     }
 
-                    const SampleIdentity& related_sample_identity() const
+                    RTPS_DllAPI const SampleIdentity& related_sample_identity() const
                     {
                         return related_sample_identity_;
                     }
 
-                    SampleIdentity& related_sample_identity()
+                    RTPS_DllAPI SampleIdentity& related_sample_identity()
                     {
                         return related_sample_identity_;
                     }
