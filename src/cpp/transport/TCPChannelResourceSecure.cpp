@@ -188,7 +188,7 @@ size_t TCPChannelResourceSecure::send(
         size_t header_size,
         const octet* data,
         size_t size,
-        asio::error_code&,
+        asio::error_code& ec,
         bool blocking)
 {
     size_t bytes_sent = 0;
@@ -207,40 +207,29 @@ size_t TCPChannelResourceSecure::send(
         if(blocking)
         {
             write_cv_.wait(write_lock, [&]() { return !write_in_process_; });
-        }
-        write_in_process_ = true;
-        const auto socket = secure_socket_;
+            write_in_process_ = true;
 
-        asio::async_write(*secure_socket_, buffers,
-                [&, socket](const std::error_code& error, const size_t&)
-                {
-                    std::unique_lock<std::mutex> lock(write_mutex_);
-
-                    if (error)
+            asio::async_write(*secure_socket_, buffers,
+                    [&](const std::error_code& error, const size_t& bytes_transferred)
                     {
-                        try
+                        std::unique_lock<std::mutex> lock(write_mutex_);
+                        ec = error;
+
+                        if (!error)
                         {
-                            asio::error_code ec;
-                            socket->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-                            socket->lowest_layer().cancel();
-
-          // This method was added on the version 1.12.0
-#if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-                            socket->lowest_layer().release();
-#endif
+                            bytes_sent = bytes_transferred;
                         }
-                        catch (std::exception&)
-                        {
-                            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-                        }
-                        socket->lowest_layer().close();
-                    }
 
-                    write_in_process_ = false;
-                    write_cv_.notify_all();
-                });
+                        write_in_process_ = false;
+                        write_cv_.notify_all();
+                    });
 
-        bytes_sent = header_size + size;
+            write_cv_.wait(write_lock, [&]() { return 0 < bytes_sent || ec; });
+        }
+        else
+        {
+            bytes_sent = secure_socket_->write_some(buffers, ec);
+        }
     }
 
     return bytes_sent;

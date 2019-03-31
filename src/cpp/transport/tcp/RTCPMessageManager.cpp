@@ -83,10 +83,12 @@ size_t RTCPMessageManager::sendMessage(
 
     asio::error_code ec;
     size_t send = channel->send(nullptr, 0, msg.buffer, msg.length, ec, blocking);
-    if (send != msg.length)
+    if (send != msg.length || ec)
     {
         logInfo(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes: " << ec.message());
+        send = 0;
     }
+
     //logInfo(RTCP, "Sent " << send << " bytes");
     return send;
 }
