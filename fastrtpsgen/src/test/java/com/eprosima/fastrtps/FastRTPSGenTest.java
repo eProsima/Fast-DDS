@@ -56,7 +56,7 @@ public class FastRTPSGenTest
         }
 
         //Configure idl tests
-        TestManager tests = new TestManager(TestLevel.RUN, "share/fastrtps/fastrtpsgen", INPUT_PATH, OUTPUT_PATH + "/idls", "x64Linux2.6gcc");
+        TestManager tests = new TestManager(TestLevel.RUN, "share/fastrtps/fastrtpsgen", INPUT_PATH, OUTPUT_PATH + "/idls", "CMake");
         tests.addCMakeArguments("-DCMAKE_PREFIX_PATH=" + System.getProperty("user.dir") + "/" + OUTPUT_PATH + "/Fast-RTPS/build/install");
         //tests.addCMakeArguments("-DCMAKE_PREFIX_PATH=" + "/home/lgasco/git/eProsima/Fast-RTPS/master/build/install");
         tests.removeTests(IDL.ARRAY_NESTED, IDL.SEQUENCE_NESTED);

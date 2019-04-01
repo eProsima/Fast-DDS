@@ -327,7 +327,11 @@ public class fastrtpsgen {
                 }
 
                 if (project != null) {
-                    solution.addProject(project);
+                    System.out.println("Adding project: " + project.getFile());
+                    if (!solution.existsProject(project.getFile()))
+                    {
+                        solution.addProject(project);
+                    }
                 } else {
                     returnedValue = false;
                 }
@@ -337,7 +341,8 @@ public class fastrtpsgen {
             for (String included : includedIDL)
             {
                 Project inner = process(included);
-                if (inner != null)
+                System.out.println("Adding project: " + inner.getFile());
+                if (inner != null && !solution.existsProject(inner.getFile()))
                 {
                     solution.addProject(inner);
                 }
