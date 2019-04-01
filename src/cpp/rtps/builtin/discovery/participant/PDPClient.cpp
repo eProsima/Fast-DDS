@@ -20,6 +20,9 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDPClient.h>
+
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
@@ -137,7 +140,7 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
        Server builtin Writers are actually TRANSIENT. Currently this mistake is not an issue but must be kept in mind if further development
        justifies the creation of an EDPClient class.
     */
-    mp_EDP = (EDP*)(new EDPSimple(this,mp_RTPSParticipant));
+    mp_EDP = (EDP*)(new EDPClient(this,mp_RTPSParticipant));
     if(!mp_EDP->initEDP(m_discovery))
     {
         logError(RTPS_PDP,"Endpoint discovery configuration failed");

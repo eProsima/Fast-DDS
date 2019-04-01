@@ -138,6 +138,7 @@ set(${PROJECT_NAME}_source_files
 	rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
+	rtps/builtin/discovery/endpoint/EDPClient.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
     rtps/builtin/discovery/endpoint/EDPStatic.cpp
     rtps/builtin/liveliness/WLP.cpp

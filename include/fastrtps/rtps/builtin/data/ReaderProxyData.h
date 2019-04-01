@@ -42,7 +42,7 @@ struct CDRMessage_t;
  * implementing the discovery.
  * *@ingroup BUILTIN_MODULE
  */
-class ReaderProxyData
+class ReaderProxyData 
 {
     public:
 
@@ -288,7 +288,7 @@ class ReaderProxyData
          * Convert the data to a parameter list to send this information as a RTPS message.
          * @return Generated parameter list
          */
-        ParameterList_t toParameterList();
+        RTPS_DllAPI ParameterList_t toParameterList(); // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
         /**
          *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
