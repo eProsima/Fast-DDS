@@ -33,6 +33,7 @@ namespace rtps {
 
 class ReaderProxy;
 class NackResponseDelay;
+class TimedCallback;
 
 /**
  * Class StatefulWriter, specialization of RTPSWriter that maintains information of each matched Reader.
@@ -195,6 +196,12 @@ public:
     }
 
     /**
+     * @brief Returns true if disable positive ACKs QoS is enabled
+     * @return True if positive acks are disabled, false otherwise
+     */
+    inline bool get_disable_positive_ACKs() const { return disable_positive_ACKs_; };
+
+    /**
      * Update the WriterTimes attributes of all associated ReaderProxy.
      * @param times WriterTimes parameter.
      */
@@ -210,7 +217,7 @@ public:
      * @brief Sends a heartbeat to a remote reader.
      * @remarks This function is non thread-safe.
      */
-    void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool final = false);
+    void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy);
 
     void perform_nack_response();
 
@@ -270,16 +277,24 @@ private:
             const std::vector<GUID_t>& remote_readers,
             const LocatorList_t& locators,
             RTPSMessageGroup& message_group,
-            bool final);
+            bool final = false);
 
     void check_acked_status();
+
+    /**
+     * @brief A method called when a sample expires
+     * @details Only used if disable positive ACKs QoS is enabled
+     */
+    void lifespan_expired();
 
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
     bool disable_positive_ACKs_;
-    //! Keep duration for disable positive ACKs QoS, in milliseconds
-    double keep_duration_ms_;
+    //! Keep duration for disable positive ACKs QoS, in microseconds
+    std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
+    //! A timed event to remove expired samples (used only if disable positive ACKs QoS is enabled)
+    TimedCallback* lifespan_timer_;
 
     const uint32_t sendBufferSize_;
 

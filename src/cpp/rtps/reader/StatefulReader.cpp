@@ -395,10 +395,20 @@ bool StatefulReader::processHeartbeatMsg(
             pWP->missing_changes_update(lastSN);
             pWP->m_heartbeatFinalFlag = finalFlag;
 
-            //Analyze wheter a acknack message is needed:
+            //Analyze wheter a acknack message is needed
             if(!finalFlag)
             {
-                pWP->mp_heartbeatResponse->restart_timer();
+                if (disable_positive_ACKs_)
+                {
+                    if(pWP->areThereMissing())
+                    {
+                        pWP->mp_heartbeatResponse->restart_timer();
+                    }
+                }
+                else
+                {
+                    pWP->mp_heartbeatResponse->restart_timer();
+                }
             }
             else if(finalFlag && !livelinessFlag)
             {

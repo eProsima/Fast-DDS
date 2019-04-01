@@ -144,7 +144,7 @@ public:
      * StatelessReader allways return true;
      * @return true
      */
-    bool isInCleanState() { return true; }
+    bool isInCleanState() override { return true; }
 
     inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
 

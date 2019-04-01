@@ -176,7 +176,7 @@ class StatefulReader:public RTPSReader
          * its WriterProxies are up to date.
          * @return There is a clean state with all Writers.
          */
-        bool isInCleanState();
+        bool isInCleanState() override;
 
         //! Acknack Count
         uint32_t m_acknackCount;
