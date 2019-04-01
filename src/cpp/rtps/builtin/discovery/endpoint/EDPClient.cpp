@@ -86,7 +86,7 @@ bool EDPClient::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
             WriteParams wp;
             SampleIdentity local;
             local.writer_guid(writer->first->getGuid());
-            local.sequence_number(writer->second->next_sequence_number() - 1);
+            local.sequence_number(writer->second->next_sequence_number());
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
@@ -153,7 +153,7 @@ bool EDPClient::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
             WriteParams wp;
             SampleIdentity local;
             local.writer_guid(writer->first->getGuid());
-            local.sequence_number(writer->second->next_sequence_number() - 1);
+            local.sequence_number(writer->second->next_sequence_number());
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
@@ -204,7 +204,7 @@ bool EDPClient::removeLocalWriter(RTPSWriter* W)
             WriteParams wp;
             SampleIdentity local;
             local.writer_guid(writer->first->getGuid());
-            local.sequence_number(writer->second->next_sequence_number() - 1);
+            local.sequence_number(writer->second->next_sequence_number());
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
@@ -251,7 +251,7 @@ bool EDPClient::removeLocalReader(RTPSReader* R)
             WriteParams wp;
             SampleIdentity local;
             local.writer_guid(writer->first->getGuid());
-            local.sequence_number(writer->second->next_sequence_number() - 1);
+            local.sequence_number(writer->second->next_sequence_number());
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 

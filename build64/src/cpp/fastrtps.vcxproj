@@ -357,6 +357,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\data\ReaderProxyData.h" />
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\data\WriterProxyData.h" />
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\endpoint\EDP.h" />
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\endpoint\EDPClient.h" />
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\endpoint\EDPSimple.h" />
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\endpoint\EDPStatic.h" />
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\participant\PDP.h" />
@@ -634,6 +635,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\participant\timedevent\DSClientEvent.cpp" />
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDP.cpp" />
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimple.cpp" />
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPClient.cpp" />
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimpleListeners.cpp" />
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPStatic.cpp" />
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\liveliness\WLP.cpp" />

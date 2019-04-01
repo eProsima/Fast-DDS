@@ -325,6 +325,9 @@
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\src\cpp\rtps\builtin\discovery\endpoint\EDPSimpleListeners.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -532,6 +535,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\endpoint\EDP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\endpoint\EDPClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\MiguelBarro\Documents\Fast-RTPS\include\fastrtps\rtps\builtin\discovery\endpoint\EDPSimple.h">
