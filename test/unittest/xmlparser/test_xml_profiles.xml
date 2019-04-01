@@ -75,6 +75,7 @@
                 </initialPeersList>
                 <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
                 <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
+                <mutation_tries>55</mutation_tries>
             </builtin>
             <port>
                 <portBase>12</portBase>
