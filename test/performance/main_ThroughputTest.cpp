@@ -141,24 +141,23 @@ const option::Descriptor usage[] = {
     { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
     { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tSeed to calculate domain and topic, to isolate test." },
+    { HOSTNAME,0,"","hostname",             Arg::None,      "\t--hostname \tAppend hostname to the topic." },
+    { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
+    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
+    { FORCED_DOMAIN, 0, "", "domain",       Arg::Numeric,   "\t--domain \tSet the domain to connect." },
+#if HAVE_SECURITY
+    { USE_SECURITY, 0, "", "security",      Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    { CERTS_PATH, 0, "", "certs",           Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
+#endif
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
     { TIME, 0,"t","time",                   Arg::Numeric,   "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
     { RECOVERY_TIME, 0,"","recovery_time",  Arg::Numeric,   "  \t--recovery_time=<num>  \tHow long to sleep after writing a demand in milliseconds." },
     { DEMAND, 0,"d","demand",               Arg::Numeric,   "  -d <num>, \t--demand=<num>  \tNumber of sample sent in block." },
     { MSG_SIZE, 0,"s","msg_size",           Arg::Numeric,   "  -s <num>, \t--msg_size=<num>  \tSize of the message." },
-    { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg>   \tFile to read the payload demands from.\t" },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
-    { HOSTNAME,0,"","hostname",             Arg::None,      "" },
-    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "" },
+    { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg> \tFile to read the payload demands from." },
+    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "\t--export_csv \tFlag to export a CVS file." },
     { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
-    { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg>   \tFile to read the payload demands from.\t" },
-#if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",      Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",           Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
-#endif
-    { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
-    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
-    { FORCED_DOMAIN, 0, "", "domain",       Arg::Numeric,   "\t--domain \tSet the domain to connect." },
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
     { 0, 0, 0, 0, 0, 0 }
 };
 

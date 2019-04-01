@@ -117,10 +117,10 @@ inline bool operator==(const ThroughputType& lt1,const ThroughputType& lt2)
 class ThroughputDataType: public eprosima::fastrtps::TopicDataType
 {
     public:
-        ThroughputDataType()
+        ThroughputDataType(uint32_t size)
         {
             setName("ThroughputType");
-            m_typeSize = 9004;
+            m_typeSize = size + 4 + 4;
             m_isGetKeyDefined = false;
         };
         ~ThroughputDataType(){};
