@@ -48,7 +48,9 @@ public class StructTypeCode extends com.eprosima.idl.parser.typecode.StructTypeC
                     String value = key.getValue("value");
 
                     if(value != null && value.equals("true"))
+                    {
                         returnedValue = true;
+                    }
                 }
             }
         }

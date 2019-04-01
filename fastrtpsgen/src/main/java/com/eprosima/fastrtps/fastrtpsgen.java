@@ -105,9 +105,6 @@ public class fastrtpsgen {
     // Generate TypeObject files?
     private boolean m_type_object_files = false;
 
-    // Export PubSub symbols
-    private boolean m_export_pubsub_symbols = false;
-
     // Testing
     private boolean m_test = false;
 
@@ -220,10 +217,6 @@ public class fastrtpsgen {
             else if(arg.equals("-typeobject"))
             {
                 m_type_object_files = true;
-            }
-            else if(arg.equals("-exportsymbols"))
-            {
-                m_export_pubsub_symbols = true;
             }
             else if(arg.equals("-test"))
             {
@@ -447,7 +440,6 @@ public class fastrtpsgen {
         System.out.println("\t\t-t <temp dir>: sets a specific directory as a temporary directory.");
         System.out.print("\t\t-typeobject: generates TypeObject files to automatically register the types as");
         System.out.println(" dynamic.");
-        System.out.println("\t\t-exportsymbols: exports PubSub symbols.");
         System.out.println("\t\t-test: executes FastRTPSGen tests.");
         System.out.println("\tand the supported input files are:");
         System.out.println("\t* IDL files.");
@@ -512,7 +504,7 @@ public class fastrtpsgen {
         }
 
         if (idlParseFileName != null) {
-            Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct, m_type_object_files, m_export_pubsub_symbols);
+            Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct, m_type_object_files);
 
             if(fusion_) ctx.setActivateFusion(true);
 

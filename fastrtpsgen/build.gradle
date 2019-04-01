@@ -23,8 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile files('../thirdparty/idl/build/libs/TestIDLParser-1.0.0.jar')
-    //compile files('../thirdparty/idl/build/libs/idlparser-1.0.0.jar')
+    compile files('../thirdparty/idl/build/libs/idlparser-1.0.0.jar')
     testCompile group: 'junit', name: 'junit', version: '4.+'
     compile 'junit:junit:4.+'
 }

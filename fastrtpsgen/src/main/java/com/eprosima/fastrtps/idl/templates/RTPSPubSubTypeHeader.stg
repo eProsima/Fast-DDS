@@ -81,16 +81,16 @@ class $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType : pub
 public:
     typedef $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$ type;
 
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
+    eProsima_user_DllExport $if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
 
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+    eProsima_user_DllExport virtual ~$if(parent.IsInterface)$$parent.name$_$endif$$struct.name$PubSubType();
+    eProsima_user_DllExport virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    eProsima_user_DllExport virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+    eProsima_user_DllExport virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
         bool force_md5 = false) override;
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual void* createData() override;
-    $if(ctx.exportPubSubSymbols)$eProsima_user_DllExport $endif$virtual void deleteData(void * data) override;
+    eProsima_user_DllExport virtual void* createData() override;
+    eProsima_user_DllExport virtual void deleteData(void * data) override;
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 };
