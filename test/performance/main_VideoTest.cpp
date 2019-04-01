@@ -143,26 +143,27 @@ const option::Descriptor usage[] = {
     { HELP,    0,"h", "help",                   Arg::None,      "  -h \t--help  \tProduce help message." },
     { RELIABILITY,0,"r","reliability",          Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
     { SAMPLES,0,"s","samples",                  Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
-    { SEED,0,"","seed",                         Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
-    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nPublisher options:"},
-    { SUBSCRIBERS,0,"n","subscribers",          Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
-    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nSubscriber options:"},
-    { HOSTNAME,0,"","hostname",                 Arg::None,      "" },
-    { EXPORT_CSV,0,"","export_csv",             Arg::None,      "" },
-    { EXPORT_PREFIX,0,"","export_prefix",       Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
-#if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",          Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",               Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
-#endif
+    { SEED,0,"","seed",                         Arg::Numeric,   "  \t--seed=<num>  \tSeed to calculate domain and topic, to isolate test." },
+    { HOSTNAME,0,"","hostname",                 Arg::None,      "\t--hostname \tAppend hostname to the topic." },
     { LARGE_DATA, 0, "l", "large",              Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",                   Arg::String,    "\t--xml \tXML Configuration file." },
-    { TEST_TIME, 0, "", "testtime",             Arg::Numeric,   "\t--testtime \tTest duration time in seconds." },
-    { DROP_RATE, 0, "", "droprate",             Arg::Numeric,   "\t--droprate \tSending drop percentage ( 0 - 100 )." },
-    { SEND_SLEEP_TIME, 0, "", "sleeptime",      Arg::Numeric,   "\t--sleeptime \tMaximum sleep time before shipments (milliseconds)." },
     { FORCED_DOMAIN, 0, "", "domain",           Arg::Numeric,   "\t--domain \tRTPS Domain." },
     { WIDTH, 0, "", "width",                    Arg::Numeric,   "\t--width \tWidth of the video." },
     { HEIGHT, 0, "", "height",                  Arg::Numeric,   "\t--height \tHeight of the video." },
     { FRAMERATE, 0, "", "rate",                 Arg::Numeric,   "\t--rate \tFrame rate of the video." },
+#if HAVE_SECURITY
+    { USE_SECURITY, 0, "", "security",          Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    { CERTS_PATH, 0, "", "certs",               Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
+#endif
+    { UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nPublisher options:"},
+    { SUBSCRIBERS,0,"n","subscribers",          Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tNumber of subscribers." },
+    { TEST_TIME, 0, "", "testtime",             Arg::Numeric,   "\t--testtime \tTest duration time in seconds." },
+    { DROP_RATE, 0, "", "droprate",             Arg::Numeric,   "\t--droprate \tSending drop percentage ( 0 - 100 )." },
+    { SEND_SLEEP_TIME, 0, "", "sleeptime",      Arg::Numeric,   "\t--sleeptime \tMaximum sleep time before shipments (milliseconds)." },
+    { EXPORT_CSV,0,"","export_csv",             Arg::None,      "\t--export_csv \tFlag to export a CSV file." },
+    { EXPORT_PREFIX,0,"","export_prefix",       Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
+    //{ UNKNOWN_OPT, 0,"", "",                    Arg::None,      "\nSubscriber options:"},
+
 
     { 0, 0, 0, 0, 0, 0 }
 };

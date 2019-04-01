@@ -183,14 +183,18 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     }
 
     //REGISTER THE TYPES
+    /*
     if (dynamic_data)
     {
         Domain::registerType(mp_par, &m_DynType);
     }
     else
     {
-        Domain::registerType(mp_par, (TopicDataType*)&latency_t);
+        latency_t = new ThroughputDataType(9004); // Just for creation, removed later.
+        Domain::registerType(mp_par, (TopicDataType*)latency_t);
     }
+    */
+    latency_t = nullptr;
     Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
     // Create Sending Publisher
@@ -223,19 +227,24 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_par, profile_name, (PublisherListener*)&this->m_DataPubListener);
+        mp_datapub = Domain::createPublisher(mp_par, profile_name, nullptr);
+        pubAttr = mp_datapub->getAttributes();
+        Domain::removePublisher(mp_datapub);
     }
     else
     {
-        mp_datapub = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_DataPubListener);
+        //mp_datapub = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_DataPubListener);
+        pubAttr = Wparam;
     }
-
+    /*
     if (mp_datapub == nullptr)
     {
         std::cout << "ERROR creating publisher" << std::endl;
         ready = false;
         return;
     }
+    */
+    mp_datapub = nullptr;
 
     // COMMAND SUBSCRIBER
     SubscriberAttributes Rparam;
@@ -282,18 +291,24 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << " us"  << std::endl;
 
-    if (mp_datapub == nullptr || mp_commandsub == nullptr || mp_commandpub == nullptr)
+    if (/*mp_datapub == nullptr || */mp_commandsub == nullptr || mp_commandpub == nullptr)
     {
         ready = false;
     }
 
+    /*
     if (dynamic_data)
     {
         DynamicTypeBuilderFactory::DeleteInstance();
-        pubAttr = mp_datapub->getAttributes();
-        Domain::removePublisher(mp_datapub);
-        Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
     }
+    else
+    {
+        delete latency_t;
+    }
+    //pubAttr = mp_datapub->getAttributes();
+    //Domain::removePublisher(mp_datapub);
+    Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
+    */
 }
 
 ThroughputPublisher::~ThroughputPublisher()
@@ -400,7 +415,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
     }
 }
 
-bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
+bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t msg_size)
 {
     if (dynamic_data)
     {
@@ -411,7 +426,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
         struct_type_builder->AddMember(1, "data",
             DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), size
+                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), msg_size
             ));
         struct_type_builder->SetName("ThroughputType");
 
@@ -420,12 +435,12 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         m_DynType.SetDynamicType(m_pDynType);
 
         Domain::registerType(mp_par, &m_DynType);
-        mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
+
         m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
 
         MemberId id;
         DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
-        for (uint32_t i = 0; i < size; ++i)
+        for (uint32_t i = 0; i < msg_size; ++i)
         {
             my_data->InsertSequenceData(id);
             my_data->SetByteValue(0, id);
@@ -434,8 +449,11 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     }
     else
     {
-        latency = new ThroughputType((uint16_t)size);
+        latency_t = new ThroughputDataType(msg_size);
+        Domain::registerType(mp_par, latency_t);
+        latency = new ThroughputType((uint16_t)msg_size);
     }
+    mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
 
     t_end_ = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::micro> timewait_us(0);
@@ -492,13 +510,19 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     {
         DynamicTypeBuilderFactory::DeleteInstance();
         DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
-        pubAttr = mp_datapub->getAttributes();
-        Domain::removePublisher(mp_datapub);
-        Domain::unregisterType(mp_par, "ThroughputType");
     }
     else
     {
+        //delete(latency_t);
         delete(latency);
+    }
+    pubAttr = mp_datapub->getAttributes();
+    Domain::removePublisher(mp_datapub);
+    mp_datapub = nullptr;
+    Domain::unregisterType(mp_par, "ThroughputType");
+    if (!dynamic_data)
+    {
+        delete latency_t;
     }
 
     mp_commandsub->waitForUnreadMessage();
@@ -510,7 +534,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
             //cout << "Received results from subscriber"<<endl;
             TroughputResults result;
             result.demand = demand;
-            result.payload_size = size + 4 + 4;
+            result.payload_size = msg_size + 4 + 4;
             result.publisher.send_samples = samples;
             result.publisher.totaltime_us = std::chrono::duration<double, std::micro>(t_end_ - t_start_) - timewait_us;
             result.subscriber.recv_samples = command.m_lastrecsample - command.m_lostsamples;
