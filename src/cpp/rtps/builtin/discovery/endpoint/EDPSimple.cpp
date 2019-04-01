@@ -176,8 +176,13 @@ bool EDPSimple::createSEDPEndpoints()
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
 
-        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
-                publications_listener_, c_EntityId_SEDPPubWriter, true);
+        created &=this->mp_RTPSParticipant->createWriter(
+                    &waux,
+                    watt,
+                    publications_writer_.second,
+                    publications_listener_,
+                    c_EntityId_SEDPPubWriter,
+                    true);
 
         if(created)
         {
@@ -203,8 +208,13 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
 
-        created &=this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
-                subscriptions_listener_, c_EntityId_SEDPSubReader, true);
+        created &=this->mp_RTPSParticipant->createReader(
+                    &raux,
+                    ratt,
+                    subscriptions_reader_.second,
+                    subscriptions_listener_,
+                    c_EntityId_SEDPSubReader,
+                    true);
 
         if(created)
         {

@@ -38,8 +38,6 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-
-
 StatefulReader::~StatefulReader()
 {
     logInfo(RTPS_READER,"StatefulReader destructor.";);
@@ -49,8 +47,6 @@ StatefulReader::~StatefulReader()
         delete(*it);
     }
 }
-
-
 
 StatefulReader::StatefulReader(
         RTPSParticipantImpl* pimpl,
@@ -70,7 +66,6 @@ StatefulReader::StatefulReader(
     , disable_positive_ACKs_(att.disable_positive_ACKs)
 {
 }
-
 
 bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {

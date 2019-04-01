@@ -115,15 +115,8 @@ enum ParameterId_t	: uint16_t
     PID_RELATED_SAMPLE_IDENTITY = 0x800f,
     PID_DATA_REPRESENTATION = 0x0073,
     PID_TYPE_CONSISTENCY_ENFORCEMENT = 0x0074,
+    PID_DISABLE_POSITIVE_ACKS = 0x0075,
 };
-
-
-
-
-
-
-
-
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
 //!@ingroup PARAMETER_MODULE
@@ -485,7 +478,7 @@ class ParameterTime_t:public Parameter_t{
 /**
  *
  */
-class ParameterBuiltinEndpointSet_t:public Parameter_t{
+class ParameterBuiltinEndpointSet_t : public Parameter_t{
     public:
 		rtps::BuiltinEndpointSet_t endpointSet;
         ParameterBuiltinEndpointSet_t():endpointSet(0){};
@@ -494,7 +487,12 @@ class ParameterBuiltinEndpointSet_t:public Parameter_t{
          * @param pid Pid of the parameter
          * @param in_length Its associated length
          */
-        ParameterBuiltinEndpointSet_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),endpointSet(0){};
+        ParameterBuiltinEndpointSet_t(
+                ParameterId_t pid,
+                uint16_t in_length)
+            : Parameter_t(pid, in_length)
+            , endpointSet(0)
+        {};
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.

@@ -53,7 +53,8 @@ public:
                (this->m_topicData == b.m_topicData) &&
                (this->m_groupData == b.m_groupData) &&
                (this->m_durabilityService == b.m_durabilityService) &&
-               (this->m_lifespan == b.m_lifespan);
+               (this->m_lifespan == b.m_lifespan) &&
+               (this->m_disablePositiveACKs == b.m_disablePositiveACKs);
     }
 
     //!Durability Qos, implemented in the library.
@@ -90,6 +91,8 @@ public:
     DataRepresentationQosPolicy m_dataRepresentation;
     //!Type consistency enforcement Qos, NOT implemented in the library.
     TypeConsistencyEnforcementQosPolicy m_typeConsistency;
+    //!Disable positive ACKs QoS
+    DisablePositiveACKsQosPolicy m_disablePositiveACKs;
     /**
      * Set Qos from another class
      * @param readerqos Reference from a ReaderQos object.

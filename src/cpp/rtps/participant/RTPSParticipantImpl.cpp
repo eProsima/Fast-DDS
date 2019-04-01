@@ -287,8 +287,13 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
  * MAIN RTPSParticipant IMPL API
  *
  */
-bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut, WriterAttributes& param,WriterHistory* hist,
-    WriterListener* listen, const EntityId_t& entityId,bool isBuiltin)
+bool RTPSParticipantImpl::createWriter(
+        RTPSWriter** WriterOut,
+        WriterAttributes& param,
+        WriterHistory* hist,
+        WriterListener* listen,
+        const EntityId_t& entityId,
+        bool isBuiltin)
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT," of type " << type);
@@ -443,8 +448,14 @@ bool RTPSParticipantImpl::createWriter(RTPSWriter** WriterOut, WriterAttributes&
 }
 
 
-bool RTPSParticipantImpl::createReader(RTPSReader** ReaderOut, ReaderAttributes& param,ReaderHistory* hist,
-    ReaderListener* listen, const EntityId_t& entityId,bool isBuiltin, bool enable)
+bool RTPSParticipantImpl::createReader(
+        RTPSReader** ReaderOut,
+        ReaderAttributes& param,
+        ReaderHistory* hist,
+        ReaderListener* listen,
+        const EntityId_t& entityId,
+        bool isBuiltin,
+        bool enable)
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT," of type " << type);
