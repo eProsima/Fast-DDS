@@ -124,8 +124,7 @@ protected:
         uint16_t logical_port) const;
 
     //! Closes the given p_channel_resource and unbind it from every resource.
-    void close_tcp_socket(
-            std::shared_ptr<TCPChannelResource>& channel);
+    void close_tcp_socket(std::shared_ptr<TCPChannelResource>& channel);
 
     //! Creates a TCP acceptor to wait for incomming connections by the given locator.
     bool create_acceptor_socket(const Locator_t& locator);
@@ -179,8 +178,7 @@ public:
     virtual ~TCPTransportInterface();
 
     //! Stores the binding between the given locator and the given TCP socket. Server side.
-    void bind_socket(
-            std::shared_ptr<TCPChannelResource>&);
+    void bind_socket(std::shared_ptr<TCPChannelResource>&);
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;

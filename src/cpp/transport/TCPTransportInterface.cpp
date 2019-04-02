@@ -14,7 +14,6 @@
 
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
-#include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
 #include "TCPSenderResource.hpp"
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -169,12 +168,12 @@ void TCPTransportInterface::clean()
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     for (auto& unbound_channel_resource : unbound_channel_resources_)
     {
-        unbound_channel_resource->thread(nullptr);
+        unbound_channel_resource->thread(std::thread());
     }
 
     for (auto& channel_resource : channel_resources_)
     {
-        channel_resource.second->thread(nullptr);
+        channel_resource.second->thread(std::thread());
     }
     channel_resources_.clear();
 
@@ -195,7 +194,6 @@ void TCPTransportInterface::bind_socket(
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
     channel_resources_[channel->locator()] = channel;
-    channel->make_thread_joinable();
 }
 
 bool TCPTransportInterface::check_crc(
@@ -687,6 +685,7 @@ void TCPTransportInterface::perform_listen_operation(
             std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
             unbound_channel_resources_.push_back(channel);
             channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBind);
+            channel->make_thread_joinable();
         }
 
         std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
@@ -1051,7 +1050,7 @@ void TCPTransportInterface::SocketAccepted(
 
         channel->set_options(configuration());
         std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-        channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
+        channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
             channel, rtcp_manager_weak_ptr), false);
 
         logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor->locator())
@@ -1083,8 +1082,8 @@ void TCPTransportInterface::SecureSocketAccepted(
 
         secure_channel->set_options(configuration());
         std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-        secure_channel->thread(new std::thread(&TCPTransportInterface::perform_listen_operation, this,
-            secure_channel, rtcp_manager_weak_ptr));
+        secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+            secure_channel, rtcp_manager_weak_ptr), false);
 
         logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(acceptor->locator())
             << ", remote: " << secure_channel->remote_endpoint().address()
@@ -1123,8 +1122,7 @@ void TCPTransportInterface::SocketConnected(
                 channel->set_options(configuration());
 
                 std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-                channel->thread(
-                    new std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
                         channel, rtcp_manager_weak_ptr));
             }
         }

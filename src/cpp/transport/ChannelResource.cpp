@@ -22,7 +22,6 @@ namespace rtps {
 ChannelResource::ChannelResource()
     : message_buffer_()
     , alive_(true)
-    , thread_(nullptr)
     , thread_joinable_(true)
 {
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
@@ -30,12 +29,11 @@ ChannelResource::ChannelResource()
 
 ChannelResource::ChannelResource(ChannelResource&& channelResource)
     : message_buffer_(std::move(channelResource.message_buffer_))
-    , thread_(channelResource.thread_)
+    , thread_(std::move(channelResource.thread_))
     , thread_joinable_(channelResource.thread_joinable_)
 {
     bool b = channelResource.alive_;
     alive_ = b;
-    channelResource.thread_ = nullptr;
     //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
     //message_buffer_ = std::move(channelResource.message_buffer_);
 }
@@ -43,7 +41,6 @@ ChannelResource::ChannelResource(ChannelResource&& channelResource)
 ChannelResource::ChannelResource(uint32_t rec_buffer_size)
     : message_buffer_(rec_buffer_size)
     , alive_(true)
-    , thread_(nullptr)
     , thread_joinable_(true)
 {
     memset(message_buffer_.buffer, 0, rec_buffer_size);
@@ -58,11 +55,16 @@ ChannelResource::~ChannelResource()
 void ChannelResource::clear()
 {
     alive_ = false;
-    if (thread_ != nullptr && thread_joinable_)
+    if(thread_.joinable())
     {
-        thread_->join();
-        delete thread_;
-        thread_ = nullptr;
+        if (thread_joinable_)
+        {
+            thread_.join();
+        }
+        else
+        {
+            thread_.detach();
+        }
     }
 }
 

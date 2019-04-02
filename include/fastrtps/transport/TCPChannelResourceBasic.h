@@ -50,7 +50,7 @@ public:
 
     uint32_t read(
         octet* buffer,
-        std::size_t size,
+        const std::size_t size,
         asio::error_code& ec) override;
 
     size_t send(
