@@ -67,7 +67,7 @@ TEST_F(DynamicTypes_4_2_Tests, Inheritance_And_Default_Value)
 TEST_F(DynamicTypes_4_2_Tests, Bitmask)
 {
     using namespace bitmodule;
-    MyBitMask bitmask;
+    MyBitMask bitmask(static_cast<MyBitMask>(0));
 
     ASSERT_TRUE(bitmask == static_cast<MyBitMask>(0));
     bitmask = MyBitMask::flag0;
