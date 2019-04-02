@@ -17,6 +17,7 @@
 
 #include <asio.hpp>
 #include <asio/ssl.hpp>
+#include <asio/strand.hpp>
 #include <fastrtps/transport/TCPChannelResource.h>
 
 namespace eprosima{
@@ -85,6 +86,7 @@ class TCPChannelResourceSecure : public TCPChannelResource
 
         asio::io_service& service_;
         asio::ssl::context& ssl_context_;
+        asio::io_service::strand strand_;
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
 
         bool read_done_;

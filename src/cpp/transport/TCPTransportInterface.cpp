@@ -126,6 +126,7 @@ TCPTransportInterface::~TCPTransportInterface()
 void TCPTransportInterface::clean()
 {
     assert(receiver_resources_.size() == 0);
+    std::cout << "ATOMARPORCULO" << std::endl;
 
     if(keep_alive_event_ != nullptr)
     {
@@ -155,6 +156,7 @@ void TCPTransportInterface::clean()
     {
         io_service_.stop();
         io_service_thread_->join();
+        std::cout << "BYE BYE" << std::endl;
     }
 
     {
@@ -374,7 +376,7 @@ bool TCPTransportInterface::init()
 
     auto ioServiceFunction = [&]()
     {
-        io_service::work work(io_service_);
+        asio::executor_work_guard<asio::io_service::executor_type> work_(io_service_.get_executor());
         io_service_.run();
     };
     io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
@@ -675,7 +677,7 @@ void TCPTransportInterface::perform_listen_operation(
     Locator_t remote_locator;
     uint16_t logicalPort(0);
 
-    if(channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
+    if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
     {
         // RTCP Control Message
         rtcp_message_manager_->sendConnectionRequest(channel);
@@ -683,11 +685,13 @@ void TCPTransportInterface::perform_listen_operation(
     else
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        std::cout << "CAGUEN" << std::endl;
         unbound_channel_resources_.push_back(channel);
     }
 
-    while (channel)
+    while (channel && TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
     {
+        std::cout << "MAMMAMA" << std::endl;
         // Blocking receive.
         CDRMessage_t& msg = channel->message_buffer();
         CDRMessage::initCDRMsg(&msg);

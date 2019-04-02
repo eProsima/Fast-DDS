@@ -17,6 +17,8 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
 
+#include <future>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -32,6 +34,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     : TCPChannelResource(parent, locator, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
+    , strand_(service)
     , read_done_(false)
     , write_in_process_(false)
 {
@@ -46,6 +49,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     : TCPChannelResource(parent, maxMsgSize)
     , service_(service)
     , ssl_context_(ssl_context)
+    , strand_(service)
     , secure_socket_(socket)
     , read_done_(false)
     , write_in_process_(false)
@@ -70,6 +74,7 @@ void TCPChannelResourceSecure::connect(
     {
         try
         {
+            std::cout << "DISCO" << std::endl;
             ip::tcp::resolver resolver(service_);
 
             auto endpoints = resolver.resolve(
@@ -94,14 +99,14 @@ void TCPChannelResourceSecure::connect(
                         role = ssl::stream_base::server;
                     }
 
-                    logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(locator));
+                    logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(channel->locator()));
 
                     secure_socket->async_handshake(role,
                         [channel, parent](const std::error_code& error)
                     {
                         if (!error)
                         {
-                            logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(locator));
+                            logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(channel->locator()));
                             parent->SocketConnected(channel, error);
                         }
                         else
@@ -130,28 +135,33 @@ void TCPChannelResourceSecure::disconnect()
 {
     if (change_status(eConnectionStatus::eDisconnected))
     {
-        try
-        {
-            asio::error_code ec;
-            secure_socket_->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-            secure_socket_->lowest_layer().cancel();
+        std::cout << "CLOSE" << std::endl;
+        auto socket = secure_socket_;
+        strand_.post([&, socket]()
+                {
+                    try
+                    {
+                        asio::error_code ec;
+                        socket->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+                        socket->lowest_layer().cancel();
 
-          // This method was added on the version 1.12.0
+                    // This method was added on the version 1.12.0
 #if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-            secure_socket_->lowest_layer().release();
+                        socket->lowest_layer().release();
 #endif
-        }
-        catch (std::exception&)
-        {
-            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-        }
-        secure_socket_->lowest_layer().close();
+                    }
+                    catch (std::exception&)
+                    {
+                        // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
+                    }
+                    socket->lowest_layer().close();
 
-        {
-            std::unique_lock<std::mutex> lock(read_mutex_);
-            read_done_ = true;
-            read_cv_.notify_all();
-        }
+                    {
+                        std::unique_lock<std::mutex> lock(read_mutex_);
+                        read_done_ = true;
+                        read_cv_.notify_all();
+                    }
+                });
     }
 }
 
@@ -160,13 +170,16 @@ uint32_t TCPChannelResourceSecure::read(
         const std::size_t size,
         asio::error_code& ec)
 {
+    /*
     std::unique_lock<std::mutex> read_lock(read_mutex_);
     size_t bytes_read = 0;
     const auto socket = secure_socket_;
 
+                std::cout<< "READING" << std::endl;
     asio::async_read(*secure_socket_, asio::buffer(buffer, size),
                 [&, socket](const std::error_code& error, const size_t bytes_transferred)
                 {
+                std::cout<< "READING" << std::endl;
                     ec = error;
 
                     if(!error)
@@ -179,6 +192,34 @@ uint32_t TCPChannelResourceSecure::read(
                 });
 
     read_cv_.wait(read_lock, [&]() { return (bytes_read == size) || ec || read_done_; });
+    */
+
+    size_t bytes_read = 0;
+    std::promise<size_t> bytes_promise;
+    auto bytes_future = bytes_promise.get_future();
+    auto socket = secure_socket_;
+
+    std::cout << "VAAA" << std::endl;
+    strand_.post([&, socket]()
+            {
+    std::cout << "SIIII" << std::endl;
+                asio::async_read(*socket, asio::buffer(buffer, size),
+                        [&](const std::error_code& error, const size_t bytes_transferred)
+                        {
+    std::cout << "READDD" << std::endl;
+                            ec = error;
+
+                            if (!error)
+                            {
+                                bytes_promise.set_value(bytes_transferred);
+                            }
+                            else
+                            {
+                                bytes_promise.set_value(0);
+                            }
+                        });
+            });
+    bytes_read = bytes_future.get();
 
     return static_cast<uint32_t>(bytes_read);
 }
@@ -191,6 +232,7 @@ size_t TCPChannelResourceSecure::send(
         asio::error_code& ec,
         bool blocking)
 {
+    /*
     size_t bytes_sent = 0;
 
     if (eConnecting < connection_status_ && secure_socket_->lowest_layer().is_open())
@@ -225,6 +267,54 @@ size_t TCPChannelResourceSecure::send(
                     });
 
             write_cv_.wait(write_lock, [&]() { return 0 < bytes_sent || ec; });
+        }
+        else
+        {
+            bytes_sent = secure_socket_->write_some(buffers, ec);
+        }
+    }
+
+    return bytes_sent;
+    */
+
+    size_t bytes_sent = 0;
+
+    if (eConnecting < connection_status_)
+    {
+        std::vector<asio::const_buffer> buffers;
+        if(header_size > 0)
+        {
+            buffers.push_back(asio::buffer(header, header_size));
+        }
+        buffers.push_back(asio::buffer(data, size));
+
+        if(blocking)
+        {
+            std::promise<size_t> bytes_promise;
+            auto bytes_future = bytes_promise.get_future();
+            auto socket = secure_socket_;
+
+            std::cout << "POSTING" << std::endl;
+            strand_.post([&, socket]()
+                    {
+            std::cout << "POSTED" << std::endl;
+                        asio::async_write(*socket, buffers,
+                                [&](const std::error_code& error, const size_t& bytes_transferred)
+                                {
+            std::cout << "WRITE" << std::endl;
+                                    ec = error;
+
+                                    if (!error)
+                                    {
+                                        bytes_promise.set_value(bytes_transferred);
+                                    }
+                                    else
+                                    {
+                                        bytes_promise.set_value(0);
+                                    }
+                                });
+                    });
+            bytes_sent = bytes_future.get();
         }
         else
         {
