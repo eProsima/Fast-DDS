@@ -32,12 +32,14 @@ int main(int argc, char** argv)
 {
     int type = 1;
 
-    // PositiveACKs
-    long keep_duration_ms = 500;
+    // >0 to use disable positive acks
+    long use_disable_positive_acks = 1;
+    // Keep duration in milliseconds
+    long keep_duration_ms = 5000;
     // Sleep time between samples
-    long writer_sleep_ms = 100;
+    long writer_sleep_ms = 1000;
     // Number of samples to send
-    long count = 10;
+    long count = 20;
 
     if(argc > 1)
     {
@@ -46,13 +48,17 @@ int main(int argc, char** argv)
             type = 1;
             if (argc > 2)
             {
-                keep_duration_ms = atoi(argv[2]);
+                use_disable_positive_acks = atoi(argv[2]);
                 if (argc > 3)
                 {
-                    writer_sleep_ms = atoi(argv[3]);
+                    keep_duration_ms = atoi(argv[3]);
                     if( argc > 4 )
                     {
-                        count = atoi(argv[4]);
+                        writer_sleep_ms = atoi(argv[4]);
+                        if( argc > 5 )
+                        {
+                            count = atoi(argv[5]);
+                        }
                     }
                 }
             }
@@ -62,7 +68,11 @@ int main(int argc, char** argv)
             type = 2;
             if (argc > 2)
             {
-                count = atoi(argv[2]);
+                use_disable_positive_acks = atoi(argv[2]);
+                if (argc > 3)
+                {
+                    count = atoi(argv[2]);
+                }
             }
         }
     }
@@ -78,7 +88,7 @@ int main(int argc, char** argv)
         case 1:
             {
                 PositiveACKsPublisher mypub;
-                if( mypub.init(keep_duration_ms) )
+                if( mypub.init(use_disable_positive_acks > 0, keep_duration_ms) )
                 {
                     mypub.run(count, writer_sleep_ms);
                 }
@@ -87,7 +97,7 @@ int main(int argc, char** argv)
         case 2:
             {
                 PositiveACKsSubscriber mysub;
-                if( mysub.init() )
+                if( mysub.init(use_disable_positive_acks) )
                 {
                     mysub.run(count);
                 }

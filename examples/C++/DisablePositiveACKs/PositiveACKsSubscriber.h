@@ -42,9 +42,10 @@ public:
 
     /**
      * @brief Initialises the subscriber
+     * @param disable_positive_acks True to disable positive acks
      * @return True if initialisation was successful
      */
-    bool init();
+    bool init(bool disable_positive_acks);
 
     /**
      * @brief Runs the subscriber

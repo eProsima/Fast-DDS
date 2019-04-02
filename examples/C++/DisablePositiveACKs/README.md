@@ -1,23 +1,19 @@
-# Lifespan QoS example
+# Disable Positive ACKs QoS example
 
-This example illustrates how to use the Lifespan QoS in a Fast-RTPS application.
+This example illustrates how to use the Disable Positive ACKs QoS in a Fast-RTPS application. When using this QoS, acknack messages are only sent by the reader if it is missing any samples. In this way, strict reliability is no longer maintained but the writer keeps samples in its history for a sufficient duration (or keep duration) so that readers can negatively acknowledge it. After this duration, the sample is considered to be acknowledged by all readers and is removed from the writer history.
 
 To launch this test open two different consoles:
 
-In the first one launch: ./LifespanQoSExample publisher  
-In the second one launch: ./LifespanQoSExample subscriber
+In the first one launch: ./DisablePositiveACKsQoS publisher  
+In the second one launch: ./DisablePositiveACKsQoS subscriber
 
 ## Application behaviour
 
-The publisher will send the specified number of samples and, after waiting for a given amount of time, it will try to remove all samples from its history.
-If the lifespan is smaller than the wait time, no changes will exist in the history, and the publisher will report that 0 samples were removed. On the contrary, if the lifespan is greater than the wait time, the publisher will be able to remove changes, and the number of samples removed will be
-reported.
+In this application, the publisher sends a number of samples and periodic heartbeats to the subscriber, and the subscriber expects to receive a number of samples from the publisher. The best way to test this example is to analyze the network traffic. When this QoS is enabled no ack messages will be exchanged (unless samples are not received by the subscriber). When this QoS is disabled, ack messages will be sent in response to heartbeats.
 
-The subscriber waits until it receives a specified number of samples from the publisher, then waits for a given amount of time, and finally tries to take data from the history. Similarly, if the lifespan is smaller than the wait time, the subscriber will not be able to take data from the history.
+By default the QoS is enabled, the publisher sends 20 samples every 1000 milliseconds and the keep duration is set to 5000 milliseconds. The subscriber waits until 20 samples are received. You can change these defaults by executing:
 
-The default parameters are 500ms for the lifespan, 2000 ms for the wait time and 10 for the number of samples. You can change these defaults by executing:
+./LifespanQoSExample publisher &lt;enable_QoS&gt; &lt;keep_duration_ms&gt; &lt;sleep_ms&gt; &lt;samples&gt;  
+./LifespanQoSExample subscriber &lt;enable_QoS&gt; &lt;samples&gt;
 
-./LifespanQoSExample publisher &lt;lifespan_ms&gt; &lt;sleep_ms&gt; &lt;samples&gt;  
-./LifespanQoSExample subscriber &lt;lifespan_ms&gt; &lt;sleep_ms&gt;
-
-for publisher and subscriber respectively.
+for publisher and subscriber respectively, where any positive number for &lt;enable_QoS&gt; will enable the QoS, &lt;keep_duration_ms&gt; will set the duration for which to keep the samples, &lt;sleep_ms&gt; determines the amount of time to wait before the publisher sends a new sample, and &lt;samples&gt; sets the total number of samples to be sent/received.

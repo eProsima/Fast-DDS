@@ -42,10 +42,13 @@ public:
 
     /**
      * @brief Initialises the publisher
+     * @param disable_positive_acks True to disable positive acks
      * @param keep_duration_ms The keep duration in ms
      * @return True if initialization was successful
      */
-    bool init(uint32_t keep_duration_ms);
+    bool init(
+            bool disable_positive_acks,
+            uint32_t keep_duration_ms);
 
     /**
      * @brief Publishes a new sample

@@ -34,7 +34,7 @@ PositiveACKsSubscriber::PositiveACKsSubscriber()
 {
 }
 
-bool PositiveACKsSubscriber::init()
+bool PositiveACKsSubscriber::init(bool disable_positive_acks)
 {
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = 0;
@@ -56,7 +56,7 @@ bool PositiveACKsSubscriber::init()
     Rparam.topic.historyQos.depth = 30;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Rparam.qos.m_disablePositiveACKs.enabled = true;
+    Rparam.qos.m_disablePositiveACKs.enabled = disable_positive_acks;
     subscriber_ = Domain::createSubscriber(participant_, Rparam, (SubscriberListener*) &listener);
     if( subscriber_ == nullptr )
     {

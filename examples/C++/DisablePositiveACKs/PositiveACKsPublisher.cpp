@@ -36,7 +36,9 @@ PositiveACKsPublisher::PositiveACKsPublisher()
 {
 }
 
-bool PositiveACKsPublisher::init(uint32_t keep_duration_ms)
+bool PositiveACKsPublisher::init(
+        bool disable_positive_acks,
+        uint32_t keep_duration_ms)
 {
     hello_.index(0);
     hello_.message("PositiveACKs");
@@ -61,7 +63,7 @@ bool PositiveACKsPublisher::init(uint32_t keep_duration_ms)
     Wparam.topic.historyQos.depth = 30;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Wparam.qos.m_disablePositiveACKs.enabled = true;
+    Wparam.qos.m_disablePositiveACKs.enabled = disable_positive_acks;
     Wparam.qos.m_disablePositiveACKs.duration = rtps::Duration_t(keep_duration_ms * 1e-3);
     publisher_ = Domain::createPublisher(participant_, Wparam, (PublisherListener*) &listener);
     if( publisher_ == nullptr )
