@@ -368,6 +368,16 @@ bool RTPSParticipantImpl::createWriter(
         }
     }
 
+    // Locators with port 0, calculate port.
+    for (Locator_t& loc : param.endpoint.unicastLocatorList)
+    {
+        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+    }
+    for (Locator_t& loc : param.endpoint.multicastLocatorList)
+    {
+        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+    }
+
     // Normalize unicast locators
     if (!param.endpoint.unicastLocatorList.empty())
     {
@@ -521,6 +531,16 @@ bool RTPSParticipantImpl::createReader(
             logError(RTPS_PARTICIPANT, "Couldn't create persistence service for transient/persistent reader");
             return false;
         }
+    }
+
+    // Locators with port 0, calculate port.
+    for (Locator_t& loc : param.endpoint.unicastLocatorList)
+    {
+        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+    }
+    for (Locator_t& loc : param.endpoint.multicastLocatorList)
+    {
+        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
     }
 
     // Normalize unicast locators
