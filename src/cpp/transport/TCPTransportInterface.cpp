@@ -156,6 +156,7 @@ void TCPTransportInterface::clean()
     {
         io_service_.stop();
         io_service_thread_->join();
+        io_service_thread_ = nullptr;
         std::cout << "BYE BYE" << std::endl;
     }
 
@@ -447,15 +448,7 @@ void TCPTransportInterface::CloseOutputChannel(std::shared_ptr<TCPChannelResourc
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(physical_locator);
     assert(channel_resource != channel_resources_.end());
-
-    /* TODO Que hacer¿
-    if(TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel_resource->second->tcp_connection_type() &&
-            3 == channel_resource->second.use_count())
-    {
-        channel_resource->second->disable();
-        channel_resources_.erase(channel_resource);
-    }
-    */
+    (void)channel_resource;
 }
 
 bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
@@ -691,7 +684,7 @@ void TCPTransportInterface::perform_listen_operation(
 
     while (channel && TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
     {
-        std::cout << "MAMMAMA" << std::endl;
+        std::cout << "MAMMAMA " << channel.get() << std::endl;
         // Blocking receive.
         CDRMessage_t& msg = channel->message_buffer();
         CDRMessage::initCDRMsg(&msg);

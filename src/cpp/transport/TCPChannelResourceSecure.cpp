@@ -35,8 +35,6 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     , service_(service)
     , ssl_context_(ssl_context)
     , strand_(service)
-    , read_done_(false)
-    , write_in_process_(false)
 {
 }
 
@@ -51,8 +49,6 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     , ssl_context_(ssl_context)
     , strand_(service)
     , secure_socket_(socket)
-    , read_done_(false)
-    , write_in_process_(false)
 {
     set_tls_verify_mode(parent->configuration());
 }
@@ -133,14 +129,17 @@ void TCPChannelResourceSecure::connect(
 
 void TCPChannelResourceSecure::disconnect()
 {
-    if (change_status(eConnectionStatus::eDisconnected))
+        std::cout << "CLOSE "<< this <<  " - " << connection_status_ << std::endl;
+    if (eConnecting < change_status(eConnectionStatus::eDisconnected))
     {
-        std::cout << "CLOSE" << std::endl;
+        std::promise<bool> cancel_promise;
+        auto cancel_future = cancel_promise.get_future();
         auto socket = secure_socket_;
         strand_.post([&, socket]()
                 {
                     try
                     {
+                        socket->shutdown();
                         asio::error_code ec;
                         socket->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
                         socket->lowest_layer().cancel();
@@ -155,13 +154,10 @@ void TCPChannelResourceSecure::disconnect()
                         // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
                     }
                     socket->lowest_layer().close();
-
-                    {
-                        std::unique_lock<std::mutex> lock(read_mutex_);
-                        read_done_ = true;
-                        read_cv_.notify_all();
-                    }
+                    cancel_promise.set_value(true);
                 });
+
+        cancel_future.get();
     }
 }
 
@@ -170,30 +166,6 @@ uint32_t TCPChannelResourceSecure::read(
         const std::size_t size,
         asio::error_code& ec)
 {
-    /*
-    std::unique_lock<std::mutex> read_lock(read_mutex_);
-    size_t bytes_read = 0;
-    const auto socket = secure_socket_;
-
-                std::cout<< "READING" << std::endl;
-    asio::async_read(*secure_socket_, asio::buffer(buffer, size),
-                [&, socket](const std::error_code& error, const size_t bytes_transferred)
-                {
-                std::cout<< "READING" << std::endl;
-                    ec = error;
-
-                    if(!error)
-                    {
-                        bytes_read = bytes_transferred;
-                    }
-
-                    std::unique_lock<std::mutex> lock(read_mutex_);
-                    read_cv_.notify_all();
-                });
-
-    read_cv_.wait(read_lock, [&]() { return (bytes_read == size) || ec || read_done_; });
-    */
-
     size_t bytes_read = 0;
     std::promise<size_t> bytes_promise;
     auto bytes_future = bytes_promise.get_future();
@@ -232,51 +204,6 @@ size_t TCPChannelResourceSecure::send(
         asio::error_code& ec,
         bool blocking)
 {
-    /*
-    size_t bytes_sent = 0;
-
-    if (eConnecting < connection_status_ && secure_socket_->lowest_layer().is_open())
-    {
-
-        std::vector<asio::const_buffer> buffers;
-        if(header_size > 0)
-        {
-            buffers.push_back(asio::buffer(header, header_size));
-        }
-        buffers.push_back(asio::buffer(data, size));
-
-        std::unique_lock<std::mutex> write_lock(write_mutex_);
-        if(blocking)
-        {
-            write_cv_.wait(write_lock, [&]() { return !write_in_process_; });
-            write_in_process_ = true;
-
-            asio::async_write(*secure_socket_, buffers,
-                    [&](const std::error_code& error, const size_t& bytes_transferred)
-                    {
-                        std::unique_lock<std::mutex> lock(write_mutex_);
-                        ec = error;
-
-                        if (!error)
-                        {
-                            bytes_sent = bytes_transferred;
-                        }
-
-                        write_in_process_ = false;
-                        write_cv_.notify_all();
-                    });
-
-            write_cv_.wait(write_lock, [&]() { return 0 < bytes_sent || ec; });
-        }
-        else
-        {
-            bytes_sent = secure_socket_->write_some(buffers, ec);
-        }
-    }
-
-    return bytes_sent;
-    */
-
     size_t bytes_sent = 0;
 
     if (eConnecting < connection_status_)
@@ -340,10 +267,6 @@ void TCPChannelResourceSecure::set_options(const TCPTransportDescriptor* options
     secure_socket_->lowest_layer().set_option(socket_base::receive_buffer_size(options->receiveBufferSize));
     secure_socket_->lowest_layer().set_option(socket_base::send_buffer_size(options->sendBufferSize));
     secure_socket_->lowest_layer().set_option(ip::tcp::no_delay(options->enable_tcp_nodelay));
-    {
-        std::unique_lock<std::mutex> lock(read_mutex_);
-        read_done_ = false;
-    }
 }
 
 void TCPChannelResourceSecure::set_tls_verify_mode(const TCPTransportDescriptor* options)

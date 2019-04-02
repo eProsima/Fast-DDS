@@ -88,12 +88,6 @@ class TCPChannelResourceSecure : public TCPChannelResource
         asio::ssl::context& ssl_context_;
         asio::io_service::strand strand_;
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
-
-        bool read_done_;
-        std::condition_variable read_cv_;
-
-        bool write_in_process_;
-        std::condition_variable write_cv_;
 };
 
 

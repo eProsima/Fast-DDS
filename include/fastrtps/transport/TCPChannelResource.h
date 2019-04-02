@@ -154,7 +154,7 @@ protected:
         TCPTransportInterface* parent,
         uint32_t maxMsgSize);
 
-    inline bool change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
+    inline eConnectionStatus change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
     {
         eConnectionStatus old = connection_status_.exchange(s);
 
@@ -165,9 +165,9 @@ protected:
                 assert(rtcp_manager != nullptr);
                 send_pending_open_logical_ports(rtcp_manager);
             }
-            return true;
         }
-        return false;
+
+        return old;
     }
 
     void add_logical_port_response(const TCPTransactionId &id, bool success, RTCPMessageManager* rtcp_manager);
