@@ -83,8 +83,21 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
 {
     mSendBufferSize = descriptor.sendBufferSize;
     mReceiveBufferSize = descriptor.receiveBufferSize;
-    for (const auto& interface : descriptor.interfaceWhiteList)
-        interface_whitelist_.emplace_back(ip::address_v4::from_string(interface));
+    if (!descriptor.interfaceWhiteList.empty())
+    {
+        const auto white_begin = descriptor.interfaceWhiteList.begin();
+        const auto white_end = descriptor.interfaceWhiteList.end();
+
+        std::vector<IPFinder::info_IP> local_interfaces;
+        get_ipv4s(local_interfaces, true);
+        for (const IPFinder::info_IP& infoIP : local_interfaces)
+        {
+            if(std::find(white_begin, white_end, infoIP.name) != white_end)
+            {
+                interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
+            }
+        }
+    }
 }
 
 UDPv4Transport::UDPv4Transport()
@@ -129,25 +142,11 @@ bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(
         LocatorList_t &locators,
         uint32_t metatraffic_unicast_port) const
 {
-    if (interface_whitelist_.empty())
-    {
-        Locator_t locator;
-        locator.kind = LOCATOR_KIND_UDPv4;
-        locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
-        locator.set_Invalid_Address();
-        locators.push_back(locator);
-    }
-    else
-    {
-        for (auto& it : interface_whitelist_)
-        {
-            Locator_t locator;
-            locator.kind = LOCATOR_KIND_UDPv4;
-            locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
-            IPLocator::setIPv4(locator, it.to_string());
-            locators.push_back(locator);
-        }
-    }
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
+    locator.set_Invalid_Address();
+    locators.push_back(locator);
 
     return true;
 }
@@ -156,25 +155,12 @@ bool UDPv4Transport::getDefaultUnicastLocators(
         LocatorList_t &locators,
         uint32_t unicast_port) const
 {
-    if (interface_whitelist_.empty())
-    {
-        Locator_t locator;
-        locator.kind = LOCATOR_KIND_UDPv4;
-        locator.set_Invalid_Address();
-        fillUnicastLocator(locator, unicast_port);
-        locators.push_back(locator);
-    }
-    else
-    {
-        for (auto& it : interface_whitelist_)
-        {
-            Locator_t locator;
-            locator.kind = LOCATOR_KIND_UDPv4;
-            IPLocator::setIPv4(locator, it.to_string());
-            fillUnicastLocator(locator, unicast_port);
-            locators.push_back(locator);
-        }
-    }
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    locator.set_Invalid_Address();
+    fillUnicastLocator(locator, unicast_port);
+    locators.push_back(locator);
+
     return true;
 }
 
