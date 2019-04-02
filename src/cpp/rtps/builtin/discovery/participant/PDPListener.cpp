@@ -148,6 +148,8 @@ void PDPListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t*
             {
                 listener->onParticipantDiscovery(this->mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
             }
+
+            return; // all changes related with this participant have been removed from history by removeRemoteParticipant
         }
     }
 
