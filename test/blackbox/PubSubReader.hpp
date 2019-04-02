@@ -410,6 +410,13 @@ public:
         return *this;
     }
 
+    PubSubReader& keep_duration(const eprosima::fastrtps::rtps::Duration_t duration)
+    {
+        subscriber_attr_.qos.m_disablePositiveACKs.enabled = true;
+        subscriber_attr_.qos.m_disablePositiveACKs.duration = duration;
+        return *this;
+    }
+
     PubSubReader& history_kind(const eprosima::fastrtps::HistoryQosPolicyKind kind)
     {
         subscriber_attr_.topic.historyQos.kind = kind;

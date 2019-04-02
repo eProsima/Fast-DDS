@@ -415,6 +415,13 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& keep_duration(const eprosima::fastrtps::rtps::Duration_t duration)
+    {
+        publisher_attr_.qos.m_disablePositiveACKs.enabled = true;
+        publisher_attr_.qos.m_disablePositiveACKs.duration = duration;
+        return *this;
+    }
+
     PubSubWriter& max_blocking_time(const eprosima::fastrtps::rtps::Duration_t time)
     {
         publisher_attr_.qos.m_reliability.max_blocking_time = time;
