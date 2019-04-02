@@ -91,7 +91,9 @@ bool StatelessWriter::has_builtin_guid()
 
 // TODO(Ricardo) This function only can be used by history. Private it and frined History.
 // TODO(Ricardo) Look for other functions
-void StatelessWriter::unsent_change_added_to_history(CacheChange_t* change)
+void StatelessWriter::unsent_change_added_to_history(
+        CacheChange_t* change,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
@@ -114,7 +116,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* change)
                     {
                         guids.at(0) = it.guid;
                         RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                                it.endpoint.unicastLocatorList, guids, change->write_params.max_blocking_time_point());
+                                it.endpoint.unicastLocatorList, guids, max_blocking_time);
 
                         if (!group.add_data(*change, guids, it.endpoint.unicastLocatorList, it.expectsInlineQos))
                         {
@@ -125,7 +127,7 @@ void StatelessWriter::unsent_change_added_to_history(CacheChange_t* change)
                 else
                 {
                     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                            mAllShrinkedLocatorList, all_remote_readers_, change->write_params.max_blocking_time_point());
+                            mAllShrinkedLocatorList, all_remote_readers_, max_blocking_time);
 
                     if (!group.add_data(*change, all_remote_readers_, mAllShrinkedLocatorList, is_inline_qos_expected_))
                     {

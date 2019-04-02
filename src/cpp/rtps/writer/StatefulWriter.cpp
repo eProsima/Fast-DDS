@@ -121,7 +121,9 @@ StatefulWriter::~StatefulWriter()
  *	CHANGE-RELATED METHODS
  */
 
-void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
+void StatefulWriter::unsent_change_added_to_history(
+        CacheChange_t* change,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
@@ -173,7 +175,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                 if (!m_separateSendingEnabled)
                 {
                     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                            change->write_params.max_blocking_time_point());
+                            max_blocking_time);
                     if (!group.add_data(*change, all_remote_readers_, mAllShrinkedLocatorList, expectsInlineQos))
                     {
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
@@ -190,7 +192,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                         const std::vector<GUID_t>& guids = it->guid_as_vector();
                         const LocatorList_t& locators = it->remote_locators_shrinked();
                         RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                                locators, guids, change->write_params.max_blocking_time_point());
+                                locators, guids, max_blocking_time);
                         if (!group.add_data(*change, guids, locators, it->expects_inline_qos()))
                         {
                             logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);

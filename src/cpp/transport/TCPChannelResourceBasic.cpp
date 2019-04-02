@@ -87,7 +87,7 @@ void TCPChannelResourceBasic::connect(
 
 void TCPChannelResourceBasic::disconnect()
 {
-    if (change_status(eConnectionStatus::eDisconnected))
+    if (eConnecting < change_status(eConnectionStatus::eDisconnected))
     {
         try
         {

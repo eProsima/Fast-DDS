@@ -67,7 +67,8 @@ PublisherHistory::~PublisherHistory() {
 bool PublisherHistory::add_pub_change(
         CacheChange_t* change,
         WriteParams &wparams,
-        std::unique_lock<std::recursive_timed_mutex>& lock)
+        std::unique_lock<std::recursive_timed_mutex>& lock,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     if(m_isHistoryFull)
     {
@@ -75,7 +76,7 @@ bool PublisherHistory::add_pub_change(
 
         if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
         {
-            ret = this->mp_writer->try_remove_change(wparams.max_blocking_time_point(), lock);
+            ret = this->mp_writer->try_remove_change(max_blocking_time, lock);
         }
         else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
         {
@@ -96,7 +97,7 @@ bool PublisherHistory::add_pub_change(
     //NO KEY HISTORY
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
-        if(this->add_change(change, wparams))
+        if(this->add_change_(change, wparams, max_blocking_time))
         {
             returnedValue = true;
         }
@@ -137,7 +138,7 @@ bool PublisherHistory::add_pub_change(
 
             if(add)
             {
-                if(this->add_change(change, wparams))
+                if(this->add_change_(change, wparams, max_blocking_time))
                 {
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle

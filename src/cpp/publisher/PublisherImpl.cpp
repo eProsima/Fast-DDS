@@ -116,11 +116,11 @@ bool PublisherImpl::create_new_change_with_params(
     }
 
     // Block lowlevel writer
-    wparams.max_blocking_time_point() = std::chrono::steady_clock::now() +
+    auto max_blocking_time = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
     std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex(), std::defer_lock);
 
-    if(lock.try_lock_until(wparams.max_blocking_time_point()))
+    if(lock.try_lock_until(max_blocking_time))
     {
         CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
         if(ch != nullptr)
@@ -180,7 +180,7 @@ bool PublisherImpl::create_new_change_with_params(
                 ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
             }
 
-            if(!this->m_history.add_pub_change(ch, wparams, lock))
+            if(!this->m_history.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
                 m_history.release_Cache(ch);
                 return false;

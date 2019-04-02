@@ -43,10 +43,12 @@ namespace rtps {
  *	CHANGE-RELATED METHODS
  */
 
-void StatefulPersistentWriter::unsent_change_added_to_history(CacheChange_t* cptr)
+void StatefulPersistentWriter::unsent_change_added_to_history(
+        CacheChange_t* cptr,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     add_persistent_change(cptr);
-    StatefulWriter::unsent_change_added_to_history(cptr);
+    StatefulWriter::unsent_change_added_to_history(cptr, max_blocking_time);
 }
 
 bool StatefulPersistentWriter::change_removed_by_history(CacheChange_t* change)

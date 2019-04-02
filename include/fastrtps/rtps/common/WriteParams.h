@@ -31,124 +31,95 @@ namespace eprosima
              * @brief This class contains additional information of a CacheChange.
              * @ingroup COMMON_MODULE
              */
-            class WriteParams
+            class RTPS_DllAPI WriteParams
             {
                 public:
 
                     /*!
                      * @brief Default constructor.
                      */
-                    RTPS_DllAPI WriteParams()
-                        : max_blocking_time_point_(std::chrono::steady_clock::now() + std::chrono::hours(24))
-                    {
-                    }
+                    WriteParams() = default;
 
                     /*!
                      * @brief Copy constructor.
                      */
-                    RTPS_DllAPI WriteParams(const WriteParams &wparam)
+                    WriteParams(const WriteParams &wparam)
                         : sample_identity_(wparam.sample_identity_)
                         , related_sample_identity_(wparam.related_sample_identity_)
-                        , max_blocking_time_point_(wparam.max_blocking_time_point_)
                     {
                     }
 
                     /*!
                      * @brief Move constructor.
                      */
-                    RTPS_DllAPI WriteParams(WriteParams &&wparam)
+                    WriteParams(WriteParams &&wparam)
                         : sample_identity_(std::move(wparam.sample_identity_))
                         , related_sample_identity_(std::move(wparam.related_sample_identity_))
-                        , max_blocking_time_point_(std::move(wparam.max_blocking_time_point_))
                     {
                     }
 
                     /*!
                      * @brief Assignment operator
                      */
-                    RTPS_DllAPI WriteParams& operator=(const WriteParams &wparam)
+                    WriteParams& operator=(const WriteParams &wparam)
                     {
                         sample_identity_ = wparam.sample_identity_;
                         related_sample_identity_ = wparam.related_sample_identity_;
-                        max_blocking_time_point_ = wparam.max_blocking_time_point_;
                         return *this;
                     }
 
                     /*!
                      * @brief Assignment operator
                      */
-                    RTPS_DllAPI WriteParams& operator=(WriteParams &&wparam)
+                    WriteParams& operator=(WriteParams &&wparam)
                     {
                         sample_identity_ = std::move(wparam.sample_identity_);
                         related_sample_identity_ = std::move(wparam.related_sample_identity_);
-                        max_blocking_time_point_ = std::move(wparam.max_blocking_time_point_);
                         return *this;
                     }
 
-                    RTPS_DllAPI WriteParams& sample_identity(const SampleIdentity &sample_id)
+                    WriteParams& sample_identity(const SampleIdentity &sample_id)
                     {
                         sample_identity_ = sample_id;
                         return *this;
                     }
 
-                    RTPS_DllAPI WriteParams& sample_identity(SampleIdentity &&sample_id)
+                    WriteParams& sample_identity(SampleIdentity &&sample_id)
                     {
                         sample_identity_ = std::move(sample_id);
                         return *this;
                     }
 
-                    RTPS_DllAPI const SampleIdentity& sample_identity() const
+                    const SampleIdentity& sample_identity() const
                     {
                         return sample_identity_;
                     }
 
-                    RTPS_DllAPI SampleIdentity& sample_identity()
+                    SampleIdentity& sample_identity()
                     {
                         return sample_identity_;
                     }
 
-                    RTPS_DllAPI WriteParams& related_sample_identity(const SampleIdentity &sample_id)
+                    WriteParams& related_sample_identity(const SampleIdentity &sample_id)
                     {
                         related_sample_identity_ = sample_id;
                         return *this;
                     }
 
-                    RTPS_DllAPI WriteParams& related_sample_identity(SampleIdentity &&sample_id)
+                    WriteParams& related_sample_identity(SampleIdentity &&sample_id)
                     {
                         related_sample_identity_ = std::move(sample_id);
                         return *this;
                     }
 
-                    RTPS_DllAPI const SampleIdentity& related_sample_identity() const
+                    const SampleIdentity& related_sample_identity() const
                     {
                         return related_sample_identity_;
                     }
 
-                    RTPS_DllAPI SampleIdentity& related_sample_identity()
+                    SampleIdentity& related_sample_identity()
                     {
                         return related_sample_identity_;
-                    }
-
-                    WriteParams& max_blocking_time_point(const std::chrono::steady_clock::time_point &time_point)
-                    {
-                        max_blocking_time_point_ = time_point;
-                        return *this;
-                    }
-
-                    WriteParams& max_blocking_time_point(std::chrono::steady_clock::time_point &&time_point)
-                    {
-                        max_blocking_time_point_ = std::move(time_point);
-                        return *this;
-                    }
-
-                    const std::chrono::steady_clock::time_point& max_blocking_time_point() const
-                    {
-                        return max_blocking_time_point_;
-                    }
-
-                    std::chrono::steady_clock::time_point& max_blocking_time_point()
-                    {
-                        return max_blocking_time_point_;
                     }
 
                 private:
@@ -156,8 +127,6 @@ namespace eprosima
                     SampleIdentity sample_identity_;
 
                     SampleIdentity related_sample_identity_;
-
-                    std::chrono::time_point<std::chrono::steady_clock> max_blocking_time_point_;
             };
 
         } //namespace rtps

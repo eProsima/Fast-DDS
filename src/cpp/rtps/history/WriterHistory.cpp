@@ -47,10 +47,16 @@ WriterHistory::~WriterHistory()
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
     WriteParams wparams;
-    return add_change(a_change, wparams);
+    return add_change_(a_change, wparams);
 }
 
 bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
+{
+    return add_change_(a_change, wparams);
+}
+
+bool WriterHistory::add_change_(CacheChange_t* a_change, WriteParams &wparams,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     if(mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -97,7 +103,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
     logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber << " added with "<<a_change->serializedPayload.length<< " bytes");
 
     updateMaxMinSeqNum();
-    mp_writer->unsent_change_added_to_history(a_change);
+    mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
 
     return true;
 }

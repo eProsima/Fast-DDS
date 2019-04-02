@@ -101,7 +101,7 @@ bool RTCPMessageManager::sendData(
         const ResponseCode respCode,
         bool blocking)
 {
-    if(0 < sendData(channel.get(), kind, transaction_id, payload, respCode, blocking))
+    if(sendData(channel.get(), kind, transaction_id, payload, respCode, blocking))
     {
         return true;
     }
