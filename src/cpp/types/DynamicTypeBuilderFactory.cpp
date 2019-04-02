@@ -1750,7 +1750,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         {
             CompleteBitfield msm;
             msm.common().position(member->annotation_get_position()); // Position stored as annotation
-            msm.common().bitcount(member->annotation_get_bit_bound()); // Bitcount stored as bit_bound annotation
+            // Bitcount stored as bit_bound annotation
+            msm.common().bitcount(static_cast<octet>(member->annotation_get_bit_bound()));
             msm.common().holder_type(member->type_->get_kind());
             msm.detail().name(member->get_name());
 
@@ -1817,7 +1818,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         {
             MinimalBitfield msm;
             msm.common().position(member->annotation_get_position()); // Position stored as annotation
-            msm.common().bitcount(member->annotation_get_bit_bound()); // Bitcount stored as bit_bound annotation
+            // Bitcount stored as bit_bound annotation
+            msm.common().bitcount(static_cast<octet>(member->annotation_get_bit_bound()));
             msm.common().holder_type(member->type_->get_kind());
             MD5 parent_bitfield_hash(member->get_name());
             for(int i = 0; i < 4; ++i)

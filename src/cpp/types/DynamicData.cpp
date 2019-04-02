@@ -6434,7 +6434,7 @@ void DynamicData::serialize_discriminator(eprosima::fastcdr::Cdr& cdr) const
     }
     case TK_BOOLEAN:
     {
-        bool aux = static_cast<bool>(discriminator_value_);
+        bool aux = !!(discriminator_value_);
         cdr << aux;
         break;
     }

@@ -1629,7 +1629,6 @@ bool AnnotationParameterValue::operator==(const AnnotationParameterValue& other)
         return m_extended_value == other.m_extended_value;
         break;
     }
-    return false;
 }
 
 

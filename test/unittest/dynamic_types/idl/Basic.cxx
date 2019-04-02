@@ -159,7 +159,7 @@ bool EnumStruct::isKeyDefined()
 void EnumStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 AliasStruct::AliasStruct()
@@ -285,7 +285,7 @@ bool AliasStruct::isKeyDefined()
 void AliasStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 AliasAliasStruct::AliasAliasStruct()
@@ -411,7 +411,7 @@ bool AliasAliasStruct::isKeyDefined()
 void AliasAliasStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 BoolStruct::BoolStruct()
@@ -531,7 +531,7 @@ bool BoolStruct::isKeyDefined()
 void BoolStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 OctetStruct::OctetStruct()
@@ -651,7 +651,7 @@ bool OctetStruct::isKeyDefined()
 void OctetStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 ShortStruct::ShortStruct()
@@ -771,7 +771,7 @@ bool ShortStruct::isKeyDefined()
 void ShortStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 LongStruct::LongStruct()
@@ -891,7 +891,7 @@ bool LongStruct::isKeyDefined()
 void LongStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 LongLongStruct::LongLongStruct()
@@ -1011,7 +1011,7 @@ bool LongLongStruct::isKeyDefined()
 void LongLongStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 UShortStruct::UShortStruct()
@@ -1131,7 +1131,7 @@ bool UShortStruct::isKeyDefined()
 void UShortStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 ULongStruct::ULongStruct()
@@ -1251,7 +1251,7 @@ bool ULongStruct::isKeyDefined()
 void ULongStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 ULongLongStruct::ULongLongStruct()
@@ -1371,7 +1371,7 @@ bool ULongLongStruct::isKeyDefined()
 void ULongLongStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 FloatStruct::FloatStruct()
@@ -1491,7 +1491,7 @@ bool FloatStruct::isKeyDefined()
 void FloatStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 DoubleStruct::DoubleStruct()
@@ -1611,7 +1611,7 @@ bool DoubleStruct::isKeyDefined()
 void DoubleStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 LongDoubleStruct::LongDoubleStruct()
@@ -1731,7 +1731,7 @@ bool LongDoubleStruct::isKeyDefined()
 void LongDoubleStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 CharStruct::CharStruct()
@@ -1851,7 +1851,7 @@ bool CharStruct::isKeyDefined()
 void CharStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 WCharStruct::WCharStruct()
@@ -1971,7 +1971,7 @@ bool WCharStruct::isKeyDefined()
 void WCharStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 StringStruct::StringStruct()
@@ -2097,7 +2097,7 @@ bool StringStruct::isKeyDefined()
 void StringStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 WStringStruct::WStringStruct()
@@ -2223,7 +2223,7 @@ bool WStringStruct::isKeyDefined()
 void WStringStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 LargeStringStruct::LargeStringStruct()
@@ -2349,7 +2349,7 @@ bool LargeStringStruct::isKeyDefined()
 void LargeStringStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 LargeWStringStruct::LargeWStringStruct()
@@ -2475,7 +2475,7 @@ bool LargeWStringStruct::isKeyDefined()
 void LargeWStringStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 ArraytStruct::ArraytStruct()
@@ -2602,7 +2602,7 @@ bool ArraytStruct::isKeyDefined()
 void ArraytStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 
@@ -2740,7 +2740,7 @@ bool ArrayArrayStruct::isKeyDefined()
 void ArrayArrayStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 SequenceStruct::SequenceStruct()
@@ -2872,7 +2872,7 @@ bool SequenceStruct::isKeyDefined()
 void SequenceStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 SequenceSequenceStruct::SequenceSequenceStruct()
@@ -3016,7 +3016,7 @@ bool SequenceSequenceStruct::isKeyDefined()
 void SequenceSequenceStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 MapStruct::MapStruct()
@@ -3160,7 +3160,7 @@ bool MapStruct::isKeyDefined()
 void MapStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 MapMapStruct::MapMapStruct()
@@ -3320,7 +3320,7 @@ bool MapMapStruct::isKeyDefined()
 void MapMapStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 MyBitset::MyBitset()
@@ -3404,7 +3404,7 @@ void MyBitset::a(char _a)
     int size = 2;
     for (int i = base + size - 1; i >= base; --i)
     {
-        m_bitset.set(i, _a | 0x01);
+        m_bitset.set(i, !!(_a | 0x01));
         _a = _a >> 1;
     }
 }
@@ -3427,7 +3427,7 @@ void MyBitset::b(uint32_t _b)
     int size = 20;
     for (int i = base + size - 1; i >= base; --i)
     {
-        m_bitset.set(i, _b | 0x01);
+        m_bitset.set(i, !!(_b | 0x01));
         _b = _b >> 1;
     }
 }
@@ -3567,7 +3567,7 @@ bool BitsetStruct::isKeyDefined()
 void BitsetStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 StructStruct::StructStruct()
@@ -3732,8 +3732,8 @@ bool StructStruct::isKeyDefined()
 void StructStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
+
+
 }
 
 StructStructStruct::StructStructStruct()
@@ -3903,8 +3903,8 @@ bool StructStructStruct::isKeyDefined()
 void StructStructStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
-	 
+
+
 }
 
 SimpleUnion::SimpleUnion()
@@ -4144,7 +4144,7 @@ size_t SimpleUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
@@ -4153,7 +4153,7 @@ size_t SimpleUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -4461,7 +4461,7 @@ size_t UnionUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += SimpleUnion::getMaxCdrSerializedSize(reset_alignment);
@@ -4469,7 +4469,7 @@ size_t UnionUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -4770,7 +4770,7 @@ size_t WCharUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
         reset_alignment = current_alignment;
 
         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
@@ -4779,7 +4779,7 @@ size_t WCharUnion::getMaxCdrSerializedSize(size_t current_alignment)
         if(union_max_size_serialized < reset_alignment)
             union_max_size_serialized = reset_alignment;
 
-        
+
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -4967,7 +4967,7 @@ bool SimpleUnionStruct::isKeyDefined()
 void SimpleUnionStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 UnionUnionUnionStruct::UnionUnionUnionStruct()
@@ -5093,7 +5093,7 @@ bool UnionUnionUnionStruct::isKeyDefined()
 void UnionUnionUnionStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }
 
 WCharUnionStruct::WCharUnionStruct()
@@ -5219,5 +5219,5 @@ bool WCharUnionStruct::isKeyDefined()
 void WCharUnionStruct::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
 	(void) scdr;
-	 
+
 }

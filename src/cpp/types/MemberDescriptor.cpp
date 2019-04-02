@@ -544,7 +544,7 @@ uint16_t MemberDescriptor::annotation_get_position() const
             return static_cast<uint16_t>(std::stoi(value));
         }
     }
-    return -1;
+    return static_cast<uint16_t>(-1);
 }
 
 // Annotations setters
