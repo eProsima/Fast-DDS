@@ -70,7 +70,6 @@ void TCPChannelResourceSecure::connect(
     {
         try
         {
-            std::cout << "DISCO" << std::endl;
             ip::tcp::resolver resolver(service_);
 
             auto endpoints = resolver.resolve(
@@ -129,12 +128,12 @@ void TCPChannelResourceSecure::connect(
 
 void TCPChannelResourceSecure::disconnect()
 {
-        std::cout << "CLOSE "<< this <<  " - " << connection_status_ << std::endl;
     if (eConnecting < change_status(eConnectionStatus::eDisconnected))
     {
         std::promise<bool> cancel_promise;
         auto cancel_future = cancel_promise.get_future();
         auto socket = secure_socket_;
+        /*
         strand_.post([&, socket]()
                 {
                     try
@@ -156,6 +155,11 @@ void TCPChannelResourceSecure::disconnect()
                     socket->lowest_layer().close();
                     cancel_promise.set_value(true);
                 });
+                */
+        secure_socket_->async_shutdown([&, socket](const std::error_code&)
+                {
+                    cancel_promise.set_value(true);
+                });
 
         cancel_future.get();
     }
@@ -171,14 +175,11 @@ uint32_t TCPChannelResourceSecure::read(
     auto bytes_future = bytes_promise.get_future();
     auto socket = secure_socket_;
 
-    std::cout << "VAAA" << std::endl;
     strand_.post([&, socket]()
             {
-    std::cout << "SIIII" << std::endl;
                 asio::async_read(*socket, asio::buffer(buffer, size),
-                        [&](const std::error_code& error, const size_t bytes_transferred)
+                        [&, socket](const std::error_code& error, const size_t bytes_transferred)
                         {
-    std::cout << "READDD" << std::endl;
                             ec = error;
 
                             if (!error)
@@ -221,14 +222,11 @@ size_t TCPChannelResourceSecure::send(
             auto bytes_future = bytes_promise.get_future();
             auto socket = secure_socket_;
 
-            std::cout << "POSTING" << std::endl;
             strand_.post([&, socket]()
                     {
-            std::cout << "POSTED" << std::endl;
                         asio::async_write(*socket, buffers,
-                                [&](const std::error_code& error, const size_t& bytes_transferred)
+                                [&, socket](const std::error_code& error, const size_t& bytes_transferred)
                                 {
-            std::cout << "WRITE" << std::endl;
                                     ec = error;
 
                                     if (!error)

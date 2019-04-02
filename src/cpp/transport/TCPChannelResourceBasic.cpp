@@ -154,7 +154,8 @@ asio::ip::tcp::endpoint TCPChannelResourceBasic::remote_endpoint() const
 
 asio::ip::tcp::endpoint TCPChannelResourceBasic::local_endpoint() const
 {
-    return socket_->local_endpoint();
+    std::error_code ec;
+    return socket_->local_endpoint(ec);
 }
 
 void TCPChannelResourceBasic::set_options(const TCPTransportDescriptor* options)

@@ -126,7 +126,6 @@ TCPTransportInterface::~TCPTransportInterface()
 void TCPTransportInterface::clean()
 {
     assert(receiver_resources_.size() == 0);
-    std::cout << "ATOMARPORCULO" << std::endl;
 
     if(keep_alive_event_ != nullptr)
     {
@@ -152,24 +151,21 @@ void TCPTransportInterface::clean()
         }
     }
 
-    if (io_service_thread_)
-    {
-        io_service_.stop();
-        io_service_thread_->join();
-        io_service_thread_ = nullptr;
-        std::cout << "BYE BYE" << std::endl;
-    }
-
     {
         std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
         rtcp_message_manager_cv_.wait(lock, [&]()
                 {
                 return 1 >=rtcp_message_manager_.use_count();
                 });
+
+        if (rtcp_message_manager_)
+        {
+            rtcp_message_manager_->dispose();
+            rtcp_message_manager_.reset();
+        }
     }
 
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-
     for (auto& unbound_channel_resource : unbound_channel_resources_)
     {
         unbound_channel_resource->thread(nullptr);
@@ -181,9 +177,11 @@ void TCPTransportInterface::clean()
     }
     channel_resources_.clear();
 
-    if (rtcp_message_manager_)
+    if (io_service_thread_)
     {
-        rtcp_message_manager_->dispose();
+        io_service_.stop();
+        io_service_thread_->join();
+        io_service_thread_ = nullptr;
     }
 }
 
@@ -678,13 +676,11 @@ void TCPTransportInterface::perform_listen_operation(
     else
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        std::cout << "CAGUEN" << std::endl;
         unbound_channel_resources_.push_back(channel);
     }
 
     while (channel && TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
     {
-        std::cout << "MAMMAMA " << channel.get() << std::endl;
         // Blocking receive.
         CDRMessage_t& msg = channel->message_buffer();
         CDRMessage::initCDRMsg(&msg);
