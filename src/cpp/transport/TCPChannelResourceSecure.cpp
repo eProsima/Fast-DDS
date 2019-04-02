@@ -133,29 +133,7 @@ void TCPChannelResourceSecure::disconnect()
         std::promise<bool> cancel_promise;
         auto cancel_future = cancel_promise.get_future();
         auto socket = secure_socket_;
-        /*
-        strand_.post([&, socket]()
-                {
-                    try
-                    {
-                        socket->shutdown();
-                        asio::error_code ec;
-                        socket->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-                        socket->lowest_layer().cancel();
 
-                    // This method was added on the version 1.12.0
-#if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-                        socket->lowest_layer().release();
-#endif
-                    }
-                    catch (std::exception&)
-                    {
-                        // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-                    }
-                    socket->lowest_layer().close();
-                    cancel_promise.set_value(true);
-                });
-                */
         secure_socket_->async_shutdown([&, socket](const std::error_code&)
                 {
                     cancel_promise.set_value(true);
