@@ -39,7 +39,8 @@ WriterProxyData::WriterProxyData(
     , remote_locators_(max_unicast_locators, max_multicast_locators)
     , m_userDefinedId(0)
 #else
-    : m_userDefinedId(0)
+    : remote_locators_(max_unicast_locators, max_multicast_locators)
+    , m_userDefinedId(0)
 #endif
     , m_typeMaxSerialized(0)
     , m_isAlive(true)
