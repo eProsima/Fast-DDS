@@ -184,6 +184,7 @@ void TCPTransportInterface::clean()
     }
 
     channel_resources_.clear();
+    unbound_channel_resources_.clear();
 }
 
 void TCPTransportInterface::bind_socket(
@@ -576,7 +577,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                 );
 
             channel_resources_[physical_locator] = channel;
-            channel->connect(channel);
+            channel->connect(channel_resources_[physical_locator]);
         }
 
         success = true;
@@ -992,7 +993,8 @@ bool TCPTransportInterface::send(
             TCPChannelResource::eConnectionStatus::eDisconnected == channel->connection_status())
     {
         channel->set_all_ports_pending();
-        channel->connect(channel);
+        std::unique_lock<std::mutex> lock(sockets_map_mutex_);
+        channel->connect(channel_resources_[channel->locator()]);
     }
 
     return success;

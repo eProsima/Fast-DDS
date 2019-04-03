@@ -80,10 +80,9 @@ void TCPChannelResourceSecure::connect(
             secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(service_, ssl_context_);
             set_tls_verify_mode(parent->configuration());
             const auto secure_socket = secure_socket_;
-            const auto channel = myself;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
-                [secure_socket, channel, parent](const std::error_code& error,
+                [secure_socket, &myself, parent](const std::error_code& error,
                     const tcp::endpoint& /*endpoint*/)
             {
                 if (!error)
@@ -97,25 +96,25 @@ void TCPChannelResourceSecure::connect(
                     logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(channel->locator()));
 
                     secure_socket->async_handshake(role,
-                        [channel, parent](const std::error_code& error)
+                        [&myself, parent](const std::error_code& error)
                     {
                         if (!error)
                         {
                             logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(channel->locator()));
-                            parent->SocketConnected(channel, error);
+                            parent->SocketConnected(myself, error);
                         }
                         else
                         {
                             logError(RTCP_TLS, "Handshake failed: " << error.message());
                             eClock::my_sleep(5000); // Retry, but after a big while
-                            parent->SocketConnected(channel, error);
+                            parent->SocketConnected(myself, error);
                         }
                     });
                 }
                 else
                 {
                     //logError(RTCP_TLS, "Connect failed: " << error.message());
-                    parent->SocketConnected(channel, error); // Manages errors and retries
+                    parent->SocketConnected(myself, error); // Manages errors and retries
                 }
             });
         }
