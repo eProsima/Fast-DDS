@@ -175,8 +175,6 @@ void TCPTransportInterface::clean()
     {
         channel_resource.second->thread(std::thread());
     }
-    channel_resources_.clear();
-	acceptors_.clear();
 
     if (io_service_thread_)
     {
@@ -184,6 +182,8 @@ void TCPTransportInterface::clean()
         io_service_thread_->join();
         io_service_thread_ = nullptr;
     }
+
+    channel_resources_.clear();
 }
 
 void TCPTransportInterface::bind_socket(
@@ -235,7 +235,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             {
                 std::shared_ptr<TCPAcceptorSecure> acceptor =
                     std::make_shared<TCPAcceptorSecure>(io_service_, this, locator);
-				acceptors_[locator] = acceptor;
+                acceptors_[locator] = acceptor;
                 acceptor->accept(this, ssl_context_);
             }
             else
@@ -243,7 +243,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             {
                 std::shared_ptr<TCPAcceptorBasic> acceptor =
                     std::make_shared<TCPAcceptorBasic>(io_service_, this, locator);
-				acceptors_[locator] = acceptor;
+                acceptors_[locator] = acceptor;
                 acceptor->accept(this);
             }
 
@@ -261,7 +261,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
                 {
                     std::shared_ptr<TCPAcceptorSecure> acceptor =
                         std::make_shared<TCPAcceptorSecure>(io_service_, sInterface, locator);
-					acceptors_[locator] = acceptor;
+                    acceptors_[locator] = acceptor;
                     acceptor->accept(this, ssl_context_);
                 }
                 else
@@ -269,7 +269,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
                 {
                     std::shared_ptr<TCPAcceptorBasic> acceptor =
                         std::make_shared<TCPAcceptorBasic>(io_service_, sInterface, locator);
-					acceptors_[locator] = acceptor;
+                    acceptors_[locator] = acceptor;
                     acceptor->accept(this);
                 }
 
@@ -1044,8 +1044,8 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 }
 
 void TCPTransportInterface::SocketAccepted(
-		std::shared_ptr<asio::ip::tcp::socket> socket,
-		const Locator_t& locator,
+        std::shared_ptr<asio::ip::tcp::socket> socket,
+        const Locator_t& locator,
         const asio::error_code& error)
 {
     if (!error.value())
@@ -1065,24 +1065,24 @@ void TCPTransportInterface::SocketAccepted(
     }
     else
     {
-		logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-		eClock::my_sleep(200); // Wait a little to accept again.
+        logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+        eClock::my_sleep(200); // Wait a little to accept again.
     }
 
-	if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
-	{
-		std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
-		if (acceptor != nullptr)
-		{
-			dynamic_cast<TCPAcceptorBasic*>(acceptor.get())->accept(this);
-		}
-	}
+    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+    {
+        std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
+        if (acceptor != nullptr)
+        {
+            dynamic_cast<TCPAcceptorBasic*>(acceptor.get())->accept(this);
+        }
+    }
 }
 
 #if TLS_FOUND
 void TCPTransportInterface::SecureSocketAccepted(
-		std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
-		const Locator_t& locator,
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
+        const Locator_t& locator,
         const asio::error_code& error)
 {
     if (!error.value())
@@ -1102,18 +1102,18 @@ void TCPTransportInterface::SecureSocketAccepted(
     }
     else
     {
-		logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-		eClock::my_sleep(200); // Wait a little to accept again.
+        logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+        eClock::my_sleep(200); // Wait a little to accept again.
     }
 
-	if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
-	{
-		std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
-		if (acceptor != nullptr)
-		{
-			dynamic_cast<TCPAcceptorSecure*>(acceptor.get())->accept(this, ssl_context_);
-		}
-	}
+    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+    {
+        std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
+        if (acceptor != nullptr)
+        {
+            dynamic_cast<TCPAcceptorSecure*>(acceptor.get())->accept(this, ssl_context_);
+        }
+    }
 }
 #endif
 

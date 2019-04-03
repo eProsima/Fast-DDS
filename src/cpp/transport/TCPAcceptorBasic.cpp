@@ -43,7 +43,7 @@ void TCPAcceptorBasic::accept(TCPTransportInterface* parent)
 {
     using asio::ip::tcp;
 
-	const Locator_t locator = locator_;
+    const Locator_t locator = locator_;
 
     acceptor_.async_accept(
         [parent, locator](const std::error_code& error, tcp::socket socket)

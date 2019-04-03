@@ -47,7 +47,7 @@ void TCPAcceptorSecure::accept(
 
     using asio::ip::tcp;
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
-	const Locator_t locator = locator_;
+    const Locator_t locator = locator_;
 
     try
     {
@@ -62,8 +62,8 @@ void TCPAcceptorSecure::accept(
                         role = ssl::stream_base::client;
                     }
 
-					std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket = 
-						std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(std::move(socket), ssl_context);
+                    std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket = 
+                    std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(std::move(socket), ssl_context);
 
                     secure_socket->async_handshake(role,
                         [secure_socket, locator, parent](const std::error_code& error)
