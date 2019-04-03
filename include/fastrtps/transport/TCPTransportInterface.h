@@ -94,6 +94,8 @@ protected:
 
     TCPKeepAliveEvent* keep_alive_event_;
 
+	std::map<Locator_t, std::shared_ptr<TCPAcceptor>> acceptors_;
+
     TCPTransportInterface(int32_t transport_kind);
 
     virtual bool compare_locator_ip(
@@ -288,13 +290,15 @@ public:
 
     //! Callback called each time that an incomming connection is accepted.
     void SocketAccepted(
-        const std::shared_ptr<TCPAcceptorBasic>& acceptor,
+		std::shared_ptr<asio::ip::tcp::socket> socket,
+		const Locator_t& locator,
         const asio::error_code& error);
 
 #if TLS_FOUND
     //! Callback called each time that an incomming connection is accepted (secure).
     void SecureSocketAccepted(
-        const std::shared_ptr<TCPAcceptorSecure>& acceptor,
+		std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
+		const Locator_t& locator,
         const asio::error_code& error);
 #endif
 
