@@ -687,8 +687,8 @@ void TCPTransportInterface::perform_listen_operation(
             std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
             unbound_channel_resources_.push_back(channel);
             channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBind);
-            channel->make_thread_joinable();
         }
+        channel->make_thread_joinable();
 
         std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
         rtcp_message_manager.reset();

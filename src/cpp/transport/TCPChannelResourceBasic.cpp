@@ -18,6 +18,8 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
 
+#include <future>
+
 using namespace asio;
 
 namespace eprosima {
@@ -87,22 +89,18 @@ void TCPChannelResourceBasic::disconnect()
 {
     if (eConnecting < change_status(eConnectionStatus::eDisconnected))
     {
-        try
-        {
-            asio::error_code ec;
-            socket_->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-            socket_->cancel();
+        std::promise<bool> cancel_promise;
+        auto cancel_future = cancel_promise.get_future();
+        auto socket = socket_;
 
-          // This method was added on the version 1.12.0
-#if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-            socket_->release();
-#endif
-        }
-        catch (std::exception&)
-        {
-            // Cancel & shutdown throws exceptions if the socket has been closed ( Test_TCPv4Transport )
-        }
-        socket_->close();
+        service_.post([&, socket]()
+                {
+                    socket->close();
+                    cancel_promise.set_value(true);
+                });
+
+        socket.reset();
+        cancel_future.get();
     }
 }
 

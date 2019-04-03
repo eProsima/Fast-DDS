@@ -92,14 +92,14 @@ void TCPChannelResourceSecure::connect(
                         role = ssl::stream_base::server;
                     }
 
-                    logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(channel->locator()));
+                    logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(myself->locator()));
 
                     secure_socket->async_handshake(role,
                         [&myself, parent](const std::error_code& error)
                     {
                         if (!error)
                         {
-                            logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(channel->locator()));
+                            logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(myself->locator()));
                             parent->SocketConnected(myself, error);
                         }
                         else
