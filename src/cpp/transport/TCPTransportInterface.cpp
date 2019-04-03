@@ -672,11 +672,7 @@ void TCPTransportInterface::perform_listen_operation(
     Locator_t remote_locator;
     uint16_t logicalPort(0);
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager;
-
-    {
-        std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
-        rtcp_message_manager = rtcp_manager.lock();
-    }
+    rtcp_message_manager = rtcp_manager.lock();
 
     // RTCP Control Message
     if(rtcp_message_manager)
