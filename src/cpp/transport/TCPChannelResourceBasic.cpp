@@ -47,7 +47,6 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
 
 TCPChannelResourceBasic::~TCPChannelResourceBasic()
 {
-    disconnect();
 }
 
 void TCPChannelResourceBasic::connect(

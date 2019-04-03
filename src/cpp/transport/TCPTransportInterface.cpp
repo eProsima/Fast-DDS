@@ -797,11 +797,14 @@ bool TCPTransportInterface::Receive(
                 logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << " (expected: : "
                         << TCPHeader::size() << ")" << ec.message());
             }
-            else
+            else if (ec != asio::error::eof)
             {
                 logWarning(DEBUG, "Error reading TCP header: " << ec.message());
             }
-            close_tcp_socket(channel);
+            if (ec != asio::error::eof)
+            {
+                close_tcp_socket(channel);
+            }
             success = false;
         }
         else
@@ -1130,7 +1133,7 @@ void TCPTransportInterface::SocketConnected(
 
                 std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
                 channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                        channel, rtcp_manager_weak_ptr));
+                        channel, rtcp_manager_weak_ptr), false);
             }
         }
         catch (asio::system_error const& /*e*/)

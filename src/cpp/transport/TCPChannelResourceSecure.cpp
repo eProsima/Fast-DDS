@@ -55,7 +55,6 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
 
 TCPChannelResourceSecure::~TCPChannelResourceSecure()
 {
-    disconnect();
 }
 
 void TCPChannelResourceSecure::connect(
