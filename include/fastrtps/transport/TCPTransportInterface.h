@@ -139,7 +139,7 @@ protected:
 
     //! Functions to be called from new threads, which takes cares of performing a blocking receive
     void perform_listen_operation(
-            std::shared_ptr<TCPChannelResource> channel,
+            std::weak_ptr<TCPChannelResource> channel,
             std::weak_ptr<RTCPMessageManager> rtcp_manager);
 
     bool read_body(

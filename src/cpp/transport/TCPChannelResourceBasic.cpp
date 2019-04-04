@@ -68,6 +68,7 @@ void TCPChannelResourceBasic::connect(
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             socket_ = std::make_shared<asio::ip::tcp::socket>(service_);
+            auto socket = socket_;
 
             asio::async_connect(
                 *socket_,
