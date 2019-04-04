@@ -104,6 +104,7 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator=(const TCPTransportDesc
 #if TLS_FOUND
 TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
     : TransportInterface(transport_kind)
+    , alive_(true)
     , ssl_context_(asio::ssl::context::sslv23)
     , keep_alive_event_(nullptr)
 {
@@ -111,6 +112,7 @@ TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
 #else
 TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
     : TransportInterface(transport_kind)
+    , alive_(true)
     , keep_alive_event_(nullptr)
 {
     if (configuration()->apply_security)
@@ -127,6 +129,7 @@ TCPTransportInterface::~TCPTransportInterface()
 void TCPTransportInterface::clean()
 {
     assert(receiver_resources_.size() == 0);
+    alive_ = false;
 
     if(keep_alive_event_ != nullptr)
     {
@@ -154,9 +157,9 @@ void TCPTransportInterface::clean()
         scopedLock.unlock();
 
         rtcp_message_manager_cv_.wait(lock, [&]()
-                {
-                return 1 >=rtcp_message_manager_.use_count();
-                });
+        {
+            return 1 >= rtcp_message_manager_.use_count();
+        });
 
         if (rtcp_message_manager_)
         {
@@ -1054,9 +1057,9 @@ void TCPTransportInterface::SocketAccepted(
         const Locator_t& locator,
         const asio::error_code& error)
 {
-    if (!error.value())
+    if(alive_)
     {
-        if(rtcp_message_manager_)
+        if (!error.value())
         {
             // Store the new connection.
             std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
@@ -1077,19 +1080,19 @@ void TCPTransportInterface::SocketAccepted(
                     << ", remote: " << channel->remote_endpoint().address()
                     << ":" << channel->remote_endpoint().port() << ")");
         }
-    }
-    else
-    {
-        logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-        eClock::my_sleep(200); // Wait a little to accept again.
-    }
-
-    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
-    {
-        std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
-        if (acceptor != nullptr)
+        else
         {
-            dynamic_cast<TCPAcceptorBasic*>(acceptor.get())->accept(this);
+            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+            eClock::my_sleep(200); // Wait a little to accept again.
+        }
+
+        if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+        {
+            std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
+            if (acceptor != nullptr)
+            {
+                dynamic_cast<TCPAcceptorBasic*>(acceptor.get())->accept(this);
+            }
         }
     }
 }
@@ -1100,9 +1103,9 @@ void TCPTransportInterface::SecureSocketAccepted(
         const Locator_t& locator,
         const asio::error_code& error)
 {
-    if (!error.value())
+    if(alive_)
     {
-        if(rtcp_message_manager_)
+        if (!error.value())
         {
             // Store the new connection.
             std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
@@ -1123,19 +1126,19 @@ void TCPTransportInterface::SecureSocketAccepted(
                     << ", remote: " << socket->lowest_layer().remote_endpoint().address()
                     << ":" << socket->lowest_layer().remote_endpoint().port() << ")");
         }
-    }
-    else
-    {
-        logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-        eClock::my_sleep(200); // Wait a little to accept again.
-    }
-
-    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
-    {
-        std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
-        if (acceptor != nullptr)
+        else
         {
-            dynamic_cast<TCPAcceptorSecure*>(acceptor.get())->accept(this, ssl_context_);
+            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+            eClock::my_sleep(200); // Wait a little to accept again.
+        }
+
+        if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+        {
+            std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
+            if (acceptor != nullptr)
+            {
+                dynamic_cast<TCPAcceptorSecure*>(acceptor.get())->accept(this, ssl_context_);
+            }
         }
     }
 }
@@ -1146,13 +1149,13 @@ void TCPTransportInterface::SocketConnected(
         const std::weak_ptr<TCPChannelResource>& channel_weak_ptr,
         const asio::error_code& error)
 {
-    auto channel = channel_weak_ptr.lock();
-
-    if(channel)
+    if(alive_)
     {
-        if (!error)
+        auto channel = channel_weak_ptr.lock();
+
+        if(channel)
         {
-            if(rtcp_message_manager_)
+            if (!error)
             {
                 try
                 {
@@ -1175,10 +1178,10 @@ void TCPTransportInterface::SocketConnected(
                        */
                 }
             }
-        }
-        else
-        {
-            channel->disable();
+            else
+            {
+                channel->disable();
+            }
         }
     }
 }

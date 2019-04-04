@@ -71,6 +71,8 @@ class TCPTransportInterface : public TransportInterface
             std::condition_variable cv;
     };
 
+    std::atomic<bool> alive_;
+
 protected:
 
     std::vector<IPFinder::info_IP> current_interfaces_;
