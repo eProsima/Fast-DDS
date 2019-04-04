@@ -21,15 +21,9 @@
 #ifndef FASTRTPS_RTPS_READER_RTPSREADER_H_
 #define FASTRTPS_RTPS_READER_RTPSREADER_H_
 
-
 #include "../Endpoint.h"
 #include "../attributes/ReaderAttributes.h"
 #include "../common/SequenceNumber.h"
-
-#include <foonathan/memory/container.hpp>
-#include <foonathan/memory/memory_pool.hpp>
-
-#include <map>
 
 namespace eprosima {
 namespace fastrtps {
@@ -41,6 +35,7 @@ class ReaderHistory;
 struct CacheChange_t;
 class WriterProxy;
 class FragmentedChangePitStop;
+struct ReaderHistoryState;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
@@ -290,20 +285,9 @@ protected:
     EntityId_t m_trustedWriterEntityId;
     //!Expects Inline Qos.
     bool m_expectsInlineQos;
-
-    using pool_allocator_t =
-        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
-
-    pool_allocator_t persistence_guid_map_allocator_;
-    pool_allocator_t persistence_guid_count_allocator_;
-    pool_allocator_t history_record_allocator_;
-
-    //!Physical GUID to persistence GUID map
-    foonathan::memory::map<GUID_t, GUID_t, pool_allocator_t> persistence_guid_map_;
-    //!Persistence GUID count map
-    foonathan::memory::map<GUID_t, uint16_t, pool_allocator_t> persistence_guid_count_;
-    //!Information about max notified change
-    foonathan::memory::map<GUID_t, SequenceNumber_t, pool_allocator_t> history_record_;
+    
+    //!ReaderHistoryState
+    ReaderHistoryState* history_state_;
 
     //TODO Select one
     FragmentedChangePitStop* fragmentedChangePitStop_;

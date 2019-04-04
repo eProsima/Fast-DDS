@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/log/Log.h>
 #include "FragmentedChangePitStop.h"
+#include "ReaderHistoryState.hpp"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
@@ -32,13 +33,6 @@
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
-
-constexpr size_t guid_map_node_size = 
-    memory::map_node_size<std::pair<size_t,std::pair<GUID_t, GUID_t>>>::value;
-constexpr size_t guid_count_node_size = 
-    memory::map_node_size<std::pair<size_t,std::pair<GUID_t, uint16_t>>>::value;
-constexpr size_t history_record_node_size = 
-    memory::map_node_size<std::pair<size_t,std::pair<GUID_t, SequenceNumber_t>>>::value;
 
 RTPSReader::RTPSReader(
         RTPSParticipantImpl* pimpl,
@@ -52,18 +46,7 @@ RTPSReader::RTPSReader(
     , m_acceptMessagesToUnknownReaders(true)
     , m_acceptMessagesFromUnkownWriters(true)
     , m_expectsInlineQos(att.expectsInlineQos)
-    , persistence_guid_map_allocator_(
-            guid_map_node_size,
-            guid_map_node_size * std::max(att.matched_writers_allocation.initial, (size_t) 4u))
-    , persistence_guid_count_allocator_(
-            guid_count_node_size,
-            guid_count_node_size * std::max(att.matched_writers_allocation.initial, (size_t) 4u))
-    , history_record_allocator_(
-            history_record_node_size,
-            history_record_node_size * std::max(att.matched_writers_allocation.initial, (size_t) 4u))
-    , persistence_guid_map_(persistence_guid_map_allocator_)
-    , persistence_guid_count_(persistence_guid_count_allocator_)
-    , history_record_(history_record_allocator_)
+    , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
     , fragmentedChangePitStop_(nullptr)
 {
     mp_history->mp_reader = this;
@@ -76,6 +59,7 @@ RTPSReader::~RTPSReader()
 {
     logInfo(RTPS_READER,"Removing reader "<<this->getGuid().entityId;);
     delete fragmentedChangePitStop_;
+    delete history_state_;
     mp_history->mp_reader = nullptr;
     mp_history->mp_mutex = nullptr;
 }
@@ -125,8 +109,8 @@ void RTPSReader::add_persistence_guid(
          const GUID_t& persistence_guid)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    persistence_guid_map_[guid] = persistence_guid;
-    persistence_guid_count_[persistence_guid]++;
+    history_state_->persistence_guid_map[guid] = persistence_guid;
+    history_state_->persistence_guid_count[persistence_guid]++;
 }
 
 void RTPSReader::remove_persistence_guid(
@@ -134,13 +118,13 @@ void RTPSReader::remove_persistence_guid(
         const GUID_t& persistence_guid)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    persistence_guid_map_.erase(guid);
-    auto count = --persistence_guid_count_[persistence_guid];
+    history_state_->persistence_guid_map.erase(guid);
+    auto count = --history_state_->persistence_guid_count[persistence_guid];
     if (count == 0)
     {
         if (m_att.durabilityKind < TRANSIENT)
         {
-            history_record_.erase(persistence_guid);
+            history_state_->history_record.erase(persistence_guid);
         }
     }
 }
@@ -152,14 +136,14 @@ SequenceNumber_t RTPSReader::update_last_notified(
     SequenceNumber_t ret_val;
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     GUID_t guid_to_look = guid;
-    auto p_guid = persistence_guid_map_.find(guid);
-    if (p_guid != persistence_guid_map_.end())
+    auto p_guid = history_state_->persistence_guid_map.find(guid);
+    if (p_guid != history_state_->persistence_guid_map.end())
     {
         guid_to_look = p_guid->second;
     }
 
-    auto p_seq = history_record_.find(guid_to_look);
-    if (p_seq != history_record_.end())
+    auto p_seq = history_state_->history_record.find(guid_to_look);
+    if (p_seq != history_state_->history_record.end())
     {
         ret_val = p_seq->second;
     }
@@ -177,14 +161,14 @@ SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid)
     SequenceNumber_t ret_val;
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     GUID_t guid_to_look = guid;
-    auto p_guid = persistence_guid_map_.find(guid);
-    if (p_guid != persistence_guid_map_.end())
+    auto p_guid = history_state_->persistence_guid_map.find(guid);
+    if (p_guid != history_state_->persistence_guid_map.end())
     {
         guid_to_look = p_guid->second;
     }
 
-    auto p_seq = history_record_.find(guid_to_look);
-    if (p_seq != history_record_.end())
+    auto p_seq = history_state_->history_record.find(guid_to_look);
+    if (p_seq != history_state_->history_record.end())
     {
         ret_val = p_seq->second;
     }
@@ -196,7 +180,7 @@ void RTPSReader::set_last_notified(
         const GUID_t& peristence_guid, 
         const SequenceNumber_t& seq)
 {
-    history_record_[peristence_guid] = seq;
+    history_state_->history_record[peristence_guid] = seq;
 }
 
 } /* namespace rtps */
