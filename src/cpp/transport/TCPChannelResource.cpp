@@ -130,7 +130,9 @@ void TCPChannelResource::add_logical_port(uint16_t port, RTCPMessageManager* rtc
             pending_logical_output_ports_.emplace_back(port);
             if (connection_established())
             {
+                scopedLock.unlock();
                 TCPTransactionId id = rtcp_manager->sendOpenLogicalPortRequest(this, port);
+                scopedLock.lock();
                 negotiating_logical_ports_[id] = port;
             }
         }
