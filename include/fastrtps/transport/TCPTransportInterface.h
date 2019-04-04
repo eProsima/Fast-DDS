@@ -304,7 +304,7 @@ public:
 
     //! Callback called each time that an outgoing connection is established.
     void SocketConnected(
-            const std::shared_ptr<TCPChannelResource>& channel,
+            const std::weak_ptr<TCPChannelResource>& channel,
             const asio::error_code& error);
 
     /**

@@ -78,10 +78,11 @@ void TCPChannelResourceSecure::connect(
             TCPTransportInterface* parent = parent_;
             secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(service_, ssl_context_);
             set_tls_verify_mode(parent->configuration());
+            std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
             const auto secure_socket = secure_socket_;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
-                [secure_socket, &myself, parent](const std::error_code& error,
+                [secure_socket, channel_weak_ptr, parent](const std::error_code& error,
                     const tcp::endpoint& /*endpoint*/)
             {
                 if (!error)
@@ -92,28 +93,28 @@ void TCPChannelResourceSecure::connect(
                         role = ssl::stream_base::server;
                     }
 
-                    logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(myself->locator()));
+                    logInfo(RTCP_TLS, "Connected: " << IPLocator::to_string(channel_weak_ptr->locator()));
 
                     secure_socket->async_handshake(role,
-                        [&myself, parent](const std::error_code& error)
+                        [channel_weak_ptr, parent](const std::error_code& error)
                     {
                         if (!error)
                         {
-                            logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(myself->locator()));
-                            parent->SocketConnected(myself, error);
+                            logInfo(RTCP_TLS, "Handshake OK: " << IPLocator::to_string(channel_weak_ptr->locator()));
+                            parent->SocketConnected(channel_weak_ptr, error);
                         }
                         else
                         {
                             logError(RTCP_TLS, "Handshake failed: " << error.message());
                             eClock::my_sleep(5000); // Retry, but after a big while
-                            parent->SocketConnected(myself, error);
+                            parent->SocketConnected(channel_weak_ptr, error);
                         }
                     });
                 }
                 else
                 {
                     //logError(RTCP_TLS, "Connect failed: " << error.message());
-                    parent->SocketConnected(myself, error); // Manages errors and retries
+                    parent->SocketConnected(channel_weak_ptr, error); // Manages errors and retries
                 }
             });
         }

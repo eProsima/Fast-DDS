@@ -68,14 +68,14 @@ void TCPChannelResourceBasic::connect(
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             socket_ = std::make_shared<asio::ip::tcp::socket>(service_);
-            auto socket = socket_;
+            std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
 
             asio::async_connect(
                 *socket_,
                 endpoints,
-                [this, &myself](std::error_code ec, ip::tcp::endpoint)
+                [this, channel_weak_ptr](std::error_code ec, ip::tcp::endpoint)
                 {
-                    parent_->SocketConnected(myself, ec);
+                    parent_->SocketConnected(channel_weak_ptr, ec);
                 }
             );
         }

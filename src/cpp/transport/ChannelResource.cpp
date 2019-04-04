@@ -22,7 +22,6 @@ namespace rtps {
 ChannelResource::ChannelResource()
     : message_buffer_()
     , alive_(true)
-    , thread_joinable_(true)
 {
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
 }
@@ -30,7 +29,6 @@ ChannelResource::ChannelResource()
 ChannelResource::ChannelResource(ChannelResource&& channelResource)
     : message_buffer_(std::move(channelResource.message_buffer_))
     , thread_(std::move(channelResource.thread_))
-    , thread_joinable_(channelResource.thread_joinable_)
 {
     bool b = channelResource.alive_;
     alive_ = b;
@@ -41,7 +39,6 @@ ChannelResource::ChannelResource(ChannelResource&& channelResource)
 ChannelResource::ChannelResource(uint32_t rec_buffer_size)
     : message_buffer_(rec_buffer_size)
     , alive_(true)
-    , thread_joinable_(true)
 {
     memset(message_buffer_.buffer, 0, rec_buffer_size);
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
@@ -57,14 +54,7 @@ void ChannelResource::clear()
     alive_ = false;
     if(thread_.joinable())
     {
-        if (thread_joinable_)
-        {
-            thread_.join();
-        }
-        else
-        {
-            thread_.detach();
-        }
+        thread_.join();
     }
 }
 

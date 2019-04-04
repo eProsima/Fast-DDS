@@ -35,27 +35,14 @@ public:
 
     virtual void clear();
 
-    inline void thread(std::thread&& pThread, bool thread_joinable = true)
+    inline void thread(std::thread&& pThread)
     {
         if(thread_.joinable())
         {
-            if(thread_joinable_)
-            {
-                thread_.join();
-            }
-            else
-            {
-                thread_.detach();
-            }
+            thread_.join();
         }
 
         thread_.swap(pThread);
-        thread_joinable_ = thread_joinable;
-    }
-
-    void make_thread_joinable()
-    {
-        thread_joinable_ = true;
     }
 
     inline bool alive() const
@@ -79,7 +66,6 @@ protected:
 
     std::atomic<bool> alive_;
     std::thread thread_;
-    bool thread_joinable_;
 };
 
 } // namespace rtps

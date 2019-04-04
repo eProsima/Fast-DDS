@@ -693,7 +693,6 @@ void TCPTransportInterface::perform_listen_operation(
             {
                 channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBind);
             }
-            //channel->make_thread_joinable();
         }
 
         std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
@@ -1056,24 +1055,27 @@ void TCPTransportInterface::SocketAccepted(
 {
     if (!error.value())
     {
-        // Store the new connection.
-        std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
-            io_service_, socket, configuration()->maxMessageSize));
-
+        if(rtcp_message_manager_)
         {
-            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-            unbound_channel_resources_.push_back(channel);
+            // Store the new connection.
+            std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
+                        io_service_, socket, configuration()->maxMessageSize));
+
+            {
+                std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+                unbound_channel_resources_.push_back(channel);
+            }
+
+            channel->set_options(configuration());
+            std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
+            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+            channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                        channel_weak_ptr, rtcp_manager_weak_ptr));
+
+            logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
+                    << ", remote: " << channel->remote_endpoint().address()
+                    << ":" << channel->remote_endpoint().port() << ")");
         }
-
-        channel->set_options(configuration());
-        std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
-        std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-        channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-            channel_weak_ptr, rtcp_manager_weak_ptr), false);
-
-        logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
-            << ", remote: " << channel->remote_endpoint().address()
-            << ":" << channel->remote_endpoint().port() << ")");
     }
     else
     {
@@ -1099,24 +1101,27 @@ void TCPTransportInterface::SecureSocketAccepted(
 {
     if (!error.value())
     {
-        // Store the new connection.
-        std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
-            io_service_, ssl_context_, socket, configuration()->maxMessageSize));
-
+        if(rtcp_message_manager_)
         {
-            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-            unbound_channel_resources_.push_back(secure_channel);
+            // Store the new connection.
+            std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
+                        io_service_, ssl_context_, socket, configuration()->maxMessageSize));
+
+            {
+                std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+                unbound_channel_resources_.push_back(secure_channel);
+            }
+
+            secure_channel->set_options(configuration());
+            std::weak_ptr<TCPChannelResource> channel_weak_ptr = secure_channel;
+            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+            secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                        channel_weak_ptr, rtcp_manager_weak_ptr));
+
+            logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
+                    << ", remote: " << socket->lowest_layer().remote_endpoint().address()
+                    << ":" << socket->lowest_layer().remote_endpoint().port() << ")");
         }
-
-        secure_channel->set_options(configuration());
-        std::weak_ptr<TCPChannelResource> channel_weak_ptr = secure_channel;
-        std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-        secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-            channel_weak_ptr, rtcp_manager_weak_ptr), false);
-
-        logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
-            << ", remote: " << socket->lowest_layer().remote_endpoint().address()
-            << ":" << socket->lowest_layer().remote_endpoint().port() << ")");
     }
     else
     {
@@ -1137,36 +1142,43 @@ void TCPTransportInterface::SecureSocketAccepted(
 
 //TODO Passh the shared_ptr
 void TCPTransportInterface::SocketConnected(
-        const std::shared_ptr<TCPChannelResource>& channel,
+        const std::weak_ptr<TCPChannelResource>& channel_weak_ptr,
         const asio::error_code& error)
 {
-    if (!error)
-    {
-        try
-        {
-            if(TCPChannelResource::eConnectionStatus::eDisconnected < channel->connection_status())
-            {
-                channel->set_options(configuration());
+    auto channel = channel_weak_ptr.lock();
 
-        std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
-                std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-                channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                        channel_weak_ptr, rtcp_manager_weak_ptr), false);
+    if(channel)
+    {
+        if (!error)
+        {
+            if(rtcp_message_manager_)
+            {
+                try
+                {
+                    if(TCPChannelResource::eConnectionStatus::eDisconnected < channel->connection_status())
+                    {
+                        channel->set_options(configuration());
+
+                        std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+                        channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                                    channel_weak_ptr, rtcp_manager_weak_ptr));
+                    }
+                }
+                catch (asio::system_error const& /*e*/)
+                {
+                    /*
+                       (void)e;
+                       logInfo(RTCP_MSG_OUT, "TCPTransport Error establishing the connection at port:("
+                       << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
+                       CloseOutputChannel(locator);
+                       */
+                }
             }
         }
-        catch (asio::system_error const& /*e*/)
+        else
         {
-            /*
-            (void)e;
-            logInfo(RTCP_MSG_OUT, "TCPTransport Error establishing the connection at port:("
-                << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
-            CloseOutputChannel(locator);
-            */
+            channel->disable();
         }
-    }
-    else
-    {
-        channel->disable();
     }
 }
 
