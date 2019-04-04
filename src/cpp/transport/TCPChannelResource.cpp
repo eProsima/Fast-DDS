@@ -58,7 +58,7 @@ TCPChannelResource::TCPChannelResource(
     , parent_(parent)
     , locator_()
     , waiting_for_keep_alive_(false)
-    , connection_status_(eConnectionStatus::eDisconnected)
+    , connection_status_(eConnectionStatus::eConnected)
     , tcp_connection_type_(TCPConnectionType::TCP_ACCEPT_TYPE)
 {
 }

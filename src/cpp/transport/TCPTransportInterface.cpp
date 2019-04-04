@@ -690,7 +690,6 @@ void TCPTransportInterface::perform_listen_operation(
         {
             if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
             {
-                channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
                 rtcp_message_manager->sendConnectionRequest(channel);
             }
             else
@@ -1144,7 +1143,6 @@ void TCPTransportInterface::SecureSocketAccepted(
 }
 #endif
 
-//TODO Passh the shared_ptr
 void TCPTransportInterface::SocketConnected(
         const std::weak_ptr<TCPChannelResource>& channel_weak_ptr,
         const asio::error_code& error)
@@ -1157,25 +1155,14 @@ void TCPTransportInterface::SocketConnected(
         {
             if (!error)
             {
-                try
+                if(TCPChannelResource::eConnectionStatus::eDisconnected < channel->connection_status())
                 {
-                    if(TCPChannelResource::eConnectionStatus::eDisconnected < channel->connection_status())
-                    {
-                        channel->set_options(configuration());
+                    channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
+                    channel->set_options(configuration());
 
-                        std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-                        channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                                    channel_weak_ptr, rtcp_manager_weak_ptr));
-                    }
-                }
-                catch (asio::system_error const& /*e*/)
-                {
-                    /*
-                       (void)e;
-                       logInfo(RTCP_MSG_OUT, "TCPTransport Error establishing the connection at port:("
-                       << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
-                       CloseOutputChannel(locator);
-                       */
+                    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+                    channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                                channel_weak_ptr, rtcp_manager_weak_ptr));
                 }
             }
             else
