@@ -18,7 +18,6 @@
  */
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
@@ -27,6 +26,7 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
+#include "WriterProxy.h"
 #include <fastrtps/utils/TimeConversion.h>
 #include "../history/HistoryAttributesExtension.hpp"
 
@@ -195,6 +195,17 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
     }
 
     logInfo(RTPS_READER,"Writer Proxy " << writer_guid << " doesn't exist in reader "<<this->getGuid().entityId);
+    return false;
+}
+
+bool StatefulReader::assert_liveliness(const GUID_t& writer_guid)
+{
+    WriterProxy* WP;
+    if (matched_writer_lookup(writer_guid, &WP))
+    {
+        WP->assert_liveliness();
+        return true;
+    }
     return false;
 }
 

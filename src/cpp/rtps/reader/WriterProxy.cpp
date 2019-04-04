@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
-#include <fastrtps/rtps/reader/WriterProxy.h>
+#include "WriterProxy.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
 #include <fastrtps/log/Log.h>

@@ -23,7 +23,7 @@
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
+#include "../WriterProxy.h"
 
 #include "../../participant/RTPSParticipantImpl.h"
 

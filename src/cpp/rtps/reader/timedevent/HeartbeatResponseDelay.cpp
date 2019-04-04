@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
+#include "../WriterProxy.h"
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include "../../participant/RTPSParticipantImpl.h"

@@ -21,7 +21,7 @@
 #include "SubscriberImpl.h"
 
 #include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
+#include "../rtps/reader/WriterProxy.h"
 
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/log/Log.h>

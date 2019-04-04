@@ -74,6 +74,13 @@ class StatefulReader : public RTPSReader
         bool liveliness_expired(const GUID_t& writer_guid);
 
         /**
+         * Manually asserts liveliness on a matched writer.
+         * @param writer_guid GUID of the writer proxy for which livelines is asserted.
+         * @return True if correct.
+         */
+        bool assert_liveliness(const GUID_t& writer_guid);
+
+        /**
          * Remove a WriterProxyData from the matached writers.
          * @param writer_guid GUID of the writer to remove.
          * @return True if correct.

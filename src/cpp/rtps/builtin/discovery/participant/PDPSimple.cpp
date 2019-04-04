@@ -42,7 +42,6 @@
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/reader/StatelessReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
@@ -1188,12 +1187,7 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
                         if((*rit)->getAttributes().reliabilityKind == RELIABLE)
                         {
                             StatefulReader* sfr = (StatefulReader*)(*rit);
-                            WriterProxy* WP;
-                            if(sfr->matched_writer_lookup(wit->guid(), &WP))
-                            {
-                                WP->assert_liveliness();
-                                continue;
-                            }
+                            sfr->assert_liveliness(wit->guid());
                         }
                     }
                 }

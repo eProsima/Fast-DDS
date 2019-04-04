@@ -22,19 +22,19 @@
 
 #include <mutex>
 
-#include "../common/Types.h"
-#include "../common/Locator.h"
-#include "../common/CacheChange.h"
-#include "../attributes/ReaderAttributes.h"
-#include "../attributes/RTPSParticipantAllocationAttributes.hpp"
-#include "../messages/RTPSMessageSenderInterface.hpp"
-#include "../../utils/collections/ResourceLimitedVector.hpp"
+#include <fastrtps/rtps/common/Types.h>
+#include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/common/CacheChange.h>
+#include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
 
-#include<set>
+#include <set>
 
 // Testing purpose
 #ifndef TEST_FRIENDS
