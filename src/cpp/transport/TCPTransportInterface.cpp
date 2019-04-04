@@ -687,6 +687,7 @@ void TCPTransportInterface::perform_listen_operation(
         {
             if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
             {
+                channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
                 rtcp_message_manager->sendConnectionRequest(channel);
             }
             else
