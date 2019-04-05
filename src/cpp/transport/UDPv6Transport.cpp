@@ -297,7 +297,7 @@ bool UDPv6Transport::OpenInputChannel(
         uint32_t maxMsgSize)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
-    if (!IsLocatorSupported(locator))
+    if (!is_locator_allowed(locator))
         return false;
 
     bool success = false;

@@ -302,7 +302,18 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
 
 TEST_F(UDPv4Tests, send_to_blocked_interface)
 {
-    descriptor.interfaceWhiteList.emplace_back("111.111.111.111");
+    std::vector<IPFinder::info_IP> ip_list;
+    IPFinder::getIPs(&ip_list);
+
+    for (const IPFinder::info_IP& ip : ip_list)
+    {
+        if (IPFinder::IP4 == ip.type)
+        {
+            descriptor.interfaceWhiteList.emplace_back(ip.name);
+            break;
+        }
+    }
+
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -525,17 +536,27 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
 
 TEST_F(UDPv4Tests, open_a_blocked_socket)
 {
-    descriptor.interfaceWhiteList.emplace_back("111.111.111.111");
-    UDPv4Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    std::vector<IPFinder::info_IP> ip_list;
+    IPFinder::getIPs(&ip_list);
 
-    Locator_t multicastLocator;
-    multicastLocator.port = g_default_port;
-    multicastLocator.kind = LOCATOR_KIND_UDPv4;
-    IPLocator::setIPv4(multicastLocator, 239, 255, 0, 1);
+    for (const IPFinder::info_IP& ip : ip_list)
+    {
+        if (IPFinder::IP4 == ip.type)
+        {
+            descriptor.interfaceWhiteList.emplace_back("127.0.0.1");
+            UDPv4Transport transportUnderTest(descriptor);
+            transportUnderTest.init();
 
-    MockReceiverResource receiver(transportUnderTest, multicastLocator);
-    ASSERT_FALSE(transportUnderTest.IsInputChannelOpen(multicastLocator));
+            Locator_t multicastLocator;
+            multicastLocator.port = g_default_port;
+            multicastLocator.kind = LOCATOR_KIND_UDPv4;
+            IPLocator::setIPv4(multicastLocator, ip.name);
+
+            MockReceiverResource receiver(transportUnderTest, multicastLocator);
+            ASSERT_FALSE(transportUnderTest.IsInputChannelOpen(multicastLocator));
+            break;
+        }
+    }
 }
 
 TEST_F(UDPv4Tests, shrink_locator_lists)
