@@ -31,18 +31,10 @@ bool RTPSMessageCreator::addMessageAcknack(
         int32_t count,
         bool finalFlag)
 {
-    try
-    {
-        RTPSMessageCreator::addHeader(msg,guidprefix);
-        RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
-        RTPSMessageCreator::addSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
-        msg->length = msg->pos;
-    }
-    catch(int e)
-    {
-        logError(RTPS_CDR_MSG,"Data message not created"<<e<<endl);
-        return false;
-    }
+    RTPSMessageCreator::addHeader(msg,guidprefix);
+    RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
+    RTPSMessageCreator::addSubmessageAcknack(msg,readerId, writerId,SNSet,count,finalFlag);
+    msg->length = msg->pos;
     return true;
 }
 
@@ -111,18 +103,10 @@ bool RTPSMessageCreator::addMessageNackFrag(
         FragmentNumberSet_t fnState,
         int32_t count)
 {
-    try
-    {
-        RTPSMessageCreator::addHeader(msg, guidprefix);
-        RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
-        RTPSMessageCreator::addSubmessageNackFrag(msg, readerId, writerId, writerSN, fnState, count);
-        msg->length = msg->pos;
-    }
-    catch (int e)
-    {
-        logError(RTPS_CDR_MSG, "Data message not created" << e << endl);
-        return false;
-    }
+    RTPSMessageCreator::addHeader(msg, guidprefix);
+    RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
+    RTPSMessageCreator::addSubmessageNackFrag(msg, readerId, writerId, writerSN, fnState, count);
+    msg->length = msg->pos;
     return true;
 }
 

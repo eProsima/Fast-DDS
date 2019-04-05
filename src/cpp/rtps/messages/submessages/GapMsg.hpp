@@ -30,18 +30,10 @@ bool RTPSMessageCreator::addMessageGap(
         const EntityId_t& readerId,
         const EntityId_t& writerId)
 {
-    try
-    {
-        RTPSMessageCreator::addHeader(msg, guidprefix);
-        RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
-        RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
-        RTPSMessageCreator::addSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
-    }
-    catch(int e)
-    {
-        logError(RTPS_CDR_MSG,"Gap message error"<<e<<endl)
-            return false;
-    }
+    RTPSMessageCreator::addHeader(msg, guidprefix);
+    RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidPrefix);
+    RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
+    RTPSMessageCreator::addSubmessageGap(msg,seqNumFirst,seqNumList,readerId, writerId);
     return true;
 }
 

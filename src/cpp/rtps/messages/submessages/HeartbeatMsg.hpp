@@ -32,17 +32,9 @@ bool RTPSMessageCreator::addMessageHeartbeat(
         bool isFinal,
         bool livelinessFlag)
 {
-    try
-    {
-        RTPSMessageCreator::addHeader(msg,guidprefix);
-        RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
-        msg->length = msg->pos;
-    }
-    catch(int e)
-    {
-        logError(RTPS_CDR_MSG,"HB message not created"<<e<<endl)
-            return false;
-    }
+    RTPSMessageCreator::addHeader(msg,guidprefix);
+    RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+    msg->length = msg->pos;
     return true;
 }
 
@@ -58,18 +50,10 @@ bool RTPSMessageCreator::addMessageHeartbeat(
         bool isFinal, 
         bool livelinessFlag)
 {
-    try
-    {
-        RTPSMessageCreator::addHeader(msg,guidprefix);
-        RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidprefix);
-        RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
-        msg->length = msg->pos;
-    }
-    catch(int e)
-    {
-        logError(RTPS_CDR_MSG,"HB message not created"<<e<<endl)
-            return false;
-    }
+    RTPSMessageCreator::addHeader(msg,guidprefix);
+    RTPSMessageCreator::addSubmessageInfoDST(msg, remoteGuidprefix);
+    RTPSMessageCreator::addSubmessageHeartbeat(msg,readerId, writerId,firstSN,lastSN,count,isFinal,livelinessFlag);
+    msg->length = msg->pos;
     return true;
 }
 
@@ -141,17 +125,9 @@ bool RTPSMessageCreator::addMessageHeartbeatFrag(
         FragmentNumber_t& lastFN,
         Count_t count)
 {
-    try
-    {
-        RTPSMessageCreator::addHeader(msg, guidprefix);
-        RTPSMessageCreator::addSubmessageHeartbeatFrag(msg, readerId, writerId, firstSN, lastFN, count);
-        msg->length = msg->pos;
-    }
-    catch (int e)
-    {
-        logError(RTPS_CDR_MSG, "HB message not created" << e << endl)
-            return false;
-    }
+    RTPSMessageCreator::addHeader(msg, guidprefix);
+    RTPSMessageCreator::addSubmessageHeartbeatFrag(msg, readerId, writerId, firstSN, lastFN, count);
+    msg->length = msg->pos;
     return true;
 }
 
