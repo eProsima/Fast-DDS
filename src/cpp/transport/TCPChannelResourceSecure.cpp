@@ -126,16 +126,16 @@ void TCPChannelResourceSecure::disconnect()
 {
     if (eConnecting < change_status(eConnectionStatus::eDisconnected))
     {
-        std::promise<bool> cancel_promise;
-        auto cancel_future = cancel_promise.get_future();
         auto socket = secure_socket_;
 
-        secure_socket_->async_shutdown([&, socket](const std::error_code&)
-                {
-                    cancel_promise.set_value(true);
-                });
-
-        cancel_future.get();
+        strand_.post([&, socket]()
+        {
+            std::error_code ec;
+            socket->lowest_layer().cancel(ec);
+            socket->async_shutdown([&, socket](const std::error_code&)
+            {
+            });
+        });
     }
 }
 
@@ -145,28 +145,39 @@ uint32_t TCPChannelResourceSecure::read(
         asio::error_code& ec)
 {
     size_t bytes_read = 0;
-    std::promise<size_t> bytes_promise;
-    auto bytes_future = bytes_promise.get_future();
-    auto socket = secure_socket_;
 
-    strand_.post([&, socket]()
-            {
-                asio::async_read(*socket, asio::buffer(buffer, size),
-                        [&, socket](const std::error_code& error, const size_t bytes_transferred)
-                        {
+    if (eConnecting < connection_status_)
+    {
+        std::promise<size_t> read_bytes_promise;
+        auto bytes_future = read_bytes_promise.get_future();
+        auto socket = secure_socket_;
+
+        strand_.post([&, socket]()
+        {
+            asio::async_read(*socket, asio::buffer(buffer, size), asio::transfer_exactly(size),
+                    [&, socket](const std::error_code& error, const size_t bytes_transferred)
+                    {
                             ec = error;
-
+                        try
+                        {
                             if (!error)
                             {
-                                bytes_promise.set_value(bytes_transferred);
+                                read_bytes_promise.set_value(bytes_transferred);
                             }
                             else
                             {
-                                bytes_promise.set_value(0);
+                                read_bytes_promise.set_value(0);
                             }
-                        });
-            });
-    bytes_read = bytes_future.get();
+
+
+                        }
+                        catch(std::exception&)
+                        {
+                        }
+                    });
+        });
+        bytes_read = bytes_future.get();
+    }
 
     return static_cast<uint32_t>(bytes_read);
 }
@@ -176,8 +187,7 @@ size_t TCPChannelResourceSecure::send(
         size_t header_size,
         const octet* data,
         size_t size,
-        asio::error_code& ec,
-        bool blocking)
+        asio::error_code& ec)
 {
     size_t bytes_sent = 0;
 
@@ -190,35 +200,36 @@ size_t TCPChannelResourceSecure::send(
         }
         buffers.push_back(asio::buffer(data, size));
 
-        if(blocking)
-        {
-            std::promise<size_t> bytes_promise;
-            auto bytes_future = bytes_promise.get_future();
-            auto socket = secure_socket_;
+        // Work around meanwhile
+        std::promise<size_t> write_bytes_promise;
+        auto bytes_future = write_bytes_promise.get_future();
+        auto socket = secure_socket_;
 
-            strand_.post([&, socket]()
+        strand_.post([&, socket]()
+        {
+            asio::async_write(*socket, buffers,
+                    [&, socket](const std::error_code& error, const size_t& bytes_transferred)
                     {
-                        asio::async_write(*socket, buffers,
-                                [&, socket](const std::error_code& error, const size_t& bytes_transferred)
-                                {
-                                    ec = error;
+                        ec = error;
+                        try
+                        {
+                            if (!error)
+                            {
+                                write_bytes_promise.set_value(bytes_transferred);
+                            }
+                            else
+                            {
+                                write_bytes_promise.set_value(0);
+                            }
 
-                                    if (!error)
-                                    {
-                                        bytes_promise.set_value(bytes_transferred);
-                                    }
-                                    else
-                                    {
-                                        bytes_promise.set_value(0);
-                                    }
-                                });
+
+                        }
+                        catch(std::exception&)
+                        {
+                        }
                     });
-            bytes_sent = bytes_future.get();
-        }
-        else
-        {
-            bytes_sent = secure_socket_->write_some(buffers, ec);
-        }
+        });
+        bytes_sent = bytes_future.get();
     }
 
     return bytes_sent;

@@ -38,7 +38,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps {
 
-static const int s_default_keep_alive_frequency = 10000; // 10 SECONDS
+static const int s_default_keep_alive_frequency = 100; // 10 SECONDS
 static const int s_default_keep_alive_timeout = 30000; // 30 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
@@ -134,11 +134,15 @@ void TCPTransportInterface::clean()
     if(keep_alive_event_ != nullptr)
     {
         delete keep_alive_event_;
+        io_service_timers_.stop();
+        io_service_timers_thread_->join();
+        io_service_timers_thread_ = nullptr;
     }
 
     {
         std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
         for (auto& unbound_channel_resource : unbound_channel_resources_)
         {
@@ -170,6 +174,7 @@ void TCPTransportInterface::clean()
 
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
         for (auto& unbound_channel_resource : unbound_channel_resources_)
         {
             unbound_channel_resource->thread(std::thread());
@@ -196,6 +201,7 @@ void TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+    std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
     auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
     assert(it_remove != unbound_channel_resources_.end());
@@ -385,16 +391,20 @@ bool TCPTransportInterface::init()
 
     auto ioServiceFunction = [&]()
     {
-        asio::executor_work_guard<asio::io_service::executor_type> work_(io_service_.get_executor());
+        asio::executor_work_guard<asio::io_service::executor_type> work(io_service_.get_executor());
         io_service_.run();
     };
     io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
 
-    keep_alive_event_ = new TCPKeepAliveEvent(*this, io_service_, *io_service_thread_.get(),
-        configuration()->keep_alive_frequency_ms);
-
     if (0 < configuration()->keep_alive_frequency_ms)
     {
+        io_service_timers_thread_ = std::make_shared<std::thread>([&]()
+        {
+            asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.get_executor());
+            io_service_timers_.run();
+        });
+        keep_alive_event_ = new TCPKeepAliveEvent(*this, io_service_timers_, *io_service_timers_thread_.get(),
+            configuration()->keep_alive_frequency_ms);
         keep_alive_event_->restart_timer();
     }
 
@@ -623,9 +633,12 @@ void TCPTransportInterface::keep_alive()
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
 
-    for (auto channel_resource : channel_resources_)
+    for (auto& channel_resource : channel_resources_)
     {
-        rtcp_message_manager_->sendKeepAliveRequest(channel_resource.second);
+        if(TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel_resource.second->tcp_connection_type())
+        {
+            rtcp_message_manager_->sendKeepAliveRequest(channel_resource.second);
+        }
     }
     //TODO Check timeout.
 
@@ -717,25 +730,28 @@ void TCPTransportInterface::perform_listen_operation(
             continue;
         }
 
-        // Processes the data through the CDR Message interface.
-        logicalPort = IPLocator::getLogicalPort(remote_locator);
-        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        auto it = receiver_resources_.find(logicalPort);
-        //TransportReceiverInterface* receiver = channel->GetMessageReceiver(logicalPort);
-        if (it != receiver_resources_.end())
+        if(TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
         {
-            TransportReceiverInterface* receiver = it->second.first;
-            ReceiverInUseCV* receiver_in_use = it->second.second;
-            receiver_in_use->in_use = true;
-            scopedLock.unlock();
-            receiver->OnDataReceived(msg.buffer, msg.length, channel->locator(), remote_locator);
-            scopedLock.lock();
-            receiver_in_use->in_use = false;
-            receiver_in_use->cv.notify_one();
-        }
-        else
-        {
-            logWarning(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
+            // Processes the data through the CDR Message interface.
+            logicalPort = IPLocator::getLogicalPort(remote_locator);
+            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+            auto it = receiver_resources_.find(logicalPort);
+            //TransportReceiverInterface* receiver = channel->GetMessageReceiver(logicalPort);
+            if (it != receiver_resources_.end())
+            {
+                TransportReceiverInterface* receiver = it->second.first;
+                ReceiverInUseCV* receiver_in_use = it->second.second;
+                receiver_in_use->in_use = true;
+                scopedLock.unlock();
+                receiver->OnDataReceived(msg.buffer, msg.length, channel->locator(), remote_locator);
+                scopedLock.lock();
+                receiver_in_use->in_use = false;
+                receiver_in_use->cv.notify_one();
+            }
+            else
+            {
+                logWarning(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
+            }
         }
     }
 
@@ -803,15 +819,14 @@ bool TCPTransportInterface::Receive(
             {
                 logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << " (expected: : "
                         << TCPHeader::size() << ")" << ec.message());
-            }
-            else if (ec != asio::error::eof)
-            {
-                logWarning(DEBUG, "Error reading TCP header: " << ec.message());
-            }
-            if (ec != asio::error::eof)
-            {
                 close_tcp_socket(channel);
             }
+            else if (ec)
+            {
+                logWarning(DEBUG, "Error reading TCP header: " << ec.message());
+                close_tcp_socket(channel);
+            }
+
             success = false;
         }
         else
@@ -1065,7 +1080,7 @@ void TCPTransportInterface::SocketAccepted(
                         io_service_, socket, configuration()->maxMessageSize));
 
             {
-                std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+                std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
                 unbound_channel_resources_.push_back(channel);
             }
 
@@ -1111,7 +1126,7 @@ void TCPTransportInterface::SecureSocketAccepted(
                         io_service_, ssl_context_, socket, configuration()->maxMessageSize));
 
             {
-                std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+                std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
                 unbound_channel_resources_.push_back(secure_channel);
             }
 

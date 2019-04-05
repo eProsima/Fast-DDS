@@ -60,8 +60,7 @@ class TCPChannelResourceSecure : public TCPChannelResource
                 size_t header_size,
                 const octet* data,
                 size_t size,
-                asio::error_code& ec,
-                bool blocking = true) override;
+                asio::error_code& ec) override;
 
         asio::ip::tcp::endpoint remote_endpoint() const override;
         asio::ip::tcp::endpoint local_endpoint() const override;

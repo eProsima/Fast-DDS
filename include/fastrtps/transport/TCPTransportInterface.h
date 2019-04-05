@@ -77,14 +77,17 @@ protected:
 
     std::vector<IPFinder::info_IP> current_interfaces_;
     asio::io_service io_service_;
+    asio::io_service io_service_timers_;
 #if TLS_FOUND
     asio::ssl::context ssl_context_;
 #endif
     std::shared_ptr<std::thread> io_service_thread_;
+    std::shared_ptr<std::thread> io_service_timers_thread_;
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;
     mutable std::mutex sockets_map_mutex_;
+    mutable std::mutex unbound_map_mutex_;
 
     std::map<Locator_t, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
     std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;

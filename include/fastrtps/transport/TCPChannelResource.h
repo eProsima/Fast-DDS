@@ -122,8 +122,7 @@ public:
         size_t header_size,
         const octet* buffer,
         size_t size,
-        asio::error_code& ec,
-        bool blocking = true) = 0;
+        asio::error_code& ec) = 0;
 
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
 

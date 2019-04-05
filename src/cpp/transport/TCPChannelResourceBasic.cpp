@@ -90,18 +90,27 @@ void TCPChannelResourceBasic::disconnect()
 {
     if (eConnecting < change_status(eConnectionStatus::eDisconnected))
     {
-        std::promise<bool> cancel_promise;
-        auto cancel_future = cancel_promise.get_future();
         auto socket = socket_;
 
         service_.post([&, socket]()
                 {
-                    socket->close();
-                    cancel_promise.set_value(true);
+                    try
+                    {
+                        std::error_code ec;
+                        socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+                        socket->cancel();
+
+                    // This method was added on the version 1.12.0
+#if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
+                        socket->release();
+#endif
+                        socket->close();
+                    }
+                    catch(std::exception&)
+                    {
+                    }
                 });
 
-        socket.reset();
-        cancel_future.get();
     }
 }
 
@@ -112,7 +121,12 @@ uint32_t TCPChannelResourceBasic::read(
 {
     std::unique_lock<std::mutex> read_lock(read_mutex_);
 
-    return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, size), transfer_exactly(size), ec));
+    if (eConnecting < connection_status_)
+    {
+        return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, size), transfer_exactly(size), ec));
+    }
+
+    return 0;
 }
 
 size_t TCPChannelResourceBasic::send(
@@ -120,8 +134,7 @@ size_t TCPChannelResourceBasic::send(
         size_t header_size,
         const octet* data,
         size_t size,
-        asio::error_code& ec,
-        bool)
+        asio::error_code& ec)
 {
     size_t bytes_sent = 0;
 

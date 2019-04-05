@@ -73,8 +73,7 @@ RTCPMessageManager::~RTCPMessageManager()
 
 size_t RTCPMessageManager::sendMessage(
         TCPChannelResource* channel,
-        const CDRMessage_t &msg,
-        bool blocking) const
+        const CDRMessage_t &msg) const
 {
     if (!alive())
     {
@@ -82,7 +81,7 @@ size_t RTCPMessageManager::sendMessage(
     }
 
     asio::error_code ec;
-    size_t send = channel->send(nullptr, 0, msg.buffer, msg.length, ec, blocking);
+    size_t send = channel->send(nullptr, 0, msg.buffer, msg.length, ec);
     if (send != msg.length || ec)
     {
         logInfo(RTCP, "Bad sent size..." << send << " bytes of " << msg.length << " bytes: " << ec.message());
@@ -98,10 +97,9 @@ bool RTCPMessageManager::sendData(
         TCPCPMKind kind,
         const TCPTransactionId& transaction_id,
         const SerializedPayload_t* payload,
-        const ResponseCode respCode,
-        bool blocking)
+        const ResponseCode respCode)
 {
-    if(sendData(channel.get(), kind, transaction_id, payload, respCode, blocking))
+    if(sendData(channel.get(), kind, transaction_id, payload, respCode))
     {
         return true;
     }
@@ -121,8 +119,7 @@ bool RTCPMessageManager::sendData(
         TCPCPMKind kind,
         const TCPTransactionId &transaction_id,
         const SerializedPayload_t *payload,
-        const ResponseCode respCode,
-        bool blocking)
+        const ResponseCode respCode)
 {
     if (!alive())
     {
@@ -150,7 +147,7 @@ bool RTCPMessageManager::sendData(
         RTPSMessageCreator::addCustomContent(&msg, payload->data, payload->length); // Data
     }
 
-    return sendMessage(channel, msg, blocking) > 0;
+    return sendMessage(channel, msg) > 0;
 }
 
 uint32_t& RTCPMessageManager::addToCRC(
@@ -376,7 +373,7 @@ TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(
     request.serialize(&payload);
     logInfo(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST]");
     TCPTransactionId id = getTransactionId();
-    sendData(channel, KEEP_ALIVE_REQUEST, id, &payload, RETCODE_VOID, false);
+    sendData(channel, KEEP_ALIVE_REQUEST, id, &payload, RETCODE_VOID);
     return id;
 }
 

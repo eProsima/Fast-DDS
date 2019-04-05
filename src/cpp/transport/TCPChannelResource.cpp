@@ -176,6 +176,7 @@ void TCPChannelResource::add_logical_port_response(
             }
             else
             {
+                scopedLock.unlock();
                 prepare_send_check_logical_ports_req(port, rtcp_manager);
             }
         }
@@ -224,6 +225,7 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(
     else
     {
         TCPTransactionId id = rtcp_manager->sendCheckLogicalPortsRequest(this, candidatePorts);
+        std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
         last_checked_logical_port_[id] = candidatePorts.back();
     }
 }
@@ -233,11 +235,13 @@ void TCPChannelResource::process_check_logical_ports_response(
         const std::vector<uint16_t> &availablePorts,
         RTCPMessageManager* rtcp_manager)
 {
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     auto it = last_checked_logical_port_.find(transactionId);
     if (it != last_checked_logical_port_.end())
     {
         uint16_t lastPort = it->second;
         last_checked_logical_port_.erase(it);
+        scopedLock.unlock();
         if (availablePorts.empty())
         {
             prepare_send_check_logical_ports_req(lastPort, rtcp_manager);
