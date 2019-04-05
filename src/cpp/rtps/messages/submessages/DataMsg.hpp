@@ -30,23 +30,14 @@ bool RTPSMessageCreator::addMessageData(
         bool expectsInlineQos,
         InlineQosWriter* inlineQos)
 {
-    try
-    {
 
-        RTPSMessageCreator::addHeader(msg,guidprefix);
+    RTPSMessageCreator::addHeader(msg,guidprefix);
 
-        RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
+    RTPSMessageCreator::addSubmessageInfoTS_Now(msg,false);
 
-        RTPSMessageCreator::addSubmessageData(msg, change,topicKind,readerId,expectsInlineQos,inlineQos);
+    RTPSMessageCreator::addSubmessageData(msg, change,topicKind,readerId,expectsInlineQos,inlineQos);
 
-        msg->length = msg->pos;
-    }
-    catch(int e)
-    {
-        logError(RTPS_CDR_MSG, "Data message error" << e << endl)
-
-            return false;
-    }
+    msg->length = msg->pos;
 
     return true;
 }
@@ -121,109 +112,103 @@ bool RTPSMessageCreator::addSubmessageData(
     }
 
     bool added_no_error = true;
-    try
+
+    // Submessage header.
+    CDRMessage::addOctet(msg, DATA);
+    CDRMessage::addOctet(msg, flags);
+    uint32_t submessage_size_pos = msg->pos;
+    uint16_t submessage_size = 0;
+    CDRMessage::addUInt16(msg, submessage_size);
+    uint32_t position_size_count_size = msg->pos;
+
+    //extra flags. not in this version.
+    added_no_error &= CDRMessage::addUInt16(msg, 0);
+    //octet to inline Qos is 12, may change in future versions
+    added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
+    //Entity ids
+    added_no_error &= CDRMessage::addEntityId(msg, &readerId);
+    added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
+    //Add Sequence Number
+    added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
+    //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
+
+
+    if(inlineQosFlag) //inlineQoS
     {
-        // Submessage header.
-        CDRMessage::addOctet(msg, DATA);
-        CDRMessage::addOctet(msg, flags);
-        uint32_t submessage_size_pos = msg->pos;
-        uint16_t submessage_size = 0;
-        CDRMessage::addUInt16(msg, submessage_size);
-        uint32_t position_size_count_size = msg->pos;
-
-        //extra flags. not in this version.
-        added_no_error &= CDRMessage::addUInt16(msg, 0);
-        //octet to inline Qos is 12, may change in future versions
-        added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATASUBMSG);
-        //Entity ids
-        added_no_error &= CDRMessage::addEntityId(msg, &readerId);
-        added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
-        //Add Sequence Number
-        added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
-        //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
-
-
-        if(inlineQosFlag) //inlineQoS
+        if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
-            if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
-            {
-                CDRMessage::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
-            }
-
-            if(topicKind == WITH_KEY)
-            {
-                //cout << "ADDDING PARAMETER KEY " << endl;
-                CDRMessage::addParameterKey(msg, &change->instanceHandle);
-            }
-
-            if(change->kind != ALIVE)
-            {
-                CDRMessage::addParameterStatus(msg, status);
-            }
-
-            if (inlineQos != nullptr)
-            {
-                inlineQos->writeQosToCDRMessage(msg);
-            }
-
-            CDRMessage::addParameterSentinel(msg);
+            CDRMessage::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
         }
 
-        //Add Serialized Payload
-        if(dataFlag)
-            added_no_error &= CDRMessage::addData(msg, change->serializedPayload.data, change->serializedPayload.length);
-
-        if(keyFlag)
+        if(topicKind == WITH_KEY)
         {
-            added_no_error &= CDRMessage::addOctet(msg, 0); //ENCAPSULATION
-            if(msg->msg_endian == BIGEND)
-            {
-                added_no_error &= CDRMessage::addOctet(msg, PL_CDR_BE); //ENCAPSULATION
-            }
-            else
-            {
-                added_no_error &= CDRMessage::addOctet(msg, PL_CDR_LE); //ENCAPSULATION
-            }
-
-            added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
-            added_no_error &= CDRMessage::addParameterKey(msg, &change->instanceHandle);
-            added_no_error &= CDRMessage::addParameterStatus(msg, status);
-            added_no_error &= CDRMessage::addParameterSentinel(msg);
+            //cout << "ADDDING PARAMETER KEY " << endl;
+            CDRMessage::addParameterKey(msg, &change->instanceHandle);
         }
 
-        // Align submessage to rtps alignment (4).
-        uint32_t align = (4 - msg->pos % 4) & 3;
-        for(uint32_t count = 0; count < align; ++count)
-            added_no_error &= CDRMessage::addOctet(msg, 0);
-
-        //if(align > 0)
+        if(change->kind != ALIVE)
         {
-            //submsgElem.pos += align;
-            //submsgElem.length += align;
+            CDRMessage::addParameterStatus(msg, status);
         }
 
-
-        //TODO(Ricardo) Improve.
-        submessage_size = uint16_t(msg->pos - position_size_count_size);
-        octet* o= (octet*)&submessage_size;
-        if(msg->msg_endian == DEFAULT_ENDIAN)
+        if (inlineQos != nullptr)
         {
-            msg->buffer[submessage_size_pos] = *(o);
-            msg->buffer[submessage_size_pos+1] = *(o+1);
+            inlineQos->writeQosToCDRMessage(msg);
+        }
+
+        CDRMessage::addParameterSentinel(msg);
+    }
+
+    //Add Serialized Payload
+    if(dataFlag)
+        added_no_error &= CDRMessage::addData(msg, change->serializedPayload.data, change->serializedPayload.length);
+
+    if(keyFlag)
+    {
+        added_no_error &= CDRMessage::addOctet(msg, 0); //ENCAPSULATION
+        if(msg->msg_endian == BIGEND)
+        {
+            added_no_error &= CDRMessage::addOctet(msg, PL_CDR_BE); //ENCAPSULATION
         }
         else
         {
-            msg->buffer[submessage_size_pos] = *(o+1);
-            msg->buffer[submessage_size_pos+1] = *(o);
+            added_no_error &= CDRMessage::addOctet(msg, PL_CDR_LE); //ENCAPSULATION
         }
 
-        msg->msg_endian = old_endianess;
+        added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
+        added_no_error &= CDRMessage::addParameterKey(msg, &change->instanceHandle);
+        added_no_error &= CDRMessage::addParameterStatus(msg, status);
+        added_no_error &= CDRMessage::addParameterSentinel(msg);
     }
-    catch(int t){
-        logError(RTPS_CDR_MSG,"Data SUBmessage not created"<<t<<endl)
 
-            return false;
+    // Align submessage to rtps alignment (4).
+    uint32_t align = (4 - msg->pos % 4) & 3;
+    for(uint32_t count = 0; count < align; ++count)
+        added_no_error &= CDRMessage::addOctet(msg, 0);
+
+    //if(align > 0)
+    {
+        //submsgElem.pos += align;
+        //submsgElem.length += align;
     }
+
+
+    //TODO(Ricardo) Improve.
+    submessage_size = uint16_t(msg->pos - position_size_count_size);
+    octet* o= (octet*)&submessage_size;
+    if(msg->msg_endian == DEFAULT_ENDIAN)
+    {
+        msg->buffer[submessage_size_pos] = *(o);
+        msg->buffer[submessage_size_pos+1] = *(o+1);
+    }
+    else
+    {
+        msg->buffer[submessage_size_pos] = *(o+1);
+        msg->buffer[submessage_size_pos+1] = *(o);
+    }
+
+    msg->msg_endian = old_endianess;
+
     return added_no_error;
 }
 
@@ -232,37 +217,28 @@ bool RTPSMessageCreator::addMessageDataFrag(CDRMessage_t* msg, GuidPrefix_t& gui
         const CacheChange_t* change, uint32_t fragment_number, TopicKind_t topicKind, const EntityId_t& readerId,
         bool expectsInlineQos, InlineQosWriter* inlineQos)
 {
+    RTPSMessageCreator::addHeader(msg, guidprefix);
 
-    try{
+    RTPSMessageCreator::addSubmessageInfoTS_Now(msg, false);
 
-        RTPSMessageCreator::addHeader(msg, guidprefix);
+    // Calculate fragment start
+    uint32_t fragment_start = change->getFragmentSize() * (fragment_number - 1);
+    // Calculate fragment size. If last fragment, size may be smaller
+    uint32_t fragment_size = fragment_number < change->getFragmentCount() ? change->getFragmentSize() :
+        change->serializedPayload.length - fragment_start;
 
-        RTPSMessageCreator::addSubmessageInfoTS_Now(msg, false);
+    // TODO (Ricardo). Check to create special wrapper.
+    CacheChange_t change_to_add;
+    change_to_add.copy_not_memcpy(change);
+    change_to_add.serializedPayload.data = change->serializedPayload.data + fragment_start;
+    change_to_add.serializedPayload.length = fragment_size;
 
-        // Calculate fragment start
-        uint32_t fragment_start = change->getFragmentSize() * (fragment_number - 1);
-        // Calculate fragment size. If last fragment, size may be smaller
-        uint32_t fragment_size = fragment_number < change->getFragmentCount() ? change->getFragmentSize() :
-            change->serializedPayload.length - fragment_start;
+    RTPSMessageCreator::addSubmessageDataFrag(msg, &change_to_add, fragment_number, change->serializedPayload.length,
+            topicKind, readerId, expectsInlineQos, inlineQos);
 
-        // TODO (Ricardo). Check to create special wrapper.
-        CacheChange_t change_to_add;
-        change_to_add.copy_not_memcpy(change);
-        change_to_add.serializedPayload.data = change->serializedPayload.data + fragment_start;
-        change_to_add.serializedPayload.length = fragment_size;
+    change_to_add.serializedPayload.data = NULL;
 
-        RTPSMessageCreator::addSubmessageDataFrag(msg, &change_to_add, fragment_number, change->serializedPayload.length,
-                topicKind, readerId, expectsInlineQos, inlineQos);
-
-        change_to_add.serializedPayload.data = NULL;
-
-        msg->length = msg->pos;
-    }
-    catch (int e)
-    {
-        logError(RTPS_CDR_MSG, "Data message error" << e << endl)
-            return false;
-    }
+    msg->length = msg->pos;
     return true;
 }
 
@@ -338,117 +314,110 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
 
     bool added_no_error = true;
 
-    try
+    // Submessage header.
+    CDRMessage::addOctet(msg, DATA_FRAG);
+    CDRMessage::addOctet(msg, flags);
+    uint32_t submessage_size_pos = msg->pos;
+    uint16_t submessage_size = 0;
+    CDRMessage::addUInt16(msg, submessage_size);
+    uint32_t position_size_count_size = msg->pos;
+
+    //extra flags. not in this version.
+    added_no_error &= CDRMessage::addUInt16(msg, 0);
+
+    //octet to inline Qos is 28, may change in future versions
+    added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
+
+    //Entity ids
+    added_no_error &= CDRMessage::addEntityId(msg, &readerId);
+    added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
+
+    //Add Sequence Number
+    added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
+
+    // Add fragment starting number
+    added_no_error &= CDRMessage::addUInt32(msg, fragment_number); // fragments start in 1
+
+    // Add fragments in submessage
+    added_no_error &= CDRMessage::addUInt16(msg, 1); // we are sending one fragment
+
+    // Add fragment size
+    added_no_error &= CDRMessage::addUInt16(msg, change->getFragmentSize());
+
+    // Add total sample size
+    added_no_error &= CDRMessage::addUInt32(msg, sample_size); //TODO(Ricardo) Sample size in CacheChange
+
+    //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
+    if (inlineQosFlag) //inlineQoS
     {
-        // Submessage header.
-        CDRMessage::addOctet(msg, DATA_FRAG);
-        CDRMessage::addOctet(msg, flags);
-        uint32_t submessage_size_pos = msg->pos;
-        uint16_t submessage_size = 0;
-        CDRMessage::addUInt16(msg, submessage_size);
-        uint32_t position_size_count_size = msg->pos;
-
-        //extra flags. not in this version.
-        added_no_error &= CDRMessage::addUInt16(msg, 0);
-
-        //octet to inline Qos is 28, may change in future versions
-        added_no_error &= CDRMessage::addUInt16(msg, RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG);
-
-        //Entity ids
-        added_no_error &= CDRMessage::addEntityId(msg, &readerId);
-        added_no_error &= CDRMessage::addEntityId(msg, &change->writerGUID.entityId);
-
-        //Add Sequence Number
-        added_no_error &= CDRMessage::addSequenceNumber(msg, &change->sequenceNumber);
-
-        // Add fragment starting number
-        added_no_error &= CDRMessage::addUInt32(msg, fragment_number); // fragments start in 1
-
-        // Add fragments in submessage
-        added_no_error &= CDRMessage::addUInt16(msg, 1); // we are sending one fragment
-
-        // Add fragment size
-        added_no_error &= CDRMessage::addUInt16(msg, change->getFragmentSize());
-
-        // Add total sample size
-        added_no_error &= CDRMessage::addUInt32(msg, sample_size); //TODO(Ricardo) Sample size in CacheChange
-
-        //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
-        if (inlineQosFlag) //inlineQoS
+        if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
-            if(change->write_params.related_sample_identity() != SampleIdentity::unknown())
-            {
-                CDRMessage::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
-            }
-
-            if(topicKind == WITH_KEY)
-            {
-                CDRMessage::addParameterKey(msg,&change->instanceHandle);
-            }
-
-            if(change->kind != ALIVE)
-            {
-                CDRMessage::addParameterStatus(msg,status);
-            }
-
-            if (inlineQos != nullptr)
-            {
-                inlineQos->writeQosToCDRMessage(msg);
-            }
-
-            CDRMessage::addParameterSentinel(msg);
+            CDRMessage::addParameterSampleIdentity(msg, change->write_params.related_sample_identity());
         }
 
-        //Add Serialized Payload XXX TODO
-        if (!keyFlag) // keyflag = 0 means that the serializedPayload SubmessageElement contains the serialized Data 
+        if(topicKind == WITH_KEY)
         {
-            added_no_error &= CDRMessage::addData(msg, change->serializedPayload.data,
-                    change->serializedPayload.length);
-        }
-        else
-        {   // keyflag = 1 means that the serializedPayload SubmessageElement contains the serialized Key 
-            /*
-               added_no_error &= CDRMessage::addOctet(&submsgElem, 0); //ENCAPSULATION
-               if (submsgElem.msg_endian == BIGEND)
-               added_no_error &= CDRMessage::addOctet(&submsgElem, PL_CDR_BE); //ENCAPSULATION
-               else
-               added_no_error &= CDRMessage::addOctet(&submsgElem, PL_CDR_LE); //ENCAPSULATION
-
-               added_no_error &= CDRMessage::addUInt16(&submsgElem, 0); //ENCAPSULATION OPTIONS
-               added_no_error &= CDRMessage::addParameterKey(&submsgElem, &change->instanceHandle);
-               added_no_error &= CDRMessage::addParameterStatus(&submsgElem, status);
-               added_no_error &= CDRMessage::addParameterSentinel(&submsgElem);
-               */
-            msg->msg_endian = old_endianess;
-            return false;
+            CDRMessage::addParameterKey(msg,&change->instanceHandle);
         }
 
-        // TODO(Ricardo) This should be on cachechange.
-        // Align submessage to rtps alignment (4).
-        uint32_t align = (4 - msg->pos % 4) & 3;
-        for (uint32_t count = 0; count < align; ++count)
-            added_no_error &= CDRMessage::addOctet(msg, 0);
-
-        //TODO(Ricardo) Improve.
-        submessage_size = uint16_t(msg->pos - position_size_count_size);
-        octet* o= (octet*)&submessage_size;
-        if(msg->msg_endian == DEFAULT_ENDIAN)
+        if(change->kind != ALIVE)
         {
-            msg->buffer[submessage_size_pos] = *(o);
-            msg->buffer[submessage_size_pos+1] = *(o+1);
-        }
-        else
-        {
-            msg->buffer[submessage_size_pos] = *(o+1);
-            msg->buffer[submessage_size_pos+1] = *(o);
+            CDRMessage::addParameterStatus(msg,status);
         }
 
+        if (inlineQos != nullptr)
+        {
+            inlineQos->writeQosToCDRMessage(msg);
+        }
+
+        CDRMessage::addParameterSentinel(msg);
+    }
+
+    //Add Serialized Payload XXX TODO
+    if (!keyFlag) // keyflag = 0 means that the serializedPayload SubmessageElement contains the serialized Data 
+    {
+        added_no_error &= CDRMessage::addData(msg, change->serializedPayload.data,
+                change->serializedPayload.length);
+    }
+    else
+    {   // keyflag = 1 means that the serializedPayload SubmessageElement contains the serialized Key 
+        /*
+            added_no_error &= CDRMessage::addOctet(&submsgElem, 0); //ENCAPSULATION
+            if (submsgElem.msg_endian == BIGEND)
+            added_no_error &= CDRMessage::addOctet(&submsgElem, PL_CDR_BE); //ENCAPSULATION
+            else
+            added_no_error &= CDRMessage::addOctet(&submsgElem, PL_CDR_LE); //ENCAPSULATION
+
+            added_no_error &= CDRMessage::addUInt16(&submsgElem, 0); //ENCAPSULATION OPTIONS
+            added_no_error &= CDRMessage::addParameterKey(&submsgElem, &change->instanceHandle);
+            added_no_error &= CDRMessage::addParameterStatus(&submsgElem, status);
+            added_no_error &= CDRMessage::addParameterSentinel(&submsgElem);
+            */
         msg->msg_endian = old_endianess;
+        return false;
     }
-    catch (int t){
-        logError(RTPS_CDR_MSG, "Data SUBmessage not created" << t << endl)
-            return false;
+
+    // TODO(Ricardo) This should be on cachechange.
+    // Align submessage to rtps alignment (4).
+    uint32_t align = (4 - msg->pos % 4) & 3;
+    for (uint32_t count = 0; count < align; ++count)
+        added_no_error &= CDRMessage::addOctet(msg, 0);
+
+    //TODO(Ricardo) Improve.
+    submessage_size = uint16_t(msg->pos - position_size_count_size);
+    octet* o= (octet*)&submessage_size;
+    if(msg->msg_endian == DEFAULT_ENDIAN)
+    {
+        msg->buffer[submessage_size_pos] = *(o);
+        msg->buffer[submessage_size_pos+1] = *(o+1);
     }
+    else
+    {
+        msg->buffer[submessage_size_pos] = *(o+1);
+        msg->buffer[submessage_size_pos+1] = *(o);
+    }
+
+    msg->msg_endian = old_endianess;
 
     return added_no_error;
 }

@@ -38,8 +38,8 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps {
 
-static const int s_default_keep_alive_frequency = 100; // 10 SECONDS
-static const int s_default_keep_alive_timeout = 30000; // 30 SECONDS
+static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
+static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
 
