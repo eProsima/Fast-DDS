@@ -631,9 +631,15 @@ bool TCPTransportInterface::OpenInputChannel(
 
 void TCPTransportInterface::keep_alive()
 {
-    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
+    std::map<Locator_t, std::shared_ptr<TCPChannelResource>> tmp_vec;
 
-    for (auto& channel_resource : channel_resources_)
+    {
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
+        tmp_vec = channel_resources_;
+    }
+
+
+    for (auto& channel_resource : tmp_vec)
     {
         if(TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel_resource.second->tcp_connection_type())
         {
