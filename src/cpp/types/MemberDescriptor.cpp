@@ -176,6 +176,11 @@ std::string MemberDescriptor::GetName() const
     return mName;
 }
 
+DynamicType_ptr MemberDescriptor::get_type() const
+{
+    return mType;
+}
+
 std::vector<uint64_t> MemberDescriptor::GetUnionLabels() const
 {
     return mLabels;

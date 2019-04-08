@@ -55,6 +55,8 @@ public:
     RTPS_DllAPI void SetType(DynamicType_ptr type);
     RTPS_DllAPI void SetDefaultUnionValue(bool bDefault);
 
+    DynamicType_ptr get_type() const;
+
 protected:
 
     friend class DynamicTypeBuilderFactory;

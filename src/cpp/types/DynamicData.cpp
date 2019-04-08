@@ -260,6 +260,11 @@ ResponseCode DynamicData::SetDescriptor(MemberId id, const MemberDescriptor* val
     }
 }
 
+const std::map<MemberId, MemberDescriptor*>& DynamicData::get_descriptors() const
+{
+    return mDescriptors;
+}
+
 bool DynamicData::Equals(const DynamicData* other) const
 {
     if (other != nullptr)

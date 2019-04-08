@@ -327,7 +327,7 @@ ResponseCode DynamicType::GetMemberByName(DynamicTypeMember& member, const std::
     }
 }
 
-ResponseCode DynamicType::GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members)
+ResponseCode DynamicType::GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members) const
 {
     members = mMemberByName;
     return ResponseCode::RETCODE_OK;
@@ -348,7 +348,7 @@ ResponseCode DynamicType::GetMember(DynamicTypeMember& member, MemberId id)
     }
 }
 
-ResponseCode DynamicType::GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members)
+ResponseCode DynamicType::GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members) const
 {
     members = mMemberById;
     return ResponseCode::RETCODE_OK;

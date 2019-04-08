@@ -33,8 +33,8 @@ public:
 
     bool Equals(const DynamicType* other) const;
 
-    ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members);
-    ResponseCode GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members);
+    ResponseCode GetAllMembers(std::map<MemberId, DynamicTypeMember*>& members) const;
+    ResponseCode GetAllMembersByName(std::map<std::string, DynamicTypeMember*>& members) const;
 
     uint32_t GetBounds(uint32_t index = 0) const;
     uint32_t GetBoundsSize() const;

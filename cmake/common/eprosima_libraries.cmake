@@ -38,17 +38,17 @@ macro(eprosima_find_package package)
             set(SUBDIRECTORY_EXIST TRUE)
             if(THIRDPARTY_UPDATE OR NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
                 message(STATUS "${package} thirdparty is being updated...")
-                execute_process(
-                    COMMAND git submodule update --recursive --init "thirdparty/${package}"
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                    RESULT_VARIABLE EXECUTE_RESULT
-                    )
-                if(NOT EXECUTE_RESULT EQUAL 0)
-                    message(WARNING "Cannot configure Git submodule ${package}")
-                    if(NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
-                        set(SUBDIRECTORY_EXIST FALSE)
-                    endif()
-                endif()
+                # execute_process(
+                #     COMMAND git submodule update --recursive --init "thirdparty/${package}"
+                #     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                #     RESULT_VARIABLE EXECUTE_RESULT
+                #     )
+                # if(NOT EXECUTE_RESULT EQUAL 0)
+                #     message(WARNING "Cannot configure Git submodule ${package}")
+                #     if(NOT EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
+                #         set(SUBDIRECTORY_EXIST FALSE)
+                #     endif()
+                # endif()
             endif()
 
             if(SUBDIRECTORY_EXIST)
@@ -79,16 +79,16 @@ macro(eprosima_find_thirdparty package thirdparty_name)
         option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
 
         if(THIRDPARTY OR THIRDPARTY_${package})
-            execute_process(
-                COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                RESULT_VARIABLE EXECUTE_RESULT
-                )
+            # execute_process(
+            #     COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
+            #     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            #     RESULT_VARIABLE EXECUTE_RESULT
+            #     )
 
-            if(EXECUTE_RESULT EQUAL 0)
-            else()
-                message(FATAL_ERROR "Cannot configure Git submodule ${package}")
-            endif()
+            # if(EXECUTE_RESULT EQUAL 0)
+            # else()
+            #     message(FATAL_ERROR "Cannot configure Git submodule ${package}")
+            # endif()
             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name})
             set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name})
         endif()
