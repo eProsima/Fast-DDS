@@ -149,6 +149,8 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             {
                 listener->onParticipantDiscovery(this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
             }
+
+            return; // change already remove from history
         }
     }
 
