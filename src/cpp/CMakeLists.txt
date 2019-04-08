@@ -433,7 +433,7 @@ elseif(NOT EPROSIMA_INSTALLER)
                 )
         endif()
 
-        if(EPROSIMA_INSTALLER_MINION AND SECURITY)
+        if(EPROSIMA_INSTALLER_MINION AND LINK_SSL)
             # Libraries from https://www.npcglib.org/~stathis/blog/precompiled-openssl/
             install(FILES ${OPENSSL_ROOT_DIR}/bin/libeay32MD.dll
                 ${OPENSSL_ROOT_DIR}/bin/libeay32MDd.dll
@@ -455,7 +455,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     include(CMakePackageConfigHelpers)
 
     # Add fastrtps dependencies in its CMake config file.
-    if(SECURITY AND NOT EPROSIMA_INSTALLER_MINION)
+    if(LINK_SSL AND NOT EPROSIMA_INSTALLER_MINION)
         set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     endif()
 

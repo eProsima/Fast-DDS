@@ -786,8 +786,8 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
         bool ret = m_network_Factory.BuildReceiverResources(*it_loc, size, newItemsBuffer);
         if (!ret && ApplyMutation)
         {
-            int tries = 0;
-            while (!ret && (tries < MutationTries))
+            uint32_t tries = 0;
+            while (!ret && (tries < m_att.builtin.mutation_tries))
             {
                 tries++;
                 *it_loc = applyLocatorAdaptRule(*it_loc);
@@ -833,8 +833,8 @@ void RTPSParticipantImpl::createSenderResources(LocatorList_t& Locator_list, boo
             buffer = m_network_Factory.BuildSenderResources(*it_loc);
             if (buffer.size() == 0 && ApplyMutation)
             {
-                int tries = 0;
-                while (buffer.size() == 0 && (tries < MutationTries))
+                uint32_t tries = 0;
+                while (buffer.size() == 0 && (tries < m_att.builtin.mutation_tries))
                 {
                     tries++;
                     *it_loc = applyLocatorAdaptRule(*it_loc);

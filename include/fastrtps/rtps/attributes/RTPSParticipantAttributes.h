@@ -127,6 +127,9 @@ class BuiltinAttributes{
         //! Memory policy for builtin writers
         MemoryManagementPolicy_t writerHistoryMemoryPolicy;
 
+        //! Mutation tries if the port is being used.
+        uint32_t mutation_tries;
+
         BuiltinAttributes()
         {
             use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
@@ -139,6 +142,7 @@ class BuiltinAttributes{
             use_WriterLivelinessProtocol = true;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+            mutation_tries = 100u;
         }
         virtual ~BuiltinAttributes() {}
 
@@ -157,7 +161,8 @@ class BuiltinAttributes{
                    (this->initialPeersList == b.initialPeersList) &&
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
-                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename);
+                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
+                   (this->mutation_tries == b.mutation_tries);
         }
 
         /**

@@ -215,6 +215,7 @@ const char* PUBREADER_SUBWRITER = "PUBREADER_SUBWRITER";
 const char* STATIC_ENDPOINT_XML = "staticEndpointXMLFilename";
 const char* READER_HIST_MEM_POLICY = "readerHistoryMemoryPolicy";
 const char* WRITER_HIST_MEM_POLICY = "writerHistoryMemoryPolicy";
+const char* MUTATION_TRIES = "mutation_tries";
 const char* ACCESS_SCOPE = "access_scope";
 
 // Endpoint parser

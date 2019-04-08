@@ -282,6 +282,7 @@
             <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+            <xs:element name="mutation_tries" type="uint32Type" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 

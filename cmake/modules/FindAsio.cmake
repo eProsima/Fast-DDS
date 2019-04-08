@@ -13,7 +13,7 @@ else()
 
 
     include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(asio DEFAULT_MSG ASIO_INCLUDE_DIR)
+    find_package_handle_standard_args(Asio DEFAULT_MSG ASIO_INCLUDE_DIR)
 
     mark_as_advanced(ASIO_INCLUDE_DIR)
 endif()
