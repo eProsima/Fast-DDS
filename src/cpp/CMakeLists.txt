@@ -16,10 +16,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 # Set source files
-file(GLOB_RECURSE ALL_HEADERS 
-	"C:/Users/MiguelBarro/Documents/Fast-RTPS/include/**/*.h"
-	"C:/Users/MiguelBarro/Documents/Fast-RTPS/include/**/*.hpp"
-	)  #TODO: remove when development process is finished
 
 set(${PROJECT_NAME}_source_files
 	${ALL_HEADERS} #TODO: remove when development process is finished
@@ -280,7 +276,10 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
         )
 
-	target_compile_options(${PROJECT_NAME} PRIVATE	-wd4251) #TODO: remove when discovery-server incorporated into the library
+    if(WIN32)
+        #TODO: remove when discovery-server incorporated into the library
+        target_compile_options(${PROJECT_NAME} PRIVATE	-wd4251)
+    endif()
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC

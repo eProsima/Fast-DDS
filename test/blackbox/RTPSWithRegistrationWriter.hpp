@@ -101,7 +101,7 @@ class RTPSWithRegistrationWriter
     {
         //Create participant
         eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-        pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+        pattr.builtin.discoveryProtocol = eprosima::fastrtps::rtps::PDPType::SIMPLE;
         pattr.builtin.use_WriterLivelinessProtocol = true;
         pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
         participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(pattr);
@@ -173,7 +173,7 @@ class RTPSWithRegistrationWriter
                 return matched_ != 0;
             });
         }
-        
+
         ASSERT_NE(matched_, 0u);
     }
 
