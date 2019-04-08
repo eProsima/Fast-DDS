@@ -800,7 +800,7 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
         if (alive())
         {
             mTransport->close_tcp_socket(channel);
-            channel.reset();
+            //channel.reset();
         }
         responseCode = RETCODE_OK;
     }
