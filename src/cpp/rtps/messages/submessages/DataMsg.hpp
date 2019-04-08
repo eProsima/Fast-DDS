@@ -195,7 +195,7 @@ bool RTPSMessageCreator::addSubmessageData(
 
     //TODO(Ricardo) Improve.
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= (octet*)&submessage_size;
+    octet* o= reinterpret_cast<octet*>(&submessage_size);
     if(msg->msg_endian == DEFAULT_ENDIAN)
     {
         msg->buffer[submessage_size_pos] = *(o);
@@ -405,7 +405,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
 
     //TODO(Ricardo) Improve.
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    octet* o= (octet*)&submessage_size;
+    octet* o= reinterpret_cast<octet*>(&submessage_size);
     if(msg->msg_endian == DEFAULT_ENDIAN)
     {
         msg->buffer[submessage_size_pos] = *(o);

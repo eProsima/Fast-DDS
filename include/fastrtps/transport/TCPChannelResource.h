@@ -114,7 +114,7 @@ public:
 
     virtual uint32_t read(
         octet* buffer,
-        const std::size_t size,
+        std::size_t size,
         asio::error_code& ec) = 0;
 
     virtual size_t send(
@@ -183,7 +183,9 @@ protected:
 
 private:
 
-    void prepare_send_check_logical_ports_req(uint16_t closedPort, RTCPMessageManager* rtcp_manager);
+    void prepare_send_check_logical_ports_req(
+            uint16_t closedPort,
+            RTCPMessageManager* rtcp_manager);
 
     void send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager);
 

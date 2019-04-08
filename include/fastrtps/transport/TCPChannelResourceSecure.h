@@ -52,7 +52,7 @@ class TCPChannelResourceSecure : public TCPChannelResource
 
         uint32_t read(
                 octet* buffer,
-                const std::size_t size,
+                std::size_t size,
                 asio::error_code& ec) override;
 
         size_t send(
