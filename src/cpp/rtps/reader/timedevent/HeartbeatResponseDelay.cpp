@@ -49,7 +49,13 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(
             0)
     , message_buffer_(
             participant->getMaxMessageSize(),
-            participant->getGuid().guidPrefix)
+            participant->getGuid().guidPrefix,
+#if HAVE_SECURITY
+            participant->is_secure()
+#else
+            false
+#endif
+            )
     , writer_proxy_(writer_proxy)
 {
 }

@@ -31,8 +31,8 @@
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps{
-namespace rtps{
+namespace fastrtps {
+namespace rtps {
 
 
 PeriodicHeartbeat::~PeriodicHeartbeat()
@@ -45,12 +45,18 @@ PeriodicHeartbeat::PeriodicHeartbeat(
         StatefulWriter* p_SFW,
         double interval)
     : TimedEvent(
-          p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
-          p_SFW->getRTPSParticipant()->getEventResource().getThread(),
-          interval)
+            p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+            p_SFW->getRTPSParticipant()->getEventResource().getThread(),
+            interval)
     , m_cdrmessages(
-          p_SFW->getRTPSParticipant()->getMaxMessageSize(),
-          p_SFW->getRTPSParticipant()->getGuid().guidPrefix)
+            p_SFW->getRTPSParticipant()->getMaxMessageSize(),
+            p_SFW->getRTPSParticipant()->getGuid().guidPrefix,
+#if HAVE_SECURITY
+            p_SFW->getRTPSParticipant()->is_secure()
+#else
+            false
+#endif
+            )
     , mp_SFW(p_SFW)
 {
 
@@ -83,6 +89,6 @@ void PeriodicHeartbeat::event(
     }
 }
 
-}
-}
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

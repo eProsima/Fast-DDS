@@ -45,11 +45,14 @@ class RTPSMessageGroup_t
 {
     public:
 
-        RTPSMessageGroup_t(uint32_t payload, GuidPrefix_t participant_guid):
-            rtpsmsg_submessage_(payload),
-            rtpsmsg_fullmsg_(payload)
+        RTPSMessageGroup_t(
+                uint32_t payload,
+                const GuidPrefix_t& participant_guid,
+                bool has_security)
+            : rtpsmsg_submessage_(payload)
+            , rtpsmsg_fullmsg_(payload)
 #if HAVE_SECURITY
-            , rtpsmsg_encrypt_(payload)
+            , rtpsmsg_encrypt_(has_security ? payload : 0u)
 #endif
         {
             CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);

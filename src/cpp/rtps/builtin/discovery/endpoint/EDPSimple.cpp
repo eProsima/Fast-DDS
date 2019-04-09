@@ -139,7 +139,7 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
     }
 
 #if HAVE_SECURITY
-    if(!create_sedp_secure_endpoints())
+    if(mp_RTPSParticipant->is_secure() && !create_sedp_secure_endpoints())
     {
         logError(RTPS_EDP,"Problem creation SimpleEDP endpoints");
         return false;

@@ -32,8 +32,8 @@
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {
-namespace fastrtps{
-namespace rtps{
+namespace fastrtps {
+namespace rtps {
 
 InitialAckNack::~InitialAckNack()
 {
@@ -50,7 +50,13 @@ InitialAckNack::InitialAckNack(
             0)
     , message_buffer_(
             participant->getMaxMessageSize(),
-            participant->getGuid().guidPrefix)
+            participant->getGuid().guidPrefix,
+#if HAVE_SECURITY
+            participant->is_secure()
+#else
+            false
+#endif
+        )
     , writer_proxy_(writer_proxy)
 {
 }

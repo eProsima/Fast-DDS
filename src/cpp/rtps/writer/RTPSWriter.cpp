@@ -40,12 +40,18 @@ RTPSWriter::RTPSWriter(
     : Endpoint(impl, guid, att.endpoint)
     , m_pushMode(true)
     , m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.bytesPerPeriod ?
-        att.throughputController.bytesPerPeriod > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
-        impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-        att.throughputController.bytesPerPeriod :
-        impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
-        impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-        impl->getMaxMessageSize(), impl->getGuid().guidPrefix)
+            att.throughputController.bytesPerPeriod > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
+            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
+            att.throughputController.bytesPerPeriod :
+            impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
+            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
+            impl->getMaxMessageSize(), impl->getGuid().guidPrefix,
+#if HAVE_SECURITY
+            impl->is_secure()
+#else
+            false
+#endif
+            )
     , m_livelinessAsserted(false)
     , mp_history(hist)
     , mp_listener(listen)
