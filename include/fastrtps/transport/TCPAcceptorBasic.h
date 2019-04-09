@@ -61,6 +61,9 @@ public:
 
     //! Method to start the accepting process.
     void accept(TCPTransportInterface* parent);
+
+private:
+    asio::ip::tcp::socket socket_;
 };
 
 

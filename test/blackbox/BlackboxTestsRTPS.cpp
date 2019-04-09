@@ -18,6 +18,7 @@
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
+#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -328,4 +329,3 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableVolatileSocket)
 
     ASSERT_TRUE(writer.is_history_empty());
 }
-
