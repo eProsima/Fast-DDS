@@ -613,7 +613,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             }
 
             // The ChangeForReader_t status has to be UNACKNOWLEDGED
-            changeForReader.setStatus(UNACKNOWLEDGED); /// TODO JOOOODERR TESSSST BESTEFFORT CASE
+            changeForReader.setStatus(UNACKNOWLEDGED);
             rp->add_change(changeForReader, false);
             ++current_seq;
         }

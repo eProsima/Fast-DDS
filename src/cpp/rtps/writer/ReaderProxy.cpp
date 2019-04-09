@@ -37,8 +37,8 @@ namespace fastrtps {
 namespace rtps {
 
 ReaderProxy::ReaderProxy(
-        const WriterTimes& times, 
-        StatefulWriter* writer) 
+        const WriterTimes& times,
+        StatefulWriter* writer)
     : is_active_(false)
     , reader_attributes_()
     , writer_(writer)
@@ -180,7 +180,7 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
         {
             // Skip all consecutive changes already in the collection
             ChangeConstIterator it = find_change(current_sequence);
-            while( it != changes_for_reader_.end() && 
+            while( it != changes_for_reader_.end() &&
                 current_sequence <= changes_low_mark_ &&
                 it->getSequenceNumber() == current_sequence)
             {
@@ -327,12 +327,12 @@ bool ReaderProxy::perform_acknack_response()
 }
 
 bool ReaderProxy::convert_status_on_all_changes(
-        ChangeForReaderStatus_t previous, 
+        ChangeForReaderStatus_t previous,
         ChangeForReaderStatus_t next)
 {
     assert(previous > next);
 
-    // NOTE: This is only called for REQUESTED=>UNSENT (acknack response) or 
+    // NOTE: This is only called for REQUESTED=>UNSENT (acknack response) or
     //       UNDERWAY=>UNACKNOWLEDGED (nack supression)
 
     bool at_least_one_modified = false;
@@ -375,7 +375,7 @@ bool ReaderProxy::has_unacknowledged() const
 }
 
 bool ReaderProxy::requested_fragment_set(
-        const SequenceNumber_t& seq_num, 
+        const SequenceNumber_t& seq_num,
         const FragmentNumberSet_t& frag_set)
 {
     // Locate the outbound change referenced by the NACK_FRAG
@@ -397,7 +397,7 @@ bool ReaderProxy::requested_fragment_set(
 }
 
 bool ReaderProxy::process_nack_frag(
-        const GUID_t& reader_guid, 
+        const GUID_t& reader_guid,
         uint32_t nack_count,
         const SequenceNumber_t& seq_num,
         const FragmentNumberSet_t& fragments_state)
@@ -407,7 +407,6 @@ bool ReaderProxy::process_nack_frag(
         if (last_nackfrag_count_ < nack_count)
         {
             last_nackfrag_count_ = nack_count;
-            // TODO Not doing Acknowledged.
             if (requested_fragment_set(seq_num, fragments_state))
             {
                 return true;
@@ -430,9 +429,9 @@ ReaderProxy::ChangeIterator ReaderProxy::find_change(const SequenceNumber_t& seq
     ReaderProxy::ChangeIterator it;
     ReaderProxy::ChangeIterator end = changes_for_reader_.end();
     it = std::lower_bound(changes_for_reader_.begin(), end, seq_num, change_less_than_sequence);
-    
-    return it == end 
-        ? it 
+
+    return it == end
+        ? it
         : it->getSequenceNumber() == seq_num ? it : end;
 }
 

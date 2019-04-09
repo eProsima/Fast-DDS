@@ -53,7 +53,7 @@ public:
      * @param writer Pointer to the StatefulWriter creating the reader proxy.
      */
     ReaderProxy(
-            const WriterTimes& times, 
+            const WriterTimes& times,
             StatefulWriter* writer);
 
     /**
@@ -106,7 +106,7 @@ public:
     /**
     * Applies the given function object to every unsent change.
     * @param max_seq Maximum sequence number to be considered without including it.
-    * @param f Function to apply. 
+    * @param f Function to apply.
     *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
     *          The second argument may be nullptr for irrelevant changes.
     */
@@ -124,7 +124,7 @@ public:
                 // Holes before this change are informed as irrelevant.
                 SequenceNumber_t change_seq = it->getSequenceNumber();
                 for(; current_seq < change_seq; ++current_seq)
-                { 
+                {
                     f(current_seq, nullptr);
                 }
 
@@ -161,7 +161,7 @@ public:
      * @return true when a status has changed, false otherwise.
      */
     bool set_change_to_status(
-            const SequenceNumber_t& seq_num, 
+            const SequenceNumber_t& seq_num,
             ChangeForReaderStatus_t status,
             bool restart_nack_supression);
 
@@ -301,7 +301,7 @@ public:
      * @return true if a change was modified, false otherwise.
      */
     bool process_nack_frag(
-            const GUID_t& reader_guid, 
+            const GUID_t& reader_guid,
             uint32_t nack_count,
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t& fragments_state);
@@ -366,7 +366,7 @@ private:
      * @return true when at least one change has been modified, false otherwise.
      */
     bool convert_status_on_all_changes(
-            ChangeForReaderStatus_t previous, 
+            ChangeForReaderStatus_t previous,
             ChangeForReaderStatus_t next);
 
     /*!
@@ -376,13 +376,13 @@ private:
      * @return True if there is at least one requested fragment. False in other case.
      */
     bool requested_fragment_set(
-            const SequenceNumber_t& seq_num, 
+            const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t& frag_set);
 
     /**
      * @brief Find a change with the specified sequence number.
      * @param seq_num Sequence number to find.
-     * @return Iterator pointing to the change, changes_for_reader_.end() if not found. 
+     * @return Iterator pointing to the change, changes_for_reader_.end() if not found.
      */
     ChangeIterator find_change(const SequenceNumber_t& seq_num);
 
