@@ -69,7 +69,7 @@ class RTPSWriter;
  * RTPSMessageGroup Class used to construct a RTPS message.
  * @ingroup WRITER_MODULE
  */
- class RTPS_DllAPI RTPSMessageGroup // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
+ class RTPSMessageGroup 
 {
     public:
 

@@ -61,7 +61,7 @@ class ParameterList_t
  * @ingroup PARAMETER_MODULE
  */
  
-class RTPS_DllAPI ParameterList // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
+class ParameterList 
 {
     public:
 

@@ -73,7 +73,7 @@ class WriterProxyData;
 * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
 *@ingroup BUILTIN_MODULE
 */
-class RTPS_DllAPI ParticipantProxyData // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
+class ParticipantProxyData 
 {
     public:
 

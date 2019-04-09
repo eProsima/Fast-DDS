@@ -51,7 +51,7 @@ class RTPSParticipantImpl;
  * definitions required by the specific implementations.
  * @ingroup DISCOVERY_MODULE
  */
-class RTPS_DllAPI EDP // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
+class EDP 
 {
     public:
         /**

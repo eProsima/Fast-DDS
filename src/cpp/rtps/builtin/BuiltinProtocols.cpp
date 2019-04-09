@@ -22,6 +22,7 @@
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
@@ -102,25 +103,19 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
             break;
 
         case PDPType_t::EXTERNAL:
-        {
-            PDPFactory & f = attributes.m_PDPfactory;
-            assert(f.CreatePDPInstance);
-            mp_PDP = (*f.CreatePDPInstance)(this);
-            assert(mp_PDP);
-        }
-                break;
+            assert(0); // not implemented
+            break;
 
         case PDPType_t::CLIENT:
             mp_PDP = new PDPClient(this);
             break;
 
         case PDPType_t::SERVER:
-            assert(0); // currently unavailable
-            // mp_PDP = new PDPServer(this);
+            mp_PDP = new PDPServer(this, DurabilityKind_t::TRANSIENT_LOCAL);
             break;
+
         case PDPType_t::BACKUP:
-            assert(0); // currently unavailable
-            // mp_PDP = new PDPServer(this,true);
+            mp_PDP = new PDPServer(this, DurabilityKind_t::TRANSIENT);
             break;
     }
 

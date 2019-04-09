@@ -42,15 +42,13 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-// TODO: remove RTPS_DllAPI when discovery server incorporated to the library
-
 // Default configuration values for EDP entities.
-RTPS_DllAPI const Duration_t edp_heartbeat_period{1, 0}; // 1 second
-RTPS_DllAPI const Duration_t edp_nack_response_delay{0, 400*1000*1000}; // ~93 milliseconds
-RTPS_DllAPI const Duration_t edp_nack_supression_duration{0, 50*1000*1000}; // ~11 milliseconds
-RTPS_DllAPI const Duration_t edp_heartbeat_response_delay{0, 50*1000*1000}; // ~11 milliseconds
+ const Duration_t edp_heartbeat_period{1, 0}; // 1 second
+ const Duration_t edp_nack_response_delay{0, 400*1000*1000}; // ~93 milliseconds
+ const Duration_t edp_nack_supression_duration{0, 50*1000*1000}; // ~11 milliseconds
+ const Duration_t edp_heartbeat_response_delay{0, 50*1000*1000}; // ~11 milliseconds
 
-RTPS_DllAPI const int32_t edp_initial_reserved_caches = 20;
+ const int32_t edp_initial_reserved_caches = 20;
 
 
 EDPSimple::EDPSimple(

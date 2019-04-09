@@ -335,9 +335,9 @@ class WriterProxyData
         //!Copy all information from another object.
         void copy(WriterProxyData* rdata);
         //!Convert the information to a parameter list to be send in a CDRMessage.
-        RTPS_DllAPI ParameterList_t toParameterList(); // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
+        ParameterList_t toParameterList(); 
         //!Read a parameter list from a CDRMessage_t.
-        RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
+        bool readFromCDRMessage(CDRMessage_t* msg);
 
         /**
          * Convert the ProxyData information to RemoteWriterAttributes object.
