@@ -23,7 +23,7 @@
                 <sendSocketBufferSize>32</sendSocketBufferSize>
                 <listenSocketBufferSize>1000</listenSocketBufferSize>
                 <builtin>
-                    <use_SIMPLE_RTPS_PDP>true</use_SIMPLE_RTPS_PDP>
+                    <discoveryProtocol>SIMPLE</discoveryProtocol>
                     <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
                     <EDP>SIMPLE</EDP>
                     <domainId>2019102</domainId>
