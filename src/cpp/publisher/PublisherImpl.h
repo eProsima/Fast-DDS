@@ -30,7 +30,7 @@
 #include <fastrtps/publisher/PublisherHistory.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/timedevent/DeadlineTimer.h>
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
 namespace eprosima {
@@ -165,7 +165,7 @@ class PublisherImpl
     uint32_t high_mark_for_frag_;
 
     //! A timer used to check for deadlines
-    DeadlineTimer deadline_timer_;
+    TimedCallback deadline_timer_;
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the timer

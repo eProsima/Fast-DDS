@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,18 +13,18 @@
 // limitations under the License.
 
 /**
- * @file DeadlineTimer.cpp
+ * @file TimedCallback.cpp
  *
  */
 
-#include <fastrtps/rtps/timedevent/DeadlineTimer.h>
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-DeadlineTimer::DeadlineTimer(
+TimedCallback::TimedCallback(
         const std::function<void()>& callback,
         const Duration_t& period,
         asio::io_service &service,
@@ -34,11 +34,11 @@ DeadlineTimer::DeadlineTimer(
 {
 }
 
-DeadlineTimer::~DeadlineTimer()
+TimedCallback::~TimedCallback()
 {
 }
 
-void DeadlineTimer::event(EventCode code, const char *msg)
+void TimedCallback::event(EventCode code, const char *msg)
 {
     // Unused in release mode.
     (void)msg;
@@ -51,16 +51,16 @@ void DeadlineTimer::event(EventCode code, const char *msg)
         }
         else
         {
-            logWarning(DEADLINETIMER, "Event successfull but callback is nullptr");
+            logWarning(TimedCallback, "Event successfull but callback is nullptr");
         }
     }
     else if(code == EVENT_ABORT)
     {
-        logInfo(DEADLINETIMER, "Aborted");
+        logInfo(TimedCallback, "Aborted");
     }
     else
     {
-        logInfo(DEADLINETIMER, "Event message: " << msg);
+        logInfo(TimedCallback, "Event message: " << msg);
     }
 }
 

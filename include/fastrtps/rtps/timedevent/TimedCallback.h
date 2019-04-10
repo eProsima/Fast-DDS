@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file DeadlineTimer.h
+ * @file TimedCallback.h
  *
  */
 
-#ifndef DeadlineTimer_H_
-#define DeadlineTimer_H_
+#ifndef TimedCallback_H_
+#define TimedCallback_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../resources/TimedEvent.h"
@@ -32,17 +32,17 @@ namespace rtps {
 /** A class that starts a timer and invokes a callback when the timer expires
  * @ingroup MANAGEMENT_MODULE
  */
-class DeadlineTimer : public TimedEvent
+class TimedCallback : public TimedEvent
 {
 public:
 
     /** Constructor
      * @param callback A callback to invoke when the timer expires
-     * @param period Interval of the DeadlineTimer in milliseconds
+     * @param period Interval of the TimedCallback in milliseconds
      * @param service IO service to run the event
      * @param event_thread starting thread for identification.
      */
-    DeadlineTimer(
+    TimedCallback(
             const std::function<void()>& callback,
             const Duration_t& period,
             asio::io_service &service,
@@ -50,7 +50,7 @@ public:
 
     /** Destructor
      */
-    virtual ~DeadlineTimer();
+    virtual ~TimedCallback();
 
     /** Method invoked when the event occurs
      * @param code Code representing the status of the event

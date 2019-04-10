@@ -26,7 +26,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/timedevent//DeadlineTimer.h>
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
 namespace eprosima {
@@ -162,7 +162,7 @@ private:
     rtps::RTPSParticipant* mp_rtpsParticipant;
 
     //! A timer used to check for deadlines
-    DeadlineTimer deadline_timer_;
+    TimedCallback deadline_timer_;
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the timer
