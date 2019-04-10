@@ -189,7 +189,7 @@ bool EDPServer::createSEDPEndpoints()
     return created;
 }
 
-template<class ProxyCont> 
+template<class ProxyCont>
 bool EDPServer::trimWriterHistory(key_list & _demises, StatefulWriter & writer, WriterHistory & history, ProxyCont ParticipantProxyData::* pC)
 {
     // trim demises container
@@ -217,7 +217,7 @@ bool EDPServer::trimWriterHistory(key_list & _demises, StatefulWriter & writer, 
     if (_demises.empty())
         return true;
 
-    // traverse the WriterHistory searching CacheChanges_t with demised keys  
+    // traverse the WriterHistory searching CacheChanges_t with demised keys
     std::forward_list<CacheChange_t*> removal;
     std::lock_guard<std::recursive_mutex> guardW(*writer.getMutex());
 
@@ -267,9 +267,9 @@ bool EDPServer::addEndpointFromHistory(StatefulWriter & writer, WriterHistory & 
         wp.related_sample_identity(sid);
     }
 
-    // See if this sample is already in the cache. 
+    // See if this sample is already in the cache.
     // TODO: Accelerate this search by using a PublisherHistory as mp_PDPWriterHistory
-    auto it = std::find_if(history.changesRbegin(), history.changesRend(), [&sid](auto c) {
+    auto it = std::find_if(history.changesRbegin(), history.changesRend(), [&sid](CacheChange_t* c) {
         return sid == c->write_params.sample_identity();
     });
 
@@ -394,7 +394,7 @@ bool EDPServer::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
             ParameterList_t parameter_list = wdata->toParameterList();
             ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
-            
+
             // unlike on EDPSimple we wouldn't remove endpoint outdate info till all client-servers acknowledge reception
             // We must key-signed the CacheChange_t to avoid duplications:
             WriteParams wp;

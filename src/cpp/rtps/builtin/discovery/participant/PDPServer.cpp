@@ -46,12 +46,16 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-PDPServer::PDPServer(BuiltinProtocols* built, DurabilityKind_t durability_kind) :
-    PDP(built), mp_sync(nullptr), _durability(durability_kind),
-    _msgbuffer(DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,built->mp_participantImpl->getGuid().guidPrefix)
-    {
+PDPServer::PDPServer(
+        BuiltinProtocols* built,
+        DurabilityKind_t durability_kind)
+    : PDP(built)
+    , _durability(durability_kind)
+    , _msgbuffer(DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,built->mp_participantImpl->getGuid().guidPrefix)
+    , mp_sync(nullptr)
+{
 
-    }
+}
 
 PDPServer::~PDPServer()
 {
@@ -75,7 +79,7 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
     }
 
     /*
-        Given the fact that a participant is either a client or a server the 
+        Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
     */
     mp_sync = new DServerEvent(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
@@ -249,7 +253,7 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
         watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = TRANSIENT_LOCAL; 
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
 
         // TODO remove the join when Reader and Writer match functions are updated
         watt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficUnicastLocatorList);
@@ -312,7 +316,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
     if (auxendp != 0)
     {
         RemoteWriterAttributes watt;
-    
+
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SPDPWriter;
         watt.endpoint.persistence_guid = watt.guid;
@@ -354,7 +358,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
             mp_PDPWriter->matched_reader_add(ratt);
         }
     }
-    
+
 }
 
 bool PDPServer::all_clients_acknowledge_PDP()
@@ -375,7 +379,7 @@ void PDPServer::match_all_clients_EDP_endpoints()
 
     if (!pendingEDPMatches())
         return;
-    
+
     for (auto p: _p2match)
     {
        assert( p != nullptr);
@@ -407,7 +411,7 @@ bool PDPServer::trimPDPWriterHistory()
         return true;
 
     std::lock_guard<std::recursive_mutex> guardP(*getMutex());
-    
+
     // sweep away any resurrected participant
     std::for_each(ParticipantProxiesBegin(), ParticipantProxiesEnd(),
         [&disposal](const ParticipantProxyData* pD) { disposal.insert(pD->m_key); });
@@ -418,7 +422,7 @@ bool PDPServer::trimPDPWriterHistory()
     if (_demises.empty())
         return true;
 
-    // traverse the WriterHistory searching CacheChanges_t with demised keys  
+    // traverse the WriterHistory searching CacheChanges_t with demised keys
     std::forward_list<CacheChange_t*> removal;
     std::lock_guard<std::recursive_mutex> guardW(*mp_PDPWriter->getMutex());
 
@@ -470,11 +474,14 @@ bool PDPServer::addRelayedChangeToHistory( CacheChange_t & c)
         wp.related_sample_identity(sid);
     }
 
-    // See if this sample is already in the cache. 
+    // See if this sample is already in the cache.
     // TODO: Accelerate this search by using a PublisherHistory as mp_PDPWriterHistory
-    auto it = std::find_if(mp_PDPWriterHistory->changesRbegin(), mp_PDPWriterHistory->changesRend(), [&sid] (auto c) {
-        return sid == c->write_params.sample_identity();
-        });
+    auto it = std::find_if(
+            mp_PDPWriterHistory->changesRbegin(),
+            mp_PDPWriterHistory->changesRend(),
+            [&sid] (CacheChange_t* c) {
+                return sid == c->write_params.sample_identity();
+            });
 
     if (it == mp_PDPWriterHistory->changesRend())
     {
@@ -496,7 +503,7 @@ void PDPServer::removeParticipantFromHistory(const InstanceHandle_t & key)
     std::lock_guard<std::recursive_mutex> guardP(*mp_mutex);
 
     _demises.insert(key);
-    trimWriterHistory(); 
+    trimWriterHistory();
 }
 
 void PDPServer::queueParticipantForEDPMatch(const ParticipantProxyData * pdata)
@@ -509,7 +516,7 @@ void PDPServer::queueParticipantForEDPMatch(const ParticipantProxyData * pdata)
     _p2match.insert(pdata);
     mp_sync->restart_timer();
 
-    logInfo(PDP_SERVER, "participant " << pdata->m_participantName << " prefix: " << pdata->m_guid 
+    logInfo(PDP_SERVER, "participant " << pdata->m_participantName << " prefix: " << pdata->m_guid
         << " waiting for EDP match with server " << this->getRTPSParticipant()->getRTPSParticipantAttributes().getName());
 }
 
@@ -524,7 +531,7 @@ void PDPServer::removeParticipantForEDPMatch(const ParticipantProxyData * pdata)
     _p2match.erase(pdata);
 }
 
-std::string PDPServer::GetPersistenceFileName() 
+std::string PDPServer::GetPersistenceFileName()
 {
     assert(getRTPSParticipant());
 
@@ -681,7 +688,7 @@ bool PDPServer::pendingHistoryCleaning()
 
     return !_demises.empty() || pEDP->pendingHistoryCleaning();
 }
-    
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

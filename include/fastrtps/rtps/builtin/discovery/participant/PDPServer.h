@@ -144,11 +144,11 @@ class PDPServer : public PDP
      * Check if there are pending matches.
      * @return True if all participants EDP endpoints are already matched
      */
-    inline bool pendingEDPMatches() 
-    { 
+    inline bool pendingEDPMatches()
+    {
         std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
 
-        return !_p2match.empty(); 
+        return !_p2match.empty();
     }
 
     //! Matches all clients EDP endpoints
@@ -212,11 +212,11 @@ class PDPServer : public PDP
      bool trimPDPWriterHistory();
 
     /**
-    * TimedEvent for server synchronization: 
+    * TimedEvent for server synchronization:
     *   first stage: periodically resend the local RTPSParticipant information until all servers have acknowledge reception
     *   second stage: waiting PDP info is up to date before allowing EDP matching
-    */ 
-    DServerEvent * mp_sync;
+    */
+    DServerEvent* mp_sync;
 };
 
 }
