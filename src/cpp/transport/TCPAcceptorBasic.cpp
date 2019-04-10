@@ -25,6 +25,7 @@ TCPAcceptorBasic::TCPAcceptorBasic(
         TCPTransportInterface* parent,
         const Locator_t& locator)
     : TCPAcceptor(io_service, parent, locator)
+    , socket_(std::make_shared<asio::ip::tcp::socket>(*io_service_))
 {
     endpoint_ = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator_));
 }
@@ -34,6 +35,7 @@ TCPAcceptorBasic::TCPAcceptorBasic(
         const std::string& interface,
         const Locator_t& locator)
     : TCPAcceptor(io_service, interface, locator)
+    , socket_(std::make_shared<asio::ip::tcp::socket>(*io_service_))
 {
     endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
         IPLocator::getPhysicalPort(locator_));
@@ -42,14 +44,12 @@ TCPAcceptorBasic::TCPAcceptorBasic(
 void TCPAcceptorBasic::accept(TCPTransportInterface* parent)
 {
     Locator_t locator = locator_;
-    using asio::ip::tcp;
 
-    acceptor_.async_accept(
-        [this, locator, parent](const std::error_code& error, tcp::socket socket)
+    acceptor_.async_accept(*socket_,
+        [this, locator, parent](const std::error_code& error)
         {
             if (!error)
             {
-                socket_ = std::make_shared<tcp::socket>(std::move(socket));
                 parent->SocketAccepted(this, locator, error);
             }
             else

@@ -38,6 +38,7 @@ public:
     */
     TCPAcceptorSecure(
         asio::io_service& io_service,
+        asio::ssl::context& ssl_context,
         TCPTransportInterface* parent,
         const Locator_t& locator);
 
@@ -49,6 +50,7 @@ public:
     */
     TCPAcceptorSecure(
         asio::io_service& io_service,
+        asio::ssl::context& ssl_context,
         const std::string& interface,
         const Locator_t& locator);
 
@@ -63,8 +65,7 @@ public:
 
     //! Method to start the accepting process.
     void accept(
-        TCPTransportInterface* parent,
-        asio::ssl::context&);
+        TCPTransportInterface* parent);
 
     std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> move_socket()
     {

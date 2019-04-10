@@ -295,7 +295,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
             newAcceptor =
 #if TLS_FOUND
                 (configuration()->apply_security) ?
-                    static_cast<TCPAcceptor*>(new TCPAcceptorSecure(io_service_, this, locator)) :
+                    static_cast<TCPAcceptor*>(new TCPAcceptorSecure(io_service_, ssl_context_, this, locator)) :
 #endif
                 static_cast<TCPAcceptor*>(new TCPAcceptorBasic(io_service_, this, locator));
 
@@ -317,7 +317,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 #if TLS_FOUND
             if (configuration()->apply_security)
             {
-                static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this, ssl_context_);
+                static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this);
             }
             else
 #endif
@@ -333,7 +333,8 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
                 newAcceptor =
 #if TLS_FOUND
                     (configuration()->apply_security) ?
-                        static_cast<TCPAcceptor*>(new TCPAcceptorSecure(io_service_, sInterface, locator)) :
+                        static_cast<TCPAcceptor*>(new TCPAcceptorSecure(io_service_, ssl_context_,
+                            sInterface, locator)) :
 #endif
                         static_cast<TCPAcceptor*>(new TCPAcceptorBasic(io_service_, sInterface, locator));
 
@@ -355,7 +356,7 @@ bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 #if TLS_FOUND
                 if (configuration()->apply_security)
                 {
-                    static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this, ssl_context_);
+                    static_cast<TCPAcceptorSecure*>(newAcceptor)->accept(this);
                 }
                 else
 #endif
@@ -1434,7 +1435,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
         if (socket_acceptors_.find(IPLocator::getPhysicalPort(acceptor_locator)) != socket_acceptors_.end())
         {
-            acceptor->accept(this, ssl_context_);
+            acceptor->accept(this);
         }
     }
     else

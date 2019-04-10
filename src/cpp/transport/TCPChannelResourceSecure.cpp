@@ -79,16 +79,21 @@ void TCPChannelResourceSecure::connect()
 
             ip::tcp::resolver resolver(service_);
 
-            auto endpoints = resolver.resolve(
+            auto endpoints = resolver.resolve({
                 IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(locator_),
-                std::to_string(IPLocator::getPhysicalPort(locator_)));
+                std::to_string(IPLocator::getPhysicalPort(locator_))});
 
             TCPTransportInterface* parent = parent_;
             std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket = secure_socket_;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
-                [secure_socket, locator, parent](const std::error_code& error,
-                    const tcp::endpoint& /*endpoint*/)
+                [secure_socket, locator, parent](const std::error_code& error
+#if ASIO_VERSION >= 101200
+                        , ip::tcp::endpoint
+#else
+                        , ip::tcp::resolver::iterator
+#endif
+                    )
             {
                 if (!error)
                 {

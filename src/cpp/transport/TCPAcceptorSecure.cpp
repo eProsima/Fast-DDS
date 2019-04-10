@@ -24,23 +24,26 @@ using namespace asio;
 
 TCPAcceptorSecure::TCPAcceptorSecure(
         io_service& io_service,
+        ssl::context& ssl_context,
         TCPTransportInterface* parent,
         const Locator_t& locator)
     : TCPAcceptor(io_service, parent, locator)
+    , secure_socket_(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(*io_service_, ssl_context))
 {
 }
 
 TCPAcceptorSecure::TCPAcceptorSecure(
         io_service& io_service,
+        ssl::context& ssl_context,
         const std::string& interface,
         const Locator_t& locator)
     : TCPAcceptor(io_service, interface, locator)
+    , secure_socket_(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(*io_service_, ssl_context))
 {
 }
 
 void TCPAcceptorSecure::accept(
-        TCPTransportInterface* parent,
-        ssl::context& ssl_context)
+        TCPTransportInterface* parent)
 {
     logInfo(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
         << ":" << acceptor_.local_endpoint().port());
@@ -52,8 +55,8 @@ void TCPAcceptorSecure::accept(
     Locator_t locator = locator_;
     try
     {
-        acceptor_.async_accept(
-            [this, locator, parent, &ssl_context](const std::error_code& error, tcp::socket socket)
+        acceptor_.async_accept(secure_socket_->lowest_layer(),
+            [this, locator, parent](const std::error_code& error)
             {
                 if (!error)
                 {
@@ -62,10 +65,6 @@ void TCPAcceptorSecure::accept(
                     {
                         role = ssl::stream_base::client;
                     }
-
-                    secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(
-                        std::move(socket),
-                        ssl_context);
 
                     secure_socket_->async_handshake(role,
                         [this, locator, parent](const std::error_code& error)

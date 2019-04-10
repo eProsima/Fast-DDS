@@ -73,14 +73,20 @@ void TCPChannelResourceBasic::connect()
 
             ip::tcp::resolver resolver(service_);
 
-            auto endpoints = resolver.resolve(
+            auto endpoints = resolver.resolve({
                 IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(locator_),
-                std::to_string(IPLocator::getPhysicalPort(locator_)));
+                std::to_string(IPLocator::getPhysicalPort(locator_))});
 
             asio::async_connect(
                 *socket_,
                 endpoints,
-                [this, locator](std::error_code ec, ip::tcp::endpoint)
+                [this, locator](std::error_code ec
+#if ASIO_VERSION >= 101200
+                            , ip::tcp::endpoint
+#else
+                            , ip::tcp::resolver::iterator
+#endif
+                        )
                 {
                     parent_->SocketConnected(locator, ec);
                 }
