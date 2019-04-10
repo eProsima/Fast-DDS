@@ -21,6 +21,8 @@
 #include <algorithm>
 #include <mutex>
 #include <set>
+#include <memory>
+#include <atomic>
 #include "../common/Types.h"
 #include "../common/Locator.h"
 #include "../common/SequenceNumber.h"
@@ -28,8 +30,6 @@
 #include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
-
-#include <set>
 
 namespace eprosima {
 namespace fastrtps {

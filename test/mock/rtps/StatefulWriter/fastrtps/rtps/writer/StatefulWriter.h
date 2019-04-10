@@ -20,6 +20,7 @@
 #define _RTPS_WRITER_STATEFULWRITER_H_
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastrtps/rtps/history/WriterHistory.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -31,9 +32,11 @@ class StatefulWriter : public RTPSWriter
 {
     public:
 
-        StatefulWriter(RTPSParticipantImpl* participant) : participant_(participant) {}
+        StatefulWriter(RTPSParticipantImpl* participant) : participant_(participant), mp_history(new WriterHistory()) {}
 
-        virtual ~StatefulWriter() {}
+        StatefulWriter() : participant_(nullptr), mp_history(new WriterHistory()) {}
+
+        virtual ~StatefulWriter() { delete mp_history; }
 
         MOCK_METHOD1(matched_reader_add, bool(RemoteReaderAttributes&));
 
@@ -45,9 +48,15 @@ class StatefulWriter : public RTPSWriter
 
         RTPSParticipantImpl* getRTPSParticipant() { return participant_; }
 
+        SequenceNumber_t get_seq_num_min() { return SequenceNumber_t(0, 0); }
+
     private:
 
+        friend class ReaderProxy;
+
         RTPSParticipantImpl* participant_;
+
+        WriterHistory* mp_history;
 };
 
 } // namespace rtps

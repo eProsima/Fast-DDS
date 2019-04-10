@@ -20,7 +20,6 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
@@ -224,6 +223,10 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
             chit->markAllFragmentsAsUnsent();
             isSomeoneWasSetRequested = true;
         }
+        else if(chit == changes_for_reader_.end() && sit >= changes_low_mark_)
+        {
+            std::cout << "JAAAARRRRL" << std::endl;
+        }
     });
 
     if (isSomeoneWasSetRequested)
@@ -292,7 +295,7 @@ bool ReaderProxy::set_change_to_status(
 }
 
 bool ReaderProxy::mark_fragment_as_sent_for_change(
-        const SequenceNumber_t& seq_num, 
+        const SequenceNumber_t& seq_num,
         FragmentNumber_t frag_num,
         bool& was_last_fragment)
 {
