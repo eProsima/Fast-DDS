@@ -55,23 +55,16 @@ BuiltinProtocols::BuiltinProtocols():
 
 BuiltinProtocols::~BuiltinProtocols() {
     // Send participant is disposed
-    if(mp_PDP != nullptr)
+    if (mp_PDP != nullptr)
         mp_PDP->announceParticipantState(true, true);
     // TODO Auto-generated destructor stub
-    if(mp_WLP!=nullptr)
+    if (mp_WLP != nullptr)
+    {
         delete(mp_WLP);
-
-    if (m_att.discoveryProtocol == PDPType_t::EXTERNAL)
-    {
-        PDPFactory & f = m_att.m_PDPfactory;
-
-        assert(f.ReleasePDPInstance);
-        (*f.ReleasePDPInstance)(mp_PDP);
+        mp_WLP = nullptr;
     }
-    else
-    {
-        delete(mp_PDP); // responsible for object's lifetime
-    }
+    if (mp_PDP != nullptr)
+        delete(mp_PDP);
 }
 
 
