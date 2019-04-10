@@ -681,16 +681,23 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
             if (XMLP_ret::XML_OK != getXMLPublishModeQos(p_aux0, qos.m_publishMode, ident))
                 return XMLP_ret::XML_ERROR;
         }
-        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, DEADLINE) == 0 ||
-            strcmp(name, LATENCY_BUDGET) == 0 || strcmp(name, LIFESPAN) == 0 ||
-            strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
-            strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
-            strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
-            strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
+        else if (strcmp(name, DEADLINE) == 0)
+        {
+            // deadline
+            if (XMLP_ret::XML_OK != getXMLDeadlineQos(p_aux0, qos.m_deadline, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, LATENCY_BUDGET) == 0 ||
+                 strcmp(name, LIFESPAN) == 0 || strcmp(name, USER_DATA) == 0 ||
+                 strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 ||
+                 strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 ||
+                 strcmp(name, PRESENTATION) == 0 || strcmp(name, TOPIC_DATA) == 0 ||
+                 strcmp(name, GROUP_DATA) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(          DEADLINE))) getXMLDeadlineQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(    LATENCY_BUDGET))) getXMLLatencyBudgetQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(          LIFESPAN))) getXMLLifespanQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         USER_DATA))) getXMLUserDataQos(p_aux, ident);
@@ -765,16 +772,23 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
             if (XMLP_ret::XML_OK != getXMLPartitionQos(p_aux0, qos.m_partition, ident))
                 return XMLP_ret::XML_ERROR;
         }
-        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, DEADLINE) == 0 ||
-            strcmp(name, LATENCY_BUDGET) == 0 || strcmp(name, LIFESPAN) == 0 ||
-            strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
-            strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
-            strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
-            strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
+        else if (strcmp(name, DEADLINE) == 0)
+        {
+            // deadline
+            if (XMLP_ret::XML_OK != getXMLDeadlineQos(p_aux0, qos.m_deadline, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, LATENCY_BUDGET) == 0 ||
+                 strcmp(name, LIFESPAN) == 0 || strcmp(name, USER_DATA) == 0 ||
+                 strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 ||
+                 strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 ||
+                 strcmp(name, PRESENTATION) == 0 || strcmp(name, TOPIC_DATA) == 0 ||
+                 strcmp(name, GROUP_DATA) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(          DEADLINE))) getXMLDeadlineQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(    LATENCY_BUDGET))) getXMLLatencyBudgetQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(          LIFESPAN))) getXMLLifespanQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         USER_DATA))) getXMLUserDataQos(p_aux, ident);
