@@ -80,8 +80,7 @@ private:
     std::condition_variable all_acked_cond_;
     // TODO Also remove when main mutex not recursive.
     bool all_acked_;
-    std::mutex may_remove_change_mutex_;
-    std::condition_variable may_remove_change_cond_;
+    std::condition_variable_any may_remove_change_cond_;
     unsigned int may_remove_change_;
     //! Timed Event to manage the Acknack response delay.
     NackResponseDelay* nack_response_event_;
@@ -92,7 +91,9 @@ public:
      * Add a specific change to all ReaderLocators.
      * @param p Pointer to the change.
      */
-    void unsent_change_added_to_history(CacheChange_t* p) override;
+    void unsent_change_added_to_history(
+            CacheChange_t* p,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time) override;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
@@ -133,7 +134,7 @@ public:
      */
     bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) override;
 
-    bool is_acked_by_all(const CacheChange_t* a_change) const override;
+    bool is_acked_by_all(const CacheChange_t* a_change) override;
 
     bool wait_for_all_acked(const Duration_t& max_wait) override;
 
@@ -142,8 +143,8 @@ public:
      * @return True if removed.
      */
     bool try_remove_change(
-            std::chrono::microseconds& microseconds,
-            std::unique_lock<std::recursive_mutex>& lock) override;
+            std::chrono::steady_clock::time_point& max_blocking_time_point,
+            std::unique_lock<std::recursive_timed_mutex>& lock) override;
 
     /**
      * Update the Attributes of the Writer.

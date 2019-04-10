@@ -64,8 +64,11 @@ PublisherHistory::~PublisherHistory() {
 }
 
 
-bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparams,
-        std::unique_lock<std::recursive_mutex>& lock)
+bool PublisherHistory::add_pub_change(
+        CacheChange_t* change,
+        WriteParams &wparams,
+        std::unique_lock<std::recursive_timed_mutex>& lock,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     if(m_isHistoryFull)
     {
@@ -73,7 +76,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
 
         if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
         {
-            ret = this->mp_pubImpl->try_remove_change(lock);
+            ret = this->mp_writer->try_remove_change(max_blocking_time, lock);
         }
         else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
         {
@@ -94,7 +97,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
     //NO KEY HISTORY
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
-        if(this->add_change(change, wparams))
+        if(this->add_change_(change, wparams, max_blocking_time))
         {
             returnedValue = true;
         }
@@ -135,7 +138,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
 
             if(add)
             {
-                if(this->add_change(change, wparams))
+                if(this->add_change_(change, wparams, max_blocking_time))
                 {
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
@@ -198,7 +201,7 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 {
 
     size_t rem = 0;
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
     while(m_changes.size()>0)
     {
@@ -223,7 +226,7 @@ bool PublisherHistory::removeMinChange()
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
     if(m_changes.size()>0)
         return remove_change_pub(m_changes.front());
     return false;
@@ -238,7 +241,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if(this->remove_change(change))

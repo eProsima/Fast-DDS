@@ -23,13 +23,14 @@ using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastrtps {
-	//FIXME: UTC SECONDS AUTOMATICALLY
-eClock::eClock():
-		m_seconds_from_1900_to_1970(0),
-		m_utc_seconds_diff(0)
+
+//FIXME: UTC SECONDS AUTOMATICALLY
+eClock::eClock()
+    : m_seconds_from_1900_to_1970(0)
+    , m_utc_seconds_diff(0)
 {
 #if defined(_WIN32)
-	QueryPerformanceFrequency(&freq);
+    QueryPerformanceFrequency(&freq);
 #endif
 }
 
@@ -50,34 +51,34 @@ bool eClock::setTimeNow(Time_t* tnow)
     ftlong |= ft.dwLowDateTime;
     ftlong /=10;
     ftlong -= 11644473600000000ULL;
-	
-//	std::cout << "ftlong: " << ftlong << std::endl;
-	//std::cout << "sec from 1900 " << m_seconds_from_1900_to_1970<<std::endl;
-	tnow->seconds = (int32_t)((long)(ftlong/1000000UL)+(long)m_seconds_from_1900_to_1970+(long)m_utc_seconds_diff);
-	//std::cout << "seconds: " << tnow->seconds << " seconds " << std::endl;
-	tnow->fraction = (uint32_t)((long)(ftlong%1000000UL)*pow(10.0,-6)*pow(2.0,32));
-	return true;
+
+    //	std::cout << "ftlong: " << ftlong << std::endl;
+    //std::cout << "sec from 1900 " << m_seconds_from_1900_to_1970<<std::endl;
+    tnow->seconds = (int32_t)((long)(ftlong/1000000UL)+(long)m_seconds_from_1900_to_1970+(long)m_utc_seconds_diff);
+    //std::cout << "seconds: " << tnow->seconds << " seconds " << std::endl;
+    tnow->fraction = (uint32_t)((long)(ftlong%1000000UL)*pow(10.0,-6)*pow(2.0,32));
+    return true;
 }
 
 
 void eClock::my_sleep(uint32_t milliseconds)
 {
-	#pragma warning(disable: 4430)
-	Sleep(milliseconds);
-	return;
+#pragma warning(disable: 4430)
+    Sleep(milliseconds);
+    return;
 }
 
 
 void eClock::intervalStart()
 {
-	  GetSystemTimeAsFileTime(&ft1);
-	  QueryPerformanceCounter(&li1);
+    GetSystemTimeAsFileTime(&ft1);
+    QueryPerformanceCounter(&li1);
 }
 uint64_t eClock::intervalEnd()
 {
-	GetSystemTimeAsFileTime(&ft2);
-	QueryPerformanceCounter(&li2);
-	return 0;
+    GetSystemTimeAsFileTime(&ft2);
+    QueryPerformanceCounter(&li2);
+    return 0;
 
 }
 
@@ -86,34 +87,30 @@ uint64_t eClock::intervalEnd()
 
 bool eClock::setTimeNow(Time_t* tnow)
 {
-	gettimeofday(&m_now,NULL);
-	tnow->seconds = m_now.tv_sec+m_seconds_from_1900_to_1970+m_utc_seconds_diff;
-	tnow->fraction = (uint32_t)(m_now.tv_usec*pow(2.0,32)*pow(10.0,-6));
-	return true;
+    gettimeofday(&m_now,NULL);
+    tnow->seconds = m_now.tv_sec+m_seconds_from_1900_to_1970+m_utc_seconds_diff;
+    tnow->fraction = (uint32_t)(m_now.tv_usec*pow(2.0,32)*pow(10.0,-6));
+    return true;
 }
 
 void eClock::my_sleep(uint32_t milliseconds)
 {
-	usleep(milliseconds*1000);
-	return;
+    usleep(milliseconds*1000);
+    return;
 }
 
 void eClock::intervalStart()
 {
-	gettimeofday(&m_interval1,NULL);
+    gettimeofday(&m_interval1,NULL);
 }
 
 uint64_t eClock::intervalEnd()
 {
-	gettimeofday(&m_interval2,NULL);
-	return (m_interval2.tv_sec-m_interval1.tv_sec)*1000000+m_interval2.tv_usec-m_interval1.tv_usec;
+    gettimeofday(&m_interval2,NULL);
+    return (m_interval2.tv_sec-m_interval1.tv_sec)*1000000+m_interval2.tv_usec-m_interval1.tv_usec;
 }
 
-
-
 #endif
-
-
 
 } /* namespace rtps */
 } /* namespace eprosima */

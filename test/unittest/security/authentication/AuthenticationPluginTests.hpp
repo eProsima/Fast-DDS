@@ -24,9 +24,6 @@
 
 #include <gtest/gtest.h>
 
-
-
-
 class AuthenticationPluginTest : public ::testing::Test
 {
     protected:

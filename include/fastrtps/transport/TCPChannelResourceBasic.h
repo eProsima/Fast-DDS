@@ -30,7 +30,6 @@ public:
     // Constructor called when trying to connect to a remote server
     TCPChannelResourceBasic(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         const Locator_t& locator,
         uint32_t maxMsgSize);
@@ -38,14 +37,14 @@ public:
     // Constructor called when local server accepted connection
     TCPChannelResourceBasic(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         asio::io_service& service,
         std::shared_ptr<asio::ip::tcp::socket> socket,
         uint32_t maxMsgSize);
 
     virtual ~TCPChannelResourceBasic();
 
-    void connect() override;
+    void connect(
+            const std::shared_ptr<TCPChannelResource>& myself) override;
 
     void disconnect() override;
 
@@ -54,7 +53,9 @@ public:
         std::size_t size,
         asio::error_code& ec) override;
 
-    uint32_t send(
+    size_t send(
+        const octet* header,
+        size_t header_size,
         const octet* data,
         size_t size,
         asio::error_code& ec) override;

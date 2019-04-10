@@ -30,7 +30,6 @@
 
 #include <asio/io_service.hpp>
 #include <asio/steady_timer.hpp>
-#include <asio/deadline_timer.hpp>
 #include <asio/placeholders.hpp>
 #include <asio/io_service.hpp>
 

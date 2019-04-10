@@ -79,12 +79,12 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             if(this->sedp_->mp_PDP->addWriterProxyData(&writerProxyData, pdata)) //ADDED NEW DATA
             {
                 // At this point we can release reader lock, cause change is not used
-                reader->getMutex()->unlock();
+                reader->getMutex().unlock();
 
                 sedp_->pairing_writer_proxy_with_any_local_reader(&pdata, &writerProxyData);
 
                 // Take again the reader lock.
-                reader->getMutex()->lock();
+                reader->getMutex().lock();
             }
             else //NOT ADDED BECAUSE IT WAS ALREADY THERE
             {
@@ -155,12 +155,12 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             if(this->sedp_->mp_PDP->addReaderProxyData(&readerProxyData, pdata)) //ADDED NEW DATA
             {
                 // At this point we can release reader lock, cause change is not used
-                reader->getMutex()->unlock();
+                reader->getMutex().unlock();
 
                 sedp_->pairing_reader_proxy_with_any_local_writer(&pdata, &readerProxyData);
 
                 // Take again the reader lock.
-                reader->getMutex()->lock();
+                reader->getMutex().lock();
             }
             else
             {

@@ -46,11 +46,11 @@ TEST(TMutexTests, record_mutexes)
 
     tmutex_stop_recording();
 
-    ASSERT_TRUE(4 == tmutex_get_num_mutexes());
-    ASSERT_TRUE(mutex_1.native_handle() == tmutex_get_mutex(0));
-    ASSERT_TRUE(mutex_2.native_handle() == tmutex_get_mutex(1));
-    ASSERT_TRUE(mutex_3.native_handle() == tmutex_get_mutex(2));
-    ASSERT_TRUE(mutex_4.native_handle() == tmutex_get_mutex(3));
+    ASSERT_EQ(4, tmutex_get_num_mutexes());
+    ASSERT_EQ(mutex_1.native_handle(), tmutex_get_mutex(0));
+    ASSERT_EQ(mutex_2.native_handle(), tmutex_get_mutex(1));
+    ASSERT_EQ(mutex_3.native_handle(), tmutex_get_mutex(2));
+    ASSERT_EQ(mutex_4.native_handle(), tmutex_get_mutex(3));
 }
 
 TEST(TMutexTests, lock_mutexes)
@@ -75,8 +75,8 @@ TEST(TMutexTests, lock_mutexes)
 
     tmutex_stop_recording();
 
-    ASSERT_TRUE(4 == tmutex_get_num_lock_type());
-    ASSERT_TRUE(0 == tmutex_get_num_timedlock_type());
+    ASSERT_EQ(4, tmutex_get_num_lock_type());
+    ASSERT_EQ(0, tmutex_get_num_timedlock_type());
 
     for (size_t count = 0; count < tmutex_get_num_mutexes(); ++count)
     {
@@ -130,8 +130,8 @@ TEST(TMutexTests, lock_timed_mutexes)
 
     tmutex_stop_recording();
 
-    ASSERT_TRUE(0 == tmutex_get_num_lock_type());
-    ASSERT_TRUE(2 == tmutex_get_num_timedlock_type());
+    ASSERT_EQ(0, tmutex_get_num_lock_type());
+    ASSERT_EQ(2, tmutex_get_num_timedlock_type());
 
     for (size_t count = 0; count < tmutex_get_num_mutexes(); ++count)
     {

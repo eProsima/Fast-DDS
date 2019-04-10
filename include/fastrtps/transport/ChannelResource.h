@@ -35,12 +35,15 @@ public:
 
     virtual void clear();
 
-    inline void thread(std::thread* pThread)
+    inline void thread(std::thread&& pThread)
     {
-        thread_ = pThread;
-    }
+        if(thread_.joinable())
+        {
+            thread_.join();
+        }
 
-    std::thread* release_thread();
+        thread_.swap(pThread);
+    }
 
     inline bool alive() const
     {
@@ -62,7 +65,7 @@ protected:
     CDRMessage_t message_buffer_;
 
     std::atomic<bool> alive_;
-    std::thread* thread_;
+    std::thread thread_;
 };
 
 } // namespace rtps

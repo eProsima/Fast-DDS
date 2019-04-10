@@ -74,7 +74,7 @@ void InitialAckNack::event(
         Count_t acknackCount = 0;
 
         {//BEGIN PROTECTION
-            std::lock_guard<std::recursive_mutex> guard_reader(*wp_->mp_SFR->getMutex());
+            std::lock_guard<std::recursive_timed_mutex> guard_reader(wp_->mp_SFR->getMutex());
             wp_->mp_SFR->m_acknackCount++;
             acknackCount = wp_->mp_SFR->m_acknackCount;
         }
@@ -84,10 +84,17 @@ void InitialAckNack::event(
 
         logInfo(RTPS_READER,"Sending ACKNACK: "<< sns);
 
-        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
-            m_destination_locators, m_remote_endpoints);
+        try
+        {
+            RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
+                m_destination_locators, m_remote_endpoints);
 
-        group.add_acknack(m_remote_endpoints, sns, acknackCount, false, m_destination_locators);
+            group.add_acknack(m_remote_endpoints, sns, acknackCount, false, m_destination_locators);
+        }
+        catch(const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
     }
     else if(code == EVENT_ABORT)
     {

@@ -97,8 +97,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 {
-    std::lock_guard<std::mutex> guard(this->mp_mutex);
-
     switch(memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:
@@ -150,8 +148,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
-    std::lock_guard<std::mutex> guard(this->mp_mutex);
-
     switch(memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:

@@ -78,14 +78,25 @@ static asio::ip::address_v4::bytes_type locator_to_native(const Locator_t& locat
 }
 
 UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
-    : configuration_(descriptor)
+    : UDPTransportInterface(LOCATOR_KIND_UDPv4)
+    , configuration_(descriptor)
 {
-    transport_kind_ = LOCATOR_KIND_UDPv4;
     mSendBufferSize = descriptor.sendBufferSize;
     mReceiveBufferSize = descriptor.receiveBufferSize;
     for (const auto& interface : descriptor.interfaceWhiteList)
         interface_whitelist_.emplace_back(ip::address_v4::from_string(interface));
 }
+
+UDPv4Transport::UDPv4Transport()
+    : UDPTransportInterface(LOCATOR_KIND_UDPv4)
+{
+}
+
+UDPv4Transport::~UDPv4Transport()
+{
+    clean();
+}
+
 
 UDPv4TransportDescriptor::UDPv4TransportDescriptor()
     : UDPTransportDescriptor()
@@ -100,16 +111,6 @@ UDPv4TransportDescriptor::UDPv4TransportDescriptor(const UDPv4TransportDescripto
 TransportInterface* UDPv4TransportDescriptor::create_transport() const
 {
     return new UDPv4Transport(*this);
-}
-
-UDPv4Transport::UDPv4Transport()
-{
-    transport_kind_ = LOCATOR_KIND_UDPv4;
-}
-
-UDPv4Transport::~UDPv4Transport()
-{
-    clean();
 }
 
 bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(

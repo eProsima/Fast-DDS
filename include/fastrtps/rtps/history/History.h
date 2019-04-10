@@ -55,11 +55,13 @@ class History
          */
         RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, const std::function<uint32_t()>& calculateSizeFunc)
         {
+            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
             return m_changePool.reserve_Cache(change, calculateSizeFunc);
         }
 
         RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, uint32_t dataSize)
         {
+            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
             return m_changePool.reserve_Cache(change, dataSize);
         }
 
@@ -67,27 +69,35 @@ class History
          * release a previously reserved CacheChange_t.
          * @param ch Pointer to the CacheChange_t.
          */
-        RTPS_DllAPI inline void release_Cache(CacheChange_t* ch) { return m_changePool.release_Cache(ch); }
+        RTPS_DllAPI inline void release_Cache(CacheChange_t* ch)
+        {
+            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+            return m_changePool.release_Cache(ch);
+        }
 
         /**
          * Check if the history is full
          * @return true if the History is full.
          */
-        RTPS_DllAPI bool isFull()	{ return m_isHistoryFull; }
+        RTPS_DllAPI bool isFull() { return m_isHistoryFull; }
+
         /**
          * Get the History size.
          * @return Size of the history.
          */
-        RTPS_DllAPI size_t getHistorySize(){ return m_changes.size(); }
+        RTPS_DllAPI size_t getHistorySize() { return m_changes.size(); }
+
         /**
          * Remove all changes from the History
          * @return True if everything was correctly removed.
          */
         RTPS_DllAPI bool remove_all_changes();
+
         /**
          * Update the maximum and minimum sequenceNumbers.
          */
         virtual void updateMaxMinSeqNum()=0;
+
         /**
          * Remove a specific change from the history.
          * @param ch Pointer to the CacheChange_t.
@@ -129,27 +139,35 @@ class History
          * Get the mutex
          * @return Mutex
          */
-        RTPS_DllAPI inline std::recursive_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
+        RTPS_DllAPI inline std::recursive_timed_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
 
         RTPS_DllAPI bool get_change(const SequenceNumber_t& seq, const GUID_t& guid, CacheChange_t** change);
 
     protected:
+
         //!Vector of pointers to the CacheChange_t.
         std::vector<CacheChange_t*> m_changes;
+
         //!Variable to know if the history is full without needing to block the History mutex.
         bool m_isHistoryFull;
+
         //!Pointer to and invalid cacheChange used to return the maximum and minimum when no changes are stored in the history.
         CacheChange_t* mp_invalidCache;
+
         //!Pool of cache changes reserved when the History is created.
         CacheChangePool m_changePool;
+
         //!Pointer to the minimum sequeceNumber CacheChange.
         CacheChange_t* mp_minSeqCacheChange;
+
         //!Pointer to the maximum sequeceNumber CacheChange.
         CacheChange_t* mp_maxSeqCacheChange;
+
         //!Print the seqNum of the changes in the History (for debugging purposes).
         void print_changes_seqNum2();
+
         //!Mutex for the History.
-        std::recursive_mutex* mp_mutex;
+        std::recursive_timed_mutex* mp_mutex;
 };
 
 }

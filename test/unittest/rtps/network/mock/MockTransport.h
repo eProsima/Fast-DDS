@@ -26,7 +26,22 @@ namespace rtps{
 
 class MockTransportDescriptor;
 
-class MockTransport: public TransportInterface
+class MockSenderResource : public SenderResource
+{
+    public:
+
+        MockSenderResource(Locator_t locator)
+            : SenderResource(locator.kind)
+            , locator_(locator) {}
+
+        const Locator_t& locator() const { return locator_; }
+
+    private:
+
+        Locator_t locator_;
+};
+
+class MockTransport : public TransportInterface
 {
     public:
 
@@ -39,51 +54,24 @@ class MockTransport: public TransportInterface
         bool init() override;
 
         //API implementation
-        virtual bool IsOutputChannelOpen(const Locator_t&) const override;
-
         virtual bool IsInputChannelOpen(const Locator_t&)  const override;
 
-        virtual bool OpenOutputChannel(const Locator_t&) override;
+        virtual bool OpenOutputChannel(
+                SendResourceList& sender_resource_list,
+                const Locator_t&) override;
 
         virtual bool OpenInputChannel(
             const Locator_t&,
-            TransportReceiverInterface*, uint32_t) override;
-
-        virtual bool OpenExtraOutputChannel(const Locator_t&) override { return false; }
-
-        virtual bool CloseOutputChannel(const Locator_t&) override;
+            TransportReceiverInterface*,
+            uint32_t) override;
 
         virtual bool CloseInputChannel(const Locator_t&) override;
 
         virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
         virtual bool IsLocatorSupported(const Locator_t&)  const override;
-
         virtual bool is_locator_allowed(const Locator_t& locator) const override;
-
-        virtual bool DoInputLocatorsMatch(
-            const Locator_t&,
-            const Locator_t&) const override;
-
-        virtual bool DoOutputLocatorsMatch(
-            const Locator_t&,
-            const Locator_t&) const override;
-
-        virtual bool send(
-            const octet* sendBuffer,
-            uint32_t sendBufferSize,
-            const Locator_t& localLocator,
-            const Locator_t& remoteLocator) override;
-
-        virtual bool send(
-                const octet* sendBuffer,
-                uint32_t sendBufferSize,
-                const Locator_t& localLocator,
-                const Locator_t& remoteLocator,
-                ChannelResource*) override
-        {
-            return send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
-        }
+        virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
         virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
 
@@ -139,11 +127,9 @@ class MockTransport: public TransportInterface
         // For the mock, port + direction tuples will have a 1:1 relatonship with channels
 
         typedef uint32_t Port;
-        std::vector<Port> mockOpenOutputChannels;
         std::vector<Port> mockOpenInputChannels;
 
         const static int DefaultKind = 1;
-        int mockSupportedKind;
 
         const static int DefaultMaxChannels = 10;
         int mockMaximumChannels;

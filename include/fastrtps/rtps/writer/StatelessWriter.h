@@ -58,7 +58,9 @@ class StatelessWriter : public RTPSWriter
      * Add a specific change to all ReaderLocators.
      * @param change Pointer to the change.
      */
-    void unsent_change_added_to_history(CacheChange_t* change) override;
+    void unsent_change_added_to_history(
+            CacheChange_t* change,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time) override;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
@@ -111,10 +113,13 @@ class StatelessWriter : public RTPSWriter
     //!Reset the unsent changes.
     void unsent_changes_reset();
 
-    bool is_acked_by_all(const CacheChange_t* change) const override;
+    bool is_acked_by_all(const CacheChange_t* change) override;
 
-    bool try_remove_change(std::chrono::microseconds&, std::unique_lock<std::recursive_mutex>&) override { 
-        return remove_older_changes(1); 
+    bool try_remove_change(
+            std::chrono::steady_clock::time_point&,
+            std::unique_lock<std::recursive_timed_mutex>&) override
+    {
+        return remove_older_changes(1);
     }
 
     void add_flow_controller(std::unique_ptr<FlowController> controller) override;

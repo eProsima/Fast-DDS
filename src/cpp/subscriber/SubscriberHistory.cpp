@@ -84,7 +84,7 @@ bool SubscriberHistory::received_change(
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     //NO KEY HISTORY
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
@@ -285,7 +285,7 @@ bool SubscriberHistory::readNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUnreadCache(&change, &wp))
@@ -329,7 +329,7 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUntakenCache(&change, &wp))
@@ -379,7 +379,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUnreadCache(&change, &wp))
@@ -427,7 +427,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUntakenCache(&change, &wp))
@@ -524,7 +524,7 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change, t_v_Inst_Caches
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if (this->remove_change(change))

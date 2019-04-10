@@ -94,7 +94,7 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
     {
         auto writer = this->mp_WLP->getBuiltinWriter();
         auto history = this->mp_WLP->getBuiltinWriterHistory();
-        std::lock_guard<std::recursive_mutex> wguard(*writer->getMutex());
+        std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
         CacheChange_t* change=writer->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,m_iHandle);
         if(change!=nullptr)
         {
@@ -144,7 +144,7 @@ bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
     {
         auto writer = this->mp_WLP->getBuiltinWriter();
         auto history = this->mp_WLP->getBuiltinWriterHistory();
-        std::lock_guard<std::recursive_mutex> wguard(*writer->getMutex());
+        std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
         CacheChange_t* change=writer->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE);
         if(change!=nullptr)
         {

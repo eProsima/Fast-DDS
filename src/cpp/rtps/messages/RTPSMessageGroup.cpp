@@ -138,15 +138,25 @@ const EntityId_t& get_entity_id(const std::vector<GUID_t>& endpoints)
     return entityid;
 }
 
-RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-        RTPSMessageGroup_t& msg_group) :
-    participant_(participant), endpoint_(endpoint), full_msg_(&msg_group.rtpsmsg_fullmsg_),
-    submessage_msg_(&msg_group.rtpsmsg_submessage_), currentBytesSent_(0),
-    fixed_destination_(false), fixed_destination_locators_(nullptr), 
-    fixed_destination_guids_(nullptr), fixed_destination_prefix_()
+RTPSMessageGroup::RTPSMessageGroup(
+        RTPSParticipantImpl* participant,
+        Endpoint* endpoint,
+        ENDPOINT_TYPE type,
+        RTPSMessageGroup_t& msg_group,
+        std::chrono::steady_clock::time_point max_blocking_time_point)
+    : participant_(participant)
+    , endpoint_(endpoint)
+    , full_msg_(&msg_group.rtpsmsg_fullmsg_)
+    , submessage_msg_(&msg_group.rtpsmsg_submessage_)
+    , currentBytesSent_(0)
+    , fixed_destination_(false)
+    , fixed_destination_locators_(nullptr)
+    , fixed_destination_guids_(nullptr)
+    , fixed_destination_prefix_()
 #if HAVE_SECURITY
     , encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
 #endif
+    , max_blocking_time_point_(max_blocking_time_point)
 {
     assert(participant);
     assert(endpoint);
@@ -162,9 +172,15 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
 #endif
 }
 
-RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-    RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
-    const std::vector<GUID_t>& remote_endpoints) : RTPSMessageGroup(participant, endpoint, type, msg_group)
+RTPSMessageGroup::RTPSMessageGroup(
+        RTPSParticipantImpl* participant,
+        Endpoint* endpoint,
+        ENDPOINT_TYPE type,
+        RTPSMessageGroup_t& msg_group,
+        const LocatorList_t& locator_list,
+        const std::vector<GUID_t>& remote_endpoints,
+        std::chrono::steady_clock::time_point max_blocking_time_point)
+    : RTPSMessageGroup(participant, endpoint, type, msg_group, max_blocking_time_point)
 {
 #if HAVE_SECURITY
     if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
@@ -210,7 +226,7 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
 }
 */
 
-RTPSMessageGroup::~RTPSMessageGroup()
+RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
 {
     send();
 }
@@ -272,7 +288,10 @@ void RTPSMessageGroup::send()
             fixed_destination_ ? *fixed_destination_locators_ : current_locators_;
         for(const auto& lit : destinations)
         {
-            participant_->sendSync(msgToSend, endpoint_, lit);
+            if(!participant_->sendSync(msgToSend, endpoint_, lit, max_blocking_time_point_))
+            {
+                throw timeout();
+            }
         }
 
         currentBytesSent_ += msgToSend->length;

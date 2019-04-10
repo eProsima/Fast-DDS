@@ -71,7 +71,7 @@ bool History::remove_all_changes()
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(!m_changes.empty())
     {
         while(!m_changes.empty())
@@ -115,7 +115,7 @@ bool History::get_change(const SequenceNumber_t& seq, const GUID_t& guid,CacheCh
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
             it!=m_changes.end();++it)
     {
