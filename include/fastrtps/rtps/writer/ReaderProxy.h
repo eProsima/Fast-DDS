@@ -384,7 +384,9 @@ private:
      * @param seq_num Sequence number to find.
      * @return Iterator pointing to the change, changes_for_reader_.end() if not found.
      */
-    ChangeIterator find_change(const SequenceNumber_t& seq_num);
+    ChangeIterator find_change(
+            const SequenceNumber_t& seq_num,
+            bool exact);
 
     /**
      * @brief Find a change with the specified sequence number.

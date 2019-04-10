@@ -158,7 +158,7 @@ void ReaderProxy::acked_changes_set(const SequenceNumber_t& seq_num)
 
     if (seq_num > changes_low_mark_)
     {
-        ChangeIterator chit = find_change(seq_num);
+        ChangeIterator chit = find_change(seq_num, false);
         changes_for_reader_.erase(changes_for_reader_.begin(), chit);
     }
     else
@@ -216,16 +216,12 @@ bool ReaderProxy::requested_changes_set(const SequenceNumberSet_t& seq_num_set)
 
     seq_num_set.for_each([&](SequenceNumber_t sit)
     {
-        ChangeIterator chit = find_change(sit);
+        ChangeIterator chit = find_change(sit, true);
         if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
         {
             chit->setStatus(REQUESTED);
             chit->markAllFragmentsAsUnsent();
             isSomeoneWasSetRequested = true;
-        }
-        else if(chit == changes_for_reader_.end() && sit >= changes_low_mark_)
-        {
-            std::cout << "JAAAARRRRL" << std::endl;
         }
     });
 
@@ -253,7 +249,7 @@ bool ReaderProxy::set_change_to_status(
         return false;
     }
 
-    auto it = find_change(seq_num);
+    ChangeIterator it = find_change(seq_num, true);
     bool change_was_modified = false;
 
     // If the status is UNDERWAY (change was right now sent) and the reader is besteffort,
@@ -307,7 +303,7 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
     }
 
     bool change_found = false;
-    auto it = find_change(seq_num);
+    ChangeIterator it = find_change(seq_num, true);
 
     if (it != changes_for_reader_.end())
     {
@@ -382,7 +378,7 @@ bool ReaderProxy::requested_fragment_set(
         const FragmentNumberSet_t& frag_set)
 {
     // Locate the outbound change referenced by the NACK_FRAG
-    ChangeIterator changeIter = find_change(seq_num);
+    ChangeIterator changeIter = find_change(seq_num, true);
     if (changeIter == changes_for_reader_.end())
     {
         return false;
@@ -427,15 +423,19 @@ static bool change_less_than_sequence(
     return change.getSequenceNumber() < seq_num;
 }
 
-ReaderProxy::ChangeIterator ReaderProxy::find_change(const SequenceNumber_t& seq_num)
+ReaderProxy::ChangeIterator ReaderProxy::find_change(
+        const SequenceNumber_t& seq_num,
+        bool exact)
 {
     ReaderProxy::ChangeIterator it;
     ReaderProxy::ChangeIterator end = changes_for_reader_.end();
     it = std::lower_bound(changes_for_reader_.begin(), end, seq_num, change_less_than_sequence);
 
-    return it == end
+    return (!exact)
         ? it
-        : it->getSequenceNumber() == seq_num ? it : end;
+        : it == end
+            ? it
+            : it->getSequenceNumber() == seq_num ? it : end;
 }
 
 ReaderProxy::ChangeConstIterator ReaderProxy::find_change(const SequenceNumber_t& seq_num) const
