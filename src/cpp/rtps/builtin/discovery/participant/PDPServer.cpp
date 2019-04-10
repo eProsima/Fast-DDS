@@ -666,16 +666,18 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
 
 bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
 {
-    std::lock_guard<std::recursive_mutex> lock(*getMutex());
+    {   
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-    ParticipantProxyData info;
-    InstanceHandle_t ih;
+        ParticipantProxyData info;
+        InstanceHandle_t ih;
 
-    if (!lookupParticipantProxyData(partGUID, info))
-        return false;
+        if (!lookupParticipantProxyData(partGUID, info))
+            return false;
 
-    removeParticipantFromHistory(ih = partGUID);
-    removeParticipantForEDPMatch(&info);
+        removeParticipantFromHistory(ih = partGUID);
+        removeParticipantForEDPMatch(&info);
+    }
 
     return PDP::removeRemoteParticipant(partGUID);
 }
