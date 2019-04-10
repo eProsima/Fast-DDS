@@ -116,10 +116,14 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 this->mp_PDP->m_participantProxies.push_back(pdata);
                 lock.unlock();
 
-               // This call would be needed again if the clients known not the server prefix
-               //  mp_PDP->announceParticipantState(false);
-                mp_PDP->assignRemoteEndpoints(pdata);
-                mp_PDP->queueParticipantForEDPMatch(pdata);
+                // Dismiss any client data relayed by a server
+                if (pdata->m_guid.guidPrefix == change->writerGUID.guidPrefix )
+                {
+                    // This call would be needed again if the clients known not the server prefix
+                    //  mp_PDP->announceParticipantState(false);
+                    mp_PDP->assignRemoteEndpoints(pdata);
+                    mp_PDP->queueParticipantForEDPMatch(pdata);
+                }
             }
             else
             {

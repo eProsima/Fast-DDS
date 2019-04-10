@@ -520,7 +520,6 @@ void PDPServer::queueParticipantForEDPMatch(const ParticipantProxyData * pdata)
         << " waiting for EDP match with server " << this->getRTPSParticipant()->getRTPSParticipantAttributes().getName());
 }
 
-
 void PDPServer::removeParticipantForEDPMatch(const ParticipantProxyData * pdata)
 {
     assert(pdata != nullptr);
@@ -528,7 +527,15 @@ void PDPServer::removeParticipantForEDPMatch(const ParticipantProxyData * pdata)
     std::lock_guard<std::recursive_mutex> guardP(*mp_mutex);
 
     // remove the deceased client to the EDP matching list
-    _p2match.erase(pdata);
+    for (pending_matches_list::iterator it = _p2match.begin(); it != _p2match.end(); ++it)
+    {
+        if ((*it)->m_guid == pdata->m_guid)
+        {
+            _p2match.erase(it);
+            return;
+        }
+    }
+    
 }
 
 std::string PDPServer::GetPersistenceFileName()
