@@ -95,3 +95,8 @@ void Publisher::get_liveliness_lost_status(LivelinessLostStatus &status)
     (void)status;
     logWarning(PUBLISHER, "get_liveliness_lost_status() is not implemented yet");
 }
+
+void Publisher::assert_liveliness()
+{
+    logWarning(PUBLISHER, "assert_liveliness() is not implemented yet");
+}

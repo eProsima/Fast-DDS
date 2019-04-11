@@ -119,6 +119,11 @@ public:
     bool updateAttributes(const PublisherAttributes& att);
 
     /**
+     * @brief Asserts liveliness
+     */
+    void assert_liveliness();
+
+    /**
      * @brief Returns the liveliness lost status
      * @param status Liveliness lost status
      */
