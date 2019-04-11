@@ -364,7 +364,8 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             else
             {
                 uint32_t milliseclease = std::strtoul(auxstring.c_str(), nullptr, 10);
-                rdata->m_qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t((double)milliseclease);
+                rdata->m_qos.m_liveliness.lease_duration =
+                    TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
                 if(milliseclease == 0){
                     logWarning(RTPS_EDP,"BAD XML:livelinessQos leaseDuration is 0");
                 }
@@ -583,7 +584,8 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             else
             {
                 uint32_t milliseclease = std::strtoul(auxstring.c_str(), nullptr, 10);
-                wdata->m_qos.m_liveliness.lease_duration = TimeConv::MilliSeconds2Time_t((double)milliseclease);
+                wdata->m_qos.m_liveliness.lease_duration =
+                    TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
                 if(milliseclease == 0){
                     logWarning(RTPS_EDP,"BAD XML:livelinessQos leaseDuration is 0");
                 }

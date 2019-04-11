@@ -33,6 +33,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 #include <vector>
 
@@ -403,7 +404,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     if (reliable)
     {
         //RELIABLE
-        Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+        Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
         Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     }
     else

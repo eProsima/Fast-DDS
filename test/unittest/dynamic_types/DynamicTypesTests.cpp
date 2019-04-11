@@ -31,6 +31,7 @@
 #include <tinyxml2.h>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
 class DynamicTypesTests: public ::testing::Test

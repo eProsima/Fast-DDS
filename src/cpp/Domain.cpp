@@ -72,9 +72,9 @@ void Domain::stopAll()
     }
 
     // Deletes DynamicTypes and TypeObject factories
-    DynamicTypeBuilderFactory::delete_instance();
-    DynamicDataFactory::delete_instance();
-    TypeObjectFactory::delete_instance();
+    types::DynamicTypeBuilderFactory::delete_instance();
+    types::DynamicDataFactory::delete_instance();
+    types::TypeObjectFactory::delete_instance();
     XMLProfileManager::DeleteInstance();
 
     eClock::my_sleep(100);

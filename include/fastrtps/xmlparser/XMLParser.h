@@ -230,12 +230,12 @@ class XMLParser
     RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype,
-        MemberId mId);
+        types::MemberId mId);
 
     RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype,
-        MemberId mId,
+        types::MemberId mId,
         const std::string& values);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(
@@ -306,7 +306,7 @@ class XMLParser
 
     RTPS_DllAPI static XMLP_ret getXMLDuration(
         tinyxml2::XMLElement* elem,
-        rtps::Duration_t& duration,
+        Duration_t& duration,
         uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLWriterQosPolicies(

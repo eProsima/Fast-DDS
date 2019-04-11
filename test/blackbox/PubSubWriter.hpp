@@ -44,7 +44,7 @@
 #include <thread>
 
 using eprosima::fastrtps::rtps::IPLocator;
-using eprosima::fastrtps::UDPv4TransportDescriptor;
+using eprosima::fastrtps::rtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubWriter
@@ -57,7 +57,8 @@ class PubSubWriter
 
             ~ParticipantListener() {}
 
-            void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo&& info) override
+            void onParticipantDiscovery(eprosima::fastrtps::Participant*,
+                    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
             {
                 if(writer_.onDiscovery_!=nullptr)
                 {
@@ -362,7 +363,7 @@ class PubSubWriter
             >
             bool waitForAllAcked(const std::chrono::duration<_Rep, _Period>& max_wait)
             {
-                return publisher_->wait_for_all_acked(eprosima::fastrtps::rtps::Time_t((int32_t)max_wait.count(), 0));
+                return publisher_->wait_for_all_acked(eprosima::fastrtps::Time_t((int32_t)max_wait.count(), 0));
             }
 
     void block_until_discover_topic(const std::string& topicName, int repeatedTimes)
@@ -646,7 +647,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& lease_duration(eprosima::fastrtps::rtps::Duration_t lease_duration, eprosima::fastrtps::rtps::Duration_t announce_period)
+    PubSubWriter& lease_duration(eprosima::fastrtps::Duration_t lease_duration, eprosima::fastrtps::Duration_t announce_period)
     {
         participant_attr_.rtps.builtin.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
@@ -990,7 +991,7 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
     std::map<std::string,  int> mapPartitionCountList_;
     bool discovery_result_;
 
-    std::function<bool(const eprosima::fastrtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

@@ -688,6 +688,7 @@ XMLP_ret XMLParser::parse_tls_config(
             </options>
         </tls>
    */
+    using namespace rtps;
     using TCPDescriptor = std::shared_ptr<rtps::TCPTransportDescriptor>;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
     using TLSOption = TCPTransportDescriptor::TLSConfig::TLSOptions;
@@ -1738,13 +1739,13 @@ static bool dimensionsToLabels(const std::string& labelStr, std::vector<uint64_t
 }
 
 p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype, MemberId mId)
+        p_dynamictypebuilder_t p_dynamictype, types::MemberId mId)
 {
     return parseXMLMemberDynamicType(p_root, p_dynamictype, mId, "");
 }
 
 p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype, MemberId mId, const std::string& values)
+        p_dynamictypebuilder_t p_dynamictype, types::MemberId mId, const std::string& values)
 {
     /*
         <xs:complexType name="memberDcl">
@@ -1823,7 +1824,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         }
 
         const char* lengthStr = p_root->Attribute(SEQ_MAXLENGTH);
-        uint32_t length = MAX_ELEMENTS_COUNT;
+        uint32_t length = types::MAX_ELEMENTS_COUNT;
         if (lengthStr != nullptr)
         {
             length = std::stoi(lengthStr);
@@ -1899,7 +1900,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         }
 
         const char* lengthStr = p_root->Attribute(MAP_MAXLENGTH);
-        uint32_t length = MAX_ELEMENTS_COUNT;
+        uint32_t length = types::MAX_ELEMENTS_COUNT;
         if (lengthStr != nullptr)
         {
             length = std::stoi(lengthStr);

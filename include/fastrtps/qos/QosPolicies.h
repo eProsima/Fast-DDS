@@ -33,8 +33,6 @@ namespace rtps{
 class EDP;
 }
 
-using namespace eprosima::fastrtps::types;
-
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
  */
@@ -158,7 +156,7 @@ public:
     RTPS_DllAPI DeadlineQosPolicy()
         : Parameter_t(PID_DEADLINE, PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          period(rtps::c_TimeInfinite)
+          period(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~DeadlineQosPolicy(){}
@@ -178,7 +176,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t period;
+    Duration_t period;
 };
 
 /**
@@ -192,7 +190,7 @@ public:
     RTPS_DllAPI LatencyBudgetQosPolicy()
         : Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          duration(rtps::c_TimeZero)
+          duration(c_TimeZero)
     {}
     virtual RTPS_DllAPI ~LatencyBudgetQosPolicy() {}
 
@@ -211,7 +209,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t duration;
+    Duration_t duration;
 };
 
 /**
@@ -241,8 +239,8 @@ public:
         : Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
           QosPolicy(true),
           kind(AUTOMATIC_LIVELINESS_QOS),
-          lease_duration(rtps::c_TimeInfinite),
-          announcement_period(rtps::c_TimeInfinite)
+          lease_duration(c_TimeInfinite),
+          announcement_period(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~LivelinessQosPolicy() {}
@@ -265,8 +263,8 @@ public:
 
 public:
     LivelinessQosPolicyKind kind;
-    rtps::Duration_t lease_duration;
-    rtps::Duration_t announcement_period;
+    Duration_t lease_duration;
+    Duration_t announcement_period;
 };
 
 /**
@@ -313,7 +311,7 @@ public:
 
 public:
     ReliabilityQosPolicyKind kind;
-    rtps::Duration_t max_blocking_time;
+    Duration_t max_blocking_time;
 };
 
 
@@ -463,7 +461,7 @@ public:
     RTPS_DllAPI TimeBasedFilterQosPolicy()
         : Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),
           QosPolicy(false),
-          minimum_separation(rtps::c_TimeZero)
+          minimum_separation(c_TimeZero)
     {}
 
     virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy() {}
@@ -483,7 +481,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t minimum_separation;
+    Duration_t minimum_separation;
 };
 
 /**
@@ -825,7 +823,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t service_cleanup_delay;
+    Duration_t service_cleanup_delay;
     HistoryQosPolicyKind history_kind;
     int32_t history_depth;
     int32_t max_samples;
@@ -845,7 +843,7 @@ public:
     RTPS_DllAPI LifespanQosPolicy()
         : Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          duration(rtps::c_TimeInfinite)
+          duration(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~LifespanQosPolicy() {}
@@ -865,7 +863,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t duration;
+    Duration_t duration;
 };
 
 /**

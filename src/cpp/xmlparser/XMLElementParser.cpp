@@ -1706,7 +1706,7 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
             if (strcmp(text, DURATION_INFINITY) == 0)
                 duration = c_TimeInfinite;
             else if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
-                duration.nanosec = c_TimeInfinite.fraction;
+                duration.nanosec = c_TimeInfinite.nanosec;
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
             {
                 logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");

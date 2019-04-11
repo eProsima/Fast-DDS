@@ -33,8 +33,6 @@ namespace fastcdr{
 namespace eprosima {
 namespace fastrtps {
 
-using namespace rtps;
-
 namespace types {
 
 const std::string CONST_TRUE = "true";

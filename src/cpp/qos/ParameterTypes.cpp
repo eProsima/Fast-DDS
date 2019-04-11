@@ -168,8 +168,8 @@ bool ParameterTime_t::addToCDRMessage(CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, PARAMETER_TIME_LENGTH);//this->length);
-    valid &= CDRMessage::addInt32(msg,time.seconds);
-    valid &= CDRMessage::addInt32(msg,time.fraction);
+    valid &= CDRMessage::addInt32(msg, time.seconds());
+    valid &= CDRMessage::addInt32(msg, time.fraction());
     return valid;
 }
 

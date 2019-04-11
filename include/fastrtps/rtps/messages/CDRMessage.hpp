@@ -191,11 +191,13 @@ inline bool CDRMessage::readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberS
     return valid;
 }
 
-inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, Time_t* ts)
+inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, rtps::Time_t* ts)
 {
     bool valid = true;
-    valid &=CDRMessage::readInt32(msg,&ts->seconds);
-    valid &=CDRMessage::readUInt32(msg,&ts->fraction);
+    valid &= CDRMessage::readInt32(msg, &ts->seconds());
+    uint32_t frac;
+    valid &= CDRMessage::readUInt32(msg, &frac);
+    ts->fraction(frac);
     return valid;
 }
 

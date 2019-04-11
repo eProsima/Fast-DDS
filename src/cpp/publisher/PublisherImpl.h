@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Publisher.h 	
+ * @file Publisher.h
  */
 
 
@@ -69,7 +69,7 @@ class PublisherImpl
     virtual ~PublisherImpl();
 
     /**
-     * 
+     *
      * @param kind
      * @param  Data
      * @return
@@ -79,7 +79,7 @@ class PublisherImpl
         void* Data);
 
     /**
-     * 
+     *
      * @param kind
      * @param  Data
      * @param wparams
@@ -103,7 +103,7 @@ class PublisherImpl
     bool removeAllChange(size_t* removed);
 
     /**
-     * 
+     *
      * @return
      */
     const rtps::GUID_t& getGuid();

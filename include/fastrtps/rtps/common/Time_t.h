@@ -25,6 +25,48 @@
 
 namespace eprosima{
 namespace fastrtps{
+
+/**
+ * Structure Time_t, used to describe times.
+ * @ingroup COMMON_MODULE
+ */
+struct Time_t
+{
+    int32_t seconds;
+    uint32_t nanosec;
+
+    //! Default constructor. Sets values to zero.
+    Time_t()
+    {
+        seconds = 0;
+        nanosec = 0;
+    }
+
+    /**
+    * @param sec Seconds
+    * @param nsec Nanoseconds
+    */
+    Time_t(
+            int32_t sec,
+            uint32_t nsec)
+    {
+        seconds = sec;
+        nanosec = nsec;
+    }
+
+    /**
+     * @param sec Seconds. The fractional part is converted to nanoseconds.
+     */
+    Time_t(
+            long double sec)
+    {
+        seconds = static_cast<int32_t>(sec);
+        nanosec = static_cast<uint32_t>((sec - seconds) * 1000000000ULL);
+    }
+};
+
+typedef Time_t Duration_t;
+
 namespace rtps{
 
 // 1 fraction = 1/(2^32) seconds
@@ -32,22 +74,19 @@ constexpr long double FRACTION_TO_NANO = 0.23283064365386962890625; // 100000000
 constexpr long double NANO_TO_FRACTION = 4.294967296; // 4294967296 / 1000000000
 
 /**
- * Structure Time_t, used to describe times.
+ * Structure Time_t, used to describe times at RTPS protocol.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI Time_t
+class RTPS_DllAPI Time_t
 {
-    //!Seconds
-    int32_t seconds;
-
-    //!Fraction of second (1 fraction = 1/(2^32) seconds)
-    uint32_t fraction;
+public:
 
     //! Default constructor. Sets values to zero.
     Time_t()
     {
-        seconds = 0;
-        fraction = 0;
+        seconds_ = 0;
+        fraction_ = 0;
+        nanosec_ = 0;
     }
     /**
     * @param sec Seconds
@@ -57,49 +96,359 @@ struct RTPS_DllAPI Time_t
             int32_t sec,
             uint32_t frac)
     {
-        seconds = sec;
-        fraction = frac;
-    }
-
-    Time_t(long double sec)
-    {
-        seconds = static_cast<int32_t>(sec);
-        fraction = static_cast<uint32_t>((sec - seconds) * 4294967296ULL);
+        seconds_ = sec;
+        set_fraction(frac);
     }
 
     /**
-     *  Returns stored time as nanoseconds
+     * @param sec Seconds. The fractional part is converted to nanoseconds.
      */
-    inline int64_t to_ns() const
+    Time_t(
+            long double sec)
     {
-        int64_t nano = seconds * 1000000000ULL;
-        nano += fraction * FRACTION_TO_NANO;
+        seconds_ = static_cast<int32_t>(sec);
+        set_fraction(static_cast<uint32_t>((sec - seconds_) * 4294967296ULL));
+    }
+
+    /**
+     * @param sec Seconds. The fractional part is converted to nanoseconds.
+     */
+    Time_t(
+            fastrtps::Time_t time)
+    {
+        seconds_ = static_cast<int32_t>(time.seconds);
+        set_fraction(static_cast<uint32_t>((time.seconds - seconds_) * 4294967296ULL));
+    }
+
+    /**
+     *  Returns stored time as nanoseconds (including seconds)
+     */
+    int64_t to_ns() const
+    {
+        int64_t nano = seconds_ * 1000000000ULL;
+        nano += nanosec_;
         return nano;
     }
 
     /**
-     * Retrieve the nanosec equivalent field.
-     * Converts the internal fraction to nanoseconds.
+     * Retrieve the seconds field.
      */
-    uint32_t nanosec() const
+    int32_t seconds() const
     {
-        return static_cast<uint32_t>(fraction * FRACTION_TO_NANO);
+        return seconds_;
     }
 
     /**
-     * Sets fraction field as nanoseconds. If nanos is greater or equal than 1.000.000.000 (one second)
-     * discards all seconds.
+     * Retrieve the seconds field by ref.
      */
-    void nanosec(uint32_t nanos)
+    int32_t& seconds()
+    {
+        return seconds_;
+    }
+
+    /**
+     * Sets seconds field.
+     */
+    void seconds(
+            int32_t sec)
+    {
+        seconds_ = sec;
+    }
+
+    /**
+     * Retrieve the nanosec field.
+     */
+    uint32_t nanosec() const
+    {
+        return nanosec_;
+    }
+
+    /**
+     * Sets nanoseconds field and updates the fraction.
+     */
+    void nanosec(
+            uint32_t nanos)
     {
         const uint32_t s_to_nano = 1000000000UL;
         if (nanos >= s_to_nano)
         {
             nanos %= s_to_nano; // Remove the seconds
         }
-        fraction = static_cast<uint32_t>(nanos * NANO_TO_FRACTION);
+        set_nanosec(nanos);
+    }
+
+    /**
+     * Retrieve the fraction field.
+     */
+    uint32_t fraction() const
+    {
+        return fraction_;
+    }
+
+    /**
+     * Sets fraction field and updates the nanoseconds.
+     */
+    void fraction(
+            uint32_t frac)
+    {
+        set_fraction(frac);
+    }
+
+    Duration_t to_duration_t() const
+    {
+        return Duration_t(seconds_, nanosec_);
+    }
+
+    void from_duration_t(const Duration_t& duration)
+    {
+        seconds_ = duration.seconds;
+        set_nanosec(duration.nanosec);
+    }
+
+private:
+    //!Seconds
+    int32_t seconds_;
+
+    //!Fraction of second (1 fraction = 1/(2^32) seconds)
+    uint32_t fraction_;
+
+    //!Nanoseconds
+    uint32_t nanosec_;
+
+    void set_fraction(
+            uint32_t frac)
+    {
+        fraction_ = frac;
+        nanosec_ = static_cast<uint32_t>(fraction_ * FRACTION_TO_NANO);
+    }
+
+    void set_nanosec(
+            uint32_t nanos)
+    {
+        nanosec_ = nanos;
+        fraction_ = static_cast<uint32_t>(nanosec_ * NANO_TO_FRACTION);
     }
 };
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if equal
+ */
+static inline bool operator==(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if(t1.seconds() != t2.seconds())
+    {
+        return false;
+    }
+    if(t1.fraction() != t2.fraction())
+    {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if not equal
+ */
+static inline bool operator!=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() != t2.seconds())
+    {
+        return true;
+    }
+    if (t1.fraction() != t2.fraction())
+    {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Checks if a Time_t is less than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less than the second
+ */
+static inline bool operator<(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() < t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() > t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() < t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is greather than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greather than the second
+ */
+static inline bool operator>(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() > t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() < t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() > t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is less or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less or equal than the second
+ */
+static inline bool operator<=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() < t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() > t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() <= t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is greather or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greather or equal than the second
+ */
+static inline bool operator>=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() > t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() < t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() >= t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+inline std::ostream& operator<<(
+        std::ostream& output,
+        const Time_t& t)
+{
+    long double t_aux = t.seconds() + (((long double)t.nanosec()) / 1000000000ULL);
+    return output << t_aux;
+}
+
+/**
+ * Adds two Time_t.
+ * @param ta First Time_t to add
+ * @param tb Second Time_t to add
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator+(
+        const Time_t &ta,
+        const Time_t &tb)
+{
+    Time_t result(ta.seconds() + tb.seconds(), ta.fraction() + tb.fraction());
+    if (result.fraction() < ta.fraction()) // Overflow is detected by any of them
+    {
+        ++result.seconds();
+    }
+    return result;
+}
+
+/**
+ * Substracts two Time_t.
+ * @param ta First Time_t to substract
+ * @param tb Second Time_t to substract
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator-(
+        const Time_t &ta,
+        const Time_t &tb)
+{
+    Time_t result(ta.seconds() - tb.seconds(), ta.fraction() - tb.fraction());
+    if (result.fraction() > ta.fraction()) // Overflow is detected by ta
+    {
+        --result.seconds();
+    }
+    return result;
+}
+
+#endif
+
+const Time_t c_RTPSTimeInfinite(0x7fffffff,0xffffffff);
+const Time_t c_RTPSTimeZero(0,0);
+const Time_t c_RTPSTimeInvalid(-1,0xffffffff);
+
+} // namespace rtps
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -117,7 +466,7 @@ static inline bool operator==(
     {
         return false;
     }
-    if(t1.fraction != t2.fraction)
+    if(t1.nanosec != t2.nanosec)
     {
         return false;
     }
@@ -138,7 +487,7 @@ static inline bool operator!=(
     {
         return true;
     }
-    if (t1.fraction != t2.fraction)
+    if (t1.nanosec != t2.nanosec)
     {
         return true;
     }
@@ -165,7 +514,7 @@ static inline bool operator<(
     }
     else
     {
-        if (t1.fraction < t2.fraction)
+        if (t1.nanosec < t2.nanosec)
         {
             return true;
         }
@@ -196,7 +545,7 @@ static inline bool operator>(
     }
     else
     {
-        if (t1.fraction > t2.fraction)
+        if (t1.nanosec > t2.nanosec)
         {
             return true;
         }
@@ -227,7 +576,7 @@ static inline bool operator<=(
     }
     else
     {
-        if (t1.fraction <= t2.fraction)
+        if (t1.nanosec <= t2.nanosec)
         {
             return true;
         }
@@ -258,7 +607,7 @@ static inline bool operator>=(
     }
     else
     {
-        if (t1.fraction >= t2.fraction)
+        if (t1.nanosec >= t2.nanosec)
         {
             return true;
         }
@@ -273,7 +622,8 @@ inline std::ostream& operator<<(
         std::ostream& output,
         const Time_t& t)
 {
-    return output << t.seconds << "." << t.fraction;
+    long double t_aux = t.seconds + (((long double)t.nanosec) / 1000000000ULL);
+    return output << t_aux;
 }
 
 /**
@@ -286,8 +636,8 @@ static inline Time_t operator+(
         const Time_t &ta,
         const Time_t &tb)
 {
-    Time_t result(ta.seconds + tb.seconds, ta.fraction + tb.fraction);
-    if (result.fraction < ta.fraction) // Overflow is detected by any of them
+    Time_t result(ta.seconds + tb.seconds, ta.nanosec + tb.nanosec);
+    if (result.nanosec < ta.nanosec) // Overflow is detected by any of them
     {
         ++result.seconds;
     }
@@ -304,8 +654,8 @@ static inline Time_t operator-(
         const Time_t &ta,
         const Time_t &tb)
 {
-    Time_t result(ta.seconds - tb.seconds, ta.fraction - tb.fraction);
-    if (result.fraction > ta.fraction) // Overflow is detected by ta
+    Time_t result(ta.seconds - tb.seconds, ta.nanosec - tb.nanosec);
+    if (result.nanosec > ta.nanosec) // Overflow is detected by ta
     {
         --result.seconds;
     }
@@ -318,282 +668,7 @@ const Time_t c_TimeInfinite(0x7fffffff,0xffffffff);
 const Time_t c_TimeZero(0,0);
 const Time_t c_TimeInvalid(-1,0xffffffff);
 
-//typedef Time_t Duration_t;
-struct Duration_t
-{
-    int32_t seconds;
-    uint32_t nanosec;
-
-    //! Default constructor. Sets values to zero.
-    Duration_t()
-    {
-        seconds = 0;
-        nanosec = 0;
-    }
-
-    //! Constructor from a Time_t
-    Duration_t(const Time_t& time)
-    {
-        seconds = time.seconds;
-        if (time.fraction == c_TimeInfinite.fraction)
-        {
-            nanosec = time.fraction;
-        }
-        else
-        {
-            nanosec = time.nanosec();
-        }
-    }
-
-    /**
-    * @param sec Seconds
-    * @param nsec Nanoseconds
-    */
-    Duration_t(
-            int32_t sec,
-            uint32_t nsec)
-    {
-        seconds = sec;
-        nanosec = nsec;
-    }
-
-    Duration_t(long double sec)
-    {
-        seconds = static_cast<int32_t>(sec);
-        nanosec = static_cast<uint32_t>((sec - seconds) * 1000000000ULL);
-    }
-
-    Time_t to_time() const
-    {
-        Time_t time;
-        time.seconds = seconds;
-        if (time.fraction == c_TimeInfinite.fraction)
-        {
-            time.fraction = nanosec;
-        }
-        else
-        {
-            time.nanosec(nanosec);
-        }
-        return time;
-    }
-};
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-/**
- * Comparison assignment
- * @param t1 First Duration_t to compare
- * @param t2 Second Duration_t to compare
- * @return True if equal
- */
-static inline bool operator==(
-        const Duration_t& t1,
-        const Duration_t& t2)
-{
-    if(t1.seconds != t2.seconds)
-    {
-        return false;
-    }
-    if(t1.nanosec != t2.nanosec)
-    {
-        return false;
-    }
-    return true;
-}
-
-/**
- * Comparison assignment
- * @param t1 First Duration_t to compare
- * @param t2 Second Duration_t to compare
- * @return True if not equal
- */
-static inline bool operator!=(
-        const Duration_t& t1,
-        const Duration_t& t2)
-{
-    if (t1.seconds != t2.seconds)
-    {
-        return true;
-    }
-    if (t1.nanosec != t2.nanosec)
-    {
-        return true;
-    }
-    return false;
-}
-
-/**
- * Checks if a Duration_t is less than other.
- * @param t1 First Duration_t to compare
- * @param t2 Second Duration_t to compare
- * @return True if the first Duration_t is less than the second
- */
-static inline bool operator<(
-        const Duration_t& t1,
-        const Duration_t& t2)
-{
-    if (t1.seconds < t2.seconds)
-    {
-        return true;
-    }
-    else if (t1.seconds > t2.seconds)
-    {
-        return false;
-    }
-    else
-    {
-        if (t1.nanosec < t2.nanosec)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-/**
- * Checks if a Duration_t is greather than other.
- * @param t1 First Duration_t to compare
- * @param t2 Second Duration_t to compare
- * @return True if the first Duration_t is greather than the second
- */
-static inline bool operator>(
-        const Duration_t& t1,
-        const Duration_t& t2)
-{
-    if (t1.seconds > t2.seconds)
-    {
-        return true;
-    }
-    else if (t1.seconds < t2.seconds)
-    {
-        return false;
-    }
-    else
-    {
-        if (t1.nanosec > t2.nanosec)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-/**
- * Checks if a Duration_t is less or equal than other.
- * @param t1 First Duration_t to compare
- * @param t2 Second Duration_t to compare
- * @return True if the first Duration_t is less or equal than the second
- */
-static inline bool operator<=(
-        const Duration_t& t1,
-        const Duration_t& t2)
-{
-    if (t1.seconds < t2.seconds)
-    {
-        return true;
-    }
-    else if (t1.seconds > t2.seconds)
-    {
-        return false;
-    }
-    else
-    {
-        if (t1.nanosec <= t2.nanosec)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-/**
- * Checks if a Duration_t is greather or equal than other.
- * @param t1 First Duration_t to compare
- * @param t2 Second Duration_t to compare
- * @return True if the first Duration_t is greather or equal than the second
- */
-static inline bool operator>=(
-        const Duration_t& t1,
-        const Duration_t& t2)
-{
-    if (t1.seconds > t2.seconds)
-    {
-        return true;
-    }
-    else if (t1.seconds < t2.seconds)
-    {
-        return false;
-    }
-    else
-    {
-        if (t1.nanosec >= t2.nanosec)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-inline std::ostream& operator<<(
-        std::ostream& output,
-        const Duration_t& t)
-{
-    return output << t.seconds << "." << t.nanosec;
-}
-
-/**
- * Adds two Duration_t.
- * @param ta First Duration_t to add
- * @param tb Second Duration_t to add
- * @return A new Duration_t with the result.
- */
-static inline Duration_t operator+(
-        const Duration_t &ta,
-        const Duration_t &tb)
-{
-    Duration_t result(ta.seconds + tb.seconds, ta.nanosec + tb.nanosec);
-    if (result.nanosec < ta.nanosec) // Overflow is detected by any of them
-    {
-        ++result.seconds;
-    }
-    return result;
-}
-
-/**
- * Substracts two Duration_t.
- * @param ta First Duration_t to substract
- * @param tb Second Duration_t to substract
- * @return A new Duration_t with the result.
- */
-static inline Duration_t operator-(
-        const Duration_t &ta,
-        const Duration_t &tb)
-{
-    Duration_t result(ta.seconds - tb.seconds, ta.nanosec - tb.nanosec);
-    if (result.nanosec > ta.nanosec) // Overflow is detected by ta
-    {
-        --result.seconds;
-    }
-    return result;
-}
-
-#endif
-
-}
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* TIME_T_H_ */

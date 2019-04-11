@@ -42,7 +42,7 @@
 #include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
-using eprosima::fastrtps::UDPv4TransportDescriptor;
+using eprosima::fastrtps::rtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubReader

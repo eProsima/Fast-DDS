@@ -580,5 +580,3 @@ RemoteWriterAttributes WriterProxyData::toRemoteWriterAttributes() const
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
-
