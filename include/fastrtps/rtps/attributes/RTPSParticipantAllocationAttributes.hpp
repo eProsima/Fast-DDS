@@ -62,6 +62,34 @@ struct RTPSParticipantAllocationAttributes
     ResourceLimitedContainerConfig readers;
     //! Defines the allocation behaviour for collections dependent on the total number of writers.
     ResourceLimitedContainerConfig writers;
+
+    //! @return the allocation config for the total of readers in the system (participants * readers)
+    ResourceLimitedContainerConfig total_readers() const
+    {
+        return total_endpoints(readers);
+    }
+
+    //! @return the allocation config for the total of writers in the system (participants * writers)
+    ResourceLimitedContainerConfig total_writers() const
+    {
+        return total_endpoints(writers);
+    }
+
+private:
+    ResourceLimitedContainerConfig total_endpoints(const ResourceLimitedContainerConfig& endpoints) const
+    {
+        constexpr size_t max = std::numeric_limits<size_t>::max();
+        size_t initial;
+        size_t maximum;
+        size_t increment;
+        
+        initial = participants.initial * endpoints.initial;
+        maximum = (participants.maximum == max || endpoints.maximum == max) 
+            ? max : participants.maximum * endpoints.maximum;
+        increment = std::max(participants.increment, endpoints.increment);
+
+        return { initial, maximum, increment };
+    }
 };
 
 const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAttributes = RTPSParticipantAllocationAttributes();
