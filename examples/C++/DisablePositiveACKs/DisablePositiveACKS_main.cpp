@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file PositiveACKs_main.cpp
+ * @file DisablePositiveACKs_main.cpp
  *
  */
 
-#include "PositiveACKsPublisher.h"
-#include "PositiveACKsSubscriber.h"
+#include "DisablePositiveACKsPublisher.h"
+#include "DisablePositiveACKsSubscriber.h"
 
 #include <fastrtps/Domain.h>
 
@@ -87,8 +87,8 @@ int main(int argc, char** argv)
     {
         case 1:
             {
-                PositiveACKsPublisher mypub;
-                if( mypub.init(use_disable_positive_acks > 0, keep_duration_ms) )
+                DisablePositiveACKsPublisher mypub;
+                if (mypub.init(use_disable_positive_acks > 0, keep_duration_ms))
                 {
                     mypub.run(count, writer_sleep_ms);
                 }
@@ -96,8 +96,8 @@ int main(int argc, char** argv)
             }
         case 2:
             {
-                PositiveACKsSubscriber mysub;
-                if( mysub.init(use_disable_positive_acks) )
+                DisablePositiveACKsSubscriber mysub;
+                if (mysub.init(use_disable_positive_acks > 0))
                 {
                     mysub.run(count);
                 }

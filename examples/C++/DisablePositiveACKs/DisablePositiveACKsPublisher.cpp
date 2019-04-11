@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file PositiveACKsPublisher.cpp
+ * @file DisablePositiveACKsPublisher.cpp
  *
  */
 
-#include "PositiveACKsPublisher.h"
+#include "DisablePositiveACKsPublisher.h"
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -30,22 +30,20 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-PositiveACKsPublisher::PositiveACKsPublisher()
+DisablePositiveACKsPublisher::DisablePositiveACKsPublisher()
     : participant_(nullptr)
     , publisher_(nullptr)
 {
 }
 
-bool PositiveACKsPublisher::init(
+bool DisablePositiveACKsPublisher::init(
         bool disable_positive_acks,
         uint32_t keep_duration_ms)
 {
     hello_.index(0);
-    hello_.message("PositiveACKs");
+    hello_.message("DisablePositiveACKs");
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
     participant_ = Domain::createParticipant(PParam);
     if( participant_ == nullptr )
@@ -58,9 +56,8 @@ bool PositiveACKsPublisher::init(
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "Topic";
-    Wparam.topic.topicName = "PositiveACKsTopic";
+    Wparam.topic.topicName = "DisablePositiveACKsTopic";
     Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 30;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     Wparam.qos.m_disablePositiveACKs.enabled = disable_positive_acks;
@@ -74,17 +71,16 @@ bool PositiveACKsPublisher::init(
     return true;
 }
 
-PositiveACKsPublisher::~PositiveACKsPublisher()
+DisablePositiveACKsPublisher::~DisablePositiveACKsPublisher()
 {
     Domain::removeParticipant(participant_);
 }
 
-void PositiveACKsPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void DisablePositiveACKsPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        first_connected = true;
         std::cout << "Publisher matched"<<std::endl;
     }
     else
@@ -94,7 +90,7 @@ void PositiveACKsPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/
     }
 }
 
-void PositiveACKsPublisher::run(
+void DisablePositiveACKsPublisher::run(
         uint32_t samples,
         uint32_t write_sleep_ms)
 {
@@ -118,9 +114,9 @@ void PositiveACKsPublisher::run(
     std::cin.ignore();
 }
 
-bool PositiveACKsPublisher::publish(bool waitForListener)
+bool DisablePositiveACKsPublisher::publish(bool waitForListener)
 {
-    if(listener.first_connected || !waitForListener || listener.n_matched>0)
+    if(!waitForListener || listener.n_matched>0)
     {
         hello_.index(hello_.index()+1);
         publisher_->write((void*)&hello_);

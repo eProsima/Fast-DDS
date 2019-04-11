@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file PositiveACKsSubscriber.cpp
+ * @file DisablePositiveACKsSubscriber.cpp
  *
  */
 
-#include "PositiveACKsSubscriber.h"
+#include "DisablePositiveACKsSubscriber.h"
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -28,17 +28,15 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-PositiveACKsSubscriber::PositiveACKsSubscriber()
+DisablePositiveACKsSubscriber::DisablePositiveACKsSubscriber()
     : participant_(nullptr)
     , subscriber_(nullptr)
 {
 }
 
-bool PositiveACKsSubscriber::init(bool disable_positive_acks)
+bool DisablePositiveACKsSubscriber::init(bool disable_positive_acks)
 {
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
     participant_ = Domain::createParticipant(PParam);
     if( participant_ == nullptr )
@@ -51,9 +49,8 @@ bool PositiveACKsSubscriber::init(bool disable_positive_acks)
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "Topic";
-    Rparam.topic.topicName = "PositiveACKsTopic";
+    Rparam.topic.topicName = "DisablePositiveACKsTopic";
     Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Rparam.topic.historyQos.depth = 30;
     Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     Rparam.qos.m_disablePositiveACKs.enabled = disable_positive_acks;
@@ -66,12 +63,12 @@ bool PositiveACKsSubscriber::init(bool disable_positive_acks)
     return true;
 }
 
-PositiveACKsSubscriber::~PositiveACKsSubscriber()
+DisablePositiveACKsSubscriber::~DisablePositiveACKsSubscriber()
 {
     Domain::removeParticipant(participant_);
 }
 
-void PositiveACKsSubscriber::SubListener::onSubscriptionMatched(
+void DisablePositiveACKsSubscriber::SubListener::onSubscriptionMatched(
         Subscriber* /*sub*/,
         MatchingInfo& matching_info)
 {
@@ -87,7 +84,7 @@ void PositiveACKsSubscriber::SubListener::onSubscriptionMatched(
     }
 }
 
-void PositiveACKsSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void DisablePositiveACKsSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
     if( sub->readNextData((void*) &hello, &info) )
     {
@@ -100,7 +97,7 @@ void PositiveACKsSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
     }
 }
 
-void PositiveACKsSubscriber::run(uint32_t number)
+void DisablePositiveACKsSubscriber::run(uint32_t number)
 {
     std::cout << "Subscriber running until "<< number << " samples have been received"<<std::endl;
     while( number > this->listener.n_samples )

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file PositiveACKsPublisher.h
+ * @file DisablePositiveACKsPublisher.h
  *
  */
 
-#ifndef POSITIVEACKSPUBLISHER_H_
-#define POSITIVEACKSPUBLISHER_H_
+#ifndef DisablePositiveACKsPublisher_H_
+#define DisablePositiveACKsPublisher_H_
 
 #include "Topic.h"
 #include "TopicTypes.h"
@@ -27,18 +27,18 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
 
-class PositiveACKsPublisher {
+class DisablePositiveACKsPublisher {
 public:
 
     /**
-     * @brief PositiveACKsPublisher
+     * @brief DisablePositiveACKsPublisher
      */
-    PositiveACKsPublisher();
+    DisablePositiveACKsPublisher();
 
     /**
-     * @brief ~PositiveACKsPublisher
+     * @brief ~DisablePositiveACKsPublisher
      */
-    virtual ~PositiveACKsPublisher();
+    virtual ~DisablePositiveACKsPublisher();
 
     /**
      * @brief Initialises the publisher
@@ -70,13 +70,11 @@ private:
     Topic hello_;
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Publisher* publisher_;
-	bool stop;
-	class PubListener:public eprosima::fastrtps::PublisherListener
-	{
-	public:
+    class PubListener:public eprosima::fastrtps::PublisherListener
+    {
+    public:
         PubListener()
             : n_matched(0)
-            , first_connected(false)
         {
         }
 
@@ -88,17 +86,12 @@ private:
                 eprosima::fastrtps::Publisher* pub,
                 eprosima::fastrtps::rtps::MatchingInfo& info);
 
-		int n_matched;
-        bool first_connected;
+        int n_matched;
     }listener;
-
-    void runThread(
-            uint32_t number,
-            uint32_t sleep);
 
     TopicType type_;
 };
 
 
 
-#endif /* POSITIVEACKSPUBLISHER_H_ */
+#endif /* DisablePositiveACKsPublisher_H_ */

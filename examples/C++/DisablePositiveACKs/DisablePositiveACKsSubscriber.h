@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file PositiveACKsSubscriber.h
+ * @file DisablePositiveACKsSubscriber.h
  *
  */
 
-#ifndef POSITIVEACKSSUBSCRIBER_H_
-#define POSITIVEACKSSUBSCRIBER_H_
+#ifndef DisablePositiveACKsSubscriber_H_
+#define DisablePositiveACKsSubscriber_H_
 
 #include "TopicTypes.h"
 #include "Topic.h"
@@ -28,17 +28,17 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-class PositiveACKsSubscriber {
+class DisablePositiveACKsSubscriber {
 public:
     /**
-     * @brief PositiveACKsSubscriber
+     * @brief DisablePositiveACKsSubscriber
      */
-    PositiveACKsSubscriber();
+    DisablePositiveACKsSubscriber();
 
     /**
-     * @brief ~PositiveACKsSubscriber
+     * @brief ~DisablePositiveACKsSubscriber
      */
-    virtual ~PositiveACKsSubscriber();
+    virtual ~DisablePositiveACKsSubscriber();
 
     /**
      * @brief Initialises the subscriber
@@ -60,9 +60,9 @@ private:
     TopicType type_;
 
 public:
-	class SubListener:public eprosima::fastrtps::SubscriberListener
-	{
-	public:
+    class SubListener:public eprosima::fastrtps::SubscriberListener
+    {
+    public:
         SubListener()
             : n_matched(0)
             , n_samples(0)
@@ -76,13 +76,13 @@ public:
         void onSubscriptionMatched(
                 eprosima::fastrtps::Subscriber* sub,
                 eprosima::fastrtps::rtps::MatchingInfo& info);
-		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
 
         Topic hello;
         eprosima::fastrtps::SampleInfo_t info;
-		int n_matched;
-		uint32_t n_samples;
+        int n_matched;
+        uint32_t n_samples;
     }listener;
 };
 
-#endif /* POSITIVEACKSSUBSCRIBER_H_ */
+#endif /* DisablePositiveACKsSubscriber_H_ */
