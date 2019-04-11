@@ -347,7 +347,7 @@ bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
 
 void PublisherImpl::lifespan_expired()
 {
-    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
 
     CacheChange_t* earliest_change;
     if (!m_history.get_earliest_change(&earliest_change))

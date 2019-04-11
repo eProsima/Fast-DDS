@@ -274,7 +274,7 @@ uint64_t SubscriberImpl::getUnreadCount() const
 
 void SubscriberImpl::lifespan_expired()
 {
-    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
     CacheChange_t* earliest_change;
     if (!m_history.get_earliest_change(&earliest_change))

@@ -28,8 +28,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-WriteParams WriteParams::WRITE_PARAM_DEFAULT;
-
 WriterHistory::WriterHistory(const HistoryAttributes& att):
     History(att),
     mp_writer(nullptr)
