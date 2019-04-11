@@ -47,6 +47,8 @@ std::list<FixedSized> default_fixed_sized_data_generator(size_t max)
         ++index;
         return fs;
     });
+
+    return returnedValue;
 }
 
 std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max)

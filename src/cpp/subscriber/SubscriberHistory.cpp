@@ -560,7 +560,7 @@ bool SubscriberHistory::set_next_deadline(
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
@@ -588,7 +588,7 @@ bool SubscriberHistory::get_next_deadline(InstanceHandle_t &handle, std::chrono:
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {

@@ -220,7 +220,7 @@ void SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change)
 {
     if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
     {
-        std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+        std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
         if (!m_history.set_next_deadline(change->instanceHandle, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
         {
@@ -255,7 +255,7 @@ void SubscriberImpl::timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
     steady_clock::time_point next_deadline_us;
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
@@ -274,7 +274,7 @@ void SubscriberImpl::deadline_missed()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
@@ -293,7 +293,7 @@ void SubscriberImpl::deadline_missed()
 
 void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
 {
-    std::unique_lock<std::recursive_mutex> lock(*mp_reader->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;

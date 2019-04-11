@@ -363,7 +363,7 @@ void PublisherImpl::timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
 
     steady_clock::time_point next_deadline_us;
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
@@ -382,7 +382,7 @@ void PublisherImpl::deadline_missed()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
@@ -400,7 +400,7 @@ void PublisherImpl::deadline_missed()
 
 void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
 {
-    std::unique_lock<std::recursive_mutex> lock(*mp_writer->getMutex());
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;

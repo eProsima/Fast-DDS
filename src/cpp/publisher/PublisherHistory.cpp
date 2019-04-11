@@ -282,7 +282,7 @@ bool PublisherHistory::set_next_deadline(
         logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
     if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
@@ -312,7 +312,7 @@ bool PublisherHistory::get_next_deadline(
         logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
