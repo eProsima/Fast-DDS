@@ -324,7 +324,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableVolatileSocket)
     reader.block_for_all();
 
     // Wait for acks to be sent and check writer history is empty
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    writer.wait_for_all_acked(std::chrono::seconds(100));
 
     ASSERT_TRUE(writer.is_history_empty());
 }

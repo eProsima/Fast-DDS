@@ -246,8 +246,8 @@ BLACKBOXTEST(BlackBox, whitelisting_udp_localhost_multi)
 
         ASSERT_TRUE(readerMultiOk.isInitialized());
 
-        writer.wait_discovery(std::chrono::seconds(3));
-        readerMultiOk.wait_discovery(std::chrono::seconds(3));
+        writer.wait_discovery();
+        readerMultiOk.wait_discovery();
         ASSERT_TRUE(writer.is_matched());
         ASSERT_TRUE(readerMultiOk.is_matched());
     }
