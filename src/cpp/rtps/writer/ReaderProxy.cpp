@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/common/LocatorListComparisons.hpp>
 
 #include <mutex>
 #include <cassert>
@@ -74,6 +75,25 @@ void ReaderProxy::start(const ReaderProxyData& reader_attributes)
     timers_enabled_ = (reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS);
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
+}
+
+bool ReaderProxy::update(const ReaderProxyData& reader_attributes)
+{
+    if ((reader_attributes_.m_qos == reader_attributes.m_qos) &&
+        (reader_attributes_.remote_locators().unicast == reader_attributes.remote_locators().unicast) &&
+        (reader_attributes_.remote_locators().multicast == reader_attributes.remote_locators().multicast) &&
+        (reader_attributes_.m_expectsInlineQos == reader_attributes.m_expectsInlineQos))
+    {
+        return false;
+    }
+
+    reader_attributes_ = reader_attributes;
+    locator_info_.update(
+        reader_attributes.remote_locators().unicast,
+        reader_attributes.remote_locators().multicast,
+        reader_attributes.m_expectsInlineQos);
+
+    return true;
 }
 
 void ReaderProxy::stop()

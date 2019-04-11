@@ -263,6 +263,8 @@ public:
 
 private:
 
+    void update_reader_info(bool create_sender_resources);
+
     void send_heartbeat_piggyback_nts_(
             ReaderProxy* reader,
             RTPSMessageGroup& message_group,

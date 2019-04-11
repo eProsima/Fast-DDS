@@ -565,6 +565,21 @@ void StatefulWriter::send_any_unsent_changes()
 /*
  *	MATCHED_READER-RELATED METHODS
  */
+void StatefulWriter::update_reader_info(bool create_sender_resources)
+{
+    update_cached_info_nts();
+    compute_selected_guids();
+
+    if (create_sender_resources)
+    {
+        RTPSParticipantImpl* part = getRTPSParticipant();
+        locator_selector_.for_each([part](const Locator_t& loc)
+        {
+            part->createSenderResources(loc);
+        });
+    }
+}
+
 bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
 {
     if (rdata.guid() == c_Guid_Unknown)
@@ -580,7 +595,11 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
     {
         if(it->guid() == rdata.guid())
         {
-            logInfo(RTPS_WRITER, "Attempting to add existing reader" << endl);
+            logInfo(RTPS_WRITER, "Attempting to add existing reader, updating information." << endl);
+            if (it->update(rdata))
+            {
+                update_reader_info(true);
+            }
             return false;
         }
     }
@@ -611,15 +630,7 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
     // Add info of new datareader.
     rp->start(rdata);
     locator_selector_.add_entry(rp->locator_selector_entry());
-
-    update_cached_info_nts();
-    compute_selected_guids();
-
-    RTPSParticipantImpl* part = getRTPSParticipant();
-    locator_selector_.for_each([part](const Locator_t& loc)
-    {
-        part->createSenderResources(loc);
-    });
+    update_reader_info(true);
 
     std::set<SequenceNumber_t> not_relevant_changes;
 
@@ -728,8 +739,7 @@ bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)
     }
 
     locator_selector_.remove_entry(reader_guid);
-    update_cached_info_nts();
-    compute_selected_guids();
+    update_reader_info(false);
 
     if(matched_readers_.size()==0)
         this->mp_periodicHB->cancel_timer();

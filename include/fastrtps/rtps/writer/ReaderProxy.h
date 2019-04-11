@@ -68,6 +68,13 @@ public:
     void start(const ReaderProxyData& reader_attributes);
 
     /**
+     * Update information about the remote reader.
+     * @param reader_attributes ReaderProxyData with updated information of the reader.
+     * @return true if data was modified, false otherwise.
+     */
+    bool update(const ReaderProxyData& reader_attributes);
+
+    /**
      * Disable this proxy.
      */
     void stop();
