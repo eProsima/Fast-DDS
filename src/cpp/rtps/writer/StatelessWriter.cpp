@@ -100,6 +100,32 @@ bool StatelessWriter::has_builtin_guid()
     return false;
 }
 
+void StatelessWriter::update_reader_info(bool create_sender_resources)
+{
+    bool addGuid = !has_builtin_guid();
+    is_inline_qos_expected_ = false;
+
+    for (const ReaderLocator& reader : matched_readers_)
+    {
+        is_inline_qos_expected_ |= reader.expects_inline_qos();
+    }
+
+    update_cached_info_nts();
+    if (addGuid)
+    {
+        compute_selected_guids();
+    }
+
+    if (create_sender_resources)
+    {
+        RTPSParticipantImpl* part = mp_RTPSParticipant;
+        locator_selector_.for_each([part](const Locator_t& loc)
+        {
+            part->createSenderResources(loc);
+        });
+    }
+}
+
 /*
  *	CHANGE-RELATED METHODS
  */
@@ -316,12 +342,17 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
 
     assert(data.guid() != c_Guid_Unknown);
 
-    bool addGuid = !has_builtin_guid();
-    for(const ReaderLocator& reader : matched_readers_)
+    for(ReaderLocator& reader : matched_readers_)
     {
         if(reader.remote_guid() == data.guid())
         {
-            logWarning(RTPS_WRITER, "Attempting to add existing reader");
+            logWarning(RTPS_WRITER, "Attempting to add existing reader, updating information.");
+            if (reader.update(data.remote_locators().unicast,
+                data.remote_locators().multicast,
+                data.m_expectsInlineQos))
+            {
+                update_reader_info(true);
+            }
             return false;
         }
     }
@@ -368,26 +399,13 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
         locator_selector_.add_entry(reader.locator_selector_entry());
     }
 
-    update_cached_info_nts();
-
-    is_inline_qos_expected_ |= data.m_expectsInlineQos;
-
-    if (addGuid)
-    {
-        compute_selected_guids();
-    }
+    update_reader_info(true);
 
     if (data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
     {
         unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
         AsyncWriterThread::wakeUp(this);
     }
-
-    RTPSParticipantImpl* part = mp_RTPSParticipant;
-    locator_selector_.for_each([part](const Locator_t& loc)
-    {
-        part->createSenderResources(loc);
-    });
 
     logInfo(RTPS_READER,"Reader " << data.guid() << " added to "<<m_guid.entityId);
     return true;
@@ -431,19 +449,7 @@ bool StatelessWriter::matched_reader_remove(const GUID_t& reader_guid)
         // guid should be both on locator_selector_ and matched_readers_
         assert(found);
 
-        bool addGuid = !has_builtin_guid();
-        is_inline_qos_expected_ = false;
-
-        for (const ReaderLocator& reader : matched_readers_)
-        {
-            is_inline_qos_expected_ |= reader.expects_inline_qos();
-        }
-
-        update_cached_info_nts();
-        if (addGuid)
-        {
-            compute_selected_guids();
-        }
+        update_reader_info(false);
     }
 
     return found;

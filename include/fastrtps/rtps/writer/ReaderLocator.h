@@ -91,6 +91,20 @@ class ReaderLocator : public RTPSMessageSenderInterface
                 bool expects_inline_qos);
 
         /**
+         * Try to update information of this object.
+         *
+         * @param unicast_locators    Unicast locators of the remote reader.
+         * @param multicast_locators  Multicast locators of the remote reader.
+         * @param expects_inline_qos  Whether remote reader expects to receive inline QoS.
+         *
+         * @return true when information has changed, false otherwise.
+         */
+        bool update(
+                const ResourceLimitedVector<Locator_t>& unicast_locators,
+                const ResourceLimitedVector<Locator_t>& multicast_locators,
+                bool expects_inline_qos);
+
+        /**
          * Try to stop using this object for an unmatched reader.
          *
          * @param remote_guid  GUID of the remote reader.

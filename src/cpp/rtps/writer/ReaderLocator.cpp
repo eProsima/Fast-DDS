@@ -21,6 +21,7 @@
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/rtps/writer/StatelessWriter.h>
+#include <fastrtps/rtps/common/LocatorListComparisons.hpp>
 
 #include "../participant/RTPSParticipantImpl.h"
 
@@ -52,25 +53,40 @@ bool ReaderLocator::start(
         guid_as_vector_.at(0) = remote_guid;
         guid_prefix_as_vector_.at(0) = remote_guid.guidPrefix;
         locator_info_.remote_guid = remote_guid;
-        locator_info_.unicast.clear();
-        locator_info_.multicast.clear();
 
-        for (const Locator_t& locator : unicast_locators)
-        {
-            locator_info_.unicast.push_back(locator);
-        }
-
-        for (const Locator_t& locator : multicast_locators)
-        {
-            locator_info_.multicast.push_back(locator);
-        }
-
+        locator_info_.unicast = unicast_locators;
+        locator_info_.multicast = multicast_locators;
         locator_info_.reset();
         locator_info_.enable(true);
         return true;
     }
 
     return false;
+}
+
+bool ReaderLocator::update(
+        const ResourceLimitedVector<Locator_t>& unicast_locators,
+        const ResourceLimitedVector<Locator_t>& multicast_locators,
+        bool expects_inline_qos)
+{
+    bool ret_val = false;
+
+    if (expects_inline_qos_ != expects_inline_qos)
+    {
+        expects_inline_qos_ = expects_inline_qos;
+        ret_val = true;
+    }
+    if (!(locator_info_.unicast == unicast_locators) ||
+        !(locator_info_.multicast == multicast_locators))
+    {
+        locator_info_.unicast = unicast_locators;
+        locator_info_.multicast = multicast_locators;
+        locator_info_.reset();
+        locator_info_.enable(true);
+        ret_val = true;
+    }
+
+    return ret_val;
 }
 
 bool ReaderLocator::stop(const GUID_t& remote_guid)
