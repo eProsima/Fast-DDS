@@ -89,22 +89,11 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
                     temp_writer_data_.set_locators(participant_data.default_locators, network, true);
                 }
 
-                if (updating)
+                if (updating && !data->is_update_allowed(temp_writer_data_))
                 {
-                    if (data->m_qos.canQosBeUpdated(temp_writer_data_.m_qos))
-                    {
-                        data->update(&temp_writer_data_);
-                    }
-                    else
-                    {
-                        logWarning(RTPS_EDP, "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
-                        return false;
-                    }
+                    logWarning(RTPS_EDP, "Received incompatible update for WriterQos. writer_guid = " << data->guid());
                 }
-                else
-                {
-                    data->copy(&temp_writer_data_);
-                }
+                *data = temp_writer_data_;
                 return true;
             };
 
@@ -195,22 +184,11 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
                     temp_reader_data_.set_locators(participant_data.default_locators, network, true);
                 }
 
-                if (updating)
+                if (updating && !data->is_update_allowed(temp_reader_data_))
                 {
-                    if (data->m_qos.canQosBeUpdated(temp_reader_data_.m_qos))
-                    {
-                        data->update(&temp_reader_data_);
-                    }
-                    else
-                    {
-                        logWarning(RTPS_EDP, "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
-                        return false;
-                    }
+                    logWarning(RTPS_EDP, "Received incompatible update for ReaderQos. reader_guid = " << data->guid());
                 }
-                else
-                {
-                    data->copy(&temp_reader_data_);
-                }
+                *data = temp_reader_data_;
                 return true;
             };
 

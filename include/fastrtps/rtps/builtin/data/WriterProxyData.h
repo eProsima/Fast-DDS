@@ -323,12 +323,23 @@ class WriterProxyData
 
         //!Clear the information and return the object to the default state.
         void clear();
+
+        /**
+         * Check if this object can be updated with the information on another object.
+         * @param wdata WriterProxyData object to be checked.
+         * @return true if this object can be updated with the information on rdata.
+         */
+        bool is_update_allowed(const WriterProxyData& wdata) const;
+
         //!Update certain parameters from another object.
         void update(WriterProxyData* rdata);
+
         //!Copy all information from another object.
         void copy(WriterProxyData* rdata);
+
         //!Write as a parameter list on a CDRMessage_t
         bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
+
         //!Read a parameter list from a CDRMessage_t.
         RTPS_DllAPI bool readFromCDRMessage(
                 CDRMessage_t* msg,
@@ -391,8 +402,8 @@ class WriterProxyData
         TypeObjectV1 m_type;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif

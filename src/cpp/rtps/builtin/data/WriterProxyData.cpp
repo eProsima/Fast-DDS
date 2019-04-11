@@ -37,11 +37,10 @@ WriterProxyData::WriterProxyData(
     : security_attributes_(0)
     , plugin_security_attributes_(0)
     , remote_locators_(max_unicast_locators, max_multicast_locators)
-    , m_userDefinedId(0)
 #else
     : remote_locators_(max_unicast_locators, max_multicast_locators)
-    , m_userDefinedId(0)
 #endif
+    , m_userDefinedId(0)
     , m_typeMaxSerialized(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
@@ -561,6 +560,22 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     }
 }
 
+bool WriterProxyData::is_update_allowed(const WriterProxyData& wdata) const
+{
+    if ((m_guid != wdata.m_guid) ||
+        (persistence_guid_ != wdata.persistence_guid_) ||
+#if HAVE_SECURITY
+        (security_attributes_ != wdata.security_attributes_) ||
+        (plugin_security_attributes_ != wdata.security_attributes_) ||
+#endif
+        (m_typeName != wdata.m_typeName) ||
+        (m_topicName != wdata.m_topicName))
+    {
+        return false;
+    }
+
+    return m_qos.canQosBeUpdated(wdata.m_qos);
+}
 
 void WriterProxyData::update(WriterProxyData* wdata)
 {

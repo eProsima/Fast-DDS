@@ -309,11 +309,20 @@ class ReaderProxyData
          * Clear (put to default) the information.
          */
         void clear();
+
         /**
-         * Update the information (only certain fields can be updated).
+         * Check if this object can be updated with the information on another object.
+         * @param rdata ReaderProxyData object to be checked.
+         * @return true if this object can be updated with the information on rdata.
+         */
+        bool is_update_allowed(const ReaderProxyData& rdata) const;
+
+        /**
+         * Update the information (only certain fields will be updated).
          * @param rdata Poitner to the object from which we are going to update.
          */
         void update(ReaderProxyData* rdata);
+
         /**
          * Copy ALL the information from another object.
          * @param rdata Pointer to the object from where the information must be copied.

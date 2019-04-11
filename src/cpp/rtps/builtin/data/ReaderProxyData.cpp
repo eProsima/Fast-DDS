@@ -539,6 +539,22 @@ void ReaderProxyData::clear()
     m_type = TypeObjectV1();
 }
 
+bool ReaderProxyData::is_update_allowed(const ReaderProxyData& rdata) const
+{
+    if( (m_guid != rdata.m_guid) ||
+#if HAVE_SECURITY
+        (security_attributes_ != rdata.security_attributes_) ||
+        (plugin_security_attributes_ != rdata.security_attributes_) ||
+#endif
+        (m_typeName != rdata.m_typeName) ||
+        (m_topicName != rdata.m_topicName) )
+    {
+        return false;
+    }
+
+    return m_qos.canQosBeUpdated(rdata.m_qos);
+}
+
 void ReaderProxyData::update(ReaderProxyData* rdata)
 {
     remote_locators_ = rdata->remote_locators_;
