@@ -148,6 +148,21 @@ if("${CMAKE_CXX_COMPILER_LAUNCHER}" STREQUAL "ccache" AND
 endif()
 
 ###############################################################################
+# Clang tools                                                                 #
+###############################################################################
+
+option(CLANG_TOOLS "Activate checkings from Clang-Tools" OFF)
+if (CLANG_TOOLS)
+    include(${PROJECT_SOURCE_DIR}/cmake/modules/FindClangTools.cmake)
+    #find_package(ClangTools)
+    if(CLANG_TIDY_FOUND)
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_BIN};-checks=*, -fuchsia*, -google*")
+    else(CLANG_TIDY_FOUND)
+        message(STATUS "${Red}clang-tidy not found. Static analysis won't be done.${ColourReset}")
+    endif(CLANG_TIDY_FOUND)
+endif(CLANG_TOOLS)
+
+###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
