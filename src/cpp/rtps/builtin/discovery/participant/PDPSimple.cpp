@@ -1130,6 +1130,11 @@ bool PDPSimple::remove_remote_participant(
     return false;
 }
 
+const BuiltinAttributes& PDPSimple::builtin_attributes() const
+{
+    return mp_builtin->m_att;
+}
+
 void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);

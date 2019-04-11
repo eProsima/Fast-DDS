@@ -56,11 +56,11 @@ struct RTPSParticipantAllocationAttributes
 {
     //! Holds limits for collections of remote locators.
     RemoteLocatorsAllocationAttributes locators;
-    //! Define the allocation behaviour for collections dependent on the total number of participants.
+    //! Defines the allocation behaviour for collections dependent on the total number of participants.
     ResourceLimitedContainerConfig participants;
-    //! Define the allocation behaviour for collections dependent on the total number of readers.
+    //! Defines the allocation behaviour for collections dependent on the total number of readers.
     ResourceLimitedContainerConfig readers;
-    //! Define the allocation behaviour for collections dependent on the total number of writers.
+    //! Defines the allocation behaviour for collections dependent on the total number of writers.
     ResourceLimitedContainerConfig writers;
 };
 
