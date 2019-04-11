@@ -36,14 +36,14 @@ class Publisher;
 class RTPS_DllAPI PublisherListener
 {
 public:
-	PublisherListener(){};
-	virtual ~PublisherListener(){};
+    PublisherListener(){};
+    virtual ~PublisherListener(){};
 
-	/**
-	 * This method is called when the Publisher is matched (or unmatched) against an endpoint.
-	 * @param pub Pointer to the associated Publisher
-	 * @param info Information regarding the matched subscriber
-	 */
+    /**
+     * This method is called when the Publisher is matched (or unmatched) against an endpoint.
+     * @param pub Pointer to the associated Publisher
+     * @param info Information regarding the matched subscriber
+     */
     virtual void onPublicationMatched(
             Publisher* pub,
             rtps::MatchingInfo& info)
