@@ -63,9 +63,9 @@ static asio::ip::address_v4::bytes_type locator_to_native(
 }
 
 TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
-    : configuration_(descriptor)
+    : TCPTransportInterface(LOCATOR_KIND_TCPv4)
+    , configuration_(descriptor)
 {
-    transport_kind_ = LOCATOR_KIND_TCPv4;
     for (const auto& interface : descriptor.interfaceWhiteList)
     {
         interface_whitelist_.emplace_back(ip::address_v4::from_string(interface));
@@ -76,6 +76,16 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
         Locator_t locator(LOCATOR_KIND_TCPv4, port);
         create_acceptor_socket(locator);
     }
+}
+
+TCPv4Transport::TCPv4Transport()
+    : TCPTransportInterface(LOCATOR_KIND_TCPv4)
+{
+}
+
+TCPv4Transport::~TCPv4Transport()
+{
+    clean();
 }
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor()
@@ -93,16 +103,6 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescripto
 TransportInterface* TCPv4TransportDescriptor::create_transport() const
 {
     return new TCPv4Transport(*this);
-}
-
-TCPv4Transport::TCPv4Transport()
-{
-    transport_kind_ = LOCATOR_KIND_TCPv4;
-}
-
-TCPv4Transport::~TCPv4Transport()
-{
-    clean();
 }
 
 void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t&)

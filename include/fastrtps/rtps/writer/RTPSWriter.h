@@ -22,6 +22,7 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 #include <vector>
 #include <memory>
 #include <functional>
@@ -47,7 +48,12 @@ class RTPSWriter : public Endpoint
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
     protected:
-    RTPSWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
+    RTPSWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            WriterHistory* hist,
+            WriterListener* listen=nullptr);
     virtual ~RTPSWriter();
 
     public:
@@ -91,9 +97,9 @@ class RTPSWriter : public Endpoint
     * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
     * @return True if acknowledged by all.
     */
-    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) const { return false; }
+    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) { return false; }
 
-    RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/){ return true; }
+    RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/) { return true; }
 
     /**
      * Update the Attributes of the Writer.
@@ -158,7 +164,9 @@ class RTPSWriter : public Endpoint
      */
     RTPS_DllAPI bool remove_older_changes(unsigned int max = 0);
 
-    virtual bool try_remove_change(std::chrono::microseconds& microseconds, std::unique_lock<std::recursive_mutex>& lock) = 0;
+    virtual bool try_remove_change(
+            std::chrono::steady_clock::time_point& max_blocking_time_point,
+            std::unique_lock<std::recursive_timed_mutex>& lock) = 0;
 
     /*
      * Adds a flow controller that will apply to this writer exclusively.
@@ -184,6 +192,56 @@ class RTPSWriter : public Endpoint
      */
     bool get_separate_sending () const { return m_separateSendingEnabled; }
 
+    /**
+     * Process an incoming ACKNACK submessage.
+     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
+     * @param reader_guid[in]      GUID of the reader originating the submessage.
+     * @param ack_count[in]        Count field of the submessage.
+     * @param sn_set[in]           Sequence number bitmap field of the submessage.
+     * @param final_flag[in]       Final flag field of the submessage.
+     * @param result[out]          true if the writer could process the submessage. 
+     *                             Only valid when returned value is true.
+     * @return true when the submessage was destinated to this writer, false otherwise.
+     */
+    virtual bool process_acknack(
+            const GUID_t& writer_guid, 
+            const GUID_t& reader_guid,
+            uint32_t ack_count,
+            const SequenceNumberSet_t& sn_set,
+            bool final_flag,
+            bool &result)
+    {
+        (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
+
+        result = false;
+        return writer_guid == m_guid;
+    }
+
+    /**
+     * Process an incoming NACKFRAG submessage.
+     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
+     * @param reader_guid[in]      GUID of the reader originating the submessage.
+     * @param ack_count[in]        Count field of the submessage.
+     * @param seq_num[in]          Sequence number field of the submessage.
+     * @param fragments_state[in]  Fragment number bitmap field of the submessage.
+     * @param result[out]          true if the writer could process the submessage. 
+     *                             Only valid when returned value is true.
+     * @return true when the submessage was destinated to this writer, false otherwise.
+     */
+    virtual bool process_nack_frag(
+            const GUID_t& writer_guid, 
+            const GUID_t& reader_guid,
+            uint32_t ack_count, 
+            const SequenceNumber_t& seq_num, 
+            const FragmentNumberSet_t fragments_state, 
+            bool& result)
+    {
+        (void)reader_guid; (void)ack_count; (void)seq_num; (void)fragments_state;
+
+        result = false;
+        return writer_guid == m_guid;
+    }
+
     protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -203,10 +261,9 @@ class RTPSWriter : public Endpoint
 
     LocatorList_t mAllShrinkedLocatorList;
 
-    std::vector<GUID_t> mAllRemoteReaders;
+    ResourceLimitedVector<GUID_t> all_remote_readers_;
 
-    void update_cached_info_nts(std::vector<GUID_t>&& allRemoteReaders,
-            std::vector<LocatorList_t>& allLocatorLists);
+    void update_cached_info_nts(std::vector<LocatorList_t>& allLocatorLists);
 
     /**
      * Initialize the header of hte CDRMessages.
@@ -217,7 +274,9 @@ class RTPSWriter : public Endpoint
      * Add a change to the unsent list.
      * @param change Pointer to the change to add.
      */
-    virtual void unsent_change_added_to_history(CacheChange_t* change)=0;
+    virtual void unsent_change_added_to_history(
+            CacheChange_t* change,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time) = 0;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.

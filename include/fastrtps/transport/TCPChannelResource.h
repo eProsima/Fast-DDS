@@ -40,7 +40,15 @@ enum eSocketErrorCodes
 
 class TCPChannelResource : public ChannelResource
 {
+
 protected:
+
+    enum TCPConnectionType
+    {
+        TCP_ACCEPT_TYPE = 0,
+        TCP_CONNECT_TYPE = 1
+    };
+
     enum eConnectionStatus
     {
         eDisconnected = 0,
@@ -53,25 +61,23 @@ protected:
     };
 
     TCPTransportInterface* parent_;
-    RTCPMessageManager* rtcp_manager_;
     Locator_t locator_;
-    bool input_socket_;
     bool waiting_for_keep_alive_;
     // Must be accessed after lock pending_logical_mutex_
     std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
     std::map<TCPTransactionId, uint16_t> last_checked_logical_port_;
-    std::thread* rtcp_thread_;
     std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
     std::vector<uint16_t> logical_output_ports_;
-    std::recursive_mutex read_mutex_;
-    std::recursive_mutex write_mutex_;
+    std::mutex read_mutex_;
+    std::mutex write_mutex_;
     std::recursive_mutex pending_logical_mutex_;
-    std::condition_variable negotiation_condition_;
-    eConnectionStatus connection_status_;
-    std::mutex status_mutex_;
+    std::atomic<eConnectionStatus> connection_status_;
 
 public:
-    void add_logical_port(uint16_t port);
+
+    void add_logical_port(
+            uint16_t port,
+            RTCPMessageManager* rtcp_manager);
 
     void set_logical_port_pending(uint16_t port);
 
@@ -79,36 +85,18 @@ public:
 
     virtual void disable() override;
 
-    std::recursive_mutex& read_mutex()
-    {
-        return read_mutex_;
-    }
-
-    std::recursive_mutex& write_mutex()
-    {
-        return write_mutex_;
-    }
-
-    inline void rtcp_thread(std::thread* pThread)
-    {
-        rtcp_thread_ = pThread;
-    }
-
-    std::thread* release_rtcp_thread();
-
-    inline bool input_socket() const
-    {
-        return input_socket_;
-    }
-
     bool is_logical_port_opened(uint16_t port);
 
     bool is_logical_port_added(uint16_t port);
 
     bool connection_established()
     {
-        std::unique_lock<std::mutex> scoped(status_mutex_);
         return connection_status_ == eConnectionStatus::eEstablished;
+    }
+
+    eConnectionStatus connection_status()
+    {
+        return connection_status_;
     }
 
     inline const Locator_t& locator() const
@@ -116,12 +104,11 @@ public:
         return locator_;
     }
 
-    void input_port_closed(uint16_t port);
-
     ResponseCode process_bind_request(const Locator_t& locator);
 
     // Socket related methods
-    virtual void connect() = 0;
+    virtual void connect(
+            const std::shared_ptr<TCPChannelResource>& myself) = 0;
 
     virtual void disconnect() = 0;
 
@@ -130,7 +117,9 @@ public:
         std::size_t size,
         asio::error_code& ec) = 0;
 
-    virtual uint32_t send(
+    virtual size_t send(
+        const octet* header,
+        size_t header_size,
         const octet* buffer,
         size_t size,
         asio::error_code& ec) = 0;
@@ -147,55 +136,58 @@ public:
 
     virtual void shutdown(asio::socket_base::shutdown_type what) = 0;
 
-    bool wait_until_port_is_open_or_connection_is_closed(uint16_t port);
+    TCPConnectionType tcp_connection_type() const { return tcp_connection_type_; }
 
     virtual ~TCPChannelResource();
 
 protected:
+
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         const Locator_t& locator,
         uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
     TCPChannelResource(
         TCPTransportInterface* parent,
-        RTCPMessageManager* rtcpManager,
         uint32_t maxMsgSize);
 
-    inline bool change_status(eConnectionStatus s)
+    inline eConnectionStatus change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
     {
-        std::unique_lock<std::mutex> scoped(status_mutex_);
-        if (connection_status_ != s)
+        eConnectionStatus old = connection_status_.exchange(s);
+
+        if (old != s)
         {
-            connection_status_ = s;
-            if (connection_status_ == eEstablished)
+            if (s == eEstablished)
             {
-                send_pending_open_logical_ports();
+                assert(rtcp_manager != nullptr);
+                send_pending_open_logical_ports(rtcp_manager);
             }
-            negotiation_condition_.notify_all();
-            return true;
         }
-        return false;
+
+        return old;
     }
 
-    void add_logical_port_response(const TCPTransactionId &id, bool success);
+    void add_logical_port_response(const TCPTransactionId &id, bool success, RTCPMessageManager* rtcp_manager);
 
-    void process_check_logical_ports_response(const TCPTransactionId &transactionId,
-        const std::vector<uint16_t> &availablePorts);
+    void process_check_logical_ports_response(
+            const TCPTransactionId &transactionId,
+            const std::vector<uint16_t> &availablePorts,
+            RTCPMessageManager* rtcp_manager);
+
+    TCPConnectionType tcp_connection_type_;
 
     friend class TCPTransportInterface;
     friend class RTCPMessageManager;
-    friend class test_RTCPMessageManager;
 
 private:
-    void prepare_send_check_logical_ports_req(uint16_t closedPort);
 
-    void send_pending_open_logical_ports();
+    void prepare_send_check_logical_ports_req(
+            uint16_t closedPort,
+            RTCPMessageManager* rtcp_manager);
 
-    void copy_pending_ports_from(TCPChannelResource* from);
+    void send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager);
 
     void set_all_ports_pending();
 

@@ -72,9 +72,9 @@ TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controlle
     // Given fragmented changes
     testChangesForUse.clear();
 
-    std::set<FragmentNumber_t> fragmentSet;
+    FragmentNumberSet_t fragmentSet(1);
     for(uint32_t i = 1; i <= 10; i++)
-        fragmentSet.insert(i);
+        fragmentSet.add(i);
 
     for(auto& change : testChanges)
     {

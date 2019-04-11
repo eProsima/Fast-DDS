@@ -428,6 +428,19 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& matched_readers_allocation(size_t initial, size_t maximum)
+    {
+        publisher_attr_.matched_subscriber_allocation.initial = initial;
+        publisher_attr_.matched_subscriber_allocation.maximum = maximum;
+        return *this;
+    }
+
+    PubSubWriter& expect_no_allocs()
+    {
+        // TODO(Mcc): Add no allocations check code when feature is completely ready
+        return *this;
+    }
+
     PubSubWriter& heartbeat_period_seconds(int32_t sec)
     {
         publisher_attr_.times.heartbeatPeriod.seconds = sec;
@@ -707,7 +720,7 @@ class PubSubWriter
             ret.first->second = writer_data;
         }
 
-        auto ret_topic = mapTopicCountList_.insert(std::make_pair(writer_data.topicName(), 1));
+        auto ret_topic = mapTopicCountList_.insert(std::make_pair(writer_data.topicName().to_string(), 1));
 
         if(!ret_topic.second)
         {
@@ -737,7 +750,7 @@ class PubSubWriter
         eprosima::fastrtps::rtps::WriterProxyData old_writer_data = ret.first->second;
         ret.first->second = writer_data;
 
-        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName().to_string()), 0ul);
 
         // Remove previous partitions
         for(auto partition : old_writer_data.m_qos.m_partition.getNames())
@@ -776,7 +789,7 @@ class PubSubWriter
             ret.first->second = reader_data;
         }
 
-        auto ret_topic = mapTopicCountList_.insert(std::make_pair(reader_data.topicName(), 1));
+        auto ret_topic = mapTopicCountList_.insert(std::make_pair(reader_data.topicName().to_string(), 1));
 
         if(!ret_topic.second)
         {
@@ -806,7 +819,7 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
         eprosima::fastrtps::rtps::ReaderProxyData old_reader_data = ret.first->second;
         ret.first->second = reader_data;
 
-        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName().to_string()), 0ul);
 
         // Remove previous partitions
         for(auto partition : old_reader_data.m_qos.m_partition.getNames())
@@ -842,9 +855,9 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
 
         mapWriterInfoList_.erase(writer_data.guid());
 
-        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName().to_string()), 0ul);
 
-        --mapTopicCountList_[writer_data.topicName()];
+        --mapTopicCountList_[writer_data.topicName().to_string()];
 
         for(auto partition : writer_data.m_qos.m_partition.getNames())
         {
@@ -869,9 +882,9 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
 
         mapReaderInfoList_.erase(reader_data.guid());
 
-        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName().to_string()), 0ul);
 
-        --mapTopicCountList_[reader_data.topicName()];
+        --mapTopicCountList_[reader_data.topicName().to_string()];
 
         for(auto partition : reader_data.m_qos.m_partition.getNames())
         {

@@ -75,7 +75,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             }
 
             // At this point we can release reader lock.
-            reader->getMutex()->unlock();
+            reader->getMutex().unlock();
 
             //LOOK IF IS AN UPDATED INFORMATION
             ParticipantProxyData* pdata = nullptr;
@@ -129,7 +129,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             }
 
             // Take again the reader lock
-            reader->getMutex()->lock();
+            reader->getMutex().lock();
         }
     }
     else

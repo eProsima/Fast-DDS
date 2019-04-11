@@ -154,42 +154,42 @@ class ReaderProxyData
             return m_RTPSParticipantKey;
         }
 
-        RTPS_DllAPI void typeName(const std::string& typeName)
+        RTPS_DllAPI void typeName(const string_255& typeName)
         {
             m_typeName = typeName;
         }
 
-        RTPS_DllAPI void typeName(std::string&& typeName)
+        RTPS_DllAPI void typeName(string_255&& typeName)
         {
             m_typeName = std::move(typeName);
         }
 
-        RTPS_DllAPI const std::string& typeName() const
+        RTPS_DllAPI const string_255& typeName() const
         {
             return m_typeName;
         }
 
-        RTPS_DllAPI std::string& typeName()
+        RTPS_DllAPI string_255& typeName()
         {
             return m_typeName;
         }
 
-        RTPS_DllAPI void topicName(const std::string& topicName)
+        RTPS_DllAPI void topicName(const string_255& topicName)
         {
             m_topicName = topicName;
         }
 
-        RTPS_DllAPI void topicName(std::string&& topicName)
+        RTPS_DllAPI void topicName(string_255&& topicName)
         {
             m_topicName = std::move(topicName);
         }
 
-        RTPS_DllAPI const std::string& topicName() const
+        RTPS_DllAPI const string_255& topicName() const
         {
             return m_topicName;
         }
 
-        RTPS_DllAPI std::string& topicName()
+        RTPS_DllAPI string_255& topicName()
         {
             return m_topicName;
         }
@@ -285,10 +285,11 @@ class ReaderProxyData
         }
 
         /**
-         * Convert the data to a parameter list to send this information as a RTPS message.
-         * @return Generated parameter list
+         * Write as a parameter list on a CDRMessage_t
+         * @return True on success
          */
-        ParameterList_t toParameterList();
+        bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
+
         /**
          *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
@@ -343,9 +344,9 @@ class ReaderProxyData
         //!GUID_t of the participant converted to InstanceHandle
         InstanceHandle_t m_RTPSParticipantKey;
         //!Type name
-        std::string m_typeName;
+        string_255 m_typeName;
         //!Topic name
-        std::string m_topicName;
+        string_255 m_topicName;
         //!User defined ID
         uint16_t m_userDefinedId;
         //!Field to indicate if the Reader is Alive.

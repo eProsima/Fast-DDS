@@ -23,6 +23,9 @@
 #include "../common/Guid.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "EndpointAttributes.h"
+#include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
+
+#include <functional>
 
 namespace eprosima{
 namespace fastrtps{
@@ -102,6 +105,9 @@ class  WriterAttributes
 
         //! Disable the sending of heartbeat piggybacks.
         bool disableHeartbeatPiggyback;
+
+        //! Define the allocation behaviour for matched-reader-dependent collections.
+        ResourceLimitedContainerConfig matched_readers_allocation;
 };
 
 /**
@@ -127,6 +133,14 @@ class  RemoteReaderAttributes
         virtual ~RemoteReaderAttributes()
         {
 
+        }
+
+        std::function<bool(const RemoteReaderAttributes&)> compare_guid_function() const
+        {
+            return [this](const RemoteReaderAttributes& rhs)
+            {
+                return this->guid == rhs.guid;
+            };
         }
 
         //!Attributes of the associated endpoint.

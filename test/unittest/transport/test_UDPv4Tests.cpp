@@ -73,6 +73,7 @@ class test_UDPv4Tests: public ::testing::Test
    std::unique_ptr<std::thread> receiverThread;
 };
 
+/*
 TEST_F(test_UDPv4Tests, DATA_messages_dropped)
 {
    // Given
@@ -217,6 +218,7 @@ void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
    ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator));
 }
+*/
 
 void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumber_t sequenceNumber)
 {
@@ -224,9 +226,8 @@ void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumb
    TopicKind_t topic = WITH_KEY;
    EntityId_t entityID;
    CacheChange_t change;
-   ParameterList_t parameters;
    change.sequenceNumber = sequenceNumber; // Here is where the SN propagates from
-	RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, &parameters);
+   RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, nullptr);
 }
 
 void test_UDPv4Tests::HELPER_FillAckNackMessage(CDRMessage_t& message)

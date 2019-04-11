@@ -107,11 +107,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             types/Data64kbType.cpp
             types/Data1mb.cpp
             types/Data1mbType.cpp
-            
+            types/FixedSized.cpp
+            types/FixedSizedType.cpp
+
             utils/data_generators.cpp
             utils/lambda_functions.cpp
             utils/print_functions.cpp
-            
+
             ReqRepHelloWorldRequester.cpp
             ReqRepHelloWorldReplier.cpp
             TCPReqRepHelloWorldRequester.cpp

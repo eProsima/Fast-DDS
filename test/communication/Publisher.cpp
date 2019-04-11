@@ -30,6 +30,7 @@
 #include <types/HelloWorldType.h>
 
 #include <mutex>
+#include <condition_variable>
 #include <fstream>
 
 using namespace eprosima::fastrtps;

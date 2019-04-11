@@ -18,22 +18,16 @@
  */
 
 #include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
-#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
-#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/ReaderProxy.h>
 #include "../../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-
-#include <mutex>
-
-using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 NackResponseDelay::~NackResponseDelay()
 {
@@ -42,15 +36,17 @@ NackResponseDelay::~NackResponseDelay()
 
 NackResponseDelay::NackResponseDelay(
         StatefulWriter* writer,
-        double millisec)
-    : TimedEvent(writer->getRTPSParticipant()->getEventResource().getIOService(),
-            writer->getRTPSParticipant()->getEventResource().getThread(), millisec)
+        double interval_in_ms)
+    : TimedEvent(
+            writer->getRTPSParticipant()->getEventResource().getIOService(),
+            writer->getRTPSParticipant()->getEventResource().getThread(), 
+            interval_in_ms)
     , writer_(writer)
 {
 }
 
 void NackResponseDelay::event(
-        EventCode code,
+        EventCode code, 
         const char* msg)
 {
     // Unused in release mode.
@@ -58,13 +54,11 @@ void NackResponseDelay::event(
 
     if (code == EVENT_SUCCESS)
     {
-        logInfo(RTPS_WRITER,"Responding to Acknack msg";);
-        std::lock_guard<std::recursive_mutex> guardW(*writer_->getMutex());
-        for (auto reader_proxy =  writer_->matchedReadersBegin(); reader_proxy != writer_->matchedReadersEnd();
-                ++reader_proxy)
-        {
-            std::lock_guard<std::recursive_mutex> guardR(*(*reader_proxy)->mp_mutex);
-            (*reader_proxy)->convert_status_on_all_changes(REQUESTED, UNSENT);
-        }
+        logInfo(RTPS_WRITER, "Responding to Acknack messages";);
+        writer_->perform_nack_response();
     }
 }
+
+} /* namespace rtps */
+} /* namespace fastrtps */
+} /* namespace eprosima */

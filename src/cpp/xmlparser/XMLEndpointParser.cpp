@@ -606,7 +606,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLEndpointParser::lookforReader(std::string partname, uint16_t id,
+XMLP_ret XMLEndpointParser::lookforReader(const char* partname, uint16_t id,
         ReaderProxyData** rdataptr)
 {
     for(std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
@@ -628,7 +628,7 @@ XMLP_ret XMLEndpointParser::lookforReader(std::string partname, uint16_t id,
     return XMLP_ret::XML_ERROR;
 }
 
-XMLP_ret XMLEndpointParser::lookforWriter(std::string partname, uint16_t id,
+XMLP_ret XMLEndpointParser::lookforWriter(const char* partname, uint16_t id,
         WriterProxyData** wdataptr)
 {
     for(std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();

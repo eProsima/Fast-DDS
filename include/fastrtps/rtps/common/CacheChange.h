@@ -318,7 +318,18 @@ namespace eprosima
 
                 FragmentNumberSet_t getUnsentFragments() const
                 {
-                    return unsent_fragments_;
+                    FragmentNumberSet_t rv;
+                    auto min = unsent_fragments_.begin();
+                    if (min != unsent_fragments_.end())
+                    {
+                        rv.base(*min);
+                        for (FragmentNumber_t fn : unsent_fragments_)
+                        {
+                            rv.add(fn);
+                        }
+                    }
+
+                    return rv;
                 }
 
                 void markAllFragmentsAsUnsent()
@@ -335,8 +346,10 @@ namespace eprosima
 
                 void markFragmentsAsUnsent(const FragmentNumberSet_t& unsentFragments)
                 {
-                    for(auto element : unsentFragments.set)
+                    unsentFragments.for_each([this](FragmentNumber_t element)
+                    {
                         unsent_fragments_.insert(element);
+                    });
                 }
 
                 private:

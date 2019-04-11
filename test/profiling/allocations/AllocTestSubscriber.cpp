@@ -25,6 +25,7 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -34,10 +35,21 @@ mp_subscriber(nullptr)
 {
 }
 
-bool AllocTestSubscriber::init(const char* profile)
+bool AllocTestSubscriber::init(const char* profile, int domainId, const std::string& outputFile)
 {
+    m_profile = profile;
+    m_outputFile = outputFile;
     Domain::loadXMLProfilesFile("test_xml_profiles.xml");
-    mp_participant = Domain::createParticipant("test_participant_profile");
+
+    ParticipantAttributes participant_att;
+    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
+        eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
+            participant_att))
+    {
+        participant_att.rtps.builtin.domainId = domainId;
+        mp_participant = Domain::createParticipant(participant_att);
+    }
+
     if(mp_participant==nullptr)
         return false;
 
@@ -52,7 +64,7 @@ bool AllocTestSubscriber::init(const char* profile)
     if(mp_subscriber == nullptr)
         return false;
 
-    // Breakpoint placed here. First snapshot taken.
+    eprosima_profiling::entities_created();
     return true;
 }
 
@@ -62,6 +74,7 @@ AllocTestSubscriber::~AllocTestSubscriber() {
 
 void AllocTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
@@ -72,6 +85,7 @@ void AllocTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/
         n_matched--;
         std::cout << "Subscriber unmatched"<<std::endl;
     }
+    cv.notify_all();
 }
 
 void AllocTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
@@ -80,55 +94,78 @@ void AllocTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
     {
         if(m_info.sampleKind == ALIVE)
         {
+            std::unique_lock<std::mutex> lock(mtx);
             this->n_samples++;
             // Print your structure data here.
             std::cout << "Message " << m_Hello.index() << " RECEIVED" << std::endl;
+            cv.notify_all();
         }
     }
 
 }
 
-
-void AllocTestSubscriber::run()
+void AllocTestSubscriber::SubListener::wait_match()
 {
-  run(60);
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched > 0; });
 }
 
-void AllocTestSubscriber::run(uint32_t number)
+void AllocTestSubscriber::SubListener::wait_unmatch()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched <= 0; });
+}
+
+void AllocTestSubscriber::SubListener::wait_until_total_received_at_least(uint32_t n)
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this, n]() { return n_samples >= n; });
+}
+
+void AllocTestSubscriber::run(bool wait_unmatch)
+{
+  run(60, wait_unmatch);
+}
+
+void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
 {
     // Restart callgrind graph
-    callgrind_zero_count();
+    eprosima_profiling::callgrind_zero_count();
 
     std::cout << "Subscriber waiting for publisher..." << std::endl;
-    while (m_listener.n_matched <= 0)
-    {
-        eClock::my_sleep(25);
-    }
+    m_listener.wait_match();
 
     // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::callgrind_dump();
+    eprosima_profiling::discovery_finished();
 
     std::cout << "Subscriber matched. Waiting for first sample..." << std::endl;
-    while (this->m_listener.n_samples < 1)
-    {
-        eClock::my_sleep(25);
-    }
+    m_listener.wait_until_total_received_at_least(1ul);
 
     // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::callgrind_dump();
+    eprosima_profiling::first_sample_exchanged();
 
     std::cout << "First sample received. Waiting for rest of samples..." << std::endl;
-    while (this->m_listener.n_samples < number)
+    m_listener.wait_until_total_received_at_least(number);
+
+    // Flush callgrind graph
+    eprosima_profiling::callgrind_dump();
+    eprosima_profiling::all_samples_exchanged();
+
+    if (wait_unmatch)
     {
-        eClock::my_sleep(25);
+        std::cout << "All messages received. Waiting for publisher to stop." << std::endl;
+        m_listener.wait_unmatch();
+    }
+    else
+    {
+        std::cout << "All messages received. Waiting a bit to let publisher receive acks." << std::endl;
+        eClock::my_sleep(500);
     }
 
     // Flush callgrind graph
-    callgrind_dump();
-
-    std::cout << "All messages received. Press enter to stop subscriber" << std::endl;
-    std::cin.ignore();
-
-    // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::callgrind_dump();
+    eprosima_profiling::undiscovery_finished();
+    eprosima_profiling::print_results(m_outputFile, "subscriber", m_profile);
 }

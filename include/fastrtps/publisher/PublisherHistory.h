@@ -67,8 +67,11 @@ class PublisherHistory:public rtps::WriterHistory
          * @param wparams
          * @return True if added.
          */
-        bool add_pub_change(rtps::CacheChange_t* change, rtps::WriteParams &wparams,
-                std::unique_lock<std::recursive_mutex>& lock);
+        bool add_pub_change(
+                rtps::CacheChange_t* change, 
+                rtps::WriteParams &wparams,
+                std::unique_lock<std::recursive_timed_mutex>& lock,
+                std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
 
         /**
          * Remove all change from the associated history.

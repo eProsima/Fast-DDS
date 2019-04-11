@@ -168,6 +168,11 @@ inline bool operator==(const Locator_t&loc1, const Locator_t& loc2)
     return true;
 }
 
+inline bool operator!=(const Locator_t&loc1, const Locator_t& loc2)
+{
+    return !(loc1 == loc2);
+}
+
 inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
 {
     if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)

@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,43 +13,49 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipantLeaseDuration.cpp
+ * @file PeriodicHeartbeat.cpp
  *
  */
 
-#include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
+#include "TCPKeepAliveEvent.hpp"
 #include <fastrtps/transport/TCPTransportInterface.h>
-#include <fastrtps/log/Log.h>
-#include <mutex>
-
-
 
 namespace eprosima {
 namespace fastrtps{
-namespace rtps {
+namespace rtps{
 
 
-CleanTCPSocketsEvent::CleanTCPSocketsEvent(TCPTransportInterface* p_transport, asio::io_service& service,
-    const std::thread& thread, double interval)
-: TimedEvent(service, thread, interval, TimedEvent::NONE)
-, mp_transport(p_transport)
-{
-
-}
-
-CleanTCPSocketsEvent::~CleanTCPSocketsEvent()
+TCPKeepAliveEvent::~TCPKeepAliveEvent()
 {
     destroy();
 }
 
-void CleanTCPSocketsEvent::event(EventCode code, const char* /*msg*/)
+TCPKeepAliveEvent::TCPKeepAliveEvent(
+        TCPTransportInterface& transport,
+        asio::io_service &service,
+        const std::thread& event_thread,
+        double interval)
+    : TimedEvent(service, event_thread, interval)
+    , transport_(transport)
 {
+
+}
+
+void TCPKeepAliveEvent::event(
+        EventCode code,
+        const char* msg)
+{
+
+    // Unused in release mode.
+    (void)msg;
+
     if(code == EVENT_SUCCESS)
     {
-        mp_transport->clean_deleted_sockets();
+        transport_.keep_alive();
+        this->restart_timer();
     }
 }
 
 }
-} /* namespace rtps */
+}
 } /* namespace eprosima */

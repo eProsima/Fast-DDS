@@ -189,12 +189,13 @@ Publisher* ParticipantImpl::createPublisher(
         watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     }
     watt.times = att.times;
+    watt.matched_readers_allocation = att.matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(att.topic.getTopicName());
+    property.value(att.topic.getTopicName().c_str());
     watt.endpoint.properties.properties().push_back(std::move(property));
     if(att.qos.m_partition.getNames().size() > 0)
     {
@@ -305,7 +306,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(att.topic.getTopicName());
+    property.value(att.topic.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
     if(att.qos.m_partition.getNames().size() > 0)
     {

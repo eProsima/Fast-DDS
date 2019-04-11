@@ -31,7 +31,6 @@ set(${PROJECT_NAME}_source_files
     rtps/resources/TimedEventImpl.cpp
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
-    rtps/Endpoint.cpp
     rtps/writer/RTPSWriter.cpp
     rtps/writer/StatefulWriter.cpp
     rtps/writer/ReaderProxy.cpp
@@ -52,7 +51,6 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatelessReader.cpp
     rtps/reader/RTPSReader.cpp
     rtps/reader/FragmentedChangePitStop.cpp
-    rtps/messages/CDRMessagePool.cpp
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp
@@ -61,7 +59,6 @@ set(${PROJECT_NAME}_source_files
     rtps/messages/submessages/GapMsg.hpp
     rtps/messages/submessages/HeartbeatMsg.hpp
     rtps/network/NetworkFactory.cpp
-    rtps/network/SenderResource.cpp
     rtps/network/ReceiverResource.cpp
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
@@ -75,7 +72,6 @@ set(${PROJECT_NAME}_source_files
     subscriber/Subscriber.cpp
     subscriber/SubscriberImpl.cpp
     subscriber/SubscriberHistory.cpp
-    transport/timedevent/CleanTCPSocketsEvent.cpp
     transport/ChannelResource.cpp
     transport/UDPChannelResource.cpp
     transport/TCPChannelResource.cpp
@@ -91,7 +87,8 @@ set(${PROJECT_NAME}_source_files
     transport/test_UDPv4Transport.cpp
     transport/tcp/TCPControlMessage.cpp
     transport/tcp/RTCPMessageManager.cpp
-    transport/tcp/test_RTCPMessageManager.cpp
+    transport/timedevent/TCPKeepAliveEvent.cpp
+    #transport/tcp/test_RTCPMessageManager.cpp
 
     types/AnnotationDescriptor.cpp
     types/AnnotationParameterValue.cpp

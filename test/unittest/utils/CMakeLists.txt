@@ -28,6 +28,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp)
 
+        set(FIXEDSIZESTRINGTESTS_SOURCE
+            FixedSizeStringTests.cpp)
+
+        set(BITMAPRANGETESTS_SOURCE
+            BitmapRangeTests.cpp)
+
+        set(RESOURCELIMITEDVECTORTESTS_SOURCE
+            ResourceLimitedVectorTests.cpp)
 
         include_directories(mock/)
 
@@ -41,5 +49,29 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
         add_gtest(StringMatchingTests SOURCES ${STRINGMATCHINGTESTS_SOURCE})
+
+
+        add_executable(FixedSizeStringTests ${FIXEDSIZESTRINGTESTS_SOURCE})
+        target_compile_definitions(FixedSizeStringTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(FixedSizeStringTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(FixedSizeStringTests ${GTEST_LIBRARIES} ${MOCKS})
+        add_gtest(FixedSizeStringTests SOURCES ${FIXEDSIZESTRINGTESTS_SOURCE})
+
+
+        add_executable(BitmapRangeTests ${BITMAPRANGETESTS_SOURCE})
+        target_compile_definitions(BitmapRangeTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(BitmapRangeTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(BitmapRangeTests ${GTEST_LIBRARIES} ${MOCKS})
+        add_gtest(BitmapRangeTests SOURCES ${BITMAPRANGETESTS_SOURCE})
+
+
+        add_executable(ResourceLimitedVectorTests ${RESOURCELIMITEDVECTORTESTS_SOURCE})
+        target_compile_definitions(ResourceLimitedVectorTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(ResourceLimitedVectorTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(ResourceLimitedVectorTests ${GTEST_LIBRARIES} ${MOCKS})
+        add_gtest(ResourceLimitedVectorTests SOURCES ${RESOURCELIMITEDVECTORTESTS_SOURCE})
     endif()
 endif()

@@ -65,7 +65,12 @@ TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
     return new test_UDPv4Transport(*this);
 }
 
-bool test_UDPv4Transport::send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& localLocator, const Locator_t& remote_locator)
+bool test_UDPv4Transport::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        eProsimaUDPSocket& socket,
+        const Locator_t& remote_locator,
+        bool only_multicast_purpose)
 {
     if (packet_should_drop(send_buffer, send_buffer_size))
     {
@@ -74,20 +79,7 @@ bool test_UDPv4Transport::send(const octet* send_buffer, uint32_t send_buffer_si
     }
     else
     {
-        return UDPv4Transport::send(send_buffer, send_buffer_size, localLocator, remote_locator);
-    }
-}
-
-bool test_UDPv4Transport::send(const octet* send_buffer, uint32_t send_buffer_size, const Locator_t& localLocator, const Locator_t& remote_locator, ChannelResource *p_channel_resource)
-{
-    if (packet_should_drop(send_buffer, send_buffer_size))
-    {
-        log_drop(send_buffer, send_buffer_size);
-        return true;
-    }
-    else
-    {
-        return UDPv4Transport::send(send_buffer, send_buffer_size, localLocator, remote_locator, p_channel_resource);
+        return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose);
     }
 }
 

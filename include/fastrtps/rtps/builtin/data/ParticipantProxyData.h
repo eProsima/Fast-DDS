@@ -19,6 +19,7 @@
 
 #ifndef _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <mutex>
 #include "../../../qos/ParameterList.h"
@@ -104,7 +105,7 @@ class ParticipantProxyData
         //!Manual liveliness count
         Count_t m_manualLivelinessCount;
         //!Participant name
-        std::string m_participantName;
+        string_255 m_participantName;
         //!
         InstanceHandle_t m_key;
         //!
@@ -138,19 +139,22 @@ class ParticipantProxyData
          * @return True on success
          */
         bool updateData(ParticipantProxyData& pdata);
+
         /**
-         * Convert information to parameter list.
+         * Write as a parameter list on a CDRMessage_t
          * @return True on success
          */
-        ParameterList_t AllQostoParameterList();
+        bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
 
         /**
          * Read the parameter list from a recevied CDRMessage_t
          * @return True on success
          */
         bool readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation=true);
+
         //!Clear the data (restore to default state.)
         void clear();
+
         /**
          * Copy the data from another object.
          * @param pdata Object to copy the data from
@@ -158,9 +162,10 @@ class ParticipantProxyData
         void copy(ParticipantProxyData& pdata);
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif
+
 #endif // _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_

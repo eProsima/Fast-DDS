@@ -55,8 +55,7 @@ void prepare_SequenceNumberSet(std::set<SequenceNumber_t>& changesSeqNum,
     {
         if(new_pair)
         {
-            SequenceNumberSet_t seqset;
-            seqset.base = (*it) + 1; // IN CASE IN THIS SEQNUMSET there is only 1 number.
+            SequenceNumberSet_t seqset((*it) + 1); // IN CASE IN THIS SEQNUMSET there is only 1 number.
             pair_T pair(*it,seqset);
             sequences.push_back(pair);
             new_pair = false;
@@ -67,14 +66,14 @@ void prepare_SequenceNumberSet(std::set<SequenceNumber_t>& changesSeqNum,
         if((*it - sequences.back().first).low == count) //CONTINUOUS FROM THE START
         {
             ++count;
-            sequences.back().second.base = (*it)+1;
+            sequences.back().second.base((*it)+1);
             continue;
         }
         else
         {
             if(seqnumset_init) //FIRST TIME SINCE it was continuous
             {
-                sequences.back().second.base = (*(std::prev(it)) + 1);
+                sequences.back().second.base((*(std::prev(it)) + 1));
                 seqnumset_init = false;
             }
             // Try to add, If it fails the diference between *it and base is greater than 255.
@@ -139,15 +138,25 @@ const EntityId_t& get_entity_id(const std::vector<GUID_t>& endpoints)
     return entityid;
 }
 
-RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-        RTPSMessageGroup_t& msg_group) :
-    participant_(participant), endpoint_(endpoint), full_msg_(&msg_group.rtpsmsg_fullmsg_),
-    submessage_msg_(&msg_group.rtpsmsg_submessage_), currentBytesSent_(0),
-    fixed_destination_(false), fixed_destination_locators_(nullptr), 
-    fixed_destination_guids_(nullptr), fixed_destination_prefix_()
+RTPSMessageGroup::RTPSMessageGroup(
+        RTPSParticipantImpl* participant,
+        Endpoint* endpoint,
+        ENDPOINT_TYPE type,
+        RTPSMessageGroup_t& msg_group,
+        std::chrono::steady_clock::time_point max_blocking_time_point)
+    : participant_(participant)
+    , endpoint_(endpoint)
+    , full_msg_(&msg_group.rtpsmsg_fullmsg_)
+    , submessage_msg_(&msg_group.rtpsmsg_submessage_)
+    , currentBytesSent_(0)
+    , fixed_destination_(false)
+    , fixed_destination_locators_(nullptr)
+    , fixed_destination_guids_(nullptr)
+    , fixed_destination_prefix_()
 #if HAVE_SECURITY
     , encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
 #endif
+    , max_blocking_time_point_(max_blocking_time_point)
 {
     assert(participant);
     assert(endpoint);
@@ -163,9 +172,15 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
 #endif
 }
 
-RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-    RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
-    const std::vector<GUID_t>& remote_endpoints) : RTPSMessageGroup(participant, endpoint, type, msg_group)
+RTPSMessageGroup::RTPSMessageGroup(
+        RTPSParticipantImpl* participant,
+        Endpoint* endpoint,
+        ENDPOINT_TYPE type,
+        RTPSMessageGroup_t& msg_group,
+        const LocatorList_t& locator_list,
+        const std::vector<GUID_t>& remote_endpoints,
+        std::chrono::steady_clock::time_point max_blocking_time_point)
+    : RTPSMessageGroup(participant, endpoint, type, msg_group, max_blocking_time_point)
 {
 #if HAVE_SECURITY
     if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
@@ -211,7 +226,7 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
 }
 */
 
-RTPSMessageGroup::~RTPSMessageGroup()
+RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
 {
     send();
 }
@@ -273,7 +288,10 @@ void RTPSMessageGroup::send()
             fixed_destination_ ? *fixed_destination_locators_ : current_locators_;
         for(const auto& lit : destinations)
         {
-            participant_->sendSync(msgToSend, endpoint_, lit);
+            if(!participant_->sendSync(msgToSend, endpoint_, lit, max_blocking_time_point_))
+            {
+                throw timeout();
+            }
         }
 
         currentBytesSent_ += msgToSend->length;
@@ -428,12 +446,11 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
 
     add_info_ts_in_buffer(remote_readers);
 
-    ParameterList_t* inlineQos = NULL;
+    InlineQosWriter* inlineQos = nullptr;
     if(expectsInlineQos)
     {
         //TODOG INLINEQOS
-        //if(W->getInlineQos()->m_parameters.size()>0)
-        //    inlineQos = W->getInlineQos();
+        //inlineQos = W->getInlineQos();
     }
 
 #if HAVE_SECURITY
@@ -489,12 +506,11 @@ bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t
 
     add_info_ts_in_buffer(remote_readers);
 
-    ParameterList_t* inlineQos = NULL;
+    InlineQosWriter* inlineQos = NULL;
     if(expectsInlineQos)
     {
         //TODOG INLINEQOS
-        //if(W->getInlineQos()->m_parameters.size()>0)
-        //    inlineQos = W->getInlineQos();
+        //inlineQos = W->getInlineQos();
     }
 
 #if HAVE_SECURITY

@@ -41,22 +41,18 @@ TCPAcceptorBasic::TCPAcceptorBasic(
 
 void TCPAcceptorBasic::accept(TCPTransportInterface* parent)
 {
-    Locator_t locator = locator_;
     using asio::ip::tcp;
 
+    const Locator_t locator = locator_;
+
     acceptor_.async_accept(
-        [this, locator, parent](const std::error_code& error, tcp::socket socket)
+        [parent, locator](const std::error_code& error, tcp::socket socket)
         {
             if (!error)
             {
-                socket_ = std::make_shared<tcp::socket>(std::move(socket));
-                parent->SocketAccepted(this, locator, error);
+                auto socket_ = std::make_shared<tcp::socket>(std::move(socket));
+                parent->SocketAccepted(socket_, locator, error);
             }
-            else
-            {
-                parent->SocketAccepted(this, locator, error); // Only manage the error
-            }
-
         });
 }
 

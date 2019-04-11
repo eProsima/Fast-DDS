@@ -404,6 +404,11 @@ class XMLParser
         ResourceLimitsQosPolicy& resourceLimitsQos,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLContainerAllocationConfig(
+        tinyxml2::XMLElement* elem, 
+        ResourceLimitedContainerConfig& resourceLimitsQos,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLThroughputController(
         tinyxml2::XMLElement* elem,
         rtps::ThroughputControllerDescriptor& throughputController,

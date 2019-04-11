@@ -26,6 +26,7 @@
 #include <fastrtps/rtps/common/FragmentNumber.h>
 
 #include <vector>
+#include <chrono>
 #include <cassert>
 
 namespace eprosima {
@@ -79,6 +80,15 @@ class RTPSMessageGroup
             READER
         };
 
+        class timeout : public std::runtime_error
+        {
+            public:
+
+                timeout() : std::runtime_error("timeout") {}
+
+                virtual ~timeout() = default;
+        };
+
         /**
          * Basic constructor.
          * Constructs a RTPSMessageGroup allowing the destination endpoints to change.
@@ -87,8 +97,13 @@ class RTPSMessageGroup
          * @param type Type of endpoint (reader / writer).
          * @param msg_group Reference to data buffer for messages.
          */
-        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-            RTPSMessageGroup_t& msg_group);
+        RTPSMessageGroup(
+                RTPSParticipantImpl* participant,
+                Endpoint* endpoint,
+                ENDPOINT_TYPE type,
+                RTPSMessageGroup_t& msg_group,
+                std::chrono::steady_clock::time_point max_blocking_time_point =
+                    std::chrono::steady_clock::now() + std::chrono::hours(24));
 
         /**
          * Fixed destination constructor.
@@ -100,11 +115,17 @@ class RTPSMessageGroup
          * @param locator_list List of locators where messages will be sent
          * @param remote_endpoints List of destination GUIDs
          */
-        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-            RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
-            const std::vector<GUID_t>& remote_endpoints);
+        RTPSMessageGroup(
+                RTPSParticipantImpl* participant,
+                Endpoint* endpoint,
+                ENDPOINT_TYPE type,
+                RTPSMessageGroup_t& msg_group,
+                const LocatorList_t& locator_list,
+                const std::vector<GUID_t>& remote_endpoints,
+                std::chrono::steady_clock::time_point max_blocking_time_point =
+                    std::chrono::steady_clock::now() + std::chrono::hours(24));
 
-        ~RTPSMessageGroup();
+        ~RTPSMessageGroup() noexcept(false);
 
         /**
          * Adds a DATA message to the group.
@@ -232,6 +253,8 @@ class RTPSMessageGroup
 
         std::vector<GuidPrefix_t> current_remote_participants_;
 #endif
+
+        std::chrono::steady_clock::time_point max_blocking_time_point_;
 
 };
 

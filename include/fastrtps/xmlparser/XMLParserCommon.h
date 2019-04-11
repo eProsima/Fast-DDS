@@ -109,6 +109,7 @@ extern const char* HIST_MEM_POLICY;
 //extern const char* PROPERTIES_POLICY;
 extern const char* USER_DEF_ID;
 extern const char* ENTITY_ID;
+extern const char* MATCHED_SUBSCRIBERS_ALLOCATION;
 
 ///
 extern const char* PROPERTIES;
@@ -312,6 +313,11 @@ extern const char* USE_DEFAULT;
 extern const char* CONSUMER;
 extern const char* CLASS;
 
+// Allocation config
+extern const char* INITIAL;
+extern const char* MAXIMUM;
+extern const char* INCREMENT;
+
 // TLS Config
 extern const char* TLS;
 extern const char* TLS_PASSWORD;
@@ -353,7 +359,6 @@ extern const char* TLS_VERIFY_NONE;
 extern const char* TLS_VERIFY_PEER;
 extern const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT;
 extern const char* TLS_VERIFY_CLIENT_ONCE;
-
 
 } /* xmlparser */
 } /* namespace */
