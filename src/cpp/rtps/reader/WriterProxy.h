@@ -81,6 +81,12 @@ public:
     void start(const WriterProxyData& attributes);
 
     /**
+     * Update information on the remote writer.
+     * @param attributes WriterProxyData with updated information of the writer.
+     */
+    void update(const WriterProxyData& attributes);
+
+    /**
      * Disable this proxy.
      */
     void stop();

@@ -144,6 +144,12 @@ void WriterProxy::start(const WriterProxyData& attributes)
     initial_acknack_->restart_timer();
 }
 
+void WriterProxy::update(const WriterProxyData& attributes)
+{
+    assert(is_alive_);
+    attributes_ = attributes;
+}
+
 void WriterProxy::stop()
 {
     is_alive_ = false;

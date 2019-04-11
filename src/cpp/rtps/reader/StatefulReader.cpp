@@ -94,7 +94,12 @@ bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
     {
         if (it->guid() == wdata.guid())
         {
-            logInfo(RTPS_READER, "Attempting to add existing writer");
+            logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
+            it->update(wdata);
+            for (const Locator_t& locator : it->remote_locators_shrinked())
+            {
+                getRTPSParticipant()->createSenderResources(locator);
+            }
             return false;
         }
     }
@@ -123,8 +128,11 @@ bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
     }
 
     wp->start(wdata);
-    // TODO: Refactor createSenderResources
-    // getRTPSParticipant()->createSenderResources(wp->remote_locators_shrinked());
+
+    for (const Locator_t& locator : wp->remote_locators_shrinked())
+    {
+        getRTPSParticipant()->createSenderResources(locator);
+    }
 
     add_persistence_guid(wdata.guid(), wdata.persistence_guid());
     wp->loaded_from_storage_nts(get_last_notified(wdata.guid()));
