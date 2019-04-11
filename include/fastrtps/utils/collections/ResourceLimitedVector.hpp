@@ -100,7 +100,7 @@ public:
         clear();
         for (const_reference item : other)
         {
-            push_back(other);
+            push_back(item);
         }
 
         assert(size() == other.size());

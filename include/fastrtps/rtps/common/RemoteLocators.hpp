@@ -68,18 +68,8 @@ struct RemoteLocatorList
      */
     RemoteLocatorList& operator = (const RemoteLocatorList& other)
     {
-        unicast.clear();
-        for (const Locator_t& locator : other.unicast)
-        {
-            unicast.push_back(locator);
-        }
-
-        multicast.clear();
-        for (const Locator_t& locator : other.multicast)
-        {
-            multicast.push_back(locator);
-        }
-
+        unicast = other.unicast;
+        multicast = other.multicast;
         return *this;
     }
 
