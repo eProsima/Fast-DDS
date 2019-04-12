@@ -30,7 +30,7 @@ namespace fastrtps{
  * Structure Time_t, used to describe times.
  * @ingroup COMMON_MODULE
  */
-struct Time_t
+struct RTPS_DllAPI Time_t
 {
     int32_t seconds;
     uint32_t nanosec;
