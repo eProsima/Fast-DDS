@@ -22,8 +22,7 @@
 
 #include "../rtps/common/Guid.h"
 #include "../attributes/SubscriberAttributes.h"
-
-
+#include "../qos/LivelinessChangedStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -100,6 +99,12 @@ public:
      * @return Unread count
      */
     uint64_t getUnreadCount() const;
+
+    /**
+     * @brief Returns the liveliness changed status
+     * @param status Liveliness changed status
+     */
+    void get_liveliness_changed_status(LivelinessChangedStatus& status);
 
 private:
     SubscriberImpl* mp_impl;
