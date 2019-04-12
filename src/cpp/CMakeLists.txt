@@ -89,7 +89,6 @@ set(${PROJECT_NAME}_source_files
     transport/tcp/TCPControlMessage.cpp
     transport/tcp/RTCPMessageManager.cpp
     transport/timedevent/TCPKeepAliveEvent.cpp
-    #transport/tcp/test_RTCPMessageManager.cpp
 
     types/AnnotationDescriptor.cpp
     types/AnnotationParameterValue.cpp

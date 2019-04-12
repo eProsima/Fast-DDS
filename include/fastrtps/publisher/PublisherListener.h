@@ -22,6 +22,7 @@
 #include "../rtps/common/Types.h"
 #include "../rtps/common/MatchingInfo.h"
 #include "../qos/DeadlineMissedStatus.h"
+#include "../qos/LivelinessLostStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -38,6 +39,7 @@ class RTPS_DllAPI PublisherListener
 public:
     PublisherListener(){}
     virtual ~PublisherListener(){}
+
 	/**
 	 * This method is called when the Publisher is matched (or unmatched) against an endpoint.
 	 * @param pub Pointer to the associated Publisher
@@ -59,6 +61,19 @@ public:
     virtual void on_offered_deadline_missed(
             Publisher* pub,
             const OfferedDeadlineMissedStatus& status)
+    {
+        (void)pub;
+        (void)status;
+    }
+
+    /**
+     * @brief Method called when the livelivess of a publisher is lost
+     * @param pub The publisher
+     * @param status The liveliness lost status
+     */
+    virtual void on_liveliness_lost(
+            Publisher* pub,
+            const LivelinessLostStatus& status)
     {
         (void)pub;
         (void)status;

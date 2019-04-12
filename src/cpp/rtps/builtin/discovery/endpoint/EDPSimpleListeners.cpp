@@ -117,7 +117,9 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
     return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }
 
-void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void EDPSimpleSUBListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->subscriptions_reader_.first->getMutex());

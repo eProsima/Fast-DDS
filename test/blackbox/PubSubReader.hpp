@@ -398,6 +398,12 @@ public:
         return *this;
     }
 
+    PubSubReader& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
+    {
+        subscriber_attr_.qos.m_lifespan.duration = lifespan_period;
+        return *this;
+    }
+
     PubSubReader& topic_kind(const eprosima::fastrtps::rtps::TopicKind_t kind)
     {
         subscriber_attr_.topic.topicKind = kind;
@@ -663,9 +669,19 @@ public:
         onDiscovery_ = f;
     }
 
-    const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
+    bool takeNextData(void* data, eprosima::fastrtps::SampleInfo_t* info)
     {
-        return participant_guid_;
+        if (subscriber_->takeNextData(data, info))
+        {
+            current_received_count_++;
+            return true;
+        }
+        return false;
+    }
+
+    unsigned int missed_deadlines() const
+    {
+        return listener_.missed_deadlines();
     }
 
     bool is_matched() const
@@ -673,9 +689,11 @@ public:
         return matched_ > 0;
     }
 
-    unsigned int missed_deadlines() const
+private:
+
+    const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
-        return listener_.missed_deadlines();
+        return participant_guid_;
     }
 
 private:

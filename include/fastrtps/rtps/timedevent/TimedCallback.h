@@ -17,11 +17,10 @@
  *
  */
 
-#ifndef TimedCallback_H_
-#define TimedCallback_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef TIMEDCALLBACK_H_
+#define TIMEDCALLBACK_H_
 
-#include "../resources/TimedEvent.h"
+#include "../resources//TimedEvent.h"
 
 #include <functional>
 
@@ -39,12 +38,13 @@ public:
     /** Constructor
      * @param callback A callback to invoke when the timer expires
      * @param period Interval of the TimedCallback in milliseconds
+     * @param milliseconds Interval of the timed callback
      * @param service IO service to run the event
      * @param event_thread starting thread for identification.
      */
     TimedCallback(
             const std::function<void()>& callback,
-            const Duration_t& period,
+            double milliseconds,
             asio::io_service &service,
             const std::thread& event_thread);
 
@@ -66,5 +66,4 @@ private:
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
 #endif

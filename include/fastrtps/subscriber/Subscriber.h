@@ -23,6 +23,7 @@
 #include "../rtps/common/Guid.h"
 #include "../attributes/SubscriberAttributes.h"
 #include "../qos/DeadlineMissedStatus.h"
+#include "../qos/LivelinessChangedStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -105,6 +106,12 @@ public:
      * @return The deadline missed status
      */
     void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
+
+    /**
+     * @brief Returns the liveliness changed status
+     * @param status Liveliness changed status
+     */
+    void get_liveliness_changed_status(LivelinessChangedStatus& status);
 
 private:
     SubscriberImpl* mp_impl;

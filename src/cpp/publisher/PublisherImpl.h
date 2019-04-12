@@ -168,18 +168,30 @@ class PublisherImpl
     TimedCallback deadline_timer_;
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
-    //! The current timer owner, i.e. the instance which started the timer
+    //! The current timer owner, i.e. the instance which started the deadline timer
     InstanceHandle_t timer_owner_;
     //! The offered deadline missed status
     OfferedDeadlineMissedStatus deadline_missed_status_;
 
-    /** Method called when an instance misses the deadline
+    //! A timed callback to remove expired samples for lifespan QoS
+    rtps::TimedCallback lifespan_timer_;
+    //! The lifespan duration, in microseconds
+    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+
+    /**
+     * @brief A method called when an instance misses the deadline
      */
     void deadline_missed();
 
-    /** A method to reschedule the deadline timer
+    /**
+     * @brief A method to reschedule the deadline timer
      */
-    void timer_reschedule();
+    void deadline_timer_reschedule();
+
+    /**
+     * @brief A method to remove expired samples, invoked when the lifespan timer expires
+     */
+    void lifespan_expired();
 };
 
 

@@ -26,16 +26,17 @@ namespace rtps {
 
 TimedCallback::TimedCallback(
         const std::function<void()>& callback,
-        const Duration_t& period,
+        double milliseconds,
         asio::io_service &service,
-        const std::thread& event_thread)
-    : TimedEvent(service, event_thread, period.to_ns() * 1e-6)
+        const std::thread &event_thread)
+    : TimedEvent(service, event_thread, milliseconds)
     , callback_(callback)
 {
 }
 
 TimedCallback::~TimedCallback()
 {
+    destroy();
 }
 
 void TimedCallback::event(EventCode code, const char *msg)

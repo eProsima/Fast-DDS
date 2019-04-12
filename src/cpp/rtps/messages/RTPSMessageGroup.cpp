@@ -390,7 +390,7 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer, const std::v
     return true;
 }
 
-bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_readers)
+bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_readers, const Time_t &timestamp)
 {
     (void)remote_readers;
     logInfo(RTPS_WRITER, "Sending INFO_TS message");
@@ -399,12 +399,21 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
     uint32_t from_buffer_position = submessage_msg_->pos;
 #endif
 
-    // Insert INFO_TS submessage.
-    // TODO (Ricardo) Source timestamp maybe has marked when user call write function.
-    if(!RTPSMessageCreator::addSubmessageInfoTS_Now(submessage_msg_, false)) //Change here to add a INFO_TS for DATA.
+    if (timestamp == Time_t())
     {
-        logError(RTPS_WRITER, "Cannot add INFO_TS submsg to the CDRMessage. Buffer too small");
-        return false;
+        if(!RTPSMessageCreator::addSubmessageInfoTS_Now(submessage_msg_, false)) //Change here to add a INFO_TS for DATA.
+        {
+            logError(RTPS_WRITER, "Cannot add INFO_TS submsg to the CDRMessage. Buffer too small");
+            return false;
+        }
+    }
+    else
+    {
+        if (!RTPSMessageCreator::addSubmessageInfoTS(submessage_msg_, timestamp, false))
+        {
+            logError(RTPS_WRITER, "Cannot add INFO_TS submsg to the CDRMessage. Buffer too small");
+            return false;
+        }
     }
 
 #if HAVE_SECURITY
@@ -436,15 +445,18 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
     return true;
 }
 
-bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<GUID_t>& remote_readers,
-        const LocatorList_t& locators, bool expectsInlineQos)
+bool RTPSMessageGroup::add_data(
+        const CacheChange_t& change,
+        const std::vector<GUID_t>& remote_readers,
+        const LocatorList_t& locators,
+        bool expectsInlineQos)
 {
     logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
 
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush(locators, remote_readers);
 
-    add_info_ts_in_buffer(remote_readers);
+    add_info_ts_in_buffer(remote_readers, change.sourceTimestamp);
 
     InlineQosWriter* inlineQos = nullptr;
     if(expectsInlineQos)
@@ -496,15 +508,19 @@ bool RTPSMessageGroup::add_data(const CacheChange_t& change, const std::vector<G
     return insert_submessage(remote_readers);
 }
 
-bool RTPSMessageGroup::add_data_frag(const CacheChange_t& change, const uint32_t fragment_number,
-        const std::vector<GUID_t>& remote_readers, const LocatorList_t& locators, bool expectsInlineQos)
+bool RTPSMessageGroup::add_data_frag(
+        const CacheChange_t& change,
+        const uint32_t fragment_number,
+        const std::vector<GUID_t>& remote_readers,
+        const LocatorList_t& locators,
+        bool expectsInlineQos)
 {
     logInfo(RTPS_WRITER,"Sending relevant changes as DATA/DATA_FRAG messages");
 
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush(locators, remote_readers);
 
-    add_info_ts_in_buffer(remote_readers);
+    add_info_ts_in_buffer(remote_readers, change.sourceTimestamp);
 
     InlineQosWriter* inlineQos = NULL;
     if(expectsInlineQos)

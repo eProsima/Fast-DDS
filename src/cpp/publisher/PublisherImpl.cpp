@@ -40,6 +40,8 @@ using namespace eprosima::fastrtps;
 using namespace ::rtps;
 using namespace std::chrono;
 
+using namespace std::chrono;
+
 PublisherImpl::PublisherImpl(
         ParticipantImpl* p,
         TopicDataType* pdatatype,
@@ -64,12 +66,17 @@ PublisherImpl::PublisherImpl(
     , mp_rtpsParticipant(nullptr)
     , high_mark_for_frag_(0)
     , deadline_timer_(std::bind(&PublisherImpl::deadline_missed, this),
-                      att.qos.m_deadline.period,
+                      att.qos.m_deadline.period.to_ns() * 1e-6,
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
     , timer_owner_()
     , deadline_missed_status_()
+    , lifespan_timer_(std::bind(&PublisherImpl::lifespan_expired, this),
+                      m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
 }
 
@@ -214,10 +221,16 @@ bool PublisherImpl::create_new_change_with_params(
                 {
                     if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
                     {
-                        timer_reschedule();
+                        deadline_timer_reschedule();
                     }
                 }
             }
+
+            if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
+            {
+                lifespan_timer_.restart_timer();
+            }
+
             return true;
         }
     }
@@ -322,14 +335,30 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         //Notify the participant that a Writer has changed its QOS
         mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
 
-        // Update deadline period
-        deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
-        if (m_att.qos.m_deadline.period == c_TimeInfinite)
+        // Deadline
+
+        if (m_att.qos.m_deadline.period != c_TimeInfinite)
+        {
+            deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+            deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
+        }
+        else
         {
             deadline_timer_.cancel_timer();
         }
-    }
 
+        // Lifespan
+
+        if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
+        {
+            lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+            lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+        }
+        else
+        {
+            lifespan_timer_.cancel_timer();
+        }
+    }
 
     return updated;
 }
@@ -338,8 +367,10 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
-    if(mp_publisherImpl->mp_listener!=nullptr)
-        mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);
+    if( mp_publisherImpl->mp_listener != nullptr )
+    {
+        mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher, info);
+    }
 }
 
 void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
@@ -357,7 +388,7 @@ bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
     return mp_writer->wait_for_all_acked(max_wait);
 }
 
-void PublisherImpl::timer_reschedule()
+void PublisherImpl::deadline_timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
 
@@ -393,7 +424,7 @@ void PublisherImpl::deadline_missed()
         logError(PUBLISHER, "Could not set the next deadline in the history");
         return;
     }
-    timer_reschedule();
+    deadline_timer_reschedule();
 }
 
 void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
@@ -402,4 +433,46 @@ void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStat
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
+}
+
+void PublisherImpl::lifespan_expired()
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+
+    CacheChange_t* earliest_change;
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+
+    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    auto now = system_clock::now();
+
+    // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
+    if (now - source_timestamp < lifespan_duration_us_)
+    {
+        auto interval = source_timestamp - now + lifespan_duration_us_;
+        lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+        lifespan_timer_.restart_timer();
+        return;
+    }
+
+    // The earliest change has expired
+    m_history.remove_change_pub(earliest_change);
+
+    // Set the timer for the next change if there is one
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+
+    // Calculate when the next change is due to expire and restart
+    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    now = system_clock::now();
+    auto interval = source_timestamp - now + lifespan_duration_us_;
+
+    assert(interval.count() > 0);
+
+    lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    lifespan_timer_.restart_timer();
 }

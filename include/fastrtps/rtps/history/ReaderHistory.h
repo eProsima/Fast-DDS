@@ -74,7 +74,7 @@ public:
      * */
     RTPS_DllAPI bool remove_changes_with_guid(const GUID_t& a_guid);
     /**
-     * Sort the CacheChange_t from the History.
+     * Sort the CacheChange_t from the History by timestamp
      */
     RTPS_DllAPI void sortCacheChanges();
     /**

@@ -43,7 +43,6 @@ class WriterProxyData;
 class ReaderProxyData;
 class ResourceEvent;
 
-
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
  * @ingroup RTPS_MODULE

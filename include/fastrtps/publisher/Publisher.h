@@ -21,11 +21,11 @@
 #define PUBLISHER_H_
 
 #include "../fastrtps_dll.h"
-#include <cstdio>
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"
 #include "../attributes/PublisherAttributes.h"
 #include "../qos/DeadlineMissedStatus.h"
+#include "../qos/LivelinessLostStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -47,7 +47,7 @@ class RTPS_DllAPI Publisher
     friend class PublisherImpl;
     virtual ~Publisher();
 
-    public:
+public:
 
     Publisher(PublisherImpl* pimpl);
 
@@ -123,7 +123,18 @@ class RTPS_DllAPI Publisher
      */
     void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
 
-    private:
+    /**
+     * @brief Asserts liveliness
+     */
+    void assert_liveliness();
+
+    /**
+     * @brief Returns the liveliness lost status
+     * @param status Liveliness lost status
+     */
+    void get_liveliness_lost_status(LivelinessLostStatus& status);
+
+private:
 
     PublisherImpl* mp_impl;
 };

@@ -42,7 +42,6 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
         UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
         test_UDPv4Transport_DropLog.clear();
         test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
-        srand(static_cast<unsigned>(time(NULL)));
     }
 
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
@@ -161,13 +160,13 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                         (!drop_subscription_builtin_topic_data_ && writer_id == c_EntityId_SEDPSubWriter))
                     return false;
 
-                if(drop_data_messages_percentage_ > (rand()%100))
+                if(should_be_dropped(&drop_data_messages_percentage_))
                     return true;
 
                 break;
 
             case ACKNACK:
-                if(drop_ack_nack_messages_percentage_ > (rand()%100))
+                if(should_be_dropped(&drop_ack_nack_messages_percentage_))
                     return true;
 
                 break;
@@ -177,13 +176,13 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                 CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
                 CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
-                if(drop_heartbeat_messages_percentage_ > (rand()%100))
+                if(should_be_dropped(&drop_heartbeat_messages_percentage_))
                     return true;
 
                 break;
 
             case DATA_FRAG:
-                if(drop_data_frag_messages_percentage_  > (rand()%100))
+                if(should_be_dropped(&drop_data_frag_messages_percentage_))
                     return true;
 
                 break;
@@ -227,7 +226,19 @@ bool test_UDPv4Transport::log_drop(const octet* buffer, uint32_t size)
 
 bool test_UDPv4Transport::random_chance_drop()
 {
-    return percentage_of_messages_to_drop_ > (rand()%100);
+    return should_be_dropped(&percentage_of_messages_to_drop_);
+}
+
+bool test_UDPv4Transport::should_be_dropped(PercentageData* percent)
+{
+    percent->accumulator += percent->percentage;
+    if (percent->accumulator >= 100u)
+    {
+        percent->accumulator -= 100u;
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace rtps
