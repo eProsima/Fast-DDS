@@ -180,7 +180,6 @@ protected:
 
 public:
     friend class RTCPMessageManager;
-    friend class test_RTCPMessageManager;
 
     virtual ~TCPTransportInterface();
 
