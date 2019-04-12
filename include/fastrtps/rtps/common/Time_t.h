@@ -26,6 +26,12 @@
 namespace eprosima{
 namespace fastrtps{
 
+namespace rtps{
+// 1 fraction = 1/(2^32) seconds
+constexpr long double FRACTION_TO_NANO = 0.23283064365386962890625; // 1000000000 / 4294967296
+constexpr long double NANO_TO_FRACTION = 4.294967296; // 4294967296 / 1000000000
+} // namespace rtps
+
 /**
  * Structure Time_t, used to describe times.
  * @ingroup COMMON_MODULE
@@ -63,15 +69,22 @@ struct RTPS_DllAPI Time_t
         seconds = static_cast<int32_t>(sec);
         nanosec = static_cast<uint32_t>((sec - seconds) * 1000000000ULL);
     }
+
+    void fraction(
+            uint32_t frac)
+    {
+        nanosec = static_cast<uint32_t>(frac * rtps::FRACTION_TO_NANO);
+    }
+
+    uint32_t fraction() const
+    {
+        return static_cast<uint32_t>(nanosec * rtps::NANO_TO_FRACTION);
+    }
 };
 
 typedef Time_t Duration_t;
 
 namespace rtps{
-
-// 1 fraction = 1/(2^32) seconds
-constexpr long double FRACTION_TO_NANO = 0.23283064365386962890625; // 1000000000 / 4294967296
-constexpr long double NANO_TO_FRACTION = 4.294967296; // 4294967296 / 1000000000
 
 /**
  * Structure Time_t, used to describe times at RTPS protocol.
