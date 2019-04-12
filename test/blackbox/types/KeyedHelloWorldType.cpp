@@ -32,7 +32,7 @@ KeyedHelloWorldType::KeyedHelloWorldType() {
     setName("KeyedHelloWorld");
     m_typeSize = (uint32_t)KeyedHelloWorld::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = KeyedHelloWorld::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(KeyedHelloWorld::getKeyMaxCdrSerializedSize()>16 ? KeyedHelloWorld::getKeyMaxCdrSerializedSize() : 16);
+    m_keyBuffer = (unsigned char*)calloc(KeyedHelloWorld::getKeyMaxCdrSerializedSize()>16 ? KeyedHelloWorld::getKeyMaxCdrSerializedSize() : 16, sizeof(unsigned char*));
 }
 
 KeyedHelloWorldType::~KeyedHelloWorldType() {
