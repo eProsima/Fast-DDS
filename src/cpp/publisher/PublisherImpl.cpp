@@ -204,24 +204,22 @@ bool PublisherImpl::create_new_change_with_params(
                 return false;
             }
 
-            return true;
-        }
-
-        if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
-        {
-            if (!m_history.set_next_deadline(ch->instanceHandle, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+            if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
             {
-                logError(PUBLISHER, "Could not set the next deadline in the history");
-            }
-            else
-            {
-                if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
+                if (!m_history.set_next_deadline(ch->instanceHandle, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
                 {
-                    timer_reschedule();
+                    logError(PUBLISHER, "Could not set the next deadline in the history");
+                }
+                else
+                {
+                    if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
+                    {
+                        timer_reschedule();
+                    }
                 }
             }
+            return true;
         }
-        return true;
     }
 
     return false;
