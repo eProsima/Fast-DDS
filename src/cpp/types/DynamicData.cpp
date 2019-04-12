@@ -1115,11 +1115,11 @@ void DynamicData::GetValue(std::string& sOutValue, MemberId id /*= MEMBER_ID_INV
     {
         wchar_t value(0);
         GetChar16Value(value, id);
-		using convert_type = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convert_type, wchar_t> converter;
+        using convert_type = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_type, wchar_t> converter;
         std::wstring temp = L"";
         temp += value;
-		sOutValue = converter.to_bytes(temp);
+        sOutValue = converter.to_bytes(temp);
     }
     break;
     case TK_BOOLEAN:
@@ -1143,11 +1143,11 @@ void DynamicData::GetValue(std::string& sOutValue, MemberId id /*= MEMBER_ID_INV
     break;
     case TK_STRING16:
     {
-		using convert_type = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convert_type, wchar_t> converter;
+        using convert_type = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_type, wchar_t> converter;
         std::wstring value;
         GetWstringValue(value, id);
-		sOutValue = converter.to_bytes(value);
+        sOutValue = converter.to_bytes(value);
     }
     break;
     case TK_ENUM:
