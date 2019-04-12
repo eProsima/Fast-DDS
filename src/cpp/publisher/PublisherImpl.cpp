@@ -195,15 +195,13 @@ bool PublisherImpl::create_new_change_with_params(
                 return false;
             }
 
+            if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
+            {
+                lifespan_timer_.restart_timer();
+            }
+
             return true;
         }
-
-        if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
-        {
-            lifespan_timer_.restart_timer();
-        }
-
-        return true;
     }
 
     return false;
