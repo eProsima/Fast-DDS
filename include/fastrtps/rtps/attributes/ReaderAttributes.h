@@ -65,7 +65,7 @@ class  ReaderAttributes
 
         ReaderAttributes()
             : expectsInlineQos(false)
-            , disable_positive_ACKs(false)
+            , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;
             endpoint.durabilityKind = VOLATILE;
@@ -84,7 +84,7 @@ class  ReaderAttributes
         bool expectsInlineQos;
 
         //! Disable positive ACKs
-        bool disable_positive_ACKs;
+        bool disable_positive_acks;
 };
 
 /**

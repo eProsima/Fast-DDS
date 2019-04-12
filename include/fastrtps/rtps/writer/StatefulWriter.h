@@ -199,7 +199,7 @@ public:
      * @brief Returns true if disable positive ACKs QoS is enabled
      * @return True if positive acks are disabled, false otherwise
      */
-    inline bool get_disable_positive_ACKs() const { return disable_positive_ACKs_; };
+    inline bool get_disable_positive_acks() const { return disable_positive_acks_; }
 
     /**
      * Update the WriterTimes attributes of all associated ReaderProxy.
@@ -282,19 +282,19 @@ private:
     void check_acked_status();
 
     /**
-     * @brief A method called when a sample expires
+     * @brief A method called when the ack timer expires
      * @details Only used if disable positive ACKs QoS is enabled
      */
-    void lifespan_expired();
+    void ack_timer_expired();
 
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
-    bool disable_positive_ACKs_;
+    bool disable_positive_acks_;
     //! Keep duration for disable positive ACKs QoS, in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
-    //! A timed event to remove expired samples (used only if disable positive ACKs QoS is enabled)
-    TimedCallback* lifespan_timer_;
+    //! A timed event to mark samples as acknowledget (used only if disable positive ACKs QoS is enabled)
+    TimedCallback* ack_timer_;
 
     const uint32_t sendBufferSize_;
 

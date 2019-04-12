@@ -79,8 +79,6 @@ public:
     rtps::MemoryManagementPolicy_t historyMemoryPolicy;
     rtps::PropertyPolicy properties;
     ResourceLimitedContainerConfig matched_subscriber_allocation;
-    //!Disable positive ACKs QoS
-    DisablePositiveACKsQosPolicy disablePositiveACKs;
 
     /**
      * Get the user defined ID

@@ -63,7 +63,7 @@ StatefulReader::StatefulReader(
     , m_acknackCount(0)
     , m_nackfragCount(0)
     , m_times(att.times)
-    , disable_positive_ACKs_(att.disable_positive_ACKs)
+    , disable_positive_acks_(att.disable_positive_acks)
 {
 }
 
@@ -393,7 +393,7 @@ bool StatefulReader::processHeartbeatMsg(
             //Analyze wheter a acknack message is needed
             if(!finalFlag)
             {
-                if (disable_positive_ACKs_)
+                if (disable_positive_acks_)
                 {
                     if(pWP->areThereMissing())
                     {

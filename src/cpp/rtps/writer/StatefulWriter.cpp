@@ -67,9 +67,9 @@ StatefulWriter::StatefulWriter(
     , may_remove_change_(0)
     , nack_response_event_(nullptr)
     , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
-    , disable_positive_ACKs_(att.disable_positive_ACKs)
-    , keep_duration_us_(att.keep_duration_.to_ns() * 1e-3)
-    , lifespan_timer_(nullptr)
+    , disable_positive_acks_(att.disable_positive_acks)
+    , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
+    , ack_timer_(nullptr)
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
     , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
     , m_controllers()
@@ -84,11 +84,11 @@ StatefulWriter::StatefulWriter(
     mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
     nack_response_event_ = new NackResponseDelay(this, TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
-    if (disable_positive_ACKs_)
+    if (disable_positive_acks_)
     {
-        lifespan_timer_ = new TimedCallback(
-                    std::bind(&StatefulWriter::lifespan_expired, this),
-                    att.keep_duration_.to_ns() * 1e-6, // in milliseconds
+        ack_timer_ = new TimedCallback(
+                    std::bind(&StatefulWriter::ack_timer_expired, this),
+                    att.keep_duration.to_ns() * 1e-6, // in milliseconds
                     pimpl->getUserRTPSParticipant()->get_resource_event().getIOService(),
                     pimpl->getUserRTPSParticipant()->get_resource_event().getThread());
     }
@@ -261,9 +261,9 @@ void StatefulWriter::unsent_change_added_to_history(
             }
         }
 
-        if (disable_positive_ACKs_)
+        if (disable_positive_acks_)
         {
-            lifespan_timer_->restart_timer();
+            ack_timer_->restart_timer();
         }
     }
     else
@@ -1023,7 +1023,11 @@ void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy)
         RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
             locators, guids);
 
-        send_heartbeat_nts_(guids, locators, group);
+        send_heartbeat_nts_(
+                    guids,
+                    locators,
+                    group,
+                    disable_positive_acks_);
     }
     catch(const RTPSMessageGroup::timeout&)
     {
@@ -1090,7 +1094,7 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
                         remote_readers,
                         locators,
                         message_group,
-                        disable_positive_ACKs_);
+                        disable_positive_acks_);
         }
         else
         {
@@ -1103,7 +1107,7 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
                             remote_readers,
                             locators,
                             message_group,
-                            disable_positive_ACKs_);
+                            disable_positive_acks_);
             }
         }
     }
@@ -1227,7 +1231,7 @@ bool StatefulWriter::process_nack_frag(
     return result;
 }
 
-void StatefulWriter::lifespan_expired()
+void StatefulWriter::ack_timer_expired()
 {
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
@@ -1245,13 +1249,16 @@ void StatefulWriter::lifespan_expired()
     if (now - source_timestamp < keep_duration_us_)
     {
         auto interval = source_timestamp - now + keep_duration_us_;
-        lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-        lifespan_timer_->restart_timer();
+        ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+        ack_timer_->restart_timer();
         return;
     }
 
-    // The earliest sample has expired
-    mp_history->remove_change_g(earliest_change);
+    // The earliest sample has 'expired' so mark it as acknowledged
+    for(const auto& remote_reader : matched_readers_)
+    {
+        remote_reader->acked_changes_set(earliest_change->sequenceNumber);
+    }
 
     // Set the timer for the next sample if there is one
     if (!mp_history->get_earliest_change(&earliest_change))
@@ -1265,6 +1272,6 @@ void StatefulWriter::lifespan_expired()
 
     assert(interval.count() > 0);
 
-    lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-    lifespan_timer_->restart_timer();
+    ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    ack_timer_->restart_timer();
 }

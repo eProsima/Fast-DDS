@@ -211,8 +211,8 @@ Publisher* ParticipantImpl::createPublisher(
     if (att.qos.m_disablePositiveACKs.enabled &&
             att.qos.m_disablePositiveACKs.duration != rtps::c_TimeInfinite)
     {
-        watt.disable_positive_ACKs = true;
-        watt.keep_duration_ = att.qos.m_disablePositiveACKs.duration;
+        watt.disable_positive_acks = true;
+        watt.keep_duration = att.qos.m_disablePositiveACKs.duration;
     }
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
@@ -328,7 +328,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     }
     if (att.qos.m_disablePositiveACKs.enabled)
     {
-        ratt.disable_positive_ACKs = true;
+        ratt.disable_positive_acks = true;
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
