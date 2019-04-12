@@ -31,9 +31,12 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
+
+using namespace std::chrono;
 
 PublisherImpl::PublisherImpl(
         ParticipantImpl* p,
@@ -58,6 +61,11 @@ PublisherImpl::PublisherImpl(
     , mp_userPublisher(nullptr)
     , mp_rtpsParticipant(nullptr)
     , high_mark_for_frag_(0)
+    , lifespan_timer_(std::bind(&PublisherImpl::lifespan_expired, this),
+                      m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
 }
 
@@ -187,6 +195,11 @@ bool PublisherImpl::create_new_change_with_params(
                 return false;
             }
 
+            if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
+            {
+                lifespan_timer_.restart_timer();
+            }
+
             return true;
         }
     }
@@ -291,6 +304,16 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
     }
 
+    // Update lifespan period
+    if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
+    {
+        lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+        lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+    }
+    else
+    {
+        lifespan_timer_.cancel_timer();
+    }
 
     return updated;
 }
@@ -299,8 +322,10 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
-    if(mp_publisherImpl->mp_listener!=nullptr)
-        mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher,info);
+    if( mp_publisherImpl->mp_listener != nullptr )
+    {
+        mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher, info);
+    }
 }
 
 void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
@@ -316,4 +341,46 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
+}
+
+void PublisherImpl::lifespan_expired()
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+
+    CacheChange_t* earliest_change;
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+
+    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    auto now = system_clock::now();
+
+    // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
+    if (now - source_timestamp < lifespan_duration_us_)
+    {
+        auto interval = source_timestamp - now + lifespan_duration_us_;
+        lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+        lifespan_timer_.restart_timer();
+        return;
+    }
+
+    // The earliest change has expired
+    m_history.remove_change_pub(earliest_change);
+
+    // Set the timer for the next change if there is one
+    if (!m_history.get_earliest_change(&earliest_change))
+    {
+        return;
+    }
+
+    // Calculate when the next change is due to expire and restart
+    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
+    now = system_clock::now();
+    auto interval = source_timestamp - now + lifespan_duration_us_;
+
+    assert(interval.count() > 0);
+
+    lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    lifespan_timer_.restart_timer();
 }

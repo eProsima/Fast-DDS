@@ -24,13 +24,13 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-Participant::Participant():
-    mp_impl(nullptr)
-    {
+Participant::Participant()
+    : mp_impl(nullptr)
+{
+}
 
-    }
-
-Participant::~Participant() {
+Participant::~Participant()
+{
     // TODO Auto-generated destructor stub
 }
 

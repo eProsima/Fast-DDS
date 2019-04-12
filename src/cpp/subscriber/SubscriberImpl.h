@@ -26,7 +26,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
-
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -120,6 +120,13 @@ public:
 	 */
 	uint64_t getUnreadCount() const;
 
+    /**
+     * @brief A method called when a new cache change is added
+     * @param change The cache change that has been added
+     * @return True if the change has not expired due to lifespan QoS
+     */
+    bool onNewCacheChangeAdded(const CacheChange_t * const change);
+
 private:
 	//!Participant
 	ParticipantImpl* mp_participant;
@@ -134,19 +141,34 @@ private:
 	SubscriberHistory m_history;
 	//!Listener
 	SubscriberListener* mp_listener;
-	class SubscriberReaderListener : public rtps::ReaderListener
-	{
-	public:
+    class SubscriberReaderListener : public rtps::ReaderListener
+    {
+    public:
         SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
         virtual ~SubscriberReaderListener() {}
-		void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
-		void onNewCacheChangeAdded(rtps::RTPSReader * reader,const rtps::CacheChange_t* const change);
-		SubscriberImpl* mp_subscriberImpl;
+        void onReaderMatched(
+                rtps::RTPSReader* reader,
+                rtps::MatchingInfo& info) override;
+        void onNewCacheChangeAdded(
+                rtps::RTPSReader* reader,
+                const rtps::CacheChange_t* const change) override;
+        SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
 
 	Subscriber* mp_userSubscriber;
 	//!RTPSParticipant
 	rtps::RTPSParticipant* mp_rtpsParticipant;
+
+    //! A timed callback to remove expired samples
+    rtps::TimedCallback lifespan_timer_;
+    //! The lifespan duration
+    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+
+    /**
+     * @brief A method called when the lifespan timer expires
+     */
+    void lifespan_expired();
+
 };
 
 

@@ -49,7 +49,9 @@ WLPListener::~WLPListener()
 
 typedef std::vector<WriterProxy*>::iterator WPIT;
 
-void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const changeIN)
+void WLPListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t* const changeIN)
 {
 	std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,"");

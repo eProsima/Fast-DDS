@@ -366,6 +366,12 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
+    {
+        publisher_attr_.qos.m_lifespan.duration = lifespan_period;
+        return *this;
+    }
+
     PubSubWriter& max_blocking_time(const eprosima::fastrtps::rtps::Duration_t time)
     {
         publisher_attr_.qos.m_reliability.max_blocking_time = time;

@@ -82,7 +82,9 @@ void TestReaderSocket::run()
 	std::cin >> aux;
 }
 
-void TestReaderSocket::MyListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change)
+void TestReaderSocket::MyListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t * const change)
 {
 	printf("Received: %s\n",change->serializedPayload.data);
 	reader->getHistory()->remove_change((CacheChange_t*)change);

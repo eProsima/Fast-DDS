@@ -150,7 +150,7 @@ class RTPSMessageCreator
         static bool addSubmessageNackFrag(CDRMessage_t* msg,
                 const EntityId_t& readerId, const EntityId_t& writerId, SequenceNumber_t& writerSN, FragmentNumberSet_t fnState, int32_t count);
 
-        static bool addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag);
+        static bool addSubmessageInfoTS(CDRMessage_t* msg, const Time_t &time, bool invalidateFlag);
         static bool addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalidateFlag);
 
         static bool addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version, const VendorId_t& vendorId, const GuidPrefix_t& guidP);

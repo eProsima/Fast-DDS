@@ -30,20 +30,10 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-
-//typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
-//typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
-
-inline bool sort_ReaderHistoryCache(CacheChange_t*c1, CacheChange_t*c2)
-{
-    return c1->sequenceNumber < c2->sequenceNumber;
-}
-
-
-ReaderHistory::ReaderHistory(const HistoryAttributes& att):
-                        History(att),
-                        mp_reader(nullptr),
-                        mp_semaphore(new Semaphore(0))
+ReaderHistory::ReaderHistory(const HistoryAttributes& att)
+    : History(att)
+    , mp_reader(nullptr)
+    , mp_semaphore(new Semaphore(0))
 {
 }
 
@@ -60,7 +50,6 @@ bool ReaderHistory::received_change(CacheChange_t* change, size_t)
 
 bool ReaderHistory::add_change(CacheChange_t* a_change)
 {
-
     if(mp_reader == nullptr || mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY,"You need to create a Reader with this History before adding any changes");
@@ -91,7 +80,6 @@ bool ReaderHistory::add_change(CacheChange_t* a_change)
 
 bool ReaderHistory::remove_change(CacheChange_t* a_change)
 {
-
     if(mp_reader == nullptr || mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY,"You need to create a Reader with this History before removing any changes");
@@ -140,12 +128,18 @@ bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
             bool matches = true;
             unsigned int size = a_guid.guidPrefix.size;
             if( !std::equal( (*chit)->writerGUID.guidPrefix.value , (*chit)->writerGUID.guidPrefix.value + size -1, a_guid.guidPrefix.value ) )
+            {
                 matches = false;
+            }
             size = a_guid.entityId.size;
             if( !std::equal( (*chit)->writerGUID.entityId.value , (*chit)->writerGUID.entityId.value + size -1, a_guid.entityId.value ) )
-                    matches = false;
+            {
+                matches = false;
+            }
             if(matches)
+            {
                 changes_to_remove.push_back( (*chit) );
+            }
         }
     }//End lock scope
 
@@ -159,7 +153,9 @@ bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
 
 void ReaderHistory::sortCacheChanges()
 {
-    std::sort(m_changes.begin(),m_changes.end(),sort_ReaderHistoryCache);
+    std::sort(m_changes.begin(),
+              m_changes.end(),
+              [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sourceTimestamp < c2->sourceTimestamp; });
 }
 
 void ReaderHistory::updateMaxMinSeqNum()
@@ -171,8 +167,11 @@ void ReaderHistory::updateMaxMinSeqNum()
     }
     else
     {
-        mp_minSeqCacheChange = m_changes.front();
-        mp_maxSeqCacheChange = m_changes.back();
+        auto minmax = std::minmax_element(m_changes.begin(),
+                                          m_changes.end(),
+                                          [](CacheChange_t* c1, CacheChange_t* c2){ return c1->sequenceNumber < c2->sequenceNumber; });
+        mp_minSeqCacheChange = *(minmax.first);
+        mp_maxSeqCacheChange = *(minmax.second);
     }
 }
 
