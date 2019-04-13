@@ -39,7 +39,7 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicLongDeadline)
     // Number of samples written by writer
     uint32_t writer_samples = 3;
     // Deadline period in seconds
-    eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 2 * 1e-3);
+    eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 10 * 1e-3);
 
     reader.deadline_period(deadline_s);
     writer.deadline_period(deadline_s);
@@ -132,7 +132,7 @@ BLACKBOXTEST(DeadlineQos, KeyedTopicLongDeadline)
     // Number of samples written by writer
     uint32_t writer_samples = 4;
     // Deadline period in seconds
-    eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 4 * 1e-3);
+    eprosima::fastrtps::rtps::Duration_t deadline_s(writer_sleep_ms * 10 * 1e-3);
 
     reader.deadline_period(deadline_s);
     writer.deadline_period(deadline_s);

@@ -74,11 +74,6 @@ SubscriberImpl::~SubscriberImpl()
         logInfo(SUBSCRIBER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
     }
 
-    if (m_att.qos.m_deadline.period != c_TimeInfinite)
-    {
-        deadline_timer_.cancel_timer();
-    }
-
     RTPSDomain::removeRTPSReader(mp_reader);
     delete(this->mp_userSubscriber);
 }

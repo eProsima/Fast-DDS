@@ -87,11 +87,6 @@ PublisherImpl::~PublisherImpl()
         logInfo(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
     }
 
-    if (m_att.qos.m_deadline.period != c_TimeInfinite)
-    {
-        deadline_timer_.cancel_timer();
-    }
-
     RTPSDomain::removeRTPSWriter(mp_writer);
     delete(this->mp_userPublisher);
 }
