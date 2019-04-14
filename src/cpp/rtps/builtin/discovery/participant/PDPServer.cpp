@@ -83,7 +83,7 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
         discoveryServer_client_syncperiod parameter has a context defined meaning.
     */
     mp_sync = new DServerEvent(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
-    mp_sync->restart_timer();
+    mp_sync->restart_timer(); // the timer is also restart from removeRemoteParticipant and queueParticipantForEDPMatch
 
     return true;
 }
@@ -514,7 +514,7 @@ void PDPServer::queueParticipantForEDPMatch(const ParticipantProxyData * pdata)
 
     // add the new client or server to the EDP matching list
     _p2match.insert(pdata);
-    mp_sync->restart_timer();
+    mp_sync->restart_timer(); // the timer is also restart from removeRemoteParticipant
 
     logInfo(PDP_SERVER, "participant " << pdata->m_participantName << " prefix: " << pdata->m_guid
         << " waiting for EDP match with server " << this->getRTPSParticipant()->getRTPSParticipantAttributes().getName());
@@ -684,6 +684,9 @@ bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
 
         removeParticipantFromHistory(ih = partGUID);
         removeParticipantForEDPMatch(&info);
+
+        // awake server event thread
+        mp_sync->restart_timer(); // the timer is also restart from queueParticipantForEDPMatch
     }
 
     return PDP::removeRemoteParticipant(partGUID);

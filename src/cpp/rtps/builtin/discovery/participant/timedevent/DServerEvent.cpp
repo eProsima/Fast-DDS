@@ -54,7 +54,7 @@ void DServerEvent::event(EventCode code, const char* msg)
 
     if(code == EVENT_SUCCESS)
     {
-        logInfo(RTPS_PDP,"DServerEvent Period");
+        logInfo(SERVER_PDP_THREAD,"DServerEvent Period");
 
         std::lock_guard<std::recursive_mutex> lock(*mp_PDP->getMutex());
         bool restart = false;
@@ -71,6 +71,7 @@ void DServerEvent::event(EventCode code, const char* msg)
             }
             else
             {
+                logInfo(SERVER_PDP_THREAD, "Not all servers acknowledge PDP info")
                 restart = true;
             }
         }
@@ -89,16 +90,22 @@ void DServerEvent::event(EventCode code, const char* msg)
                 mp_PDP->match_all_clients_EDP_endpoints();
                 // Whenever new clients appear restart_timer()
                 // see PDPServer::queueParticipantForEDPMatch
+
+                logInfo(SERVER_PDP_THREAD, "Client PDP points matched")
             }
             else
             {   // keep trying the match
                 restart = true;  
+
+                logInfo(SERVER_PDP_THREAD, "Not all clients acknowledge PDP info")
             }
         }  
 
         if (mp_PDP->pendingHistoryCleaning())
         {
             restart |= !mp_PDP->trimWriterHistory();
+
+            logInfo(SERVER_PDP_THREAD, "trimming PDP history from removed endpoints")
         }
 
         if (restart)
@@ -109,11 +116,11 @@ void DServerEvent::event(EventCode code, const char* msg)
     }
     else if(code == EVENT_ABORT)
     {
-        logInfo(RTPS_PDP,"DServerEvent aborted");
+        logInfo(SERVER_PDP_THREAD,"DServerEvent aborted");
     }
     else
     {
-        logInfo(RTPS_PDP,"message: " <<msg);
+        logInfo(SERVER_PDP_THREAD,"message: " <<msg);
     }
 }
 
