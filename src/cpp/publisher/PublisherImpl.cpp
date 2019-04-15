@@ -208,7 +208,9 @@ bool PublisherImpl::create_new_change_with_params(
 
             if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
             {
-                if (!m_history.set_next_deadline(ch->instanceHandle, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                if (!m_history.set_next_deadline(
+                            ch->instanceHandle,
+                            steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
                 {
                     logError(PUBLISHER, "Could not set the next deadline in the history");
                 }
@@ -334,7 +336,8 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
 
         if (m_att.qos.m_deadline.period != c_TimeInfinite)
         {
-            deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+            deadline_duration_us_ =
+                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
             deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
         }
         else
@@ -346,7 +349,8 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
 
         if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
         {
-            lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+            lifespan_duration_us_ =
+                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
             lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
         }
         else
@@ -414,7 +418,9 @@ void PublisherImpl::deadline_missed()
     mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
-    if (!m_history.set_next_deadline(timer_owner_, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+    if (!m_history.set_next_deadline(
+                timer_owner_,
+                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
         logError(PUBLISHER, "Could not set the next deadline in the history");
         return;

@@ -324,7 +324,8 @@ bool PublisherHistory::get_next_deadline(
                                     keyed_changes_.end(),
                                     [](
                                     const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs){ return lhs.second.next_deadline_us < rhs.second.next_deadline_us;});
+                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
+        { return lhs.second.next_deadline_us < rhs.second.next_deadline_us; });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;

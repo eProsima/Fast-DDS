@@ -140,7 +140,9 @@ class PubSubWriter
 
             ~Listener(){};
 
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info) override
+            void onPublicationMatched(
+                    eprosima::fastrtps::Publisher* /*pub*/,
+                    eprosima::fastrtps::rtps::MatchingInfo &info) override
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {
@@ -400,7 +402,10 @@ class PubSubWriter
 
     PubSubWriter& key(bool keyed)
     {
-        publisher_attr_.topic.topicKind = keyed ? eprosima::fastrtps::TopicKind_t::WITH_KEY : eprosima::fastrtps::TopicKind_t::NO_KEY;
+        publisher_attr_.topic.topicKind =
+                keyed ?
+                    eprosima::fastrtps::TopicKind_t::WITH_KEY :
+                    eprosima::fastrtps::TopicKind_t::NO_KEY;
         return *this;
     }
 

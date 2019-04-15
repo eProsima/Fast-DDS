@@ -186,7 +186,8 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
 
         if (m_att.qos.m_deadline.period != c_TimeInfinite)
         {
-            deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+            deadline_duration_us_ =
+                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
             deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
         }
         else
@@ -198,7 +199,8 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
 
         if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
         {
-            lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+            lifespan_duration_us_ =
+                    std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
             lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
         }
         else
@@ -236,7 +238,9 @@ bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
     {
         std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
-        if (!m_history.set_next_deadline(change_in->instanceHandle, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+        if (!m_history.set_next_deadline(
+                    change_in->instanceHandle,
+                    steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
         {
             logError(SUBSCRIBER, "Could not set next deadline in the history");
         }
@@ -336,7 +340,9 @@ void SubscriberImpl::deadline_missed()
     mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
-    if (!m_history.set_next_deadline(timer_owner_, steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+    if (!m_history.set_next_deadline(
+                timer_owner_,
+                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
         logError(SUBSCRIBER, "Could not set next deadline in the history");
         return;

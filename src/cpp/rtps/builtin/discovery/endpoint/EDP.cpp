@@ -535,7 +535,9 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     }
     if(rdata->m_qos.m_deadline.period < wdata->m_qos.m_deadline.period)
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " << wdata->guid() << "has smaller DEADLINE period");
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "
+                   << wdata->topicName() << "):RemoteWriter "
+                   << wdata->guid() << "has smaller DEADLINE period");
         return false;
     }
 
