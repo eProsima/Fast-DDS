@@ -763,7 +763,7 @@ public:
     int32_t allocated_samples;
 
     RTPS_DllAPI ResourceLimitsQosPolicy() :Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4), QosPolicy(false),
-        max_samples(5000), max_instances(10), max_samples_per_instance(400), allocated_samples(100) 
+        max_samples(5000), max_instances(10), max_samples_per_instance(400), allocated_samples(100)
     { }
 
     virtual RTPS_DllAPI ~ResourceLimitsQosPolicy() { }
@@ -870,7 +870,7 @@ public:
  * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
  * value: Default value 0.
  */
-class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy 
+class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -1046,9 +1046,9 @@ class TypeIdV1 : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
-    TypeIdentifier m_type_identifier;
+    types::TypeIdentifier m_type_identifier;
 
-    RTPS_DllAPI TypeIdV1() 
+    RTPS_DllAPI TypeIdV1()
             : Parameter_t(PID_TYPE_IDV1, 0)
             , QosPolicy(false)
             , m_type_identifier()
@@ -1111,9 +1111,9 @@ class TypeObjectV1 : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
-    TypeObject m_type_object;
+    types::TypeObject m_type_object;
 
-    RTPS_DllAPI TypeObjectV1() 
+    RTPS_DllAPI TypeObjectV1()
             : Parameter_t(PID_TYPE_OBJECTV1, 0)
             , QosPolicy(false)
             , m_type_object()

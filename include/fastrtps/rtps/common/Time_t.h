@@ -80,6 +80,16 @@ struct RTPS_DllAPI Time_t
     {
         return static_cast<uint32_t>(nanosec * rtps::NANO_TO_FRACTION);
     }
+
+    /**
+     *  Returns stored time as nanoseconds (including seconds)
+     */
+    int64_t to_ns() const
+    {
+        int64_t nano = seconds * 1000000000ULL;
+        nano += nanosec;
+        return nano;
+    }
 };
 
 typedef Time_t Duration_t;

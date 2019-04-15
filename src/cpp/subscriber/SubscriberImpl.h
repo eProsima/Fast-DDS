@@ -81,7 +81,7 @@ public:
 	bool takeNextData(void* data,SampleInfo_t* info);
 
 	///@}
-	
+
 	/**
 	 * Update the Attributes of the subscriber;
 	 * @param att Reference to a SubscriberAttributes object to update the parameters;

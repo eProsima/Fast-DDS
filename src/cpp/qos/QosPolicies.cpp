@@ -263,7 +263,7 @@ bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
+    size_t size = types::TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -311,7 +311,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
 bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeObject::getCdrSerializedSize(m_type_object) + 4;
+    size_t size = types::TypeObject::getCdrSerializedSize(m_type_object) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 

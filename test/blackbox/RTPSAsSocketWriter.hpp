@@ -141,7 +141,7 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
 
         bool wait_for_all_acked(const std::chrono::seconds& seconds)
         {
-            eprosima::fastrtps::rtps::Duration_t max_time(int32_t(seconds.count()), 0);
+            eprosima::fastrtps::Duration_t max_time(int32_t(seconds.count()), 0);
             return writer_->wait_for_all_acked(max_time);
         }
 

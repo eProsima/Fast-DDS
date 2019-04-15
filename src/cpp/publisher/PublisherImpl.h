@@ -127,7 +127,7 @@ class PublisherImpl
      */
     TopicDataType* getType() {return mp_type;};
 
-    bool wait_for_all_acked(const rtps::Time_t& max_wait);
+    bool wait_for_all_acked(const Time_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status

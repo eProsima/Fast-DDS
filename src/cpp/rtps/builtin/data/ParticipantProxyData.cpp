@@ -285,7 +285,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             {
                 const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
                 assert(p != nullptr);
-                this->m_leaseDuration = p->time;
+                this->m_leaseDuration = p->time.to_duration_t();
                 break;
             }
             case PID_BUILTIN_ENDPOINT_SET:
@@ -341,7 +341,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             case PID_PARTICIPANT_SECURITY_INFO:
             {
 #if HAVE_SECURITY
-                const ParameterParticipantSecurityInfo_t* p = 
+                const ParameterParticipantSecurityInfo_t* p =
                     dynamic_cast<const ParameterParticipantSecurityInfo_t*>(param);
                 assert(p != nullptr);
                 this->security_attributes_ = p->security_attributes;

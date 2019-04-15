@@ -44,6 +44,7 @@
 #include <mutex>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps{

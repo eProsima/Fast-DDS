@@ -331,7 +331,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DeadlineQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.period.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.period.fraction);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.period.fraction(frac);
                     IF_VALID_CALL
                 }
                 case PID_LATENCY_BUDGET:
@@ -342,7 +344,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     LatencyBudgetQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.duration.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.duration.fraction);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.duration.fraction(frac);
                     IF_VALID_CALL
                 }
                 case PID_LIVELINESS:
@@ -355,7 +359,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
                     msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.lease_duration.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.lease_duration.fraction);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.lease_duration.fraction(frac);
                     IF_VALID_CALL
                 }
                 case PID_OWNERSHIP:
@@ -379,7 +385,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
                     msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.max_blocking_time.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.max_blocking_time.fraction);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.max_blocking_time.fraction(frac);
                     IF_VALID_CALL
                 }
                 case PID_DESTINATION_ORDER:
@@ -434,7 +442,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     TimeBasedFilterQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.minimum_separation.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.minimum_separation.fraction);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.minimum_separation.fraction(frac);
                     IF_VALID_CALL
                 }
                 case PID_PRESENTATION:
@@ -522,7 +532,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DurabilityServiceQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.service_cleanup_delay.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.service_cleanup_delay.fraction);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.service_cleanup_delay.fraction(frac);
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.history_kind); msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.history_depth);
                     valid &= CDRMessage::readInt32(&msg, &p.max_samples);
@@ -538,7 +550,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     LifespanQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.duration.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.duration.fraction);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.duration.fraction(frac);
                     IF_VALID_CALL
                 }
                 case PID_OWNERSHIP_STRENGTH:
@@ -601,8 +615,12 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     ParameterTime_t p(PID_PARTICIPANT_LEASE_DURATION, plength);
-                    valid &= CDRMessage::readInt32(&msg, &p.time.seconds);
-                    valid &= CDRMessage::readUInt32(&msg, &p.time.fraction);
+                    int32_t sec;
+                    valid &= CDRMessage::readInt32(&msg, &sec);
+                    p.time.seconds(sec);
+                    uint32_t frac;
+                    valid &= CDRMessage::readUInt32(&msg, &frac);
+                    p.time.fraction(frac);
                     IF_VALID_CALL
                 }
                 case PID_CONTENT_FILTER_PROPERTY:
