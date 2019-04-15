@@ -91,7 +91,7 @@ void DServerEvent::event(EventCode code, const char* msg)
                 // Whenever new clients appear restart_timer()
                 // see PDPServer::queueParticipantForEDPMatch
 
-                logInfo(SERVER_PDP_THREAD, "Client PDP points matched")
+                logInfo(SERVER_PDP_THREAD, "Client EDP points matched")
             }
             else
             {   // keep trying the match

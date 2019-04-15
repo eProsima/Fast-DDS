@@ -203,10 +203,13 @@ class PDPServer : public PDP
     //! Get filename for persistence database file
     std::string GetPersistenceFileName();
 
+    //! Wakes up the DServerEvent for new matching or trimming
+    void awakeServerThread() { mp_sync->restart_timer(); }
+
     private:
 
      /**
-     *! Callback to remove unnecesary WriterHistory info from PDP alone
+     * Callback to remove unnecesary WriterHistory info from PDP alone
      * @return True if trimming is completed
      */
      bool trimPDPWriterHistory();

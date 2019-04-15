@@ -292,8 +292,12 @@ void EDPServer::removePublisherFromHistory(const InstanceHandle_t & key)
     std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
 
     _PUBdemises.insert(key);
-    trimPUBWriterHistory();
-
+    if ( !trimPUBWriterHistory() )
+    {
+        PDPServer * pS = dynamic_cast<PDPServer*>(mp_PDP);
+        assert(pS); // EDPServer should always be associated with a PDPServer
+        pS->awakeServerThread();
+    }
 }
 
 void EDPServer::removeSubscriberFromHistory(const InstanceHandle_t & key)
@@ -301,7 +305,13 @@ void EDPServer::removeSubscriberFromHistory(const InstanceHandle_t & key)
     std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
 
     _SUBdemises.insert(key);
-    trimSUBWriterHistory();
+
+    if (!trimSUBWriterHistory())
+    {
+        PDPServer * pS = dynamic_cast<PDPServer*>(mp_PDP);
+        assert(pS); // EDPServer should always be associated with a PDPServer
+        pS->awakeServerThread();
+    }
 }
 
 bool EDPServer::removeLocalReader(RTPSReader* R)
