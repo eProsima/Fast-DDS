@@ -54,7 +54,7 @@ void DServerEvent::event(EventCode code, const char* msg)
 
     if(code == EVENT_SUCCESS)
     {
-        logInfo(SERVER_PDP_THREAD,"DServerEvent Period");
+        logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
         std::lock_guard<std::recursive_mutex> lock(*mp_PDP->getMutex());
         bool restart = false;
@@ -71,7 +71,7 @@ void DServerEvent::event(EventCode code, const char* msg)
             }
             else
             {
-                logInfo(SERVER_PDP_THREAD, "Not all servers acknowledge PDP info")
+                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all servers acknowledge PDP info")
                 restart = true;
             }
         }
@@ -91,13 +91,13 @@ void DServerEvent::event(EventCode code, const char* msg)
                 // Whenever new clients appear restart_timer()
                 // see PDPServer::queueParticipantForEDPMatch
 
-                logInfo(SERVER_PDP_THREAD, "Client EDP points matched")
+                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " clients EDP points matched")
             }
             else
             {   // keep trying the match
                 restart = true;  
 
-                logInfo(SERVER_PDP_THREAD, "Not all clients acknowledge PDP info")
+                logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " not all clients acknowledge PDP info")
             }
         }  
 
