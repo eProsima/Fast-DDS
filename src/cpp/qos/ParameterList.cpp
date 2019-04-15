@@ -331,7 +331,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DeadlineQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.period.seconds);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.period.fraction(frac);
                     IF_VALID_CALL
@@ -344,7 +344,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     LatencyBudgetQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.duration.seconds);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.duration.fraction(frac);
                     IF_VALID_CALL
@@ -359,7 +359,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
                     msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.lease_duration.seconds);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.lease_duration.fraction(frac);
                     IF_VALID_CALL
@@ -385,7 +385,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
                     msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.max_blocking_time.seconds);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.max_blocking_time.fraction(frac);
                     IF_VALID_CALL
@@ -442,7 +442,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     TimeBasedFilterQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.minimum_separation.seconds);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.minimum_separation.fraction(frac);
                     IF_VALID_CALL
@@ -532,7 +532,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DurabilityServiceQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.service_cleanup_delay.seconds);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.service_cleanup_delay.fraction(frac);
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.history_kind); msg.pos += 3;
@@ -550,7 +550,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     LifespanQosPolicy p;
                     valid &= CDRMessage::readInt32(&msg, &p.duration.seconds);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.duration.fraction(frac);
                     IF_VALID_CALL
@@ -615,10 +615,10 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     ParameterTime_t p(PID_PARTICIPANT_LEASE_DURATION, plength);
-                    int32_t sec;
+                    int32_t sec(0);
                     valid &= CDRMessage::readInt32(&msg, &sec);
                     p.time.seconds(sec);
-                    uint32_t frac;
+                    uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.time.fraction(frac);
                     IF_VALID_CALL

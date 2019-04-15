@@ -69,7 +69,7 @@ bool Publisher::removeAllChange(size_t* removed )
     return mp_impl->removeAllChange(removed);
 }
 
-bool Publisher::wait_for_all_acked(const Time_t& max_wait)
+bool Publisher::wait_for_all_acked(const fastrtps::Time_t& max_wait)
 {
     logInfo(PUBLISHER,"Waiting for all samples acknowledged");
     return mp_impl->wait_for_all_acked(max_wait);

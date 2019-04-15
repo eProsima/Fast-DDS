@@ -195,7 +195,7 @@ inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, rtps::Time_t* ts)
 {
     bool valid = true;
     valid &= CDRMessage::readInt32(msg, &ts->seconds());
-    uint32_t frac;
+    uint32_t frac(0);
     valid &= CDRMessage::readUInt32(msg, &frac);
     ts->fraction(frac);
     return valid;
@@ -559,7 +559,7 @@ inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
 }
 
 inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
-        FragmentNumberSet_t* fns) 
+        FragmentNumberSet_t* fns)
 {
     FragmentNumber_t base = fns->base();
     if (base == 0)

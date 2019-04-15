@@ -159,7 +159,7 @@ void TimedEventImpl::restart_timer()
     }
 }
 
-bool TimedEventImpl::update_interval(const Duration_t& inter)
+bool TimedEventImpl::update_interval(const fastrtps::Duration_t& inter)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 	m_interval_microsec = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
