@@ -20,6 +20,7 @@
 #define SUBLISTENER_H_
 
 #include "../fastrtps_dll.h"
+#include "../qos/DeadlineMissedStatus.h"
 #include "../qos/LivelinessChangedStatus.h"
 
 namespace eprosima {
@@ -40,9 +41,9 @@ class RTPS_DllAPI SubscriberListener
 {
     public:
 
-        SubscriberListener(){};
+        SubscriberListener(){}
 
-        virtual ~SubscriberListener(){};
+        virtual ~SubscriberListener(){}
 
         /**
          * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
@@ -67,6 +68,19 @@ class RTPS_DllAPI SubscriberListener
         }
 
         /**
+         * Virtual method to be called when a topic misses the deadline period
+         * @param sub Subscriber
+         * @param status The requested deadline missed status
+         */
+        virtual void on_requested_deadline_missed(
+                Subscriber* sub,
+                const RequestedDeadlineMissedStatus& status)
+        {
+            (void)sub;
+            (void)status;
+        }
+
+        /**
          * @brief Method called when the liveliness status associated to a subscriber changes
          * @param sub The subscriber
          * @param status The liveliness changed status
@@ -78,6 +92,7 @@ class RTPS_DllAPI SubscriberListener
             (void)sub;
             (void)status;
         }
+
 };
 
 } /* namespace fastrtps */

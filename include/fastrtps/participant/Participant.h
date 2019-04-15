@@ -86,6 +86,7 @@ class RTPS_DllAPI Participant
     bool get_remote_writer_info(const rtps::GUID_t& writerGuid, rtps::WriterProxyData& returnedInfo);
 
     bool get_remote_reader_info(const rtps::GUID_t& readerGuid, rtps::ReaderProxyData& returnedInfo);
+
 };
 
 }

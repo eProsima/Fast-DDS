@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/rtps/timedevent//TimedCallback.h>
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {
@@ -25,7 +25,7 @@ namespace fastrtps{
 namespace rtps {
 
 TimedCallback::TimedCallback(
-        std::function<void()> callback,
+        const std::function<void()>& callback,
         double milliseconds,
         asio::io_service &service,
         const std::thread &event_thread)

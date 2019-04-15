@@ -22,6 +22,7 @@
 
 #include "../rtps/common/Guid.h"
 #include "../attributes/SubscriberAttributes.h"
+#include "../qos/DeadlineMissedStatus.h"
 #include "../qos/LivelinessChangedStatus.h"
 
 namespace eprosima {
@@ -99,6 +100,12 @@ public:
      * @return Unread count
      */
     uint64_t getUnreadCount() const;
+
+    /**
+     * @brief Get the requested deadline missed status
+     * @return The deadline missed status
+     */
+    void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
 
     /**
      * @brief Returns the liveliness changed status

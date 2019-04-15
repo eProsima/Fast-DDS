@@ -24,6 +24,7 @@
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"
 #include "../attributes/PublisherAttributes.h"
+#include "../qos/DeadlineMissedStatus.h"
 #include "../qos/LivelinessLostStatus.h"
 
 namespace eprosima {
@@ -34,8 +35,6 @@ namespace rtps
 struct GUID_t;
 class WriteParams;
 }
-
-
 
 class PublisherImpl;
 
@@ -117,6 +116,12 @@ public:
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
      */
     bool updateAttributes(const PublisherAttributes& att);
+
+    /**
+     * @brief Returns the offered deadline missed status
+     * @param Deadline missed status struct
+     */
+    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
 
     /**
      * @brief Asserts liveliness

@@ -101,6 +101,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
+	    types/KeyedHelloWorld.cpp
+	    types/KeyedHelloWorldType.cpp
             types/String.cpp
             types/StringType.cpp
             types/Data64kb.cpp

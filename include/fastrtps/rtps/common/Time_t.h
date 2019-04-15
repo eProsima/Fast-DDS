@@ -61,7 +61,7 @@ struct RTPS_DllAPI Time_t
     /**
      *  Returns stored time as nanoseconds
      */
-    inline int64_t to_ns()
+    inline int64_t to_ns() const
     {
         int64_t nano = seconds * 1000000000ULL;
         nano += (fraction  * 1000000000ULL) / 4294967296ULL; // 1 fraction = 1/(2^32) seconds

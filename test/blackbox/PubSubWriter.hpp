@@ -41,6 +41,7 @@
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+#include <thread>
 
 using eprosima::fastrtps::rtps::IPLocator;
 using eprosima::fastrtps::UDPv4TransportDescriptor;
@@ -132,11 +133,16 @@ class PubSubWriter
     {
         public:
 
-            Listener(PubSubWriter &writer) : writer_(writer){};
+            Listener(PubSubWriter &writer)
+                : writer_(writer)
+                , times_deadline_missed_(0)
+            {};
 
             ~Listener(){};
 
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
+            void onPublicationMatched(
+                    eprosima::fastrtps::Publisher* /*pub*/,
+                    eprosima::fastrtps::rtps::MatchingInfo &info) override
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {
@@ -150,11 +156,26 @@ class PubSubWriter
                 }
             }
 
+            void on_offered_deadline_missed(
+                    eprosima::fastrtps::Publisher* pub,
+                    const eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
+            {
+                (void)pub;
+                times_deadline_missed_ = status.total_count;
+            }
+
+            unsigned int missed_deadlines() const
+            {
+                return times_deadline_missed_;
+            }
+
         private:
 
             Listener& operator=(const Listener&) = delete;
 
             PubSubWriter &writer_;
+
+            unsigned int times_deadline_missed_;
 
     } listener_;
 
@@ -163,9 +184,16 @@ class PubSubWriter
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-    PubSubWriter(const std::string &topic_name) : participant_listener_(*this), listener_(*this),
-    participant_(nullptr), publisher_(nullptr), initialized_(false), matched_(0),
-    participant_matched_(0), discovery_result_(false), onDiscovery_(nullptr)
+    PubSubWriter(const std::string &topic_name)
+        : participant_listener_(*this)
+        , listener_(*this)
+        , participant_(nullptr)
+        , publisher_(nullptr)
+        , initialized_(false)
+        , matched_(0)
+        , participant_matched_(0)
+        , discovery_result_(false)
+        , onDiscovery_(nullptr)
 #if HAVE_SECURITY
     , authorized_(0), unauthorized_(0)
 #endif
@@ -366,6 +394,21 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& deadline_period(const eprosima::fastrtps::rtps::Duration_t deadline_period)
+    {
+        publisher_attr_.qos.m_deadline.period = deadline_period;
+        return *this;
+    }
+
+    PubSubWriter& key(bool keyed)
+    {
+        publisher_attr_.topic.topicKind =
+                keyed ?
+                    eprosima::fastrtps::TopicKind_t::WITH_KEY :
+                    eprosima::fastrtps::TopicKind_t::NO_KEY;
+        return *this;
+    }
+
     PubSubWriter& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
     {
         publisher_attr_.qos.m_lifespan.duration = lifespan_period;
@@ -401,6 +444,12 @@ class PubSubWriter
     PubSubWriter& history_depth(const int32_t depth)
     {
         publisher_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
+
+    PubSubWriter& topic_kind(const eprosima::fastrtps::rtps::TopicKind_t kind)
+    {
+        publisher_attr_.topic.topicKind = kind;
         return *this;
     }
 
@@ -666,6 +715,11 @@ class PubSubWriter
     bool is_matched() const
     {
         return matched_ > 0;
+    }
+
+    unsigned int missed_deadlines() const
+    {
+        return listener_.missed_deadlines();
     }
 
     private:

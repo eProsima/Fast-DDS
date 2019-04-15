@@ -24,6 +24,11 @@ const std::function<void(const FixedSized&)>  default_fixed_sized_print = [](con
     std::cout << hello.index() << " ";
 };
 
+const std::function<void(const KeyedHelloWorld&)>  default_keyedhelloworld_print = [](const KeyedHelloWorld& hello)
+{
+    std::cout << hello.message() << " " << hello.key();
+};
+
 const std::function<void(const String&)> default_string_print = [](const String& str)
 {
     std::cout << str.message()[str.message().size() - 2]

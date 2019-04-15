@@ -64,6 +64,11 @@ uint64_t Subscriber::getUnreadCount() const
 	return mp_impl->getUnreadCount();
 }
 
+void Subscriber::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
+{
+    mp_impl->get_requested_deadline_missed_status(status);
+}
+
 void Subscriber::get_liveliness_changed_status(LivelinessChangedStatus &status)
 {
     (void)status;

@@ -40,10 +40,16 @@ publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())
 while True:
     line = publisher_proc.stdout.readline()
     if line.strip().decode('utf-8') == 'Subscriber matched':
+        print("Subscriber matched.")
         break
 
 subscriber_proc.kill()
 publisher_proc.communicate()
 retvalue = publisher_proc.returncode
+
+if retvalue != 0:
+    print("Test failed: " + str(retvalue))
+else:
+    print("Test successed")
 
 sys.exit(retvalue)

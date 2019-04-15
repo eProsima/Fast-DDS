@@ -44,22 +44,30 @@ const ParticipantAttributes& Participant::getAttributes() const
     return mp_impl->getAttributes();
 }
 
-bool Participant::newRemoteEndpointDiscovered(const GUID_t& partguid, uint16_t endpointId,
+bool Participant::newRemoteEndpointDiscovered(
+        const GUID_t& partguid,
+        uint16_t endpointId,
         EndpointKind_t kind)
 {
     return mp_impl->newRemoteEndpointDiscovered(partguid, endpointId, kind);
 }
 
-std::vector<std::string> Participant::getParticipantNames() const {
+std::vector<std::string> Participant::getParticipantNames() const
+{
     return mp_impl->getParticipantNames();
 }
 
-bool Participant::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
+bool Participant::get_remote_writer_info(
+        const GUID_t& writerGuid,
+        WriterProxyData& returnedInfo)
 {
     return mp_impl->get_remote_writer_info(writerGuid, returnedInfo);
 }
 
-bool Participant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
+bool Participant::get_remote_reader_info(
+        const GUID_t& readerGuid,
+        ReaderProxyData& returnedInfo)
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
+

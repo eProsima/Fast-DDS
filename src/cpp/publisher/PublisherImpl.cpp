@@ -31,10 +31,14 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+
+#include <functional>
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
+using namespace std::chrono;
 
 using namespace std::chrono;
 
@@ -61,6 +65,13 @@ PublisherImpl::PublisherImpl(
     , mp_userPublisher(nullptr)
     , mp_rtpsParticipant(nullptr)
     , high_mark_for_frag_(0)
+    , deadline_timer_(std::bind(&PublisherImpl::deadline_missed, this),
+                      att.qos.m_deadline.period.to_ns() * 1e-6,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
+    , timer_owner_()
+    , deadline_missed_status_()
     , lifespan_timer_(std::bind(&PublisherImpl::lifespan_expired, this),
                       m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
                       mp_participant->get_resource_event().getIOService(),
@@ -195,6 +206,23 @@ bool PublisherImpl::create_new_change_with_params(
                 return false;
             }
 
+            if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
+            {
+                if (!m_history.set_next_deadline(
+                            ch->instanceHandle,
+                            steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                {
+                    logError(PUBLISHER, "Could not set the next deadline in the history");
+                }
+                else
+                {
+                    if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
+                    {
+                        deadline_timer_reschedule();
+                    }
+                }
+            }
+
             if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
             {
                 lifespan_timer_.restart_timer();
@@ -298,21 +326,37 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
             StatefulWriter* sfw = (StatefulWriter*)mp_writer;
             sfw->updateTimes(att.times);
         }
+
         this->m_att.qos.setQos(att.qos,false);
         this->m_att = att;
         //Notify the participant that a Writer has changed its QOS
         mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
-    }
 
-    // Update lifespan period
-    if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
-    {
-        lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
-        lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
-    }
-    else
-    {
-        lifespan_timer_.cancel_timer();
+        // Deadline
+
+        if (m_att.qos.m_deadline.period != c_TimeInfinite)
+        {
+            deadline_duration_us_ =
+                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+            deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
+        }
+        else
+        {
+            deadline_timer_.cancel_timer();
+        }
+
+        // Lifespan
+
+        if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
+        {
+            lifespan_duration_us_ =
+                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+            lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+        }
+        else
+        {
+            lifespan_timer_.cancel_timer();
+        }
     }
 
     return updated;
@@ -341,6 +385,55 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
 bool PublisherImpl::wait_for_all_acked(const Time_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
+}
+
+void PublisherImpl::deadline_timer_reschedule()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+
+    steady_clock::time_point next_deadline_us;
+    if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
+    {
+        logError(PUBLISHER, "Could not get the next deadline from the history");
+        return;
+    }
+    auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
+
+    deadline_timer_.cancel_timer();
+    deadline_timer_.update_interval_millisec((double)interval_ms.count());
+    deadline_timer_.restart_timer();
+}
+
+void PublisherImpl::deadline_missed()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+
+    deadline_missed_status_.total_count++;
+    deadline_missed_status_.total_count_change++;
+    deadline_missed_status_.last_instance_handle = timer_owner_;
+    mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
+    deadline_missed_status_.total_count_change = 0;
+
+    if (!m_history.set_next_deadline(
+                timer_owner_,
+                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+    {
+        logError(PUBLISHER, "Could not set the next deadline in the history");
+        return;
+    }
+    deadline_timer_reschedule();
+}
+
+void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+
+    status = deadline_missed_status_;
+    deadline_missed_status_.total_count_change = 0;
 }
 
 void PublisherImpl::lifespan_expired()

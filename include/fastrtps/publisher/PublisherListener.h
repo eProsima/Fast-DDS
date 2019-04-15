@@ -21,6 +21,7 @@
 
 #include "../rtps/common/Types.h"
 #include "../rtps/common/MatchingInfo.h"
+#include "../qos/DeadlineMissedStatus.h"
 #include "../qos/LivelinessLostStatus.h"
 
 namespace eprosima {
@@ -36,20 +37,33 @@ class Publisher;
 class RTPS_DllAPI PublisherListener
 {
 public:
-    PublisherListener(){};
-    virtual ~PublisherListener(){};
+    PublisherListener(){}
+    virtual ~PublisherListener(){}
 
-    /**
-     * This method is called when the Publisher is matched (or unmatched) against an endpoint.
-     * @param pub Pointer to the associated Publisher
-     * @param info Information regarding the matched subscriber
-     */
+	/**
+	 * This method is called when the Publisher is matched (or unmatched) against an endpoint.
+	 * @param pub Pointer to the associated Publisher
+	 * @param info Information regarding the matched subscriber
+	 */
     virtual void onPublicationMatched(
             Publisher* pub,
             rtps::MatchingInfo& info)
     {
         (void)pub;
         (void)info;
+    }
+
+    /**
+     * A method called when a deadline is missed
+     * @param pub Pointer to the associated Publisher
+     * @param status The deadline missed status
+     */
+    virtual void on_offered_deadline_missed(
+            Publisher* pub,
+            const OfferedDeadlineMissedStatus& status)
+    {
+        (void)pub;
+        (void)status;
     }
 
     /**

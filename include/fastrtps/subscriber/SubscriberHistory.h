@@ -24,9 +24,8 @@
 #include <fastrtps/rtps/resources/ResourceManagement.h>
 #include "../rtps/history/ReaderHistory.h"
 #include "../qos/QosPolicies.h"
+#include "../common/KeyedChanges.h"
 #include "SampleInfo.h"
-
-
 
 namespace eprosima {
 namespace fastrtps {
@@ -34,7 +33,6 @@ namespace fastrtps {
 namespace rtps{
 class WriterProxy;
 }
-
 
 class SubscriberImpl;
 
@@ -45,9 +43,6 @@ class SubscriberImpl;
 class SubscriberHistory: public rtps::ReaderHistory
 {
     public:
-
-        typedef std::pair<rtps::InstanceHandle_t,std::vector<rtps::CacheChange_t*>> t_p_I_Change;
-        typedef std::vector<t_p_I_Change> t_v_Inst_Caches;
 
         /**
          * Constructor. Requires information about the subscriner
@@ -94,10 +89,9 @@ class SubscriberHistory: public rtps::ReaderHistory
         /**
          * This method is called to remove a change from the SubscriberHistory.
          * @param change Pointer to the CacheChange_t.
-         * @param vit Pointer to the iterator of the key-ordered cacheChange vector.
          * @return True if removed.
          */
-        bool remove_change_sub(rtps::CacheChange_t* change,t_v_Inst_Caches::iterator* vit=nullptr);
+        bool remove_change_sub(rtps::CacheChange_t* change);
 
         //!Increase the unread count.
         inline void increaseUnreadCount()
@@ -120,12 +114,36 @@ class SubscriberHistory: public rtps::ReaderHistory
             return m_unreadCacheCount;
         }
 
+        /**
+         * @brief A method to set the next deadline for the given instance
+         * @param handle The handle to the instance
+         * @param next_deadline_us The time point when the deadline will occur
+         * @return True if the deadline was set correctly
+         */
+        bool set_next_deadline(
+                const InstanceHandle_t& handle,
+                const std::chrono::steady_clock::time_point& next_deadline_us);
+
+        /**
+         * @brief A method to get the next instance handle that will miss the deadline and the time when the deadline will occur
+         * @param handle The handle to the instance
+         * @param next_deadline_us The time point when the instance will miss the deadline
+         * @return True if the deadline was retrieved successfully
+         */
+        bool get_next_deadline(
+                InstanceHandle_t& handle,
+                std::chrono::steady_clock::time_point& next_deadline_us);
+
     private:
+
+        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
 
         //!Number of unread CacheChange_t.
         uint64_t m_unreadCacheCount;
-        //!Vector of pointer to the CacheChange_t divided by key.
-        t_v_Inst_Caches m_keyedChanges;
+        //!Map where keys are instance handles and values vectors of cache changes
+        t_m_Inst_Caches keyed_changes_;
+        //!Time point when the next deadline will occur (only used for topics with no key)
+        std::chrono::steady_clock::time_point next_deadline_us_;
         //!HistoryQosPolicy values.
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
@@ -136,8 +154,15 @@ class SubscriberHistory: public rtps::ReaderHistory
         //!Type object to deserialize Key
         void * mp_getKeyObject;
 
-
-        bool find_Key(rtps::CacheChange_t* a_change,t_v_Inst_Caches::iterator* vecPairIterrator);
+        /**
+         * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
+         * @param a_change The change to get the key from
+         * @param map_it A map iterator to the given key
+         * @return True if it was found or could be added to the map
+         */
+        bool find_key(
+                rtps::CacheChange_t* a_change,
+                t_m_Inst_Caches::iterator* map_it);
 };
 
 } /* namespace fastrtps */

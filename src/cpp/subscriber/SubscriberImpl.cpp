@@ -18,6 +18,7 @@
  */
 
 #include "SubscriberImpl.h"
+#include "../participant/ParticipantImpl.h"
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
@@ -26,7 +27,7 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include "../participant/ParticipantImpl.h"
+//#include "../participant/ParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
@@ -52,13 +53,18 @@ SubscriberImpl::SubscriberImpl(
     , m_readerListener(this)
     , mp_userSubscriber(nullptr)
     , mp_rtpsParticipant(nullptr)
+    , deadline_timer_(std::bind(&SubscriberImpl::deadline_missed, this),
+                      att.qos.m_deadline.period.to_ns() * 1e-6,
+                      mp_participant->get_resource_event().getIOService(),
+                      mp_participant->get_resource_event().getThread())
+    , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
+    , deadline_missed_status_()
     , lifespan_timer_(std::bind(&SubscriberImpl::lifespan_expired, this),
                       m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
                       mp_participant->get_resource_event().getIOService(),
                       mp_participant->get_resource_event().getThread())
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
-
 }
 
 SubscriberImpl::~SubscriberImpl()
@@ -175,17 +181,32 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
         this->m_att.qos.setQos(att.qos,false);
         //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
         mp_rtpsParticipant->updateReader(this->mp_reader, m_att.topic, m_att.qos);
-    }
 
-    // Update lifespan
-    if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
-    {
-        lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
-        lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
-    }
-    else
-    {
-        lifespan_timer_.cancel_timer();
+        // Deadline
+
+        if (m_att.qos.m_deadline.period != c_TimeInfinite)
+        {
+            deadline_duration_us_ =
+                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+            deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
+        }
+        else
+        {
+            deadline_timer_.cancel_timer();
+        }
+
+        // Lifespan
+
+        if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
+        {
+            lifespan_duration_us_ =
+                    std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+            lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+        }
+        else
+        {
+            lifespan_timer_.cancel_timer();
+        }
     }
 
     return updated;
@@ -211,8 +232,24 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
-bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t * const change_in)
+bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
 {
+    if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
+    {
+        std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+
+        if (!m_history.set_next_deadline(
+                    change_in->instanceHandle,
+                    steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+        {
+            logError(SUBSCRIBER, "Could not set next deadline in the history");
+        }
+        else if (timer_owner_ == change_in->instanceHandle || timer_owner_ == InstanceHandle_t())
+        {
+            deadline_timer_reschedule();
+        }
+    }
+
     CacheChange_t* change = (CacheChange_t*)change_in;
 
     if (m_att.qos.m_lifespan.duration == c_TimeInfinite)
@@ -270,6 +307,56 @@ bool SubscriberImpl::isInCleanState() const
 uint64_t SubscriberImpl::getUnreadCount() const
 {
     return m_history.getUnreadCount();
+}
+
+void SubscriberImpl::deadline_timer_reschedule()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+
+    steady_clock::time_point next_deadline_us;
+    if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
+    {
+        logError(SUBSCRIBER, "Could not get the next deadline from the history");
+        return;
+    }
+    auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
+
+    deadline_timer_.cancel_timer();
+    deadline_timer_.update_interval_millisec((double)interval_ms.count());
+    deadline_timer_.restart_timer();
+}
+
+void SubscriberImpl::deadline_missed()
+{
+    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+
+    deadline_missed_status_.total_count++;
+    deadline_missed_status_.total_count_change++;
+    deadline_missed_status_.last_instance_handle = timer_owner_;
+    mp_listener->on_requested_deadline_missed(mp_userSubscriber, deadline_missed_status_);
+    deadline_missed_status_.total_count_change = 0;
+
+    if (!m_history.set_next_deadline(
+                timer_owner_,
+                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+    {
+        logError(SUBSCRIBER, "Could not set next deadline in the history");
+        return;
+    }
+    deadline_timer_reschedule();
+}
+
+
+void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+
+    status = deadline_missed_status_;
+    deadline_missed_status_.total_count_change = 0;
 }
 
 void SubscriberImpl::lifespan_expired()
