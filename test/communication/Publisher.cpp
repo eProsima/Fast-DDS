@@ -171,7 +171,7 @@ int main(int argc, char** argv)
 
     //CREATE THE PUBLISHER
     PublisherAttributes publisher_attributes;
-    Domain::getDefaultPublisherAttributes(publisher_attributes);
+    //Domain::getDefaultPublisherAttributes(publisher_attributes);
     publisher_attributes.topic.topicKind = NO_KEY;
     publisher_attributes.topic.topicDataType = type.getName();
     publisher_attributes.topic.topicName = topic.str();

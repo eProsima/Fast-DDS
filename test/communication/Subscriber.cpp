@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 
     //CREATE THE SUBSCRIBER
     SubscriberAttributes subscriber_attributes;
-    Domain::getDefaultSubscriberAttributes(subscriber_attributes);
+    //Domain::getDefaultSubscriberAttributes(subscriber_attributes);
     subscriber_attributes.topic.topicKind = NO_KEY;
     subscriber_attributes.topic.topicDataType = type.getName();
     subscriber_attributes.topic.topicName = topic.str();
