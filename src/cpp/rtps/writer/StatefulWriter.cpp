@@ -70,6 +70,7 @@ StatefulWriter::StatefulWriter(
     , disable_positive_acks_(att.disable_positive_acks)
     , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
     , ack_timer_(nullptr)
+    , last_sequence_number_()
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
     , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
     , m_controllers()
@@ -230,6 +231,11 @@ void StatefulWriter::unsent_change_added_to_history(
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, change);
                 }
+
+                if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
+                {
+                    last_sequence_number_ = change->sequenceNumber;
+                }
             }
             catch(const RTPSMessageGroup::timeout&)
             {
@@ -318,7 +324,13 @@ void StatefulWriter::send_any_unsent_changes()
                     // Specific destination message group
                     const std::vector<GUID_t>& guids = remoteReader->guid_as_vector();
                     const LocatorList_t& locators = remoteReader->remote_locators_shrinked();
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages, locators, guids);
+                    RTPSMessageGroup group(
+                                mp_RTPSParticipant,
+                                this,
+                                RTPSMessageGroup::WRITER,
+                                m_cdrmessages,
+                                locators,
+                                guids);
 
                     // Loop all changes
                     bool is_reliable = remoteReader->is_reliable();
@@ -327,7 +339,10 @@ void StatefulWriter::send_any_unsent_changes()
                         if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                         {
                             // As we checked we are not async, we know we cannot have fragments
-                            if (group.add_data(*(unsentChange->getChange()), guids, locators, 
+                            if (group.add_data(
+                                        *(unsentChange->getChange()),
+                                        guids,
+                                        locators,
                                         remoteReader->expects_inline_qos()))
                             {
                                 remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
@@ -532,8 +547,15 @@ void StatefulWriter::send_any_unsent_changes()
         {
             try
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
-                send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group, true);
+                RTPSMessageGroup group(
+                            mp_RTPSParticipant,
+                            this,
+                            RTPSMessageGroup::WRITER,
+                            m_cdrmessages);
+                send_heartbeat_nts_(all_remote_readers_,
+                                    mAllShrinkedLocatorList,
+                                    group,
+                                    disable_positive_acks_);
             }
             catch(const RTPSMessageGroup::timeout&)
             {
@@ -668,7 +690,11 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
                         guids);
 
             // Send initial heartbeat
-            send_heartbeat_nts_(guids, locatorsList, group, false);
+            send_heartbeat_nts_(
+                        guids,
+                        locatorsList,
+                        group,
+                        disable_positive_acks_);
 
             // Send Gap
             if(!not_relevant_changes.empty())
@@ -1001,7 +1027,11 @@ bool StatefulWriter::send_periodic_heartbeat()
                 {
                     RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
                         mAllShrinkedLocatorList, all_remote_readers_);
-                    send_heartbeat_nts_(all_remote_readers_, mAllShrinkedLocatorList, group, false);
+                    send_heartbeat_nts_(
+                                all_remote_readers_,
+                                mAllShrinkedLocatorList,
+                                group,
+                                disable_positive_acks_);
                 }
                 catch(const RTPSMessageGroup::timeout&)
                 {
@@ -1235,39 +1265,26 @@ void StatefulWriter::ack_timer_expired()
 {
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
-    CacheChange_t* earliest_change;
-    if (!mp_history->get_earliest_change(&earliest_change))
-    {
-        return;
-    }
 
-    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    auto now = system_clock::now();
-
-    // Check that the earliest change in the history has actually expired as
-    // the change that started the timer could have been removed from the history
-    if (now - source_timestamp < keep_duration_us_)
-    {
-        auto interval = source_timestamp - now + keep_duration_us_;
-        ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-        ack_timer_->restart_timer();
-        return;
-    }
-
-    // The earliest sample has 'expired' so mark it as acknowledged
+    // The timer has expired so the earliest non-acked change must have been acked
     for(const auto& remote_reader : matched_readers_)
     {
-        remote_reader->acked_changes_set(earliest_change->sequenceNumber);
+        remote_reader->acked_changes_set(last_sequence_number_);
     }
+    last_sequence_number_++;
 
-    // Set the timer for the next sample if there is one
-    if (!mp_history->get_earliest_change(&earliest_change))
+    // Get the next cache change from the history
+    CacheChange_t* change;
+    if (!mp_history->get_change(
+                last_sequence_number_,
+                getGuid(),
+                &change))
     {
         return;
     }
 
-    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    now = system_clock::now();
+    auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+    auto now = system_clock::now();
     auto interval = source_timestamp - now + keep_duration_us_;
 
     assert(interval.count() > 0);

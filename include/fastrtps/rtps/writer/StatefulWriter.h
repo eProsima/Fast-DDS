@@ -295,6 +295,8 @@ private:
     std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
     //! A timed event to mark samples as acknowledget (used only if disable positive ACKs QoS is enabled)
     TimedCallback* ack_timer_;
+    //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
+    SequenceNumber_t last_sequence_number_;
 
     const uint32_t sendBufferSize_;
 
