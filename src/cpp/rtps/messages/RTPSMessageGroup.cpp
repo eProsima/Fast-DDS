@@ -399,21 +399,10 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(const std::vector<GUID_t>& remote_r
     uint32_t from_buffer_position = submessage_msg_->pos;
 #endif
 
-    if (timestamp == Time_t())
+    if (!RTPSMessageCreator::addSubmessageInfoTS(submessage_msg_, timestamp, false))
     {
-        if(!RTPSMessageCreator::addSubmessageInfoTS_Now(submessage_msg_, false)) //Change here to add a INFO_TS for DATA.
-        {
-            logError(RTPS_WRITER, "Cannot add INFO_TS submsg to the CDRMessage. Buffer too small");
-            return false;
-        }
-    }
-    else
-    {
-        if (!RTPSMessageCreator::addSubmessageInfoTS(submessage_msg_, timestamp, false))
-        {
-            logError(RTPS_WRITER, "Cannot add INFO_TS submsg to the CDRMessage. Buffer too small");
-            return false;
-        }
+        logError(RTPS_WRITER, "Cannot add INFO_TS submsg to the CDRMessage. Buffer too small");
+        return false;
     }
 
 #if HAVE_SECURITY
