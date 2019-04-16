@@ -960,9 +960,32 @@ bool TCPTransportInterface::send(
         std::shared_ptr<TCPChannelResource>& channel,
         const Locator_t& remote_locator)
 {
-    if (channel->locator() != IPLocator::toPhysicalLocator(remote_locator) ||
-            send_buffer_size > configuration()->sendBufferSize)
+    bool locator_mismatch = false;
+
+    if (channel->locator() != IPLocator::toPhysicalLocator(remote_locator))
     {
+        locator_mismatch = true;
+    }
+
+    // Maybe is WAN?
+    if (locator_mismatch && IPLocator::hasWan(remote_locator))
+    {
+        Locator_t wan_locator;
+        wan_locator.kind = remote_locator.kind;
+        wan_locator.port = IPLocator::toPhysicalLocator(remote_locator).port;
+        IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(remote_locator)); // WAN to IP
+        //std::cout << "WANLocator: " << IPLocator::to_string(wan_locator) << std::endl;
+        if(channel->locator() == wan_locator)
+        {
+            locator_mismatch = false;
+        }
+    }
+
+    if (locator_mismatch || send_buffer_size > configuration()->sendBufferSize)
+    {
+        //std::cout << "ChannelLocator: " << IPLocator::to_string(channel->locator()) << std::endl;
+        //std::cout << "RemoteLocator: " << IPLocator::to_string(remote_locator) << std::endl;
+
         logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
             << " @ IP: " << IPLocator::toIPv4string(remote_locator));
         return false;
@@ -1258,8 +1281,6 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_unicast_port));
     }
 
-    // TODO: Add WAN address
-
     return true;
 }
 
@@ -1328,8 +1349,6 @@ bool TCPTransportInterface::fillUnicastLocator(
     {
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(well_known_port));
     }
-
-    // TODO: Add WAN address
 
     return true;
 }
