@@ -203,7 +203,29 @@ void Log::GetTimestamp(std::string &timestamp)
     localtime_s(&timeinfo, &now_c);
     stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
 #else
-    stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+   struct tm* timeinfo = localtime(&now_c);
+   stream << timeinfo->tm_year+1900 << "-";
+   if (timeinfo->tm_mon+1 < 10) {
+      stream << "0";
+   }
+   stream << timeinfo->tm_mon+1 << "-";
+   if (timeinfo->tm_mday < 10) {
+      stream << "0";
+   }
+   stream << timeinfo->tm_mday << " ";
+   if (timeinfo->tm_hour < 10) {
+      stream << "0";
+   }
+   stream << timeinfo->tm_hour << ":";
+   if (timeinfo->tm_min < 10) {
+      stream << "0";
+   }
+   stream << timeinfo->tm_min << ":";
+   if (timeinfo->tm_sec < 10) {
+      stream << "0";
+   }
+   stream << timeinfo->tm_sec << "\n";
+    // stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
 #endif
     timestamp = stream.str();
 }
