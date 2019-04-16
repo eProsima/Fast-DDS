@@ -189,7 +189,7 @@ class BuiltinAttributes{
             discoveryProtocol = PDPType_t::SIMPLE;
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
-            discoveryServer_client_syncperiod.fraction = 500 * 1000 * 1000; // 116 milliseconds
+            discoveryServer_client_syncperiod.fraction = 2000 * 1000 * 1000; // 852 milliseconds
             m_staticEndpointXMLFilename = "";
             domainId = 0;
             leaseDuration.seconds = 130;

@@ -63,7 +63,7 @@ namespace rtps {
 
 
 // Default configuration values for PDP reliable entities.
-const Duration_t pdp_heartbeat_period{ 0, 500 * 1000 * 1000 }; // 116 milliseconds
+const Duration_t pdp_heartbeat_period{ 0, 1500 * 1000 * 1000 }; // 348 milliseconds
 const Duration_t pdp_nack_response_delay{ 0, 400 * 1000 * 1000 }; // ~93 milliseconds
 const Duration_t pdp_nack_supression_duration{ 0, 50 * 1000 * 1000 }; // ~11 milliseconds
 const Duration_t pdp_heartbeat_response_delay{ 0, 50 * 1000 * 1000 }; // ~11 milliseconds

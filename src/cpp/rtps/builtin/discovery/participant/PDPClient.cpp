@@ -81,7 +81,7 @@ GUID_t RemoteServerAttributes::GetEDPSubscriptionsReader() const
 }
 
 PDPClient::PDPClient(BuiltinProtocols* built):
-    PDP(built), mp_sync(nullptr)
+    PDP(built), mp_sync(nullptr), _msgbuffer(DISCOVERY_PARTICIPANT_DATA_MAX_SIZE, built->mp_participantImpl->getGuid().guidPrefix)
     {
 
     }
@@ -406,9 +406,36 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose, WritePar
     {
         if (!new_change)
         {
-            StatefulWriter * pW = dynamic_cast<StatefulWriter *>(mp_PDPWriter);
-            assert(pW);
-            pW->send_any_unacknowledge_changes();
+            // retrieve the participant discovery data
+            CacheChange_t * pPD;
+            if (mp_PDPWriterHistory->get_min_change(&pPD))
+            {
+                std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, RTPSMessageGroup::WRITER, _msgbuffer);
+
+                std::vector<GUID_t> remote_readers;
+                LocatorList_t locators;
+
+                for (auto & svr : mp_builtin->m_DiscoveryServers)
+                {
+                    if (svr.proxy == nullptr)
+                    {
+                        remote_readers.push_back(svr.GetPDPReader());
+                        locators.push_back(svr.metatrafficMulticastLocatorList);
+                        locators.push_back(svr.metatrafficUnicastLocatorList);
+                    }
+                }
+
+                if (!group.add_data(*pPD, remote_readers, locators, false))
+                {
+                    logError(RTPS_PDP, "Error sending announcement from client to servers");
+                }
+            }
+            else
+            {
+                logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache by a previous call to announceParticipantState()");
+            }
         }
     }
 }
