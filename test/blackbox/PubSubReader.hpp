@@ -62,7 +62,9 @@ private:
 
         ~ParticipantListener() {}
 
-        void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo&& info) override
+        void onParticipantDiscovery(
+                eprosima::fastrtps::Participant*,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
         {
             if(reader_.onDiscovery_!= nullptr)
             {
@@ -83,7 +85,9 @@ private:
         }
 
 #if HAVE_SECURITY
-        void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantAuthenticationInfo&& info) override
+        void onParticipantAuthentication(
+                eprosima::fastrtps::Participant*,
+                eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
         {
             if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
             {
@@ -205,7 +209,7 @@ public:
 
             // By default, heartbeat period delay is 100 milliseconds.
             subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
-            subscriber_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
+            subscriber_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
         }
 
     ~PubSubReader()
@@ -386,7 +390,7 @@ public:
         return *this;
     }
 
-    PubSubReader& deadline_period(const eprosima::fastrtps::rtps::Duration_t deadline_period)
+    PubSubReader& deadline_period(const eprosima::fastrtps::Duration_t deadline_period)
     {
         subscriber_attr_.qos.m_deadline.period = deadline_period;
         return *this;
@@ -394,11 +398,13 @@ public:
 
     PubSubReader& key(bool keyed)
     {
-        subscriber_attr_.topic.topicKind = keyed ? eprosima::fastrtps::TopicKind_t::WITH_KEY : eprosima::fastrtps::TopicKind_t::NO_KEY;
+        subscriber_attr_.topic.topicKind = keyed
+            ? eprosima::fastrtps::rtps::TopicKind_t::WITH_KEY
+            : eprosima::fastrtps::rtps::TopicKind_t::NO_KEY;
         return *this;
     }
 
-    PubSubReader& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
+    PubSubReader& lifespan_period(const eprosima::fastrtps::Duration_t lifespan_period)
     {
         subscriber_attr_.qos.m_lifespan.duration = lifespan_period;
         return *this;
@@ -598,7 +604,9 @@ public:
         return *this;
     }
 
-    PubSubReader& lease_duration(eprosima::fastrtps::rtps::Duration_t lease_duration, eprosima::fastrtps::rtps::Duration_t announce_period)
+    PubSubReader& lease_duration(
+            eprosima::fastrtps::Duration_t lease_duration,
+            eprosima::fastrtps::Duration_t announce_period)
     {
         participant_attr_.rtps.builtin.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
@@ -672,7 +680,8 @@ public:
         std::cout << "Reader gets discovery result..." << std::endl;
     }
 
-    void setOnDiscoveryFunction(std::function<bool(const eprosima::fastrtps::ParticipantDiscoveryInfo&)> f){
+    void setOnDiscoveryFunction(std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&)> f)
+    {
         onDiscovery_ = f;
     }
 
@@ -802,7 +811,7 @@ private:
     size_t number_samples_expected_;
     bool discovery_result_;
 
-    std::function<bool(const eprosima::fastrtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

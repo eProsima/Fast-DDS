@@ -126,7 +126,7 @@ public:
      * @param change The cache change that has been added
      * @return True if the change was added (due to some QoS it could have been 'rejected')
      */
-    bool onNewCacheChangeAdded(const CacheChange_t * const change);
+    bool onNewCacheChangeAdded(const rtps::CacheChange_t* const change);
 
     /**
      * @brief Get the requested deadline missed status

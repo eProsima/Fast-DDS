@@ -65,7 +65,7 @@ class PublisherHistory : public rtps::WriterHistory
          * @return True if added.
          */
         bool add_pub_change(
-                rtps::CacheChange_t* change, 
+                rtps::CacheChange_t* change,
                 rtps::WriteParams &wparams,
                 std::unique_lock<std::recursive_timed_mutex>& lock,
                 std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
@@ -99,7 +99,7 @@ class PublisherHistory : public rtps::WriterHistory
          * @return True if deadline was set successfully
          */
         bool set_next_deadline(
-                const InstanceHandle_t& handle,
+                const rtps::InstanceHandle_t& handle,
                 const std::chrono::steady_clock::time_point& next_deadline_us);
 
         /**
@@ -108,7 +108,9 @@ class PublisherHistory : public rtps::WriterHistory
          * @param next_deadline_us The time point when the deadline will occur
          * @return True if deadline could be retrieved for the given instance
          */
-        bool get_next_deadline(InstanceHandle_t& handle, std::chrono::steady_clock::time_point& next_deadline_us);
+        bool get_next_deadline(
+                rtps::InstanceHandle_t& handle,
+                std::chrono::steady_clock::time_point& next_deadline_us);
 
 private:
 

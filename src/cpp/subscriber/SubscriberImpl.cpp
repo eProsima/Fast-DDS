@@ -235,7 +235,7 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
 
 bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
 {
-    if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
+    if (m_att.qos.m_deadline.period != c_TimeInfinite)
     {
         std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
@@ -312,7 +312,7 @@ uint64_t SubscriberImpl::getUnreadCount() const
 
 void SubscriberImpl::deadline_timer_reschedule()
 {
-    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+    assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
@@ -331,7 +331,7 @@ void SubscriberImpl::deadline_timer_reschedule()
 
 void SubscriberImpl::deadline_missed()
 {
-    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+    assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 

@@ -395,7 +395,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& deadline_period(const eprosima::fastrtps::rtps::Duration_t deadline_period)
+    PubSubWriter& deadline_period(const eprosima::fastrtps::Duration_t deadline_period)
     {
         publisher_attr_.qos.m_deadline.period = deadline_period;
         return *this;
@@ -405,12 +405,12 @@ class PubSubWriter
     {
         publisher_attr_.topic.topicKind =
                 keyed ?
-                    eprosima::fastrtps::TopicKind_t::WITH_KEY :
-                    eprosima::fastrtps::TopicKind_t::NO_KEY;
+                    eprosima::fastrtps::rtps::TopicKind_t::WITH_KEY :
+                    eprosima::fastrtps::rtps::TopicKind_t::NO_KEY;
         return *this;
     }
 
-    PubSubWriter& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
+    PubSubWriter& lifespan_period(const eprosima::fastrtps::Duration_t lifespan_period)
     {
         publisher_attr_.qos.m_lifespan.duration = lifespan_period;
         return *this;

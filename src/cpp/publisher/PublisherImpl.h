@@ -165,11 +165,11 @@ class PublisherImpl
     uint32_t high_mark_for_frag_;
 
     //! A timer used to check for deadlines
-    TimedCallback deadline_timer_;
+    rtps::TimedCallback deadline_timer_;
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the deadline timer
-    InstanceHandle_t timer_owner_;
+    rtps::InstanceHandle_t timer_owner_;
     //! The offered deadline missed status
     OfferedDeadlineMissedStatus deadline_missed_status_;
 

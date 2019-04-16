@@ -208,7 +208,7 @@ bool PublisherImpl::create_new_change_with_params(
                 return false;
             }
 
-            if (m_att.qos.m_deadline.period != rtps::c_TimeInfinite)
+            if (m_att.qos.m_deadline.period != c_TimeInfinite)
             {
                 if (!m_history.set_next_deadline(
                             ch->instanceHandle,
@@ -225,7 +225,7 @@ bool PublisherImpl::create_new_change_with_params(
                 }
             }
 
-            if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
+            if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
             {
                 lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
                 lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
@@ -393,7 +393,7 @@ bool PublisherImpl::wait_for_all_acked(const fastrtps::Time_t& max_wait)
 
 void PublisherImpl::deadline_timer_reschedule()
 {
-    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+    assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
 
@@ -412,7 +412,7 @@ void PublisherImpl::deadline_timer_reschedule()
 
 void PublisherImpl::deadline_missed()
 {
-    assert(m_att.qos.m_deadline.period != rtps::c_TimeInfinite);
+    assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
 

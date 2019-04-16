@@ -121,7 +121,7 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @return True if the deadline was set correctly
          */
         bool set_next_deadline(
-                const InstanceHandle_t& handle,
+                const rtps::InstanceHandle_t& handle,
                 const std::chrono::steady_clock::time_point& next_deadline_us);
 
         /**
@@ -131,7 +131,7 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @return True if the deadline was retrieved successfully
          */
         bool get_next_deadline(
-                InstanceHandle_t& handle,
+                rtps::InstanceHandle_t& handle,
                 std::chrono::steady_clock::time_point& next_deadline_us);
 
     private:
