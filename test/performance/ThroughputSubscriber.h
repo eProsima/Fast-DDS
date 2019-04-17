@@ -72,7 +72,6 @@ public:
     std::condition_variable data_disc_cond_;
     //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
     int stop_count_;
-    std::condition_variable stop_cond_;
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:

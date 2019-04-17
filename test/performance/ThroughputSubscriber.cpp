@@ -161,7 +161,6 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber*
 
 void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber*)
 {
-    m_up.stop_cond_.notify_one();
 }
 
 void ThroughputSubscriber::processMessage()
@@ -265,7 +264,6 @@ void ThroughputSubscriber::processMessage()
                     throughputin = nullptr;
                 }
                 subAttr = mp_datasub->getAttributes();
-                //stop_cond_.notify_one();
                 break;
             }
             case (ALL_STOPS):
@@ -273,7 +271,6 @@ void ThroughputSubscriber::processMessage()
                 std::unique_lock<std::mutex> lock(mutex_);
                 stop_count_ = 2;
                 lock.unlock();
-                //stop_cond_.notify_one();
                 std::cout << "Command: ALL_STOPS" << std::endl;
             }
         }
@@ -391,18 +388,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         return;
     }
 
-    //REGISTER THE TYPES
-    /*
-    if (dynamic_data)
-    {
-        Domain::registerType(mp_par, &m_DynType);
-    }
-    else
-    {
-        throughput_t = new ThroughputDataType(9004);
-        Domain::registerType(mp_par, (TopicDataType*)throughput_t);
-    }
-    */
+    //REGISTER THE COMMAND TYPE
     throughput_t = nullptr;
     Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
@@ -433,13 +419,14 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datasub = Domain::createSubscriber(mp_par, profile_name, nullptr /*&this->m_DataSubListener*/);
-        subAttr = mp_datasub->getAttributes();
-        Domain::removeSubscriber(mp_datasub);
+        if (xmlparser::XMLP_ret::XML_ERROR
+                == xmlparser::XMLProfileManager::fillSubscriberAttributes(profile_name, subAttr))
+        {
+            std::cout << "Cannot read subscriber profile " << profile_name << std::endl;
+        }
     }
     else
     {
-        //mp_datasub = Domain::createSubscriber(mp_par, Sparam, (SubscriberListener*)&this->m_DataSubListener);
         subAttr = Sparam;
     }
     mp_datasub = nullptr;
@@ -496,23 +483,6 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     }
 
     eClock::my_sleep(1000);
-/*
-    if (dynamic_data)
-    {
-        DynamicTypeBuilderFactory::delete_instance();
-    }
-    else
-    {
-        delete throughput_t;
-        throughput_t = nullptr;
-    }
-    //if (mp_datasub != nullptr)
-    //{
-        //subAttr = mp_datasub->getAttributes();
-        //Domain::removeSubscriber(mp_datasub);
-    //}
-    //Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
-*/
 }
 
 void ThroughputSubscriber::run()
@@ -532,7 +502,6 @@ void ThroughputSubscriber::run()
 
     do
     {
-        //stop_cond_.wait(lock);
         processMessage();
 
         if (stop_count_ == 1)
@@ -550,7 +519,9 @@ void ThroughputSubscriber::run()
             comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
             comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
 
-            auto total_time_count = (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
+            auto total_time_count =
+                (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
+
             if (total_time_count < std::numeric_limits<uint64_t>::min())
             {
                 comm.m_totaltime = std::numeric_limits<uint64_t>::min();
@@ -586,53 +557,5 @@ void ThroughputSubscriber::run()
         }
     } while (stop_count_ != 2);
 
-    /*
-    while (stop_count_ != 2)
-    {
-        stop_cond_.wait(lock);
-        if (stop_count_ == 1)
-        {
-            std::cout << "Waiting clean state" << std::endl;
-            while (!mp_datasub->isInCleanState())
-            {
-                eClock::my_sleep(50);
-            }
-            std::cout << "Sending results" << std::endl;
-            ThroughputCommandType comm;
-            comm.m_command = TEST_RESULTS;
-            comm.m_demand = m_demand;
-            comm.m_size = m_datasize + 4 + 4;
-            comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
-            comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
-
-            auto total_time_count = (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
-            if (total_time_count < std::numeric_limits<uint64_t>::min())
-            {
-                comm.m_totaltime = std::numeric_limits<uint64_t>::min();
-            }
-            else if (total_time_count > std::numeric_limits<uint64_t>::max())
-            {
-                comm.m_totaltime = std::numeric_limits<uint64_t>::max();
-            }
-            else
-            {
-                comm.m_totaltime = static_cast<uint64_t>(total_time_count);
-            }
-
-            std::cout << "Last Received Sample: " << comm.m_lastrecsample << std::endl;
-            std::cout << "Lost Samples: " << comm.m_lostsamples << std::endl;
-            std::cout << "Samples per second: "
-                << (double)(comm.m_lastrecsample - comm.m_lostsamples) * 1000000 / comm.m_totaltime
-                << std::endl;
-            std::cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << std::endl;
-            mp_commandpubli->write(&comm);
-
-            stop_count_ = 0;
-
-            Domain::removeSubscriber(mp_datasub);
-            Domain::unregisterType(mp_par, "ThroughputType");
-        }
-    }
-    */
     return;
 }

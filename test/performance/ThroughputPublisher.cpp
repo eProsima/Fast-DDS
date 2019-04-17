@@ -183,18 +183,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         return;
     }
 
-    //REGISTER THE TYPES
-    /*
-    if (dynamic_data)
-    {
-        Domain::registerType(mp_par, &m_DynType);
-    }
-    else
-    {
-        latency_t = new ThroughputDataType(9004); // Just for creation, removed later.
-        Domain::registerType(mp_par, (TopicDataType*)latency_t);
-    }
-    */
+    //REGISTER THE COMMAND TYPE
     latency_t = nullptr;
     Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
@@ -228,23 +217,16 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_par, profile_name, nullptr);
-        pubAttr = mp_datapub->getAttributes();
-        Domain::removePublisher(mp_datapub);
+        if (xmlparser::XMLP_ret::XML_ERROR
+                == xmlparser::XMLProfileManager::fillPublisherAttributes(profile_name, pubAttr))
+        {
+            std::cout << "Cannot read publisher profile " << profile_name << std::endl;
+        }
     }
     else
     {
-        //mp_datapub = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_DataPubListener);
         pubAttr = Wparam;
     }
-    /*
-    if (mp_datapub == nullptr)
-    {
-        std::cout << "ERROR creating publisher" << std::endl;
-        ready = false;
-        return;
-    }
-    */
     mp_datapub = nullptr;
 
     // COMMAND SUBSCRIBER
@@ -296,20 +278,6 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     {
         ready = false;
     }
-
-    /*
-    if (dynamic_data)
-    {
-        DynamicTypeBuilderFactory::delete_instance();
-    }
-    else
-    {
-        delete latency_t;
-    }
-    //pubAttr = mp_datapub->getAttributes();
-    //Domain::removePublisher(mp_datapub);
-    Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
-    */
 }
 
 ThroughputPublisher::~ThroughputPublisher()
@@ -566,7 +534,8 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
                         "B_" + str_reliable + "_" + std::to_string(result.demand) + "demand.csv";
                 }
                 outFile.open(fileName);
-                outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (" + str_reliable + ")\"" << std::endl;
+                outFile << "\"" << result.payload_size << " bytes; demand " << result.demand
+                    << " (" + str_reliable + ")\"" << std::endl;
                 outFile << "\"" << result.subscriber.MBitssec << "\"";
                 outFile.close();
             }
