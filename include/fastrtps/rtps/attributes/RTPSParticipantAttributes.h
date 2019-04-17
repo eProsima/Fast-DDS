@@ -106,19 +106,28 @@ class BuiltinAttributes{
          * DomainId to be used by the RTPSParticipant (80 by default).
          */
         uint32_t domainId;
-        //!Lease Duration of the RTPSParticipant, indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
+
+        /**
+         * Lease Duration of the RTPSParticipant,
+         * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
+         */
         Duration_t leaseDuration;
+
         /**
          * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
          * as well as to all Multicast ports.
          */
         Duration_t leaseDuration_announcementperiod;
+
         //!Attributes of the SimpleEDP protocol
         SimpleEDPAttributes m_simpleEDP;
+
         //!Metatraffic Unicast Locator List
         LocatorList_t metatrafficUnicastLocatorList;
+
         //!Metatraffic Multicast Locator List.
         LocatorList_t metatrafficMulticastLocatorList;
+
         //! Initial peers.
         LocatorList_t initialPeersList;
 
