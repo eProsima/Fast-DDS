@@ -224,8 +224,15 @@ void Log::GetTimestamp(std::string &timestamp)
    if (timeinfo->tm_sec < 10) {
       stream << "0";
    }
-   stream << timeinfo->tm_sec << "\n";
-    // stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+   stream << timeinfo->tm_sec << ".";
+   if (ms < 100) {
+      stream << "0";
+      if (ms < 10) {
+         stream << "0";
+      }
+   }
+   stream << ms << " ";
+   // stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
 #endif
     timestamp = stream.str();
 }
