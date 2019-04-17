@@ -50,25 +50,27 @@ protected:
             ReaderHistory* hist,
             ReaderListener* listen=nullptr);
 public:
+
     /**
      * Add a matched writer represented by a WriterProxyData object.
      * @param wdata Pointer to the WPD object to add.
      * @return True if correctly added.
      */
-    bool matched_writer_add(RemoteWriterAttributes& wdata);
+    bool matched_writer_add(RemoteWriterAttributes& wdata) override;
+
     /**
      * Remove a WriterProxyData from the matached writers.
      * @param wdata Pointer to the WPD object.
      * @return True if correct.
      */
-    bool matched_writer_remove(const RemoteWriterAttributes& wdata);
+    bool matched_writer_remove(const RemoteWriterAttributes& wdata) override;
 
     /**
      * Tells us if a specific Writer is matched against this reader
      * @param wdata Pointer to the WriterProxyData object
      * @return True if it is matched.
      */
-    bool matched_writer_is_matched(const RemoteWriterAttributes& wdata);
+    bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) override;
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -76,7 +78,9 @@ public:
      * @param prox Pointer to the WriterProxy.
      * @return True if correctly removed.
      */
-    bool change_removed_by_history(CacheChange_t* change,WriterProxy* prox = nullptr);
+    bool change_removed_by_history(
+            CacheChange_t* change,
+            WriterProxy* prox = nullptr) override;
 
     /**
      * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -84,7 +88,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    bool processDataMsg(CacheChange_t *change);
+    bool processDataMsg(CacheChange_t *change) override;
 
     /**
      * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -93,7 +97,10 @@ public:
      * @param fragmentStartingNum fragment number of this particular fragment.
      * @return true if the reader accepts message.
      */
-    bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum);
+    bool processDataFragMsg(
+            CacheChange_t *change,
+            uint32_t sampleSize,
+            uint32_t fragmentStartingNum) override;
 
     /**
      * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -106,9 +113,12 @@ public:
             SequenceNumber_t &firstSN,
             SequenceNumber_t &lastSN,
             bool finalFlag,
-            bool livelinessFlag);
+            bool livelinessFlag) override;
 
-    bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList);
+    bool processGapMsg(
+            GUID_t &writerGUID,
+            SequenceNumber_t &gapStart,
+            SequenceNumberSet_t &gapList) override;
 
     /**
      * This method is called when a new change is received. This method calls the received_change of the History
@@ -124,14 +134,19 @@ public:
      * @param wpout Pointer to pointer of the matched writer proxy
      * @return True if read.
      */
-    bool nextUnreadCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
+    bool nextUnreadCache(
+            CacheChange_t** change,
+            WriterProxy** wpout=nullptr) override;
+
     /**
      * Take the next CacheChange_t from the history;
      * @param change Pointer to pointer of CacheChange_t
      * @param wpout Pointer to pointer of the matched writer proxy
      * @return True if read.
      */
-    bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
+    bool nextUntakenCache(
+            CacheChange_t** change,
+            WriterProxy** wpout=nullptr) override;
 
     /**
      * Get the number of matched writers
