@@ -70,6 +70,9 @@ public:
         {
             logError(RTPS, "Calculated port number is too high. Probably the domainId is over 232 "
                 << "or portBase is too high.");
+            std::cout << "Calculated port number is too high. Probably the domainId is over 232 "
+                << "or portBase is too high." << std::endl;
+            std::cout.flush();
             exit(EXIT_FAILURE);
         }
 
@@ -90,6 +93,9 @@ public:
         {
             logError(RTPS, "Calculated port number is too high. Probably the domainId is over 232, there are "
                 << "too much participants created or portBase is too high.");
+            std::cout << "Calculated port number is too high. Probably the domainId is over 232, there are "
+                << "too much participants created or portBase is too high." << std::endl;
+            std::cout.flush();
             exit(EXIT_FAILURE);
         }
 
