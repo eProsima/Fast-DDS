@@ -391,7 +391,11 @@ bool TCPTransportInterface::init()
 
     auto ioServiceFunction = [&]()
     {
+#if ASIO_VERSION >= 101200
         asio::executor_work_guard<asio::io_service::executor_type> work(io_service_.get_executor());
+#else
+        io_service::work work(io_service_);
+#endif
         io_service_.run();
     };
     io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
@@ -400,7 +404,12 @@ bool TCPTransportInterface::init()
     {
         io_service_timers_thread_ = std::make_shared<std::thread>([&]()
         {
+
+#if ASIO_VERSION >= 101200
             asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.get_executor());
+#else
+            io_service::work work(io_service_timers_);
+#endif
             io_service_timers_.run();
         });
         keep_alive_event_ = new TCPKeepAliveEvent(*this, io_service_timers_, *io_service_timers_thread_.get(),
