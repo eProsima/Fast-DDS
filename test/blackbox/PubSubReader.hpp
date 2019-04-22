@@ -462,7 +462,7 @@ public:
     PubSubReader& heartbeatResponseDelay(const int32_t secs, const int32_t frac)
     {
         subscriber_attr_.times.heartbeatResponseDelay.seconds = secs;
-        subscriber_attr_.times.heartbeatResponseDelay.fraction = frac;
+        subscriber_attr_.times.heartbeatResponseDelay.fraction(frac);
         return *this;
     }
 
