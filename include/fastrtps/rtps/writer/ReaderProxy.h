@@ -23,6 +23,10 @@
 #include <set>
 #include <memory>
 #include <atomic>
+
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/writer/ReaderLocator.h>
+
 #include "../common/Types.h"
 #include "../common/Locator.h"
 #include "../common/SequenceNumber.h"
@@ -30,9 +34,8 @@
 #include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
 #include "../attributes/RTPSParticipantAllocationAttributes.hpp"
-#include "../builtin/data/ReaderProxyData.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
-#include "ReaderLocator.h"
+
 
 namespace eprosima {
 namespace fastrtps {

@@ -38,11 +38,19 @@ class ReaderProxyData
     public:
 
         ReaderProxyData(
-                size_t /*max_unicast_locators*/,
-                size_t /*max_multicast_locators*/)
+                size_t max_unicast_locators,
+                size_t max_multicast_locators)
+            : remote_locators_(max_unicast_locators, max_multicast_locators)
         { }
 
-        GUID_t guid() { return m_guid; }
+        GUID_t guid() const { return m_guid; }
+
+        void guid(const GUID_t& guid) { m_guid = guid; }
+
+        const RemoteLocatorList& remote_locators() const
+        {
+            return remote_locators_;
+        }
 
         void clear () { }
 
@@ -62,6 +70,7 @@ class ReaderProxyData
 
         bool m_expectsInlineQos;
         ReaderQos m_qos;
+        RemoteLocatorList remote_locators_;
 
     private:
 

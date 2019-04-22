@@ -58,10 +58,13 @@ class StatefulReader : public RTPSReader
 
             RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }
 
-            void send_sync_nts(
+            bool send_sync_nts(
                     CDRMessage_t* /*message*/,
-                    const Locator_t& /*locator*/)
-            {}
+                    const Locator_t& /*locator*/,
+                    std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
+            {
+                return true;
+            }
 
     private:
 
