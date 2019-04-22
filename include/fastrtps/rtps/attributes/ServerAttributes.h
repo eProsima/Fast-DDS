@@ -39,23 +39,23 @@ namespace rtps {
      * @ingroup RTPS_ATTRIBUTES_MODULE
      */
 
-    class RTPS_DllAPI RemoteServerAttributes 
+    class RemoteServerAttributes 
     {
     public:
-        inline bool operator==(const RemoteServerAttributes & r) const { return guidPrefix == r.guidPrefix; }
+        RTPS_DllAPI inline bool operator==(const RemoteServerAttributes & r) const { return guidPrefix == r.guidPrefix; }
 
-        GUID_t GetParticipant() const;
+        RTPS_DllAPI GUID_t GetParticipant() const;
 
-        GUID_t GetPDPReader() const;
-        GUID_t GetPDPWriter() const;
+        RTPS_DllAPI GUID_t GetPDPReader() const;
+        RTPS_DllAPI GUID_t GetPDPWriter() const;
 
-        GUID_t GetEDPPublicationsReader() const;
-        GUID_t GetEDPSubscriptionsWriter() const;
+        RTPS_DllAPI GUID_t GetEDPPublicationsReader() const;
+        RTPS_DllAPI GUID_t GetEDPSubscriptionsWriter() const;
 
-        GUID_t GetEDPPublicationsWriter() const;
-        GUID_t GetEDPSubscriptionsReader() const;
+        RTPS_DllAPI GUID_t GetEDPPublicationsWriter() const;
+        RTPS_DllAPI GUID_t GetEDPSubscriptionsReader() const;
 
-        inline bool ReadguidPrefix(const char * pfx)   
+        RTPS_DllAPI inline bool ReadguidPrefix(const char * pfx)
         {
             return bool(std::istringstream(pfx) >> guidPrefix);
         }

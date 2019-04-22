@@ -29,6 +29,7 @@
 #include "ServerAttributes.h"
 
 #include <memory>
+#include <sstgream>
 
 namespace eprosima {
 namespace fastrtps{
@@ -299,6 +300,11 @@ class RTPSParticipantAttributes
 
         //! Optionally allow user defined GuidPrefix_t
         GuidPrefix_t prefix;
+
+        RTPS_DllAPI inline bool ReadguidPrefix(const char * pfx)
+        {
+            return bool(std::istringstream(pfx) >> prefix);
+        }
 
         //! Builtin parameters.
         BuiltinAttributes builtin;
