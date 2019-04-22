@@ -697,6 +697,14 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, DISABLE_POSITIVE_ACKS) == 0)
+        {
+            // Disable positive acks
+            if (XMLP_ret::XML_OK != getXMLDisablePositiveAcksQos(p_aux0, qos.m_disablePositiveACKs, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, LATENCY_BUDGET) == 0 ||
                  strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
                  strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
@@ -789,6 +797,14 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
         else if (strcmp(name, LIFESPAN) == 0)
         {
             if (XMLP_ret::XML_OK != getXMLLifespanQos(p_aux0, qos.m_lifespan, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DISABLE_POSITIVE_ACKS) == 0)
+        {
+            // Disable positive acks
+            if (XMLP_ret::XML_OK != getXMLDisablePositiveAcksQos(p_aux0, qos.m_disablePositiveACKs, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -1207,6 +1223,49 @@ XMLP_ret XMLParser::getXMLLifespanQos(tinyxml2::XMLElement *elem, LifespanQosPol
     {
         logError(XMLPARSER, "Node 'lifespanQosPolicyType' without content");
         return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
+        tinyxml2::XMLElement* elem,
+        DisablePositiveACKsQosPolicy& disablePositiveAcks,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="disablePositiveAcksQosPolicyType">
+            <xs:all>
+                <xs:element name="enabled" type="bool"/>
+                <xs:element name="duration" type="durationType"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, ENABLED) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &disablePositiveAcks.enabled, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DURATION) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, disablePositiveAcks.duration, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Node 'disablePositiveAcksQosPolicyType' with unknown content");
+            return XMLP_ret::XML_ERROR;
+        }
     }
 
     return XMLP_ret::XML_OK;
