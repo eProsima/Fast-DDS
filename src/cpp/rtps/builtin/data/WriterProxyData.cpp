@@ -217,6 +217,13 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     {
         if (!m_qos.m_topicData.addToCDRMessage(msg)) return false;
     }
+    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_topicData.hasChanged)
+    {
+        if (!m_qos.m_disablePositiveACKs.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
     if(m_qos.m_groupData.sendAlways() ||  m_qos.m_groupData.hasChanged)
     {
         GroupDataQosPolicy*p = new GroupDataQosPolicy();
@@ -462,6 +469,13 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 }
                 break;
             }
+        case PID_DISABLE_POSITIVE_ACKS:
+        {
+            const DisablePositiveACKsQosPolicy* p = dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);
+            assert(p != nullptr);
+            m_qos.m_disablePositiveACKs = *p;
+            break;
+        }
 #if HAVE_SECURITY
             case PID_ENDPOINT_SECURITY_INFO:
             {

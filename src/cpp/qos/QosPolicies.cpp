@@ -258,8 +258,6 @@ bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);
     valid &= CDRMessage::addOctet(msg, (octet)enabled);
-    valid &= CDRMessage::addInt32(msg, duration.seconds);
-    valid &= CDRMessage::addUInt32(msg, duration.fraction);
     return valid;
 }
 

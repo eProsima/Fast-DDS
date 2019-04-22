@@ -211,7 +211,13 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     {
         if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
-
+    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_disablePositiveACKs.hasChanged)
+    {
+        if (!m_qos.m_disablePositiveACKs.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
     if (m_topicDiscoveryKind != NO_CHECK)
     {
         if (m_type_id.m_type_identifier._d() != 0)
@@ -428,7 +434,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
             }
             case PID_TYPE_CONSISTENCY_ENFORCEMENT:
             {
-                const TypeConsistencyEnforcementQosPolicy* p = 
+                const TypeConsistencyEnforcementQosPolicy* p =
                     dynamic_cast<const TypeConsistencyEnforcementQosPolicy*>(param);
                 assert(p != nullptr);
                 m_qos.m_typeConsistency = *p;
@@ -458,10 +464,17 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 }
                 break;
             }
+        case PID_DISABLE_POSITIVE_ACKS:
+        {
+            const DisablePositiveACKsQosPolicy* p = dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);
+            assert(p != nullptr);
+            m_qos.m_disablePositiveACKs = *p;
+            break;
+        }
 #if HAVE_SECURITY
             case PID_ENDPOINT_SECURITY_INFO:
             {
-                const ParameterEndpointSecurityInfo_t* p = 
+                const ParameterEndpointSecurityInfo_t* p =
                     dynamic_cast<const ParameterEndpointSecurityInfo_t*>(param);
                 assert(p != nullptr);
                 security_attributes_ = p->security_attributes;

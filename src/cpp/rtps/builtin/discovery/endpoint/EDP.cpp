@@ -432,6 +432,11 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
                 << rdata->guid() << " has smaller DEADLINE period");
         return false;
     }
+    if (!wdata->m_qos.m_disablePositiveACKs.enabled && rdata->m_qos.m_disablePositiveACKs.enabled)
+    {
+        logWarning(RTPS_EDP, "Incompatible Disable Positive Acks QoS: writer is enabled but reader is not");
+        return false;
+    }
 
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
@@ -538,6 +543,11 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "
                    << wdata->topicName() << "):RemoteWriter "
                    << wdata->guid() << "has smaller DEADLINE period");
+        return false;
+    }
+    if (rdata->m_qos.m_disablePositiveACKs.enabled && !wdata->m_qos.m_disablePositiveACKs.enabled)
+    {
+        logWarning(RTPS_EDP, "Incompatible Disable Positive Acks QoS: writer is enabled but reader is not");
         return false;
     }
 
