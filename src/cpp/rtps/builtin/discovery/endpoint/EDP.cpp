@@ -93,12 +93,12 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
     {
         if (att.type_id.m_type_identifier._d() == 0) // Not set
         {
-            //*rpd.type_id().m_type_identifier = *TypeObjectFactory::get_instance()->get_type_identifier(rpd.typeName());
             const TypeIdentifier* type_id = TypeObjectFactory::get_instance()->get_type_identifier(
-                    rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    rpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << rpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << rpd.typeName()
+                    << " isn't registered.");
             }
             else
             {
@@ -116,10 +116,11 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         {
             //*rpd.type().m_type_object = *TypeObjectFactory::get_instance()->get_type_object(rpd.typeName());
             const TypeObject *type_obj = TypeObjectFactory::get_instance()->get_type_object(
-                    rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    rpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << rpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << rpd.typeName()
+                    << " isn't registered.");
             }
             else
             {
@@ -183,10 +184,11 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
         if (att.type_id.m_type_identifier._d() == 0) // Not set
         {
             const TypeIdentifier* type_id = TypeObjectFactory::get_instance()->get_type_identifier(
-                    wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    wpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << wpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << wpd.typeName()
+                    << " isn't registered.");
             }
             else
             {
@@ -203,10 +205,11 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
                 || att.type_id.m_type_identifier._d() == EK_COMPLETE)) // Not set
         {
             const TypeObject *type_obj = TypeObjectFactory::get_instance()->get_type_object(
-                    wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                    wpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << wpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << wpd.typeName()
+                    << " isn't registered.");
             }
             else
             {
