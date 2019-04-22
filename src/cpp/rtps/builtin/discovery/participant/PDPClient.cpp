@@ -80,11 +80,13 @@ GUID_t RemoteServerAttributes::GetEDPSubscriptionsReader() const
     return GUID_t(guidPrefix, c_EntityId_SEDPSubReader);
 }
 
-PDPClient::PDPClient(BuiltinProtocols* built):
-    PDP(built), mp_sync(nullptr), _msgbuffer(DISCOVERY_PARTICIPANT_DATA_MAX_SIZE, built->mp_participantImpl->getGuid().guidPrefix)
-    {
+PDPClient::PDPClient(BuiltinProtocols* built)
+    : PDP(built)
+    , _msgbuffer(DISCOVERY_PARTICIPANT_DATA_MAX_SIZE, built->mp_participantImpl->getGuid().guidPrefix)
+    , mp_sync(nullptr)
+{
 
-    }
+}
 
 PDPClient::~PDPClient()
 {
@@ -92,7 +94,7 @@ PDPClient::~PDPClient()
         delete(mp_sync);
 }
 
-void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant_data) 
+void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
@@ -174,9 +176,9 @@ bool PDPClient::createPDPEndpoints()
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 
-    mp_listener = new PDPListener(this); 
+    mp_listener = new PDPListener(this);
 
-    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false)) 
+    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false))
     {
 //#if HAVE_SECURITY
 //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
@@ -199,7 +201,7 @@ bool PDPClient::createPDPEndpoints()
 
             mp_PDPReader->matched_writer_add(rwatt);
         }
-       
+
     }
     else
     {
@@ -233,7 +235,7 @@ bool PDPClient::createPDPEndpoints()
         watt.mode = ASYNCHRONOUS_WRITER;
     }
 
-    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true)) 
+    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
     {
 //#if HAVE_SECURITY
 //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
@@ -255,7 +257,7 @@ bool PDPClient::createPDPEndpoints()
 
             mp_PDPWriter->matched_reader_add(rratt);
         }
-        
+
     }
     else
     {
@@ -323,7 +325,7 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
         if (auxendp != 0)
         {
             RemoteWriterAttributes watt;
-    
+
             watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
             watt.guid.entityId = c_EntityId_SPDPWriter;
             watt.endpoint.persistence_guid = watt.guid;
@@ -379,7 +381,7 @@ bool PDPClient::all_servers_acknowledge_PDP()
     {
         logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache by a previous call to announceParticipantState()");
     }
-  
+
     return false;
 }
 
@@ -399,7 +401,7 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose, WritePar
     wp.sample_identity(local);
     wp.related_sample_identity(local);
 
-    PDP::announceParticipantState(new_change, dispose, wp); 
+    PDP::announceParticipantState(new_change, dispose, wp);
 
     // Add the write params to the sample
     if (!dispose)

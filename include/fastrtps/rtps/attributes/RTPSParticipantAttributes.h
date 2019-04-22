@@ -29,7 +29,7 @@
 #include "ServerAttributes.h"
 
 #include <memory>
-#include <sstgream>
+#include <sstream>
 
 namespace eprosima {
 namespace fastrtps{
@@ -43,12 +43,12 @@ typedef enum PDPType
         Publisher and Subscriber defined with the same topic name would NOT be linked.
         All matching must be done manually through the addReaderLocator, addReaderProxy, addWriterProxy methods.
     */
-    NONE, 
+    NONE,
     /*
         Discovery works according to 'The Real-time Publish-Subscribe Protocol(RTPS) DDS
         Interoperability Wire Protocol Specification'
     */
-    SIMPLE, 
+    SIMPLE,
     /*
     A user defined PDP subclass object must be provided in the attributes that deals with the discovery. Framework is not responsible of this object lifetime.
     */

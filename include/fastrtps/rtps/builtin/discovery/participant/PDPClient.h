@@ -84,7 +84,7 @@ class PDPClient : public PDP
     bool is_all_servers_PDPdata_updated();
 
     /**
-     * Force the sending of our local PDP to all servers 
+     * Force the sending of our local PDP to all servers
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
@@ -114,11 +114,11 @@ class PDPClient : public PDP
     private:
 
     /**
-    * TimedEvent for server synchronization: 
+    * TimedEvent for server synchronization:
     *   first stage: periodically resend the local RTPSParticipant information until all servers have acknowledge reception
     *   second stage: waiting PDP info is up to date before allowing EDP matching
-    */ 
-    DSClientEvent * mp_sync;
+    */
+    DSClientEvent* mp_sync;
 };
 
 }
