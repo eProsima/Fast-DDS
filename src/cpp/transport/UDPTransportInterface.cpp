@@ -19,6 +19,8 @@
 #include <utility>
 #include <cstring>
 #include <algorithm>
+#include <future>
+#include <asio/use_future.hpp>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -374,8 +376,9 @@ bool UDPTransportInterface::OpenOutputChannel(
 void UDPTransportInterface::perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator)
 {
     Locator_t remote_locator;
+    uint32_t tries = 0;
 
-    while (p_channel_resource->alive())
+    while (p_channel_resource->alive() && tries < 100)
     {
         // Blocking receive.
         auto& msg = p_channel_resource->message_buffer();
@@ -402,14 +405,29 @@ bool UDPTransportInterface::Receive(UDPChannelResource* p_channel_resource, octe
 {
     try
     {
+        asio::io_service::work work(io_service_);
+        std::thread thread([this](){ io_service_.run(); });
+        thread.detach(); // safe because of work
+
         ip::udp::endpoint senderEndpoint;
 
-        size_t bytes = p_channel_resource->socket()->receive_from(asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint);
+        // read socket non-blocking
+        std::future<std::size_t> read_result = p_channel_resource->socket()->async_receive_from(
+            asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint, asio::use_future);
+
+        if (read_result.wait_for(std::chrono::milliseconds(100)) == std::future_status::timeout)
+        {
+            p_channel_resource->socket()->cancel();
+            return false;
+        }
+        auto bytes = read_result.get();
+
         receive_buffer_size = static_cast<uint32_t>(bytes);
         if (receive_buffer_size > 0)
         {
             if (receive_buffer_size == 13 && memcmp(receive_buffer, "EPRORTPSCLOSE", 13) == 0)
             {
+                p_channel_resource->disable();
                 return false;
             }
             endpoint_to_locator(senderEndpoint, remote_locator);
