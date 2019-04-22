@@ -4,16 +4,18 @@ This example illustrates how to use the Disable Positive ACKs QoS extension in a
 
 To launch this test open two different consoles:
 
-In the first one launch: ./DisablePositiveACKsQoS publisher  
-In the second one launch: ./DisablePositiveACKsQoS subscriber
+In the first one launch: ./DisablePositiveACKsQoS publisher --disable  
+In the second one launch: ./DisablePositiveACKsQoS subscriber --disable
+
+The above will launch publisher and subscriber using this QoS, i.e. positive acks will not be sent.
 
 ## Application behaviour
 
 In this application, the publisher sends a number of samples and periodic heartbeats to the subscriber, and the subscriber expects to receive a number of samples from the publisher. The best way to test this example is to analyze the network traffic. When this QoS is enabled no ack messages will be exchanged (unless samples are not received by the subscriber). When this QoS is disabled, ack messages will be sent in response to heartbeats.
 
-By default the QoS is enabled, the publisher sends 20 samples every 1000 milliseconds and the keep duration is set to 5000 milliseconds. The subscriber waits until 20 samples are received. You can change these defaults by executing:
+By default the QoS is disabled, the publisher sends 20 samples every 1000 milliseconds and the keep duration is set to 5000 milliseconds. The subscriber waits until 20 samples are received. You can change these defaults by executing:
 
-./LifespanQoSExample publisher &lt;enable_QoS&gt; &lt;keep_duration_ms&gt; &lt;sleep_ms&gt; &lt;samples&gt;  
-./LifespanQoSExample subscriber &lt;enable_QoS&gt; &lt;samples&gt;
+./DisablePositiveACKsQoS publisher [--disable] [--keep_duration &lt;keep_duration_ms&gt;] [--sleep &lt;writer_sleep_ms&gt;] [--samples &lt;samples&gt;]  
+./DisablePositiveACKsQoS subscriber [--disable] [--samples &lt;samples&gt;]
 
-for publisher and subscriber respectively, where any positive number for &lt;enable_QoS&gt; will enable the QoS, &lt;keep_duration_ms&gt; will set the duration for which to keep the samples, &lt;sleep_ms&gt; determines the amount of time to wait before the publisher sends a new sample, and &lt;samples&gt; sets the total number of samples to be sent/received.
+for publisher and subscriber respectively, where the option &lt;enable_QoS&gt; will enable the QoS (i.e. positive akcs will not be sent), &lt;keep_duration_ms&gt; will set the duration for which to keep the samples, &lt;sleep_ms&gt; determines the amount of time to wait before the publisher sends a new sample, and &lt;samples&gt; sets the total number of samples to be sent/received.
