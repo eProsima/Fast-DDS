@@ -55,6 +55,8 @@ class RTPSMessageGroup_t
             , rtpsmsg_encrypt_(has_security ? payload : 0u)
 #endif
         {
+            (void)has_security; // unused when built without security
+            
             CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);
             RTPSMessageCreator::addHeader(&rtpsmsg_fullmsg_, participant_guid);
         }
