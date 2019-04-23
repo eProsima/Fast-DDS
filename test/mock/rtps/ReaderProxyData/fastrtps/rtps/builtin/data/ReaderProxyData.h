@@ -43,7 +43,7 @@ class ReaderProxyData
             : remote_locators_(max_unicast_locators, max_multicast_locators)
         { }
 
-        GUID_t guid() const { return m_guid; }
+        const GUID_t& guid() const { return m_guid; }
 
         void guid(const GUID_t& guid) { m_guid = guid; }
 

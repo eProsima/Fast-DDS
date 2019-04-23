@@ -295,7 +295,9 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
 
 bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, const ReaderQos& rqos)
 {
-    auto init_fun = [this, reader, & att, & rqos](
+    (void)att;
+
+    auto init_fun = [this, reader, &rqos](
             ReaderProxyData* rdata,
             bool updating,
             const ParticipantProxyData& participant_data)
@@ -335,7 +337,9 @@ bool EDP::updatedLocalReader(RTPSReader* reader, const TopicAttributes& att, con
 
 bool EDP::updatedLocalWriter(RTPSWriter* writer, const TopicAttributes& att, const WriterQos& wqos)
 {
-    auto init_fun = [this, writer, &att, &wqos](
+    (void)att;
+
+    auto init_fun = [this, writer, &wqos](
         WriterProxyData* wdata,
         bool updating,
         const ParticipantProxyData& participant_data)

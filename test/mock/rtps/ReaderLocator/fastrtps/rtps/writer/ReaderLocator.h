@@ -171,9 +171,7 @@ class ReaderLocator : public RTPSMessageSenderInterface
 
     private:
 
-        RTPSParticipantImpl* owner_;
         GUID_t remote_guid_;
-        bool expects_inline_qos_;
         std::vector<GuidPrefix_t> guid_prefix_as_vector_;
         std::vector<GUID_t> guid_as_vector_;
 };
