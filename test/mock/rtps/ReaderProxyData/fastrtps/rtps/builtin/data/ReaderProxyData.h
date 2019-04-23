@@ -45,6 +45,8 @@ class ReaderProxyData
 
         const GUID_t& guid() const { return m_guid; }
 
+        GUID_t& guid() { return m_guid; }
+
         void guid(const GUID_t& guid) { m_guid = guid; }
 
         const RemoteLocatorList& remote_locators() const
