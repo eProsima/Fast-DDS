@@ -43,7 +43,9 @@ Time_t::Time_t(
 void Time_t::fraction(
         uint32_t frac)
 {
-    nanosec = static_cast<uint32_t>(std::lroundl(frac * rtps::FRACTION_TO_NANO));
+    nanosec = (frac == 0xffffffff)
+        ? 0xffffffff
+        : static_cast<uint32_t>(std::lroundl(frac * rtps::FRACTION_TO_NANO));
 }
 
 uint32_t Time_t::fraction() const
