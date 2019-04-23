@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,11 +42,7 @@ struct RTPS_DllAPI Time_t
     uint32_t nanosec;
 
     //! Default constructor. Sets values to zero.
-    Time_t()
-    {
-        seconds = 0;
-        nanosec = 0;
-    }
+    Time_t();
 
     /**
     * @param sec Seconds
@@ -54,42 +50,23 @@ struct RTPS_DllAPI Time_t
     */
     Time_t(
             int32_t sec,
-            uint32_t nsec)
-    {
-        seconds = sec;
-        nanosec = nsec;
-    }
+            uint32_t nsec);
 
     /**
      * @param sec Seconds. The fractional part is converted to nanoseconds.
      */
     Time_t(
-            long double sec)
-    {
-        seconds = static_cast<int32_t>(sec);
-        nanosec = static_cast<uint32_t>((sec - seconds) * 1000000000ULL);
-    }
+            long double sec);
 
     void fraction(
-            uint32_t frac)
-    {
-        nanosec = static_cast<uint32_t>(frac * rtps::FRACTION_TO_NANO);
-    }
+            uint32_t frac);
 
-    uint32_t fraction() const
-    {
-        return static_cast<uint32_t>(nanosec * rtps::NANO_TO_FRACTION);
-    }
+    uint32_t fraction() const;
 
     /**
      *  Returns stored time as nanoseconds (including seconds)
      */
-    int64_t to_ns() const
-    {
-        int64_t nano = seconds * 1000000000ULL;
-        nano += nanosec;
-        return nano;
-    }
+    int64_t to_ns() const;
 };
 
 typedef Time_t Duration_t;
@@ -105,128 +82,74 @@ class RTPS_DllAPI Time_t
 public:
 
     //! Default constructor. Sets values to zero.
-    Time_t()
-    {
-        seconds_ = 0;
-        fraction_ = 0;
-        nanosec_ = 0;
-    }
+    Time_t();
+
     /**
     * @param sec Seconds
     * @param frac Fraction of second
     */
     Time_t(
             int32_t sec,
-            uint32_t frac)
-    {
-        seconds_ = sec;
-        set_fraction(frac);
-    }
+            uint32_t frac);
 
     /**
      * @param sec Seconds. The fractional part is converted to nanoseconds.
      */
     Time_t(
-            long double sec)
-    {
-        seconds_ = static_cast<int32_t>(sec);
-        set_fraction(static_cast<uint32_t>((sec - seconds_) * 4294967296ULL));
-    }
+            long double sec);
 
     /**
      * @param sec Seconds. The fractional part is converted to nanoseconds.
      */
     Time_t(
-            fastrtps::Time_t time)
-    {
-        seconds_ = static_cast<int32_t>(time.seconds);
-        set_fraction(static_cast<uint32_t>((time.seconds - seconds_) * 4294967296ULL));
-    }
+            fastrtps::Time_t time);
 
     /**
      *  Returns stored time as nanoseconds (including seconds)
      */
-    int64_t to_ns() const
-    {
-        int64_t nano = seconds_ * 1000000000ULL;
-        nano += nanosec_;
-        return nano;
-    }
+    int64_t to_ns() const;
 
     /**
      * Retrieve the seconds field.
      */
-    int32_t seconds() const
-    {
-        return seconds_;
-    }
+    int32_t seconds() const;
 
     /**
      * Retrieve the seconds field by ref.
      */
-    int32_t& seconds()
-    {
-        return seconds_;
-    }
+    int32_t& seconds();
 
     /**
      * Sets seconds field.
      */
     void seconds(
-            int32_t sec)
-    {
-        seconds_ = sec;
-    }
+            int32_t sec);
 
     /**
      * Retrieve the nanosec field.
      */
-    uint32_t nanosec() const
-    {
-        return nanosec_;
-    }
+    uint32_t nanosec() const;
 
     /**
      * Sets nanoseconds field and updates the fraction.
      */
     void nanosec(
-            uint32_t nanos)
-    {
-        const uint32_t s_to_nano = 1000000000UL;
-        if (nanos >= s_to_nano)
-        {
-            nanos %= s_to_nano; // Remove the seconds
-        }
-        set_nanosec(nanos);
-    }
+            uint32_t nanos);
 
     /**
      * Retrieve the fraction field.
      */
-    uint32_t fraction() const
-    {
-        return fraction_;
-    }
+    uint32_t fraction() const;
 
     /**
      * Sets fraction field and updates the nanoseconds.
      */
     void fraction(
-            uint32_t frac)
-    {
-        set_fraction(frac);
-    }
+            uint32_t frac);
 
-    Duration_t to_duration_t() const
-    {
-        return Duration_t(seconds_, nanosec_);
-    }
+    Duration_t to_duration_t() const;
 
-    void from_duration_t(const Duration_t& duration)
-    {
-        seconds_ = duration.seconds;
-        set_nanosec(duration.nanosec);
-    }
+    void from_duration_t(const Duration_t& duration);
 
 private:
     //!Seconds
@@ -239,18 +162,10 @@ private:
     uint32_t nanosec_;
 
     void set_fraction(
-            uint32_t frac)
-    {
-        fraction_ = frac;
-        nanosec_ = static_cast<uint32_t>(fraction_ * FRACTION_TO_NANO);
-    }
+            uint32_t frac);
 
     void set_nanosec(
-            uint32_t nanos)
-    {
-        nanosec_ = nanos;
-        fraction_ = static_cast<uint32_t>(nanosec_ * NANO_TO_FRACTION);
-    }
+            uint32_t nanos);
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
