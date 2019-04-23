@@ -43,12 +43,24 @@ Time_t::Time_t(
 void Time_t::fraction(
         uint32_t frac)
 {
-    nanosec = static_cast<uint32_t>(frac * rtps::FRACTION_TO_NANO);
+    nanosec = static_cast<uint32_t>(std::lroundl(frac * rtps::FRACTION_TO_NANO));
 }
 
 uint32_t Time_t::fraction() const
 {
-    return static_cast<uint32_t>(nanosec * rtps::NANO_TO_FRACTION);
+    if (nanosec == 0xffffffff)
+    {
+        return nanosec;
+    }
+
+    uint32_t fraction = static_cast<uint32_t>(std::lroundl(nanosec * rtps::NANO_TO_FRACTION));
+    uint32_t nano_check = static_cast<uint32_t>(std::lroundl(fraction * rtps::FRACTION_TO_NANO));
+    while (nano_check != nanosec)
+    {
+        nano_check = static_cast<uint32_t>(std::lroundl(++fraction * rtps::FRACTION_TO_NANO));
+    }
+
+    return fraction;
 }
 
 int64_t Time_t::to_ns() const
@@ -154,7 +166,7 @@ void rtps::Time_t::set_fraction(
     fraction_ = frac;
     nanosec_ = (fraction_ == 0xffffffff)
         ? 0xffffffff
-        : static_cast<uint32_t>(fraction_ * FRACTION_TO_NANO);
+        : static_cast<uint32_t>(std::lroundl(fraction_ * FRACTION_TO_NANO));
 }
 
 void rtps::Time_t::set_nanosec(
@@ -163,5 +175,14 @@ void rtps::Time_t::set_nanosec(
     nanosec_ = nanos;
     fraction_ = (nanosec_ == 0xffffffff)
         ? 0xffffffff
-        : static_cast<uint32_t>(nanosec_ * NANO_TO_FRACTION);
+        : static_cast<uint32_t>(std::lroundl(nanosec_ * NANO_TO_FRACTION));
+
+    if (fraction_ != 0xffffffff)
+    {
+        uint32_t nano_check = static_cast<uint32_t>(std::lroundl(fraction_ * FRACTION_TO_NANO));
+        while (nano_check != nanosec_)
+        {
+            nano_check = static_cast<uint32_t>(std::lroundl(++fraction_ * FRACTION_TO_NANO));
+        }
+    }
 }

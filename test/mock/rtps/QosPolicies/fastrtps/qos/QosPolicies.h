@@ -120,7 +120,7 @@ class DurabilityQosPolicy : public Parameter_t, public QosPolicy
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeInifinite.
  */
-class DeadlineQosPolicy : public Parameter_t, public QosPolicy 
+class DeadlineQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -146,7 +146,7 @@ class DeadlineQosPolicy : public Parameter_t, public QosPolicy
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeZero.
  */
-class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy 
+class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -186,7 +186,7 @@ typedef enum LivelinessQosPolicyKind:rtps::octet {
  * lease_duration: Default value c_TimeInfinite.
  * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
  */
-class LivelinessQosPolicy : public Parameter_t, public QosPolicy 
+class LivelinessQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -236,7 +236,7 @@ class ReliabilityQosPolicy : public Parameter_t, public QosPolicy
         QosPolicy(true), //indicate send always
         kind(BEST_EFFORT_RELIABILITY_QOS),
         // max_blocking_time = 100ms
-        max_blocking_time{0, 4294967100}  {}
+        max_blocking_time{0, 100000000}  {}
         virtual RTPS_DllAPI ~ReliabilityQosPolicy(){}
         ReliabilityQosPolicyKind kind;
         Duration_t max_blocking_time;
@@ -265,7 +265,7 @@ enum OwnershipQosPolicyKind:rtps::octet {
  * Class OwnershipQosPolicy, to indicate the ownership kind of the endpoints.
  * kind: Default value SHARED_OWNERSHIP_QOS.
  */
-class OwnershipQosPolicy : public Parameter_t, public QosPolicy 
+class OwnershipQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -299,7 +299,7 @@ enum DestinationOrderQosPolicyKind :rtps::octet{
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * kind: Default value BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS
  */
-class DestinationOrderQosPolicy : public Parameter_t, public QosPolicy 
+class DestinationOrderQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -360,7 +360,7 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * minimum_separation: Default value c_TimeZero
  */
-class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy 
+class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -573,7 +573,7 @@ enum HistoryQosPolicyKind:rtps::octet {
  * kind: Default value KEEP_LAST_HISTORY_QOS.
  * depth: Default value 1000.
  */
-class HistoryQosPolicy : public Parameter_t, public QosPolicy 
+class HistoryQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -600,7 +600,7 @@ class HistoryQosPolicy : public Parameter_t, public QosPolicy
  * max_samples_per_instance: Default value 400.
  * allocated_samples: Default value 100.
  */
-class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy 
+class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -634,7 +634,7 @@ class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
  * max_instances: Default value -1.
  * max_samples_per_instance: Default value -1.
  */
-class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy 
+class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -664,7 +664,7 @@ class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * duration: Default value c_TimeInfinite.
  */
-class LifespanQosPolicy : public Parameter_t, public QosPolicy 
+class LifespanQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -691,7 +691,7 @@ class LifespanQosPolicy : public Parameter_t, public QosPolicy
  * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
  * value: Default value 0.
  */
-class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy 
+class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:

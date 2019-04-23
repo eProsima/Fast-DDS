@@ -289,7 +289,7 @@ public:
           QosPolicy(true), //indicate send always
           kind(BEST_EFFORT_RELIABILITY_QOS),
           // max_blocking_time = 100ms
-          max_blocking_time{0, 4294967100}
+          max_blocking_time{0, 100000000}
     {}
 
     virtual RTPS_DllAPI ~ReliabilityQosPolicy() {}
