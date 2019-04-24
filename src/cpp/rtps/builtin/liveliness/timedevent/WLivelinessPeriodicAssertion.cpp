@@ -139,7 +139,9 @@ bool WLivelinessPeriodicAssertion::automatic_liveliness_assertion()
 bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
+
     bool livelinessAsserted = false;
+
     for(std::vector<RTPSWriter*>::iterator wit=this->mp_WLP->m_livManRTPSParticipantWriters.begin();
             wit!=this->mp_WLP->m_livManRTPSParticipantWriters.end();++wit)
     {
@@ -149,6 +151,8 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
         }
         (*wit)->setLivelinessAsserted(false);
     }
+
+    // Liveliness was asserted for at least one of the writers using MANUAL_BY_PARTICIPANT
     if(livelinessAsserted)
     {
         auto writer = this->mp_WLP->getBuiltinWriter();
@@ -175,6 +179,7 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
                 if((*ch)->instanceHandle == change->instanceHandle)
                 {
                     history->remove_change(*ch);
+                    break;
                 }
             }
             history->add_change(change);

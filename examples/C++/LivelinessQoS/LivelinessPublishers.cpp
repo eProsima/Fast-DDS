@@ -37,7 +37,8 @@ LivelinessPublishers::LivelinessPublishers()
 }
 
 bool LivelinessPublishers::init(
-        LivelinessQosPolicyKind kind,
+        LivelinessQosPolicyKind first_kind,
+        LivelinessQosPolicyKind second_kind,
         int first_liveliness_ms,
         int second_liveliness_ms)
 {
@@ -70,7 +71,7 @@ bool LivelinessPublishers::init(
     // First publisher
     Wparam.qos.m_liveliness.lease_duration = Duration_t(first_liveliness_ms * 1e-3);
     Wparam.qos.m_liveliness.announcement_period = Duration_t(first_liveliness_ms * 1e-3 * 0.5);
-    Wparam.qos.m_liveliness.kind = kind;
+    Wparam.qos.m_liveliness.kind = first_kind;
     publisher_1_ = Domain::createPublisher(participant_, Wparam, &listener_);
     if(publisher_1_ == nullptr)
     {
@@ -80,12 +81,36 @@ bool LivelinessPublishers::init(
     // Second publisher
     Wparam.qos.m_liveliness.lease_duration = Duration_t(second_liveliness_ms * 1e-3);
     Wparam.qos.m_liveliness.announcement_period = Duration_t(second_liveliness_ms * 1e-3 * 0.5);
-    Wparam.qos.m_liveliness.kind = kind;
+    Wparam.qos.m_liveliness.kind = second_kind;
     publisher_2_ = Domain::createPublisher(participant_, Wparam, &listener_);
     if(publisher_2_ == nullptr)
     {
         return false;
     }
+
+    std::cout << "Publisher 1 using:" << std::endl;
+    std::cout << "Lease duration: " << first_liveliness_ms << std::endl;
+    if (first_kind == eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: AUTOMATIC" << std::endl;
+    }
+    else if (first_kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: MANUAL_BY_PARTICIPANT_LIVELINESS_QOS" << std::endl;
+    }
+    std::cout << std::endl;
+
+    std::cout << "Publisher 2 using:" << std::endl;
+    std::cout << "Lease duration: " << second_liveliness_ms << std::endl;
+    if (second_kind == eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: AUTOMATIC" << std::endl;
+    }
+    else if (second_kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: MANUAL_BY_PARTICIPANT_LIVELINESS_QOS" << std::endl;
+    }
+    std::cout << std::endl;
 
     return true;
 }

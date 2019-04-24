@@ -47,6 +47,8 @@ bool parse_arguments(
         int& type,
         int& first_liveliness_ms,
         int& second_liveliness_ms,
+        eprosima::fastrtps::LivelinessQosPolicyKind& first_kind,
+        eprosima::fastrtps::LivelinessQosPolicyKind& second_kind,
         int& sleep_ms,
         int& samples);
 
@@ -58,7 +60,8 @@ int main(int argc, char** argv)
     int sleep_ms = 1000;
     int count = 10;
 
-    eprosima::fastrtps::LivelinessQosPolicyKind kind = eprosima::fastrtps::AUTOMATIC_LIVELINESS_QOS;
+    eprosima::fastrtps::LivelinessQosPolicyKind first_kind = eprosima::fastrtps::AUTOMATIC_LIVELINESS_QOS;
+    eprosima::fastrtps::LivelinessQosPolicyKind second_kind = eprosima::fastrtps::AUTOMATIC_LIVELINESS_QOS;
 
     if (!parse_arguments(
                 argc,
@@ -66,6 +69,8 @@ int main(int argc, char** argv)
                 type,
                 first_liveliness_ms,
                 second_liveliness_ms,
+                first_kind,
+                second_kind,
                 sleep_ms,
                 count))
     {
@@ -79,6 +84,8 @@ int main(int argc, char** argv)
         std::cout << argv[0] << " publishers ";
         std::cout << "[--liveliness_first <liveliness_ms>] ";
         std::cout << "[--liveliness_second <liveliness_ms>] ";
+        std::cout << "[--kind_first <KIND>] ";
+        std::cout << "[--kind_second <KIND>] ";
         std::cout << "[--sleep <writer_sleep_ms>] ";
         std::cout << "[--samples <samples>]" << std::endl;
 
@@ -93,7 +100,7 @@ int main(int argc, char** argv)
     case 1:
     {
         LivelinessPublisher mypub;
-        if(mypub.init(kind, first_liveliness_ms))
+        if(mypub.init(first_kind, first_liveliness_ms))
         {
             mypub.run(count, sleep_ms);
         }
@@ -103,7 +110,8 @@ int main(int argc, char** argv)
     {
         LivelinessPublishers mypub;
         if (mypub.init(
-                    kind,
+                    first_kind,
+                    second_kind,
                     first_liveliness_ms,
                     second_liveliness_ms))
         {
@@ -114,7 +122,7 @@ int main(int argc, char** argv)
     case 3:
     {
         LivelinessSubscriber mysub;
-        if(mysub.init(kind, first_liveliness_ms))
+        if(mysub.init(first_kind, first_liveliness_ms))
         {
             mysub.run();
         }
@@ -132,6 +140,8 @@ bool parse_arguments(
         int& type,
         int& first_liveliness_ms,
         int& second_liveliness_ms,
+        eprosima::fastrtps::LivelinessQosPolicyKind& first_kind,
+        eprosima::fastrtps::LivelinessQosPolicyKind& second_kind,
         int& sleep_ms,
         int& samples)
 {
@@ -160,6 +170,22 @@ bool parse_arguments(
             if (!strcmp(argv[count], "--liveliness"))
             {
                 first_liveliness_ms = atoi(argv[count + 1]);
+            }
+            else if (!strcmp(argv[count], "--kind"))
+            {
+                if (!strcmp(argv[count + 1], "AUTOMATIC"))
+                {
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+                }
+                else if(!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
+                {
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                }
+                else
+                {
+                    std::cout << "Unknown command line value " << argv[count + 1] << " for publisher" << std::endl;
+                    return false;
+                }
             }
             else if (!strcmp(argv[count], "--sleep"))
             {
@@ -193,6 +219,38 @@ bool parse_arguments(
             {
                 second_liveliness_ms = atoi(argv[count + 1]);
             }
+            else if (!strcmp(argv[count], "--kind_first"))
+            {
+                if (!strcmp(argv[count + 1], "AUTOMATIC"))
+                {
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+                }
+                else if(!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
+                {
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                }
+                else
+                {
+                    std::cout << "Unknown command line value " << argv[count + 1] << " for publisher" << std::endl;
+                    return false;
+                }
+            }
+            else if (!strcmp(argv[count], "--kind_second"))
+            {
+                if (!strcmp(argv[count + 1], "AUTOMATIC"))
+                {
+                    second_kind = eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+                }
+                else if(!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
+                {
+                    second_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                }
+                else
+                {
+                    std::cout << "Unknown command line value " << argv[count + 1] << " for publisher" << std::endl;
+                    return false;
+                }
+            }
             else if (!strcmp(argv[count], "--sleep"))
             {
                 sleep_ms = atoi(argv[count + 1]);
@@ -215,23 +273,37 @@ bool parse_arguments(
     {
         type = 3;
 
-        if (argc != 2 && argc != 4)
+        int count = 2;
+        while (count < argc)
         {
-            // Incorrect number of command line arguments for subscriber
-            return false;
-        }
-
-        if (argc > 2)
-        {
-            if (!strcmp(argv[2], "--liveliness"))
+            if (!strcmp(argv[count], "--liveliness"))
             {
-                first_liveliness_ms = atoi(argv[3]);
+                first_liveliness_ms = atoi(argv[count + 1]);
+            }
+            else if (!strcmp(argv[count], "--kind"))
+            {
+                if (!strcmp(argv[count + 1], "AUTOMATIC"))
+                {
+                    std::cout << "+++++++ Setting kind to AUTOMATIC" << std::endl;
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+                }
+                else if(!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
+                {
+                    std::cout << "+++++++ Setting kind to MANUAL" << std::endl;
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                }
+                else
+                {
+                    std::cout << "Unknown command line value " << argv[count + 1] << " for subscriber" << std::endl;
+                    return false;
+                }
             }
             else
             {
-                std::cout << "Unknown command line option " << argv[2] << " for publisher" << std::endl;
+                std::cout << "Unknown command line option " << argv[count] << " for publisher" << std::endl;
                 return false;
             }
+            count = count + 2;
         }
         return true;
     }

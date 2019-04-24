@@ -60,18 +60,21 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 	if(code == EVENT_SUCCESS)
 	{
 
+        std::cout << "********** WriterProxyLiveliness expired due to writer: " << mp_WP->m_att.guid << std::endl;
+
 		logInfo(RTPS_LIVELINESS,"Deleting Writer: "<<mp_WP->m_att.guid);
 //		if(!mp_WP->isAlive())
 //		{
 			//logWarning(RTPS_LIVELINESS,"Liveliness failed, leaseDuration was "<< this->getIntervalMilliSec()<< " ms");
-			if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_att,false))
-			{
-				if(mp_WP->mp_SFR->getListener()!=nullptr)
-				{
-					MatchingInfo info(REMOVED_MATCHING,mp_WP->m_att.guid);
-					mp_WP->mp_SFR->getListener()->onReaderMatched((RTPSReader*)mp_WP->mp_SFR,info);
-				}
-			}
+
+            if(mp_WP->mp_SFR->matched_writer_remove(mp_WP->m_att,false))
+            {
+                if(mp_WP->mp_SFR->getListener()!=nullptr)
+                {
+                    MatchingInfo info(REMOVED_MATCHING,mp_WP->m_att.guid);
+                    mp_WP->mp_SFR->getListener()->onReaderMatched((RTPSReader*)mp_WP->mp_SFR,info);
+                }
+            }
 
 			mp_WP->mp_writerProxyLiveliness = nullptr;
 			delete(mp_WP);

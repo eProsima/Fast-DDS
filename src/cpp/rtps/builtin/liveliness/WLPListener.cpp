@@ -53,6 +53,7 @@ void WLPListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const changeIN)
 {
+
 	std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,"");
 	GuidPrefix_t guidP;
@@ -97,7 +98,8 @@ void WLPListener::onNewCacheChangeAdded(
         history->remove_change(change);
 		return;
 	}
-	this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
+
+    this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
 
 	return;
 }

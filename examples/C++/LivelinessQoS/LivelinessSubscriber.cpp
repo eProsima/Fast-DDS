@@ -69,6 +69,17 @@ bool LivelinessSubscriber::init(
     {
         return false;
     }
+    std::cout << "Subscriber using:" << std::endl;
+    std::cout << "Lease duration: " << liveliness_ms << std::endl;
+    if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: AUTOMATIC" << std::endl;
+    }
+    else if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: MANUAL_BY_PARTICIPANT_LIVELINESS_QOS" << std::endl;
+    }
+    std::cout << std::endl;
 
     return true;
 }

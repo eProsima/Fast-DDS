@@ -40,13 +40,15 @@ public:
 
     /**
      * @brief Initialises the participant
-     * @param kind Liveliness kind
+     * @param first_kind Liveliness kind of the first publisher
+     * @param second_kind Liveliness kind of the second publisher
      * @param first_liveliness_ms Lease duration of first publisher
      * @param second_liveliness_ms Lease duration of second publisher
      * @return
      */
     bool init(
-            eprosima::fastrtps::LivelinessQosPolicyKind kind,
+            eprosima::fastrtps::LivelinessQosPolicyKind first_kind,
+            eprosima::fastrtps::LivelinessQosPolicyKind second_kind,
             int first_liveliness_ms,
             int second_liveliness_ms);
 

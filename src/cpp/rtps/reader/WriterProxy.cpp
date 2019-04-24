@@ -131,7 +131,9 @@ WriterProxy::WriterProxy(const RemoteWriterAttributes& watt,
         this, TimeConv::Duration_t2MilliSecondsDouble(mp_SFR->getTimes().initialAcknackDelay));
 
     if(m_att.livelinessLeaseDuration < c_TimeInfinite)
+    {
         mp_writerProxyLiveliness->restart_timer();
+    }
     logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
 }
 
