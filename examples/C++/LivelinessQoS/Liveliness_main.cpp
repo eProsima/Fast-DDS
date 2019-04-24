@@ -18,6 +18,7 @@
  */
 
 #include "LivelinessPublisher.h"
+#include "LivelinessPublishers.h"
 #include "LivelinessSubscriber.h"
 
 #include <fastrtps/Domain.h>
@@ -34,7 +35,8 @@ using namespace rtps;
  * @param argc Number of command line arguments
  * @param argv Array of command line arguments
  * @param type Publisher or subscriber
- * @param liveliness_ms Liveliness value read from command line arguments (populated if specified)
+ * @param first_liveliness_ms Lease duration of the first publisher
+ * @param second_liveliness_ms Lease duration of the second publisher
  * @param sleep_ms Writer sleep read from command line arguments (populated if specified)
  * @param samples Number of samples read from command line arguments (populated if specified)
  * @return True if command line arguments were parsed succesfully and execution can continue
@@ -43,14 +45,16 @@ bool parse_arguments(
         int argc,
         char** argv,
         int& type,
-        int& liveliness_ms,
+        int& first_liveliness_ms,
+        int& second_liveliness_ms,
         int& sleep_ms,
         int& samples);
 
 int main(int argc, char** argv)
 {
     int type = 1;
-    int liveliness_ms = 100;
+    int first_liveliness_ms = 100;
+    int second_liveliness_ms = 100;
     int sleep_ms = 1000;
     int count = 10;
 
@@ -60,13 +64,21 @@ int main(int argc, char** argv)
                 argc,
                 argv,
                 type,
-                liveliness_ms,
+                first_liveliness_ms,
+                second_liveliness_ms,
                 sleep_ms,
                 count))
     {
         std::cout << "Usage: " << std::endl;
         std::cout << argv[0] << " publisher ";
         std::cout << "[--liveliness <liveliness_ms>] ";
+        std::cout << "[--sleep <writer_sleep_ms>] ";
+        std::cout << "[--samples <samples>]" << std::endl;
+
+        std::cout << "OR" << std::endl;
+        std::cout << argv[0] << " publishers ";
+        std::cout << "[--liveliness_first <liveliness_ms>] ";
+        std::cout << "[--liveliness_second <liveliness_ms>] ";
         std::cout << "[--sleep <writer_sleep_ms>] ";
         std::cout << "[--samples <samples>]" << std::endl;
 
@@ -78,25 +90,37 @@ int main(int argc, char** argv)
 
     switch(type)
     {
-        case 1:
-            {
-                LivelinessPublisher mypub;
-                if(mypub.init(kind, liveliness_ms))
-                {
-                    mypub.run(count, sleep_ms);
-                }
-                break;
-            }
-        case 2:
-            {
-                LivelinessSubscriber mysub;
-                if(mysub.init(kind, liveliness_ms))
-                {
-                    mysub.run();
-                }
-                break;
-            }
+    case 1:
+    {
+        LivelinessPublisher mypub;
+        if(mypub.init(kind, first_liveliness_ms))
+        {
+            mypub.run(count, sleep_ms);
+        }
+        break;
     }
+    case 2:
+    {
+        LivelinessPublishers mypub;
+        if (mypub.init(
+                    kind,
+                    first_liveliness_ms,
+                    second_liveliness_ms))
+        {
+            mypub.run(count, sleep_ms);
+        }
+        break;
+    }
+    case 3:
+    {
+        LivelinessSubscriber mysub;
+        if(mysub.init(kind, first_liveliness_ms))
+        {
+            mysub.run();
+        }
+        break;
+    }
+}
     Domain::stopAll();
     Log::Reset();
     return 0;
@@ -106,7 +130,8 @@ bool parse_arguments(
         int argc,
         char** argv,
         int& type,
-        int& liveliness_ms,
+        int& first_liveliness_ms,
+        int& second_liveliness_ms,
         int& sleep_ms,
         int& samples)
 {
@@ -134,7 +159,39 @@ bool parse_arguments(
         {
             if (!strcmp(argv[count], "--liveliness"))
             {
-                liveliness_ms = atoi(argv[count + 1]);
+                first_liveliness_ms = atoi(argv[count + 1]);
+            }
+            else if (!strcmp(argv[count], "--sleep"))
+            {
+                sleep_ms = atoi(argv[count + 1]);
+            }
+            else if (!strcmp(argv[count], "--samples"))
+            {
+                samples = atoi(argv[count + 1]);
+            }
+            else
+            {
+                std::cout << "Unknown command line option " << argv[count] << " for publisher" << std::endl;
+                return false;
+            }
+            count = count + 2;
+        }
+        return true;
+    }
+    else if (strcmp(argv[1], "publishers") == 0)
+    {
+        type = 2;
+
+        int count = 2;
+        while (count < argc)
+        {
+            if (!strcmp(argv[count], "--liveliness_first"))
+            {
+                first_liveliness_ms = atoi(argv[count + 1]);
+            }
+            else if (!strcmp(argv[count], "--liveliness_second"))
+            {
+                second_liveliness_ms = atoi(argv[count + 1]);
             }
             else if (!strcmp(argv[count], "--sleep"))
             {
@@ -154,9 +211,9 @@ bool parse_arguments(
         return true;
     }
 
-    if (strcmp(argv[1], "subscriber") == 0)
+    else if (strcmp(argv[1], "subscriber") == 0)
     {
-        type = 2;
+        type = 3;
 
         if (argc != 2 && argc != 4)
         {
@@ -166,9 +223,9 @@ bool parse_arguments(
 
         if (argc > 2)
         {
-            if (!strcmp(argv[2], "--deadline"))
+            if (!strcmp(argv[2], "--liveliness"))
             {
-                liveliness_ms = atoi(argv[3]);
+                first_liveliness_ms = atoi(argv[3]);
             }
             else
             {

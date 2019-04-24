@@ -273,7 +273,6 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             // because this function can unlock the StatefulReader timed_mutex.
             if(pWP != nullptr)
             {
-                std::cout << "StatefulReader " << getGuid() << " asserting liveliness of writer " << pWP->m_att.guid << std::endl;
                 pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
             }
 
