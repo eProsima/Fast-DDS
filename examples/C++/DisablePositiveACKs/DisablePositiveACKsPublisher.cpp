@@ -61,7 +61,7 @@ bool DisablePositiveACKsPublisher::init(
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     Wparam.qos.m_disablePositiveACKs.enabled = disable_positive_acks;
-    Wparam.qos.m_disablePositiveACKs.duration = rtps::Duration_t(keep_duration_ms * 1e-3);
+    Wparam.qos.m_disablePositiveACKs.duration = Duration_t(keep_duration_ms * 1e-3);
     publisher_ = Domain::createPublisher(participant_, Wparam, (PublisherListener*) &listener);
     if( publisher_ == nullptr )
     {

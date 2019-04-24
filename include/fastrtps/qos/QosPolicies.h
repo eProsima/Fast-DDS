@@ -1012,7 +1012,7 @@ public:
         : Parameter_t(PID_DISABLE_POSITIVE_ACKS, 0)
         , QosPolicy(true)
         , enabled(false)
-        , duration(rtps::c_TimeInfinite)
+        , duration(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~DisablePositiveACKsQosPolicy()
@@ -1036,7 +1036,7 @@ public:
     //! True if this QoS is enabled
     bool enabled;
     //! The duration to keep samples for (not serialised as not needed by reader)
-    rtps::Duration_t duration;
+    Duration_t duration;
 };
 
 /**
