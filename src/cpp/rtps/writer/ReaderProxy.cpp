@@ -119,6 +119,12 @@ void ReaderProxy::add_change(
         return;
     }
 
+    // Irrelevant changes are not added to the collection
+    if (!change.isRelevant())
+    {
+        return;
+    }
+
     if (changes_for_reader_.push_back(change) == nullptr)
     {
         // This should never happen

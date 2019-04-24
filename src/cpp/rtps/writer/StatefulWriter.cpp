@@ -596,6 +596,13 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         for(std::vector<CacheChange_t*>::iterator cit = mp_history->changesBegin();
                 cit != mp_history->changesEnd(); ++cit)
         {
+            // This is to cover the case when there are holes in the history
+            while (current_seq != (*cit)->sequenceNumber)
+            {
+                not_relevant_changes.insert(current_seq);
+                ++current_seq;
+            }
+
             ChangeForReader_t changeForReader(*cit);
 
             if(rp->durability_kind() >= TRANSIENT_LOCAL && this->getAttributes().durabilityKind >= TRANSIENT_LOCAL)
@@ -618,7 +625,12 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
             ++current_seq;
         }
 
-        assert(last_seq + 1 == current_seq);
+        // This is to cover the case where the last changes have been removed from the history
+        while (current_seq < next_sequence_number())
+        {
+            not_relevant_changes.insert(current_seq);
+            ++current_seq;
+        }
 
         try
         {
