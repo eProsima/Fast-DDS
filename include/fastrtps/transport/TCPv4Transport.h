@@ -143,7 +143,7 @@ public:
     /**
      * Performs the locator selection algorithm for this transport.
      *
-     * It basically constists of the following steps
+     * It basically consists of the following steps
      *   - selector.transport_starts is called
      *   - transport handles the selection state of each locator
      *   - if a locator from an entry is selected, selector.select is called for that entry

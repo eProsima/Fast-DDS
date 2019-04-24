@@ -99,7 +99,7 @@ class NetworkFactory
         /**
          * Performs the locator selection algorithm.
          *
-         * It basically constists of the following steps
+         * It basically consists of the following steps
          *   - selector.selection_start is called
          *   - the transport selection algorithm is called for each registered transport
          *
