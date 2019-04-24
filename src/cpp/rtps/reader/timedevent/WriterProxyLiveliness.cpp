@@ -59,7 +59,7 @@ void WriterProxyLiveliness::event(EventCode code, const char* msg)
 
 	if(code == EVENT_SUCCESS)
 	{
-	
+
 		logInfo(RTPS_LIVELINESS,"Deleting Writer: "<<mp_WP->m_att.guid);
 //		if(!mp_WP->isAlive())
 //		{

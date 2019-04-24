@@ -40,10 +40,15 @@ namespace fastrtps{
 namespace rtps {
 
 
-WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
-    TimedEvent(pwlp->getRTPSParticipant()->getEventResource().getIOService(),
-            pwlp->getRTPSParticipant()->getEventResource().getThread(), 0),
-    m_livelinessKind(kind), mp_WLP(pwlp)
+WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(
+        WLP* pwlp,
+        LivelinessQosPolicyKind kind)
+    : TimedEvent(
+          pwlp->getRTPSParticipant()->getEventResource().getIOService(),
+          pwlp->getRTPSParticipant()->getEventResource().getThread(),
+          0)
+    , m_livelinessKind(kind)
+    , mp_WLP(pwlp)
     {
         m_guidP = this->mp_WLP->getRTPSParticipant()->getGuid().guidPrefix;
         for(uint8_t i =0;i<12;++i)
@@ -70,9 +75,13 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
         if(this->mp_WLP->getBuiltinWriter()->getMatchedReadersSize()>0)
         {
             if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
-                AutomaticLivelinessAssertion();
+            {
+                automatic_liveliness_assertion();
+            }
             else if(m_livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-                ManualByRTPSParticipantLivelinessAssertion();
+            {
+                manual_by_participant_liveliness_assertion();
+            }
         }
         this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertLocalWritersLiveliness(m_livelinessKind);
         this->restart_timer();
@@ -87,7 +96,7 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
     }
 }
 
-bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
+bool WLivelinessPeriodicAssertion::automatic_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
     if(this->mp_WLP->m_livAutomaticWriters.size()>0)
@@ -127,7 +136,7 @@ bool WLivelinessPeriodicAssertion::AutomaticLivelinessAssertion()
     return true;
 }
 
-bool WLivelinessPeriodicAssertion::ManualByRTPSParticipantLivelinessAssertion()
+bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
     bool livelinessAsserted = false;

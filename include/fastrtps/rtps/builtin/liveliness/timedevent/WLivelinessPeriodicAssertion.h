@@ -33,7 +33,7 @@ namespace rtps {
 class WLP;
 
 /**
- * Class WLivelinessPeriodicAssertion, used to assert the liveliness of the writers in a RTPSParticipant.
+ * @brief A timed event used to assert liveliness of writers in a participant
  * @ingroup LIVELINESS_MODULE
  */
 class WLivelinessPeriodicAssertion: public TimedEvent {
@@ -43,28 +43,40 @@ public:
 	* @param pwlp Pointer to the WLP object.
 	* @param kind Kind of the periodic assertion timed event
 	*/
-	WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind);
+    WLivelinessPeriodicAssertion(
+            WLP* pwlp,
+            LivelinessQosPolicyKind kind);
+
+    /**
+     * @brief Destructor
+     */
 	virtual ~WLivelinessPeriodicAssertion();
+
 	/**
 	* Method invoked when the event occurs
 	* @param code Code representing the status of the event
 	* @param msg Message associated to the event
 	*/
-	void event(EventCode code, const char* msg= nullptr);
-	//!Liveliness Kind that is being asserted by this object.
-	LivelinessQosPolicyKind m_livelinessKind;
-	//!Pointer to the WLP object.
-	WLP* mp_WLP;
-	//!Assert the liveliness of AUTOMATIC kind Writers.
-	bool AutomaticLivelinessAssertion();
-	//!Assert the liveliness of MANUAL_BY_PARTICIPANT kind writers.
-	bool ManualByRTPSParticipantLivelinessAssertion();
-	//!Message to store the data.
-	CDRMessage_t m_msg;
-	//!Instance Handle
-	InstanceHandle_t m_iHandle;
-	//!GuidPrefix_t
-	GuidPrefix_t m_guidP;
+    void event(EventCode code, const char* msg= nullptr) override;
+
+private:
+
+    //! Asserts the liveliness of AUTOMATIC kind writers
+    bool automatic_liveliness_assertion();
+    //! Asserts the liveliness of MANUAL_BY_PARTICIPANT kind writers
+    bool manual_by_participant_liveliness_assertion();
+
+    //!Liveliness Kind that is being asserted by this object.
+    LivelinessQosPolicyKind m_livelinessKind;
+    //!Pointer to the WLP object.
+    WLP* mp_WLP;
+    //!Message to store the data.
+    CDRMessage_t m_msg;
+    //!Instance Handle
+    InstanceHandle_t m_iHandle;
+    //!GuidPrefix_t
+    GuidPrefix_t m_guidP;
+
 };
 
 } /* namespace rtps */

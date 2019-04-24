@@ -158,10 +158,10 @@ private:
 	ReaderHistory* mp_builtinReaderHistory;
 	//!Listener object.
 	WLPListener* mp_listener;
-	//!Pointer to the periodic assertion timer object for the automatic liveliness writers.
-	WLivelinessPeriodicAssertion* mp_livelinessAutomatic;
-	//!Pointer to the periodic assertion timer object for the manual by RTPSParticipant liveliness writers.
-	WLivelinessPeriodicAssertion* mp_livelinessManRTPSParticipant;
+    //!Pointer to the periodic assertion timer object for automatic liveliness writers
+    WLivelinessPeriodicAssertion* automatic_liveliness_assertion_;
+    //!Pointer to the periodic assertion timer object for manual by participant liveliness writers
+    WLivelinessPeriodicAssertion* manual_liveliness_assertion_;
 	//!List of the writers using automatic liveliness.
 	std::vector<RTPSWriter*> m_livAutomaticWriters;
 	//!List of the writers using manual by RTPSParticipant liveliness.
