@@ -208,11 +208,18 @@ Publisher* ParticipantImpl::createPublisher(
         property.value(std::move(partitions));
         watt.endpoint.properties.properties().push_back(std::move(property));
     }
+    if (att.qos.m_disablePositiveACKs.enabled &&
+            att.qos.m_disablePositiveACKs.duration != rtps::c_TimeInfinite)
+    {
+        watt.disable_positive_acks = true;
+        watt.keep_duration = att.qos.m_disablePositiveACKs.duration;
+    }
 
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
-            watt,
-            (WriterHistory*)&pubimpl->m_history,
-            (WriterListener*)&pubimpl->m_writerListener);
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(
+                this->mp_rtpsParticipant,
+                watt,
+                (WriterHistory*)&pubimpl->m_history,
+                (WriterListener*)&pubimpl->m_writerListener);
     if(writer == nullptr)
     {
         logError(PARTICIPANT,"Problem creating associated Writer");
@@ -318,6 +325,10 @@ Subscriber* ParticipantImpl::createSubscriber(
         }
         property.value(std::move(partitions));
         ratt.endpoint.properties.properties().push_back(std::move(property));
+    }
+    if (att.qos.m_disablePositiveACKs.enabled)
+    {
+        ratt.disable_positive_acks = true;
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,

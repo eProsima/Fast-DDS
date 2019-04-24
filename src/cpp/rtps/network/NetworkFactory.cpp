@@ -137,12 +137,14 @@ LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t
             LocatorList_t resultList;
 
             for(auto it = locatorList.begin(); it != locatorList.end(); ++it)
+            {
                 if(transport->IsLocatorSupported(*it))
+                {
                     resultList.push_back(*it);
-
+                }
+            }
             transportLocatorLists.push_back(resultList);
         }
-
         returnedList.push_back(transport->ShrinkLocatorLists(transportLocatorLists));
     }
 

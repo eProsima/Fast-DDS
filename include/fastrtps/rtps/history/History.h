@@ -175,6 +175,7 @@ class History
 
         //!Mutex for the History.
         std::recursive_timed_mutex* mp_mutex;
+
 };
 
 }

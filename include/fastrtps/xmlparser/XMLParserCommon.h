@@ -167,6 +167,7 @@ extern const char* PARTITION;
 extern const char* TOPIC_DATA;
 extern const char* GROUP_DATA;
 extern const char* PUB_MODE;
+extern const char* DISABLE_POSITIVE_ACKS;
 
 extern const char* SYNCHRONOUS;
 extern const char* ASYNCHRONOUS;
@@ -235,6 +236,7 @@ extern const char* READER_HIST_MEM_POLICY;
 extern const char* WRITER_HIST_MEM_POLICY;
 extern const char* MUTATION_TRIES;
 extern const char* ACCESS_SCOPE;
+extern const char* ENABLED;
 
 // Endpoint parser
 extern const char* STATICDISCOVERY;

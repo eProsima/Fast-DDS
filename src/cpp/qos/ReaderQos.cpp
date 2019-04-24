@@ -114,6 +114,11 @@ void ReaderQos::setQos(const ReaderQos& qos, bool first_time)
 		m_lifespan = qos.m_lifespan;
 		m_lifespan.hasChanged = true;
 	}
+    if (first_time)
+    {
+        m_disablePositiveACKs = qos.m_disablePositiveACKs;
+        m_disablePositiveACKs.hasChanged = true;
+    }
 }
 
 

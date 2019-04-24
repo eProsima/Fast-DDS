@@ -64,7 +64,9 @@ class WriterHistory : public History
      * @param wparams Extra write parameters.
      * @return True if added.
      */
-    RTPS_DllAPI bool add_change(CacheChange_t* a_change, WriteParams &wparams);
+    RTPS_DllAPI bool add_change(
+            CacheChange_t* a_change,
+            WriteParams &wparams);
 
     /**
      * Remove a specific change from the history.

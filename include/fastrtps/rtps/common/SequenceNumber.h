@@ -90,9 +90,14 @@ struct RTPS_DllAPI SequenceNumber_t
     SequenceNumber_t& operator++() noexcept
     {
         if(low == UINT32_MAX)
-        { ++high; low = 0; }
+        {
+            ++high;
+            low = 0;
+        }
         else
+        {
             ++low;
+        }
 
         return *this;
     }
@@ -154,7 +159,9 @@ inline bool operator==(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
 inline bool operator!=(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2) noexcept
 {
     if(sn1.high == sn2.high && sn1.low == sn2.low)
+    {
         return false;
+    }
 
     return true;
 }
@@ -168,13 +175,19 @@ inline bool operator!=(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
 inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return true;
+    }
     else if(seq1.high < seq2.high)
+    {
         return false;
+    }
     else
     {
         if(seq1.low > seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -188,13 +201,19 @@ inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2
 inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return false;
+    }
     else if(seq1.high < seq2.high)
+    {
         return true;
+    }
     else
     {
         if(seq1.low < seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -208,13 +227,19 @@ inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2
 inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return true;
+    }
     else if(seq1.high < seq2.high)
+    {
         return false;
+    }
     else
     {
         if(seq1.low >= seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -228,13 +253,19 @@ inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq
 inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return false;
+    }
     else if(seq1.high < seq2.high)
+    {
         return true;
+    }
     else
     {
         if(seq1.low <= seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }

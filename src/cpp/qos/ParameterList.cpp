@@ -764,6 +764,15 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     IF_VALID_CALL
                 }
 #endif
+            case PID_DISABLE_POSITIVE_ACKS:
+            {
+                octet temp(0);
+                valid &= CDRMessage::readOctet(&msg, &temp);
+
+                DisablePositiveACKsQosPolicy p;
+                p.enabled = (temp == 0)? false : true;
+                IF_VALID_CALL
+            }
 
                 case PID_PAD:
                 default:

@@ -175,7 +175,9 @@ bool FragmentedChangePitStop::try_to_remove_until(const SequenceNumber_t& sequen
             returnedValue = true;
         }
         else
+        {
             ++cit;
+        }
     }
 
     return returnedValue;

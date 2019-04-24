@@ -42,6 +42,8 @@ using namespace std::chrono;
 
 using namespace std::chrono;
 
+using namespace std::chrono;
+
 PublisherImpl::PublisherImpl(
         ParticipantImpl* p,
         TopicDataType* pdatatype,
@@ -225,6 +227,8 @@ bool PublisherImpl::create_new_change_with_params(
 
             if (m_att.qos.m_lifespan.duration != rtps::c_TimeInfinite)
             {
+                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+                lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
                 lifespan_timer_.restart_timer();
             }
 

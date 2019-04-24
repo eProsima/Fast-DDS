@@ -126,7 +126,7 @@ public:
      * @param change The cache change that has been added
      * @return True if the change was added (due to some QoS it could have been 'rejected')
      */
-    bool onNewCacheChangeAdded(const CacheChange_t* const change);
+    bool onNewCacheChangeAdded(const CacheChange_t * const change);
 
     /**
      * @brief Get the requested deadline missed status
@@ -155,8 +155,12 @@ private:
     public:
         SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
         virtual ~SubscriberReaderListener() {}
-        void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
-        void onNewCacheChangeAdded(rtps::RTPSReader * reader,const rtps::CacheChange_t* const change);
+        void onReaderMatched(
+                rtps::RTPSReader* reader,
+                rtps::MatchingInfo& info) override;
+        void onNewCacheChangeAdded(
+                rtps::RTPSReader* reader,
+                const rtps::CacheChange_t* const change) override;
         SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
 
@@ -165,11 +169,11 @@ private:
     rtps::RTPSParticipant* mp_rtpsParticipant;
 
     //! A timer used to check for deadlines
-    TimedCallback deadline_timer_;
+    rtps::TimedCallback deadline_timer_;
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the deadline timer
-    InstanceHandle_t timer_owner_;
+    rtps::InstanceHandle_t timer_owner_;
     //! Requested deadline missed status
     RequestedDeadlineMissedStatus deadline_missed_status_;
 

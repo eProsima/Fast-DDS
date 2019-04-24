@@ -38,8 +38,6 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-
-
 StatefulReader::~StatefulReader()
 {
     logInfo(RTPS_READER,"StatefulReader destructor.";);
@@ -50,17 +48,24 @@ StatefulReader::~StatefulReader()
     }
 }
 
-
-
-StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-    RTPSReader(pimpl,guid,att,hist, listen),
-    m_acknackCount(0),
-    m_nackfragCount(0),
-    m_times(att.times)
+StatefulReader::StatefulReader(
+        RTPSParticipantImpl* pimpl,
+        GUID_t& guid,
+        ReaderAttributes& att,
+        ReaderHistory* hist,
+        ReaderListener* listen)
+    : RTPSReader(
+          pimpl,
+          guid,
+          att,
+          hist,
+          listen)
+    , m_acknackCount(0)
+    , m_nackfragCount(0)
+    , m_times(att.times)
+    , disable_positive_acks_(att.disable_positive_acks)
 {
 }
-
 
 bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
@@ -123,7 +128,9 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     return false;
 }
 
-bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata, bool deleteWP)
+bool StatefulReader::matched_writer_remove(
+        const RemoteWriterAttributes& wdata,
+        bool deleteWP)
 {
     WriterProxy *wproxy = nullptr;
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
@@ -169,7 +176,9 @@ bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wda
 }
 
 
-bool StatefulReader::matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP)
+bool StatefulReader::matched_writer_lookup(
+        const GUID_t& writerGUID,
+        WriterProxy** WP)
 {
     assert(WP);
 
@@ -189,7 +198,9 @@ bool StatefulReader::matched_writer_lookup(const GUID_t& writerGUID, WriterProxy
     return returnedValue;
 }
 
-bool StatefulReader::findWriterProxy(const GUID_t& writerGUID, WriterProxy** WP)
+bool StatefulReader::findWriterProxy(
+        const GUID_t& writerGUID,
+        WriterProxy** WP)
 {
     assert(WP);
 
@@ -278,7 +289,10 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
-bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
+bool StatefulReader::processDataFragMsg(
+        CacheChange_t *incomingChange,
+        uint32_t sampleSize,
+        uint32_t fragmentStartingNum)
 {
     WriterProxy *pWP = nullptr;
 
@@ -349,8 +363,13 @@ bool StatefulReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t 
     return true;
 }
 
-bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag)
+bool StatefulReader::processHeartbeatMsg(
+        GUID_t &writerGUID,
+        uint32_t hbCount,
+        SequenceNumber_t &firstSN,
+        SequenceNumber_t &lastSN,
+        bool finalFlag,
+        bool livelinessFlag)
 {
     WriterProxy *pWP = nullptr;
 
@@ -371,15 +390,27 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
             pWP->missing_changes_update(lastSN);
             pWP->m_heartbeatFinalFlag = finalFlag;
 
-            //Analyze wheter a acknack message is needed:
+            //Analyze wheter a acknack message is needed
             if(!finalFlag)
             {
-                pWP->mp_heartbeatResponse->restart_timer();
+                if (disable_positive_acks_)
+                {
+                    if(pWP->areThereMissing())
+                    {
+                        pWP->mp_heartbeatResponse->restart_timer();
+                    }
+                }
+                else
+                {
+                    pWP->mp_heartbeatResponse->restart_timer();
+                }
             }
             else if(finalFlag && !livelinessFlag)
             {
                 if(pWP->areThereMissing())
+                {
                     pWP->mp_heartbeatResponse->restart_timer();
+                }
             }
 
             //FIXME: livelinessFlag
@@ -398,7 +429,10 @@ bool StatefulReader::processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, S
     return true;
 }
 
-bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList)
+bool StatefulReader::processGapMsg(
+        GUID_t &writerGUID,
+        SequenceNumber_t &gapStart,
+        SequenceNumberSet_t &gapList)
 {
     WriterProxy *pWP = nullptr;
 
@@ -412,20 +446,26 @@ bool StatefulReader::processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStar
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
         {
             if(pWP->irrelevant_change_set(auxSN))
+            {
                 fragmentedChangePitStop_->try_to_remove(auxSN, pWP->m_att.guid);
+            }
         }
 
         gapList.for_each([&](SequenceNumber_t it)
         {
             if(pWP->irrelevant_change_set(it))
+            {
                 fragmentedChangePitStop_->try_to_remove(it, pWP->m_att.guid);
+            }
         });
     }
 
     return true;
 }
 
-bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
+bool StatefulReader::acceptMsgFrom(
+        GUID_t &writerId,
+        WriterProxy **wp)
 {
     assert(wp != nullptr);
 
@@ -442,7 +482,9 @@ bool StatefulReader::acceptMsgFrom(GUID_t &writerId, WriterProxy **wp)
     return false;
 }
 
-bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterProxy* wp)
+bool StatefulReader::change_removed_by_history(
+        CacheChange_t* a_change,
+        WriterProxy* wp)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
@@ -458,7 +500,9 @@ bool StatefulReader::change_removed_by_history(CacheChange_t* a_change, WriterPr
     return false;
 }
 
-bool StatefulReader::change_received(CacheChange_t* a_change, WriterProxy* prox)
+bool StatefulReader::change_received(
+        CacheChange_t* a_change,
+        WriterProxy* prox)
 {
     //First look for WriterProxy in case is not provided
     if(prox == nullptr)
@@ -528,7 +572,9 @@ void StatefulReader::NotifyChanges(WriterProxy* prox)
     }
 }
 
-bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout)
+bool StatefulReader::nextUntakenCache(
+        CacheChange_t** change,
+        WriterProxy** wpout)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     std::vector<CacheChange_t*> toremove;
@@ -585,7 +631,9 @@ bool StatefulReader::nextUntakenCache(CacheChange_t** change,WriterProxy** wpout
 }
 
 // TODO Porque elimina aqui y no cuando hay unpairing
-bool StatefulReader::nextUnreadCache(CacheChange_t** change,WriterProxy** wpout)
+bool StatefulReader::nextUnreadCache(
+        CacheChange_t** change,
+        WriterProxy** wpout)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     std::vector<CacheChange_t*> toremove;

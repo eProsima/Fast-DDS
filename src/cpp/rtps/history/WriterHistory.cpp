@@ -83,7 +83,8 @@ bool WriterHistory::add_change_(CacheChange_t* a_change, WriteParams &wparams,
 
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
-    a_change->sourceTimestamp = Time_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count() * 1e-9);
+    a_change->sourceTimestamp = Time_t(std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                           std::chrono::system_clock::now().time_since_epoch()).count() * 1e-9);
 
     a_change->write_params = wparams;
     // Updated sample identity
@@ -237,7 +238,9 @@ bool WriterHistory::remove_min_change()
         return true;
     }
     else
+    {
         return false;
+    }
 }
 
 //TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.

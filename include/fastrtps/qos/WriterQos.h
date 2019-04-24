@@ -33,7 +33,8 @@ namespace fastrtps {
  * Please consult each of them to check for implementation details and default values.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
-class  WriterQos{
+class  WriterQos
+{
 public:
     RTPS_DllAPI WriterQos();
     RTPS_DllAPI virtual ~WriterQos();
@@ -56,7 +57,8 @@ public:
                (this->m_partition == b.m_partition) &&
                (this->m_topicData == b.m_topicData) &&
                (this->m_groupData == b.m_groupData) &&
-               (this->m_publishMode == b.m_publishMode);
+               (this->m_publishMode == b.m_publishMode) &&
+               (this->m_disablePositiveACKs == b.m_disablePositiveACKs);
     }
 
     //!Durability Qos, implemented in the library.
@@ -93,6 +95,8 @@ public:
     GroupDataQosPolicy m_groupData;
     //!Publication Mode Qos, implemented in the library.
     PublishModeQosPolicy m_publishMode;
+    //!Disable positive acks QoS, implemented in the library.
+    DisablePositiveACKsQosPolicy m_disablePositiveACKs;
     /**
      * Set Qos from another class
      * @param qos Reference from a WriterQos object.

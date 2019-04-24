@@ -43,7 +43,12 @@ StatelessWriter::StatelessWriter(
         WriterAttributes& attributes,
         WriterHistory* history,
         WriterListener* listener)
-    : RTPSWriter(participant, guid, attributes, history, listener)
+    : RTPSWriter(
+          participant,
+          guid,
+          attributes,
+          history,
+          listener)
     , matched_readers_(attributes.matched_readers_allocation)
     , unsent_changes_(resource_limits_from_history(history->m_att))
 {
@@ -126,8 +131,14 @@ void StatelessWriter::unsent_change_added_to_history(
                 }
                 else
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                            mAllShrinkedLocatorList, all_remote_readers_, max_blocking_time);
+                    RTPSMessageGroup group(
+                                mp_RTPSParticipant,
+                                this,
+                                RTPSMessageGroup::WRITER,
+                                m_cdrmessages,
+                                mAllShrinkedLocatorList,
+                                all_remote_readers_,
+                                max_blocking_time);
 
                     if (!group.add_data(*change, all_remote_readers_, mAllShrinkedLocatorList, is_inline_qos_expected_))
                     {

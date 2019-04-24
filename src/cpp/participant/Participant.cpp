@@ -70,4 +70,3 @@ bool Participant::get_remote_reader_info(
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
-

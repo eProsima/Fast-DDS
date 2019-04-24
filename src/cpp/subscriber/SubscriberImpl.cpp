@@ -27,7 +27,6 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-//#include "../participant/ParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
@@ -212,7 +211,9 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
     return updated;
 }
 
-void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(RTPSReader* /*reader*/, const CacheChange_t * const change_in)
+void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(
+        RTPSReader* /*reader*/,
+        const CacheChange_t * const change_in)
 {
     if (mp_subscriberImpl->onNewCacheChangeAdded(change_in))
     {

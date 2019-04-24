@@ -253,6 +253,14 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
+bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
+{
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+    valid &= CDRMessage::addUInt16(msg, this->length);
+    valid &= CDRMessage::addOctet(msg, (octet)enabled);
+    return valid;
+}
+
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 {
     size_t size = TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;

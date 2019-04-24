@@ -62,6 +62,7 @@ public:
     void onNewCacheChangeAdded(
             RTPSReader* reader,
             const CacheChange_t* const  change) override;
+
     /**
     * Separate the Key between the GuidPrefix_t and the liveliness Kind
     * @param key InstanceHandle_t to separate.

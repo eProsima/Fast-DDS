@@ -454,12 +454,15 @@ class XMLParser
         std::string* s,
         uint8_t ident);
 
-
     RTPS_DllAPI static XMLP_ret getXMLTransports(
         tinyxml2::XMLElement *elem,
         std::vector<std::shared_ptr<rtps::TransportDescriptorInterface>> &transports,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLDisablePositiveAcksQos(
+        tinyxml2::XMLElement* elem,
+        DisablePositiveACKsQosPolicy& disablePositiveAcks,
+        uint8_t ident);
 };
 
 } // namespace xmlparser

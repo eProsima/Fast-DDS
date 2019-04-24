@@ -131,6 +131,11 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
         m_ownershipStrength = qos.m_ownershipStrength;
         m_ownershipStrength.hasChanged = true;
     }
+    if (first_time)
+    {
+        m_disablePositiveACKs = qos.m_disablePositiveACKs;
+        m_disablePositiveACKs.hasChanged = true;
+    }
 }
 
 bool WriterQos::checkQos() const

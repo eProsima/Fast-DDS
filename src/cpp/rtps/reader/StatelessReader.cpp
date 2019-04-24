@@ -40,13 +40,20 @@ StatelessReader::~StatelessReader()
     logInfo(RTPS_READER,"Removing reader "<<this->getGuid());
 }
 
-StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-    RTPSReader(pimpl,guid,att,hist, listen)
+StatelessReader::StatelessReader(
+        RTPSParticipantImpl* pimpl,
+        GUID_t& guid,
+        ReaderAttributes& att,
+        ReaderHistory* hist,
+        ReaderListener* listen)
+    : RTPSReader(
+          pimpl,
+          guid,
+          att,
+          hist,
+          listen)
 {
 }
-
-
 
 bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
@@ -127,6 +134,7 @@ bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpo
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     //m_reader_cache.sortCacheChangesBySeqNum();
+
     bool found = false;
     std::vector<CacheChange_t*>::iterator it;
     //TODO PROTEGER ACCESO A HISTORIA AQUI??? YO CREO QUE NO, YA ESTA EL READER PROTEGIDO
@@ -149,7 +157,9 @@ bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpo
 }
 
 
-bool StatelessReader::change_removed_by_history(CacheChange_t* /*ch*/, WriterProxy* /*prox*/)
+bool StatelessReader::change_removed_by_history(
+        CacheChange_t* /*ch*/,
+        WriterProxy* /*prox*/)
 {
     return true;
 }
@@ -283,13 +293,21 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
     return true;
 }
 
-bool StatelessReader::processHeartbeatMsg(GUID_t& /*writerGUID*/, uint32_t /*hbCount*/, SequenceNumber_t& /*firstSN*/,
-        SequenceNumber_t& /*lastSN*/, bool /*finalFlag*/, bool /*livelinessFlag*/)
+bool StatelessReader::processHeartbeatMsg(
+        GUID_t& /*writerGUID*/,
+        uint32_t /*hbCount*/,
+        SequenceNumber_t& /*firstSN*/,
+        SequenceNumber_t& /*lastSN*/,
+        bool /*finalFlag*/,
+        bool /*livelinessFlag*/)
 {
     return true;
 }
 
-bool StatelessReader::processGapMsg(GUID_t& /*writerGUID*/, SequenceNumber_t& /*gapStart*/, SequenceNumberSet_t& /*gapList*/)
+bool StatelessReader::processGapMsg(
+        GUID_t& /*writerGUID*/,
+        SequenceNumber_t& /*gapStart*/,
+        SequenceNumberSet_t& /*gapList*/)
 {
     return true;
 }
@@ -303,7 +321,9 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
     else
     {
         if(writerId.entityId == this->m_trustedWriterEntityId)
+        {
             return true;
+        }
 
         for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
         {

@@ -56,7 +56,7 @@ class RTPSWriter : public Endpoint
             WriterListener* listen=nullptr);
     virtual ~RTPSWriter();
 
-    public:
+public:
 
     /**
      * Create a new change based with the provided changeKind.
@@ -242,7 +242,7 @@ class RTPSWriter : public Endpoint
         return writer_guid == m_guid;
     }
 
-    protected:
+protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
     bool m_pushMode;
@@ -291,7 +291,7 @@ class RTPSWriter : public Endpoint
     bool encrypt_cachechange(CacheChange_t* change);
 #endif
 
-    private:
+private:
 
     RTPSWriter& operator=(const RTPSWriter&) = delete;
 };

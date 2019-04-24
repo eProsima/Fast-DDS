@@ -1001,6 +1001,47 @@ public:
 };
 
 /**
+ * Class DisablePositiveACKsQosPolicy to disable sending of positive ACKs
+ * period: Default value c_TimeInfinite.
+ */
+class DisablePositiveACKsQosPolicy : public Parameter_t, public QosPolicy
+{
+    friend class ParameterList;
+
+public:
+
+    RTPS_DllAPI DisablePositiveACKsQosPolicy()
+        : Parameter_t(PID_DISABLE_POSITIVE_ACKS, 0)
+        , QosPolicy(true)
+        , enabled(false)
+        , duration(rtps::c_TimeInfinite)
+    {}
+
+    virtual RTPS_DllAPI ~DisablePositiveACKsQosPolicy()
+    {}
+
+    bool operator==(const DisablePositiveACKsQosPolicy& b) const
+    {
+        return enabled == b.enabled &&
+                Parameter_t::operator==(b) &&
+                QosPolicy::operator==(b);
+    }
+
+    /**
+     * Appends QoS to the specified CDR message.
+     * @param msg Message to append the QoS Policy to.
+     * @return True if the modified CDRMessage is valid.
+     */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+public:
+    //! True if this QoS is enabled
+    bool enabled;
+    //! The duration to keep samples for (not serialised as not needed by reader)
+    rtps::Duration_t duration;
+};
+
+/**
 * Class TypeIdV1,
 */
 class TypeIdV1 : public Parameter_t, public QosPolicy

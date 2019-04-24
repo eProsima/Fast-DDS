@@ -150,6 +150,7 @@ const char* PARTITION = "partition";
 const char* TOPIC_DATA = "topicData";
 const char* GROUP_DATA = "groupData";
 const char* PUB_MODE = "publishMode";
+const char* DISABLE_POSITIVE_ACKS = "disablePositiveAcks";
 
 const char* SYNCHRONOUS = "SYNCHRONOUS";
 const char* ASYNCHRONOUS = "ASYNCHRONOUS";
@@ -218,6 +219,7 @@ const char* READER_HIST_MEM_POLICY = "readerHistoryMemoryPolicy";
 const char* WRITER_HIST_MEM_POLICY = "writerHistoryMemoryPolicy";
 const char* MUTATION_TRIES = "mutation_tries";
 const char* ACCESS_SCOPE = "access_scope";
+const char* ENABLED = "enabled";
 
 // Endpoint parser
 const char* STATICDISCOVERY = "staticdiscovery";
