@@ -34,6 +34,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(PortParametersTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(PortParametersTests ${GTEST_LIBRARIES})
-        add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE})
+        add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
     endif()
 endif()
