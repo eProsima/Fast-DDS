@@ -180,6 +180,13 @@ class RTPSMessageGroup
 
         uint32_t get_current_bytes_processed() { return currentBytesSent_ + full_msg_->length; }
 
+        /**
+         * To be used whenever destination locators/guids change between two add_xxx calls.
+         * Automatically called inside add_xxx calls if destinations_have_changed() method of
+         * RTPSMessageSenderInterface returns true.
+         * May become private again with a refactor of RTPSMessageSenderInterface, adding a
+         * group_has_been_flushed() method.
+         */
         void flush_and_reset();
 
     private:
