@@ -102,7 +102,7 @@ public:
      * @param sec Seconds. The fractional part is converted to nanoseconds.
      */
     Time_t(
-            fastrtps::Time_t time);
+            const eprosima::fastrtps::Time_t& time);
 
     /**
      *  Returns stored time as nanoseconds (including seconds)

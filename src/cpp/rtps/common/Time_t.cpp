@@ -95,9 +95,9 @@ rtps::Time_t::Time_t(
 }
 
 rtps::Time_t::Time_t(
-        fastrtps::Time_t time)
+        const eprosima::fastrtps::Time_t& time)
 {
-    seconds_ = static_cast<int32_t>(time.seconds);
+    seconds_ = time.seconds;
     set_nanosec(time.nanosec);
 }
 
