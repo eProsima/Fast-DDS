@@ -66,6 +66,7 @@ StatefulReader::StatefulReader(
     , matched_writers_(att.matched_writers_allocation)
     , matched_writers_pool_(att.matched_writers_allocation)
     , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
+    , disable_positive_acks_(att.disable_positive_acks)
 {
     // Update resource limits on proxy changes set adding 256 possibly missing changes
     proxy_changes_config_.initial += 256u;
