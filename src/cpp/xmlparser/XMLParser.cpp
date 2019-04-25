@@ -1297,7 +1297,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
     {
         try
         {
-            uint16_t size = atoi(bit_bound);
+            uint16_t size = static_cast<uint16_t>(std::stoul(bit_bound));
             if (size == 1)
             {
                 memberType = BOOLEAN;
@@ -1477,9 +1477,9 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
     {
         try
         {
-            field_position = static_cast<uint16_t>(std::atoi(position));
+            field_position = static_cast<uint16_t>(std::stoul(position));
         }
-        catch(...)
+        catch(const std::exception&)
         {
             logError(XMLPARSER, "Error parsing bit_value position: Invalid (must be an unsigned short).");
             return XMLP_ret::XML_ERROR;
