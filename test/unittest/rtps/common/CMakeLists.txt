@@ -18,6 +18,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     if(GTEST_FOUND)
         set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
+        set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp)
 
         add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
         target_compile_definitions(SequenceNumberTests PRIVATE FASTRTPS_NO_LIB)
@@ -25,5 +28,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(SequenceNumberTests ${GTEST_LIBRARIES})
         add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
+
+        add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
+        target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(PortParametersTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(PortParametersTests ${GTEST_LIBRARIES})
+        add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
     endif()
 endif()

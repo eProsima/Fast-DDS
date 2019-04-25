@@ -290,10 +290,23 @@ void NetworkFactory::Shutdown()
 
 uint16_t NetworkFactory::calculateWellKnownPort(const RTPSParticipantAttributes& att) const
 {
-    return static_cast<uint16_t>(att.port.portBase +
-            att.port.domainIDGain*att.builtin.domainId +
-            att.port.offsetd3 +
-            att.port.participantIDGain*att.participantID);
+
+    uint32_t port = att.port.portBase +
+        att.port.domainIDGain * att.builtin.domainId +
+        att.port.offsetd3 +
+        att.port.participantIDGain * att.participantID;
+
+    if (port > 65535)
+    {
+        logError(RTPS, "Calculated port number is too high. Probably the domainId is over 232, there are "
+            << "too much participants created or portBase is too high.");
+        std::cout << "Calculated port number is too high. Probably the domainId is over 232, there are "
+            << "too much participants created or portBase is too high." << std::endl;
+        std::cout.flush();
+        exit(EXIT_FAILURE);
+    }
+
+    return static_cast<uint16_t>(port);
 }
 
 } // namespace rtps
