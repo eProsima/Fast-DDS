@@ -2130,7 +2130,8 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         case TK_BOOLEAN:
         {
             std::string value = member->get_default_value();
-            std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+            std::transform(value.begin(), value.end(), value.begin(),
+                    [](unsigned char c){ return static_cast<char>(std::tolower(c));});
             apv.boolean_value(value.compare("0") != 0 || value.compare(CONST_TRUE) == 0);
         }
         break;
