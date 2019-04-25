@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles>
+
+    <participant profile_name="simple_participant_profile" is_default_profile="true">
+        <rtps>
+            <builtin>
+                <leaseDuration>
+                    <sec>360</sec>
+                </leaseDuration>
+            </builtin>
+        </rtps>
+    </participant>
+</profiles>

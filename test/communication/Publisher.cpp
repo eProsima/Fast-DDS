@@ -32,6 +32,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <fstream>
+#include <string>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -105,6 +106,8 @@ int main(int argc, char** argv)
     bool exit_on_lost_liveliness = false;
     uint32_t seed = 7800, wait = 0;
     char* xml_file = nullptr;
+    uint32_t samples = 4;
+    std::string magic;
 
     while(arg_count < argc)
     {
@@ -131,6 +134,26 @@ int main(int argc, char** argv)
             }
 
             wait = strtol(argv[arg_count], nullptr, 10);
+        }
+        else if(strcmp(argv[arg_count], "--samples") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--samples expects a parameter" << std::endl;
+                return -1;
+            }
+
+            samples = strtol(argv[arg_count], nullptr, 10);
+        }
+        else if(strcmp(argv[arg_count], "--magic") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--magic expects a parameter" << std::endl;
+                return -1;
+            }
+
+            magic = argv[arg_count];
         }
         else if(strcmp(argv[arg_count], "--xmlfile") == 0)
         {
@@ -167,7 +190,7 @@ int main(int argc, char** argv)
 
     // Generate topic name
     std::ostringstream topic;
-    topic << "HelloWorldTopic_" << asio::ip::host_name() << "_" << seed;
+    topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
     PublisherAttributes publisher_attributes;
@@ -196,7 +219,7 @@ int main(int argc, char** argv)
     {
         publisher->write((void*)&data);
 
-        if(data.index() == 4)
+        if(data.index() == samples)
             data.index() = 1;
         else
             ++data.index();
