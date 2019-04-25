@@ -1216,7 +1216,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(tinyxml2::XMLElement* p_root)
     if (baseType != nullptr)
     {
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == TK_BITSET)
+        if (parentType != nullptr && parentType->get_kind() == types::TK_BITSET)
         {
             typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(parentType);
         }
@@ -1260,7 +1260,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(tinyxml2::XMLElement* p_root)
 p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
         tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype,
-        MemberId mId,
+        types::MemberId mId,
         uint16_t& position)
 {
     /*
@@ -1389,9 +1389,10 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
         p_dynamictype->add_member(mId, memberName, memberBuilder);
         if (!std::string(memberName).empty())
         {
-            p_dynamictype->apply_annotation_to_member(mId, ANNOTATION_BIT_BOUND_ID, "value", bit_bound);
+            p_dynamictype->apply_annotation_to_member(mId, types::ANNOTATION_BIT_BOUND_ID, "value", bit_bound);
             //position += static_cast<uint16_t>(mId);
-            p_dynamictype->apply_annotation_to_member(mId, ANNOTATION_POSITION_ID, "value", std::to_string(position));
+            p_dynamictype->apply_annotation_to_member(mId, types::ANNOTATION_POSITION_ID, "value",
+                std::to_string(position));
         }
         position += static_cast<uint16_t>(atoi(bit_bound));
     }
@@ -1567,7 +1568,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(tinyxml2::XMLElement* p_root)
     if (baseType != nullptr)
     {
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == TK_STRUCTURE)
+        if (parentType != nullptr && parentType->get_kind() == types::TK_STRUCTURE)
         {
             typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(parentType);
         }
@@ -2192,10 +2193,10 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     {
         if (strncmp(memberTopicKey, "true", 5) == 0)
         {
-            memberBuilder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
+            memberBuilder->apply_annotation(types::ANNOTATION_KEY_ID, "value", "true");
             if (p_dynamictype != nullptr)
             {
-                p_dynamictype->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
+                p_dynamictype->apply_annotation(types::ANNOTATION_KEY_ID, "value", "true");
             }
         }
     }

@@ -219,7 +219,7 @@ class XMLParser
     RTPS_DllAPI static p_dynamictypebuilder_t parseXMLBitfieldDynamicType(
         tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype,
-        MemberId mId,
+        types::MemberId mId,
         uint16_t& position);
 
     RTPS_DllAPI static XMLP_ret parseXMLBitvalueDynamicType(
@@ -420,7 +420,7 @@ class XMLParser
         uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLContainerAllocationConfig(
-        tinyxml2::XMLElement* elem, 
+        tinyxml2::XMLElement* elem,
         ResourceLimitedContainerConfig& resourceLimitsQos,
         uint8_t ident);
 

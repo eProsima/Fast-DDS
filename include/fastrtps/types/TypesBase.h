@@ -32,8 +32,9 @@ namespace fastcdr{
 
 namespace eprosima {
 namespace fastrtps {
-
 namespace types {
+
+using eprosima::fastrtps::rtps::octet;
 
 const std::string CONST_TRUE = "true";
 const std::string CONST_FALSE = "false";

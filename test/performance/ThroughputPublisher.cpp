@@ -425,7 +425,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
-        DynamicData *my_data = m_DynData->loan_value(m_DynData->GetMemberIdAtIndex(1));
+        DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
         for (uint32_t i = 0; i < size; ++i)
         {
             my_data->insert_sequence_data(id);

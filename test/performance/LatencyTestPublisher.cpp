@@ -670,8 +670,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
         m_DynData_out = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id_in, id_out;
-        DynamicData *my_data_in = m_DynData_in->loan_value(m_DynData_in->GetMemberIdAtIndex(1));
-        DynamicData *my_data_out = m_DynData_out->loan_value(m_DynData_out->GetMemberIdAtIndex(1));
+        DynamicData *my_data_in = m_DynData_in->loan_value(m_DynData_in->get_member_id_at_index(1));
+        DynamicData *my_data_out = m_DynData_out->loan_value(m_DynData_out->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             my_data_in->insert_sequence_data(id_in);
