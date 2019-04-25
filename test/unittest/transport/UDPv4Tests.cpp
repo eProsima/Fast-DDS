@@ -302,18 +302,7 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
 
 TEST_F(UDPv4Tests, send_to_blocked_interface)
 {
-    std::vector<IPFinder::info_IP> ip_list;
-    IPFinder::getIPs(&ip_list);
-
-    for (const IPFinder::info_IP& ip : ip_list)
-    {
-        if (IPFinder::IP4 == ip.type)
-        {
-            descriptor.interfaceWhiteList.emplace_back(ip.name);
-            break;
-        }
-    }
-
+    descriptor.interfaceWhiteList.emplace_back("111.111.111.111");
     UDPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 

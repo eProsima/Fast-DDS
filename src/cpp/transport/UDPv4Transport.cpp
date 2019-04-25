@@ -97,6 +97,12 @@ UDPv4Transport::UDPv4Transport(const UDPv4TransportDescriptor& descriptor)
                 interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
             }
         }
+
+        if (interface_whitelist_.empty())
+        {
+            logError(TRANSPORT, "All whitelist interfaces where filtered out");
+            interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
+        }
     }
 }
 
