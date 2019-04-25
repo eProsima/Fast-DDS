@@ -20,8 +20,10 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 if(WIN32)
 
 file(GLOB_RECURSE ALL_HEADERS 
-	"C:/Users/MiguelBarro/Documents/Fast-RTPS/include/**/*.h"
-	"C:/Users/MiguelBarro/Documents/Fast-RTPS/include/**/*.hpp"
+	${PROJECT_SOURCE_DIR}/include/**/*.h
+	${PROJECT_SOURCE_DIR}/include/**/*.hpp
+	${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
+	${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
 	)  #TODO: remove when development process is finished
 
 endif(WIN32)
