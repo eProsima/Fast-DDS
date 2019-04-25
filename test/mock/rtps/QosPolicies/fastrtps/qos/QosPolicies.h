@@ -120,13 +120,16 @@ class DurabilityQosPolicy : public Parameter_t, public QosPolicy
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeInifinite.
  */
-class DeadlineQosPolicy : public Parameter_t, public QosPolicy 
+class DeadlineQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
-        RTPS_DllAPI DeadlineQosPolicy():Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(rtps::c_TimeInfinite){	};
-        virtual RTPS_DllAPI ~DeadlineQosPolicy(){};
-        rtps::Duration_t period;
+        RTPS_DllAPI DeadlineQosPolicy()
+            : Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(c_TimeInfinite) {}
+
+        virtual RTPS_DllAPI ~DeadlineQosPolicy(){}
+
+        Duration_t period;
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.
@@ -143,13 +146,16 @@ class DeadlineQosPolicy : public Parameter_t, public QosPolicy
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * period: Default value c_TimeZero.
  */
-class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy 
+class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
-        RTPS_DllAPI LatencyBudgetQosPolicy():Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(rtps::c_TimeZero){};
-        virtual RTPS_DllAPI ~LatencyBudgetQosPolicy(){};
-        rtps::Duration_t duration;
+        RTPS_DllAPI LatencyBudgetQosPolicy()
+            : Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeZero) {}
+
+        virtual RTPS_DllAPI ~LatencyBudgetQosPolicy(){}
+
+        Duration_t duration;
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.
@@ -180,16 +186,24 @@ typedef enum LivelinessQosPolicyKind:rtps::octet {
  * lease_duration: Default value c_TimeInfinite.
  * announcement_period: Default value c_TimeInfinite (must be < lease_duration).
  */
-class LivelinessQosPolicy : public Parameter_t, public QosPolicy 
+class LivelinessQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
-        RTPS_DllAPI LivelinessQosPolicy():Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),QosPolicy(true),
-        kind(AUTOMATIC_LIVELINESS_QOS){lease_duration = rtps::c_TimeInfinite; announcement_period = rtps::c_TimeInfinite;};
-        virtual RTPS_DllAPI ~LivelinessQosPolicy(){};
+        RTPS_DllAPI LivelinessQosPolicy()
+            : Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH)
+            , QosPolicy(true)
+            , kind(AUTOMATIC_LIVELINESS_QOS)
+        {
+            lease_duration = c_TimeInfinite;
+            announcement_period = c_TimeInfinite;
+        }
+
+        virtual RTPS_DllAPI ~LivelinessQosPolicy(){}
+
         LivelinessQosPolicyKind kind;
-        rtps::Duration_t lease_duration;
-        rtps::Duration_t announcement_period;
+        Duration_t lease_duration;
+        Duration_t announcement_period;
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.
@@ -222,10 +236,10 @@ class ReliabilityQosPolicy : public Parameter_t, public QosPolicy
         QosPolicy(true), //indicate send always
         kind(BEST_EFFORT_RELIABILITY_QOS),
         // max_blocking_time = 100ms
-        max_blocking_time{0, 4294967100}  {}
+        max_blocking_time{0, 100000000}  {}
         virtual RTPS_DllAPI ~ReliabilityQosPolicy(){}
         ReliabilityQosPolicyKind kind;
-        rtps::Duration_t max_blocking_time;
+        Duration_t max_blocking_time;
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.
@@ -251,7 +265,7 @@ enum OwnershipQosPolicyKind:rtps::octet {
  * Class OwnershipQosPolicy, to indicate the ownership kind of the endpoints.
  * kind: Default value SHARED_OWNERSHIP_QOS.
  */
-class OwnershipQosPolicy : public Parameter_t, public QosPolicy 
+class OwnershipQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -285,7 +299,7 @@ enum DestinationOrderQosPolicyKind :rtps::octet{
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * kind: Default value BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS
  */
-class DestinationOrderQosPolicy : public Parameter_t, public QosPolicy 
+class DestinationOrderQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -346,14 +360,19 @@ public:
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * minimum_separation: Default value c_TimeZero
  */
-class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy 
+class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
 
-        RTPS_DllAPI TimeBasedFilterQosPolicy():Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),QosPolicy(false),minimum_separation(rtps::c_TimeZero){};
-        virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy(){};
-        rtps::Duration_t minimum_separation;
+        RTPS_DllAPI TimeBasedFilterQosPolicy()
+            : Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH)
+            , QosPolicy(false)
+            , minimum_separation(c_TimeZero) {}
+
+        virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy(){}
+
+        Duration_t minimum_separation;
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.
@@ -554,7 +573,7 @@ enum HistoryQosPolicyKind:rtps::octet {
  * kind: Default value KEEP_LAST_HISTORY_QOS.
  * depth: Default value 1000.
  */
-class HistoryQosPolicy : public Parameter_t, public QosPolicy 
+class HistoryQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -581,7 +600,7 @@ class HistoryQosPolicy : public Parameter_t, public QosPolicy
  * max_samples_per_instance: Default value 400.
  * allocated_samples: Default value 100.
  */
-class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy 
+class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
@@ -615,11 +634,11 @@ class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
  * max_instances: Default value -1.
  * max_samples_per_instance: Default value -1.
  */
-class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy 
+class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
-        rtps::Duration_t service_cleanup_delay;
+        Duration_t service_cleanup_delay;
         HistoryQosPolicyKind history_kind;
         int32_t history_depth;
         int32_t max_samples;
@@ -645,13 +664,18 @@ class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
  * This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
  * duration: Default value c_TimeInfinite.
  */
-class LifespanQosPolicy : public Parameter_t, public QosPolicy 
+class LifespanQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:
-        RTPS_DllAPI LifespanQosPolicy():Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(rtps::c_TimeInfinite){};
-        virtual RTPS_DllAPI ~LifespanQosPolicy(){};
-        rtps::Duration_t duration;
+        RTPS_DllAPI LifespanQosPolicy()
+            : Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH)
+            , QosPolicy(true)
+            , duration(c_TimeInfinite) {}
+
+        virtual RTPS_DllAPI ~LifespanQosPolicy() {}
+
+        Duration_t duration;
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.
@@ -667,7 +691,7 @@ class LifespanQosPolicy : public Parameter_t, public QosPolicy
  * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
  * value: Default value 0.
  */
-class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy 
+class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy
 {
         friend class ParameterList;
     public:

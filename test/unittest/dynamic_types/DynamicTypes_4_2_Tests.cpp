@@ -32,6 +32,7 @@
 #include "idl/new_features_4_2TypeObject.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastcdr::exception;
 

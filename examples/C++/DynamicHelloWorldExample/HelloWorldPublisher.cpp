@@ -35,6 +35,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : mp_participant(nullptr)

@@ -95,7 +95,8 @@ class RTPSWithRegistrationReader
 
             // By default, heartbeat period delay is 100 milliseconds.
             reader_attr_.times.heartbeatResponseDelay.seconds = 0;
-            reader_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
+            //reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
+            reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
         }
 
         virtual ~RTPSWithRegistrationReader()

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Publisher.h 	
+ * @file Publisher.h
  */
 
 
@@ -69,7 +69,7 @@ class PublisherImpl
     virtual ~PublisherImpl();
 
     /**
-     * 
+     *
      * @param kind
      * @param  Data
      * @return
@@ -79,7 +79,7 @@ class PublisherImpl
         void* Data);
 
     /**
-     * 
+     *
      * @param kind
      * @param  Data
      * @param wparams
@@ -103,7 +103,7 @@ class PublisherImpl
     bool removeAllChange(size_t* removed);
 
     /**
-     * 
+     *
      * @return
      */
     const rtps::GUID_t& getGuid();
@@ -127,7 +127,7 @@ class PublisherImpl
      */
     TopicDataType* getType() {return mp_type;};
 
-    bool wait_for_all_acked(const rtps::Time_t& max_wait);
+    bool wait_for_all_acked(const Time_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
@@ -165,11 +165,11 @@ class PublisherImpl
     uint32_t high_mark_for_frag_;
 
     //! A timer used to check for deadlines
-    TimedCallback deadline_timer_;
+    rtps::TimedCallback deadline_timer_;
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the deadline timer
-    InstanceHandle_t timer_owner_;
+    rtps::InstanceHandle_t timer_owner_;
     //! The offered deadline missed status
     OfferedDeadlineMissedStatus deadline_missed_status_;
 

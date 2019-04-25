@@ -29,9 +29,9 @@
 
 #define TIME_LIMIT_US 10000
 
-using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 uint32_t dataspub[] = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
 uint32_t dataspub_large[] = {63996, 131068};
@@ -270,7 +270,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     pt << pid << "_PUB2SUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.times.heartbeatPeriod.nanosec = 100000000;
 
     if (!reliable)
     {
@@ -670,8 +670,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
         m_DynData_out = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id_in, id_out;
-        DynamicData *my_data_in = m_DynData_in->loan_value(m_DynData_in->GetMemberIdAtIndex(1));
-        DynamicData *my_data_out = m_DynData_out->loan_value(m_DynData_out->GetMemberIdAtIndex(1));
+        DynamicData *my_data_in = m_DynData_in->loan_value(m_DynData_in->get_member_id_at_index(1));
+        DynamicData *my_data_out = m_DynData_out->loan_value(m_DynData_out->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             my_data_in->insert_sequence_data(id_in);

@@ -47,6 +47,7 @@
 #include <vector>
 #include <stdexcept>
 
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
 
@@ -76,7 +77,7 @@ StatefulWriter::StatefulWriter(
     , m_controllers()
 {
     m_heartbeatCount = 0;
-    m_HBReaderEntityId = 
+    m_HBReaderEntityId =
         (guid.entityId == c_EntityId_SEDPPubWriter)    ? c_EntityId_SEDPPubReader :
         (guid.entityId == c_EntityId_SEDPSubWriter)    ? c_EntityId_SEDPSubReader :
         (guid.entityId == c_EntityId_WriterLiveliness) ? c_EntityId_ReaderLiveliness :
@@ -841,7 +842,7 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 
     if(!all_acked_)
     {
-        std::chrono::microseconds max_w(::TimeConv::Time_t2MicroSecondsInt64(max_wait));
+        std::chrono::microseconds max_w(::TimeConv::Duration_t2MicroSecondsInt64(max_wait));
         all_acked_cond_.wait_for(all_acked_lock, max_w, [&]() { return all_acked_; });
     }
 
@@ -1123,7 +1124,7 @@ void StatefulWriter::send_heartbeat_nts_(
 }
 
 void StatefulWriter::send_heartbeat_piggyback_nts_(
-    const std::vector<GUID_t>& remote_readers, 
+    const std::vector<GUID_t>& remote_readers,
     const LocatorList_t& locators,
     RTPSMessageGroup& message_group,
     uint32_t& last_bytes_processed)
@@ -1197,10 +1198,10 @@ void StatefulWriter::perform_nack_supression(const GUID_t& reader_guid)
 }
 
 bool StatefulWriter::process_acknack(
-        const GUID_t& writer_guid, 
-        const GUID_t& reader_guid, 
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
         uint32_t ack_count,
-        const SequenceNumberSet_t& sn_set, 
+        const SequenceNumberSet_t& sn_set,
         bool final_flag,
         bool &result)
 {

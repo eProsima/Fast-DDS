@@ -102,7 +102,7 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333u);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
@@ -171,7 +171,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333u);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
@@ -236,7 +236,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_durability.kind, TRANSIENT_LOCAL_DURABILITY_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.lease_duration.seconds, 1);
-    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.fraction, 2u);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.nanosec, 2u);
     EXPECT_EQ(pub_qos.m_liveliness.announcement_period, c_TimeInfinite);
     EXPECT_EQ(pub_qos.m_reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
     EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, c_TimeZero);
@@ -245,10 +245,10 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
-    EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
+    EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
-    EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
+    EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
     locator.port = 197;
     EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
@@ -304,7 +304,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_durability.kind, TRANSIENT_LOCAL_DURABILITY_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.lease_duration.seconds, 1);
-    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.fraction, 2u);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.nanosec, 2u);
     EXPECT_EQ(pub_qos.m_liveliness.announcement_period, c_TimeInfinite);
     EXPECT_EQ(pub_qos.m_reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
     EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, c_TimeZero);
@@ -313,10 +313,10 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
-    EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
+    EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
-    EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
+    EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
     locator.port = 197;
     EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
@@ -373,7 +373,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.lease_duration.seconds, 11);
-    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.fraction, 22u);
+    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.nanosec, 22u);
     EXPECT_EQ(sub_qos.m_liveliness.announcement_period, c_TimeZero);
     EXPECT_EQ(sub_qos.m_reliability.kind, RELIABLE_RELIABILITY_QOS);
     EXPECT_EQ(sub_qos.m_reliability.max_blocking_time, c_TimeInfinite);
@@ -383,7 +383,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_qos.m_partition.getNames()[3], "partition_name_f");
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
-    EXPECT_EQ(sub_times.heartbeatResponseDelay.fraction, 81u);
+    EXPECT_EQ(sub_times.heartbeatResponseDelay.nanosec, 81u);
     IPLocator::setIPv4(locator, 192, 168, 1, 10);
     locator.port = 196;
     EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
@@ -437,7 +437,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     EXPECT_EQ(sub_qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.lease_duration.seconds, 11);
-    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.fraction, 22u);
+    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.nanosec, 22u);
     EXPECT_EQ(sub_qos.m_liveliness.announcement_period, c_TimeZero);
     EXPECT_EQ(sub_qos.m_reliability.kind, RELIABLE_RELIABILITY_QOS);
     EXPECT_EQ(sub_qos.m_reliability.max_blocking_time, c_TimeInfinite);
@@ -447,7 +447,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     EXPECT_EQ(sub_qos.m_partition.getNames()[3], "partition_name_f");
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
-    EXPECT_EQ(sub_times.heartbeatResponseDelay.fraction, 81u);
+    EXPECT_EQ(sub_times.heartbeatResponseDelay.nanosec, 81u);
     IPLocator::setIPv4(locator, 192, 168, 1, 10);
     locator.port = 196;
     EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);

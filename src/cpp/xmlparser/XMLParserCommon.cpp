@@ -129,7 +129,7 @@ const char* DURATION_INFINITY = "DURATION_INFINITY";
 const char* DURATION_INFINITE_SEC = "DURATION_INFINITE_SEC";
 const char* DURATION_INFINITE_NSEC = "DURATION_INFINITE_NSEC";
 const char* SECONDS = "sec";
-const char* FRACTION = "fraction";
+const char* NANOSECONDS = "nanosec";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
 

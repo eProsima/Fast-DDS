@@ -390,7 +390,7 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333u);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
@@ -477,7 +477,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333u);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);

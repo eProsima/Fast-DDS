@@ -36,6 +36,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){}
 ThroughputPublisher::DataPubListener::~DataPubListener(){}
@@ -209,9 +210,9 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     if (reliable)
     {
         //RELIABLE
-        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100);
-        Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0);
-        Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100).to_duration_t();
+        Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
+        Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
         Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     }
     else
@@ -376,7 +377,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
     command.m_command = ALL_STOPS;
     //	cout << "SEND COMMAND "<< command.m_command << endl;
     mp_commandpub->write((void*)&command);
-    mp_commandpub->wait_for_all_acked(Time_t(20, 0));
+    mp_commandpub->wait_for_all_acked(eprosima::fastrtps::Time_t(20, 0));
 
     if (m_export_csv)
     {
@@ -424,7 +425,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
-        DynamicData *my_data = m_DynData->loan_value(m_DynData->GetMemberIdAtIndex(1));
+        DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
         for (uint32_t i = 0; i < size; ++i)
         {
             my_data->insert_sequence_data(id);

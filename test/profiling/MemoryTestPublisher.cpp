@@ -34,6 +34,7 @@
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 
 MemoryTestPublisher::MemoryTestPublisher()
@@ -374,7 +375,7 @@ bool MemoryTestPublisher::test(uint32_t test_time, uint32_t datasize)
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
-        DynamicData *my_data = m_DynData->loan_value(m_DynData->GetMemberIdAtIndex(1));
+        DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             my_data->insert_sequence_data(id);

@@ -26,21 +26,24 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Find requirements
-find_package(osrf_testing_tools_cpp REQUIRED)
+find_package(osrf_testing_tools_cpp)
 
-message(STATUS "Configuring AllocationTest...")
-file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CXX "*.cxx")
-file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CPP "*.cpp")
+if (osrf_testing_tools_cpp_FOUND)
+    message(STATUS "Configuring AllocationTest...")
+    file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CXX "*.cxx")
+    file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CPP "*.cpp")
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-    )
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.sh
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-    )
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+        )
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.sh
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+        )
 
-add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
-target_link_libraries(AllocationTest fastrtps fastcdr osrf_testing_tools_cpp::memory_tools)
-install(TARGETS AllocationTest
-    RUNTIME DESTINATION test/profiling/allocations/${BIN_INSTALL_DIR})
-
+    add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
+    target_link_libraries(AllocationTest fastrtps fastcdr osrf_testing_tools_cpp::memory_tools)
+    install(TARGETS AllocationTest
+        RUNTIME DESTINATION test/profiling/allocations/${BIN_INSTALL_DIR})
+else(osrf_testing_tools_cpp_FOUND)
+    message(STATUS "osrf_testing_tools_cpp not found, skipping AllocationTest.")
+endif(osrf_testing_tools_cpp_FOUND)

@@ -44,7 +44,7 @@
 #include <thread>
 
 using eprosima::fastrtps::rtps::IPLocator;
-using eprosima::fastrtps::UDPv4TransportDescriptor;
+using eprosima::fastrtps::rtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubWriter
@@ -57,7 +57,8 @@ class PubSubWriter
 
             ~ParticipantListener() {}
 
-            void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo&& info) override
+            void onParticipantDiscovery(eprosima::fastrtps::Participant*,
+                    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
             {
                 if(writer_.onDiscovery_!=nullptr)
                 {
@@ -77,7 +78,7 @@ class PubSubWriter
             }
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantAuthenticationInfo&& info) override
+            void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
                 {
@@ -215,9 +216,9 @@ class PubSubWriter
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         publisher_attr_.times.heartbeatPeriod.seconds = 0;
-        publisher_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+        publisher_attr_.times.heartbeatPeriod.nanosec = 100000000;
         publisher_attr_.times.nackResponseDelay.seconds = 0;
-        publisher_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
+        publisher_attr_.times.nackResponseDelay.nanosec = 100000000;
     }
 
     ~PubSubWriter()
@@ -362,7 +363,7 @@ class PubSubWriter
             >
             bool waitForAllAcked(const std::chrono::duration<_Rep, _Period>& max_wait)
             {
-                return publisher_->wait_for_all_acked(eprosima::fastrtps::rtps::Time_t((int32_t)max_wait.count(), 0));
+                return publisher_->wait_for_all_acked(eprosima::fastrtps::Time_t((int32_t)max_wait.count(), 0));
             }
 
     void block_until_discover_topic(const std::string& topicName, int repeatedTimes)
@@ -394,7 +395,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& deadline_period(const eprosima::fastrtps::rtps::Duration_t deadline_period)
+    PubSubWriter& deadline_period(const eprosima::fastrtps::Duration_t deadline_period)
     {
         publisher_attr_.qos.m_deadline.period = deadline_period;
         return *this;
@@ -404,25 +405,25 @@ class PubSubWriter
     {
         publisher_attr_.topic.topicKind =
                 keyed ?
-                    eprosima::fastrtps::TopicKind_t::WITH_KEY :
-                    eprosima::fastrtps::TopicKind_t::NO_KEY;
+                    eprosima::fastrtps::rtps::TopicKind_t::WITH_KEY :
+                    eprosima::fastrtps::rtps::TopicKind_t::NO_KEY;
         return *this;
     }
 
-    PubSubWriter& lifespan_period(const eprosima::fastrtps::rtps::Duration_t lifespan_period)
+    PubSubWriter& lifespan_period(const eprosima::fastrtps::Duration_t lifespan_period)
     {
         publisher_attr_.qos.m_lifespan.duration = lifespan_period;
         return *this;
     }
 
-    PubSubWriter& keep_duration(const eprosima::fastrtps::rtps::Duration_t duration)
+    PubSubWriter& keep_duration(const eprosima::fastrtps::Duration_t duration)
     {
         publisher_attr_.qos.m_disablePositiveACKs.enabled = true;
         publisher_attr_.qos.m_disablePositiveACKs.duration = duration;
         return *this;
     }
 
-    PubSubWriter& max_blocking_time(const eprosima::fastrtps::rtps::Duration_t time)
+    PubSubWriter& max_blocking_time(const eprosima::fastrtps::Duration_t time)
     {
         publisher_attr_.qos.m_reliability.max_blocking_time = time;
         return *this;
@@ -509,9 +510,9 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& heartbeat_period_fraction(uint32_t frac)
+    PubSubWriter& heartbeat_period_nanosec(uint32_t nanosec)
     {
-        publisher_attr_.times.heartbeatPeriod.fraction = frac;
+        publisher_attr_.times.heartbeatPeriod.nanosec = nanosec;
         return *this;
     }
 
@@ -646,7 +647,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& lease_duration(eprosima::fastrtps::rtps::Duration_t lease_duration, eprosima::fastrtps::rtps::Duration_t announce_period)
+    PubSubWriter& lease_duration(eprosima::fastrtps::Duration_t lease_duration, eprosima::fastrtps::Duration_t announce_period)
     {
         participant_attr_.rtps.builtin.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
@@ -990,7 +991,7 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
     std::map<std::string,  int> mapPartitionCountList_;
     bool discovery_result_;
 
-    std::function<bool(const eprosima::fastrtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

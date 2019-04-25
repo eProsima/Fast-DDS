@@ -37,8 +37,10 @@ class ReaderTimes
 public:
     ReaderTimes()
     {
-        initialAcknackDelay.fraction = 300*1000*1000;
-        heartbeatResponseDelay.fraction = 20*1000*1000;
+        //initialAcknackDelay.fraction = 300*1000*1000;
+        //heartbeatResponseDelay.fraction = 20*1000*1000;
+        initialAcknackDelay.nanosec = 70*1000*1000;
+        heartbeatResponseDelay.nanosec = 5*1000*1000;
     }
 
     virtual ~ReaderTimes() {}

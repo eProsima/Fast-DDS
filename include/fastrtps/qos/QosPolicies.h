@@ -33,8 +33,6 @@ namespace rtps{
 class EDP;
 }
 
-using namespace eprosima::fastrtps::types;
-
 /**
  * Class QosPolicy, base for all QoS policies defined for Writers and Readers.
  */
@@ -158,7 +156,7 @@ public:
     RTPS_DllAPI DeadlineQosPolicy()
         : Parameter_t(PID_DEADLINE, PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          period(rtps::c_TimeInfinite)
+          period(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~DeadlineQosPolicy(){}
@@ -178,7 +176,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t period;
+    Duration_t period;
 };
 
 /**
@@ -192,7 +190,7 @@ public:
     RTPS_DllAPI LatencyBudgetQosPolicy()
         : Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          duration(rtps::c_TimeZero)
+          duration(c_TimeZero)
     {}
     virtual RTPS_DllAPI ~LatencyBudgetQosPolicy() {}
 
@@ -211,7 +209,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t duration;
+    Duration_t duration;
 };
 
 /**
@@ -241,8 +239,8 @@ public:
         : Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
           QosPolicy(true),
           kind(AUTOMATIC_LIVELINESS_QOS),
-          lease_duration(rtps::c_TimeInfinite),
-          announcement_period(rtps::c_TimeInfinite)
+          lease_duration(c_TimeInfinite),
+          announcement_period(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~LivelinessQosPolicy() {}
@@ -265,8 +263,8 @@ public:
 
 public:
     LivelinessQosPolicyKind kind;
-    rtps::Duration_t lease_duration;
-    rtps::Duration_t announcement_period;
+    Duration_t lease_duration;
+    Duration_t announcement_period;
 };
 
 /**
@@ -291,7 +289,7 @@ public:
           QosPolicy(true), //indicate send always
           kind(BEST_EFFORT_RELIABILITY_QOS),
           // max_blocking_time = 100ms
-          max_blocking_time{0, 4294967100}
+          max_blocking_time{0, 100000000}
     {}
 
     virtual RTPS_DllAPI ~ReliabilityQosPolicy() {}
@@ -313,7 +311,7 @@ public:
 
 public:
     ReliabilityQosPolicyKind kind;
-    rtps::Duration_t max_blocking_time;
+    Duration_t max_blocking_time;
 };
 
 
@@ -463,7 +461,7 @@ public:
     RTPS_DllAPI TimeBasedFilterQosPolicy()
         : Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),
           QosPolicy(false),
-          minimum_separation(rtps::c_TimeZero)
+          minimum_separation(c_TimeZero)
     {}
 
     virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy() {}
@@ -483,7 +481,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t minimum_separation;
+    Duration_t minimum_separation;
 };
 
 /**
@@ -765,7 +763,7 @@ public:
     int32_t allocated_samples;
 
     RTPS_DllAPI ResourceLimitsQosPolicy() :Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4), QosPolicy(false),
-        max_samples(5000), max_instances(10), max_samples_per_instance(400), allocated_samples(100) 
+        max_samples(5000), max_instances(10), max_samples_per_instance(400), allocated_samples(100)
     { }
 
     virtual RTPS_DllAPI ~ResourceLimitsQosPolicy() { }
@@ -825,7 +823,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t service_cleanup_delay;
+    Duration_t service_cleanup_delay;
     HistoryQosPolicyKind history_kind;
     int32_t history_depth;
     int32_t max_samples;
@@ -845,7 +843,7 @@ public:
     RTPS_DllAPI LifespanQosPolicy()
         : Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          duration(rtps::c_TimeInfinite)
+          duration(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~LifespanQosPolicy() {}
@@ -865,14 +863,14 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
-    rtps::Duration_t duration;
+    Duration_t duration;
 };
 
 /**
  * Class OwnershipStrengthQosPolicy, to indicate the strength of the ownership.
  * value: Default value 0.
  */
-class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy 
+class OwnershipStrengthQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
@@ -1014,7 +1012,7 @@ public:
         : Parameter_t(PID_DISABLE_POSITIVE_ACKS, 0)
         , QosPolicy(true)
         , enabled(false)
-        , duration(rtps::c_TimeInfinite)
+        , duration(c_TimeInfinite)
     {}
 
     virtual RTPS_DllAPI ~DisablePositiveACKsQosPolicy()
@@ -1038,7 +1036,7 @@ public:
     //! True if this QoS is enabled
     bool enabled;
     //! The duration to keep samples for (not serialised as not needed by reader)
-    rtps::Duration_t duration;
+    Duration_t duration;
 };
 
 /**
@@ -1048,9 +1046,9 @@ class TypeIdV1 : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
-    TypeIdentifier m_type_identifier;
+    types::TypeIdentifier m_type_identifier;
 
-    RTPS_DllAPI TypeIdV1() 
+    RTPS_DllAPI TypeIdV1()
             : Parameter_t(PID_TYPE_IDV1, 0)
             , QosPolicy(false)
             , m_type_identifier()
@@ -1113,9 +1111,9 @@ class TypeObjectV1 : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
-    TypeObject m_type_object;
+    types::TypeObject m_type_object;
 
-    RTPS_DllAPI TypeObjectV1() 
+    RTPS_DllAPI TypeObjectV1()
             : Parameter_t(PID_TYPE_OBJECTV1, 0)
             , QosPolicy(false)
             , m_type_object()

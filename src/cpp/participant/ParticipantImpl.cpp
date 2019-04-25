@@ -209,7 +209,7 @@ Publisher* ParticipantImpl::createPublisher(
         watt.endpoint.properties.properties().push_back(std::move(property));
     }
     if (att.qos.m_disablePositiveACKs.enabled &&
-            att.qos.m_disablePositiveACKs.duration != rtps::c_TimeInfinite)
+            att.qos.m_disablePositiveACKs.duration != c_TimeInfinite)
     {
         watt.disable_positive_acks = true;
         watt.keep_duration = att.qos.m_disablePositiveACKs.duration;

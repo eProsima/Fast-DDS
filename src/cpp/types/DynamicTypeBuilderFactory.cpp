@@ -1137,7 +1137,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteAliasType::getCdrSerializedSize(object.complete().alias_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -1191,7 +1191,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalAliasType::getCdrSerializedSize(object.minimal().alias_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -1251,7 +1251,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteEnumeratedType::getCdrSerializedSize(object.complete().enumerated_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -1294,7 +1294,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -1396,7 +1396,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteStructType::getCdrSerializedSize(object.complete().struct_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -1487,7 +1487,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalStructType::getCdrSerializedSize(object.minimal().struct_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -1603,7 +1603,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteUnionType::getCdrSerializedSize(object.complete().union_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -1704,7 +1704,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_MINIMAL);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4));
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
@@ -1778,7 +1778,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteBitsetType::getCdrSerializedSize(object.complete().bitset_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -1843,7 +1843,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalBitsetType::getCdrSerializedSize(object.minimal().bitset_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -1908,7 +1908,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteBitmaskType::getCdrSerializedSize(object.complete().bitmask_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -1959,7 +1959,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalBitmaskType::getCdrSerializedSize(object.minimal().bitmask_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -2031,7 +2031,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            CompleteAnnotationType::getCdrSerializedSize(object.complete().annotation_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -2094,7 +2094,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         TypeIdentifier identifier;
         identifier._d(EK_COMPLETE);
 
-        SerializedPayload_t payload(static_cast<uint32_t>(
+        eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
            MinimalAnnotationType::getCdrSerializedSize(object.minimal().annotation_type()) + 4));
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);

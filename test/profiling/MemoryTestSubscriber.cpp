@@ -21,9 +21,9 @@
 #include "fastrtps/log/Log.h"
 #include "fastrtps/log/Colors.h"
 
-using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 MemoryTestSubscriber::MemoryTestSubscriber()
     : mp_participant(nullptr)

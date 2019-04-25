@@ -162,7 +162,7 @@
     <xs:complexType name="durationType">
         <xs:all>
             <xs:element name="sec" type="nonNegativeInteger_Duration_SEC" minOccurs="0"/>
-            <xs:element name="fraction" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
+            <xs:element name="nanosec" type="nonNegativeInteger_Duration_NSEC" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 

@@ -42,7 +42,7 @@ bool DeadlineQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addInt32(msg,period.seconds);
-    valid &= CDRMessage::addUInt32(msg,period.fraction);
+    valid &= CDRMessage::addUInt32(msg,period.fraction());
     return valid;
 }
 
@@ -51,7 +51,7 @@ bool LatencyBudgetQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addInt32(msg,duration.seconds);
-    valid &= CDRMessage::addUInt32(msg,duration.fraction);
+    valid &= CDRMessage::addUInt32(msg,duration.fraction());
     return valid;
 }
 
@@ -63,7 +63,7 @@ bool LivelinessQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     valid &= CDRMessage::addOctet(msg,0);
     valid &= CDRMessage::addOctet(msg,0);
     valid &= CDRMessage::addInt32(msg,lease_duration.seconds);
-    valid &= CDRMessage::addUInt32(msg,lease_duration.fraction);
+    valid &= CDRMessage::addUInt32(msg,lease_duration.fraction());
     return valid;
 }
 
@@ -85,7 +85,7 @@ bool ReliabilityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     valid &= CDRMessage::addOctet(msg,0);
     valid &= CDRMessage::addOctet(msg,0);
     valid &= CDRMessage::addInt32(msg,max_blocking_time.seconds);
-    valid &= CDRMessage::addUInt32(msg,max_blocking_time.fraction);
+    valid &= CDRMessage::addUInt32(msg,max_blocking_time.fraction());
     return valid;
 }
 
@@ -103,7 +103,7 @@ bool TimeBasedFilterQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addInt32(msg,minimum_separation.seconds);
-    valid &= CDRMessage::addUInt32(msg,minimum_separation.fraction);
+    valid &= CDRMessage::addUInt32(msg,minimum_separation.fraction());
     return valid;
 }
 
@@ -190,7 +190,7 @@ bool DurabilityServiceQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addInt32(msg,service_cleanup_delay.seconds);
-    valid &= CDRMessage::addUInt32(msg,service_cleanup_delay.fraction);
+    valid &= CDRMessage::addUInt32(msg,service_cleanup_delay.fraction());
     valid &= CDRMessage::addOctet(msg,history_kind);
     valid &= CDRMessage::addOctet(msg,0);
     valid &= CDRMessage::addOctet(msg,0);
@@ -206,7 +206,7 @@ bool LifespanQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addInt32(msg,duration.seconds);
-    valid &= CDRMessage::addUInt32(msg,duration.fraction);
+    valid &= CDRMessage::addUInt32(msg,duration.fraction());
     return valid;
 }
 
@@ -263,7 +263,7 @@ bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
+    size_t size = types::TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -311,7 +311,7 @@ bool TypeIdV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
 bool TypeObjectV1::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = TypeObject::getCdrSerializedSize(m_type_object) + 4;
+    size_t size = types::TypeObject::getCdrSerializedSize(m_type_object) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 

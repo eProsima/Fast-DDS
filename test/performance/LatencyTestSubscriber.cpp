@@ -22,9 +22,9 @@
 #include "fastrtps/log/Colors.h"
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 
 uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
@@ -166,7 +166,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.times.heartbeatPeriod.nanosec = 100000000;
 
     if (!reliable)
     {
@@ -442,7 +442,7 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
-        DynamicData *my_data = m_DynData->loan_value(m_DynData->GetMemberIdAtIndex(1));
+        DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             my_data->insert_sequence_data(id);

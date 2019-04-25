@@ -96,7 +96,7 @@ public:
      */
     bool removeAllChange(size_t* removed = nullptr);
 
-    bool wait_for_all_acked(const rtps::Time_t& max_wait);
+    bool wait_for_all_acked(const Time_t& max_wait);
 
     /**
      * Get the GUID_t of the associated RTPSWriter.

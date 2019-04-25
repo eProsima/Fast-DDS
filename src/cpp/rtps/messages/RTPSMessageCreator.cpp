@@ -72,7 +72,7 @@ bool RTPSMessageCreator::addCustomContent(CDRMessage_t*msg, const octet* content
 {
     CDRMessage::addData(msg, content, static_cast<uint32_t>(contentSize));
     msg->length = msg->pos;
-	
+
     return true;
 }
 
@@ -115,14 +115,14 @@ bool RTPSMessageCreator::addSubmessageInfoTS(
     CDRMessage::addUInt16(msg, size);
     if(!invalidateFlag)
     {
-        CDRMessage::addInt32(msg,time.seconds);
-        CDRMessage::addUInt32(msg,time.fraction);
+        CDRMessage::addInt32(msg, time.seconds());
+        CDRMessage::addUInt32(msg, time.fraction());
     }
 
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version, 
+bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version,
     const VendorId_t& vendorId, const GuidPrefix_t& guidPrefix)
 {
     octet flags = 0x0;

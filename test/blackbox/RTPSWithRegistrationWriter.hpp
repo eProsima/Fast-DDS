@@ -84,9 +84,9 @@ class RTPSWithRegistrationWriter
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         writer_attr_.times.heartbeatPeriod.seconds = 0;
-        writer_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+        writer_attr_.times.heartbeatPeriod.nanosec = 100000000;
         writer_attr_.times.nackResponseDelay.seconds = 0;
-        writer_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
+        writer_attr_.times.nackResponseDelay.nanosec = 100000000;
     }
 
     virtual ~RTPSWithRegistrationWriter()
@@ -173,7 +173,7 @@ class RTPSWithRegistrationWriter
                 return matched_ != 0;
             });
         }
-        
+
         ASSERT_NE(matched_, 0u);
     }
 
@@ -226,9 +226,9 @@ class RTPSWithRegistrationWriter
         return *this;
     }
 
-    RTPSWithRegistrationWriter& heartbeat_period_fraction(uint32_t frac)
+    RTPSWithRegistrationWriter& heartbeat_period_nanosec(uint32_t nanosec)
     {
-        writer_attr_.times.heartbeatPeriod.fraction = frac;
+        writer_attr_.times.heartbeatPeriod.nanosec = nanosec;
         return *this;
     }
 
