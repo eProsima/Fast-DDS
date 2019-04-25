@@ -653,8 +653,9 @@ public:
         {
             case TK_BOOLEAN:
             {
-                std::string val_;
-                std::transform(val_.begin(), val_.end(), val_.begin(), ::tolower);
+                std::string val_ = value;
+                std::transform(val_.begin(), val_.end(), val_.begin(), 
+                    [](unsigned char c){ return static_cast<char>(std::tolower(c));});
                 boolean_value(val_.compare("0") != 0 || val_.compare(CONST_TRUE) == 0);
             }
             break;
