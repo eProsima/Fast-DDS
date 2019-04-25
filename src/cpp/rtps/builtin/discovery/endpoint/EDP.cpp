@@ -93,12 +93,12 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
     {
         if (att.type_id.m_type_identifier._d() == 0) // Not set
         {
-            //*rpd.type_id().m_type_identifier = *TypeObjectFactory::GetInstance()->GetTypeIdentifier(rpd.typeName());
-            const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
-                    rpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
+            const TypeIdentifier* type_id = TypeObjectFactory::get_instance()->get_type_identifier(
+                    rpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << rpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << rpd.typeName()
+                    << " isn't registered.");
             }
             else
             {
@@ -114,12 +114,13 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
             && (att.type_id.m_type_identifier._d() == EK_MINIMAL
                 || att.type_id.m_type_identifier._d() == EK_COMPLETE)) // Not set
         {
-            //*rpd.type().m_type_object = *TypeObjectFactory::GetInstance()->GetTypeObject(rpd.typeName());
-            const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
-                    rpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
+            //*rpd.type().m_type_object = *TypeObjectFactory::get_instance()->get_type_object(rpd.typeName());
+            const TypeObject *type_obj = TypeObjectFactory::get_instance()->get_type_object(
+                    rpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << rpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << rpd.typeName()
+                    << " isn't registered.");
             }
             else
             {
@@ -182,11 +183,12 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
     {
         if (att.type_id.m_type_identifier._d() == 0) // Not set
         {
-            const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
-                    wpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
+            const TypeIdentifier* type_id = TypeObjectFactory::get_instance()->get_type_identifier(
+                    wpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << wpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type identifier " << wpd.typeName()
+                    << " isn't registered.");
             }
             else
             {
@@ -202,11 +204,12 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
             && (att.type_id.m_type_identifier._d() == EK_MINIMAL
                 || att.type_id.m_type_identifier._d() == EK_COMPLETE)) // Not set
         {
-            const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
-                    wpd.typeName().to_string(), att.getTopicDiscoveryKind() == COMPLETE);
+            const TypeObject *type_obj = TypeObjectFactory::get_instance()->get_type_object(
+                    wpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
-                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << wpd.typeName() << " isn't registered.");
+                logError(EDP, "TopicDiscoveryKind isn't NO_CHECK, but type object " << wpd.typeName()
+                    << " isn't registered.");
             }
             else
             {

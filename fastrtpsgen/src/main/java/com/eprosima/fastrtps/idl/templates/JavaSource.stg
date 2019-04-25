@@ -1,0 +1,125 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group JavaSource;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "PubSub.java"], description=[""])$
+
+$if(!ctx.isPackageEmpty)$
+package $ctx.onlyPackage$;
+$endif$
+
+public class $ctx.filename$PubSub
+{
+    static
+    {
+        System.loadLibrary("$ctx.filename$PubSubJNI");
+    }
+
+    private native long create_participant();
+
+    public boolean isInit() { return (participant_ != 0); }
+
+    public $ctx.filename$PubSub()
+    {
+        participant_ = create_participant();
+    }
+
+    private native void delete_participant(long participant);
+
+    public void dispose()
+    {
+        if(participant_ != 0)
+        {
+            delete_participant(participant_);
+            participant_ = 0;
+        }
+    }
+
+    private long participant_ = 0;
+
+    $definitions; separator="\n"$
+}
+>>
+
+module(ctx, parent, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+exception(ctx, parent, exception) ::= <<>>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+struct_type(ctx, parent, struct) ::= <<
+$if(struct.isTopic)$
+public interface $struct.name$Listener
+{
+    public void receive($ctx.package$$struct.javaScopedname$ data);
+};
+
+private native long $struct.name$_create_subscriber_internal(long participant, $struct.name$Listener listener);
+
+public boolean is$struct.name$Init() { return ($struct.name$_ != 0); }
+
+public void $struct.name$_create_subscriber($struct.name$Listener listener)
+{
+    $struct.name$_ = $struct.name$_create_subscriber_internal(participant_, listener);
+}
+
+private native void $struct.name$_delete_subscriber_internal(long pointer);
+
+public void $struct.name$_delete_subscriber()
+{
+    if($struct.name$_ != 0)
+    {
+        $struct.name$_delete_subscriber_internal($struct.name$_);
+        $struct.name$_ = 0;
+    }
+}
+
+private long $struct.name$_ = 0;
+
+$endif$
+>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<>>

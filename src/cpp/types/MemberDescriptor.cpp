@@ -14,6 +14,8 @@
 
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/log/Log.h>
 
@@ -22,85 +24,103 @@ namespace fastrtps {
 namespace types {
 
 MemberDescriptor::MemberDescriptor()
-: mName("")
-, mId(MEMBER_ID_INVALID)
-, mType(nullptr)
-, mDefaultValue("")
-, mIndex(INDEX_INVALID)
-, mDefaultLabel(false)
+: name_("")
+, id_(MEMBER_ID_INVALID)
+, type_(nullptr)
+, default_value_("")
+, index_(INDEX_INVALID)
+, default_label_(false)
 {
 }
 
-MemberDescriptor::MemberDescriptor(uint32_t index, const std::string& name)
-    : mName(name)
-    , mId(MEMBER_ID_INVALID)
-    , mType(nullptr)
-    , mDefaultValue("")
-    , mIndex(index)
-    , mDefaultLabel(false)
+MemberDescriptor::MemberDescriptor(
+        uint32_t index,
+        const std::string& name)
+    : name_(name)
+    , id_(MEMBER_ID_INVALID)
+    , type_(nullptr)
+    , default_value_("")
+    , index_(index)
+    , default_label_(false)
 {
 }
 
 MemberDescriptor::MemberDescriptor(const MemberDescriptor* descriptor)
-: mName("")
-, mId(MEMBER_ID_INVALID)
-, mType(nullptr)
-, mDefaultValue("")
-, mIndex(INDEX_INVALID)
-, mDefaultLabel(false)
+: name_("")
+, id_(MEMBER_ID_INVALID)
+, type_(nullptr)
+, default_value_("")
+, index_(INDEX_INVALID)
+, default_label_(false)
 {
-    CopyFrom(descriptor);
+    copy_from(descriptor);
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType)
-    : mName(name)
-    , mId(id)
-    , mType(mType)
-    , mDefaultValue("")
-    , mIndex(INDEX_INVALID)
-    , mDefaultLabel(false)
+MemberDescriptor::MemberDescriptor(
+        MemberId id,
+        const std::string& name,
+        DynamicType_ptr type_)
+    : name_(name)
+    , id_(id)
+    , type_(type_)
+    , default_value_("")
+    , index_(INDEX_INVALID)
+    , default_label_(false)
 {
 
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
-    const std::string& defaultValue)
-    : mName(name)
-    , mId(id)
-    , mType(mType)
-    , mDefaultValue(defaultValue)
-    , mIndex(INDEX_INVALID)
-    , mDefaultLabel(false)
+MemberDescriptor::MemberDescriptor(
+        MemberId id,
+        const std::string& name,
+        DynamicType_ptr type_,
+        const std::string& defaultValue)
+    : name_(name)
+    , id_(id)
+    , type_(type_)
+    , default_value_(defaultValue)
+    , index_(INDEX_INVALID)
+    , default_label_(false)
 {
 }
 
-MemberDescriptor::MemberDescriptor(MemberId id, const std::string& name, DynamicType_ptr mType,
-    const std::string& defaultValue, const std::vector<uint64_t>& unionLabels, bool isDefaultLabel)
-    : mName(name)
-    , mId(id)
-    , mType(mType)
-    , mDefaultValue(defaultValue)
-    , mIndex(INDEX_INVALID)
-    , mDefaultLabel(isDefaultLabel)
+MemberDescriptor::MemberDescriptor(
+        MemberId id,
+        const std::string& name,
+        DynamicType_ptr type_,
+        const std::string& defaultValue,
+        const std::vector<uint64_t>& unionLabels,
+        bool isDefaultLabel)
+    : name_(name)
+    , id_(id)
+    , type_(type_)
+    , default_value_(defaultValue)
+    , index_(INDEX_INVALID)
+    , default_label_(isDefaultLabel)
 {
-    mLabels = unionLabels;
+    labels_ = unionLabels;
 }
 
 MemberDescriptor::~MemberDescriptor()
 {
-    mType = nullptr;
+    for (auto it = annotation_.begin(); it != annotation_.end(); ++it)
+    {
+        delete *it;
+    }
+    annotation_.clear();
+    type_ = nullptr;
 }
 
-void MemberDescriptor::AddUnionCaseIndex(uint64_t value)
+void MemberDescriptor::add_union_case_index(uint64_t value)
 {
-    mLabels.push_back(value);
+    labels_.push_back(value);
 }
 
-bool MemberDescriptor::CheckUnionLabels(const std::vector<uint64_t>& labels) const
+bool MemberDescriptor::check_union_labels(const std::vector<uint64_t>& labels) const
 {
     for (auto it = labels.begin(); it != labels.end(); ++it)
     {
-        if (std::find(mLabels.begin(), mLabels.end(), *it) != mLabels.end())
+        if (std::find(labels_.begin(), labels_.end(), *it) != labels_.end())
         {
             return false;
         }
@@ -108,19 +128,33 @@ bool MemberDescriptor::CheckUnionLabels(const std::vector<uint64_t>& labels) con
     return true;
 }
 
-ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
+ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
 {
     if (other != nullptr)
     {
         try
         {
-            mType = other->mType;
-            mName = other->mName;
-            mId = other->mId;
-            mDefaultValue = other->mDefaultValue;
-            mIndex = other->mIndex;
-            mDefaultLabel = other->mDefaultLabel;
-            mLabels = other->mLabels;
+            // Clear annotations
+            for (auto it = annotation_.begin(); it != annotation_.end(); ++it)
+            {
+                delete *it;
+            }
+            annotation_.clear();
+
+            // Copy them
+            for (auto it = other->annotation_.begin(); it != other->annotation_.end(); ++it)
+            {
+                AnnotationDescriptor* newDescriptor = new AnnotationDescriptor(*it);
+                annotation_.push_back(newDescriptor);
+            }
+
+            type_ = other->type_;
+            name_ = other->name_;
+            id_ = other->id_;
+            default_value_ = other->default_value_;
+            index_ = other->index_;
+            default_label_ = other->default_label_;
+            labels_ = other->labels_;
             return ResponseCode::RETCODE_OK;
         }
         catch (std::exception& /*e*/)
@@ -135,14 +169,14 @@ ResponseCode MemberDescriptor::CopyFrom(const MemberDescriptor* other)
     }
 }
 
-bool MemberDescriptor::Equals(const MemberDescriptor* other) const
+bool MemberDescriptor::equals(const MemberDescriptor* other) const
 {
-    if (other != nullptr && mName == other->mName && mId == other->mId &&
-        ((mType == nullptr && other->mType == nullptr) || mType->Equals(other->mType.get())) &&
-        mDefaultValue == other->mDefaultValue && mIndex == other->mIndex && mDefaultLabel == other->mDefaultLabel &&
-        mLabels.size() == other->mLabels.size())
+    if (other != nullptr && name_ == other->name_ && id_ == other->id_ &&
+        ((type_ == nullptr && other->type_ == nullptr) || type_->equals(other->type_.get())) &&
+        default_value_ == other->default_value_ && index_ == other->index_ && default_label_ == other->default_label_ &&
+        labels_.size() == other->labels_.size())
     {
-        for (auto it = mLabels.begin(), it2 = other->mLabels.begin(); it != mLabels.end(); ++it, ++it2)
+        for (auto it = labels_.begin(), it2 = other->labels_.begin(); it != labels_.end(); ++it, ++it2)
         {
             if (*it != *it2)
                 return false;
@@ -152,67 +186,67 @@ bool MemberDescriptor::Equals(const MemberDescriptor* other) const
     return false;
 }
 
-MemberId MemberDescriptor::GetId() const
+MemberId MemberDescriptor::get_id() const
 {
-    return mId;
+    return id_;
 }
 
-uint32_t MemberDescriptor::GetIndex() const
+uint32_t MemberDescriptor::get_index() const
 {
-    return mIndex;
+    return index_;
 }
 
-TypeKind MemberDescriptor::GetKind() const
+TypeKind MemberDescriptor::get_kind() const
 {
-    if (mType != nullptr)
+    if (type_ != nullptr)
     {
-        return mType->GetKind();
+        return type_->get_kind();
     }
     return 0;
 }
 
-std::string MemberDescriptor::GetName() const
+std::string MemberDescriptor::get_name() const
 {
-    return mName;
+    return name_;
 }
 
-std::vector<uint64_t> MemberDescriptor::GetUnionLabels() const
+std::vector<uint64_t> MemberDescriptor::get_union_labels() const
 {
-    return mLabels;
+    return labels_;
 }
 
-bool MemberDescriptor::IsConsistent(TypeKind parentKind) const
+bool MemberDescriptor::is_consistent(TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
-    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && mType == nullptr)
+    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && type_ == nullptr)
     {
         return false;
     }
 
     // Only aggregated types must use the ID value.
-    if (mId != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
-        parentKind != TK_ANNOTATION)
+    if (id_ != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
+        parentKind != TK_BITSET && parentKind != TK_ANNOTATION)
     {
         return false;
     }
 
-    if (!IsDefaultValueConsistent(mDefaultValue))
+    if (!is_default_value_consistent(default_value_))
     {
         return false;
     }
 
-    if (!IsTypeNameConsistent(mName))
+    if (type_ != nullptr && !is_type_name_consistent(type_->name_)) // Enums and bitmask don't have type
     {
         return false;
     }
 
     // Only Unions need the field "label"
-    if (mLabels.size() != 0 && parentKind != TK_UNION)
+    if (labels_.size() != 0 && parentKind != TK_UNION)
     {
         return false;
     }
     // If the field isn't the default value for the union, it must have a label value.
-    else if (parentKind == TK_UNION && mDefaultLabel == false && mLabels.size() == 0)
+    else if (parentKind == TK_UNION && default_label_ == false && labels_.size() == 0)
     {
         return false;
     }
@@ -220,18 +254,18 @@ bool MemberDescriptor::IsConsistent(TypeKind parentKind) const
     return true;
 }
 
-bool MemberDescriptor::IsDefaultUnionValue() const
+bool MemberDescriptor::is_default_union_value() const
 {
-    return mDefaultLabel;
+    return default_label_;
 }
 
-bool MemberDescriptor::IsDefaultValueConsistent(const std::string& sDefaultValue) const
+bool MemberDescriptor::is_default_value_consistent(const std::string& sDefaultValue) const
 {
     if (sDefaultValue.length() > 0)
     {
         try
         {
-            switch (GetKind())
+            switch (get_kind())
             {
             default:
                 return true;
@@ -307,6 +341,10 @@ bool MemberDescriptor::IsDefaultValueConsistent(const std::string& sDefaultValue
             break;
             case TK_BOOLEAN:
             {
+                if (sDefaultValue == CONST_TRUE || sDefaultValue == CONST_FALSE)
+                {
+                    return true;
+                }
                 int value(0);
                 value = stoi(sDefaultValue);
                 (void)value;
@@ -322,7 +360,6 @@ bool MemberDescriptor::IsDefaultValueConsistent(const std::string& sDefaultValue
                 (void)value;
             }
             break;
-            case TK_BITSET:
             case TK_BITMASK:
             {
                 int value(0);
@@ -343,7 +380,7 @@ bool MemberDescriptor::IsDefaultValueConsistent(const std::string& sDefaultValue
     return true;
 }
 
-bool MemberDescriptor::IsTypeNameConsistent(const std::string& sName) const
+bool MemberDescriptor::is_type_name_consistent(const std::string& sName) const
 {
     // The first letter must start with a letter ( uppercase or lowercase )
     if (sName.length() > 0 && std::isalpha(sName[0]))
@@ -361,29 +398,354 @@ bool MemberDescriptor::IsTypeNameConsistent(const std::string& sName) const
     return false;
 }
 
-void MemberDescriptor::SetId(MemberId id)
+void MemberDescriptor::set_id(MemberId id)
 {
-    mId = id;
+    id_ = id;
 }
 
-void MemberDescriptor::SetIndex(uint32_t index)
+void MemberDescriptor::set_index(uint32_t index)
 {
-    mIndex = index;
+    index_ = index;
 }
 
-void MemberDescriptor::SetName(const std::string& name)
+void MemberDescriptor::set_name(const std::string& name)
 {
-    mName = name;
+    name_ = name;
 }
 
-void MemberDescriptor::SetType(DynamicType_ptr type)
+void MemberDescriptor::set_type(DynamicType_ptr type)
 {
-    mType = type;
+    type_ = type;
 }
 
-void MemberDescriptor::SetDefaultUnionValue(bool bDefault)
+void MemberDescriptor::set_default_union_value(bool bDefault)
 {
-    mDefaultLabel = bDefault;
+    default_label_ = bDefault;
+}
+
+// Annotations application
+bool MemberDescriptor::annotation_is_optional() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_OPTIONAL_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+    return false;
+}
+
+bool MemberDescriptor::annotation_is_key() const
+{
+    return annotation_get_key();
+}
+
+bool MemberDescriptor::annotation_get_key() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
+    if (ann == nullptr)
+    {
+        ann = get_annotation(ANNOTATION_EPKEY_ID);
+    }
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+    return false;
+}
+
+bool MemberDescriptor::annotation_is_must_understand() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+    return false;
+}
+
+bool MemberDescriptor::annotation_is_non_serialized() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value == CONST_TRUE;
+        }
+    }
+    return false;
+}
+
+bool MemberDescriptor::annotation_is_value() const
+{
+    return get_annotation(ANNOTATION_VALUE_ID) != nullptr;
+}
+
+bool MemberDescriptor::annotation_is_default_literal() const
+{
+    return get_annotation(ANNOTATION_DEFAULT_LITERAL_ID) != nullptr;
+}
+
+bool MemberDescriptor::annotation_is_position() const
+{
+    return get_annotation(ANNOTATION_OPTIONAL_ID) != nullptr;
+}
+
+// Annotations getters
+std::string MemberDescriptor::annotation_get_value() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_VALUE_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value;
+        }
+    }
+    return "";
+}
+
+std::string MemberDescriptor::annotation_get_default() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return value;
+        }
+    }
+    return "";
+}
+
+uint16_t MemberDescriptor::annotation_get_position() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_POSITION_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return static_cast<uint16_t>(std::stoi(value));
+        }
+    }
+    return static_cast<uint16_t>(-1);
+}
+
+// Annotations setters
+void MemberDescriptor::annotation_set_optional(bool optional)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_OPTIONAL_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_OPTIONAL_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_OPTIONAL_ID);
+    }
+    ann->set_value("value", optional ? "true" : "false");
+}
+
+void MemberDescriptor::annotation_set_key(bool key)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_KEY_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_KEY_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_KEY_ID);
+    }
+    ann->set_value("value", key ? "true" : "false");
+}
+
+void MemberDescriptor::annotation_set_must_understand(bool must_understand)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_MUST_UNDERSTAND_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
+    }
+    ann->set_value("value", must_understand ? "true" : "false");
+}
+
+void MemberDescriptor::annotation_set_non_serialized(bool non_serialized)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_NON_SERIALIZED_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
+    }
+    ann->set_value("value", non_serialized ? "true" : "false");
+}
+
+void MemberDescriptor::annotation_set_value(const std::string& value)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_VALUE_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_VALUE_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_VALUE_ID);
+    }
+    ann->set_value("value", value);
+}
+
+void MemberDescriptor::annotation_set_default_literal()
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_LITERAL_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_DEFAULT_LITERAL_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_DEFAULT_LITERAL_ID);
+    }
+    ann->set_value("value", "true");
+}
+
+void MemberDescriptor::annotation_set_position(uint16_t position)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_POSITION_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_POSITION_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_POSITION_ID);
+    }
+    ann->set_value("value", std::to_string(position));
+}
+
+void MemberDescriptor::annotation_set_default(const std::string& default_value)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_DEFAULT_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_DEFAULT_ID);
+    }
+    ann->set_value("value", default_value);
+}
+
+bool MemberDescriptor::annotation_is_bit_bound() const
+{
+    return get_annotation(ANNOTATION_BIT_BOUND_ID) != nullptr;
+}
+
+uint16_t MemberDescriptor::annotation_get_bit_bound() const
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    if(ann != nullptr)
+    {
+        std::string value;
+        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        {
+            return static_cast<uint16_t>(std::stoi(value));
+        }
+    }
+    return 32; // Default value
+}
+
+void MemberDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
+{
+    AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    if (ann == nullptr)
+    {
+        ann = new AnnotationDescriptor();
+        ann->set_type(DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
+        apply_annotation(*ann);
+        delete ann;
+        ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
+    }
+    ann->set_value("value", std::to_string(bit_bound));
+}
+
+ResponseCode MemberDescriptor::apply_annotation(AnnotationDescriptor& descriptor)
+{
+    if (descriptor.is_consistent())
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->copy_from(&descriptor);
+        annotation_.push_back(pNewDescriptor);
+        return ResponseCode::RETCODE_OK;
+    }
+    else
+    {
+        logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
+        return ResponseCode::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ResponseCode MemberDescriptor::apply_annotation(
+        const std::string& annotation_name,
+        const std::string& key,
+        const std::string& value)
+{
+    AnnotationDescriptor* ann = get_annotation(annotation_name);
+    if (ann != nullptr)
+    {
+        ann->set_value(key, value);
+    }
+    else
+    {
+        AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+        pNewDescriptor->set_type(
+            DynamicTypeBuilderFactory::get_instance()->create_annotation_primitive(annotation_name));
+        pNewDescriptor->set_value(key, value);
+        annotation_.push_back(pNewDescriptor);
+    }
+    return ResponseCode::RETCODE_OK;
+}
+
+AnnotationDescriptor* MemberDescriptor::get_annotation(const std::string& name) const
+{
+    auto it = annotation_.begin();
+
+    for(; it != annotation_.end(); ++it)
+    {
+        AnnotationDescriptor* ann = *it;
+        if (ann->type()->get_name().compare(name) == 0)
+        {
+            return ann;
+        }
+    }
+    return nullptr;
 }
 
 } // namespace types

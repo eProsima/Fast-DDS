@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Basic.h
  * This header file contains the declaration of the described types in the IDL file.
  *
@@ -91,7 +91,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~EnumStruct();
+    eProsima_user_DllExport virtual ~EnumStruct();
 
     /*!
      * @brief Copy constructor.
@@ -121,28 +121,19 @@ public:
      * @brief This function sets a value in member my_enum
      * @param _my_enum New value for member my_enum
      */
-    inline eProsima_user_DllExport void my_enum(MyEnum _my_enum)
-    {
-        m_my_enum = _my_enum;
-    }
+    eProsima_user_DllExport void my_enum(MyEnum _my_enum);
 
     /*!
      * @brief This function returns the value of member my_enum
      * @return Value of member my_enum
      */
-    inline eProsima_user_DllExport MyEnum my_enum() const
-    {
-        return m_my_enum;
-    }
+    eProsima_user_DllExport MyEnum my_enum() const;
 
     /*!
      * @brief This function returns a reference to member my_enum
      * @return Reference to member my_enum
      */
-    inline eProsima_user_DllExport MyEnum& my_enum()
-    {
-        return m_my_enum;
-    }
+    eProsima_user_DllExport MyEnum& my_enum();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -213,7 +204,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~AliasStruct();
+    eProsima_user_DllExport virtual ~AliasStruct();
 
     /*!
      * @brief Copy constructor.
@@ -243,28 +234,19 @@ public:
      * @brief This function sets a value in member my_alias
      * @param _my_alias New value for member my_alias
      */
-    inline eProsima_user_DllExport void my_alias(MyAliasEnum _my_alias)
-    {
-        m_my_alias = _my_alias;
-    }
+    eProsima_user_DllExport void my_alias(MyAliasEnum _my_alias);
 
     /*!
      * @brief This function returns the value of member my_alias
      * @return Value of member my_alias
      */
-    inline eProsima_user_DllExport MyAliasEnum my_alias() const
-    {
-        return m_my_alias;
-    }
+    eProsima_user_DllExport MyAliasEnum my_alias() const;
 
     /*!
      * @brief This function returns a reference to member my_alias
      * @return Reference to member my_alias
      */
-    inline eProsima_user_DllExport MyAliasEnum& my_alias()
-    {
-        return m_my_alias;
-    }
+    eProsima_user_DllExport MyAliasEnum& my_alias();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -335,7 +317,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~AliasAliasStruct();
+    eProsima_user_DllExport virtual ~AliasAliasStruct();
 
     /*!
      * @brief Copy constructor.
@@ -365,28 +347,19 @@ public:
      * @brief This function sets a value in member my_alias_alias
      * @param _my_alias_alias New value for member my_alias_alias
      */
-    inline eProsima_user_DllExport void my_alias_alias(MyAliasAliasEnum _my_alias_alias)
-    {
-        m_my_alias_alias = _my_alias_alias;
-    }
+    eProsima_user_DllExport void my_alias_alias(MyAliasAliasEnum _my_alias_alias);
 
     /*!
      * @brief This function returns the value of member my_alias_alias
      * @return Value of member my_alias_alias
      */
-    inline eProsima_user_DllExport MyAliasAliasEnum my_alias_alias() const
-    {
-        return m_my_alias_alias;
-    }
+    eProsima_user_DllExport MyAliasAliasEnum my_alias_alias() const;
 
     /*!
      * @brief This function returns a reference to member my_alias_alias
      * @return Reference to member my_alias_alias
      */
-    inline eProsima_user_DllExport MyAliasAliasEnum& my_alias_alias()
-    {
-        return m_my_alias_alias;
-    }
+    eProsima_user_DllExport MyAliasAliasEnum& my_alias_alias();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -457,7 +430,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BoolStruct();
+    eProsima_user_DllExport virtual ~BoolStruct();
 
     /*!
      * @brief Copy constructor.
@@ -487,28 +460,19 @@ public:
      * @brief This function sets a value in member my_bool
      * @param _my_bool New value for member my_bool
      */
-    inline eProsima_user_DllExport void my_bool(bool _my_bool)
-    {
-        m_my_bool = _my_bool;
-    }
+    eProsima_user_DllExport void my_bool(bool _my_bool);
 
     /*!
      * @brief This function returns the value of member my_bool
      * @return Value of member my_bool
      */
-    inline eProsima_user_DllExport bool my_bool() const
-    {
-        return m_my_bool;
-    }
+    eProsima_user_DllExport bool my_bool() const;
 
     /*!
      * @brief This function returns a reference to member my_bool
      * @return Reference to member my_bool
      */
-    inline eProsima_user_DllExport bool& my_bool()
-    {
-        return m_my_bool;
-    }
+    eProsima_user_DllExport bool& my_bool();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -579,7 +543,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~OctetStruct();
+    eProsima_user_DllExport virtual ~OctetStruct();
 
     /*!
      * @brief Copy constructor.
@@ -609,28 +573,19 @@ public:
      * @brief This function sets a value in member my_octet
      * @param _my_octet New value for member my_octet
      */
-    inline eProsima_user_DllExport void my_octet(uint8_t _my_octet)
-    {
-        m_my_octet = _my_octet;
-    }
+    eProsima_user_DllExport void my_octet(uint8_t _my_octet);
 
     /*!
      * @brief This function returns the value of member my_octet
      * @return Value of member my_octet
      */
-    inline eProsima_user_DllExport uint8_t my_octet() const
-    {
-        return m_my_octet;
-    }
+    eProsima_user_DllExport uint8_t my_octet() const;
 
     /*!
      * @brief This function returns a reference to member my_octet
      * @return Reference to member my_octet
      */
-    inline eProsima_user_DllExport uint8_t& my_octet()
-    {
-        return m_my_octet;
-    }
+    eProsima_user_DllExport uint8_t& my_octet();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -701,7 +656,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ShortStruct();
+    eProsima_user_DllExport virtual ~ShortStruct();
 
     /*!
      * @brief Copy constructor.
@@ -731,28 +686,19 @@ public:
      * @brief This function sets a value in member my_int16
      * @param _my_int16 New value for member my_int16
      */
-    inline eProsima_user_DllExport void my_int16(int16_t _my_int16)
-    {
-        m_my_int16 = _my_int16;
-    }
+    eProsima_user_DllExport void my_int16(int16_t _my_int16);
 
     /*!
      * @brief This function returns the value of member my_int16
      * @return Value of member my_int16
      */
-    inline eProsima_user_DllExport int16_t my_int16() const
-    {
-        return m_my_int16;
-    }
+    eProsima_user_DllExport int16_t my_int16() const;
 
     /*!
      * @brief This function returns a reference to member my_int16
      * @return Reference to member my_int16
      */
-    inline eProsima_user_DllExport int16_t& my_int16()
-    {
-        return m_my_int16;
-    }
+    eProsima_user_DllExport int16_t& my_int16();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -823,7 +769,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LongStruct();
+    eProsima_user_DllExport virtual ~LongStruct();
 
     /*!
      * @brief Copy constructor.
@@ -853,28 +799,19 @@ public:
      * @brief This function sets a value in member my_int32
      * @param _my_int32 New value for member my_int32
      */
-    inline eProsima_user_DllExport void my_int32(int32_t _my_int32)
-    {
-        m_my_int32 = _my_int32;
-    }
+    eProsima_user_DllExport void my_int32(int32_t _my_int32);
 
     /*!
      * @brief This function returns the value of member my_int32
      * @return Value of member my_int32
      */
-    inline eProsima_user_DllExport int32_t my_int32() const
-    {
-        return m_my_int32;
-    }
+    eProsima_user_DllExport int32_t my_int32() const;
 
     /*!
      * @brief This function returns a reference to member my_int32
      * @return Reference to member my_int32
      */
-    inline eProsima_user_DllExport int32_t& my_int32()
-    {
-        return m_my_int32;
-    }
+    eProsima_user_DllExport int32_t& my_int32();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -945,7 +882,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LongLongStruct();
+    eProsima_user_DllExport virtual ~LongLongStruct();
 
     /*!
      * @brief Copy constructor.
@@ -975,28 +912,19 @@ public:
      * @brief This function sets a value in member my_int64
      * @param _my_int64 New value for member my_int64
      */
-    inline eProsima_user_DllExport void my_int64(int64_t _my_int64)
-    {
-        m_my_int64 = _my_int64;
-    }
+    eProsima_user_DllExport void my_int64(int64_t _my_int64);
 
     /*!
      * @brief This function returns the value of member my_int64
      * @return Value of member my_int64
      */
-    inline eProsima_user_DllExport int64_t my_int64() const
-    {
-        return m_my_int64;
-    }
+    eProsima_user_DllExport int64_t my_int64() const;
 
     /*!
      * @brief This function returns a reference to member my_int64
      * @return Reference to member my_int64
      */
-    inline eProsima_user_DllExport int64_t& my_int64()
-    {
-        return m_my_int64;
-    }
+    eProsima_user_DllExport int64_t& my_int64();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1067,7 +995,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~UShortStruct();
+    eProsima_user_DllExport virtual ~UShortStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1097,28 +1025,19 @@ public:
      * @brief This function sets a value in member my_uint16
      * @param _my_uint16 New value for member my_uint16
      */
-    inline eProsima_user_DllExport void my_uint16(uint16_t _my_uint16)
-    {
-        m_my_uint16 = _my_uint16;
-    }
+    eProsima_user_DllExport void my_uint16(uint16_t _my_uint16);
 
     /*!
      * @brief This function returns the value of member my_uint16
      * @return Value of member my_uint16
      */
-    inline eProsima_user_DllExport uint16_t my_uint16() const
-    {
-        return m_my_uint16;
-    }
+    eProsima_user_DllExport uint16_t my_uint16() const;
 
     /*!
      * @brief This function returns a reference to member my_uint16
      * @return Reference to member my_uint16
      */
-    inline eProsima_user_DllExport uint16_t& my_uint16()
-    {
-        return m_my_uint16;
-    }
+    eProsima_user_DllExport uint16_t& my_uint16();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1189,7 +1108,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ULongStruct();
+    eProsima_user_DllExport virtual ~ULongStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1219,28 +1138,19 @@ public:
      * @brief This function sets a value in member my_uint32
      * @param _my_uint32 New value for member my_uint32
      */
-    inline eProsima_user_DllExport void my_uint32(uint32_t _my_uint32)
-    {
-        m_my_uint32 = _my_uint32;
-    }
+    eProsima_user_DllExport void my_uint32(uint32_t _my_uint32);
 
     /*!
      * @brief This function returns the value of member my_uint32
      * @return Value of member my_uint32
      */
-    inline eProsima_user_DllExport uint32_t my_uint32() const
-    {
-        return m_my_uint32;
-    }
+    eProsima_user_DllExport uint32_t my_uint32() const;
 
     /*!
      * @brief This function returns a reference to member my_uint32
      * @return Reference to member my_uint32
      */
-    inline eProsima_user_DllExport uint32_t& my_uint32()
-    {
-        return m_my_uint32;
-    }
+    eProsima_user_DllExport uint32_t& my_uint32();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1311,7 +1221,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ULongLongStruct();
+    eProsima_user_DllExport virtual ~ULongLongStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1341,28 +1251,19 @@ public:
      * @brief This function sets a value in member my_uint64
      * @param _my_uint64 New value for member my_uint64
      */
-    inline eProsima_user_DllExport void my_uint64(uint64_t _my_uint64)
-    {
-        m_my_uint64 = _my_uint64;
-    }
+    eProsima_user_DllExport void my_uint64(uint64_t _my_uint64);
 
     /*!
      * @brief This function returns the value of member my_uint64
      * @return Value of member my_uint64
      */
-    inline eProsima_user_DllExport uint64_t my_uint64() const
-    {
-        return m_my_uint64;
-    }
+    eProsima_user_DllExport uint64_t my_uint64() const;
 
     /*!
      * @brief This function returns a reference to member my_uint64
      * @return Reference to member my_uint64
      */
-    inline eProsima_user_DllExport uint64_t& my_uint64()
-    {
-        return m_my_uint64;
-    }
+    eProsima_user_DllExport uint64_t& my_uint64();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1433,7 +1334,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~FloatStruct();
+    eProsima_user_DllExport virtual ~FloatStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1463,28 +1364,19 @@ public:
      * @brief This function sets a value in member my_float32
      * @param _my_float32 New value for member my_float32
      */
-    inline eProsima_user_DllExport void my_float32(float _my_float32)
-    {
-        m_my_float32 = _my_float32;
-    }
+    eProsima_user_DllExport void my_float32(float _my_float32);
 
     /*!
      * @brief This function returns the value of member my_float32
      * @return Value of member my_float32
      */
-    inline eProsima_user_DllExport float my_float32() const
-    {
-        return m_my_float32;
-    }
+    eProsima_user_DllExport float my_float32() const;
 
     /*!
      * @brief This function returns a reference to member my_float32
      * @return Reference to member my_float32
      */
-    inline eProsima_user_DllExport float& my_float32()
-    {
-        return m_my_float32;
-    }
+    eProsima_user_DllExport float& my_float32();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1555,7 +1447,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~DoubleStruct();
+    eProsima_user_DllExport virtual ~DoubleStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1585,28 +1477,19 @@ public:
      * @brief This function sets a value in member my_float64
      * @param _my_float64 New value for member my_float64
      */
-    inline eProsima_user_DllExport void my_float64(double _my_float64)
-    {
-        m_my_float64 = _my_float64;
-    }
+    eProsima_user_DllExport void my_float64(double _my_float64);
 
     /*!
      * @brief This function returns the value of member my_float64
      * @return Value of member my_float64
      */
-    inline eProsima_user_DllExport double my_float64() const
-    {
-        return m_my_float64;
-    }
+    eProsima_user_DllExport double my_float64() const;
 
     /*!
      * @brief This function returns a reference to member my_float64
      * @return Reference to member my_float64
      */
-    inline eProsima_user_DllExport double& my_float64()
-    {
-        return m_my_float64;
-    }
+    eProsima_user_DllExport double& my_float64();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1677,7 +1560,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LongDoubleStruct();
+    eProsima_user_DllExport virtual ~LongDoubleStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1707,28 +1590,19 @@ public:
      * @brief This function sets a value in member my_float128
      * @param _my_float128 New value for member my_float128
      */
-    inline eProsima_user_DllExport void my_float128(long double _my_float128)
-    {
-        m_my_float128 = _my_float128;
-    }
+    eProsima_user_DllExport void my_float128(long double _my_float128);
 
     /*!
      * @brief This function returns the value of member my_float128
      * @return Value of member my_float128
      */
-    inline eProsima_user_DllExport long double my_float128() const
-    {
-        return m_my_float128;
-    }
+    eProsima_user_DllExport long double my_float128() const;
 
     /*!
      * @brief This function returns a reference to member my_float128
      * @return Reference to member my_float128
      */
-    inline eProsima_user_DllExport long double& my_float128()
-    {
-        return m_my_float128;
-    }
+    eProsima_user_DllExport long double& my_float128();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1799,7 +1673,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~CharStruct();
+    eProsima_user_DllExport virtual ~CharStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1829,28 +1703,19 @@ public:
      * @brief This function sets a value in member my_char
      * @param _my_char New value for member my_char
      */
-    inline eProsima_user_DllExport void my_char(char _my_char)
-    {
-        m_my_char = _my_char;
-    }
+    eProsima_user_DllExport void my_char(char _my_char);
 
     /*!
      * @brief This function returns the value of member my_char
      * @return Value of member my_char
      */
-    inline eProsima_user_DllExport char my_char() const
-    {
-        return m_my_char;
-    }
+    eProsima_user_DllExport char my_char() const;
 
     /*!
      * @brief This function returns a reference to member my_char
      * @return Reference to member my_char
      */
-    inline eProsima_user_DllExport char& my_char()
-    {
-        return m_my_char;
-    }
+    eProsima_user_DllExport char& my_char();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -1921,7 +1786,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~WCharStruct();
+    eProsima_user_DllExport virtual ~WCharStruct();
 
     /*!
      * @brief Copy constructor.
@@ -1951,28 +1816,19 @@ public:
      * @brief This function sets a value in member my_wchar
      * @param _my_wchar New value for member my_wchar
      */
-    inline eProsima_user_DllExport void my_wchar(wchar_t _my_wchar)
-    {
-        m_my_wchar = _my_wchar;
-    }
+    eProsima_user_DllExport void my_wchar(wchar_t _my_wchar);
 
     /*!
      * @brief This function returns the value of member my_wchar
      * @return Value of member my_wchar
      */
-    inline eProsima_user_DllExport wchar_t my_wchar() const
-    {
-        return m_my_wchar;
-    }
+    eProsima_user_DllExport wchar_t my_wchar() const;
 
     /*!
      * @brief This function returns a reference to member my_wchar
      * @return Reference to member my_wchar
      */
-    inline eProsima_user_DllExport wchar_t& my_wchar()
-    {
-        return m_my_wchar;
-    }
+    eProsima_user_DllExport wchar_t& my_wchar();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2043,7 +1899,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~StringStruct();
+    eProsima_user_DllExport virtual ~StringStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2073,37 +1929,25 @@ public:
      * @brief This function copies the value in member my_string
      * @param _my_string New value to be copied in member my_string
      */
-    inline eProsima_user_DllExport void my_string(const std::string &_my_string)
-    {
-        m_my_string = _my_string;
-    }
+    eProsima_user_DllExport void my_string(const std::string &_my_string);
 
     /*!
      * @brief This function moves the value in member my_string
      * @param _my_string New value to be moved in member my_string
      */
-    inline eProsima_user_DllExport void my_string(std::string &&_my_string)
-    {
-        m_my_string = std::move(_my_string);
-    }
+    eProsima_user_DllExport void my_string(std::string &&_my_string);
 
     /*!
      * @brief This function returns a constant reference to member my_string
      * @return Constant reference to member my_string
      */
-    inline eProsima_user_DllExport const std::string& my_string() const
-    {
-        return m_my_string;
-    }
+    eProsima_user_DllExport const std::string& my_string() const;
 
     /*!
      * @brief This function returns a reference to member my_string
      * @return Reference to member my_string
      */
-    inline eProsima_user_DllExport std::string& my_string()
-    {
-        return m_my_string;
-    }
+    eProsima_user_DllExport std::string& my_string();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2174,7 +2018,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~WStringStruct();
+    eProsima_user_DllExport virtual ~WStringStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2204,37 +2048,25 @@ public:
      * @brief This function copies the value in member my_wstring
      * @param _my_wstring New value to be copied in member my_wstring
      */
-    inline eProsima_user_DllExport void my_wstring(const std::wstring &_my_wstring)
-    {
-        m_my_wstring = _my_wstring;
-    }
+    eProsima_user_DllExport void my_wstring(const std::wstring &_my_wstring);
 
     /*!
      * @brief This function moves the value in member my_wstring
      * @param _my_wstring New value to be moved in member my_wstring
      */
-    inline eProsima_user_DllExport void my_wstring(std::wstring &&_my_wstring)
-    {
-        m_my_wstring = std::move(_my_wstring);
-    }
+    eProsima_user_DllExport void my_wstring(std::wstring &&_my_wstring);
 
     /*!
      * @brief This function returns a constant reference to member my_wstring
      * @return Constant reference to member my_wstring
      */
-    inline eProsima_user_DllExport const std::wstring& my_wstring() const
-    {
-        return m_my_wstring;
-    }
+    eProsima_user_DllExport const std::wstring& my_wstring() const;
 
     /*!
      * @brief This function returns a reference to member my_wstring
      * @return Reference to member my_wstring
      */
-    inline eProsima_user_DllExport std::wstring& my_wstring()
-    {
-        return m_my_wstring;
-    }
+    eProsima_user_DllExport std::wstring& my_wstring();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2305,7 +2137,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LargeStringStruct();
+    eProsima_user_DllExport virtual ~LargeStringStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2335,37 +2167,25 @@ public:
      * @brief This function copies the value in member my_large_string
      * @param _my_large_string New value to be copied in member my_large_string
      */
-    inline eProsima_user_DllExport void my_large_string(const std::string &_my_large_string)
-    {
-        m_my_large_string = _my_large_string;
-    }
+    eProsima_user_DllExport void my_large_string(const std::string &_my_large_string);
 
     /*!
      * @brief This function moves the value in member my_large_string
      * @param _my_large_string New value to be moved in member my_large_string
      */
-    inline eProsima_user_DllExport void my_large_string(std::string &&_my_large_string)
-    {
-        m_my_large_string = std::move(_my_large_string);
-    }
+    eProsima_user_DllExport void my_large_string(std::string &&_my_large_string);
 
     /*!
      * @brief This function returns a constant reference to member my_large_string
      * @return Constant reference to member my_large_string
      */
-    inline eProsima_user_DllExport const std::string& my_large_string() const
-    {
-        return m_my_large_string;
-    }
+    eProsima_user_DllExport const std::string& my_large_string() const;
 
     /*!
      * @brief This function returns a reference to member my_large_string
      * @return Reference to member my_large_string
      */
-    inline eProsima_user_DllExport std::string& my_large_string()
-    {
-        return m_my_large_string;
-    }
+    eProsima_user_DllExport std::string& my_large_string();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2436,7 +2256,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LargeWStringStruct();
+    eProsima_user_DllExport virtual ~LargeWStringStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2466,37 +2286,25 @@ public:
      * @brief This function copies the value in member my_large_wstring
      * @param _my_large_wstring New value to be copied in member my_large_wstring
      */
-    inline eProsima_user_DllExport void my_large_wstring(const std::wstring &_my_large_wstring)
-    {
-        m_my_large_wstring = _my_large_wstring;
-    }
+    eProsima_user_DllExport void my_large_wstring(const std::wstring &_my_large_wstring);
 
     /*!
      * @brief This function moves the value in member my_large_wstring
      * @param _my_large_wstring New value to be moved in member my_large_wstring
      */
-    inline eProsima_user_DllExport void my_large_wstring(std::wstring &&_my_large_wstring)
-    {
-        m_my_large_wstring = std::move(_my_large_wstring);
-    }
+    eProsima_user_DllExport void my_large_wstring(std::wstring &&_my_large_wstring);
 
     /*!
      * @brief This function returns a constant reference to member my_large_wstring
      * @return Constant reference to member my_large_wstring
      */
-    inline eProsima_user_DllExport const std::wstring& my_large_wstring() const
-    {
-        return m_my_large_wstring;
-    }
+    eProsima_user_DllExport const std::wstring& my_large_wstring() const;
 
     /*!
      * @brief This function returns a reference to member my_large_wstring
      * @return Reference to member my_large_wstring
      */
-    inline eProsima_user_DllExport std::wstring& my_large_wstring()
-    {
-        return m_my_large_wstring;
-    }
+    eProsima_user_DllExport std::wstring& my_large_wstring();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2567,7 +2375,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ArraytStruct();
+    eProsima_user_DllExport virtual ~ArraytStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2597,37 +2405,25 @@ public:
      * @brief This function copies the value in member my_array
      * @param _my_array New value to be copied in member my_array
      */
-    inline eProsima_user_DllExport void my_array(const std::array<std::array<std::array<int32_t, 2>, 2>, 2> &_my_array)
-    {
-        m_my_array = _my_array;
-    }
+    eProsima_user_DllExport void my_array(const std::array<std::array<std::array<int32_t, 2>, 2>, 2> &_my_array);
 
     /*!
      * @brief This function moves the value in member my_array
      * @param _my_array New value to be moved in member my_array
      */
-    inline eProsima_user_DllExport void my_array(std::array<std::array<std::array<int32_t, 2>, 2>, 2> &&_my_array)
-    {
-        m_my_array = std::move(_my_array);
-    }
+    eProsima_user_DllExport void my_array(std::array<std::array<std::array<int32_t, 2>, 2>, 2> &&_my_array);
 
     /*!
      * @brief This function returns a constant reference to member my_array
      * @return Constant reference to member my_array
      */
-    inline eProsima_user_DllExport const std::array<std::array<std::array<int32_t, 2>, 2>, 2>& my_array() const
-    {
-        return m_my_array;
-    }
+    eProsima_user_DllExport const std::array<std::array<std::array<int32_t, 2>, 2>, 2>& my_array() const;
 
     /*!
      * @brief This function returns a reference to member my_array
      * @return Reference to member my_array
      */
-    inline eProsima_user_DllExport std::array<std::array<std::array<int32_t, 2>, 2>, 2>& my_array()
-    {
-        return m_my_array;
-    }
+    eProsima_user_DllExport std::array<std::array<std::array<int32_t, 2>, 2>, 2>& my_array();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2699,7 +2495,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ArrayArrayStruct();
+    eProsima_user_DllExport virtual ~ArrayArrayStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2729,37 +2525,25 @@ public:
      * @brief This function copies the value in member my_array_array
      * @param _my_array_array New value to be copied in member my_array_array
      */
-    inline eProsima_user_DllExport void my_array_array(const std::array<std::array<MyArray, 2>, 2> &_my_array_array)
-    {
-        m_my_array_array = _my_array_array;
-    }
+    eProsima_user_DllExport void my_array_array(const std::array<std::array<MyArray, 2>, 2> &_my_array_array);
 
     /*!
      * @brief This function moves the value in member my_array_array
      * @param _my_array_array New value to be moved in member my_array_array
      */
-    inline eProsima_user_DllExport void my_array_array(std::array<std::array<MyArray, 2>, 2> &&_my_array_array)
-    {
-        m_my_array_array = std::move(_my_array_array);
-    }
+    eProsima_user_DllExport void my_array_array(std::array<std::array<MyArray, 2>, 2> &&_my_array_array);
 
     /*!
      * @brief This function returns a constant reference to member my_array_array
      * @return Constant reference to member my_array_array
      */
-    inline eProsima_user_DllExport const std::array<std::array<MyArray, 2>, 2>& my_array_array() const
-    {
-        return m_my_array_array;
-    }
+    eProsima_user_DllExport const std::array<std::array<MyArray, 2>, 2>& my_array_array() const;
 
     /*!
      * @brief This function returns a reference to member my_array_array
      * @return Reference to member my_array_array
      */
-    inline eProsima_user_DllExport std::array<std::array<MyArray, 2>, 2>& my_array_array()
-    {
-        return m_my_array_array;
-    }
+    eProsima_user_DllExport std::array<std::array<MyArray, 2>, 2>& my_array_array();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2830,7 +2614,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~SequenceStruct();
+    eProsima_user_DllExport virtual ~SequenceStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2860,37 +2644,25 @@ public:
      * @brief This function copies the value in member my_sequence
      * @param _my_sequence New value to be copied in member my_sequence
      */
-    inline eProsima_user_DllExport void my_sequence(const std::vector<int32_t> &_my_sequence)
-    {
-        m_my_sequence = _my_sequence;
-    }
+    eProsima_user_DllExport void my_sequence(const std::vector<int32_t> &_my_sequence);
 
     /*!
      * @brief This function moves the value in member my_sequence
      * @param _my_sequence New value to be moved in member my_sequence
      */
-    inline eProsima_user_DllExport void my_sequence(std::vector<int32_t> &&_my_sequence)
-    {
-        m_my_sequence = std::move(_my_sequence);
-    }
+    eProsima_user_DllExport void my_sequence(std::vector<int32_t> &&_my_sequence);
 
     /*!
      * @brief This function returns a constant reference to member my_sequence
      * @return Constant reference to member my_sequence
      */
-    inline eProsima_user_DllExport const std::vector<int32_t>& my_sequence() const
-    {
-        return m_my_sequence;
-    }
+    eProsima_user_DllExport const std::vector<int32_t>& my_sequence() const;
 
     /*!
      * @brief This function returns a reference to member my_sequence
      * @return Reference to member my_sequence
      */
-    inline eProsima_user_DllExport std::vector<int32_t>& my_sequence()
-    {
-        return m_my_sequence;
-    }
+    eProsima_user_DllExport std::vector<int32_t>& my_sequence();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -2961,7 +2733,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~SequenceSequenceStruct();
+    eProsima_user_DllExport virtual ~SequenceSequenceStruct();
 
     /*!
      * @brief Copy constructor.
@@ -2991,37 +2763,25 @@ public:
      * @brief This function copies the value in member my_sequence_sequence
      * @param _my_sequence_sequence New value to be copied in member my_sequence_sequence
      */
-    inline eProsima_user_DllExport void my_sequence_sequence(const std::vector<std::vector<int32_t>> &_my_sequence_sequence)
-    {
-        m_my_sequence_sequence = _my_sequence_sequence;
-    }
+    eProsima_user_DllExport void my_sequence_sequence(const std::vector<std::vector<int32_t>> &_my_sequence_sequence);
 
     /*!
      * @brief This function moves the value in member my_sequence_sequence
      * @param _my_sequence_sequence New value to be moved in member my_sequence_sequence
      */
-    inline eProsima_user_DllExport void my_sequence_sequence(std::vector<std::vector<int32_t>> &&_my_sequence_sequence)
-    {
-        m_my_sequence_sequence = std::move(_my_sequence_sequence);
-    }
+    eProsima_user_DllExport void my_sequence_sequence(std::vector<std::vector<int32_t>> &&_my_sequence_sequence);
 
     /*!
      * @brief This function returns a constant reference to member my_sequence_sequence
      * @return Constant reference to member my_sequence_sequence
      */
-    inline eProsima_user_DllExport const std::vector<std::vector<int32_t>>& my_sequence_sequence() const
-    {
-        return m_my_sequence_sequence;
-    }
+    eProsima_user_DllExport const std::vector<std::vector<int32_t>>& my_sequence_sequence() const;
 
     /*!
      * @brief This function returns a reference to member my_sequence_sequence
      * @return Reference to member my_sequence_sequence
      */
-    inline eProsima_user_DllExport std::vector<std::vector<int32_t>>& my_sequence_sequence()
-    {
-        return m_my_sequence_sequence;
-    }
+    eProsima_user_DllExport std::vector<std::vector<int32_t>>& my_sequence_sequence();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -3092,7 +2852,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~MapStruct();
+    eProsima_user_DllExport virtual ~MapStruct();
 
     /*!
      * @brief Copy constructor.
@@ -3122,37 +2882,25 @@ public:
      * @brief This function copies the value in member my_map
      * @param _my_map New value to be copied in member my_map
      */
-    inline eProsima_user_DllExport void my_map(const std::map<int32_t, int32_t> &_my_map)
-    {
-        m_my_map = _my_map;
-    }
+    eProsima_user_DllExport void my_map(const std::map<int32_t, int32_t> &_my_map);
 
     /*!
      * @brief This function moves the value in member my_map
      * @param _my_map New value to be moved in member my_map
      */
-    inline eProsima_user_DllExport void my_map(std::map<int32_t, int32_t> &&_my_map)
-    {
-        m_my_map = std::move(_my_map);
-    }
+    eProsima_user_DllExport void my_map(std::map<int32_t, int32_t> &&_my_map);
 
     /*!
      * @brief This function returns a constant reference to member my_map
      * @return Constant reference to member my_map
      */
-    inline eProsima_user_DllExport const std::map<int32_t, int32_t>& my_map() const
-    {
-        return m_my_map;
-    }
+    eProsima_user_DllExport const std::map<int32_t, int32_t>& my_map() const;
 
     /*!
      * @brief This function returns a reference to member my_map
      * @return Reference to member my_map
      */
-    inline eProsima_user_DllExport std::map<int32_t, int32_t>& my_map()
-    {
-        return m_my_map;
-    }
+    eProsima_user_DllExport std::map<int32_t, int32_t>& my_map();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -3223,7 +2971,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~MapMapStruct();
+    eProsima_user_DllExport virtual ~MapMapStruct();
 
     /*!
      * @brief Copy constructor.
@@ -3253,37 +3001,25 @@ public:
      * @brief This function copies the value in member my_map_map
      * @param _my_map_map New value to be copied in member my_map_map
      */
-    inline eProsima_user_DllExport void my_map_map(const std::map<int32_t, std::map<int32_t, int32_t>> &_my_map_map)
-    {
-        m_my_map_map = _my_map_map;
-    }
+    eProsima_user_DllExport void my_map_map(const std::map<int32_t, std::map<int32_t, int32_t>> &_my_map_map);
 
     /*!
      * @brief This function moves the value in member my_map_map
      * @param _my_map_map New value to be moved in member my_map_map
      */
-    inline eProsima_user_DllExport void my_map_map(std::map<int32_t, std::map<int32_t, int32_t>> &&_my_map_map)
-    {
-        m_my_map_map = std::move(_my_map_map);
-    }
+    eProsima_user_DllExport void my_map_map(std::map<int32_t, std::map<int32_t, int32_t>> &&_my_map_map);
 
     /*!
      * @brief This function returns a constant reference to member my_map_map
      * @return Constant reference to member my_map_map
      */
-    inline eProsima_user_DllExport const std::map<int32_t, std::map<int32_t, int32_t>>& my_map_map() const
-    {
-        return m_my_map_map;
-    }
+    eProsima_user_DllExport const std::map<int32_t, std::map<int32_t, int32_t>>& my_map_map() const;
 
     /*!
      * @brief This function returns a reference to member my_map_map
      * @return Reference to member my_map_map
      */
-    inline eProsima_user_DllExport std::map<int32_t, std::map<int32_t, int32_t>>& my_map_map()
-    {
-        return m_my_map_map;
-    }
+    eProsima_user_DllExport std::map<int32_t, std::map<int32_t, int32_t>>& my_map_map();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -3339,6 +3075,238 @@ private:
     std::map<int32_t, std::map<int32_t, int32_t>> m_my_map_map;
 };
 /*!
+ * @brief This class represents the structure MyBitset defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class MyBitset
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport MyBitset();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport virtual ~MyBitset();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset(const MyBitset &x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset(MyBitset &&x);
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset& operator=(const MyBitset &x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object MyBitset that will be copied.
+     */
+    eProsima_user_DllExport MyBitset& operator=(MyBitset &&x);
+
+    /*!
+     * @brief This function sets a value in member a
+     * @param _a New value for member a
+     */
+    eProsima_user_DllExport void a(char _a);
+
+    /*!
+     * @brief This function returns the value of member a
+     * @return Value of member a
+     */
+    eProsima_user_DllExport char a() const;
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     */
+    //eProsima_user_DllExport char& a();
+
+    /*!
+     * @brief This function sets a value in member b
+     * @param _b New value for member b
+     */
+    eProsima_user_DllExport void b(uint32_t _b);
+
+    /*!
+     * @brief This function returns the value of member b
+     * @return Value of member b
+     */
+    eProsima_user_DllExport uint32_t b() const;
+
+    /*!
+     * @brief This function returns a reference to member b
+     * @return Reference to member b
+     */
+    //eProsima_user_DllExport uint32_t& b();
+
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const MyBitset& data, size_t current_alignment = 0);
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+
+
+
+private:
+    std::bitset<30> m_bitset;
+};
+/*!
+ * @brief This class represents the structure BitsetStruct defined by the user in the IDL file.
+ * @ingroup BASIC
+ */
+class BitsetStruct
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport BitsetStruct();
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport virtual ~BitsetStruct();
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object BitsetStruct that will be copied.
+     */
+    eProsima_user_DllExport BitsetStruct(const BitsetStruct &x);
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object BitsetStruct that will be copied.
+     */
+    eProsima_user_DllExport BitsetStruct(BitsetStruct &&x);
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object BitsetStruct that will be copied.
+     */
+    eProsima_user_DllExport BitsetStruct& operator=(const BitsetStruct &x);
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object BitsetStruct that will be copied.
+     */
+    eProsima_user_DllExport BitsetStruct& operator=(BitsetStruct &&x);
+
+    /*!
+     * @brief This function copies the value in member a
+     * @param _a New value to be copied in member a
+     */
+    eProsima_user_DllExport void a(const MyBitset &_a);
+
+    /*!
+     * @brief This function moves the value in member a
+     * @param _a New value to be moved in member a
+     */
+    eProsima_user_DllExport void a(MyBitset &&_a);
+
+    /*!
+     * @brief This function returns a constant reference to member a
+     * @return Constant reference to member a
+     */
+    eProsima_user_DllExport const MyBitset& a() const;
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     */
+    eProsima_user_DllExport MyBitset& a();
+
+    /*!
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function returns the serialized size of a data depending on the buffer alignment.
+     * @param data Data which is calculated its serialized size.
+     * @param current_alignment Buffer alignment.
+     * @return Serialized size.
+     */
+    eProsima_user_DllExport static size_t getCdrSerializedSize(const BitsetStruct& data, size_t current_alignment = 0);
+
+
+    /*!
+     * @brief This function serializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+
+    /*!
+     * @brief This function deserializes an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+
+
+    /*!
+     * @brief This function returns the maximum serialized size of the Key of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+
+    /*!
+     * @brief This function tells you if the Key has been defined for this type
+     */
+    eProsima_user_DllExport static bool isKeyDefined();
+
+    /*!
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
+    eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+private:
+    MyBitset m_a;
+};
+/*!
  * @brief This class represents the structure StructStruct defined by the user in the IDL file.
  * @ingroup BASIC
  */
@@ -3354,7 +3322,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~StructStruct();
+    eProsima_user_DllExport virtual ~StructStruct();
 
     /*!
      * @brief Copy constructor.
@@ -3384,54 +3352,36 @@ public:
      * @brief This function sets a value in member a
      * @param _a New value for member a
      */
-    inline eProsima_user_DllExport void a(int32_t _a)
-    {
-        m_a = _a;
-    }
+    eProsima_user_DllExport void a(int32_t _a);
 
     /*!
      * @brief This function returns the value of member a
      * @return Value of member a
      */
-    inline eProsima_user_DllExport int32_t a() const
-    {
-        return m_a;
-    }
+    eProsima_user_DllExport int32_t a() const;
 
     /*!
      * @brief This function returns a reference to member a
      * @return Reference to member a
      */
-    inline eProsima_user_DllExport int32_t& a()
-    {
-        return m_a;
-    }
+    eProsima_user_DllExport int32_t& a();
     /*!
      * @brief This function sets a value in member b
      * @param _b New value for member b
      */
-    inline eProsima_user_DllExport void b(int64_t _b)
-    {
-        m_b = _b;
-    }
+    eProsima_user_DllExport void b(int64_t _b);
 
     /*!
      * @brief This function returns the value of member b
      * @return Value of member b
      */
-    inline eProsima_user_DllExport int64_t b() const
-    {
-        return m_b;
-    }
+    eProsima_user_DllExport int64_t b() const;
 
     /*!
      * @brief This function returns a reference to member b
      * @return Reference to member b
      */
-    inline eProsima_user_DllExport int64_t& b()
-    {
-        return m_b;
-    }
+    eProsima_user_DllExport int64_t& b();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -3503,7 +3453,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~StructStructStruct();
+    eProsima_user_DllExport virtual ~StructStructStruct();
 
     /*!
      * @brief Copy constructor.
@@ -3533,63 +3483,42 @@ public:
      * @brief This function copies the value in member child_struct
      * @param _child_struct New value to be copied in member child_struct
      */
-    inline eProsima_user_DllExport void child_struct(const StructStruct &_child_struct)
-    {
-        m_child_struct = _child_struct;
-    }
+    eProsima_user_DllExport void child_struct(const StructStruct &_child_struct);
 
     /*!
      * @brief This function moves the value in member child_struct
      * @param _child_struct New value to be moved in member child_struct
      */
-    inline eProsima_user_DllExport void child_struct(StructStruct &&_child_struct)
-    {
-        m_child_struct = std::move(_child_struct);
-    }
+    eProsima_user_DllExport void child_struct(StructStruct &&_child_struct);
 
     /*!
      * @brief This function returns a constant reference to member child_struct
      * @return Constant reference to member child_struct
      */
-    inline eProsima_user_DllExport const StructStruct& child_struct() const
-    {
-        return m_child_struct;
-    }
+    eProsima_user_DllExport const StructStruct& child_struct() const;
 
     /*!
      * @brief This function returns a reference to member child_struct
      * @return Reference to member child_struct
      */
-    inline eProsima_user_DllExport StructStruct& child_struct()
-    {
-        return m_child_struct;
-    }
+    eProsima_user_DllExport StructStruct& child_struct();
     /*!
      * @brief This function sets a value in member child_int64
      * @param _child_int64 New value for member child_int64
      */
-    inline eProsima_user_DllExport void child_int64(int64_t _child_int64)
-    {
-        m_child_int64 = _child_int64;
-    }
+    eProsima_user_DllExport void child_int64(int64_t _child_int64);
 
     /*!
      * @brief This function returns the value of member child_int64
      * @return Value of member child_int64
      */
-    inline eProsima_user_DllExport int64_t child_int64() const
-    {
-        return m_child_int64;
-    }
+    eProsima_user_DllExport int64_t child_int64() const;
 
     /*!
      * @brief This function returns a reference to member child_int64
      * @return Reference to member child_int64
      */
-    inline eProsima_user_DllExport int64_t& child_int64()
-    {
-        return m_child_int64;
-    }
+    eProsima_user_DllExport int64_t& child_int64();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -4135,7 +4064,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~SimpleUnionStruct();
+    eProsima_user_DllExport virtual ~SimpleUnionStruct();
 
     /*!
      * @brief Copy constructor.
@@ -4165,37 +4094,25 @@ public:
      * @brief This function copies the value in member my_union
      * @param _my_union New value to be copied in member my_union
      */
-    inline eProsima_user_DllExport void my_union(const SimpleUnion &_my_union)
-    {
-        m_my_union = _my_union;
-    }
+    eProsima_user_DllExport void my_union(const SimpleUnion &_my_union);
 
     /*!
      * @brief This function moves the value in member my_union
      * @param _my_union New value to be moved in member my_union
      */
-    inline eProsima_user_DllExport void my_union(SimpleUnion &&_my_union)
-    {
-        m_my_union = std::move(_my_union);
-    }
+    eProsima_user_DllExport void my_union(SimpleUnion &&_my_union);
 
     /*!
      * @brief This function returns a constant reference to member my_union
      * @return Constant reference to member my_union
      */
-    inline eProsima_user_DllExport const SimpleUnion& my_union() const
-    {
-        return m_my_union;
-    }
+    eProsima_user_DllExport const SimpleUnion& my_union() const;
 
     /*!
      * @brief This function returns a reference to member my_union
      * @return Reference to member my_union
      */
-    inline eProsima_user_DllExport SimpleUnion& my_union()
-    {
-        return m_my_union;
-    }
+    eProsima_user_DllExport SimpleUnion& my_union();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -4266,7 +4183,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~UnionUnionUnionStruct();
+    eProsima_user_DllExport virtual ~UnionUnionUnionStruct();
 
     /*!
      * @brief Copy constructor.
@@ -4296,37 +4213,25 @@ public:
      * @brief This function copies the value in member my_union
      * @param _my_union New value to be copied in member my_union
      */
-    inline eProsima_user_DllExport void my_union(const UnionUnion &_my_union)
-    {
-        m_my_union = _my_union;
-    }
+    eProsima_user_DllExport void my_union(const UnionUnion &_my_union);
 
     /*!
      * @brief This function moves the value in member my_union
      * @param _my_union New value to be moved in member my_union
      */
-    inline eProsima_user_DllExport void my_union(UnionUnion &&_my_union)
-    {
-        m_my_union = std::move(_my_union);
-    }
+    eProsima_user_DllExport void my_union(UnionUnion &&_my_union);
 
     /*!
      * @brief This function returns a constant reference to member my_union
      * @return Constant reference to member my_union
      */
-    inline eProsima_user_DllExport const UnionUnion& my_union() const
-    {
-        return m_my_union;
-    }
+    eProsima_user_DllExport const UnionUnion& my_union() const;
 
     /*!
      * @brief This function returns a reference to member my_union
      * @return Reference to member my_union
      */
-    inline eProsima_user_DllExport UnionUnion& my_union()
-    {
-        return m_my_union;
-    }
+    eProsima_user_DllExport UnionUnion& my_union();
 
     /*!
      * @brief This function returns the maximum serialized size of an object
@@ -4397,7 +4302,7 @@ public:
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~WCharUnionStruct();
+    eProsima_user_DllExport virtual ~WCharUnionStruct();
 
     /*!
      * @brief Copy constructor.
@@ -4427,37 +4332,25 @@ public:
      * @brief This function copies the value in member my_union
      * @param _my_union New value to be copied in member my_union
      */
-    inline eProsima_user_DllExport void my_union(const WCharUnion &_my_union)
-    {
-        m_my_union = _my_union;
-    }
+    eProsima_user_DllExport void my_union(const WCharUnion &_my_union);
 
     /*!
      * @brief This function moves the value in member my_union
      * @param _my_union New value to be moved in member my_union
      */
-    inline eProsima_user_DllExport void my_union(WCharUnion &&_my_union)
-    {
-        m_my_union = std::move(_my_union);
-    }
+    eProsima_user_DllExport void my_union(WCharUnion &&_my_union);
 
     /*!
      * @brief This function returns a constant reference to member my_union
      * @return Constant reference to member my_union
      */
-    inline eProsima_user_DllExport const WCharUnion& my_union() const
-    {
-        return m_my_union;
-    }
+    eProsima_user_DllExport const WCharUnion& my_union() const;
 
     /*!
      * @brief This function returns a reference to member my_union
      * @return Reference to member my_union
      */
-    inline eProsima_user_DllExport WCharUnion& my_union()
-    {
-        return m_my_union;
-    }
+    eProsima_user_DllExport WCharUnion& my_union();
 
     /*!
      * @brief This function returns the maximum serialized size of an object

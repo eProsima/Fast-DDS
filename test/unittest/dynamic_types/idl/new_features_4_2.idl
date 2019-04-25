@@ -1,0 +1,85 @@
+struct NewAliases
+{
+	int8 int8_;
+	uint8 uint8_;
+	int16 int16_;
+	uint16 uint16_;
+	int32 int32_;
+	uint32 uint32_;
+	int64 int64_;
+	@default(555) uint64 uint64_;
+	@non_serialized string local_string;
+};
+
+union WCharUnion switch (wchar)
+{
+	case 'a':
+		long case_zero;
+	case 'b':
+		long case_one;
+};
+
+union OctetUnion switch (octet)
+{
+	case 5:
+		long case_five;
+	case 7:
+		long case_seven;
+};
+
+
+union Int8Union switch (int8)
+{
+	case 3:
+		long case_three;
+	case 6:
+	    long case_six;
+};
+
+module bitmodule
+{
+	bitset ParentBitset
+	{
+		bitfield<17> parent_bitfield;
+	};
+
+	bitset MyBitset : ParentBitset
+	{
+		bitfield<3> a;
+		bitfield<1> b;
+		bitfield<4>;
+		bitfield<10> c;
+		bitfield<12, short> d, e, f;
+	};
+
+	@bit_bound(8)
+	bitmask MyBitMask
+	{
+		@position(0) flag0,
+		@position(1) flag1,
+		@position(4) flag4,
+		@position(6) flag6,
+		flag7
+	};
+
+
+	struct BitsetBitmask
+	{
+		MyBitset mybitset;
+		MyBitMask mybitmask;
+	};
+
+	struct BM2 : BitsetBitmask
+	{
+		MyBitMask two;
+		long mylong;
+	};
+};
+
+struct StructTest : NewAliases
+{
+	WCharUnion charUnion;
+	OctetUnion octetUnion;
+	Int8Union int8Union;
+	bitmodule::BM2 myStructBits;
+};

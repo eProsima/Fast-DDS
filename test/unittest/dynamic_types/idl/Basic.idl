@@ -140,6 +140,18 @@ struct MapMapStruct
     map<long, map<long, long, 2> , 2> my_map_map;
 };
 
+bitset MyBitset
+{
+    bitfield<2> a;
+    bitfield<8>;
+    bitfield<20> b;
+};
+
+struct BitsetStruct
+{
+    MyBitset a;
+};
+
 struct StructStruct
 {
     long a;

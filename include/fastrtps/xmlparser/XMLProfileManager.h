@@ -130,7 +130,7 @@ public:
     RTPS_DllAPI static XMLP_ret fillTopicAttributes(const std::string& profile_name, TopicAttributes& atts);
 
     RTPS_DllAPI static void getDefaultTopicAttributes(TopicAttributes& topic_attributes);
-    
+
     RTPS_DllAPI static bool insertDynamicTypeByName(const std::string& sName, p_dynamictypebuilder_t type);
     RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(const std::string& sName);
 
@@ -143,7 +143,7 @@ public:
 
         for (auto pair : m_dynamictypes)
         {
-            types::DynamicTypeBuilderFactory::GetInstance()->DeleteBuilder(pair.second);
+            types::DynamicTypeBuilderFactory::get_instance()->delete_builder(pair.second);
         }
         m_dynamictypes.clear();
     }
@@ -152,7 +152,7 @@ public:
     {
         if (m_dynamictypes.find(typeName) != m_dynamictypes.end())
         {
-            return new types::DynamicPubSubType(m_dynamictypes[typeName]->Build());
+            return new types::DynamicPubSubType(m_dynamictypes[typeName]->build());
         }
         return nullptr;
     }

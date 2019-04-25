@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file BasicTypeObject.h
  * This header file contains the declaration of the described types in the IDL file.
  *
@@ -203,6 +203,16 @@ eProsima_user_DllExport const TypeIdentifier* GetMapMapStructIdentifier(bool com
 eProsima_user_DllExport const TypeObject* GetMapMapStructObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMapMapStructObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMapMapStructObject();
+
+eProsima_user_DllExport const TypeIdentifier* GetMyBitsetIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMyBitsetObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalMyBitsetObject();
+eProsima_user_DllExport const TypeObject* GetCompleteMyBitsetObject();
+
+eProsima_user_DllExport const TypeIdentifier* GetBitsetStructIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetBitsetStructObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalBitsetStructObject();
+eProsima_user_DllExport const TypeObject* GetCompleteBitsetStructObject();
 
 eProsima_user_DllExport const TypeIdentifier* GetStructStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetStructStructObject(bool complete = false);

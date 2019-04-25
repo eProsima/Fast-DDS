@@ -23,7 +23,7 @@ namespace types {
 DynamicData_ptr::DynamicData_ptr(DynamicData* pData)
     : Base(pData, [](DynamicData* pData)
 {
-    DynamicDataFactory::GetInstance()->DeleteData(pData);
+    DynamicDataFactory::get_instance()->delete_data(pData);
 })
 {
 }

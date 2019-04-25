@@ -1,0 +1,112 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "SerializationTest.cpp"], description=["This file contains serialization test code."])$
+
+#include "$ctx.filename$PubSubTypes.h"
+#include "$ctx.filename$Serialization.h"
+#include <fastcdr/Cdr.h>
+#include <fastrtps/rtps/common/SerializedPayload.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <string.h>
+
+int test$ctx.lastStructure.name$()
+{
+    using eprosima::fastrtps::rtps::SerializedPayload_t;
+    $if(ctx.lastStructure.hasScope)$    using namespace $ctx.lastStructure.scope$;$endif$
+
+    $ctx.lastStructure.name$ $ctx.lastStructure.name$_serialization_topic;
+    $ctx.lastStructure.name$ $ctx.lastStructure.name$_deserialization_topic;
+
+    initialize$ctx.lastStructure.name$(&$ctx.lastStructure.name$_serialization_topic);
+
+    $ctx.lastStructure.name$PubSubType pst;
+    uint32_t payloadSize = static_cast<uint32_t>(pst.getSerializedSizeProvider(&$ctx.lastStructure.name$_serialization_topic)());
+
+    SerializedPayload_t payload(payloadSize);
+    if (pst.serialize(&$ctx.lastStructure.name$_serialization_topic, &payload) == 0)
+    {
+        return 0;
+    }
+
+    if (pst.deserialize(&payload, &$ctx.lastStructure.name$_deserialization_topic) == 0)
+    {
+        return 0;
+    }
+
+    uint32_t payloadOutSize = static_cast<uint32_t>(pst.getSerializedSizeProvider(&$ctx.lastStructure.name$_deserialization_topic)());
+
+    //int topic_equal = memcmp(&$ctx.lastStructure.name$_serialization_topic, &$ctx.lastStructure.name$_deserialization_topic, sizeof(&$ctx.lastStructure.name$)) == 0;
+    int topic_equal = compare$ctx.lastStructure.name$(&$ctx.lastStructure.name$_serialization_topic, &$ctx.lastStructure.name$_deserialization_topic);
+    int size_equal = payloadOutSize == payloadSize;
+
+    printf("\n");
+    printf("===== Before serialize: =====\n");
+    print$ctx.lastStructure.name$(&$ctx.lastStructure.name$_serialization_topic);
+    printf("\n");
+    printf("===== After deserialize: =====\n");
+    print$ctx.lastStructure.name$(&$ctx.lastStructure.name$_deserialization_topic);
+    printf("\n");
+    printf("SerializedPayload_t: \n");
+    printf("length: %d - %d\n", payloadSize, payload.length);
+    printf("data: ");
+    for(int i = 0; i < payloadSize; ++i)
+    {
+        printf("%02X ", payload.data[i]);
+    }
+    printf("\n\n");
+
+    printf("Topic $ctx.lastStructure.name$ size: %s => payloadIn: %d, payloadOut: %d, type: %ld\n", size_equal ? "OK" : "ERROR", payloadSize, payloadOutSize, sizeof($ctx.lastStructure.name$));
+    printf("Topic $ctx.lastStructure.name$ comparation: %s\n", topic_equal ? "OK" : "ERROR");
+
+    if (!topic_equal)
+    {
+        return 0;
+    }
+
+    return payload.length == payloadSize;
+}
+
+int main(void)
+{
+    srand((unsigned) time(NULL));
+    return test$ctx.lastStructure.name$() ? 0 : 1;
+}
+
+>>
+
+struct_type(ctx, parent, struct) ::= <<>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<>>
+
+annotation(ctx, annotation) ::= <<>>
+
+module(ctx, parent, module, definition_list) ::= <<>>
+
+definition_list(definitions) ::= <<>>

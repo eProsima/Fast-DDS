@@ -72,9 +72,9 @@ void Domain::stopAll()
     }
 
     // Deletes DynamicTypes and TypeObject factories
-    DynamicTypeBuilderFactory::DeleteInstance();
-    DynamicDataFactory::DeleteInstance();
-    TypeObjectFactory::DeleteInstance();
+    DynamicTypeBuilderFactory::delete_instance();
+    DynamicDataFactory::delete_instance();
+    TypeObjectFactory::delete_instance();
     XMLProfileManager::DeleteInstance();
 
     eClock::my_sleep(100);
@@ -206,7 +206,7 @@ Publisher* Domain::createPublisher(
         logError(PUBLISHER, "Problem loading profile '" << publisher_profile << "'");
         return nullptr;
     }
- 
+
     return createPublisher(part, publisher_att, listen);
 }
 
@@ -318,38 +318,38 @@ bool Domain::registerDynamicType(
         types::DynamicPubSubType* type)
 {
     using namespace eprosima::fastrtps::types;
-    TypeObjectFactory *typeFactory = TypeObjectFactory::GetInstance();
+    TypeObjectFactory *typeFactory = TypeObjectFactory::get_instance();
 
-    const TypeIdentifier *type_id_min = typeFactory->GetTypeIdentifier(type->getName());
+    const TypeIdentifier *type_id_min = typeFactory->get_type_identifier(type->getName());
 
     if (type_id_min == nullptr)
     {
-        DynamicTypeBuilderFactory *dynFactory = DynamicTypeBuilderFactory::GetInstance();
+        DynamicTypeBuilderFactory *dynFactory = DynamicTypeBuilderFactory::get_instance();
         std::map<MemberId, DynamicTypeMember*> membersMap;
-        type->GetDynamicType()->GetAllMembers(membersMap);
+        type->GetDynamicType()->get_all_members(membersMap);
         std::vector<const MemberDescriptor*> members;
         for (auto it : membersMap)
         {
-            members.push_back(it.second->GetDescriptor());
+            members.push_back(it.second->get_descriptor());
         }
         TypeObject typeObj;
-        dynFactory->BuildTypeObject(type->GetDynamicType()->getTypeDescriptor(), typeObj, &members);
+        dynFactory->build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, &members);
         // Minimal too
-        dynFactory->BuildTypeObject(type->GetDynamicType()->getTypeDescriptor(), typeObj, &members, false);
-        const TypeIdentifier *type_id2 = typeFactory->GetTypeIdentifier(type->getName());
-        const TypeObject *type_obj = typeFactory->GetTypeObject(type->getName());
+        dynFactory->build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
+        const TypeIdentifier *type_id2 = typeFactory->get_type_identifier(type->getName());
+        const TypeObject *type_obj = typeFactory->get_type_object(type->getName());
         if (type_id2 == nullptr)
         {
             logError(DYN_TYPES, "Cannot register dynamic type " << type->getName());
         }
         else
         {
-            typeFactory->AddTypeObject(type->getName(), type_id2, type_obj);
+            typeFactory->add_type_object(type->getName(), type_id2, type_obj);
 
             // Complete, just to make sure it is generated
-            const TypeIdentifier *type_id_complete = typeFactory->GetTypeIdentifier(type->getName(), true);
-            const TypeObject *type_obj_complete = typeFactory->GetTypeObject(type->getName(), true);
-            typeFactory->AddTypeObject(type->getName(), type_id_complete, type_obj_complete); // Add complete
+            const TypeIdentifier *type_id_complete = typeFactory->get_type_identifier(type->getName(), true);
+            const TypeObject *type_obj_complete = typeFactory->get_type_object(type->getName(), true);
+            typeFactory->add_type_object(type->getName(), type_id_complete, type_obj_complete); // Add complete
         }
     }
     return registerType(part, type);

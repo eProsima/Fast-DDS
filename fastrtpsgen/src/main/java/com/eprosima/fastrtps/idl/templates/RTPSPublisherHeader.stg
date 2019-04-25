@@ -1,0 +1,94 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "Publisher.h"], description=["This header file contains the declaration of the publisher functions."])$
+
+
+#ifndef _$ctx.headerGuardName$_PUBLISHER_H_
+#define _$ctx.headerGuardName$_PUBLISHER_H_
+
+#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/publisher/PublisherListener.h>
+
+#include "$ctx.filename$PubSubTypes.h"
+
+class $ctx.filename$Publisher
+{
+public:
+	$ctx.filename$Publisher();
+	virtual ~$ctx.filename$Publisher();
+	bool init();
+	void run();
+private:
+	eprosima::fastrtps::Participant *mp_participant;
+	eprosima::fastrtps::Publisher *mp_publisher;
+
+	class PubListener : public eprosima::fastrtps::PublisherListener
+	{
+	public:
+		PubListener() : n_matched(0){};
+		~PubListener(){};
+		void onPublicationMatched(eprosima::fastrtps::Publisher* pub,eprosima::fastrtps::rtps::MatchingInfo& info);
+		int n_matched;
+	} m_listener;
+	$ctx.m_lastStructureTopicDataTypeName$PubSubType myType;
+};
+
+#endif // _$ctx.headerGuardName$_PUBLISHER_H_
+>>
+
+module(ctx, parent, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, parent, exception) ::= <<>>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+struct_type(ctx, parent, struct) ::= <<>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<>>

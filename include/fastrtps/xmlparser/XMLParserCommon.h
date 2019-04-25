@@ -294,6 +294,8 @@ extern const char* UNION;
 extern const char* SEQUENCE;
 extern const char* MAP;
 extern const char* TYPEDEF;
+extern const char* BITSET;
+extern const char* BITMASK;
 extern const char* ENUM;
 extern const char* CASE;
 extern const char* DEFAULT;
@@ -309,6 +311,11 @@ extern const char* NON_BASIC_TYPE;
 extern const char* NON_BASIC_TYPE_NAME;
 extern const char* KEY;
 extern const char* MEMBER;
+extern const char* BITFIELD;
+extern const char* BIT_VALUE;
+extern const char* POSITION;
+extern const char* BIT_BOUND;
+extern const char* BASE_TYPE;
 
 // LOG
 extern const char* USE_DEFAULT;

@@ -150,7 +150,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
             Domain::registerType(mp_participant, &m_dynType);
             break;
         }
-        m_DynamicData->SetUint32Value(0, 0);
+        m_DynamicData->set_uint32_value(0, 0);
     }
     else*/
     {
@@ -283,7 +283,7 @@ void BenchMarkSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
         {
             if (m_info.sampleKind == ALIVE)
             {
-                mParent->m_DynamicData->SetUint32Value(mParent->m_DynamicData->GetUint32Value(0) + 1, 0);
+                mParent->m_DynamicData->set_uint32_value(mParent->m_DynamicData->get_uint32_value(0) + 1, 0);
                 mParent->mp_publisher->write((void*)mParent->m_DynamicData.get());
             }
         }

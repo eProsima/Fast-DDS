@@ -1,0 +1,204 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group eprosima;
+
+paramTypeByValue(typecode) ::= <<
+$if(typecode.primitive)$
+$typecode.cppTypename$
+$else$
+const $typecode.cppTypename$&
+$endif$
+>>
+
+varDecl(variable, create) ::= <<
+$if(variable)$
+$if(variable.typecode.primitive)$
+$variable.typecode.cppTypename$  $variable.name$ = $variable.typecode.initialValue$;
+$else$
+$variable.typecode.cppTypename$  $variable.name$;
+$endif$
+$endif$
+>>
+
+varDel(variable) ::= <<>>
+
+struct_inherit_default_init(parent) ::= <<$parent.scopedname$()>>
+
+struct_inherit_copy_init(parent) ::= <<$parent.scopedname$(x)>>
+
+struct_inherit_move_init(parent) ::= <<$parent.scopedname$(std::move(x))>>
+
+bitset_inherit_default_init(parent) ::= <<$parent.scopedname$()>>
+
+bitset_inherit_copy_init(parent) ::= <<$parent.scopedname$(x)>>
+
+bitset_inherit_move_init(parent) ::= <<$parent.scopedname$(std::move(x))>>
+
+member_default_init(member) ::= <<
+$if(member.typecode.forwarded)$m_$member.name$ = new $member.typecode.cppTypename$($if(member.annotationDefault)$$member.annotationDefaultValue$$endif$);$else$$if(member.typecode.primitive)$$if(member.typecode.isBitmaskType)$m_$member.name$ = $if(member.annotationDefault)$$member.annotationDefaultValue$$else$static_cast<$member.typecode.cppTypename$>(0)$endif$;$else$m_$member.name$ = $if(member.annotationDefault)$$member.annotationDefaultValue$$else$$member.typecode.initialValue$$endif$;$endif$$elseif(member.typecode.isType_f)$$if(member.typecode.contentTypeCode.primitive)$memset(&m_$member.name$, $if(member.annotationDefault)$$member.annotationDefaultValue$$else$0$endif$, $member.typecode.size$ * $member.typecode.contentTypeCode.size$);$endif$$endif$$endif$>>
+
+member_destructor(member) ::= <<$if(member.typecode.forwarded)$delete m_$member.name$;$endif$>>
+
+getTypenameOperation(operation, suffix, varname) ::= <<
+$varname$ = $operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::get_typename();
+>>
+
+getTypenameInterface(interface, suffix, varname) ::= <<
+$varname$ = $interface.scopedname$$suffix$Plugin::get_typename();
+>>
+
+registerTypenameOperationAndCheck(operation, suffix, varname) ::= <<
+!$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::register_type(m_ddsTransport->getRTPSParticipant(), $varname$)
+>>
+
+registerTypenameInterfaceAndCheck(interface, suffix, varname) ::= <<
+!$interface.scopedname$$suffix$Plugin::register_type(m_ddsTransport->getRTPSParticipant(), $varname$)
+>>
+
+createDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Create_data)$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::create_data
+>>
+
+createDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Create_data)$interface.scopedname$$suffix$Plugin::create_data
+>>
+
+copyDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Copy_data)$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::copy_data
+>>
+
+copyDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Copy_data)$interface.scopedname$$suffix$Plugin::copy_data
+>>
+
+destroyDataCallback(operation, suffix) ::= <<
+(::transport::dds::Transport::Destroy_data)$operation.parent.scopedname$Plugin::$operation.name$$suffix$Plugin::destroy_data
+>>
+
+destroyDataCallbackInterface(interface, suffix) ::= <<
+(::transport::dds::Transport::Destroy_data)$interface.scopedname$$suffix$Plugin::destroy_data
+>>
+
+addParamToTopic(param, varname, isRequest) ::= <<
+$if(param)$
+$if(isRequest)$
+$varname$.$param.name$($param.name$);
+$else$
+$if(param.typecode.primitive)$
+$varname$.$param.name$($param.name$);
+$else$
+$varname$.$param.name$(std::move($param.name$));
+$endif$
+$endif$
+$endif$
+>>
+
+addExceptionMemberToTopic(exception, member, varname) ::= <<
+$if(member.typecode.primitive)$
+$varname$.unio().$exception.formatedScopedname$_ex().$member.name$(ex.$member.name$());
+$else$
+$varname$.unio().$exception.formatedScopedname$_ex().$member.name$(std::move(ex.$member.name$()));
+$endif$
+>>
+
+extractParamFromTopic(param, varname, isReply) ::= <<
+$if(param.typecode.primitive)$
+$param.name$ = $varname$.$param.name$();
+$else$
+$param.name$ = std::move($varname$.$param.name$()); //TODO Probar que esto funciona.
+$endif$
+>>
+
+extractExceptionMemberFromTopic(exception, member, varname) ::= <<
+$if(member.typecode.primitive)$
+ex.$member.name$($varname$.unio().$exception.formatedScopedname$_ex().$member.name$());
+$else$
+ex.$member.name$(std::move($varname$.unio().$exception.formatedScopedname$_ex().$member.name$()));
+$endif$
+>>
+
+extractExceptionMemberFromTopicByInterface(exception, member, varname) ::= <<
+$if(member.typecode.primitive)$
+ex.$member.name$($varname$.$exception.formatedScopedname$_ex().$member.name$());
+$else$
+ex.$member.name$(std::move($varname$.$exception.formatedScopedname$_ex().$member.name$()));
+$endif$
+>>
+
+copyHeaderInfo(reqvarname, repvarname) ::= <<
+$repvarname$._header().clientId().value_1() = $reqvarname$._header().clientId().value_1();
+$repvarname$._header().clientId().value_2() = $reqvarname$._header().clientId().value_2();
+$repvarname$._header().clientId().value_3() = $reqvarname$._header().clientId().value_3();
+$repvarname$._header().clientId().value_4() = $reqvarname$._header().clientId().value_4();
+$repvarname$._header().requestSequenceNumber() = $reqvarname$._header().requestSequenceNumber();
+>>
+
+setHeaderSuccess(varname) ::= <<
+$varname$._header().retCode(OPERATION_SUCCESSFUL);
+>>
+
+setHeaderServerInternalException(varname) ::= <<
+$varname$._header().retCode(SERVER_INTERNAL_ERROR);
+$varname$._header().retMsg(std::move(ex.what()));
+>>
+
+getHeaderRetCode(varname) ::= <<
+$varname$._header().retCode()
+>>
+
+getHeaderRetMsg(varname) ::= <<
+$varname$._header().retMsg()
+>>
+
+interfaceUnionDiscriminator(varname) ::= <<
+$varname$.unio()._d()
+>>
+
+interfaceUnionOperation(operation, varname) ::= <<
+$varname$.unio().$operation.name$()
+>>
+
+replyUnionDiscriminator(varname) ::= <<
+$varname$.unio()._d()
+>>
+
+replyUnionDiscriminatorByInterface(operation, varname) ::= <<
+$varname$.unio().$operation.name$()._d()
+>>
+
+replyUnionData(varname, dataname) ::= <<
+$varname$.unio().$dataname$()
+>>
+
+replyUnionDataByInterface(operation, varname, dataname) ::= <<
+$varname$.unio().$operation.name$().$dataname$()
+>>
+
+eprosimaTypesBool() ::= <<true>>
+
+/** NEEDED BY RTI TYPES **/
+charCasting() ::= <<>>
+
+unsetReply() ::= <<>>
+
+reqrepDestruction(type, reqrep, name, void) ::= <<>>
+
+varComplexInitializeT(typeName, name) ::= <<>>
+
+varComplexInitialize(variable) ::= <<>>
+
+varComplexDelT(typeName, name) ::= <<>>
+
+reqrepRefFinalize(type, reqrep, name) ::= <<>>

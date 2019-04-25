@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file BasicPubSubTypes.cpp
  * This header file contains the implementation of the serialization functions.
  *
@@ -110,7 +110,8 @@ void EnumStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<EnumStruct*>(data));
 }
 
-bool EnumStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool EnumStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     EnumStruct* p_type = static_cast<EnumStruct*>(data);
@@ -212,7 +213,8 @@ void AliasStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<AliasStruct*>(data));
 }
 
-bool AliasStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool AliasStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     AliasStruct* p_type = static_cast<AliasStruct*>(data);
@@ -314,7 +316,8 @@ void AliasAliasStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<AliasAliasStruct*>(data));
 }
 
-bool AliasAliasStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool AliasAliasStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     AliasAliasStruct* p_type = static_cast<AliasAliasStruct*>(data);
@@ -416,7 +419,8 @@ void BoolStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<BoolStruct*>(data));
 }
 
-bool BoolStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool BoolStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     BoolStruct* p_type = static_cast<BoolStruct*>(data);
@@ -518,7 +522,8 @@ void OctetStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<OctetStruct*>(data));
 }
 
-bool OctetStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool OctetStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     OctetStruct* p_type = static_cast<OctetStruct*>(data);
@@ -620,7 +625,8 @@ void ShortStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<ShortStruct*>(data));
 }
 
-bool ShortStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool ShortStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     ShortStruct* p_type = static_cast<ShortStruct*>(data);
@@ -722,7 +728,8 @@ void LongStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<LongStruct*>(data));
 }
 
-bool LongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool LongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     LongStruct* p_type = static_cast<LongStruct*>(data);
@@ -824,7 +831,8 @@ void LongLongStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<LongLongStruct*>(data));
 }
 
-bool LongLongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool LongLongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     LongLongStruct* p_type = static_cast<LongLongStruct*>(data);
@@ -926,7 +934,8 @@ void UShortStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<UShortStruct*>(data));
 }
 
-bool UShortStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool UShortStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     UShortStruct* p_type = static_cast<UShortStruct*>(data);
@@ -1028,7 +1037,8 @@ void ULongStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<ULongStruct*>(data));
 }
 
-bool ULongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool ULongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     ULongStruct* p_type = static_cast<ULongStruct*>(data);
@@ -1130,7 +1140,8 @@ void ULongLongStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<ULongLongStruct*>(data));
 }
 
-bool ULongLongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool ULongLongStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     ULongLongStruct* p_type = static_cast<ULongLongStruct*>(data);
@@ -1232,7 +1243,8 @@ void FloatStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<FloatStruct*>(data));
 }
 
-bool FloatStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool FloatStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     FloatStruct* p_type = static_cast<FloatStruct*>(data);
@@ -1334,7 +1346,8 @@ void DoubleStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<DoubleStruct*>(data));
 }
 
-bool DoubleStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool DoubleStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     DoubleStruct* p_type = static_cast<DoubleStruct*>(data);
@@ -1436,7 +1449,8 @@ void LongDoubleStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<LongDoubleStruct*>(data));
 }
 
-bool LongDoubleStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool LongDoubleStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     LongDoubleStruct* p_type = static_cast<LongDoubleStruct*>(data);
@@ -1538,7 +1552,8 @@ void CharStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<CharStruct*>(data));
 }
 
-bool CharStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool CharStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     CharStruct* p_type = static_cast<CharStruct*>(data);
@@ -1640,7 +1655,8 @@ void WCharStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<WCharStruct*>(data));
 }
 
-bool WCharStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool WCharStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     WCharStruct* p_type = static_cast<WCharStruct*>(data);
@@ -1742,7 +1758,8 @@ void StringStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<StringStruct*>(data));
 }
 
-bool StringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool StringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     StringStruct* p_type = static_cast<StringStruct*>(data);
@@ -1844,7 +1861,8 @@ void WStringStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<WStringStruct*>(data));
 }
 
-bool WStringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool WStringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     WStringStruct* p_type = static_cast<WStringStruct*>(data);
@@ -1946,7 +1964,8 @@ void LargeStringStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<LargeStringStruct*>(data));
 }
 
-bool LargeStringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool LargeStringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     LargeStringStruct* p_type = static_cast<LargeStringStruct*>(data);
@@ -2048,7 +2067,8 @@ void LargeWStringStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<LargeWStringStruct*>(data));
 }
 
-bool LargeWStringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool LargeWStringStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     LargeWStringStruct* p_type = static_cast<LargeWStringStruct*>(data);
@@ -2150,7 +2170,8 @@ void ArraytStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<ArraytStruct*>(data));
 }
 
-bool ArraytStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool ArraytStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     ArraytStruct* p_type = static_cast<ArraytStruct*>(data);
@@ -2253,7 +2274,8 @@ void ArrayArrayStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<ArrayArrayStruct*>(data));
 }
 
-bool ArrayArrayStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool ArrayArrayStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     ArrayArrayStruct* p_type = static_cast<ArrayArrayStruct*>(data);
@@ -2355,7 +2377,8 @@ void SequenceStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<SequenceStruct*>(data));
 }
 
-bool SequenceStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool SequenceStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     SequenceStruct* p_type = static_cast<SequenceStruct*>(data);
@@ -2457,7 +2480,8 @@ void SequenceSequenceStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<SequenceSequenceStruct*>(data));
 }
 
-bool SequenceSequenceStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool SequenceSequenceStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     SequenceSequenceStruct* p_type = static_cast<SequenceSequenceStruct*>(data);
@@ -2559,7 +2583,8 @@ void MapStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<MapStruct*>(data));
 }
 
-bool MapStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool MapStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     MapStruct* p_type = static_cast<MapStruct*>(data);
@@ -2661,7 +2686,8 @@ void MapMapStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<MapMapStruct*>(data));
 }
 
-bool MapMapStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool MapMapStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     MapMapStruct* p_type = static_cast<MapMapStruct*>(data);
@@ -2669,6 +2695,110 @@ bool MapMapStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool f
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
     if(force_md5 || MapMapStruct::getKeyMaxCdrSerializedSize()>16)    {
+        m_md5.init();
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.finalize();
+        for(uint8_t i = 0;i<16;++i)        {
+            handle->value[i] = m_md5.digest[i];
+        }
+    }
+    else    {
+        for(uint8_t i = 0;i<16;++i)        {
+            handle->value[i] = m_keyBuffer[i];
+        }
+    }
+    return true;
+}
+
+
+BitsetStructPubSubType::BitsetStructPubSubType()
+{
+    setName("BitsetStruct");
+    m_typeSize = static_cast<uint32_t>(BitsetStruct::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
+    m_isGetKeyDefined = BitsetStruct::isKeyDefined();
+    size_t keyLength = BitsetStruct::getKeyMaxCdrSerializedSize()>16 ? BitsetStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
+    memset(m_keyBuffer, 0, keyLength);
+}
+
+BitsetStructPubSubType::~BitsetStructPubSubType()
+{
+    if(m_keyBuffer!=nullptr)
+        free(m_keyBuffer);
+}
+
+bool BitsetStructPubSubType::serialize(void *data, SerializedPayload_t *payload)
+{
+    BitsetStruct *p_type = static_cast<BitsetStruct*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size); // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    // Serialize encapsulation
+    ser.serialize_encapsulation();
+
+    try
+    {
+        p_type->serialize(ser); // Serialize the object:
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength()); //Get the serialized length
+    return true;
+}
+
+bool BitsetStructPubSubType::deserialize(SerializedPayload_t* payload, void* data)
+{
+    BitsetStruct* p_type = static_cast<BitsetStruct*>(data); //Convert DATA to pointer of your type
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length); // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+    // Deserialize encapsulation.
+    deser.read_encapsulation();
+    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    try
+    {
+        p_type->deserialize(deser); //Deserialize the object:
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+std::function<uint32_t()> BitsetStructPubSubType::getSerializedSizeProvider(void* data)
+{
+    return [data]() -> uint32_t
+    {
+        return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<BitsetStruct*>(data))) + 4 /*encapsulation*/;
+    };
+}
+
+void* BitsetStructPubSubType::createData()
+{
+    return reinterpret_cast<void*>(new BitsetStruct());
+}
+
+void BitsetStructPubSubType::deleteData(void* data)
+{
+    delete(reinterpret_cast<BitsetStruct*>(data));
+}
+
+bool BitsetStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
+    if(!m_isGetKeyDefined)
+        return false;
+    BitsetStruct* p_type = static_cast<BitsetStruct*>(data);
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),BitsetStruct::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
+    p_type->serializeKey(ser);
+    if(force_md5 || BitsetStruct::getKeyMaxCdrSerializedSize()>16)    {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
         m_md5.finalize();
@@ -2763,7 +2893,8 @@ void StructStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<StructStruct*>(data));
 }
 
-bool StructStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool StructStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     StructStruct* p_type = static_cast<StructStruct*>(data);
@@ -2865,7 +2996,8 @@ void StructStructStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<StructStructStruct*>(data));
 }
 
-bool StructStructStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool StructStructStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     StructStructStruct* p_type = static_cast<StructStructStruct*>(data);
@@ -2970,7 +3102,8 @@ void SimpleUnionStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<SimpleUnionStruct*>(data));
 }
 
-bool SimpleUnionStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool SimpleUnionStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     SimpleUnionStruct* p_type = static_cast<SimpleUnionStruct*>(data);
@@ -3072,7 +3205,8 @@ void UnionUnionUnionStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<UnionUnionUnionStruct*>(data));
 }
 
-bool UnionUnionUnionStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool UnionUnionUnionStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     UnionUnionUnionStruct* p_type = static_cast<UnionUnionUnionStruct*>(data);
@@ -3174,7 +3308,8 @@ void WCharUnionStructPubSubType::deleteData(void* data)
     delete(reinterpret_cast<WCharUnionStruct*>(data));
 }
 
-bool WCharUnionStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
+bool WCharUnionStructPubSubType::getKey(void *data, InstanceHandle_t* handle, bool force_md5)
+{
     if(!m_isGetKeyDefined)
         return false;
     WCharUnionStruct* p_type = static_cast<WCharUnionStruct*>(data);
