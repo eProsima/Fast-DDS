@@ -43,8 +43,12 @@ class StatefulReader:public RTPSReader
 
     protected:
 
-        StatefulReader(RTPSParticipantImpl*,GUID_t& guid,
-                ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
+        StatefulReader(
+                RTPSParticipantImpl*,
+                GUID_t& guid,
+                ReaderAttributes& att,
+                ReaderHistory* hist,
+                ReaderListener* listen=nullptr);
     public:
 
         /**

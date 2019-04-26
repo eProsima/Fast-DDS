@@ -30,21 +30,28 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-RTPSReader::RTPSReader(RTPSParticipantImpl*pimpl,GUID_t& guid,
-        ReaderAttributes& att,ReaderHistory* hist,ReaderListener* rlisten):
-    Endpoint(pimpl,guid,att.endpoint),
-    mp_history(hist),
-    mp_listener(rlisten),
-    m_acceptMessagesToUnknownReaders(true),
-    m_acceptMessagesFromUnkownWriters(true),
-    m_expectsInlineQos(att.expectsInlineQos),
-    fragmentedChangePitStop_(nullptr)
-    {
-        mp_history->mp_reader = this;
-        mp_history->mp_mutex = &mp_mutex;
-        fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
-        logInfo(RTPS_READER,"RTPSReader created correctly");
-    }
+RTPSReader::RTPSReader(
+        RTPSParticipantImpl*pimpl,
+        GUID_t& guid,
+        ReaderAttributes& att,
+        ReaderHistory* hist,
+        ReaderListener* rlisten)
+    : Endpoint(
+          pimpl,
+          guid,
+          att.endpoint)
+    , mp_history(hist)
+    , mp_listener(rlisten)
+    , m_acceptMessagesToUnknownReaders(true)
+    , m_acceptMessagesFromUnkownWriters(true)
+    , m_expectsInlineQos(att.expectsInlineQos)
+    , fragmentedChangePitStop_(nullptr)
+{
+    mp_history->mp_reader = this;
+    mp_history->mp_mutex = &mp_mutex;
+    fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
+    logInfo(RTPS_READER,"RTPSReader created correctly");
+}
 
 RTPSReader::~RTPSReader()
 {
@@ -85,7 +92,8 @@ bool RTPSReader::setListener(ReaderListener *target)
     return true;
 }
 
-CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(const SequenceNumber_t& sequence_number,
+CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(
+        const SequenceNumber_t& sequence_number,
         const GUID_t& writer_guid)
 {
     return fragmentedChangePitStop_->find(sequence_number, writer_guid);

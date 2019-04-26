@@ -72,6 +72,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
     m_acceptMessagesFromUnkownWriters = false;
     return true;
 }
+
 bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);

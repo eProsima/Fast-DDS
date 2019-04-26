@@ -104,18 +104,18 @@ WriterProxy::~WriterProxy()
     delete(mp_mutex);
 }
 
-WriterProxy::WriterProxy(const RemoteWriterAttributes& watt,
-        StatefulReader* SR) :
-    mp_SFR(SR),
-    m_att(watt),
-    m_lastHeartbeatCount(0),
-    mp_heartbeatResponse(nullptr),
-    mp_writerProxyLiveliness(nullptr),
-    mp_initialAcknack(nullptr),
-    m_heartbeatFinalFlag(false),
-    m_isAlive(true),
-    mp_mutex(new std::recursive_mutex())
-
+WriterProxy::WriterProxy(
+        const RemoteWriterAttributes& watt,
+        StatefulReader* SR)
+    : mp_SFR(SR)
+    , m_att(watt)
+    , m_lastHeartbeatCount(0)
+    , mp_heartbeatResponse(nullptr)
+    , mp_writerProxyLiveliness(nullptr)
+    , mp_initialAcknack(nullptr)
+    , m_heartbeatFinalFlag(false)
+    , m_isAlive(true)
+    , mp_mutex(new std::recursive_mutex())
 {
     m_changesFromW.clear();
     //Create Events
@@ -379,6 +379,8 @@ void WriterProxy::assertLiveliness()
     logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
 
     //std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    std::cout << "Asserting liveliness of writer proxy " << m_att.guid << std::endl;
 
     m_isAlive=true;
 
