@@ -35,11 +35,25 @@ namespace fastrtps{
 namespace rtps {
 
 /**
- * Struct SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
+ * Class SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-struct SimpleEDPAttributes
+class SimpleEDPAttributes
 {
+public:
+
+    //!Default value true.
+    bool use_PublicationWriterANDSubscriptionReader;
+
+    //!Default value true.
+    bool use_PublicationReaderANDSubscriptionWriter;
+
+#if HAVE_SECURITY
+    bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
+
+    bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
+#endif
+
     SimpleEDPAttributes()
         : use_PublicationWriterANDSubscriptionReader(true)
         , use_PublicationReaderANDSubscriptionWriter(true)
@@ -61,18 +75,6 @@ struct SimpleEDPAttributes
 #endif
                 (this->use_PublicationReaderANDSubscriptionWriter == b.use_PublicationReaderANDSubscriptionWriter);
     }
-
-    //!Default value true.
-    bool use_PublicationWriterANDSubscriptionReader;
-
-    //!Default value true.
-    bool use_PublicationReaderANDSubscriptionWriter;
-
-#if HAVE_SECURITY
-    bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
-
-    bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
-#endif
 };
 
 /**

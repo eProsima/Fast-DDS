@@ -43,7 +43,7 @@ typedef enum RTPSWriterPublishMode : octet
  * Struct WriterTimes, defining the times associated with the Reliable Writers events.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-struct  WriterTimes
+struct WriterTimes
 {
     //! Initial heartbeat delay. Default value ~11ms.
     Duration_t initialHeartbeatDelay;
@@ -75,7 +75,7 @@ struct  WriterTimes
 };
 
 /**
- * Struct WriterAttributes, defining the attributes of a RTPSWriter.
+ * Class WriterAttributes, defining the attributes of a RTPSWriter.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class WriterAttributes

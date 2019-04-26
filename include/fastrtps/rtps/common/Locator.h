@@ -44,7 +44,7 @@ namespace rtps {
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI Locator_t
+class RTPS_DllAPI Locator_t
 {
 public:
 

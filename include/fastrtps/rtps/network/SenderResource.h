@@ -26,7 +26,7 @@ class RTPSParticipantImpl;
 class MessageReceiver;
 class ChannelResource;
 class TransportInterface;
-struct Locator_t;
+class Locator_t;
 
 /**
  * RAII object that encapsulates the Send operation over one chanel in an unknown transport.
