@@ -38,13 +38,14 @@ class CryptoKeyFactory
          * @param participant_identity Made by a prior call to validate_local_identity
          * @param participant_permissions Made by a prior call to validate_local_permissions
          * @param participant_properties Combination of PropertyQoSPolicy and contents of AccessControl
+         * @param participant_security_attributes ParticipantSecurity Attributes.
          * @param exception (out) Security exception
-         * @return ParticipantCryptoHandle with generated key material  
+         * @return ParticipantCryptoHandle with generated key material
          */
         virtual ParticipantCryptoHandle * register_local_participant(
-                const IdentityHandle &participant_identity, 
-                const PermissionsHandle &participant_permissions, 
-                const PropertySeq &participant_properties, 
+                const IdentityHandle &participant_identity,
+                const PermissionsHandle &participant_permissions,
+                const PropertySeq &participant_properties,
                 const ParticipantSecurityAttributes &participant_security_attributes,
                 SecurityException &exception) = 0;
 
@@ -70,7 +71,8 @@ class CryptoKeyFactory
          * Creates cryptomaterial for use with incoming/outgoing messages
          * @param participant_crypto returned by a prior call to register_local_participant
          * @param datawriter_prop Combination of PropertyWosPolicy and contents of AccessControl
-         * @param exception (out) Security exception 
+         * @param datawriter_sec_attr EndpointSecurity Attributes.
+         * @param exception (out) Security exception
          * @return CryptoHandle to be used with operations related to the DataWriter
          */
         virtual DatawriterCryptoHandle * register_local_datawriter(
@@ -80,7 +82,7 @@ class CryptoKeyFactory
                 SecurityException &exception) = 0;
 
         /**
-         * Register a remote DataReader that has been granted permission to match with the local DataWriter. 
+         * Register a remote DataReader that has been granted permission to match with the local DataWriter.
          * Creates cryptographic material to encript/decrypt messages from and towards that DataReader.
          * @param local_datawriter_crypto_handle Returned by a prior call to register_local_datawriter
          * @param remote_participant_crypto Returned by a prior call to register_matched_remote_participant.
@@ -101,6 +103,7 @@ class CryptoKeyFactory
          * Creates crypto material to encode messages when the encryption is independent of the targeted DataWriter
          * @param participant_crypto Returned by a prior call to register_local_participant
          * @param datareader_properties Combination of PropertyQosPolicy and the contents of AccessControl
+         * @param datareader_security_attributes EndpointSecurity Attributes.
          * @param exception (out) Security exception
          * @return Crypto Handle to the generated key material
          */
@@ -126,30 +129,30 @@ class CryptoKeyFactory
                 SecurityException &exception) = 0;
 
         /**
-         * Releases resources associated with a Participant. The Crypto Handle becomes unusable after this 
+         * Releases resources associated with a Participant. The Crypto Handle becomes unusable after this
          * @param participant_crypto_handle Belonging to the Participant that awaits termination
          * @param exception (out) Security exception
-         * @return TRUE is succesful 
+         * @return TRUE is succesful
          */
         virtual bool unregister_participant(
                 ParticipantCryptoHandle* participant_crypto_handle,
                 SecurityException &exception) = 0;
 
         /**
-         * Releases resources associated with a DataWriter. The Crypto Handle becomes unusable after this 
+         * Releases resources associated with a DataWriter. The Crypto Handle becomes unusable after this
          * @param datawriter_crypto_handle Belonging to the DataWriter that awaits termination
          * @param exception (out) Security exception
-         * @return TRUE is succesful 
+         * @return TRUE is succesful
          */
         virtual bool unregister_datawriter(
                 DatawriterCryptoHandle *datawriter_crypto_handle,
                 SecurityException &exception) = 0;
 
         /**
-         * Releases resources associated with a DataReader. The Crypto Handle becomes unusable after this 
+         * Releases resources associated with a DataReader. The Crypto Handle becomes unusable after this
          * @param datareader_crypto_handle Belonging to the DataReader that awaits termination
          * @param exception (out) Security exception
-         * @return TRUE is succesful 
+         * @return TRUE is succesful
          */
         virtual bool unregister_datareader(
                 DatareaderCryptoHandle *datareader_crypto_handle,

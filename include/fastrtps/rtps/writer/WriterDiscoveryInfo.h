@@ -29,14 +29,14 @@ namespace rtps {
 
 /**
 * Class WriterDiscoveryInfo with discovery information of the writer.
-* @ingroup RTPS_MODULE FASTRTPS_MODULE
+* @ingroup RTPS_MODULE
 */
 struct WriterDiscoveryInfo
 {
     public:
 
         //!Enum DISCOVERY_STATUS, four different status for discovered writers.
-        //!@ingroup RTPS_MODULE FASTRTPS_MODULE
+        //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
         enum RTPS_DllAPI DISCOVERY_STATUS
 #else

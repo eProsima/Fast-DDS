@@ -35,53 +35,52 @@ namespace fastrtps{
 namespace rtps {
 
 /**
- * Class SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
+ * Struct SimpleEDPAttributes, to define the attributes of the Simple Endpoint Discovery Protocol.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class SimpleEDPAttributes
+struct SimpleEDPAttributes
 {
-    public:
+    SimpleEDPAttributes()
+        : use_PublicationWriterANDSubscriptionReader(true)
+        , use_PublicationReaderANDSubscriptionWriter(true)
+#if HAVE_SECURITY
+        , enable_builtin_secure_publications_writer_and_subscriptions_reader(true)
+        , enable_builtin_secure_subscriptions_writer_and_publications_reader(true)
+#endif
+    {
+    }
 
-        //!Default value true.
-        bool use_PublicationWriterANDSubscriptionReader;
-        //!Default value true.
-        bool use_PublicationReaderANDSubscriptionWriter;
+    bool operator==(const SimpleEDPAttributes& b) const
+    {
+        return (this->use_PublicationWriterANDSubscriptionReader == b.use_PublicationWriterANDSubscriptionReader) &&
+#if HAVE_SECURITY
+                (this->enable_builtin_secure_publications_writer_and_subscriptions_reader ==
+                b.enable_builtin_secure_publications_writer_and_subscriptions_reader) &&
+                (this->enable_builtin_secure_subscriptions_writer_and_publications_reader ==
+                b.enable_builtin_secure_subscriptions_writer_and_publications_reader) &&
+#endif
+                (this->use_PublicationReaderANDSubscriptionWriter == b.use_PublicationReaderANDSubscriptionWriter);
+    }
+
+    //!Default value true.
+    bool use_PublicationWriterANDSubscriptionReader;
+
+    //!Default value true.
+    bool use_PublicationReaderANDSubscriptionWriter;
 
 #if HAVE_SECURITY
-        bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
+    bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
 
-        bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
+    bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
 #endif
-
-        SimpleEDPAttributes():
-            use_PublicationWriterANDSubscriptionReader(true),
-            use_PublicationReaderANDSubscriptionWriter(true)
-#if HAVE_SECURITY
-            , enable_builtin_secure_publications_writer_and_subscriptions_reader(true),
-            enable_builtin_secure_subscriptions_writer_and_publications_reader(true)
-#endif
-        {
-
-        }
-
-        bool operator==(const SimpleEDPAttributes& b) const
-        {
-            return (this->use_PublicationWriterANDSubscriptionReader == b.use_PublicationWriterANDSubscriptionReader) &&
-#if HAVE_SECURITY
-                   (this->enable_builtin_secure_publications_writer_and_subscriptions_reader ==
-                    b.enable_builtin_secure_publications_writer_and_subscriptions_reader) &&
-                   (this->enable_builtin_secure_subscriptions_writer_and_publications_reader ==
-                    b.enable_builtin_secure_subscriptions_writer_and_publications_reader) &&
-#endif
-                   (this->use_PublicationReaderANDSubscriptionWriter == b.use_PublicationReaderANDSubscriptionWriter);
-        }
 };
 
 /**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class BuiltinAttributes{
+class BuiltinAttributes
+{
     public:
         /**
          * If set to false, NO discovery whatsoever would be used.
@@ -92,10 +91,12 @@ class BuiltinAttributes{
 
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol;
+
         /**
          * If set to true, SimpleEDP would be used.
          */
         bool use_SIMPLE_EndpointDiscoveryProtocol;
+
         /**
          * If set to true, StaticEDP based on an XML file would be implemented.
          * The XML filename must be provided.
@@ -158,7 +159,8 @@ class BuiltinAttributes{
 
         bool operator==(const BuiltinAttributes& b) const
         {
-            return (this->use_SIMPLE_RTPSParticipantDiscoveryProtocol == b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
+            return (this->use_SIMPLE_RTPSParticipantDiscoveryProtocol ==
+                       b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
@@ -180,17 +182,17 @@ class BuiltinAttributes{
          * @return Static endpoint XML filename
          */
         const char* getStaticEndpointXMLFilename() const { return m_staticEndpointXMLFilename.c_str(); }
+
         /**
          * Set the static endpoint XML filename
          * @param str Static endpoint XML filename
          */
-        void setStaticEndpointXMLFilename(const char* str){ m_staticEndpointXMLFilename = std::string(str); }
+        void setStaticEndpointXMLFilename(const char* str) { m_staticEndpointXMLFilename = std::string(str); }
+
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
         std::string m_staticEndpointXMLFilename;
 };
-
-
 
 /**
  * Class RTPSParticipantAttributes used to define different aspects of a RTPSParticipant.
@@ -234,8 +236,8 @@ class RTPSParticipantAttributes
         LocatorList_t defaultUnicastLocatorList;
 
         /**
-         * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
-         * that it was defined with NO UnicastLocators. This is usually left empty.
+         * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
+         * case that it was defined with NO UnicastLocators. This is usually left empty.
          */
         LocatorList_t defaultMulticastLocatorList;
 
@@ -252,33 +254,41 @@ class RTPSParticipantAttributes
 
         //! Builtin parameters.
         BuiltinAttributes builtin;
+
         //!Port Parameters
         PortParameters port;
+
         //!User Data of the participant
         std::vector<octet> userData;
+
         //!Participant ID
         int32_t participantID;
-        //!Set the name of the participant.
-        inline void setName(const char* nam){name = nam;}
-        //!Get the name of the participant.
-        inline const char* getName() const {return name.c_str();}
+
         //!Throughput controller parameters. Leave default for uncontrolled flow.
         ThroughputControllerDescriptor throughputController;
+
         //!User defined transports to use alongside or in place of builtins.
-        std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
+        std::vector<std::shared_ptr<TransportDescriptorInterface>> userTransports;
+
         //!Set as false to disable the default UDPv4 implementation.
         bool useBuiltinTransports;
 
         //! Property policies
         PropertyPolicy properties;
 
+        //!Set the name of the participant.
+        inline void setName(const char* nam) { name = nam; }
+
+        //!Get the name of the participant.
+        inline const char* getName() const { return name.c_str(); }
+
     private:
         //!Name of the participant.
         string_255 name;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* _RTPSPARTICIPANTPARAMETERS_H_ */

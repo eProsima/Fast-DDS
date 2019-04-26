@@ -96,6 +96,7 @@ class RTPSMessageGroup
          * @param endpoint Pointer to the endpoint sending data.
          * @param type Type of endpoint (reader / writer).
          * @param msg_group Reference to data buffer for messages.
+         * @param max_blocking_time_point
          */
         RTPSMessageGroup(
                 RTPSParticipantImpl* participant,
@@ -114,6 +115,7 @@ class RTPSMessageGroup
          * @param msg_group Reference to data buffer for messages.
          * @param locator_list List of locators where messages will be sent
          * @param remote_endpoints List of destination GUIDs
+         * @param max_blocking_time_point
          */
         RTPSMessageGroup(
                 RTPSParticipantImpl* participant,
@@ -211,7 +213,6 @@ class RTPSMessageGroup
          * @param writerSN Sequence number being nack'ed.
          * @param fnState Set of missing fragment numbers.
          * @param count Counting identifier.
-         * @param finalFlag Should final flag be set?
          * @param locators List of destination locators.
          * @return True when message was added to the group.
          */

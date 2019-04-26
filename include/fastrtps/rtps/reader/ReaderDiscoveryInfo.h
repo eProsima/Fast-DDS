@@ -29,18 +29,18 @@ namespace rtps {
 
 /**
 * Class ReaderDiscoveryInfo with discovery information of the reader.
-* @ingroup RTPS_MODULE FASTRTPS_MODULE
+* @ingroup RTPS_MODULE
 */
 struct ReaderDiscoveryInfo
 {
     public:
 
         //!Enum DISCOVERY_STATUS, four different status for discovered readers.
-        //!@ingroup RTPS_MODULE FASTRTPS_MODULE
+        //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
         enum RTPS_DllAPI DISCOVERY_STATUS
 #else
-        enum  DISCOVERY_STATUS
+        enum DISCOVERY_STATUS
 #endif
         {
             DISCOVERED_READER,

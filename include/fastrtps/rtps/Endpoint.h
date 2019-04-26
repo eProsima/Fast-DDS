@@ -99,7 +99,7 @@ class Endpoint
     EndpointAttributes m_att;
 
     //!Endpoint Mutex
-    std::recursive_timed_mutex mp_mutex;
+    mutable std::recursive_timed_mutex mp_mutex;
 
     private:
 

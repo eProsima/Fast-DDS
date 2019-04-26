@@ -56,7 +56,6 @@ class Exception : public std::exception
 
         /**
          * @brief This function returns the error message.
-         * @param message An error message. This message is copied.
          * @return The error message.
          */
         virtual RTPS_DllAPI const char* what() const throw();

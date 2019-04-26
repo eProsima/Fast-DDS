@@ -44,7 +44,7 @@ public:
     /**
      * @brief Adds a writer to be managed by this thread.
      * Only asynchronous writers are permitted.
-     * @param writer Asynchronous writer to be added. 
+     * @param writer Asynchronous writer to be added.
      * @return Result of the operation.
      */
     static bool addWriter(RTPSWriter& writer);
@@ -64,7 +64,7 @@ public:
 
     /**
      * Wakes the thread up.
-     * @param interestedParticipant The writer interested in an async write.
+     * @param interestedWriter The writer interested in an async write.
      */
     static void wakeUp(const RTPSWriter* interestedWriter);
 
@@ -80,7 +80,7 @@ private:
     static std::thread* thread_;
     static std::mutex data_structure_mutex_;
     static std::mutex condition_variable_mutex_;
-    
+
     //! List of asynchronous writers.
     static std::list<RTPSWriter*> async_writers;
     static AsyncInterestTree interestTree;

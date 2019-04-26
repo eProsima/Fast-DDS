@@ -57,6 +57,7 @@ public:
     /**
      * Add a specific change to all ReaderLocators.
      * @param change Pointer to the change.
+     * @param max_blocking_time
      */
     void unsent_change_added_to_history(
             CacheChange_t* change,
@@ -107,13 +108,13 @@ public:
     bool set_fixed_locators(const LocatorList_t& locator_list);
 
     void update_unsent_changes(
-            const SequenceNumber_t& seq_num, 
+            const SequenceNumber_t& seq_num,
             const FragmentNumber_t& frag_num);
 
     //!Reset the unsent changes.
     void unsent_changes_reset();
 
-    bool is_acked_by_all(const CacheChange_t* change) override;
+    bool is_acked_by_all(const CacheChange_t* change) const override;
 
     bool try_remove_change(
             std::chrono::steady_clock::time_point&,

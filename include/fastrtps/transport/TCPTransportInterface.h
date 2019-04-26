@@ -261,7 +261,8 @@ public:
 
     /**
     * Blocking Receive from the specified channel.
-    * @param p_channel_resource pointer to the socket where the method is going to read the messages.
+    * @param rtcp_manager pointer to the RTCP Manager.
+    * @param channel pointer to the socket where the method is going to read the messages.
     * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
     * capacity must not be less than the receive_buffer_size supplied to this class during construction.
     * @param receive_buffer_capacity maximum size of the buffer.
@@ -281,7 +282,7 @@ public:
     * @param send_buffer Slice into the raw data to send.
     * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
     * It must not exceed the send_buffer_size fed to this class during construction.
-    * @param localLocator Locator mapping to the channel we're sending from.
+    * @param channel channel we're sending from.
     * @param remote_locator Locator describing the remote destination we're sending to.
     */
     bool send(
@@ -312,8 +313,7 @@ public:
             const asio::error_code& error);
 
     /**
-    * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @param locator Input locator.
+    * Method to get a list of binding interfaces.
     * @return Vector of interfaces in string format.
     */
     virtual std::vector<std::string> get_binding_interfaces_list() = 0;

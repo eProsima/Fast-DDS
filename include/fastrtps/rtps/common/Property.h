@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file PropertyQos.h	
+ * @file Property.h
  */
 #ifndef _RTPS_COMMON_PROPERTYQOS_H_
 #define  _RTPS_COMMON_PROPERTYQOS_H_

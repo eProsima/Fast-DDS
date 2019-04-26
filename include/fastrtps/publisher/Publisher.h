@@ -32,8 +32,8 @@ namespace fastrtps {
 
 namespace rtps
 {
-struct GUID_t;
-class WriteParams;
+    struct GUID_t;
+    class WriteParams;
 }
 
 class PublisherImpl;
@@ -48,7 +48,10 @@ class RTPS_DllAPI Publisher
     virtual ~Publisher();
 
 public:
-
+    /**
+     * Constructor from a PublisherImpl pointer
+     * @param pimpl Actual implementation of the publisher
+     */
     Publisher(PublisherImpl* pimpl);
 
     /**
@@ -58,7 +61,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(void*Data);
+    bool write(void* Data);
 
     /**
      * Write data with params to the topic.
@@ -68,26 +71,28 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(void*Data, rtps::WriteParams &wparams);
+    bool write(
+            void* Data,
+            rtps::WriteParams& wparams);
 
     /**
      * Dispose of a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool dispose(void*Data);
+    bool dispose(void* Data);
     /**
      * Unregister a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool unregister(void*Data);
+    bool unregister(void* Data);
     /**
      * Dispose and unregister a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool dispose_and_unregister(void*Data);
+    bool dispose_and_unregister(void* Data);
 
     /**
      * Remove all the Changes in the associated RTPSWriter.
@@ -96,6 +101,11 @@ public:
      */
     bool removeAllChange(size_t* removed = nullptr);
 
+    /**
+    * Waits until all changes were acknowledged or max_wait.
+    * @param max_wait Maximum time to wait until all changes are acknowledged.
+    * @return True if all were acknowledged.
+    */
     bool wait_for_all_acked(const Time_t& max_wait);
 
     /**
@@ -119,7 +129,7 @@ public:
 
     /**
      * @brief Returns the offered deadline missed status
-     * @param Deadline missed status struct
+     * @param status missed status struct
      */
     void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
 

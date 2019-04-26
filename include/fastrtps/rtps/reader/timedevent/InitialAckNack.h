@@ -44,7 +44,7 @@ class InitialAckNack: public TimedEvent
 
         /**
          *
-         * @param p_RP
+         * @param wp
          * @param interval
          */
         InitialAckNack(

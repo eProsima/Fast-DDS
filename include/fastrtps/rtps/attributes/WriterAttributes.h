@@ -40,12 +40,20 @@ typedef enum RTPSWriterPublishMode : octet
 
 
 /**
- * Class WriterTimes, defining the times associated with the Reliable Writers events.
+ * Struct WriterTimes, defining the times associated with the Reliable Writers events.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class  WriterTimes
+struct  WriterTimes
 {
-public:
+    //! Initial heartbeat delay. Default value ~11ms.
+    Duration_t initialHeartbeatDelay;
+    //! Periodic HB period, default value 3s.
+    Duration_t heartbeatPeriod;
+    //!Delay to apply to the response of a ACKNACK message, default value ~5ms.
+    Duration_t nackResponseDelay;
+    //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
+    Duration_t nackSupressionDuration;
+
     WriterTimes()
     {
         //initialHeartbeatDelay.fraction = 50*1000*1000;
@@ -64,22 +72,13 @@ public:
                (this->nackResponseDelay == b.nackResponseDelay) &&
                (this->nackSupressionDuration == b.nackSupressionDuration);
     }
-
-    //! Initial heartbeat delay. Default value ~11ms.
-    Duration_t initialHeartbeatDelay;
-    //! Periodic HB period, default value 3s.
-    Duration_t heartbeatPeriod;
-    //!Delay to apply to the response of a ACKNACK message, default value ~5ms.
-    Duration_t nackResponseDelay;
-    //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
-    Duration_t nackSupressionDuration;
 };
 
 /**
- * Class WriterAttributes, defining the attributes of a RTPSWriter.
+ * Struct WriterAttributes, defining the attributes of a RTPSWriter.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class  WriterAttributes
+class WriterAttributes
 {
     public:
 
@@ -165,6 +164,7 @@ class  RemoteReaderAttributes
 
         bool is_eprosima_endpoint;
 };
+
 }
 }
 }

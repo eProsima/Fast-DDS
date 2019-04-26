@@ -29,13 +29,17 @@ namespace rtps {
 
 /**
 * Class ParticipantDiscoveryInfo with discovery information of the Participant.
-* @ingroup RTPS_MODULE FASTRTPS_MODULE
+* @ingroup RTPS_MODULE
 */
 struct ParticipantDiscoveryInfo
 {
     //!Enum DISCOVERY_STATUS, four different status for discovered participants.
-    //!@ingroup RTPS_MODULE FASTRTPS_MODULE
+    //!@ingroup RTPS_MODULE
+#if defined(_WIN32)
     enum RTPS_DllAPI DISCOVERY_STATUS
+#else
+    enum DISCOVERY_STATUS
+#endif
     {
         DISCOVERED_PARTICIPANT,
         CHANGED_QOS_PARTICIPANT,

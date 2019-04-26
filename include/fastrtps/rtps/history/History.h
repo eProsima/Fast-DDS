@@ -51,9 +51,12 @@ class History
         /**
          * Reserve a CacheChange_t from the CacheChange pool.
          * @param[out] change Pointer to pointer to the CacheChange_t to reserve
+         * @param[in] calculateSizeFunc Function to calculate the size of the change.
          * @return True is reserved
          */
-        RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, const std::function<uint32_t()>& calculateSizeFunc)
+        RTPS_DllAPI inline bool reserve_Cache(
+                CacheChange_t** change,
+                const std::function<uint32_t()>& calculateSizeFunc)
         {
             std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
             return m_changePool.reserve_Cache(change, calculateSizeFunc);
