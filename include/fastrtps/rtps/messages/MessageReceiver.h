@@ -43,9 +43,11 @@ class MessageReceiver
 {
     public:
         /**
+         * @param participant
          * @param rec_buffer_size
          */
         MessageReceiver(RTPSParticipantImpl* participant, uint32_t rec_buffer_size);
+
         virtual ~MessageReceiver();
         //!Reset the MessageReceiver to process a new message.
         void reset();
@@ -58,7 +60,6 @@ class MessageReceiver
 
         /**
          * Process a new CDR message.
-         * @param[in] RTPSParticipantguidprefix RTPSParticipant Guid Prefix
          * @param[in] loc Locator indicating the sending address.
          * @param[in] msg Pointer to the message
          */

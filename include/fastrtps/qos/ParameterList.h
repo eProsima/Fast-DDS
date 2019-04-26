@@ -47,13 +47,28 @@ class ParameterList
         static bool writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg);
 
         /**
+         * Update the CDRMessage of a parameterList.
+         * @param msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
+         * @param plist Pointer to the parameterList.
+         * @param use_encapsulation Flag to apply encapsulation.
+         * @return True if correct.
+         */
+        static bool writeParameterListToCDRMsg(
+                rtps::CDRMessage_t* msg,
+                ParameterList* plist,
+                bool use_encapsulation);
+
+        /**
          * Update the information of a cache change parsing the inline qos from a CDRMessage
          * @param[inout] change Reference to the cache change to be updated.
          * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
          * @param[out] qos_size Number of bytes processed.
          * @return true if parsing was correct, false otherwise.
          */
-        static bool updateCacheChangeFromInlineQos(rtps::CacheChange_t& change, rtps::CDRMessage_t* msg, uint32_t& qos_size);
+        static bool updateCacheChangeFromInlineQos(
+                rtps::CacheChange_t& change,
+                rtps::CDRMessage_t* msg,
+                uint32_t& qos_size);
 
         /**
          * Read a parameterList from a CDRMessage
@@ -63,16 +78,22 @@ class ParameterList
          * @param[out] qos_size Number of bytes processed.
          * @return true if parsing was correct, false otherwise.
          */
-        static bool readParameterListfromCDRMsg(rtps::CDRMessage_t& msg, std::function<bool(const Parameter_t*)> processor,
-            bool use_encapsulation, uint32_t& qos_size);
+        static bool readParameterListfromCDRMsg(
+                rtps::CDRMessage_t& msg,
+                std::function<bool(const Parameter_t*)> processor,
+                bool use_encapsulation,
+                uint32_t& qos_size);
+
 
         /**
          * Read change instanceHandle from the KEY_HASH or another specific PID parameter of a CDRMessage
-         * @param[in-out] change Pointer to the cache change.
+         * @param[in,out] change Pointer to the cache change.
          * @param[in] pid Specific PID to search
          * @return True when instanceHandle is updated.
          */
-        static bool readInstanceHandleFromCDRMsg(rtps::CacheChange_t* change, const uint16_t pid);
+        static bool readInstanceHandleFromCDRMsg(
+                rtps::CacheChange_t* change,
+                const uint16_t pid);
 };
 
 } /* namespace fastrtps */

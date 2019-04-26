@@ -34,20 +34,24 @@ namespace fastrtps{
  */
 class TopicAttributes
 {
-    public:
-        /**
-         * Default constructor
-         */
-        TopicAttributes()
-            : topicKind(rtps::NO_KEY)
-            , topicName("UNDEF")
-            , topicDataType("UNDEF")
-        {
-            topicDiscoveryKind = rtps::TopicDiscoveryKind_t::NO_CHECK;
-        }
+public:
 
-        //!Constructor, you need to provide the topic name and the topic data type.
-        TopicAttributes(const char* name, const char* dataType, rtps::TopicKind_t tKind= rtps::NO_KEY,
+    /**
+     * Default constructor
+     */
+    TopicAttributes()
+        : topicKind(rtps::NO_KEY)
+        , topicName("UNDEF")
+        , topicDataType("UNDEF")
+    {
+        topicDiscoveryKind = rtps::TopicDiscoveryKind_t::NO_CHECK;
+    }
+
+    //!Constructor, you need to provide the topic name and the topic data type.
+    TopicAttributes(
+            const char* name,
+            const char* dataType,
+            rtps::TopicKind_t tKind= rtps::NO_KEY,
             rtps::TopicDiscoveryKind_t tDiscovery = rtps::NO_CHECK)
         {
             topicKind = tKind;

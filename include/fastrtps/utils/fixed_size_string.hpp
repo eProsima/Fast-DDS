@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file fixed_size_string.h
+ * @file fixed_size_string.hpp
  *
  */
 
@@ -46,7 +46,7 @@ struct fixed_string
 
         static constexpr size_t max_size = MAX_CHARS;
 
-        /// Default constructor. 
+        /// Default constructor.
         fixed_string() noexcept
         {
             memset(string_data, 0, sizeof(string_data) );

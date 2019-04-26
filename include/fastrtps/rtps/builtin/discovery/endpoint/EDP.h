@@ -94,6 +94,7 @@ class EDP
 
         /**
          * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
+         * @param reader Pointer to the Reader object.
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if correct.
          */
@@ -101,6 +102,7 @@ class EDP
 
         /**
          * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
+         * @param writer Pointer to the Writer object.
          * @param wdata Pointer to the Writer ProxyData object.
          * @return True if correct.
          */
@@ -155,15 +157,16 @@ class EDP
 
         /**
          * Unpair a WriterProxyData object from all local readers.
-         * @param pdata Pointer to the participant proxy data.
-         * @param wdata Pointer to the WriterProxyData object.
+         * @param participant_guid GUID of the participant.
+         * @param writer_guid GUID of the writer.
          * @return True if correct.
          */
         bool unpairWriterProxy(const GUID_t& participant_guid, const GUID_t& writer_guid);
+
         /**
          * Unpair a ReaderProxyData object from all local writers.
-         * @param rdata Pointer to the ReaderProxyData object.
-         * @param pdata Pointer to the participant proxy data.
+         * @param participant_guid GUID of the participant.
+         * @param reader_guid GUID of the reader.
          * @return True if correct.
          */
         bool unpairReaderProxy(const GUID_t& participant_guid, const GUID_t& reader_guid);

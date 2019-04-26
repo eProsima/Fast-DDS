@@ -128,7 +128,7 @@ class StatefulReader:public RTPSReader
          * @return True if correctly removed.
          */
         bool change_removed_by_history(
-                CacheChange_t* change ,
+                CacheChange_t* change,
                 WriterProxy* prox = nullptr) override;
 
         /**
@@ -136,7 +136,6 @@ class StatefulReader:public RTPSReader
          * and depending on the implementation performs different actions.
          * @param a_change Pointer of the change to add.
          * @param prox Pointer to the WriterProxy that adds the Change.
-         * @param lock mutex protecting the StatefulReader.
          * @return True if added.
          */
         bool change_received(CacheChange_t* a_change, WriterProxy* prox);

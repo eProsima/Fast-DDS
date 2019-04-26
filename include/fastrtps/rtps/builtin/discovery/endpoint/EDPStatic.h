@@ -106,12 +106,14 @@ public:
 
 	/**
 	 * After a new local ReaderProxyData has been created some processing is needed (depends on the implementation).
+	 * @param reader Pointer to the RTPSReader object.
 	 * @param rdata Pointer to the ReaderProxyData object.
 	 * @return True if correct.
 	 */
 	bool processLocalReaderProxyData(RTPSReader* reader, ReaderProxyData* rdata) override;
 	/**
 	 * After a new local WriterProxyData has been created some processing is needed (depends on the implementation).
+	 * @param writer Pointer to the RTPSWriter object.
 	 * @param wdata Pointer to the Writer ProxyData object.
 	 * @return True if correct.
 	 */

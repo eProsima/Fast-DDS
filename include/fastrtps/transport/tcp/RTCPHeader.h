@@ -49,7 +49,6 @@ struct TCPHeader
     /*!
      * @brief This function returns the maximum serialized size of an object
      * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
     static inline size_t size()

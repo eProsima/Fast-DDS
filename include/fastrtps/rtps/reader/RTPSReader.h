@@ -28,9 +28,9 @@
 
 #include <map>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 // Forward declarations
 class ReaderListener;
@@ -99,7 +99,8 @@ public:
     RTPS_DllAPI virtual bool processDataMsg(CacheChange_t *change) = 0;
 
     /**
-     * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+     * Processes a new DATA FRAG message. Previously the message must have been accepted by function
+     * acceptMsgDirectedTo.
      *
      * @param change Pointer to the CacheChange_t.
      * @param sampleSize Size of the complete, assembled message.
@@ -109,14 +110,36 @@ public:
     RTPS_DllAPI virtual bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum) = 0;
 
     /**
-     * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
-     *
+     * Processes a new HEARTBEAT message. Previously the message must have been accepted by function
+     * acceptMsgDirectedTo.
+     * @param writerGUID
+     * @param hbCount
+     * @param firstSN
+     * @param lastSN
+     * @param finalFlag
+     * @param livelinessFlag
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-            SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag) = 0;
+    RTPS_DllAPI virtual bool processHeartbeatMsg(
+            GUID_t& writerGUID,
+            uint32_t hbCount,
+            SequenceNumber_t& firstSN,
+            SequenceNumber_t& lastSN,
+            bool finalFlag,
+            bool livelinessFlag) = 0;
 
-    RTPS_DllAPI virtual bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList) = 0;
+    /**
+     * Processes a new GAP message. Previously the message must have been accepted by function
+     * acceptMsgDirectedTo.
+     * @param writerGUID
+     * @param gapStart
+     * @param gapList
+     * @return true if the reader accepts messages from the.
+     */
+    RTPS_DllAPI virtual bool processGapMsg(
+            GUID_t& writerGUID,
+            SequenceNumber_t& gapStart,
+            SequenceNumberSet_t& gapList) = 0;
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -124,7 +147,9 @@ public:
      * @param prox Pointer to the WriterProxy.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI virtual bool change_removed_by_history(CacheChange_t* change, WriterProxy* prox = nullptr) = 0;
+    RTPS_DllAPI virtual bool change_removed_by_history(
+            CacheChange_t* change,
+            WriterProxy* prox = nullptr) = 0;
 
     /**
      * Get the associated listener, secondary attached Listener in case it is of coumpound type
@@ -145,9 +170,12 @@ public:
     /**
      * Reserve a CacheChange_t.
      * @param change Pointer to pointer to the Cache.
+     * @param dataCdrSerializedSize Size of the Cache.
      * @return True if correctly reserved.
      */
-    RTPS_DllAPI bool reserveCache(CacheChange_t** change, uint32_t dataCdrSerializedSize);
+    RTPS_DllAPI bool reserveCache(
+            CacheChange_t** change,
+            uint32_t dataCdrSerializedSize);
 
     /**
      * Release a cacheChange.
@@ -156,7 +184,7 @@ public:
 
     /**
      * Read the next unread CacheChange_t from the history
-     * @param change POinter to pointer of CacheChange_t
+     * @param change Pointer to pointer of CacheChange_t
      * @param wp Pointer to pointer to the WriterProxy
      * @return True if read.
      */
@@ -174,6 +202,7 @@ public:
      * @return True if the reader expects Inline QOS.
      */
     RTPS_DllAPI inline bool expectsInlineQos(){ return m_expectsInlineQos; };
+
     //! Returns a pointer to the associated History.
     RTPS_DllAPI inline ReaderHistory* getHistory() {return mp_history;};
 
@@ -235,11 +264,13 @@ protected:
 
     /*!
     * @brief Set the last notified sequence for a persistence guid
-    * @param guid The persistence guid to update
+    * @param persistence_guid The persistence guid to update
     * @param seq Sequence number to set for input guid
     * @remarks Persistent readers will write to DB
     */
-    virtual void set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq);
+    virtual void set_last_notified(
+            const GUID_t& persistence_guid,
+            const SequenceNumber_t& seq);
 
     //!ReaderHistory
     ReaderHistory* mp_history;

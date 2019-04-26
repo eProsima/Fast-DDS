@@ -34,7 +34,7 @@ namespace fastrtps {
  * Resource limited wrapper of std::vector.
  *
  * This template class holds an unordered collection of elements using a std::vector or a replacement.
- * It makes use of a \ref ResourceLimitsConfig to setup the allocation behaviour regarding the number of
+ * It makes use of a \ref ResourceLimitedContainerConfig to setup the allocation behaviour regarding the number of
  * elements in the collection.
  *
  * It features linear increment of the capacity, initial preallocation, and maximum number of elements control.
@@ -50,10 +50,10 @@ namespace fastrtps {
  * @ingroup UTILITIES_MODULE
  */
 template <
-    typename _Ty, 
+    typename _Ty,
     typename _KeepOrderEnabler = std::false_type,
     typename _LimitsConfig = ResourceLimitedContainerConfig,
-    typename _Alloc = std::allocator<_Ty>, 
+    typename _Alloc = std::allocator<_Ty>,
     typename _Collection = std::vector<_Ty, _Alloc> >
 class ResourceLimitedVector
 {
@@ -77,7 +77,7 @@ public:
     /**
      * Construct a ResourceLimitedVector.
      *
-     * This constructor receives a \ref ResourceLimitsConfig to setup the allocation behaviour regarding the 
+     * This constructor receives a \ref ResourceLimitedContainerConfig to setup the allocation behaviour regarding the
      * number of elements in the collection.
      *
      * The cfg parameter indicates the initial number to be reserved, the maximum number of items allowed,
@@ -98,7 +98,7 @@ public:
     /**
      * Add element at the end.
      *
-     * Adds a new element at the end of the vector, after its current last element. 
+     * Adds a new element at the end of the vector, after its current last element.
      * The content of val is copied to the new element.
      *
      * @param val   Value to be copied to the new element.
@@ -113,7 +113,7 @@ public:
     /**
      * Add element at the end.
      *
-     * Adds a new element at the end of the vector, after its current last element. 
+     * Adds a new element at the end of the vector, after its current last element.
      * The content of val is moved to the new element.
      *
      * @param val   Value to be moved to the new element.
@@ -128,7 +128,7 @@ public:
     /**
      * Construct and insert element at the end.
      *
-     * Inserts a new element at the end of the vector, right after its current last element. 
+     * Inserts a new element at the end of the vector, right after its current last element.
      * This new element is constructed in place using args as the arguments for its constructor.
      *
      * @param args   Arguments forwarded to construct the new element.
@@ -153,7 +153,7 @@ public:
 
     /**
      * Remove element.
-     * 
+     *
      * Removes the first element in the vector that compares equal to val.
      * All iterators may become invalidated if this method returns true.
      *
@@ -174,7 +174,7 @@ public:
 
     /**
      * Remove element.
-     * 
+     *
      * Removes the first element in the vector for which pred returns true.
      * All iterators may become invalidated if this method returns true.
      *
@@ -201,7 +201,7 @@ public:
 
     /**
      * Assign vector content.
-     * 
+     *
      * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
      *
      * @param first, last   Input iterators to the initial and final positions in a sequence.
@@ -223,7 +223,7 @@ public:
 
     /**
      * Assign vector content.
-     * 
+     *
      * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
      *
      * @param n     New size for the container.
@@ -239,10 +239,10 @@ public:
 
     /**
      * Assign vector content.
-     * 
+     *
      * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
      *
-     * @param il   An initializer_list object. 
+     * @param il   An initializer_list object.
      *             The compiler will automatically construct such objects from initializer list declarators.
      *             Member type value_type is the type of the elements in the container.
      *             If the size of this list is greater than the maximum number of elements allowed on the
@@ -374,7 +374,7 @@ private:
      */
     template <typename Enabler = _KeepOrderEnabler>
     typename std::enable_if<Enabler::value, void>::type do_remove(iterator it)
-    { 
+    {
         collection_.erase(it);
     }
 };

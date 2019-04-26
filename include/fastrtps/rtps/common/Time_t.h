@@ -99,7 +99,7 @@ public:
             long double sec);
 
     /**
-     * @param sec Seconds. The fractional part is converted to nanoseconds.
+     * @param time fastrtps::Time_t, aka. Duration_t.
      */
     Time_t(
             const eprosima::fastrtps::Time_t& time);
