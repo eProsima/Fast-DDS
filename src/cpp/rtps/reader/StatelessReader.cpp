@@ -117,12 +117,15 @@ bool StatelessReader::change_received(CacheChange_t* change)
         if(mp_history->received_change(change, 0))
         {
             update_last_notified(change->writerGUID, change->sequenceNumber);
+            ++total_unread_;
+
             if(getListener() != nullptr)
             {
                 getListener()->onNewCacheChangeAdded(this, change);
             }
 
-            mp_history->postSemaphore();
+            new_notification_cv_.notify_all();
+
             return true;
         }
     }
@@ -135,7 +138,20 @@ bool StatelessReader::nextUntakenCache(
         WriterProxy** /*wpout*/)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    return mp_history->get_min_change(change);
+    bool ret = mp_history->get_min_change(change);
+
+    if(ret)
+    {
+        if(!(*change)->isRead)
+        {
+            assert(total_unread_ > 0);
+            --total_unread_;
+        }
+
+        (*change)->isRead = true;
+    }
+
+    return ret;
 }
 
 
@@ -146,7 +162,7 @@ bool StatelessReader::nextUnreadCache(
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     bool found = false;
     std::vector<CacheChange_t*>::iterator it;
-    //TODO PROTEGER ACCESO A HISTORIA AQUI??? YO CREO QUE NO, YA ESTA EL READER PROTEGIDO
+
     for(it = mp_history->changesBegin();
             it!=mp_history->changesEnd();++it)
     {
@@ -156,20 +172,32 @@ bool StatelessReader::nextUnreadCache(
             break;
         }
     }
+
     if(found)
     {
         *change = *it;
+        assert(total_unread_ > 0);
+        --total_unread_;
+        (*change)->isRead = true;
+
         return true;
     }
+
     logInfo(RTPS_READER, "No Unread elements left");
     return false;
 }
 
 
 bool StatelessReader::change_removed_by_history(
-        CacheChange_t* /*ch*/,
+        CacheChange_t* ch,
         WriterProxy* /*prox*/)
 {
+    if(!ch->isRead)
+    {
+        assert(total_unread_ > 0);
+        --total_unread_;
+    }
+
     return true;
 }
 

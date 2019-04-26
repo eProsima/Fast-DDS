@@ -33,14 +33,11 @@ namespace rtps {
 ReaderHistory::ReaderHistory(const HistoryAttributes& att)
     : History(att)
     , mp_reader(nullptr)
-    , mp_semaphore(new Semaphore(0))
 {
 }
 
 ReaderHistory::~ReaderHistory()
 {
-    // TODO Auto-generated destructor stub
-    delete(mp_semaphore);
 }
 
 bool ReaderHistory::received_change(CacheChange_t* change, size_t)
@@ -176,16 +173,6 @@ void ReaderHistory::updateMaxMinSeqNum()
         mp_minSeqCacheChange = *(minmax.first);
         mp_maxSeqCacheChange = *(minmax.second);
     }
-}
-
-void ReaderHistory::postSemaphore()
-{
-    return mp_semaphore->post();
-}
-
-void ReaderHistory::waitSemaphore() //TODO CAMBIAR NOMBRE PARA que el usuario sepa que es para esperar a un cachechange nuevo
-{
-    return mp_semaphore->wait();
 }
 
 bool ReaderHistory::get_min_change_from(

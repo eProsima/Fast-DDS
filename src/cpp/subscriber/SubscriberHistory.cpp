@@ -53,7 +53,6 @@ SubscriberHistory::SubscriberHistory(
                         simpl->getAttributes().topic.getTopicKind() == NO_KEY ?
                             history.depth :
                             history.depth * resource.max_instances))
-    , m_unreadCacheCount(0)
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
     , mp_subImpl(simpl)
@@ -123,14 +122,8 @@ bool SubscriberHistory::received_change(
 
                 if (older != nullptr)
                 {
-                    bool read = older->isRead;
-
                     if (this->remove_change_sub(older))
                     {
-                        if (!read)
-                        {
-                            this->decreaseUnreadCount();
-                        }
                         add = true;
                     }
                 }
@@ -148,7 +141,6 @@ bool SubscriberHistory::received_change(
 
             if (this->add_change(a_change))
             {
-                increaseUnreadCount();
                 if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                     m_isHistoryFull = true;
                 logInfo(SUBSCRIBER, this->mp_subImpl->getGuid().entityId
@@ -221,14 +213,8 @@ bool SubscriberHistory::received_change(
 
                     if (older_sample != vit->second.cache_changes.rend())
                     {
-                        bool read = (*older_sample)->isRead;
-
                         if (this->remove_change_sub(*older_sample))
                         {
-                            if (!read)
-                            {
-                                this->decreaseUnreadCount();
-                            }
                             add = true;
                         }
                     }
@@ -246,7 +232,6 @@ bool SubscriberHistory::received_change(
 
                 if (this->add_change(a_change))
                 {
-                    increaseUnreadCount();
                     if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                         m_isHistoryFull = true;
                     //ADD TO KEY VECTOR
@@ -292,8 +277,6 @@ bool SubscriberHistory::readNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
     WriterProxy * wp;
     if (this->mp_reader->nextUnreadCache(&change, &wp))
     {
-        change->isRead = true;
-        this->decreaseUnreadCount();
         logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
         if (change->kind == ALIVE)
         {
@@ -336,11 +319,6 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
     WriterProxy * wp;
     if (this->mp_reader->nextUntakenCache(&change, &wp))
     {
-        if (!change->isRead)
-        {
-            this->decreaseUnreadCount();
-        }
-        change->isRead = true;
         logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
             " from writer: " << change->writerGUID);
         if (change->kind == ALIVE)
@@ -392,8 +370,6 @@ bool SubscriberHistory::readNextData(
         WriterProxy * wp;
         if (this->mp_reader->nextUnreadCache(&change, &wp))
         {
-            change->isRead = true;
-            this->decreaseUnreadCount();
             logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
             if (change->kind == ALIVE)
             {
@@ -447,11 +423,6 @@ bool SubscriberHistory::takeNextData(
         WriterProxy * wp;
         if (this->mp_reader->nextUntakenCache(&change, &wp))
         {
-            if (!change->isRead)
-            {
-                this->decreaseUnreadCount();
-            }
-            change->isRead = true;
             logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
             if (change->kind == ALIVE)

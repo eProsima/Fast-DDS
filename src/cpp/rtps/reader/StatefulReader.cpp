@@ -550,6 +550,12 @@ bool StatefulReader::change_removed_by_history(
     {
         if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
         {
+            if(!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
+            {
+                assert(total_unread_ > 0);
+                --total_unread_;
+            }
+
             wp->change_removed_from_history(a_change->sequenceNumber);
             return true;
         }
@@ -558,6 +564,7 @@ bool StatefulReader::change_removed_by_history(
             logError(RTPS_READER," You should always find the WP associated with a change, something is very wrong");
         }
     }
+
     return false;
 }
 
@@ -607,24 +614,26 @@ void StatefulReader::NotifyChanges(WriterProxy* prox)
     SequenceNumber_t nextChangeToNotify = prox->next_cache_change_to_be_notified();
     while (nextChangeToNotify != SequenceNumber_t::unknown())
     {
-        mp_history->postSemaphore();
+        CacheChange_t* ch_to_give = nullptr;
 
-        if (getListener() != nullptr)
+        if (mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
         {
-            CacheChange_t* ch_to_give = nullptr;
-
-            if (mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
+            if (!ch_to_give->isRead)
             {
-                if (!ch_to_give->isRead)
+                ++total_unread_;
+
+                if (getListener() != nullptr)
                 {
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);
                 }
-            }
 
-            // Search again the WriterProxy because could be removed after the unlock.
-            if (!findWriterProxy(proxGUID, &prox))
-                break;
+                new_notification_cv_.notify_all();
+            }
         }
+
+        // Search again the WriterProxy because could be removed after the unlock.
+        if (!findWriterProxy(proxGUID, &prox))
+            break;
 
         nextChangeToNotify = prox->next_cache_change_to_be_notified();
     }
@@ -653,29 +662,20 @@ bool StatefulReader::nextUntakenCache(
             if(seq >= (*it)->sequenceNumber)
             {
                 *change = *it;
+
+                if(!(*change)->isRead)
+                {
+                    assert(total_unread_ > 0);
+                    --total_unread_;
+                }
+
+                (*change)->isRead = true;
+
                 if(wpout !=nullptr)
                     *wpout = wp;
 
                 takeok = true;
                 break;
-                //				if((*it)->kind == ALIVE)
-                //				{
-                //					this->mp_type->deserialize(&(*it)->serializedPayload,data);
-                //				}
-                //				(*it)->isRead = true;
-                //				if(info!=NULL)
-                //				{
-                //					info->sampleKind = (*it)->kind;
-                //					info->writerGUID = (*it)->writerGUID;
-                //					info->sourceTimestamp = (*it)->sourceTimestamp;
-                //					info->iHandle = (*it)->instanceHandle;
-                //					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-                //						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-                //				}
-                //				m_reader_cache.decreaseUnreadCount();
-                //				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
-                //				readok = true;
-                //				break;
             }
         }
         else
@@ -711,6 +711,7 @@ bool StatefulReader::nextUnreadCache(
     {
         if((*it)->isRead)
             continue;
+
         WriterProxy* wp;
         if(this->matched_writer_lookup((*it)->writerGUID,&wp))
         {
@@ -719,29 +720,17 @@ bool StatefulReader::nextUnreadCache(
             if(seq >= (*it)->sequenceNumber)
             {
                 *change = *it;
+
+                assert(total_unread_ > 0);
+                --total_unread_;
+
+                (*change)->isRead = true;
+
                 if(wpout !=nullptr)
                     *wpout = wp;
 
                 readok = true;
                 break;
-                //				if((*it)->kind == ALIVE)
-                //				{
-                //					this->mp_type->deserialize(&(*it)->serializedPayload,data);
-                //				}
-                //				(*it)->isRead = true;
-                //				if(info!=NULL)
-                //				{
-                //					info->sampleKind = (*it)->kind;
-                //					info->writerGUID = (*it)->writerGUID;
-                //					info->sourceTimestamp = (*it)->sourceTimestamp;
-                //					info->iHandle = (*it)->instanceHandle;
-                //					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-                //						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-                //				}
-                //				m_reader_cache.decreaseUnreadCount();
-                //				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
-                //				readok = true;
-                //				break;
             }
         }
         else

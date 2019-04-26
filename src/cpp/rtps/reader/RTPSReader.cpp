@@ -29,6 +29,7 @@
 
 #include <typeinfo>
 #include <algorithm>
+#include <chrono>
 
 namespace eprosima {
 namespace fastrtps{
@@ -151,6 +152,7 @@ SequenceNumber_t RTPSReader::update_last_notified(
     if (ret_val < seq)
     {
         set_last_notified(guid_to_look, seq);
+        new_notification_cv_.notify_all();
     }
 
     return ret_val;
@@ -181,6 +183,35 @@ void RTPSReader::set_last_notified(
         const SequenceNumber_t& seq)
 {
     history_state_->history_record[peristence_guid] = seq;
+}
+
+
+bool RTPSReader::wait_for_unread_cache(
+        const eprosima::fastrtps::Duration_t &timeout)
+{
+    auto time_out = std::chrono::steady_clock::now() + std::chrono::seconds(timeout.seconds) +
+        std::chrono::nanoseconds(timeout.nanosec);
+
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex, std::defer_lock);
+
+    if(lock.try_lock_until(time_out))
+    {
+        if(new_notification_cv_.wait_until(lock, time_out, [&]()
+        {
+            return total_unread_ > 0;
+        }))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+uint64_t RTPSReader::get_unread_count() const
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    return total_unread_;
 }
 
 } /* namespace rtps */

@@ -24,6 +24,9 @@
 #include "../Endpoint.h"
 #include "../attributes/ReaderAttributes.h"
 #include "../common/SequenceNumber.h"
+#include "../common/Time_t.h"
+
+#include <condition_variable>
 
 namespace eprosima {
 namespace fastrtps {
@@ -202,6 +205,11 @@ public:
             CacheChange_t** change,
             WriterProxy** wp) = 0;
 
+    RTPS_DllAPI bool wait_for_unread_cache(
+            const eprosima::fastrtps::Duration_t &timeout);
+
+    RTPS_DllAPI uint64_t get_unread_count() const;
+
     /**
      * @return True if the reader expects Inline QOS.
      */
@@ -236,6 +244,7 @@ public:
     virtual bool isInCleanState() = 0;
 
 protected:
+
     void setTrustedWriter(const EntityId_t& writer)
     {
         m_acceptMessagesFromUnkownWriters = false;
@@ -305,8 +314,11 @@ protected:
     //!ReaderHistoryState
     ReaderHistoryState* history_state_;
 
-    //TODO Select one
     FragmentedChangePitStop* fragmentedChangePitStop_;
+
+    uint64_t total_unread_ = 0;
+
+    std::condition_variable_any new_notification_cv_;
 
 private:
 

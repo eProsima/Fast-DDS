@@ -77,16 +77,9 @@ SubscriberImpl::~SubscriberImpl()
     delete(this->mp_userSubscriber);
 }
 
-void SubscriberImpl::waitForUnreadMessage()
+bool SubscriberImpl::wait_for_unread_samples(const Duration_t& timeout)
 {
-    if(m_history.getUnreadCount()==0)
-    {
-        do
-        {
-            m_history.waitSemaphore();
-        }
-        while(m_history.getUnreadCount() == 0);
-    }
+    return mp_reader->wait_for_unread_cache(timeout);
 }
 
 bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
@@ -309,9 +302,9 @@ bool SubscriberImpl::isInCleanState() const
     return mp_reader->isInCleanState();
 }
 
-uint64_t SubscriberImpl::getUnreadCount() const
+uint64_t SubscriberImpl::get_unread_count() const
 {
-    return m_history.getUnreadCount();
+    return mp_reader->get_unread_count();
 }
 
 void SubscriberImpl::deadline_timer_reschedule()
