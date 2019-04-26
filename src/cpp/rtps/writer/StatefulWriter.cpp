@@ -1280,9 +1280,12 @@ void StatefulWriter::ack_timer_expired()
 
 
     // The timer has expired so the earliest non-acked change must have been acked
-    for(const auto& remote_reader : matched_readers_)
+    for(ReaderProxy* remote_reader : matched_readers_)
     {
-        remote_reader->acked_changes_set(last_sequence_number_);
+        if (remote_reader->reader_attributes().disable_positive_acks)
+        {
+            remote_reader->acked_changes_set(last_sequence_number_);
+        }
     }
     last_sequence_number_++;
 

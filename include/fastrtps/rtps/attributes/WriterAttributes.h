@@ -129,14 +129,18 @@ class  RemoteReaderAttributes
 {
     public:
 
-        RemoteReaderAttributes() : expectsInlineQos(false),
-        is_eprosima_endpoint(true)
+        RemoteReaderAttributes()
+            : expectsInlineQos(false)
+            , is_eprosima_endpoint(true)
+            , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;
         }
 
-        RemoteReaderAttributes(const VendorId_t& vendor_id) : expectsInlineQos(false),
-        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
+        RemoteReaderAttributes(const VendorId_t& vendor_id)
+            : expectsInlineQos(false)
+            , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
+            , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;
         }
@@ -164,6 +168,8 @@ class  RemoteReaderAttributes
         bool expectsInlineQos;
 
         bool is_eprosima_endpoint;
+
+        bool disable_positive_acks;
 };
 }
 }
