@@ -44,12 +44,14 @@ std::size_t memory_pool_block_size(
         const ResourceLimitedContainerConfig& limits)
 {
     size_t num_elems = limits.increment > 0 ? limits.initial : limits.maximum;
-    if (num_elems < 1u)
+    if (num_elems < 3u)
     {
-        num_elems = 1u;
+        num_elems = 3u;
     }
 
-    return node_size * num_elems + MemoryPool::min_node_size;
+    return node_size * num_elems       // Room for elements
+        + MemoryPool::min_node_size    // Room for free_list nodes
+        + 16u;                         // Additional fence space
 }
 
 }  // namespace fastrtps

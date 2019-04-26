@@ -117,7 +117,7 @@ WriterProxy::WriterProxy(
     , is_alive_(false)
     , changes_pool_(
             changes_node_size,
-            memory_pool_block_size< pool_allocator_t>(changes_node_size, changes_allocation))
+            memory_pool_block_size<pool_allocator_t>(changes_node_size, changes_allocation))
     , changes_from_writer_(changes_pool_)
     , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
