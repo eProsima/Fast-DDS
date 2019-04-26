@@ -124,7 +124,7 @@ public:
             std::function<bool(WriterProxyData*, bool, const ParticipantProxyData&)> initializer_func);
 
     /**
-     * This method returns whether a ReaderProxyDataObject exitsts among the registered RTPSParticipants
+     * This method returns whether a ReaderProxyDataObject exists among the registered RTPSParticipants
      * (including the local RTPSParticipant).
      * @param [in] reader GUID_t of the reader we are looking for.
      * @return True if found.
@@ -143,7 +143,7 @@ public:
             ReaderProxyData& rdata);
 
     /**
-     * This method returns whether a WriterProxyData exitsts among the registered RTPSParticipants
+     * This method returns whether a WriterProxyData exists among the registered RTPSParticipants
      * (including the local RTPSParticipant).
      * @param [in] writer GUID_t of the writer we are looking for.
      * @return True if found.
