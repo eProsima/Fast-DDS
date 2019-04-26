@@ -346,6 +346,8 @@ private:
 
     void cleanup();
 
+    void clear();
+
     //! Pointer to associated StatefulReader.
     StatefulReader* reader_;
     //! Parameters of the WriterProxy

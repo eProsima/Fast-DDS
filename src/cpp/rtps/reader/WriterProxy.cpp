@@ -127,15 +127,15 @@ WriterProxy::WriterProxy(
     heartbeat_response_ = new HeartbeatResponseDelay(reader_->getRTPSParticipant(), this);
     initial_acknack_ = new InitialAckNack(reader_->getRTPSParticipant(), this);
 
-    heartbeat_response_->update_interval(reader_->getTimes().heartbeatResponseDelay);
-    initial_acknack_->update_interval(reader_->getTimes().initialAcknackDelay);
-
-    stop();
+    clear();
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
 }
 
 void WriterProxy::start(const WriterProxyData& attributes)
 {
+    heartbeat_response_->update_interval(reader_->getTimes().heartbeatResponseDelay);
+    initial_acknack_->update_interval(reader_->getTimes().initialAcknackDelay);
+
     attributes_ = attributes;
     guid_as_vector_.push_back(attributes_.guid());
     guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
@@ -155,16 +155,21 @@ void WriterProxy::update(const WriterProxyData& attributes)
 
 void WriterProxy::stop()
 {
+    clear();
+
+    writer_proxy_liveliness_->cancel_timer();
+    initial_acknack_->cancel_timer();
+    heartbeat_response_->cancel_timer();
+}
+
+void WriterProxy::clear()
+{
     is_alive_ = false;
     last_heartbeat_count_ = 0;
     heartbeat_final_flag_ = false;
     guid_as_vector_.clear();
     guid_prefix_as_vector_.clear();
     changes_from_writer_.clear();
-
-    writer_proxy_liveliness_->cancel_timer();
-    initial_acknack_->cancel_timer();
-    heartbeat_response_->cancel_timer();
 }
 
 void WriterProxy::loaded_from_storage_nts(const SequenceNumber_t& seq_num)

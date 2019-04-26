@@ -24,6 +24,8 @@
 #include "WriterProxy.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
+#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 
 //using namespace eprosima::fastrtps::rtps;
 namespace eprosima
@@ -38,6 +40,9 @@ namespace eprosima
                 WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+                EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
                 wproxy.start(wattr);
 
                 // Update MISSING changes util sequence number 3.
@@ -109,6 +114,9 @@ namespace eprosima
                 WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+                EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
                 wproxy.start(wattr);
 
                 // Update LOST changes util sequence number 3.
@@ -158,6 +166,9 @@ namespace eprosima
                 WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+                EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
                 wproxy.start(wattr);
 
                 // Set received change with sequence number 3.
@@ -241,6 +252,9 @@ namespace eprosima
                 WriterProxyData wattr(4u, 1u);
                 StatefulReader readerMock;
                 WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
+                EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+                EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
                 wproxy.start(wattr);
 
                 // Set irrelevant change with sequence number 3.
