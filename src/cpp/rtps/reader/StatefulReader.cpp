@@ -146,7 +146,7 @@ bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
     }
 
     add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-    wp->loaded_from_storage_nts(get_last_notified(wdata.guid()));
+    wp->loaded_from_storage(get_last_notified(wdata.guid()));
     matched_writers_.push_back(wp);
     logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
     return true;
@@ -495,7 +495,6 @@ bool StatefulReader::processGapMsg(
     if(acceptMsgFrom(writerGUID, &pWP))
     {
         // TODO (Miguel C): Refactor this inside WriterProxy
-        std::unique_lock<std::recursive_mutex> wpLock(*pWP->get_mutex());
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base() - 1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
@@ -577,8 +576,6 @@ bool StatefulReader::change_received(
     }
 
     // TODO (Miguel C): Refactor this inside WriterProxy
-    std::unique_lock<std::recursive_mutex> writerProxyLock(*prox->get_mutex());
-
     size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
     if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
@@ -594,8 +591,6 @@ bool StatefulReader::change_received(
             prox->lost_changes_update(aux_change->sequenceNumber);
             fragmentedChangePitStop_->try_to_remove_until(aux_change->sequenceNumber, proxGUID);
         }
-
-        writerProxyLock.unlock();
 
         NotifyChanges(prox);
 

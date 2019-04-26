@@ -18,8 +18,9 @@
 
 
 
-#ifndef ENDPOINT_H_
-#define ENDPOINT_H_
+#ifndef _RTPS_ENDPOINT_H_
+#define _RTPS_ENDPOINT_H_
+
 #include <mutex>
 #include "common/Types.h"
 #include "common/Locator.h"
@@ -115,4 +116,4 @@ class Endpoint
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* ENDPOINT_H_ */
+#endif //_RTPS_ENDPOINT_H_

@@ -27,7 +27,7 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-
+#include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
@@ -91,12 +91,16 @@ void SubscriberImpl::waitForUnreadMessage()
 
 bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
 {
-    return this->m_history.readNextData(data,info);
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    return this->m_history.readNextData(data, info, max_blocking_time);
 }
 
 bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info)
 {
-    return this->m_history.takeNextData(data,info);
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    return this->m_history.takeNextData(data, info, max_blocking_time);
 }
 
 const GUID_t& SubscriberImpl::getGuid()

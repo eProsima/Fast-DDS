@@ -25,9 +25,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <mutex>
-
-
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
 #include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
 #include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
@@ -36,6 +33,14 @@
 
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
+
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <cassert>
+#include <mutex>
+#endif
 
 namespace eprosima {
 namespace fastrtps {
@@ -149,6 +154,10 @@ void WriterProxy::start(const WriterProxyData& attributes)
 
 void WriterProxy::update(const WriterProxyData& attributes)
 {
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     assert(is_alive_);
     attributes_ = attributes;
 }
@@ -173,16 +182,23 @@ void WriterProxy::clear()
     changes_from_writer_.clear();
 }
 
-void WriterProxy::loaded_from_storage_nts(const SequenceNumber_t& seq_num)
+void WriterProxy::loaded_from_storage(const SequenceNumber_t& seq_num)
 {
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     last_notified_ = seq_num;
     changes_from_writer_low_mark_ = seq_num;
 }
 
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
 {
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     logInfo(RTPS_READER,attributes_.guid().entityId<<": changes up to seq_num: " << seq_num <<" missing.");
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check was not removed from container.
     if(seq_num > changes_from_writer_low_mark_)
@@ -246,8 +262,11 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(
 
 void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER, attributes_.guid().entityId << ": up to seq_num: " << seq_num);
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
+    logInfo(RTPS_READER, attributes_.guid().entityId <<": up to seq_num: "<<seq_num);
 
     // Check was not removed from container.
     if(seq_num > changes_from_writer_low_mark_)
@@ -288,7 +307,9 @@ bool WriterProxy::received_change_set(
         const SequenceNumber_t& seq_num,
         bool is_relevance)
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
 
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
     if(seq_num <= changes_from_writer_low_mark_)
@@ -354,7 +375,10 @@ bool WriterProxy::received_change_set(
 
 SequenceNumberSet_t WriterProxy::missing_changes() const
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     SequenceNumberSet_t sns(available_changes_max() + 1);
 
     for(const ChangeFromWriter_t& ch : changes_from_writer_)
@@ -377,7 +401,9 @@ SequenceNumberSet_t WriterProxy::missing_changes() const
 
 bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
 
     if (seq_num <= changes_from_writer_low_mark_)
     {
@@ -390,15 +416,16 @@ bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
 
 const SequenceNumber_t WriterProxy::available_changes_max() const
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     return changes_from_writer_low_mark_;
 }
 
 void WriterProxy::assert_liveliness()
 {
     logInfo(RTPS_READER,attributes_.guid().entityId << " Liveliness asserted");
-
-    //std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     is_alive_ = true;
     writer_proxy_liveliness_->cancel_timer();
@@ -407,7 +434,9 @@ void WriterProxy::assert_liveliness()
 
 void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
 
     // Check sequence number is in the container, because it was not clean up.
     if (seq_num <= changes_from_writer_low_mark_)
@@ -444,7 +473,9 @@ void WriterProxy::cleanup()
 
 bool WriterProxy::are_there_missing_changes() const
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
 
     for(const ChangeFromWriter_t& ch : changes_from_writer_)
     {
@@ -459,8 +490,11 @@ bool WriterProxy::are_there_missing_changes() const
 
 size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_num) const
 {
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     size_t returnedValue = 0;
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     if(seq_num > changes_from_writer_low_mark_)
     {
@@ -481,13 +515,18 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
 
 size_t WriterProxy::number_of_changes_from_writer() const
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     return changes_from_writer_.size();
 }
 
 SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
 {
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
 
     if(last_notified_ < changes_from_writer_low_mark_)
     {
@@ -518,7 +557,9 @@ bool WriterProxy::process_heartbeat(
         bool liveliness_flag,
         bool disable_positive)
 {
-    std::unique_lock<std::recursive_mutex> wpLock(mutex_);
+#if defined(__DEBUG) and !defined(_WIN32)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
 
     if (last_heartbeat_count_ < count)
     {
@@ -580,6 +621,19 @@ bool WriterProxy::send(
 
     return true;
 }
+
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+int WriterProxy::get_mutex_owner() const
+{
+    auto mutex = reader_->getMutex().native_handle();
+    return mutex->__data.__owner;
+}
+
+int WriterProxy::get_thread_id() const
+{
+    return syscall(__NR_gettid);
+}
+#endif
 
 } /* namespace rtps */
 } /* namespace fastrtps */

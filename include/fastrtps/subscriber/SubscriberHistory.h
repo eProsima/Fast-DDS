@@ -27,6 +27,8 @@
 #include "../common/KeyedChanges.h"
 #include "SampleInfo.h"
 
+#include <chrono>
+
 namespace eprosima {
 namespace fastrtps {
 
@@ -76,11 +78,19 @@ class SubscriberHistory: public rtps::ReaderHistory
          * Methods to read or take data from the History.
          * @param data Pointer to the object where you want to read or take the information.
          * @param info Pointer to a SampleInfo_t object where you want
+         * @param max_blocking_time Maximum time the function can be blocked.
          * to store the information about the retrieved data
          */
         ///@{
-        bool readNextData(void* data, SampleInfo_t* info);
-        bool takeNextData(void* data, SampleInfo_t* info);
+        bool readNextData(
+                void* data,
+                SampleInfo_t* info,
+                std::chrono::steady_clock::time_point& max_blocking_time);
+
+        bool takeNextData(
+                void* data,
+                SampleInfo_t* info,
+                std::chrono::steady_clock::time_point& max_blocking_time);
         ///@}
 
         bool readNextBuffer(rtps::SerializedPayload_t* data, SampleInfo_t* info);

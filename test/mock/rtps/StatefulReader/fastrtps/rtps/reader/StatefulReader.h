@@ -28,50 +28,50 @@ class WriterProxy;
 class RTPSMessageSenderInterface;
 
 class StatefulReader : public RTPSReader
-    {
-        public:
+{
+    public:
 
-            virtual ~StatefulReader() {}
+        virtual ~StatefulReader() {}
 
-            MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
+        MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
 
-            MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
+        MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
 
-            // In real class, inherited from Endpoint base class.
-            inline const GUID_t& getGuid() const { return guid_; };
+        // In real class, inherited from Endpoint base class.
+        inline const GUID_t& getGuid() const { return guid_; };
 
-            inline ReaderTimes& getTimes(){return times_;};
+        inline ReaderTimes& getTimes(){return times_;};
 
-            void send_acknack(
-                    const SequenceNumberSet_t& /*sns*/,
-                    RTPSMessageGroup_t& /*buffer*/,
-                    const RTPSMessageSenderInterface& /*sender*/,
-                    bool /*is_final*/)
-            {}
+        void send_acknack(
+                const SequenceNumberSet_t& /*sns*/,
+                RTPSMessageGroup_t& /*buffer*/,
+                const RTPSMessageSenderInterface& /*sender*/,
+                bool /*is_final*/)
+        {}
 
-            void send_acknack(
-                    const WriterProxy* /*writer*/,
-                    RTPSMessageGroup_t& /*buffer*/,
-                    const RTPSMessageSenderInterface& /*sender*/,
-                    bool /*heartbeat_was_final*/)
-            {}
+        void send_acknack(
+                const WriterProxy* /*writer*/,
+                RTPSMessageGroup_t& /*buffer*/,
+                const RTPSMessageSenderInterface& /*sender*/,
+                bool /*heartbeat_was_final*/)
+        {}
 
-            RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }
+        RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }
 
-            bool send_sync_nts(
-                    CDRMessage_t* /*message*/,
-                    const Locator_t& /*locator*/,
-                    std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
-            {
-                return true;
-            }
+        bool send_sync_nts(
+                CDRMessage_t* /*message*/,
+                const Locator_t& /*locator*/,
+                std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
+        {
+            return true;
+        }
 
     private:
 
-            GUID_t guid_;
+        GUID_t guid_;
 
-            ReaderTimes times_;
-    };
+        ReaderTimes times_;
+};
 
 } // namespace rtps
 } // namespace fastrtps

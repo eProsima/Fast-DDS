@@ -20,8 +20,6 @@
 #define FASTRTPS_RTPS_READER_WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <mutex>
-
 #include <fastrtps/rtps/common/Types.h>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/CacheChange.h>
@@ -95,7 +93,7 @@ public:
      * Set initial value for last acked sequence number.
      * @param[in] seq_num last acked sequence number.
      */
-    void loaded_from_storage_nts(const SequenceNumber_t& seq_num);
+    void loaded_from_storage(const SequenceNumber_t& seq_num);
 
     /**
      * Get the maximum sequenceNumber received from this Writer.
@@ -208,15 +206,6 @@ public:
      * Set the writer as alive
      */
     void assert_liveliness();
-
-    /**
-     * Get the mutex
-     * @return Associated mutex
-     */
-    inline std::recursive_mutex* get_mutex()
-    {
-        return &mutex_;
-    }
 
     /*!
      * @brief Returns number of ChangeFromWriter_t managed currently by the WriterProxy.
@@ -364,8 +353,6 @@ private:
     bool heartbeat_final_flag_;
     //!Is the writer alive
     bool is_alive_;
-    //!Mutex Pointer
-    mutable std::recursive_mutex mutex_;
 
     using pool_allocator_t =
         foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
@@ -396,6 +383,12 @@ private:
             ChangeFromWriterStatus_t status,
             ChangeFromWriterStatus_t or_status,
             ChangeFromWriterStatus_t new_status);
+
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+    int get_mutex_owner() const;
+
+    int get_thread_id() const;
+#endif
 };
 
 } /* namespace rtps */
