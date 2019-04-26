@@ -34,17 +34,18 @@ class WriterQos;
 
 namespace rtps {
 
-class RTPSParticipantImpl;
-class StatefulWriter;
-class StatefulReader;
-class RTPSWriter;
 class BuiltinProtocols;
+class LivelinessManager;
+class ReaderHistory;
+class ReaderProxyData;
+class RTPSParticipantImpl;
+class RTPSWriter;
+class StatefulReader;
+class StatefulWriter;
 class ParticipantProxyData;
 class WLivelinessPeriodicAssertion;
 class WLPListener;
 class WriterHistory;
-class ReaderHistory;
-class ReaderProxyData;
 class WriterProxyData;
 
 /**
@@ -162,10 +163,27 @@ private:
     WLivelinessPeriodicAssertion* automatic_liveliness_assertion_;
     //!Pointer to the periodic assertion timer object for manual by participant liveliness writers
     WLivelinessPeriodicAssertion* manual_liveliness_assertion_;
-	//!List of the writers using automatic liveliness.
-	std::vector<RTPSWriter*> m_livAutomaticWriters;
-	//!List of the writers using manual by RTPSParticipant liveliness.
-	std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
+    //! List of the writers using automatic liveliness.
+    std::vector<RTPSWriter*> automatic_writers_;
+    //! List of the writers using manual by participant liveliness.
+    std::vector<RTPSWriter*> manual_by_participant_writers_;
+    //! List of writers using manual by topic liveliness
+    std::vector<RTPSWriter*> manual_by_topic_writers_;
+
+    //! A class managing liveliness of writers in this participant
+    LivelinessManager* liveliness_manager_;
+
+    /**
+     * @brief A method invoked by the liveliness manager to inform that a writer lost liveliness
+     * @param writer The writer losing liveliness
+     */
+    void on_liveliness_lost(GUID_t writer);
+
+    /**
+     * @brief A method invoked by the liveliness manager to inform that a writer recovered liveliness
+     * @param writer The writer losing liveliness
+     */
+    void on_livelienss_recovered(GUID_t writer);
 
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.

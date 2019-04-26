@@ -270,13 +270,6 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
                 return false;
             }
 
-            // Assertion has to be done before call change_received,
-            // because this function can unlock the StatefulReader timed_mutex.
-            if(pWP != nullptr)
-            {
-                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-            }
-
             if(!change_received(change_to_add, pWP))
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
@@ -338,13 +331,6 @@ bool StatefulReader::processDataFragMsg(
             if(getAttributes().security_attributes().is_payload_protected)
                 releaseCache(change_to_add);
 #endif
-
-            // Assertion has to be done before call change_received,
-            // because this function can unlock the StatefulReader mutex.
-            if(pWP != nullptr)
-            {
-                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-            }
 
             if(change_completed != nullptr)
             {
@@ -421,10 +407,9 @@ bool StatefulReader::processHeartbeatMsg(
                 }
             }
 
-            //FIXME: livelinessFlag
-            if(livelinessFlag )//TODOG && WP->m_att->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            if(livelinessFlag)
             {
-                pWP->assertLiveliness();
+                // TODO Raquel
             }
 
             wpLock.unlock();

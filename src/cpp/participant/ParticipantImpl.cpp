@@ -189,6 +189,7 @@ Publisher* ParticipantImpl::createPublisher(
         watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     }
     watt.times = att.times;
+    watt.liveliness_lease_duration = att.qos.m_liveliness.lease_duration;
     watt.matched_readers_allocation = att.matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
@@ -308,6 +309,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     if(att.getUserDefinedID()>0)
         ratt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     ratt.times = att.times;
+    ratt.liveliness_lease_duration = att.qos.m_liveliness.lease_duration;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions

@@ -23,9 +23,11 @@
 #include <fastrtps/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h>
 #include "../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
@@ -56,6 +58,10 @@ WLP::WLP(BuiltinProtocols* p)
     , mp_listener(nullptr)
     , automatic_liveliness_assertion_(nullptr)
     , manual_liveliness_assertion_(nullptr)
+    , automatic_writers_()
+    , manual_by_participant_writers_()
+    , manual_by_topic_writers_()
+    , liveliness_manager_(nullptr)
 #if HAVE_SECURITY
     , mp_builtinWriterSecure(nullptr)
     , mp_builtinReaderSecure(nullptr)
@@ -63,6 +69,11 @@ WLP::WLP(BuiltinProtocols* p)
     , mp_builtinReaderSecureHistory(nullptr)
 #endif
 {
+    liveliness_manager_ = new LivelinessManager(
+                std::bind(&WLP::on_liveliness_lost, this, std::placeholders::_1),
+                std::bind(&WLP::on_livelienss_recovered, this, std::placeholders::_1),
+                mp_participant->getEventResource().getIOService(),
+                mp_participant->getEventResource().getThread());
 }
 
 WLP::~WLP()
@@ -86,6 +97,7 @@ WLP::~WLP()
     {
         delete(this->manual_liveliness_assertion_);
     }
+    delete liveliness_manager_;
 }
 
 bool WLP::initWL(RTPSParticipantImpl* p)
@@ -490,7 +502,7 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
             }
             automatic_liveliness_assertion_->restart_timer();
         }
-        m_livAutomaticWriters.push_back(W);
+        automatic_writers_.push_back(W);
     }
     else if(wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
@@ -512,7 +524,11 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
             }
             manual_liveliness_assertion_->restart_timer();
         }
-        m_livManRTPSParticipantWriters.push_back(W);
+        manual_by_participant_writers_.push_back(W);
+    }
+    else if (wqos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        manual_by_topic_writers_.push_back(W);
     }
     return true;
 }
@@ -522,8 +538,9 @@ typedef std::vector<RTPSWriter*>::iterator t_WIT;
 bool WLP::removeLocalWriter(RTPSWriter* W)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    logInfo(RTPS_LIVELINESS,W->getGuid().entityId
-            <<" from Liveliness Protocol");
+
+    logInfo(RTPS_LIVELINESS,W->getGuid().entityId <<" from Liveliness Protocol");
+
     t_WIT wToEraseIt;
     ParticipantProxyData pdata;
     WriterProxyData wdata;
@@ -533,7 +550,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
         if(wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         {
             m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
-            for(t_WIT it= m_livAutomaticWriters.begin();it!=m_livAutomaticWriters.end();++it)
+            for(t_WIT it= automatic_writers_.begin();it!=automatic_writers_.end();++it)
             {
                 ParticipantProxyData pdata2;
                 WriterProxyData wdata2;
@@ -556,10 +573,10 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             }
             if(found)
             {
-                m_livAutomaticWriters.erase(wToEraseIt);
+                automatic_writers_.erase(wToEraseIt);
                 if(automatic_liveliness_assertion_!=nullptr)
                 {
-                    if(m_livAutomaticWriters.size()>0)
+                    if(automatic_writers_.size()>0)
                         automatic_liveliness_assertion_->update_interval_millisec(m_minAutomatic_MilliSec);
                     else
                     {
@@ -573,7 +590,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
         else if(wdata.m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
         {
             m_minManRTPSParticipant_MilliSec = std::numeric_limits<double>::max();
-            for(t_WIT it= m_livManRTPSParticipantWriters.begin();it!=m_livManRTPSParticipantWriters.end();++it)
+            for(t_WIT it= manual_by_participant_writers_.begin();it!=manual_by_participant_writers_.end();++it)
             {
                 ParticipantProxyData pdata2;
                 WriterProxyData wdata2;
@@ -595,10 +612,10 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             }
             if(found)
             {
-                m_livManRTPSParticipantWriters.erase(wToEraseIt);
+                manual_by_participant_writers_.erase(wToEraseIt);
                 if(manual_liveliness_assertion_!=nullptr)
                 {
-                    if(m_livManRTPSParticipantWriters.size()>0)
+                    if(manual_by_participant_writers_.size()>0)
                         manual_liveliness_assertion_->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
                     else
                     {
@@ -608,12 +625,29 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 }
             }
         }
-        else // OTHER VALUE OF LIVELINESS (BY TOPIC)
-            return true;
+        else if (wdata.m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        {
+            for (auto it=manual_by_topic_writers_.begin(); it!=manual_by_topic_writers_.end(); ++it)
+            {
+                if (W->getGuid().entityId == (*it)->getGuid().entityId)
+                {
+                    found = true;
+                }
+            }
+            if (found)
+            {
+                manual_by_topic_writers_.erase(wToEraseIt);
+            }
+        }
+
         if(found)
+        {
             return true;
+        }
         else
+        {
             return false;
+        }
     }
     logWarning(RTPS_LIVELINESS,"Writer "<<W->getGuid().entityId << " not found.");
     return false;
@@ -699,6 +733,16 @@ WriterHistory* WLP::getBuiltinWriterHistory()
 #endif
 
     return ret_val;
+}
+
+void WLP::on_liveliness_lost(GUID_t writer)
+{
+    // TODO raquel
+}
+
+void WLP::on_livelienss_recovered(GUID_t writer)
+{
+    // TODO raquel
 }
 
 } /* namespace rtps */

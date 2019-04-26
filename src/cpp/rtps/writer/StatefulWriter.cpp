@@ -153,9 +153,6 @@ void StatefulWriter::unsent_change_added_to_history(
     encrypt_cachechange(change);
 #endif
 
-    //TODO Think about when set liveliness assertion when writer is asynchronous.
-    this->setLivelinessAsserted(true);
-
     if(!matched_readers_.empty())
     {
         if(!isAsync())

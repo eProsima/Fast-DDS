@@ -23,6 +23,9 @@
 #include "FragmentedChangePitStop.h"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/writer/LivelinessManager.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include "../participant/RTPSParticipantImpl.h"
 
 #include <typeinfo>
 
@@ -46,10 +49,21 @@ RTPSReader::RTPSReader(
     , m_acceptMessagesFromUnkownWriters(true)
     , m_expectsInlineQos(att.expectsInlineQos)
     , fragmentedChangePitStop_(nullptr)
+    , liveliness_manager_(nullptr)
 {
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
     fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
+
+    if (att.liveliness_lease_duration < c_TimeInfinite)
+    {
+        liveliness_manager_ = new LivelinessManager(
+                    std::bind(&RTPSReader::on_liveliness_lost, this, std::placeholders::_1),
+                    std::bind(&RTPSReader::on_liveliness_recovered, this, std::placeholders::_1),
+                    pimpl->getEventResource().getIOService(),
+                    pimpl->getEventResource().getThread());
+    }
+
     logInfo(RTPS_READER,"RTPSReader created correctly");
 }
 
@@ -59,6 +73,11 @@ RTPSReader::~RTPSReader()
     delete fragmentedChangePitStop_;
     mp_history->mp_reader = nullptr;
     mp_history->mp_mutex = nullptr;
+
+    if (liveliness_manager_ != nullptr)
+    {
+        delete liveliness_manager_;
+    }
 }
 
 bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
@@ -168,6 +187,20 @@ SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid)
 void RTPSReader::set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq)
 {
     history_record_[peristence_guid] = seq;
+}
+
+void RTPSReader::on_liveliness_lost(GUID_t writer)
+{
+    assert(liveliness_manager_ != nullptr);
+
+    // TODO Raquel
+}
+
+void RTPSReader::on_liveliness_recovered(GUID_t writer)
+{
+    assert(liveliness_manager_ != nullptr);
+
+    // TODO Raquel
 }
 
 }

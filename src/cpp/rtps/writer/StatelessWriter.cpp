@@ -112,8 +112,6 @@ void StatelessWriter::unsent_change_added_to_history(
         {
             try
             {
-                setLivelinessAsserted(true);
-
                 if(m_separateSendingEnabled)
                 {
                     std::vector<GUID_t> guids(1);

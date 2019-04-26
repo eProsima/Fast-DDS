@@ -46,11 +46,14 @@ RTPSWriter::RTPSWriter(
         impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
         impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
         impl->getMaxMessageSize(), impl->getGuid().guidPrefix)
-    , m_livelinessAsserted(false)
     , mp_history(hist)
     , mp_listener(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
     , m_separateSendingEnabled(false)
+    , liveliness_data_(
+          guid,
+          att.liveliness_kind,
+          att.liveliness_lease_duration)
     , all_remote_readers_(att.matched_readers_allocation)
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())

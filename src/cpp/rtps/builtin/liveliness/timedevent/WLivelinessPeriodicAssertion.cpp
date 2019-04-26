@@ -99,7 +99,7 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 bool WLivelinessPeriodicAssertion::automatic_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
-    if(this->mp_WLP->m_livAutomaticWriters.size()>0)
+    if(this->mp_WLP->automatic_writers_.size()>0)
     {
         auto writer = this->mp_WLP->getBuiltinWriter();
         auto history = this->mp_WLP->getBuiltinWriterHistory();
@@ -142,14 +142,16 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
 
     bool livelinessAsserted = false;
 
-    for(std::vector<RTPSWriter*>::iterator wit=this->mp_WLP->m_livManRTPSParticipantWriters.begin();
-            wit!=this->mp_WLP->m_livManRTPSParticipantWriters.end();++wit)
+    for(std::vector<RTPSWriter*>::iterator wit=this->mp_WLP->manual_by_participant_writers_.begin();
+            wit!=this->mp_WLP->manual_by_participant_writers_.end();++wit)
     {
-        if((*wit)->getLivelinessAsserted())
-        {
-            livelinessAsserted = true;
-        }
-        (*wit)->setLivelinessAsserted(false);
+
+// TODO Raquel
+//        if((*wit)->getLivelinessAsserted())
+//        {
+//            livelinessAsserted = true;
+//        }
+//        (*wit)->setLivelinessAsserted(false);
     }
 
     // Liveliness was asserted for at least one of the writers using MANUAL_BY_PARTICIPANT

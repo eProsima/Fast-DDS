@@ -97,8 +97,6 @@ WriterProxy::~WriterProxy()
 {
     if(mp_initialAcknack != nullptr)
         delete(mp_initialAcknack);
-    if(mp_writerProxyLiveliness!=nullptr)
-        delete(mp_writerProxyLiveliness);
 
     delete(mp_heartbeatResponse);
     delete(mp_mutex);
@@ -111,29 +109,18 @@ WriterProxy::WriterProxy(
     , m_att(watt)
     , m_lastHeartbeatCount(0)
     , mp_heartbeatResponse(nullptr)
-    , mp_writerProxyLiveliness(nullptr)
     , mp_initialAcknack(nullptr)
     , m_heartbeatFinalFlag(false)
-    , m_isAlive(true)
     , mp_mutex(new std::recursive_mutex())
 {
     m_changesFromW.clear();
     //Create Events
-    mp_writerProxyLiveliness = new WriterProxyLiveliness(
-        this,
-        TimeConv::Duration_t2MilliSecondsDouble(m_att.livelinessLeaseDuration) *
-            WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER);
-
     mp_heartbeatResponse = new HeartbeatResponseDelay(
         this, TimeConv::Duration_t2MilliSecondsDouble(mp_SFR->getTimes().heartbeatResponseDelay));
 
     mp_initialAcknack = new InitialAckNack(
         this, TimeConv::Duration_t2MilliSecondsDouble(mp_SFR->getTimes().initialAcknackDelay));
 
-    if(m_att.livelinessLeaseDuration < c_TimeInfinite)
-    {
-        mp_writerProxyLiveliness->restart_timer();
-    }
     logInfo(RTPS_READER,"Writer Proxy created in reader: "<<mp_SFR->getGuid().entityId);
 }
 
@@ -371,21 +358,6 @@ void WriterProxy::print_changes_fromWriter_test2()
 
     std::string auxstr = sstream.str();
     logInfo(RTPS_READER,auxstr;);
-}
-
-void WriterProxy::assertLiveliness()
-{
-
-    logInfo(RTPS_READER,this->m_att.guid.entityId << " Liveliness asserted");
-
-    //std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-
-    std::cout << "Asserting liveliness of writer proxy " << m_att.guid << std::endl;
-
-    m_isAlive=true;
-
-    this->mp_writerProxyLiveliness->cancel_timer();
-    this->mp_writerProxyLiveliness->restart_timer();
 }
 
 void WriterProxy::setNotValid(const SequenceNumber_t& seqNum)

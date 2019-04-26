@@ -24,6 +24,7 @@
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "EndpointAttributes.h"
 #include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
+#include "../../qos/QosPolicies.h"
 
 #include <functional>
 
@@ -100,6 +101,12 @@ class WriterAttributes
 
         //!Writer Times (only used for RELIABLE).
         WriterTimes times;
+
+        //! Liveliness kind
+        LivelinessQosPolicyKind liveliness_kind;
+
+        //! Liveliness lease duration
+        Duration_t liveliness_lease_duration;
 
         //!Indicates if the Writer is synchronous or asynchronous
         RTPSWriterPublishMode mode;

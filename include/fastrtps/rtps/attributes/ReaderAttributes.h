@@ -77,8 +77,11 @@ class  ReaderAttributes
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
 
-        //!Times associated with this reader.
+        //!Times associated with this reader (only for stateful readers)
         ReaderTimes times;
+
+        //! Liveliness lease duration
+        Duration_t liveliness_lease_duration;
 
         //!Indicates if the reader expects Inline qos, default value 0.
         bool expectsInlineQos;

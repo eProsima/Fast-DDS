@@ -913,10 +913,13 @@ void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
     }
 }
 
-void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
+void PDPSimple::assertRemoteWritersLiveliness(
+        GuidPrefix_t& guidP,
+        LivelinessQosPolicyKind kind)
 {
     std::lock_guard<std::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
     std::lock_guard<std::recursive_mutex> pguard(*this->mp_mutex);
+
     logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
             <<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
 
@@ -940,7 +943,8 @@ void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosP
                             WriterProxy* WP;
                             if(sfr->matched_writer_lookup((*wit)->guid(), &WP))
                             {
-                                WP->assertLiveliness();
+                                // TODO Raquel
+                                // WP->assertLiveliness();
                                 continue;
                             }
                         }
