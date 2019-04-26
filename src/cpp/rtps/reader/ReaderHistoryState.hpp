@@ -25,6 +25,8 @@
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
 
+#include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
+
 #include <map>
 
 namespace eprosima {
@@ -44,24 +46,24 @@ constexpr size_t history_record_node_size =
  */
 struct ReaderHistoryState
 {
+    using pool_allocator_t =
+        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+
     ReaderHistoryState(size_t initial_writers_allocation)
         : persistence_guid_map_allocator(
             guid_map_node_size,
-            guid_map_node_size * std::max(initial_writers_allocation, (size_t)4u))
+            memory_pool_block_size<pool_allocator_t>(guid_map_node_size, initial_writers_allocation))
         , persistence_guid_count_allocator(
             guid_count_node_size,
-            guid_count_node_size * std::max(initial_writers_allocation, (size_t)4u))
+            memory_pool_block_size<pool_allocator_t>(guid_count_node_size, initial_writers_allocation))
         , history_record_allocator(
             history_record_node_size,
-            history_record_node_size * std::max(initial_writers_allocation, (size_t)4u))
+            memory_pool_block_size<pool_allocator_t>(history_record_node_size, initial_writers_allocation))
         , persistence_guid_map(persistence_guid_map_allocator)
         , persistence_guid_count(persistence_guid_count_allocator)
         , history_record(history_record_allocator)
     {
     }
-
-    using pool_allocator_t =
-        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
     pool_allocator_t persistence_guid_map_allocator;
     pool_allocator_t persistence_guid_count_allocator;

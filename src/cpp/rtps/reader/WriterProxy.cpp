@@ -35,6 +35,7 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 
 #include <foonathan/memory/namespace_alias.hpp>
+#include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -114,7 +115,9 @@ WriterProxy::WriterProxy(
     , last_heartbeat_count_(0)
     , heartbeat_final_flag_(false)
     , is_alive_(false)
-    , changes_pool_(changes_node_size, changes_node_size * std::max(changes_allocation.initial, (size_t)1u))
+    , changes_pool_(
+            changes_node_size,
+            memory_pool_block_size< pool_allocator_t>(changes_node_size, changes_allocation))
     , changes_from_writer_(changes_pool_)
     , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
