@@ -524,11 +524,17 @@ bool UDPTransportInterface::send(
         {
             asio::error_code ec;
             bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer, send_buffer_size), destinationEndpoint, 0, ec);
-            if ((ec.value() == asio::error::would_block) ||
-                (ec.value() == asio::error::try_again))
+            if(!!ec)
             {
-                logWarning(RTPS_MSG_OUT, "UDP send would have blocked. Packet is dropped.");
-                return true;
+                if ((ec.value() == asio::error::would_block) ||
+                    (ec.value() == asio::error::try_again))
+                {
+                    logWarning(RTPS_MSG_OUT, "UDP send would have blocked. Packet is dropped.");
+                    return true;
+                }
+
+                logWarning(RTPS_MSG_OUT, ec.message());
+                return false;
             }
         }
         catch (const std::exception& error)
