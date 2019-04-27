@@ -29,6 +29,8 @@
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 
+#include <fastrtps/rtps/writer/ReaderProxy.h>
+
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
@@ -340,7 +342,16 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
             watt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficMulticastLocatorList);
 
             mp_PDPReader->matched_writer_remove(watt);
+
+            // It's a brand new server without previous knowledge of the discovery state
+            mp_PDPReader->remove_persistence_guid(watt);
+
             mp_PDPReader->matched_writer_add(watt);
+
+            // the server participant is a new one with new sequence numbers
+            //mp_PDPReader->remove_persistence_guid(watt);
+            //SequenceNumber_t afresh;
+            //mp_PDPReader->set_last_notified(watt.guid, afresh);
 
         }
 
@@ -387,6 +398,7 @@ bool PDPClient::all_servers_acknowledge_PDP()
 
 bool PDPClient::is_all_servers_PDPdata_updated()
 {
+    // Assess all server DATA has been received
     StatefulReader * pR = dynamic_cast<StatefulReader *>(mp_PDPReader);
     assert(pR);
     return pR->isInCleanState();
@@ -401,11 +413,55 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose, WritePar
     wp.sample_identity(local);
     wp.related_sample_identity(local);
 
-    PDP::announceParticipantState(new_change, dispose, wp);
-
     // Add the write params to the sample
-    if (!dispose)
+    if (dispose)
     {
+        // we must assure when the server is dying that all client are send at least a DATA(p)
+            // note here we can no longer receive and DATA or ACKNACK from clients.
+            // In order to avoid that we send the message directly as in the standard stateless PDP
+
+        StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
+        assert(pW);
+
+        CacheChange_t* change = nullptr;
+
+        if (change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key))
+        {
+            // update the sequence number
+            change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
+            change->write_params = wp;
+
+            std::lock_guard<std::recursive_mutex> wlock(*pW->getMutex());
+
+            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, RTPSMessageGroup::WRITER, _msgbuffer);
+
+            std::vector<GUID_t> remote_readers;
+            LocatorList_t locators;
+
+            for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+            {
+                RemoteReaderAttributes & att = (*it)->m_att;
+                remote_readers.push_back(att.guid);
+
+                EndpointAttributes & ep = att.endpoint;
+                locators.push_back(ep.unicastLocatorList);
+                //locators.push_back(ep.multicastLocatorList);
+            }
+
+            if (!group.add_data(*change, remote_readers, locators, false))
+            {
+                logError(RTPS_PDP, "Error sending announcement from client to servers");
+            }
+        }
+
+        // free change
+        mp_PDPWriterHistory->release_Cache(change);
+    }
+    else
+    {
+        PDP::announceParticipantState(new_change, dispose, wp);
+
         if (!new_change)
         {
             // retrieve the participant discovery data

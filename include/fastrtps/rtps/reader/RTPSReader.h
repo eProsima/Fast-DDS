@@ -194,7 +194,7 @@ namespace eprosima
                     m_acceptMessagesFromUnkownWriters = enable;
                 }
 
-                protected:
+                
                 void setTrustedWriter(EntityId_t writer)
                 {
                     m_acceptMessagesFromUnkownWriters=false;
@@ -206,12 +206,14 @@ namespace eprosima
                  * @param wdata Info of the remote writer
                  */
                 void add_persistence_guid(const RemoteWriterAttributes& wdata);
-
+                
                 /*!
                 * @brief Remove a remote writer from the persistence_guid map
                 * @param wdata Info of the remote writer
                 */
                 void remove_persistence_guid(const RemoteWriterAttributes& wdata);
+                
+                protected:
 
                 /*!
                 * @brief Get the last notified sequence for a RTPS guid
@@ -229,7 +231,7 @@ namespace eprosima
                 * @remarks Takes persistence_guid into consideration
                 */
                 SequenceNumber_t update_last_notified(const GUID_t& guid, const SequenceNumber_t& seq);
-
+                
                 /*!
                 * @brief Set the last notified sequence for a persistence guid
                 * @param guid The persistence guid to update
@@ -237,7 +239,7 @@ namespace eprosima
                 * @remarks Persistent readers will write to DB
                 */
                 virtual void set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq);
-
+                
                 //!ReaderHistory
                 ReaderHistory* mp_history;
                 //!Listener

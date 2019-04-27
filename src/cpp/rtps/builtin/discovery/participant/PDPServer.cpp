@@ -37,6 +37,8 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPServer.h>
 
+#include <fastrtps/rtps/writer/ReaderProxy.h>
+
 #include <algorithm>
 #include <forward_list>
 
@@ -396,9 +398,13 @@ bool PDPServer::trimWriterHistory()
     EDPServer * pEDP = dynamic_cast<EDPServer*>(mp_EDP);
     assert(pEDP);
 
-    return trimPDPWriterHistory()
-            || pEDP->trimPUBWriterHistory()
-            || pEDP->trimSUBWriterHistory();
+    bool istrim = true;
+
+    istrim &= trimPDPWriterHistory();
+    istrim &= pEDP->trimPUBWriterHistory();
+    istrim &= pEDP->trimSUBWriterHistory();
+
+    return istrim;
 }
 
 
@@ -637,7 +643,53 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
         wp.sample_identity(local);
         wp.related_sample_identity(local);
 
-        PDP::announceParticipantState(new_change, dispose, wp);
+        if (!dispose)
+        {
+            PDP::announceParticipantState(new_change, dispose, wp);
+        }
+        else
+        {   // we must assure when the server is dying that all client are send at least a DATA(p)
+            // note here we can no longer receive and DATA or ACKNACK from clients.
+            // In order to avoid that we send the message directly as in the standard stateless PDP
+
+            StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
+            assert(pW);
+                        
+            CacheChange_t* change = nullptr;
+
+            if (change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key))
+            {
+                // update the sequence number
+                change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
+                change->write_params = wp;
+
+                std::lock_guard<std::recursive_mutex> wlock(*pW->getMutex());
+
+                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, RTPSMessageGroup::WRITER, _msgbuffer);
+
+                std::vector<GUID_t> remote_readers;
+                LocatorList_t locators;
+
+                for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+                {
+                    RemoteReaderAttributes & att = (*it)->m_att;
+                    remote_readers.push_back(att.guid);
+
+                    EndpointAttributes & ep = att.endpoint;
+                    locators.push_back(ep.unicastLocatorList);
+                    //locators.push_back(ep.multicastLocatorList);
+                }
+
+                if (!group.add_data(*change, remote_readers, locators, false))
+                {
+                    logError(RTPS_PDP, "Error sending announcement from server to clients");
+                }
+            }
+
+            // free change
+            mp_PDPWriterHistory->release_Cache(change);
+        }
 
     }
     else
