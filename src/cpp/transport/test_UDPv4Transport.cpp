@@ -69,7 +69,8 @@ bool test_UDPv4Transport::send(
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
         const Locator_t& remote_locator,
-        bool only_multicast_purpose)
+        bool only_multicast_purpose,
+        const std::chrono::microseconds& timeout)
 {
     if (packet_should_drop(send_buffer, send_buffer_size))
     {
@@ -78,7 +79,7 @@ bool test_UDPv4Transport::send(
     }
     else
     {
-        return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose);
+        return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose, timeout);
     }
 }
 

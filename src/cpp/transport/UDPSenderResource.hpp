@@ -43,9 +43,10 @@ class UDPSenderResource : public SenderResource
             send_lambda_ = [this, &transport] (
                     const octet* data,
                     uint32_t dataSize,
-                    const Locator_t& destination)-> bool
+                    const Locator_t& destination,
+                    const std::chrono::microseconds& timeout)-> bool
                 {
-                    return transport.send(data, dataSize, socket_, destination, only_multicast_purpose_);
+                    return transport.send(data, dataSize, socket_, destination, only_multicast_purpose_, timeout);
                 };
         }
 

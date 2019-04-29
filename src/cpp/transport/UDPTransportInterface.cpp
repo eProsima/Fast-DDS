@@ -16,13 +16,15 @@
 #include <fastrtps/transport/UDPTransportInterface.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include "UDPSenderResource.hpp"
-#include <utility>
-#include <cstring>
-#include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
+
+#include <utility>
+#include <cstring>
+#include <algorithm>
+#include <chrono>
 
 using namespace std;
 using namespace asio;
@@ -413,7 +415,8 @@ bool UDPTransportInterface::send(
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
         const Locator_t& remote_locator,
-        bool only_multicast_purpose)
+        bool only_multicast_purpose,
+        const std::chrono::microseconds& timeout)
 {
     if (!IsLocatorSupported(remote_locator) || send_buffer_size > configuration()->sendBufferSize)
     {
@@ -431,6 +434,25 @@ bool UDPTransportInterface::send(
 
         try
         {
+#ifndef _WIN32
+            if(timeout.count() > 0)
+            {
+                struct timeval timeStruct;
+                timeStruct.tv_sec = 0;
+                timeStruct.tv_usec = timeout.count();
+                setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
+                        reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
+            }
+            else
+            {
+                struct timeval timeStruct;
+                timeStruct.tv_sec = 0;
+                timeStruct.tv_usec = 0;
+                setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
+                        reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
+            }
+#endif
+
             asio::error_code ec;
             bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer, send_buffer_size), destinationEndpoint, 0, ec);
             if(!!ec)
