@@ -1303,6 +1303,9 @@ void StatefulWriter::ack_timer_expired()
     auto now = system_clock::now();
     auto interval = source_timestamp - now + keep_duration_us_;
 
+    std::cout << "--- INTERVAL: " << interval.count() << std::endl;
+    std::cout << "--- SOURCE: " << change->sourceTimestamp.to_ns() << std::endl;
+    std::cout << "--- KEEP: " << keep_duration_us_.count() << std::endl;
     assert(interval.count() > 0);
 
     ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
