@@ -53,11 +53,17 @@ class ParListener : public ParticipantListener
         void onParticipantDiscovery(Participant*, rtps::ParticipantDiscoveryInfo&& info) override
         {
             if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            {
                 std::cout << "Subscriber discovered a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+            {
                 std::cout << "Subscriber detected changes on a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+            {
                 std::cout << "Subscriber removed a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
                 std::cout << "Subscriber dropped a participant" << std::endl;
@@ -76,9 +82,13 @@ class SubListener : public SubscriberListener
         void onSubscriptionMatched(Subscriber* /*subscriber*/, MatchingInfo& info) override
         {
             if(info.status == MATCHED_MATCHING)
+            {
                 std::cout << "Publisher matched" << std::endl;
+            }
             else
+            {
                 std::cout << "Publisher unmatched" << std::endl;
+            }
         }
 
         void onNewDataMessage(Subscriber* subscriber) override
@@ -92,7 +102,8 @@ class SubListener : public SubscriberListener
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
                     ++number_samples_;
-                    std::cout << "Received sample: index(" << sample.index() << "), message(" << sample.message() << ")" << std::endl;
+                    std::cout << "Received sample: index(" << sample.index() << "), message("
+                        << sample.message() << ")" << std::endl;
                     cv_.notify_all();
                 }
             }

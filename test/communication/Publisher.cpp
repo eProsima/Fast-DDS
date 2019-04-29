@@ -46,23 +46,32 @@ class ParListener : public ParticipantListener
         virtual ~ParListener(){};
 
         /**
-         * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
+         * This method is called when a new Participant is discovered, or a previously discovered participant
+         * changes its QOS or is removed.
          * @param p Pointer to the Participant
          * @param info DiscoveryInfo.
          */
         void onParticipantDiscovery(Participant*, rtps::ParticipantDiscoveryInfo&& info) override
         {
             if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            {
                 std::cout << "Published discovered a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+            {
                 std::cout << "Published detected changes on a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+            {
                 std::cout << "Published removed a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
                 std::cout << "Published dropped a participant" << std::endl;
                 if(exit_on_lost_liveliness_)
+                {
                     run = false;
+                }
             }
         }
 
@@ -181,7 +190,9 @@ int main(int argc, char** argv)
     Participant* participant = Domain::createParticipant(participant_attributes, &participant_listener);
 
     if(participant == nullptr)
+    {
         return 1;
+    }
 
     HelloWorldType type;
     Domain::registerType(participant,&type);
@@ -220,9 +231,13 @@ int main(int argc, char** argv)
         publisher->write((void*)&data);
 
         if(data.index() == samples)
+        {
             data.index() = 1;
+        }
         else
+        {
             ++data.index();
+        }
 
         eClock::my_sleep(250);
     };
