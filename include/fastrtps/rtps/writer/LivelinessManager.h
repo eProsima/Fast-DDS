@@ -80,10 +80,18 @@ public:
 
     /**
      * @brief Asserts liveliness of a writer in the set
+     * @details Other writers are asserted as well if applicable
      * @param guid The writer to assert liveliness of
      * @return True if liveliness was successfully asserted
      */
     bool assert_liveliness(GUID_t guid);
+
+    /**
+     * @brief Asserts liveliness of writers with given liveliness kind
+     * @param kind Liveliness kind
+     * @return True if liveliness was successfully asserted
+     */
+    bool assert_liveliness(LivelinessQosPolicyKind kind);
 
 private:
 

@@ -749,6 +749,11 @@ WriterHistory* WLP::getBuiltinWriterHistory()
     return ret_val;
 }
 
+bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
+{
+    liveliness_manager_->assert_liveliness();
+}
+
 void WLP::on_liveliness_lost(GUID_t writer)
 {
     // TODO raquel

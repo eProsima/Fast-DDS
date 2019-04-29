@@ -83,7 +83,7 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
                 manual_by_participant_liveliness_assertion();
             }
         }
-        this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertLocalWritersLiveliness(m_livelinessKind);
+        this->mp_WLP->assert_liveliness(m_livelinessKind);
         this->restart_timer();
     }
     else if(code == EVENT_ABORT)

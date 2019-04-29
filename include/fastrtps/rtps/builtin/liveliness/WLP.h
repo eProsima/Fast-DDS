@@ -25,6 +25,7 @@
 #include "../../common/Time_t.h"
 #include "../../common/Locator.h"
 #include "../../common/Guid.h"
+#include "../../../qos/QosPolicies.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -99,10 +100,12 @@ public:
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
 
-    //! Minimum time among liveliness periods of automatic writers, in milliseconds
-    double min_automatic_ms_;
-    //! Minimum time among liveliness periods of manual by participant writers, in milliseconds
-    double min_manual_by_participant_ms_;
+    /**
+     * @brief Asserts liveliness of writers with given kind
+     * @param kind The liveliness kind
+     * @return True if liveliness was asserted
+     */
+    bool assert_liveliness(LivelinessQosPolicyKind kind);
 	
 	/**
 	 * Get the builtin protocols
@@ -145,7 +148,11 @@ public:
 #endif
 
 private:
-	//!Pointer to the local RTPSParticipant.
+
+    //! Minimum time among liveliness periods of automatic writers, in milliseconds
+    double min_automatic_ms_;
+    //! Minimum time among liveliness periods of manual by participant writers, in milliseconds
+    double min_manual_by_participant_ms_;	//!Pointer to the local RTPSParticipant.
 	RTPSParticipantImpl* mp_participant;
 	//!Pointer to the builtinprotocol class.
 	BuiltinProtocols* mp_builtinProtocols;

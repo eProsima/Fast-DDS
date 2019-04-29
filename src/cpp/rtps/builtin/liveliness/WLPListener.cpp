@@ -99,8 +99,7 @@ void WLPListener::onNewCacheChangeAdded(
 		return;
 	}
 
-    this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
-
+    this->mp_WLP->assert_liveliness(livelinessKind);
 	return;
 }
 

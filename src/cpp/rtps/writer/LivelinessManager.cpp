@@ -19,10 +19,12 @@ LivelinessManager::LivelinessManager(
           event_thread)
     , liveliness_lost_callback_(liveliness_lost_callback)
     , liveliness_recovered_callback_(liveliness_recovered_callback)
-{}
+{
+}
 
 LivelinessManager::~LivelinessManager()
-{}
+{
+}
 
 bool LivelinessManager::add_writer(
         GUID_t guid,
@@ -55,11 +57,18 @@ bool LivelinessManager::remove_writer(GUID_t guid)
 
 bool LivelinessManager::assert_liveliness(GUID_t guid)
 {
+    // TODO raquel
     return false;
+}
+
+void LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
+{
+    // TODO raquel
 }
 
 void LivelinessManager::timer_expired()
 {
+    // TODO raquel
 
     // Notify external classes
     if (liveliness_lost_callback_ != nullptr)

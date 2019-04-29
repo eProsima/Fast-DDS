@@ -244,21 +244,6 @@ class WriterProxyData
             return m_typeMaxSerialized;
         }
 
-        RTPS_DllAPI void isAlive(bool isAlive)
-        {
-            m_isAlive = isAlive;
-        }
-
-        RTPS_DllAPI bool isAlive() const
-        {
-            return m_isAlive;
-        }
-
-        RTPS_DllAPI bool& isAlive()
-        {
-            return m_isAlive;
-        }
-
         RTPS_DllAPI void topicKind(TopicKind_t topicKind)
         {
             m_topicKind = topicKind;
@@ -375,9 +360,6 @@ class WriterProxyData
 
         //!Maximum size of the type associated with this Wrtiter, serialized.
         uint32_t m_typeMaxSerialized;
-
-        //!Indicates if the Writer is Alive.
-        bool m_isAlive;
 
         //!Topic kind
         TopicKind_t m_topicKind;

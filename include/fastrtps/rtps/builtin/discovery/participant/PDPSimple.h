@@ -24,10 +24,7 @@
 #include <mutex>
 #include "../../../common/Guid.h"
 #include "../../../attributes/RTPSParticipantAttributes.h"
-
-#include "../../../../qos/QosPolicies.h"
-
-
+#include "../../../messages/CDRMessage.h"
 
 namespace eprosima {
 namespace fastrtps{
@@ -186,19 +183,6 @@ class PDPSimple
      * @param guidP GuidPrefix_t of the participant whose liveliness is being asserted.
      */
     void assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP);
-
-    /**
-     * Assert the liveliness of a Local Writer.
-     * @param kind LivilinessQosPolicyKind to be asserted.
-     */
-    void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
-
-    /**
-     * Assert the liveliness of remote writers.
-     * @param guidP GuidPrefix_t of the participant whose writers liveliness is begin asserted.
-     * @param kind LivelinessQosPolicyKind of the writers.
-     */
-    void assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind);
 
     /**
      * Activate a new Remote Endpoint that has been statically discovered.
