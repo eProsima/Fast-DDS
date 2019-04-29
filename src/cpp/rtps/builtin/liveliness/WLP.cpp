@@ -47,8 +47,8 @@ namespace rtps {
 
 
 WLP::WLP(BuiltinProtocols* p)
-    : m_minAutomatic_MilliSec(std::numeric_limits<double>::max())
-    , m_minManRTPSParticipant_MilliSec(std::numeric_limits<double>::max())
+    : min_automatic_ms_(std::numeric_limits<double>::max())
+    , min_manual_by_participant_ms_(std::numeric_limits<double>::max())
     , mp_participant(nullptr)
     , mp_builtinProtocols(p)
     , mp_builtinWriter(nullptr)
@@ -489,14 +489,14 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
             automatic_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
             automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             automatic_liveliness_assertion_->restart_timer();
-            m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
+            min_automatic_ms_ = wAnnouncementPeriodMilliSec;
         }
-        else if(m_minAutomatic_MilliSec > wAnnouncementPeriodMilliSec)
+        else if(min_automatic_ms_ > wAnnouncementPeriodMilliSec)
         {
-            m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
+            min_automatic_ms_ = wAnnouncementPeriodMilliSec;
             automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(automatic_liveliness_assertion_->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+            if(automatic_liveliness_assertion_->getRemainingTimeMilliSec() > min_automatic_ms_)
             {
                 automatic_liveliness_assertion_->cancel_timer();
             }
@@ -511,14 +511,14 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
             manual_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
             manual_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             manual_liveliness_assertion_->restart_timer();
-            m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
+            min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
         }
-        else if(m_minManRTPSParticipant_MilliSec > wAnnouncementPeriodMilliSec)
+        else if(min_manual_by_participant_ms_ > wAnnouncementPeriodMilliSec)
         {
-            m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
-            manual_liveliness_assertion_->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
+            min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
+            manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(manual_liveliness_assertion_->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+            if(manual_liveliness_assertion_->getRemainingTimeMilliSec() > min_manual_by_participant_ms_)
             {
                 manual_liveliness_assertion_->cancel_timer();
             }
@@ -530,6 +530,15 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
     {
         manual_by_topic_writers_.push_back(W);
     }
+
+    if (!liveliness_manager_->add_writer(
+                W->getGuid(),
+                wqos.m_liveliness.kind,
+                wqos.m_liveliness.lease_duration))
+    {
+        logError(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+    }
+
     return true;
 }
 
@@ -549,7 +558,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
         bool found = false;
         if(wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         {
-            m_minAutomatic_MilliSec = std::numeric_limits<double>::max();
+            min_automatic_ms_ = std::numeric_limits<double>::max();
             for(t_WIT it= automatic_writers_.begin();it!=automatic_writers_.end();++it)
             {
                 ParticipantProxyData pdata2;
@@ -565,9 +574,9 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                         wToEraseIt = it;
                         continue;
                     }
-                    if(m_minAutomatic_MilliSec > mintimeWIT)
+                    if(min_automatic_ms_ > mintimeWIT)
                     {
-                        m_minAutomatic_MilliSec = mintimeWIT;
+                        min_automatic_ms_ = mintimeWIT;
                     }
                 }
             }
@@ -577,7 +586,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 if(automatic_liveliness_assertion_!=nullptr)
                 {
                     if(automatic_writers_.size()>0)
-                        automatic_liveliness_assertion_->update_interval_millisec(m_minAutomatic_MilliSec);
+                        automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
                     else
                     {
                         delete(automatic_liveliness_assertion_);
@@ -589,7 +598,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
         }
         else if(wdata.m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
         {
-            m_minManRTPSParticipant_MilliSec = std::numeric_limits<double>::max();
+            min_manual_by_participant_ms_ = std::numeric_limits<double>::max();
             for(t_WIT it= manual_by_participant_writers_.begin();it!=manual_by_participant_writers_.end();++it)
             {
                 ParticipantProxyData pdata2;
@@ -604,9 +613,9 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                         wToEraseIt = it;
                         continue;
                     }
-                    if(m_minManRTPSParticipant_MilliSec > mintimeWIT)
+                    if(min_manual_by_participant_ms_ > mintimeWIT)
                     {
-                        m_minManRTPSParticipant_MilliSec = mintimeWIT;
+                        min_manual_by_participant_ms_ = mintimeWIT;
                     }
                 }
             }
@@ -616,7 +625,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 if(manual_liveliness_assertion_!=nullptr)
                 {
                     if(manual_by_participant_writers_.size()>0)
-                        manual_liveliness_assertion_->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
+                        manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
                     else
                     {
                         delete(manual_liveliness_assertion_);
@@ -638,6 +647,11 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             {
                 manual_by_topic_writers_.erase(wToEraseIt);
             }
+        }
+
+        if (!liveliness_manager_->remove_writer(W->getGuid()))
+        {
+            logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
         }
 
         if(found)
@@ -669,14 +683,14 @@ bool WLP::updateLocalWriter(RTPSWriter* W, const WriterQos& wqos)
             automatic_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
             automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             automatic_liveliness_assertion_->restart_timer();
-            m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
+            min_automatic_ms_ = wAnnouncementPeriodMilliSec;
         }
-        else if(m_minAutomatic_MilliSec > wAnnouncementPeriodMilliSec)
+        else if(min_automatic_ms_ > wAnnouncementPeriodMilliSec)
         {
-            m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
+            min_automatic_ms_ = wAnnouncementPeriodMilliSec;
             automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(automatic_liveliness_assertion_->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+            if(automatic_liveliness_assertion_->getRemainingTimeMilliSec() > min_automatic_ms_)
             {
                 automatic_liveliness_assertion_->cancel_timer();
             }
@@ -690,14 +704,14 @@ bool WLP::updateLocalWriter(RTPSWriter* W, const WriterQos& wqos)
             manual_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
             manual_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             manual_liveliness_assertion_->restart_timer();
-            m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
+            min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
         }
-        else if(m_minManRTPSParticipant_MilliSec > wAnnouncementPeriodMilliSec)
+        else if(min_manual_by_participant_ms_ > wAnnouncementPeriodMilliSec)
         {
-            m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
-            manual_liveliness_assertion_->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
+            min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
+            manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(manual_liveliness_assertion_->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+            if(manual_liveliness_assertion_->getRemainingTimeMilliSec() > min_manual_by_participant_ms_)
             {
                 manual_liveliness_assertion_->cancel_timer();
             }

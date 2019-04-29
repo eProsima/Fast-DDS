@@ -99,10 +99,10 @@ public:
 	 */
 	bool removeLocalWriter(RTPSWriter* W);
 
-	//!MInimum time of the automatic writers liveliness period.
-	double m_minAutomatic_MilliSec;
-	//!Minimum time of the manual by participant writers liveliness period.
-	double m_minManRTPSParticipant_MilliSec;
+    //! Minimum time among liveliness periods of automatic writers, in milliseconds
+    double min_automatic_ms_;
+    //! Minimum time among liveliness periods of manual by participant writers, in milliseconds
+    double min_manual_by_participant_ms_;
 	
 	/**
 	 * Get the builtin protocols

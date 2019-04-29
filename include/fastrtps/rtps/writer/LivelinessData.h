@@ -51,6 +51,28 @@ struct LivelinessData
     ~LivelinessData()
     {}
 
+    /**
+     * @brief Equality operator
+     * @param other Liveliness data to compare to
+     * @return True if equal
+     */
+    bool operator==(const LivelinessData& other) const
+    {
+        return ((writer_guid == other.writer_guid) &&
+                (kind == other.kind) &&
+                (lease_duration == other.lease_duration));
+    }
+
+    /**
+     * @brief Inequality operator
+     * @param other Liveliness data to compare to
+     * @return True if different
+     */
+    bool operator!=(const LivelinessData& other) const
+    {
+        return (!operator==(other));
+    }
+
     //! GUID of the writer
     GUID_t writer_guid;
 

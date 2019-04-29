@@ -93,6 +93,17 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
     wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
     matched_writers.push_back(wp);
 
+    if (liveliness_manager_ != nullptr)
+    {
+        if (!liveliness_manager_->add_writer(
+                    wdata.guid,
+                    wdata.liveliness_kind,
+                    wdata.liveliness_lease_duration))
+        {
+            logError(RTPS_READER, "Writer " << wp->m_att.guid << " could not be added to liveliness manager");
+        }
+    }
+
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;
 }
@@ -119,46 +130,17 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
     lock.unlock();
 
+    if (liveliness_manager_ != nullptr)
+    {
+        if (!liveliness_manager_->remove_writer(wdata.guid))
+        {
+            logError(RTPS_READER, "Writer " << wdata.guid << " could not be removed from liveliness manager");
+        }
+    }
+
     if(wproxy != nullptr)
     {
         delete wproxy;
-        return true;
-    }
-
-    logInfo(RTPS_READER,"Writer Proxy " << wdata.guid << " doesn't exist in reader "<<this->getGuid().entityId);
-    return false;
-}
-
-bool StatefulReader::matched_writer_remove(
-        const RemoteWriterAttributes& wdata,
-        bool deleteWP)
-{
-    WriterProxy *wproxy = nullptr;
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
-
-    //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid(wdata.guid);
-
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
-    {
-        if((*it)->m_att.guid == wdata.guid)
-        {
-            logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
-            wproxy = *it;
-            matched_writers.erase(it);
-            remove_persistence_guid(wdata);
-            break;
-        }
-    }
-
-    lock.unlock();
-
-    if(wproxy != nullptr)
-    {
-        if (deleteWP)
-        {
-            delete(wproxy);
-        }
         return true;
     }
 
@@ -229,6 +211,14 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
+        if (liveliness_manager_ != nullptr)
+        {
+            if (!liveliness_manager_->assert_liveliness(change->writerGUID))
+            {
+                logError(RTPS_READER, "Could not assert liveliness of writer " << change->writerGUID);
+            }
+        }
+
         // Check if CacheChange was received.
         if(!pWP->change_was_received(change->sequenceNumber))
         {
@@ -299,6 +289,14 @@ bool StatefulReader::processDataFragMsg(
 
     if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
     {
+        if (liveliness_manager_ != nullptr)
+        {
+            if (!liveliness_manager_->assert_liveliness(incomingChange->writerGUID))
+            {
+                logError(RTPS_READER, "Could not assert liveliness of writer " << incomingChange->writerGUID);
+            }
+        }
+
         // Check if CacheChange was received.
         if(!pWP->change_was_received(incomingChange->sequenceNumber))
         {
@@ -369,6 +367,14 @@ bool StatefulReader::processHeartbeatMsg(
     if(acceptMsgFrom(writerGUID, &pWP))
     {
         std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
+
+        if (liveliness_manager_ != nullptr)
+        {
+            if (!liveliness_manager_->assert_liveliness(writerGUID))
+            {
+                logError(RTPS_READER, "Could not assert liveliness of writer " << writerGUID);
+            }
+        }
 
         if(pWP->m_lastHeartbeatCount < hbCount)
         {

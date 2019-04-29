@@ -58,18 +58,34 @@ StatelessReader::StatelessReader(
 bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
+        {
             return false;
+        }
     }
 
     getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
 
     logInfo(RTPS_READER,"Writer " << wdata.guid << " added to "<<m_guid.entityId);
+
     m_matched_writers.push_back(wdata);
     add_persistence_guid(wdata);
     m_acceptMessagesFromUnkownWriters = false;
+
+    if (liveliness_manager_ != nullptr)
+    {
+        // Add the matched writer to the liveliness manager too
+        if(!liveliness_manager_->add_writer(
+                    wdata.guid,
+                    wdata.liveliness_kind,
+                    wdata.liveliness_lease_duration))
+        {
+            logError(RTPS_READER, "Could not add writer " << wdata.guid << " to liveliness manager");
+        }
+    }
     return true;
 }
 
@@ -83,6 +99,15 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
             logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
             m_matched_writers.erase(it);
             remove_persistence_guid(wdata);
+
+            //Remove it from the liveliness manager too
+            if (liveliness_manager_ != nullptr)
+            {
+                if(!liveliness_manager_->remove_writer(wdata.guid))
+                {
+                    logError(RTPS_READER, "Could not remove writer " << wdata.guid << " from liveliness manager");
+                }
+            }
             return true;
         }
     }
@@ -175,6 +200,14 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     {
         logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
+        if (liveliness_manager_ != nullptr)
+        {
+            if (!liveliness_manager_->assert_liveliness(change->writerGUID))
+            {
+                logError(RTPS_READER, "Could not assert liveliness of writer " << change->writerGUID);
+            }
+        }
+
         CacheChange_t* change_to_add;
 
         if(reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
@@ -227,7 +260,10 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     return true;
 }
 
-bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t sampleSize, uint32_t fragmentStartingNum)
+bool StatelessReader::processDataFragMsg(
+        CacheChange_t *incomingChange,
+        uint32_t sampleSize,
+        uint32_t fragmentStartingNum)
 {
     assert(incomingChange);
 
@@ -235,6 +271,14 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {
+        if (liveliness_manager_ != nullptr)
+        {
+            if (!liveliness_manager_->assert_liveliness(incomingChange->writerGUID))
+            {
+                logError(RTPS_READER, "Could not assert liveliness of writer " << incomingChange->writerGUID);
+            }
+        }
+
         // Check if CacheChange was received.
         if(!thereIsUpperRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
         {

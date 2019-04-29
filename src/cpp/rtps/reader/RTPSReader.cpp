@@ -23,7 +23,6 @@
 #include "FragmentedChangePitStop.h"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/writer/LivelinessManager.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include "../participant/RTPSParticipantImpl.h"
 

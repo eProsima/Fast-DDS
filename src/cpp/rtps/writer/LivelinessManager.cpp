@@ -24,43 +24,38 @@ LivelinessManager::LivelinessManager(
 LivelinessManager::~LivelinessManager()
 {}
 
-bool LivelinessManager::add_writer(LivelinessData *writer)
+bool LivelinessManager::add_writer(
+        GUID_t guid,
+        LivelinessQosPolicyKind kind,
+        Duration_t lease_duration)
 {
-
-    // Check if the writer is already being managed
-    if (std::find(writers_.begin(),
-                  writers_.end(),
-                  writer) != writers_.end())
+    for (const auto&writer : writers_)
     {
-        return false;
+        if (writer.writer_guid == guid)
+        {
+            return false;
+        }
     }
-
-    writers_.push_back(writer);
-
+    writers_.push_back(LivelinessData(guid, kind, lease_duration));
     return true;
 }
 
-bool LivelinessManager::remove_writer(LivelinessData *writer)
+bool LivelinessManager::remove_writer(GUID_t guid)
 {
-
-    // Check if the writer is being managed
-    auto wit = std::find(writers_.begin(),
-                         writers_.end(),
-                         writer);
-
-    if (wit != writers_.end())
+    for (const auto& writer: writers_)
     {
-        return false;
+        if (writer.writer_guid == guid)
+        {
+            writers_.remove(writer);
+            return true;
+        }
     }
-
-    writers_.erase(wit);
-
-    return true;
+    return false;
 }
 
-void LivelinessManager::assert_liveliness(LivelinessData *writer)
+bool LivelinessManager::assert_liveliness(GUID_t guid)
 {
-
+    return false;
 }
 
 void LivelinessManager::timer_expired()

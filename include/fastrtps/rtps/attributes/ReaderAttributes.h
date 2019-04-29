@@ -23,6 +23,8 @@
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
 #include "EndpointAttributes.h"
+#include "../../qos/QosPolicies.h"
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -98,7 +100,8 @@ class  RemoteWriterAttributes
 {
     public:
         RemoteWriterAttributes()
-            : livelinessLeaseDuration(c_TimeInfinite)
+            : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+            , liveliness_lease_duration(c_TimeInfinite)
             , ownershipStrength(0)
             , is_eprosima_endpoint(true)
         {
@@ -106,7 +109,8 @@ class  RemoteWriterAttributes
         }
 
         RemoteWriterAttributes(const VendorId_t& vendor_id)
-            : livelinessLeaseDuration(c_TimeInfinite)
+            : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+            , liveliness_lease_duration(c_TimeInfinite)
             , ownershipStrength(0)
             , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
         {
@@ -115,7 +119,6 @@ class  RemoteWriterAttributes
 
         virtual ~RemoteWriterAttributes()
         {
-
         }
 
         //!Attributes of the associated endpoint.
@@ -124,8 +127,11 @@ class  RemoteWriterAttributes
         //!GUID_t of the writer, can be unknown if the reader is best effort.
         GUID_t guid;
 
-        //!Liveliness lease duration, default value c_TimeInfinite.
-        Duration_t livelinessLeaseDuration;
+        //! Liveliness kind
+        LivelinessQosPolicyKind liveliness_kind;
+
+        //! Liveliness lease duration, default value c_TimeInfinite.
+        Duration_t liveliness_lease_duration;
 
         //!Ownership Strength of the associated writer.
         uint16_t ownershipStrength;

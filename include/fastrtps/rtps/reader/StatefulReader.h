@@ -61,14 +61,6 @@ class StatefulReader:public RTPSReader
         /**
          * Remove a WriterProxyData from the matached writers.
          * @param wdata Pointer to the WPD object.
-         * @param deleteWP If the Reader has to delete the associated WP object or not.
-         * @return True if correct.
-         */
-        bool matched_writer_remove(const RemoteWriterAttributes& wdata,bool deleteWP);
-
-        /**
-         * Remove a WriterProxyData from the matached writers.
-         * @param wdata Pointer to the WPD object.
          * @return True if correct.
          */
         bool matched_writer_remove(const RemoteWriterAttributes& wdata) override;

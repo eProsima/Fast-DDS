@@ -564,7 +564,8 @@ RemoteWriterAttributes WriterProxyData::toRemoteWriterAttributes() const
     RemoteWriterAttributes remoteAtt;
 
     remoteAtt.guid = m_guid;
-    remoteAtt.livelinessLeaseDuration = m_qos.m_liveliness.lease_duration;
+    remoteAtt.liveliness_kind = m_qos.m_liveliness.kind;
+    remoteAtt.liveliness_lease_duration = m_qos.m_liveliness.lease_duration;
     remoteAtt.ownershipStrength = (uint16_t)m_qos.m_ownershipStrength.value;
     remoteAtt.endpoint.durabilityKind = m_qos.m_durability.durabilityKind();
     remoteAtt.endpoint.endpointKind = WRITER;

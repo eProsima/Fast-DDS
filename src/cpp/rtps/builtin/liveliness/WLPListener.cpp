@@ -38,14 +38,14 @@ namespace fastrtps{
 namespace rtps {
 
 
-WLPListener::WLPListener(WLP* plwp) : mp_WLP(plwp)
+WLPListener::WLPListener(WLP* plwp)
+    : mp_WLP(plwp)
 {
 }
 
 WLPListener::~WLPListener()
 {
 }
-
 
 typedef std::vector<WriterProxy*>::iterator WPIT;
 

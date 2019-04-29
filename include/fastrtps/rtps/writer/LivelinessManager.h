@@ -61,23 +61,29 @@ public:
 
     /**
      * @brief Adds a writer to the set
-     * @param writer The writer to be added
+     * @param guid GUID of the writer
+     * @param kind Liveliness kind
+     * @param lease_duration Liveliness lease duration
      * @return True if the writer was successfully added
      */
-    bool add_writer(LivelinessData* writer);
+    bool add_writer(
+            GUID_t guid,
+            LivelinessQosPolicyKind kind,
+            Duration_t lease_duration);
 
     /**
-     * @brief Removes a writer from the set
-     * @param writer The writer to be removed
+     * @brief Removes a writer
+     * @param guid GUID of the writer
      * @return True if the writer was successfully removed
      */
-    bool remove_writer(LivelinessData* writer);
+    bool remove_writer(GUID_t guid);
 
     /**
      * @brief Asserts liveliness of a writer in the set
-     * @param writer The writer to assert liveliness of
+     * @param guid The writer to assert liveliness of
+     * @return True if liveliness was successfully asserted
      */
-    void assert_liveliness(LivelinessData* writer);
+    bool assert_liveliness(GUID_t guid);
 
 private:
 
@@ -85,7 +91,7 @@ private:
     void timer_expired();
 
     //! A vector of liveliness data
-    ResourceLimitedVector<LivelinessData*> writers_;
+    ResourceLimitedVector<LivelinessData> writers_;
 
     //! A timed callback expiring when a writer (the timer owner) loses its liveliness
     TimedCallback timer_;
