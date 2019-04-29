@@ -154,5 +154,5 @@ BLACKBOXTEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAc
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
     // Block reader until reception finished or timeout.
-    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0);
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
 }
