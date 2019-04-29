@@ -14,7 +14,7 @@
 
 macro(add_blackbox_gtest test memorymode)
     # Parse arguments
-    set(multiValueArgs SOURCES ENVIRONMENTS)
+    set(multiValueArgs SOURCES ENVIRONMENTS LABELS)
     cmake_parse_arguments(GTEST "" "" "${multiValueArgs}" ${ARGN})
 
     if(GTEST_INDIVIDUAL)
@@ -49,6 +49,10 @@ macro(add_blackbox_gtest test memorymode)
                 foreach(property ${GTEST_ENVIRONMENTS})
                     set_property(TEST ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
                 endforeach()
+
+                # Add labels
+                set_property(TEST ${GTEST_GROUP_NAME}_${memorymode}.${GTEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+
             endforeach()
         endforeach()
     else()
@@ -72,6 +76,10 @@ macro(add_blackbox_gtest test memorymode)
         foreach(property ${GTEST_ENVIRONMENTS})
             set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "${property}")
         endforeach()
+
+        # Add labels
+        set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")
+
     endif()
 endmacro()
 
@@ -101,8 +109,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
             types/HelloWorld.cpp
             types/HelloWorldType.cpp
-	    types/KeyedHelloWorld.cpp
-	    types/KeyedHelloWorldType.cpp
+            types/KeyedHelloWorld.cpp
+            types/KeyedHelloWorldType.cpp
             types/String.cpp
             types/StringType.cpp
             types/Data64kb.cpp
@@ -161,6 +169,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
             "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
             "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            LABELS "NoMemoryCheck"
             )
 
         add_executable(BlackboxTests_DynMem ${BLACKBOXTESTS_SOURCE})
@@ -174,6 +183,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
             "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
             "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+            LABELS "NoMemoryCheck"
             )
     endif()
 endif()
