@@ -270,6 +270,12 @@ void StatefulWriter::unsent_change_added_to_history(
 
         if (disable_positive_acks_)
         {
+            auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+            auto now = system_clock::now();
+            auto interval = source_timestamp - now + keep_duration_us_;
+            assert(interval.count() >= 0);
+
+            ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
             ack_timer_->restart_timer();
         }
     }
@@ -1084,6 +1090,7 @@ void StatefulWriter::send_heartbeat_nts_(
     RTPSMessageGroup& message_group,
     bool final)
 {
+
     SequenceNumber_t firstSeq = get_seq_num_min();
     SequenceNumber_t lastSeq = get_seq_num_max();
 
@@ -1278,35 +1285,43 @@ void StatefulWriter::ack_timer_expired()
 {
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
+    // The timer has expired so the earliest non-acked change must be marked as acknowledged
+    // This will be done in the first while iteration, as we start with a negative interval
 
-    // The timer has expired so the earliest non-acked change must have been acked
-    for(ReaderProxy* remote_reader : matched_readers_)
+    auto interval = -keep_duration_us_;
+
+    // On the other hand, we've seen in the tests that if samples are sent very quickly with little
+    // time between consecutive samples, the timer interval could end up being negative
+    // In this case, we keep marking changes as acknowledged until the timer is able to keep up, hence the while
+    // loop
+
+    while (interval.count() < 0)
     {
-        if (remote_reader->reader_attributes().disable_positive_acks)
+        for(ReaderProxy* remote_reader : matched_readers_)
         {
-            remote_reader->acked_changes_set(last_sequence_number_);
+            if (remote_reader->reader_attributes().disable_positive_acks)
+            {
+                remote_reader->acked_changes_set(last_sequence_number_ + 1);
+            }
         }
+        last_sequence_number_++;
+
+        // Get the next cache change from the history
+        CacheChange_t* change;
+
+        if (!mp_history->get_change(
+                    last_sequence_number_,
+                    getGuid(),
+                    &change))
+        {
+            return;
+        }
+
+        auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+        auto now = system_clock::now();
+        interval = source_timestamp - now + keep_duration_us_;
     }
-    last_sequence_number_++;
-
-    // Get the next cache change from the history
-    CacheChange_t* change;
-    if (!mp_history->get_change(
-                last_sequence_number_,
-                getGuid(),
-                &change))
-    {
-        return;
-    }
-
-    auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
-    auto now = system_clock::now();
-    auto interval = source_timestamp - now + keep_duration_us_;
-
-    std::cout << "--- INTERVAL: " << interval.count() << std::endl;
-    std::cout << "--- SOURCE: " << change->sourceTimestamp.to_ns() << std::endl;
-    std::cout << "--- KEEP: " << keep_duration_us_.count() << std::endl;
-    assert(interval.count() > 0);
+    assert(interval.count() >= 0);
 
     ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     ack_timer_->restart_timer();
