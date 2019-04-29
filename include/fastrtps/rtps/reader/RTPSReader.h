@@ -61,9 +61,10 @@ namespace eprosima
                 /**
                  * Add a matched writer represented by its attributes.
                  * @param wdata Attributes of the writer to add.
+                 * @param persist If the Reader must try to recover Writer formered registered state
                  * @return True if correctly added.
                  */
-                RTPS_DllAPI virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
+                RTPS_DllAPI virtual bool matched_writer_add(RemoteWriterAttributes& wdata, bool persist = true) = 0;
 
                 /**
                  * Remove a writer represented by its attributes from the matched writers.
@@ -201,6 +202,8 @@ namespace eprosima
                     m_trustedWriterEntityId = writer;
                 }
 
+                protected:
+
                 /*!
                  * @brief Add a remote writer to the persistence_guid map
                  * @param wdata Info of the remote writer
@@ -213,8 +216,6 @@ namespace eprosima
                 */
                 void remove_persistence_guid(const RemoteWriterAttributes& wdata);
                 
-                protected:
-
                 /*!
                 * @brief Get the last notified sequence for a RTPS guid
                 * @param guid The RTPS guid to query

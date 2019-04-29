@@ -62,7 +62,7 @@ StatefulReader::StatefulReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
 }
 
 
-bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata, bool persist /*=true*/)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
@@ -84,8 +84,12 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 
     wp->mp_initialAcknack->restart_timer();
 
-    add_persistence_guid(wdata);
-    wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+    if (persist)
+    {
+        add_persistence_guid(wdata);
+        wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+    }
+
     matched_writers.push_back(wp);
     logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
     return true;

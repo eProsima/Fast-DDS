@@ -342,17 +342,9 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
             watt.endpoint.remoteLocatorList.push_back(pdata->m_metatrafficMulticastLocatorList);
 
             mp_PDPReader->matched_writer_remove(watt);
-
-            // It's a brand new server without previous knowledge of the discovery state
-            mp_PDPReader->remove_persistence_guid(watt);
-
-            mp_PDPReader->matched_writer_add(watt);
-
-            // the server participant is a new one with new sequence numbers
-            //mp_PDPReader->remove_persistence_guid(watt);
-            //SequenceNumber_t afresh;
-            //mp_PDPReader->set_last_notified(watt.guid, afresh);
-
+            // rematch but discarding any previous state of the server
+            // because we know the server shutdown intencionally (sent a DATA(p[UD]))
+            mp_PDPReader->matched_writer_add(watt,false);
         }
 
         auxendp = endp;

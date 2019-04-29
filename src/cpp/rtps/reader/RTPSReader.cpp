@@ -110,7 +110,6 @@ void RTPSReader::remove_persistence_guid(const RemoteWriterAttributes& wdata)
             history_record_.erase(wdata.endpoint.persistence_guid);
         }
     }
-    history_record_[wdata.guid] = SequenceNumber_t();
 }
 
 SequenceNumber_t RTPSReader::update_last_notified(const GUID_t& guid, const SequenceNumber_t& seq)
