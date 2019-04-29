@@ -253,6 +253,7 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
 elseif(NOT EPROSIMA_INSTALLER)
     #Create library
     add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
+    set_common_compile_options(${PROJECT_NAME})
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
     set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
