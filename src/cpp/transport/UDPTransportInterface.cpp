@@ -623,7 +623,6 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
                                 // Loopback locator
                                 IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
                                 pendingUnicast.push_back(loopbackLocator);
-                                break;
                             }
                             else
                             {
@@ -632,9 +631,9 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
                                 {
                                     // Custom Loopback locator
                                     pendingUnicast.push_back(*it);
-                                    break;
                                 }
                             }
+                            break;
                         }
                     }
 
