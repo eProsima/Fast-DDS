@@ -149,7 +149,7 @@ BLACKBOXTEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAc
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
