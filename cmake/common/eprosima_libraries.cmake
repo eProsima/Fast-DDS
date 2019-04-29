@@ -55,7 +55,11 @@ macro(eprosima_find_package package)
                 foreach(opt_ ${FIND_OPTIONS})
                     set(${opt_} ON)
                 endforeach()
+                # Keep temp value in order to avoid call packages' installer.
+                set(EPROSIMA_INSTALLER_TEMP ${EPROSIMA_INSTALLER})
+                unset(EPROSIMA_INSTALLER CACHE)
                 add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/${package})
+                set(EPROSIMA_INSTALLER ${EPROSIMA_INSTALLER_TEMP})
                 set(${package}_FOUND TRUE)
                 if(NOT IS_TOP_LEVEL)
                     set(${package}_FOUND TRUE PARENT_SCOPE)
@@ -78,7 +82,9 @@ macro(eprosima_find_thirdparty package thirdparty_name)
 
         option(THIRDPARTY_${package} "Activate the use of internal thirdparty ${package}" OFF)
 
-        if(THIRDPARTY OR THIRDPARTY_${package})
+        find_package(${package} QUIET)
+
+        if(NOT ${package}_FOUND AND (THIRDPARTY OR THIRDPARTY_${package}))
             execute_process(
                 COMMAND git submodule update --recursive --init "thirdparty/${thirdparty_name}"
                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -86,14 +92,13 @@ macro(eprosima_find_thirdparty package thirdparty_name)
                 )
 
             if(EXECUTE_RESULT EQUAL 0)
+                set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name})
+                set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name})
+                find_package(${package} REQUIRED)
             else()
                 message(FATAL_ERROR "Cannot configure Git submodule ${package}")
             endif()
-            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name})
-            set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name})
         endif()
-
-        find_package(${package} REQUIRED QUIET)
 
     endif()
 endmacro()

@@ -110,18 +110,48 @@ macro(add_gtest)
         endif()
 
         foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
-            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX ^TEST)
-            foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
-                string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
-                list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
-                list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
-                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
-                    COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_NAMES REGEX ^TEST)
 
-                # Add environment
-                if(WIN32)
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+            # Search for google value-parameterized tests instantiations
+            unset(GTEST_INSTANTATIONS) # list of instantiations names
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_INSTANTIATION_NAMES REGEX ^INSTANTIATE_TEST_CASE_P)
+            foreach(GTEST_INSTANTIATION_NAME ${GTEST_INSTANTIATION_NAMES})
+                # Search and append all instantiation names
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_INSTANTIATION_NAME ${GTEST_INSTANTIATION_NAME})
+                list(GET GTEST_INSTANTIATION_NAME 1 GTEST_INSTANTIATION_NAME)
+                list(APPEND GTEST_INSTANTATIONS ${GTEST_INSTANTIATION_NAME})
+            endforeach()
+
+            foreach(GTEST_NAME ${GTEST_NAMES})
+                unset(GTEST_TEMPLATE_TEST) # flag if current test is a value-parametrized one
+                string(REGEX MATCH ^TEST_P GTEST_TEMPLATE_TEST ${GTEST_NAME})
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_NAME ${GTEST_NAME})
+
+                list(GET GTEST_NAME 1 GTEST_GROUP_NAME)
+                list(GET GTEST_NAME 3 GTEST_NAME)
+                if (GTEST_INSTANTATIONS AND GTEST_TEMPLATE_TEST)
+                    # In case is a value-paremetrized test and there are instantiations generate test calls per instantiation
+                    # Note the /*. This test will execute all the parameters combinations
+                    foreach(GTEST_INSTATATION_NAME ${GTEST_INSTANTATIONS})
+                        add_test(NAME ${GTEST_INSTATATION_NAME}.${GTEST_GROUP_NAME}.${GTEST_NAME}
+                            COMMAND ${test}
+                            --gtest_filter=${GTEST_INSTATATION_NAME}/${GTEST_GROUP_NAME}.${GTEST_NAME}/*)
+                        # Add environment
+                        if(WIN32)
+                            set_property(TEST ${GTEST_INSTATATION_NAME}.${GTEST_GROUP_NAME}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                        endif()
+                    endforeach()
+
+                else()
+                    add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_NAME}
+                        COMMAND ${test}
+                        --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_NAME})
+                    # Add environment
+                    if(WIN32)
+                        set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    endif()
                 endif()
+
 
                 foreach(property ${GTEST_ENVIRONMENTS})
                     set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
