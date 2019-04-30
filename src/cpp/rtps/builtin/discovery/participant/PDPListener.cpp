@@ -95,13 +95,8 @@ void PDPListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t*
             if(pdata == nullptr)
             {
                 //IF WE DIDNT FOUND IT WE MUST CREATE A NEW ONE
-                pdata = new ParticipantProxyData(participant_data);
-                pdata->isAlive = true;
-                pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_PDP,
-                        pdata,
-                        TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
-                pdata->mp_leaseDurationTimer->restart_timer();
-                this->mp_PDP->m_participantProxies.push_back(pdata);
+                pdata = mp_PDP->createParticipantProxyData(participant_data, *change);
+
                 lock.unlock();
 
                 mp_PDP->announceParticipantState(false);

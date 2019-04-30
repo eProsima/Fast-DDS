@@ -46,6 +46,7 @@ class ParticipantProxyData;
 class ReaderListener;
 class PDPListener;
 class PDPServerListener;
+class ResendParticipantProxyDataPeriod;
 
 
 /**
@@ -55,6 +56,7 @@ class PDPServerListener;
  */
 class PDP  
 {
+    friend class ResendRTPSParticipantProxyDataPeriod;
     friend class RemoteRTPSParticipantLeaseDuration;
     friend class PDPListener;
     friend class PDPServerListener;
@@ -77,6 +79,14 @@ class PDP
     virtual bool initPDP(RTPSParticipantImpl* part);
 
     /**
+     * Creates an initializes a new participant proxy from a DATA(p) raw info
+     * @param ParticipantProxyData from DATA msg deserialization
+     * @param CacheChange_t from DATA msg
+     * @return new ParticipantProxyData * or nullptr on failure
+     */
+    virtual ParticipantProxyData * createParticipantProxyData(const ParticipantProxyData &, const CacheChange_t &) = 0;
+
+    /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
@@ -85,10 +95,10 @@ class PDP
     virtual void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);
 
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
-    virtual void stopParticipantAnnouncement() = 0;
+    virtual void stopParticipantAnnouncement();
 
     //!Reset the RTPSParticipantAnnouncement (only used in tests).
-    virtual void resetParticipantAnnouncement() = 0;
+    virtual void resetParticipantAnnouncement();
 
     /**
      * Add a ReaderProxyData to the correct ParticipantProxyData.
@@ -238,6 +248,8 @@ class PDP
     CDRMessage_t get_participant_proxy_data_serialized(Endianness_t endian);
 
     protected:
+    //!TimedEvent to periodically resend the local RTPSParticipant information.
+    ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
     //!Pointer to the local RTPSParticipant.
     RTPSParticipantImpl* mp_RTPSParticipant;
     //!Discovery attributes.

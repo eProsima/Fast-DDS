@@ -31,7 +31,6 @@ namespace rtps {
 
 class StatelessWriter;
 class StatelessReader;
-class ResendParticipantProxyDataPeriod;
 
 /**
  * Class PDPSimple that implements the SimpleRTPSParticipantDiscoveryProtocol as defined in the RTPS specification.
@@ -39,8 +38,6 @@ class ResendParticipantProxyDataPeriod;
  */
 class PDPSimple : public PDP
 {
-    friend class ResendRTPSParticipantProxyDataPeriod;
-
     public:
     /**
      * Constructor
@@ -59,6 +56,14 @@ class PDPSimple : public PDP
     bool initPDP(RTPSParticipantImpl* part) override;
 
     /**
+     * Creates an initializes a new participant proxy from a DATA(p) raw info
+     * @param ParticipantProxyData from DATA msg deserialization
+     * @param CacheChange_t from DATA msg
+     * @return new ParticipantProxyData * or nullptr on failure
+     */
+    ParticipantProxyData * createParticipantProxyData(const ParticipantProxyData &, const CacheChange_t &) override;
+
+    /**
      * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
      * @return true if EDP endpoinst must be match
      */
@@ -71,11 +76,6 @@ class PDPSimple : public PDP
      */
     void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
-    //!Stop the RTPSParticipantAnnouncement (only used in tests).
-    void stopParticipantAnnouncement() override;
-    //!Reset the RTPSParticipantAnnouncement (only used in tests).
-    void resetParticipantAnnouncement() override;
-
     /**
      * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
@@ -87,9 +87,6 @@ class PDPSimple : public PDP
     void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
 
     private:
-
-    //!TimedEvent to periodically resend the local RTPSParticipant information.
-    ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
 
     /**
      * Create the SPDP Writer and Reader

@@ -64,6 +64,14 @@ class PDPClient : public PDP
     bool initPDP(RTPSParticipantImpl* part) override;
 
     /**
+     * Creates an initializes a new participant proxy from a DATA(p) raw info
+     * @param ParticipantProxyData from DATA msg deserialization
+     * @param CacheChange_t from DATA msg
+     * @return new ParticipantProxyData * or nullptr on failure
+     */
+    ParticipantProxyData * createParticipantProxyData(const ParticipantProxyData &, const CacheChange_t &) override;
+
+    /**
      * Create the SPDP Writer and Reader
      * @return True if correct.
      */

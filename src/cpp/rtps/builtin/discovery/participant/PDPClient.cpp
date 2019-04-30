@@ -20,6 +20,7 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPClient.h>
 
@@ -155,6 +156,42 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
     mp_sync->restart_timer();
 
     return true;
+}
+
+ParticipantProxyData * PDPClient::createParticipantProxyData(const ParticipantProxyData & participant_data, const CacheChange_t &)
+{
+    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+    // Verify if this participant is a server
+    bool is_server = false;
+    for (auto & svr : mp_builtin->m_DiscoveryServers)
+    {
+        if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+        {
+            is_server = true;
+        }
+    }
+
+    ParticipantProxyData * pdata = new ParticipantProxyData(participant_data);
+    pdata->isAlive = true;
+
+    // Clients only assert its server lifeliness, other clients liveliness is provided
+    // through server's PDP discovery data
+    if (is_server)
+    {
+        pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(this,
+            pdata,
+            TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
+        pdata->mp_leaseDurationTimer->restart_timer();
+    }
+    else
+    {
+        pdata->mp_leaseDurationTimer = nullptr;
+    }
+
+    m_participantProxies.push_back(pdata);
+
+    return pdata;
 }
 
 

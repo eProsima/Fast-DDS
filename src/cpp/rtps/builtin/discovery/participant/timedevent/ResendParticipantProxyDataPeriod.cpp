@@ -31,7 +31,7 @@ namespace fastrtps{
 namespace rtps {
 
 
-ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
+ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDP* p_SPDP,
         double interval):
     TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
             p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
@@ -61,7 +61,7 @@ void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
         mp_PDP->getMutex()->unlock();
         mp_PDP->announceParticipantState(false);
 
-        this->restart_timer();
+        restart_timer();
     }
     else if(code == EVENT_ABORT)
     {

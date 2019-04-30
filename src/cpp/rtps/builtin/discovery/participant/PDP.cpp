@@ -81,13 +81,17 @@ PDP::PDP(BuiltinProtocols* built):
     mp_listener(nullptr),
     mp_PDPWriterHistory(nullptr),
     mp_PDPReaderHistory(nullptr),
-    mp_mutex(new std::recursive_mutex())
+    mp_mutex(new std::recursive_mutex()),
+    mp_resendParticipantTimer(nullptr)
     {
 
     }
 
 PDP::~PDP()
 {
+    if (mp_resendParticipantTimer != nullptr)
+        delete(mp_resendParticipantTimer);
+
     mp_RTPSParticipant->disableReader(mp_PDPReader);
 
     if(mp_EDP!=nullptr)
@@ -206,6 +210,8 @@ bool PDP::initPDP(RTPSParticipantImpl* part)
     if(!mp_RTPSParticipant->enableReader(mp_PDPReader))
         return false;
 
+    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
+
     return true;
 }
 
@@ -294,6 +300,16 @@ void PDP::announceParticipantState(bool new_change, bool dispose, WriteParams& w
         }
     }
 
+}
+
+void PDP::stopParticipantAnnouncement()
+{
+    mp_resendParticipantTimer->cancel_timer();
+}
+
+void PDP::resetParticipantAnnouncement()
+{
+    mp_resendParticipantTimer->restart_timer();
 }
 
 bool PDP::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata, ParticipantProxyData& pdata)

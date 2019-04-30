@@ -35,7 +35,9 @@
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPServerListener.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPServer.h>
+
 
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 
@@ -90,6 +92,48 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
     // and queueParticipantForEDPMatch
     
     return true;
+}
+
+ParticipantProxyData * PDPServer::createParticipantProxyData(const ParticipantProxyData & participant_data, const CacheChange_t & change)
+{
+    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+    // lease duration is controlled for owned clients or linked servers
+    // other clients liveliness is provided through server's PDP discovery data
+
+    // check if the DATA msg is relayed by another server
+    bool do_lease = participant_data.m_guid.guidPrefix == change.writerGUID.guidPrefix;
+
+    if (!do_lease)
+    {
+        // if not a client verify this participant is a server
+        for (auto & svr : mp_builtin->m_DiscoveryServers)
+        {
+            if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
+            {
+                do_lease = true;
+            }
+        }
+    }
+
+    ParticipantProxyData * pdata = new ParticipantProxyData(participant_data);
+    pdata->isAlive = true;
+
+    if (do_lease)
+    {
+        pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(this,
+            pdata,
+            TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
+        pdata->mp_leaseDurationTimer->restart_timer();
+    }
+    else
+    {
+        pdata->mp_leaseDurationTimer = nullptr;
+    }
+
+    m_participantProxies.push_back(pdata);
+
+    return pdata;
 }
 
 bool PDPServer::createPDPEndpoints()
@@ -334,7 +378,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
         if (is_server)
         {
-            mp_PDPReader->matched_writer_add(watt);
+            mp_PDPReader->matched_writer_add(watt,false);
         }
 
     }

@@ -21,7 +21,6 @@
 #include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h>
 #include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
@@ -57,16 +56,13 @@ namespace rtps {
 
 
 PDPSimple::PDPSimple(BuiltinProtocols* built):
-    PDP(built),
-    mp_resendParticipantTimer(nullptr)
+    PDP(built)
     {
 
     }
 
 PDPSimple::~PDPSimple()
 {
-    if(mp_resendParticipantTimer != nullptr)
-        delete(mp_resendParticipantTimer);
 }
 
 void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant_data)
@@ -139,9 +135,22 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
         return false;
     }
 
-    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
-
     return true;
+}
+
+ParticipantProxyData * PDPSimple::createParticipantProxyData(const ParticipantProxyData & participant_data, const CacheChange_t &)
+{
+    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+    ParticipantProxyData * pdata = new ParticipantProxyData(participant_data);
+    pdata->isAlive = true;
+    pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(this,
+        pdata,
+        TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
+    pdata->mp_leaseDurationTimer->restart_timer();
+    m_participantProxies.push_back(pdata);
+
+    return pdata;
 }
 
 // EDPStatic requires matching on ParticipantProxyData property updates
@@ -168,17 +177,6 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose, WritePar
         }
     }
 }
-
-void PDPSimple::stopParticipantAnnouncement()
-{
-    mp_resendParticipantTimer->cancel_timer();
-}
-
-void PDPSimple::resetParticipantAnnouncement()
-{
-    mp_resendParticipantTimer->restart_timer();
-}
-
 
 bool PDPSimple::createPDPEndpoints()
 {
