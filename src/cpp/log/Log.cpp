@@ -198,16 +198,9 @@ void Log::GetTimestamp(std::string &timestamp)
     tp -= std::chrono::duration_cast<std::chrono::seconds>(tp);
     auto ms = static_cast<unsigned>(tp / std::chrono::milliseconds(1));
 
-#if defined(_WIN32)
-    struct tm timeinfo;
-    localtime_s(&timeinfo, &now_c);
-    stream << std::put_time(&timeinfo, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
-//#elif defined(__clang__) && !defined(std::put_time) // TODO arm64 doesn't seem to support std::put_time
-//    (void)now_c;
-//    (void)ms;
-#else
-    stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
-#endif
+    char time_str[20];
+    std::strftime(time_str, sizeof(time_str), "%F %T", std::localtime(&now_c));
+    stream << time_str << "." << std::setw(3) << std::setfill('0') << ms << " ";
     timestamp = stream.str();
 }
 
