@@ -108,6 +108,11 @@ StatefulWriter::~StatefulWriter()
 
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
+    if (disable_positive_acks_)
+    {
+        delete ack_timer_;
+    }
+
     // Stop all active proxies and pass them to the pool
     while (!matched_readers_.empty())
     {
