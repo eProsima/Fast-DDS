@@ -564,6 +564,7 @@ RemoteReaderAttributes ReaderProxyData::toRemoteReaderAttributes() const
     remoteAtt.endpoint.reliabilityKind = m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     remoteAtt.endpoint.unicastLocatorList = this->m_unicastLocatorList;
     remoteAtt.endpoint.multicastLocatorList = this->m_multicastLocatorList;
+    remoteAtt.disable_positive_acks = m_qos.m_disablePositiveACKs.enabled;
 
     return remoteAtt;
 }
