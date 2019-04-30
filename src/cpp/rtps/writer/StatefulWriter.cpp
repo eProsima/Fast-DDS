@@ -63,6 +63,7 @@ StatefulWriter::StatefulWriter(
     , m_times(att.times)
     , matched_readers_(att.matched_readers_allocation)
     , matched_readers_pool_(att.matched_readers_allocation)
+    , next_all_acked_notify_sequence_(0, 1)
     , all_acked_(false)
     , may_remove_change_cond_()
     , may_remove_change_(0)
@@ -77,11 +78,6 @@ StatefulWriter::StatefulWriter(
     , m_controllers()
 {
     m_heartbeatCount = 0;
-    m_HBReaderEntityId =
-        (guid.entityId == c_EntityId_SEDPPubWriter)    ? c_EntityId_SEDPPubReader :
-        (guid.entityId == c_EntityId_SEDPSubWriter)    ? c_EntityId_SEDPSubReader :
-        (guid.entityId == c_EntityId_WriterLiveliness) ? c_EntityId_ReaderLiveliness :
-                                                         c_EntityId_Unknown;
 
     mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
     nack_response_event_ = new NackResponseDelay(this, TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
@@ -886,7 +882,7 @@ void StatefulWriter::check_acked_status()
         // Inform of samples acked.
         if(mp_listener != nullptr)
         {
-            for(SequenceNumber_t current_seq = get_seq_num_min(); current_seq <= min_low_mark; ++current_seq)
+            for(SequenceNumber_t current_seq = next_all_acked_notify_sequence_; current_seq <= min_low_mark; ++current_seq)
             {
                 std::vector<CacheChange_t*>::iterator history_end = mp_history->changesEnd();
                 std::vector<CacheChange_t*>::iterator cit = std::find_if(mp_history->changesBegin(), history_end,
@@ -899,6 +895,8 @@ void StatefulWriter::check_acked_status()
                     mp_listener->onWriterChangeReceivedByAll(this, *cit);
                 }
             }
+
+            next_all_acked_notify_sequence_ = min_low_mark + 1;
         }
 
         SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
