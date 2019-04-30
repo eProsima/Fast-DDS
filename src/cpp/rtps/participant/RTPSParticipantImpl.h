@@ -333,6 +333,14 @@ private:
         */
     Locator_t& applyLocatorAdaptRule(Locator_t &loc);
 
+    /**
+     * Update port for all endpoint locators when it has a value of 0 and then
+     * apply locator normalization.
+     *
+     * @param [in, out] endpoint_att  EndpointAttributes to be updated
+     */
+    void normalize_endpoint_locators(EndpointAttributes& endpoint_att);
+
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
 
