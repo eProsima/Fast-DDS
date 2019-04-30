@@ -213,7 +213,7 @@ bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
     return true;
 }
 
-bool StatelessWriter::is_acked_by_all(const CacheChange_t* change)
+bool StatelessWriter::is_acked_by_all(const CacheChange_t* change) const
 {
     // Only asynchronous writers may have unacked (i.e. unsent changes)
     if (isAsync())
@@ -235,7 +235,7 @@ bool StatelessWriter::is_acked_by_all(const CacheChange_t* change)
 }
 
 void StatelessWriter::update_unsent_changes(
-        const SequenceNumber_t& seq_num, 
+        const SequenceNumber_t& seq_num,
         const FragmentNumber_t& frag_num)
 {
     auto find_by_seq_num = [seq_num](const ChangeForReader_t& unsent_change)

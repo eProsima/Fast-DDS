@@ -98,9 +98,12 @@ namespace eprosima
                 /**
                  * Constructor with payload size
                  * @param payload_size Serialized payload size
+                 * @param is_untyped Flag to mark the change as untyped.
                  */
                 // TODO Check pass uint32_t to serializedPayload that needs int16_t.
-                CacheChange_t(uint32_t payload_size, bool is_untyped = false):
+                CacheChange_t(
+                        uint32_t payload_size,
+                        bool is_untyped = false):
                     kind(ALIVE),
                     serializedPayload(payload_size),
                     isRead(false),
@@ -159,7 +162,7 @@ namespace eprosima
                 }
 
                 uint32_t getFragmentCount() const
-                { 
+                {
                     return (uint32_t)dataFragments_->size();
                 }
 

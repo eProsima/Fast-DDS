@@ -90,6 +90,7 @@ class XMLParser
     /**
      * Load a XML file.
      * @param filename Name for the file to be loaded.
+     * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXML(
@@ -100,6 +101,7 @@ class XMLParser
      * Load a XML data from buffer.
      * @param data XML data to load.
      * @param length Length of the XML data.
+     * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXML(
@@ -110,6 +112,7 @@ class XMLParser
     /**
      * Load a XML node.
      * @param xmlDoc Node to be loaded.
+     * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXML(
@@ -119,6 +122,7 @@ class XMLParser
     /**
      * Load a XML node.
      * @param profiles Node to be loaded.
+     * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLProfiles(

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file Authentication.h	
+ * @file Authentication.h
  */
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTRANSFORM_H_
@@ -34,11 +34,11 @@ class CryptoTransform
         virtual ~CryptoTransform(){}
         /**
          * Serializes the payload sent by the user with a Datawriter.
-         * @param encoded_buffer (out) Result of the encryption
+         * @param encoded_payload (out) Result of the encryption
          * @param extra_inline_qos (out) Contains additional parameters to be added to the inlineQos of the submessage
-         * @param plain_buffer Plain input buffer
+         * @param payload Plain input buffer
          * @param sending_datawriter_crypto Returned by a prior call to register_local_datawriter
-         * @param exception (out) Security exception 
+         * @param exception (out) Security exception
          * @return TRUE if successful
          */
         virtual bool encode_serialized_payload(
@@ -113,7 +113,7 @@ class CryptoTransform
 
         /**
          * Determines whether the secure submessage comes from a datawriter or a data reader and extracts the required CryptoHandle to decode it.
-         * @param datawriter_crypt (out) Crypto of the sending datawriter, if applicable
+         * @param datawriter_crypto (out) Crypto of the sending datawriter, if applicable
          * @param datareader_crypto (out) Crypto of the sending datareader, if applicable
          * @param secure_submessage_category (out) Specifies wether the message comes from a datawriter or from a datareader
          * @param encoded_rtps_submessage encoded input submessage
@@ -133,7 +133,7 @@ class CryptoTransform
 
         /**
          * Called after prprocess_secure_submessage when the submessage category is DATAWRITER_SUBMESSAGE
-         * @param plain_rtps_message (out) Result of the decryption
+         * @param plain_rtps_submessage (out) Result of the decryption
          * @param encoded_rtps_submessage Encoded message
          * @param receiving_datareader_crypto Crypto of the target datareader
          * @param sending_datawriter_crypto Crypto of the datawriter that sent the message
@@ -165,9 +165,9 @@ class CryptoTransform
 
         /**
          * Undoes the decryption transformation made on the writer side.
-         * @param plain_buffer (out) Result of the decryption
-         * @param encoded_buffer Encoded input buffer
-         * @param inline_qos Coming from the data message that carries the target payload 
+         * @param plain_payload (out) Result of the decryption
+         * @param encoded_payload Encoded input buffer
+         * @param inline_qos Coming from the data message that carries the target payload
          * @param receiving_datareader_crypto Crypto of the target datareader
          * @param sending_datawriter_crypto Crypto of the datawriter that sent the message
          * @param exception (out) Security exception

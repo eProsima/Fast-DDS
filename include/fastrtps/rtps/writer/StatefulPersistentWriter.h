@@ -45,6 +45,7 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
     /**
      * Add a specific change to all ReaderLocators.
      * @param p Pointer to the change.
+     * @param max_blocking_time
      */
     void unsent_change_added_to_history(
             CacheChange_t* p,

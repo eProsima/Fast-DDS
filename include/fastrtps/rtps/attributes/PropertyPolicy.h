@@ -29,7 +29,6 @@ namespace rtps {
 class PropertyPolicy
 {
     public:
-
         RTPS_DllAPI PropertyPolicy() {}
 
         RTPS_DllAPI PropertyPolicy(const PropertyPolicy& property_policy) :
@@ -57,31 +56,34 @@ class PropertyPolicy
         RTPS_DllAPI bool operator==(const PropertyPolicy& b) const
         {
             return (this->properties_ == b.properties_) &&
-                   (this->binary_properties_ == b.binary_properties_);
+                    (this->binary_properties_ == b.binary_properties_);
         }
 
+        //!Get properties
         RTPS_DllAPI const PropertySeq& properties() const
         {
             return properties_;
         }
 
+        //!Set properties
         RTPS_DllAPI PropertySeq& properties()
         {
             return properties_;
         }
 
+        //!Get binary_properties
         RTPS_DllAPI const BinaryPropertySeq& binary_properties() const
         {
             return binary_properties_;
         }
 
+        //!Set binary_properties
         RTPS_DllAPI BinaryPropertySeq& binary_properties()
         {
             return binary_properties_;
         }
 
     private:
-
         PropertySeq properties_;
 
         BinaryPropertySeq binary_properties_;
@@ -90,22 +92,29 @@ class PropertyPolicy
 class PropertyPolicyHelper
 {
     public:
-
         /*!
-         * @brief Returns only the properties whose name starts with the prefix.
-         * Prefix is removed in returned properties.
-         * @param property_policy PropertyPolicy where properties will be searched.
-         * @param prefix Prefix used to search properties.
-         * @return A copy of properties whose name starts with the prefix.
-         */
-        RTPS_DllAPI static PropertyPolicy get_properties_with_prefix(const PropertyPolicy& property_policy,
+        * @brief Returns only the properties whose name starts with the prefix.
+        * Prefix is removed in returned properties.
+        * @param property_policy PropertyPolicy where properties will be searched.
+        * @param prefix Prefix used to search properties.
+        * @return A copy of properties whose name starts with the prefix.
+        */
+        RTPS_DllAPI static PropertyPolicy get_properties_with_prefix(
+                const PropertyPolicy& property_policy,
                 const std::string& prefix);
 
+        //!Get the length of the property_policy
         RTPS_DllAPI static size_t length(const PropertyPolicy& property_policy);
 
-        RTPS_DllAPI static std::string* find_property(PropertyPolicy& property_policy, const std::string& name);
+        //!Look for a property_policy by name
+        RTPS_DllAPI static std::string* find_property(
+                PropertyPolicy& property_policy,
+                const std::string& name);
 
-        RTPS_DllAPI static const std::string* find_property(const PropertyPolicy& property_policy, const std::string& name);
+        //!Retrieves a property_policy by name
+        RTPS_DllAPI static const std::string* find_property(
+                const PropertyPolicy& property_policy,
+                const std::string& name);
 };
 
 } //namespace rtps

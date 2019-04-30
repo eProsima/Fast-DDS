@@ -245,6 +245,7 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     }
     getSocketPtr(socket)->set_option(ip::multicast::hops(configuration()->TTL));
     getSocketPtr(socket)->bind(endpoint);
+    getSocketPtr(socket)->non_blocking(true);
 
     if (port == 0)
     {
@@ -559,7 +560,20 @@ bool UDPTransportInterface::send(
 
         try
         {
-            bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer, send_buffer_size), destinationEndpoint);
+            asio::error_code ec;
+            bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer, send_buffer_size), destinationEndpoint, 0, ec);
+            if(!!ec)
+            {
+                if ((ec.value() == asio::error::would_block) ||
+                    (ec.value() == asio::error::try_again))
+                {
+                    logWarning(RTPS_MSG_OUT, "UDP send would have blocked. Packet is dropped.");
+                    return true;
+                }
+
+                logWarning(RTPS_MSG_OUT, ec.message());
+                return false;
+            }
         }
         catch (const std::exception& error)
         {

@@ -42,7 +42,6 @@ public:
      * Construct a NackSupressionDuration event.
      *
      * @param writer           Pointer to the StatefulWriter creating this event
-     * @param reader_guid      GUID of the related reader proxy
      * @param interval_in_ms   Event interval in miliseconds
      */
     NackSupressionDuration(
@@ -58,7 +57,7 @@ public:
      * @param msg Message associated to the event
      */
     void event(
-            EventCode code, 
+            EventCode code,
             const char* msg = nullptr) override;
 
     /**

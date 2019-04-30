@@ -69,6 +69,7 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
+    //!Move constructor
     Locator_t(Locator_t&& loc)
         : kind(loc.kind)
     {
@@ -76,6 +77,7 @@ public:
         std::memcpy(address, loc.address, 16 * sizeof(octet));
     }
 
+    //!Copy constructor
     Locator_t(const Locator_t& loc)
         : kind(loc.kind)
     {
@@ -83,6 +85,7 @@ public:
         std::memcpy(address, loc.address, 16 * sizeof(octet));
     }
 
+    //!Port constructor
     Locator_t(uint32_t portin)
         : kind(LOCATOR_KIND_UDPv4)
     {
@@ -90,7 +93,10 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
-    Locator_t(int32_t kindin, uint32_t portin)
+    //!Kind and port constructor
+    Locator_t(
+            int32_t kindin,
+            uint32_t portin)
         : kind(kindin)
     {
         port = portin;
@@ -196,11 +202,8 @@ inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
     return output;
 }
 
-
-
 typedef std::vector<Locator_t>::iterator LocatorListIterator;
 typedef std::vector<Locator_t>::const_iterator LocatorListConstIterator;
-
 
 /**
     * Class LocatorList_t, a Locator_t vector that doesn't avoid duplicates.

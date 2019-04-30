@@ -156,7 +156,6 @@ class StatefulReader : public RTPSReader
          * and depending on the implementation performs different actions.
          * @param a_change Pointer of the change to add.
          * @param prox Pointer to the WriterProxy that adds the Change.
-         * @param lock mutex protecting the StatefulReader.
          * @return True if added.
          */
         bool change_received(

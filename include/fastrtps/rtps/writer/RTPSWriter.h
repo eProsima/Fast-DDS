@@ -50,7 +50,7 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
-    protected:
+protected:
     RTPSWriter(
             RTPSParticipantImpl*,
             const GUID_t& guid,
@@ -63,12 +63,16 @@ public:
 
     /**
      * Create a new change based with the provided changeKind.
+     * @param data Data of the change.
      * @param changeKind The type of change.
      * @param handle InstanceHandle to assign.
      * @return Pointer to the CacheChange or nullptr if incorrect.
      */
     template<typename T>
-    CacheChange_t* new_change(T &data, ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown)
+    CacheChange_t* new_change(
+            T &data,
+            ChangeKind_t changeKind,
+            InstanceHandle_t handle = c_InstanceHandle_Unknown)
     {
         return new_change([data]() -> uint32_t {return (uint32_t)T::getCdrSerializedSize(data);}, changeKind, handle);
     }
@@ -90,19 +94,25 @@ public:
      * @return True if removed.
      */
     RTPS_DllAPI virtual bool matched_reader_remove(const GUID_t& reader_guid) = 0;
+
     /**
      * Tells us if a specific Reader is matched against this writer.
      * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
     RTPS_DllAPI virtual bool matched_reader_is_matched(const GUID_t& reader_guid) = 0;
+
     /**
     * Check if a specific change has been acknowledged by all Readers.
     * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
     * @return True if acknowledged by all.
     */
-    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) { return false; }
+    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) const { return false; }
 
+    /**
+    * Waits until all changes were acknowledged or max_wait.
+    * @return True if all were acknowledged.
+    */
     RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/) { return true; }
 
     /**
@@ -110,6 +120,7 @@ public:
      * @param att New attributes
      */
     RTPS_DllAPI virtual void updateAttributes(const WriterAttributes& att) = 0;
+
     /**
      * This method triggers the send operation for unsent changes.
      * @return number of messages sent
@@ -134,46 +145,57 @@ public:
      */
     RTPS_DllAPI uint32_t getTypeMaxSerialized();
 
+    //!Get maximum size of the data
     uint32_t getMaxDataSize();
 
+    //! Calculates the maximum size of the data
     uint32_t calculateMaxDataSize(uint32_t length);
 
     /**
      * Get listener
      * @return Listener
      */
-    RTPS_DllAPI inline WriterListener* getListener(){ return mp_listener; };
+    RTPS_DllAPI inline WriterListener* getListener() { return mp_listener; }
 
     /**
      * Get the asserted liveliness
      * @return Asserted liveliness
      */
-    RTPS_DllAPI inline bool getLivelinessAsserted() { return m_livelinessAsserted; };
+    RTPS_DllAPI inline bool getLivelinessAsserted() { return m_livelinessAsserted; }
 
     /**
-     * Get the asserted liveliness
+     * Set the asserted liveliness
+     * @param l asserted liveliness
      * @return asserted liveliness
      */
-    RTPS_DllAPI inline void setLivelinessAsserted(bool l){ m_livelinessAsserted = l; };
+    RTPS_DllAPI inline void setLivelinessAsserted(bool l) { m_livelinessAsserted = l; }
 
     /**
      * Get the publication mode
      * @return publication mode
      */
-    RTPS_DllAPI inline bool isAsync() const { return is_async_; };
+    RTPS_DllAPI inline bool isAsync() const { return is_async_; }
 
     /**
      * Remove an specified max number of changes
+     * @param max Maximum number of changes to remove.
      * @return at least one change has been removed
      */
     RTPS_DllAPI bool remove_older_changes(unsigned int max = 0);
 
+    /**
+     * Tries to remove a change waiting a maximum of the provided microseconds.
+     * @param max_blocking_time_point Maximum time to wait for.
+     * @param lock Lock of the Change list.
+     * @return at least one change has been removed
+     */
     virtual bool try_remove_change(
             std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<std::recursive_timed_mutex>& lock) = 0;
 
     /*
      * Adds a flow controller that will apply to this writer exclusively.
+     * @param controller
      */
     virtual void add_flow_controller(std::unique_ptr<FlowController> controller) = 0;
 
@@ -181,7 +203,7 @@ public:
      * Get RTPS participant
      * @return RTPS participant
      */
-    inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
+    inline RTPSParticipantImpl* getRTPSParticipant() const { return mp_RTPSParticipant; }
 
     /**
      * Enable or disable sending data to readers separately
@@ -198,17 +220,17 @@ public:
 
     /**
      * Process an incoming ACKNACK submessage.
-     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
-     * @param reader_guid[in]      GUID of the reader originating the submessage.
-     * @param ack_count[in]        Count field of the submessage.
-     * @param sn_set[in]           Sequence number bitmap field of the submessage.
-     * @param final_flag[in]       Final flag field of the submessage.
-     * @param result[out]          true if the writer could process the submessage. 
+     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
+     * @param[in] reader_guid      GUID of the reader originating the submessage.
+     * @param[in] ack_count        Count field of the submessage.
+     * @param[in] sn_set           Sequence number bitmap field of the submessage.
+     * @param[in] final_flag       Final flag field of the submessage.
+     * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     virtual bool process_acknack(
-            const GUID_t& writer_guid, 
+            const GUID_t& writer_guid,
             const GUID_t& reader_guid,
             uint32_t ack_count,
             const SequenceNumberSet_t& sn_set,
@@ -223,21 +245,21 @@ public:
 
     /**
      * Process an incoming NACKFRAG submessage.
-     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
-     * @param reader_guid[in]      GUID of the reader originating the submessage.
-     * @param ack_count[in]        Count field of the submessage.
-     * @param seq_num[in]          Sequence number field of the submessage.
-     * @param fragments_state[in]  Fragment number bitmap field of the submessage.
-     * @param result[out]          true if the writer could process the submessage. 
+     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
+     * @param[in] reader_guid      GUID of the reader originating the submessage.
+     * @param[in] ack_count        Count field of the submessage.
+     * @param[in] seq_num          Sequence number field of the submessage.
+     * @param[in] fragments_state  Fragment number bitmap field of the submessage.
+     * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     virtual bool process_nack_frag(
-            const GUID_t& writer_guid, 
+            const GUID_t& writer_guid,
             const GUID_t& reader_guid,
-            uint32_t ack_count, 
-            const SequenceNumber_t& seq_num, 
-            const FragmentNumberSet_t fragments_state, 
+            uint32_t ack_count,
+            const SequenceNumber_t& seq_num,
+            const FragmentNumberSet_t fragments_state,
             bool& result)
     {
         (void)reader_guid; (void)ack_count; (void)seq_num; (void)fragments_state;
@@ -322,6 +344,7 @@ protected:
     /**
      * Add a change to the unsent list.
      * @param change Pointer to the change to add.
+     * @param max_blocking_time
      */
     virtual void unsent_change_added_to_history(
             CacheChange_t* change,
@@ -344,6 +367,7 @@ private:
 
     RTPSWriter& operator=(const RTPSWriter&) = delete;
 };
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

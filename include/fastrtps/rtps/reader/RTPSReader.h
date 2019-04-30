@@ -96,7 +96,8 @@ public:
     RTPS_DllAPI virtual bool processDataMsg(CacheChange_t* change) = 0;
 
     /**
-     * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+     * Processes a new DATA FRAG message. Previously the message must have been accepted by function
+     * acceptMsgDirectedTo.
      *
      * @param change Pointer to the CacheChange_t.
      * @param sampleSize Size of the complete, assembled message.
@@ -104,26 +105,40 @@ public:
      * @return true if the reader accepts message.
      */
     RTPS_DllAPI virtual bool processDataFragMsg(
-            CacheChange_t* change, 
-            uint32_t sampleSize, 
+            CacheChange_t* change,
+            uint32_t sampleSize,
             uint32_t fragmentStartingNum) = 0;
 
     /**
-     * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
-     *
+     * Processes a new HEARTBEAT message. Previously the message must have been accepted by function
+     * acceptMsgDirectedTo.
+     * @param writerGUID
+     * @param hbCount
+     * @param firstSN
+     * @param lastSN
+     * @param finalFlag
+     * @param livelinessFlag
      * @return true if the reader accepts messages from the.
      */
     RTPS_DllAPI virtual bool processHeartbeatMsg(
-            const GUID_t& writerGUID, 
-            uint32_t hbCount, 
+            const GUID_t& writerGUID,
+            uint32_t hbCount,
             const SequenceNumber_t& firstSN,
-            const SequenceNumber_t& lastSN, 
-            bool finalFlag, 
+            const SequenceNumber_t& lastSN,
+            bool finalFlag,
             bool livelinessFlag) = 0;
 
+    /**
+     * Processes a new GAP message. Previously the message must have been accepted by function
+     * acceptMsgDirectedTo.
+     * @param writerGUID
+     * @param gapStart
+     * @param gapList
+     * @return true if the reader accepts messages from the.
+     */
     RTPS_DllAPI virtual bool processGapMsg(
-            const GUID_t& writerGUID, 
-            const SequenceNumber_t& gapStart, 
+            const GUID_t& writerGUID,
+            const SequenceNumber_t& gapStart,
             const SequenceNumberSet_t& gapList) = 0;
 
     /**
@@ -133,7 +148,7 @@ public:
      * @return True if correctly removed.
      */
     RTPS_DllAPI virtual bool change_removed_by_history(
-            CacheChange_t* change, 
+            CacheChange_t* change,
             WriterProxy* prox = nullptr) = 0;
 
     /**
@@ -155,10 +170,11 @@ public:
     /**
      * Reserve a CacheChange_t.
      * @param change Pointer to pointer to the Cache.
+     * @param dataCdrSerializedSize Size of the Cache.
      * @return True if correctly reserved.
      */
     RTPS_DllAPI bool reserveCache(
-            CacheChange_t** change, 
+            CacheChange_t** change,
             uint32_t dataCdrSerializedSize);
 
     /**
@@ -168,12 +184,12 @@ public:
 
     /**
      * Read the next unread CacheChange_t from the history
-     * @param change POinter to pointer of CacheChange_t
+     * @param change Pointer to pointer of CacheChange_t
      * @param wp Pointer to pointer to the WriterProxy
      * @return True if read.
      */
     RTPS_DllAPI virtual bool nextUnreadCache(
-            CacheChange_t** change, 
+            CacheChange_t** change,
             WriterProxy** wp) = 0;
 
     /**
@@ -183,7 +199,7 @@ public:
      * @return True if read.
      */
     RTPS_DllAPI virtual bool nextUntakenCache(
-            CacheChange_t** change, 
+            CacheChange_t** change,
             WriterProxy** wp) = 0;
 
     /**
@@ -193,7 +209,7 @@ public:
     {
         return m_expectsInlineQos;
     }
-    
+
     //! Returns a pointer to the associated History.
     RTPS_DllAPI inline ReaderHistory* getHistory()
     {
@@ -265,12 +281,12 @@ protected:
 
     /*!
     * @brief Set the last notified sequence for a persistence guid
-    * @param guid The persistence guid to update
+    * @param persistence_guid The persistence guid to update
     * @param seq Sequence number to set for input guid
     * @remarks Persistent readers will write to DB
     */
     virtual void set_last_notified(
-            const GUID_t& peristence_guid,
+            const GUID_t& persistence_guid,
             const SequenceNumber_t& seq);
 
     //!ReaderHistory
@@ -285,7 +301,7 @@ protected:
     EntityId_t m_trustedWriterEntityId;
     //!Expects Inline Qos.
     bool m_expectsInlineQos;
-    
+
     //!ReaderHistoryState
     ReaderHistoryState* history_state_;
 

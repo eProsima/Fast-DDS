@@ -76,6 +76,7 @@ class  TopicDataType {
          * Get the key associated with the data.
          * @param[in] data Pointer to the data.
          * @param[out] ihandle Pointer to the Handle.
+         * @param[in] force_md5 Force MD5 checking.
          * @return True if correct.
          */
         RTPS_DllAPI virtual bool getKey(void* data, rtps::InstanceHandle_t* ihandle, bool force_md5 = false) = 0;

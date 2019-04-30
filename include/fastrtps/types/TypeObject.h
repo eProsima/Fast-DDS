@@ -3074,20 +3074,6 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
-    /*!
-
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    /*!
-
-     */
-    /*!
-     * @brief This function serializes the key members of an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-
     RTPS_DllAPI bool operator==(const TypeObject& other) const;
 private:
     uint8_t m__d;

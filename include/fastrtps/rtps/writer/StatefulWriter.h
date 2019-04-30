@@ -91,6 +91,7 @@ public:
     /**
      * Add a specific change to all ReaderLocators.
      * @param p Pointer to the change.
+     * @param max_blocking_time
      */
     void unsent_change_added_to_history(
             CacheChange_t* p,
@@ -135,7 +136,7 @@ public:
      */
     bool matched_reader_is_matched(const GUID_t& reader_guid) override;
 
-    bool is_acked_by_all(const CacheChange_t* a_change) override;
+    bool is_acked_by_all(const CacheChange_t* a_change) const override;
 
     bool wait_for_all_acked(const Duration_t& max_wait) override;
 
@@ -225,12 +226,12 @@ public:
 
     /**
      * Process an incoming ACKNACK submessage.
-     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
-     * @param reader_guid[in]      GUID of the reader originating the submessage.
-     * @param ack_count[in]        Count field of the submessage.
-     * @param sn_set[in]           Sequence number bitmap field of the submessage.
-     * @param final_flag[in]       Final flag field of the submessage.
-     * @param result[out]          true if the writer could process the submessage.
+     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
+     * @param[in] reader_guid      GUID of the reader originating the submessage.
+     * @param[in] ack_count        Count field of the submessage.
+     * @param[in] sn_set           Sequence number bitmap field of the submessage.
+     * @param[in] final_flag       Final flag field of the submessage.
+     * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
@@ -244,12 +245,12 @@ public:
 
     /**
      * Process an incoming NACKFRAG submessage.
-     * @param writer_guid[in]      GUID of the writer the submessage is directed to.
-     * @param reader_guid[in]      GUID of the reader originating the submessage.
-     * @param ack_count[in]        Count field of the submessage.
-     * @param seq_num[in]          Sequence number field of the submessage.
-     * @param fragments_state[in]  Sequence number field of the submessage.
-     * @param result[out]          true if the writer could process the submessage.
+     * @param[in] writer_guid      GUID of the writer the submessage is directed to.
+     * @param[in] reader_guid      GUID of the reader originating the submessage.
+     * @param[in] ack_count        Count field of the submessage.
+     * @param[in] seq_num          Sequence number field of the submessage.
+     * @param[in] fragments_state  Sequence number field of the submessage.
+     * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
      * @return true when the submessage was destinated to this writer, false otherwise.
      */

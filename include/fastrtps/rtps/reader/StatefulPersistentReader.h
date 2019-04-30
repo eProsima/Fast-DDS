@@ -44,7 +44,7 @@ class StatefulPersistentReader : public StatefulReader
     virtual ~StatefulPersistentReader();
 
     protected:
-    virtual void set_last_notified(const GUID_t& guid, const SequenceNumber_t& seq) override;
+    virtual void set_last_notified(const GUID_t& persistence_guid, const SequenceNumber_t& seq) override;
 
     private:
     IPersistenceService* persistence_;

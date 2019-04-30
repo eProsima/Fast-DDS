@@ -56,7 +56,7 @@ class PDPSimpleListener;
  * Class PDPSimple that implements the SimpleRTPSParticipantDiscoveryProtocol as defined in the RTPS specification.
  * @ingroup DISCOVERY_MODULE
  */
-class PDPSimple 
+class PDPSimple
 {
     friend class ResendRTPSParticipantProxyDataPeriod;
     friend class RemoteRTPSParticipantLeaseDuration;
