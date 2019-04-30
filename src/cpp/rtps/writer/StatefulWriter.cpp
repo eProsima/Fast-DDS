@@ -1178,10 +1178,10 @@ bool StatefulWriter::process_acknack(
             {
                 if (remote_reader->check_and_set_acknack_count(ack_count))
                 {
+                    // Sequence numbers before Base are set as Acknowledged.
+                    remote_reader->acked_changes_set(sn_set.base());
                     if (sn_set.base() > SequenceNumber_t(0, 0))
                     {
-                        // Sequence numbers before Base are set as Acknowledged.
-                        remote_reader->acked_changes_set(sn_set.base());
                         if (remote_reader->requested_changes_set(sn_set))
                         {
                             nack_response_event_->restart_timer();

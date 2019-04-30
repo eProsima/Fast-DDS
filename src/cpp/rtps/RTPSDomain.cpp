@@ -32,6 +32,7 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/System.h>
+#include <fastrtps/utils/md5.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
@@ -106,17 +107,28 @@ RTPSParticipant* RTPSDomain::createParticipant(
     GuidPrefix_t guidP;
     LocatorList_t loc;
     IPFinder::getIP4Address(&loc);
+
+    guidP.value[0] = c_VendorId_eProsima[0];
+    guidP.value[1] = c_VendorId_eProsima[1];
+
     if(loc.size()>0)
     {
-        guidP.value[0] = c_VendorId_eProsima[0];
-        guidP.value[1] = c_VendorId_eProsima[1];
-        guidP.value[2] = loc.begin()->address[14];
-        guidP.value[3] = loc.begin()->address[15];
+        MD5 md5;
+        for(auto& l : loc)
+        {
+            md5.update(l.address, sizeof(l.address));
+        }
+        md5.finalize();
+        uint16_t hostid = 0;
+        for(size_t i = 0; i < sizeof(md5.digest); i += 2)
+        {
+            hostid ^= ((md5.digest[i] << 8) | md5.digest[i+1]);
+        }
+        guidP.value[2] = octet(hostid);
+        guidP.value[3] = octet(hostid >> 8);
     }
     else
     {
-        guidP.value[0] = c_VendorId_eProsima[0];
-        guidP.value[1] = c_VendorId_eProsima[1];
         guidP.value[2] = 127;
         guidP.value[3] = 1;
 

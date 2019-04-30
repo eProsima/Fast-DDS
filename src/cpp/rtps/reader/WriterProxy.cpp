@@ -519,7 +519,10 @@ bool WriterProxy::process_heartbeat(
     if (last_heartbeat_count_ < count)
     {
         // If it is the first heartbeat message, we can try to cancel initial ack.
-        initial_acknack_->cancel_timer();
+        // TODO: This timer cancelling should be checked if needed with the liveliness implementation.
+        // To keep PARTICIPANT_DROPPED event we should add an explicit participant_liveliness QoS.
+        // This is now commented to avoid issues #457 and #155
+        // initial_acknack_->cancel_timer();
 
         last_heartbeat_count_ = count;
         lost_changes_update(first_seq);

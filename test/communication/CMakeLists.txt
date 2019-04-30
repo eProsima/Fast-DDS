@@ -62,6 +62,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_sub.xml COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.xml
         ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.120.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.120.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.360.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.360.xml COPYONLY)
     if(SECURITY)
         configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
             ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)

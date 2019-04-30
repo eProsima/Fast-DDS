@@ -234,6 +234,38 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
     writer.wait_discovery();
 }
 
+// Used to detect Github issue #457
+BLACKBOXTEST(BlackBox, EndpointRediscovery_2)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    reader.lease_duration({ 120, 0 }, { 1, 0 }).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer.lease_duration({ 2, 0 }, { 1, 0 }).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    reader.wait_participant_undiscovery();
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+
+    reader.wait_discovery();
+}
+
 // Regression test of Refs #2535, github micro-RTPS #1
 BLACKBOXTEST(BlackBox, PubXmlLoadedPartition)
 {
@@ -449,4 +481,3 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
 
     reader.wait_discovery_result();
 }
-

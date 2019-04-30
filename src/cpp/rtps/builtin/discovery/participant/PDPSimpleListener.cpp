@@ -152,7 +152,10 @@ void PDPSimpleListener::onNewCacheChangeAdded(
     }
     else
     {
-        parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT);
+        if(parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
+        {
+            return; // change already removed from history
+        }
     }
 
     //Remove change form history.
