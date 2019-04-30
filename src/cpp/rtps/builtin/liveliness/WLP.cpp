@@ -751,7 +751,7 @@ WriterHistory* WLP::getBuiltinWriterHistory()
 
 bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 {
-    liveliness_manager_->assert_liveliness();
+    return liveliness_manager_->assert_liveliness(kind);
 }
 
 void WLP::on_liveliness_lost(GUID_t writer)

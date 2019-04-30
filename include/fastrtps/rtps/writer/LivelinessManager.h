@@ -22,6 +22,8 @@
 #include "../timedevent/TimedCallback.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 
+#include <mutex>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -93,9 +95,31 @@ public:
      */
     bool assert_liveliness(LivelinessQosPolicyKind kind);
 
+    /**
+     * @brief A method to return liveliness data
+     * @details Should only be used for testing purposes
+     * @return Vector of liveliness data
+     */
+    const ResourceLimitedVector<LivelinessData> &get_liveliness_data() const;
+
 private:
 
-    //! A method call if the timer expires
+    /**
+     * @brief A method to calculate the time when the next writer is going to lose liveliness
+     * @details This method is public for testing purposes but it should not be used from outside this class
+     * @return True if at least one writer is alive
+     */
+    bool calculate_next();
+
+    //! A method to find a writer from a guid
+    //! Returns an iterator to the writer liveliness data
+    //! Returns true if writer was found, false otherwise
+    bool find_writer(
+            GUID_t guid,
+            ResourceLimitedVector<LivelinessData>::iterator* wit_out);
+
+
+    //! A method called if the timer expires
     void timer_expired();
 
     //! A vector of liveliness data
@@ -112,6 +136,9 @@ private:
 
     //! A callback to inform outside classes that a writer recovered its liveliness
     std::function<void(GUID_t)> liveliness_recovered_callback_;
+
+    //! A mutex to protect the liveliness data
+    std::mutex mutex_;
 };
 
 } /* namespace rtps */

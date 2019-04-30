@@ -43,9 +43,17 @@ struct LivelinessData
             GUID_t guid_in,
             LivelinessQosPolicyKind kind_in,
             Duration_t lease_duration_in)
-        : writer_guid(guid_in)
+        : guid(guid_in)
         , kind(kind_in)
         , lease_duration(lease_duration_in)
+        , alive(false)
+    {}
+
+    LivelinessData()
+        : guid()
+        , kind(AUTOMATIC_LIVELINESS_QOS)
+        , lease_duration(c_TimeInfinite)
+        , alive(false)
     {}
 
     ~LivelinessData()
@@ -58,7 +66,7 @@ struct LivelinessData
      */
     bool operator==(const LivelinessData& other) const
     {
-        return ((writer_guid == other.writer_guid) &&
+        return ((guid == other.guid) &&
                 (kind == other.kind) &&
                 (lease_duration == other.lease_duration));
     }
@@ -74,19 +82,19 @@ struct LivelinessData
     }
 
     //! GUID of the writer
-    GUID_t writer_guid;
+    GUID_t guid;
 
     //! Writer liveliness kind
     LivelinessQosPolicyKind kind;
+
+    //! The lease duration
+    Duration_t lease_duration;
 
     //! True if the writer is alive, false otherwise
     bool alive = false;
 
     //! The time when the writer will lose liveliness
     std::chrono::steady_clock::time_point time;
-
-    //! The lease duration
-    Duration_t lease_duration;
 };
 
 } /* namespace rtps */
