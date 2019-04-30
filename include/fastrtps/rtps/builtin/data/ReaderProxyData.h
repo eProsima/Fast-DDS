@@ -276,6 +276,11 @@ class ReaderProxyData
             return m_topicDiscoveryKind;
         }
 
+        inline bool disable_positive_acks() const
+        {
+            return m_qos.m_disablePositiveACKs.enabled;
+        }
+
         /**
          * Write as a parameter list on a CDRMessage_t
          * @return True on success
