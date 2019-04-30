@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Must be set outside of the macro, no way to get this directory inside the macro
+set(java_support_cmake_directory ${CMAKE_CURRENT_LIST_DIR} CACHE INTERNAL "")
+
 macro(gradle_build directory)
     find_package(Java 1.6 COMPONENTS Runtime REQUIRED)
+
     if(WIN32)
-        find_program(GRADLE_EXE NAMES gradle gradle.exe gradle.bat)
+        set(GRADLE_EXE ${java_support_cmake_directory}/gradlew.bat)
     else()
-        find_program(GRADLE_EXE gradle)
+        set(GRADLE_EXE ${java_support_cmake_directory}/gradlew)
     endif()
 
     if(GRADLE_EXE)
