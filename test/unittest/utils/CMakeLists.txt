@@ -17,10 +17,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-
 
         set(STRINGMATCHINGTESTS_SOURCE
             StringMatchingTests.cpp
@@ -40,14 +36,26 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
-        target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(StringMatchingTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(StringMatchingTests ${GTEST_LIBRARIES} ${MOCKS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
-                )
-        endif()
+        set_common_compile_options(StringMatchingTests)
+        target_compile_definitions(StringMatchingTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+            )
+        target_include_directories(StringMatchingTests
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+            )
+        target_link_libraries(StringMatchingTests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${MOCKS}
+            ${PRIVACY}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+            )
         add_gtest(StringMatchingTests SOURCES ${STRINGMATCHINGTESTS_SOURCE})
 
 

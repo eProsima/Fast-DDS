@@ -96,29 +96,40 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
 
-        include_directories(${TINYXML2_INCLUDE_DIR})
-
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
-        target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(XMLProfileParserTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-
-        target_link_libraries(XMLProfileParserTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-            $<$<BOOL:${WIN32}>:ws2_32>
-            ${TINYXML2_LIBRARY}
-            fastcdr
+        set_common_compile_options(XMLProfileParserTests)
+        target_compile_definitions(XMLProfileParserTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+            )
+        target_include_directories(XMLProfileParserTests
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${TINYXML2_INCLUDE_DIR}
+            )
+        target_link_libraries(XMLProfileParserTests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${GMOCK_LIBRARIES}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+                $<$<PLATFORM_ID:Windows>:ws2_32>
+                ${TINYXML2_LIBRARY}
+                fastcdr
             )
         add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
-
 
         set(XMLPARSER_SOURCE
             XMLParserTests.cpp
@@ -173,25 +184,35 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(XMLParserTests ${XMLPARSER_SOURCE})
-        target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(XMLParserTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_BINARY_DIR}/include
+        set_common_compile_options(XMLParserTests)
+        target_compile_definitions(XMLParserTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
             )
-
-        target_link_libraries(XMLParserTests ${GTEST_LIBRARIES}
-            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-            $<$<BOOL:${WIN32}>:ws2_32>
-            ${TINYXML2_LIBRARY}
-            fastcdr
-        )
+        target_include_directories(XMLParserTests
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${TINYXML2_INCLUDE_DIR}
+            )
+        target_link_libraries(XMLParserTests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+                $<$<PLATFORM_ID:Windows>:ws2_32>
+                ${TINYXML2_LIBRARY}
+                fastcdr
+            )
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
     endif()
 endif()

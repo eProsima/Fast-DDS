@@ -17,10 +17,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-
         set(COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
@@ -42,14 +38,29 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp)
+            ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp
+            )
 
-        target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(BuiltinAESGCMGMAC PRIVATE
-            ${GTEST_INCLUDE_DIRS}
-            ${OPENSSL_INCLUDE_DIR}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(BuiltinAESGCMGMAC fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
+        set_common_compile_options(BuiltinAESGCMGMAC)
+        target_compile_definitions(BuiltinAESGCMGMAC
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+            )
+        target_include_directories(BuiltinAESGCMGMAC
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${OPENSSL_INCLUDE_DIR}
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+#                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(BuiltinAESGCMGMAC
+            PRIVATE
+                fastcdr
+                ${GTEST_LIBRARIES}
+                ${OPENSSL_LIBRARIES}
+            )
         add_gtest(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp

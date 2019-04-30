@@ -17,14 +17,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(
-                -D_WIN32_WINNT=0x0601
-                -D_CRT_SECURE_NO_WARNINGS
-                )
-        endif()
-
-        include_directories(${ASIO_INCLUDE_DIR})
 
         set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
@@ -49,15 +41,31 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
-        target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(BuiltinPKIDH PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies/
-            ${OPENSSL_INCLUDE_DIR}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
+        set_common_compile_options(BuiltinPKIDH)
+        target_compile_definitions(BuiltinPKIDH
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+                BOOST_ASIO_STANDALONE
+                ASIO_STANDALONE
             )
-        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
+        target_include_directories(BuiltinPKIDH
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies/
+                ${OPENSSL_INCLUDE_DIR}
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(BuiltinPKIDH
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${OPENSSL_LIBRARIES}
+            )
         add_gtest(BuiltinPKIDH
             SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

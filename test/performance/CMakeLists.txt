@@ -15,40 +15,56 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     find_package(Threads REQUIRED)
 
-    if(WIN32)
-        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-            add_definitions(-D_WIN32_WINNT=0x0603)
-        else()
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-    endif()
-
-    add_definitions(
-      -DBOOST_ASIO_STANDALONE
-      -DASIO_STANDALONE
-    )
-
-    include_directories(${ASIO_INCLUDE_DIR})
-
     ###############################################################################
     # Binaries
     ###############################################################################
-    set(LATENCYTEST_SOURCE LatencyTestPublisher.cpp
+    set(LATENCYTEST_SOURCE
+        LatencyTestPublisher.cpp
         LatencyTestSubscriber.cpp
         LatencyTestTypes.cpp
         main_LatencyTest.cpp
         )
     add_executable(LatencyTest ${LATENCYTEST_SOURCE})
-    target_link_libraries(LatencyTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    set_common_compile_options(LatencyTest)
+    target_compile_definitions(LatencyTest
+        PRIVATE
+            $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+            $<$<PLATFORM_ID:WindowsStore>:_WIN32_WINNT=0x0603>
+        )
+    target_include_directories(LatencyTest
+        PRIVATE
+            ${ASIO_INCLUDE_DIR}
+        )
+    target_link_libraries(LatencyTest
+        PRIVATE
+            fastrtps
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${CMAKE_DL_LIBS}
+        )
 
-    set(THROUGHPUTTEST_SOURCE ThroughputPublisher.cpp
+    set(THROUGHPUTTEST_SOURCE
+        ThroughputPublisher.cpp
         ThroughputSubscriber.cpp
         ThroughputTypes.cpp
         main_ThroughputTest.cpp
         )
     add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
-    target_include_directories(ThroughputTest PRIVATE)
-    target_link_libraries(ThroughputTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    set_common_compile_options(ThroughputTest)
+    target_compile_definitions(ThroughputTest
+        PRIVATE
+            $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+            $<$<PLATFORM_ID:WindowsStore>:_WIN32_WINNT=0x0603>
+        )
+    target_include_directories(ThroughputTest
+        PRIVATE
+            ${ASIO_INCLUDE_DIR}
+        )
+    target_link_libraries(ThroughputTest
+        PRIVATE
+            fastrtps
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${CMAKE_DL_LIBS}
+        )
 
     if(WIN32)
         if (EXISTS $ENV{GSTREAMER_1_0_ROOT_X86_64})
@@ -88,39 +104,33 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             main_VideoTest.cpp
             )
         add_executable(VideoTest ${VIDEOTEST_SOURCE})
-
-        target_compile_options(VideoTest PUBLIC ${GST_CFLAGS})
-
-        if(NOT WIN32)
-            target_include_directories(VideoTest PUBLIC
-                ${GST_INCLUDE_DIRS}
-                )
-        else()
-            target_include_directories(VideoTest PUBLIC
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include)
-        endif()
-
-        if (WIN32)
-            target_link_libraries(VideoTest fastrtps
+        set_common_compile_options(VideoTest)
+        target_compile_options(VideoTest
+            PRIVATE
+                ${GST_CFLAGS}
+            )
+        target_include_directories(VideoTest
+            PUBLIC
+                $<$<NOT:$<PLATFORM_ID:Windows>>:${GST_INCLUDE_DIRS}>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/include>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include>
+                $<$<NOT:$<PLATFORM_ID:Windows>>:${ASIO_INCLUDE_DIR}>
+            )
+        target_link_libraries(VideoTest
+            PRIVATE
+                fastrtps
                 ${CMAKE_THREAD_LIBS_INIT}
                 ${CMAKE_DL_LIBS}
                 ${GST_LIBRARIES}
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstapp-1.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstbase-1.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib
-                $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib)
-        else()
-            target_link_libraries(VideoTest fastrtps
-                ${CMAKE_THREAD_LIBS_INIT}
-                ${CMAKE_DL_LIBS}
-                ${GST_LIBRARIES}
-                gstapp-1.0
-                )
-        endif()
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstapp-1.0.lib>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstbase-1.0.lib>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib>
+                $<$<PLATFORM_ID:Windows>:$ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib>
+                $<$<NOT:$<PLATFORM_ID:Windows>>:gstapp-1.0>
+            )
     else()
         message(STATUS "GStreamer libraries not found")
     endif()

@@ -27,19 +27,29 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+        )
 
         add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
-        target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(PersistenceTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
+        set_common_compile_options(PersistenceTests)
+        target_compile_definitions(PersistenceTests
+            PRIVATE
+                FASTRTPS_NO_LIB
             )
-        target_link_libraries(PersistenceTests ${GTEST_LIBRARIES} ${CMAKE_DL_LIBS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(PersistenceTests ${PRIVACY}
-                iphlpapi Shlwapi
-                )
-        endif()
+        target_include_directories(PersistenceTests
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp
+            )
+        target_link_libraries(PersistenceTests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${CMAKE_DL_LIBS}
+            ${PRIVACY}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+            )
         add_gtest(PersistenceTests SOURCES ${PERSISTENCETESTS_SOURCE})
     endif()
 endif()

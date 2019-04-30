@@ -19,8 +19,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         find_package(Threads REQUIRED)
 
-        include_directories(${ASIO_INCLUDE_DIR})
-
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp
             mock/MockTransport.cpp
@@ -32,23 +30,33 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         )
 
-        include_directories(mock/)
-
         add_executable(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
-        target_compile_definitions(NetworkFactoryTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(NetworkFactoryTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
+        set_common_compile_options(NetworkFactoryTests)
+        target_compile_definitions(NetworkFactoryTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
             )
-        target_link_libraries(NetworkFactoryTests ${GTEST_LIBRARIES} ${MOCKS} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-            target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi) # Later so mocks have precedence
-        endif()
-
+        target_include_directories(NetworkFactoryTests
+            PRIVATE
+                mock/
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(NetworkFactoryTests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${MOCKS}
+                ${CMAKE_THREAD_LIBS_INIT}
+                ${CMAKE_DL_LIBS}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+            )
         add_gtest(NetworkFactoryTests SOURCES ${NETWORKFACTORYTESTS_SOURCE})
 
     endif()

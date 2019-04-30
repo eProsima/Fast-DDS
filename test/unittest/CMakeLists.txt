@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_definitions(
-  -DBOOST_ASIO_STANDALONE
-  -DASIO_STANDALONE
-)
+#add_definitions(
+#  -DBOOST_ASIO_STANDALONE
+#  -DASIO_STANDALONE
+#)
 
 add_subdirectory(rtps/common)
 add_subdirectory(rtps/reader)

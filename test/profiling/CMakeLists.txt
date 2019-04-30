@@ -15,30 +15,32 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     find_package(Threads REQUIRED)
 
-    if(WIN32)
-        target_compile_definitions(${PROJECT_NAME} PRIVATE
-            $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
-            $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
-            )
-    endif()
-
-    add_definitions(
-        -DBOOST_ASIO_STANDALONE
-        -DASIO_STANDALONE
-        )
-
-    include_directories(${ASIO_INCLUDE_DIR})
-
     ###############################################################################
     # Binaries
     ###############################################################################
-    set(MEMORYTEST_SOURCE MemoryTestPublisher.cpp
+    set(MEMORYTEST_SOURCE
+        MemoryTestPublisher.cpp
         MemoryTestSubscriber.cpp
         MemoryTestTypes.cpp
         main_MemoryTest.cpp
         )
     add_executable(MemoryTest ${MEMORYTEST_SOURCE})
-    target_link_libraries(MemoryTest fastrtps ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+    set_common_compile_options(MemoryTest)
+    target_compile_definitions(MemoryTest
+        PRIVATE
+            $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+            $<$<PLATFORM_ID:WindowsStore>:_WIN32_WINNT=0x0603>
+        )
+    target_include_directories(MemoryTest
+        PRIVATE
+            ${ASIO_INCLUDE_DIR}
+        )
+    target_link_libraries(MemoryTest
+        PRIVATE
+            fastrtps
+            ${CMAKE_THREAD_LIBS_INIT}
+            ${CMAKE_DL_LIBS}
+        )
 
     configure_file("cycles_tests.py" "cycles_tests.py")
     configure_file("memory_tests.py" "memory_tests.py")

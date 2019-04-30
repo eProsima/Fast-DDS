@@ -27,24 +27,33 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             )
 
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-
         add_executable(WriterProxyTests ${WRITERPROXYTESTS_SOURCE})
-        target_compile_definitions(WriterProxyTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(WriterProxyTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeartbeatResponseDelay
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/InitialAckNack
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        set_common_compile_options(WriterProxyTests)
+        target_compile_definitions(WriterProxyTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+            )
+        target_include_directories(WriterProxyTests
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeartbeatResponseDelay
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/InitialAckNack
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+            )
         target_link_libraries(WriterProxyTests
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${GMOCK_LIBRARIES}
+                ${CMAKE_THREAD_LIBS_INIT}
+                ${CMAKE_DL_LIBS}
+            )
         add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
     endif()
 endif()

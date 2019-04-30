@@ -18,11 +18,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gmock()
 
     if(GTEST_FOUND AND GMOCK_FOUND)
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-
-        include_directories(${ASIO_INCLUDE_DIR})
 
         set(SOURCES_SECURITY_TEST_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
@@ -44,28 +39,37 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(SecurityAuthentication ${SOURCES_SECURITY_TEST_SOURCE}
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityValidationRemoteTests.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp)
-        target_compile_definitions(SecurityAuthentication PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(SecurityAuthentication PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp
+            )
+        set_common_compile_options(SecurityAuthentication)
+        target_compile_definitions(SecurityAuthentication
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+            )
+        target_include_directories(SecurityAuthentication
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp
+                ${ASIO_INCLUDE_DIR}
             )
         target_link_libraries(SecurityAuthentication ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
         add_gtest(SecurityAuthentication

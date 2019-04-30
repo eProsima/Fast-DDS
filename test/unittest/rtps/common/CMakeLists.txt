@@ -23,9 +23,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp)
 
         add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
-        target_compile_definitions(SequenceNumberTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(SequenceNumberTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        set_common_compile_options(SequenceNumberTests)
+        target_compile_definitions(SequenceNumberTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+            )
+        target_include_directories(SequenceNumberTests
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+            )
         target_link_libraries(SequenceNumberTests ${GTEST_LIBRARIES})
         add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
 

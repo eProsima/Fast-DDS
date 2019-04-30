@@ -17,15 +17,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(
-                -D_WIN32_WINNT=0x0601
-                -D_CRT_SECURE_NO_WARNINGS
-                )
-        endif()
-
-        include_directories(${ASIO_INCLUDE_DIR})
-
         set(DYNAMIC_TYPES_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicData.cpp
@@ -99,41 +90,66 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${DYNAMIC_TYPES_SOURCE}
         )
 
-        include_directories(mock/)
-
         add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
-        target_compile_definitions(DynamicTypesTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(DynamicTypesTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-            ${TINYXML2_INCLUDE_DIR}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+        set_common_compile_options(DynamicTypesTests)
+        target_compile_definitions(DynamicTypesTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
             )
-        target_link_libraries(DynamicTypesTests ${GTEST_LIBRARIES}
-            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-            $<$<BOOL:${WIN32}>:ws2_32>
-            ${TINYXML2_LIBRARY}
-            fastcdr
-        )
+        target_include_directories(DynamicTypesTests
+            PRIVATE
+                mock/
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
+                ${TINYXML2_INCLUDE_DIR}
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(DynamicTypesTests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+                $<$<PLATFORM_ID:Windows>:ws2_32>
+                ${TINYXML2_LIBRARY}
+                fastcdr
+            )
         add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
 
-
         add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
-        target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(DynamicComplexTypesTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(DynamicComplexTypesTests ${GTEST_LIBRARIES}
-            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-            $<$<BOOL:${WIN32}>:ws2_32>
-            ${TINYXML2_LIBRARY}
-            fastcdr
-        )
+        set_common_compile_options(DynamicComplexTypesTests)
+        target_compile_definitions(DynamicComplexTypesTests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+            )
+        target_include_directories(DynamicComplexTypesTests
+            PRIVATE
+                mock/
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(DynamicComplexTypesTests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+                $<$<PLATFORM_ID:Windows>:ws2_32>
+                ${TINYXML2_LIBRARY}
+                fastcdr
+            )
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 
 

@@ -88,20 +88,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     check_gtest()
 
     if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(
-                -D_WIN32_WINNT=0x0601
-                -D_CRT_SECURE_NO_WARNINGS
-                )
-        endif()
-
-        add_definitions(
-          -DBOOST_ASIO_STANDALONE
-          -DASIO_STANDALONE
-        )
-
-        include_directories(${ASIO_INCLUDE_DIR})
-
         ###############################################################################
         # Unit tests
         ###############################################################################
@@ -146,10 +132,26 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
 
         add_executable(BlackboxTests_PreallocMem ${BLACKBOXTESTS_SOURCE})
-        target_compile_definitions(BlackboxTests_PreallocMem PRIVATE
-            PREALLOCATED_MEMORY_MODE_TEST)
-        target_include_directories(BlackboxTests_PreallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests_PreallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        set_common_compile_options(BlackboxTests_PreallocMem)
+        target_compile_definitions(BlackboxTests_PreallocMem
+            PRIVATE
+                PREALLOCATED_MEMORY_MODE_TEST
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+                BOOST_ASIO_STANDALONE
+                ASIO_STANDALONE
+            )
+        target_include_directories(BlackboxTests_PreallocMem
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(BlackboxTests_PreallocMem
+            PRIVATE
+                fastrtps
+                fastcdr
+                ${GTEST_LIBRARIES}
+            )
         add_blackbox_gtest(BlackboxTests_PreallocMem PreallocMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
@@ -159,9 +161,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
 
         add_executable(BlackboxTests_ReallocMem ${BLACKBOXTESTS_SOURCE})
-        target_compile_definitions(BlackboxTests_ReallocMem PRIVATE
-            PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-        target_include_directories(BlackboxTests_ReallocMem PRIVATE ${GTEST_INCLUDE_DIRS})
+        set_common_compile_options(BlackboxTests_ReallocMem)
+        target_compile_definitions(BlackboxTests_ReallocMem
+            PRIVATE
+                PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+                BOOST_ASIO_STANDALONE
+                ASIO_STANDALONE
+            )
+        target_include_directories(BlackboxTests_ReallocMem
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${ASIO_INCLUDE_DIR}
+            )
         target_link_libraries(BlackboxTests_ReallocMem fastrtps fastcdr ${GTEST_LIBRARIES})
         add_blackbox_gtest(BlackboxTests_ReallocMem ReallocMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
@@ -173,10 +186,26 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
 
         add_executable(BlackboxTests_DynMem ${BLACKBOXTESTS_SOURCE})
-        target_compile_definitions(BlackboxTests_DynMem PRIVATE
-            DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-        target_include_directories(BlackboxTests_DynMem PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests_DynMem fastrtps fastcdr ${GTEST_LIBRARIES})
+        set_common_compile_options(BlackboxTests_DynMem)
+        target_compile_definitions(BlackboxTests_DynMem
+            PRIVATE
+                DYNAMIC_RESERVE_MEMORY_MODE_TEST
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+                BOOST_ASIO_STANDALONE
+                ASIO_STANDALONE
+            )
+        target_include_directories(BlackboxTests_DynMem
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(BlackboxTests_DynMem
+            PRIVATE
+                fastrtps
+                fastcdr
+                ${GTEST_LIBRARIES}
+            )
         add_blackbox_gtest(BlackboxTests_DynMem DynMem SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"

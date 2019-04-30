@@ -17,14 +17,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(
-                -D_WIN32_WINNT=0x0601
-                -D_CRT_SECURE_NO_WARNINGS
-                )
-        endif()
-
-        include_directories(${ASIO_INCLUDE_DIR})
 
         # Copy certs
         if(TLS_FOUND)
@@ -179,89 +171,160 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         )
 
-        include_directories(mock/)
-
         add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
-        target_compile_definitions(UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(UDPv4Tests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(UDPv4Tests ${PRIVACY} iphlpapi Shlwapi )
-        endif()
+        set_common_compile_options(UDPv4Tests)
+        target_compile_definitions(UDPv4Tests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+            )
+        target_include_directories(UDPv4Tests
+            PRIVATE
+                mock
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(UDPv4Tests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${MOCKS}
+            ${PRIVACY}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+            )
         add_gtest(UDPv4Tests SOURCES ${UDPV4TESTS_SOURCE})
 
         option(DISABLE_UDPV6_TESTS "Disable UDPv6 tests because fails in some systems" OFF)
 
         if(NOT DISABLE_UDPV6_TESTS)
             add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
-            target_compile_definitions(UDPv6Tests PRIVATE FASTRTPS_NO_LIB)
-            target_include_directories(UDPv6Tests PRIVATE
-                ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-            target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
-            if(MSVC OR MSVC_IDE)
-                target_link_libraries(UDPv6Tests ${PRIVACY} iphlpapi Shlwapi )
-            endif()
+            set_common_compile_options(UDPv6Tests)
+            target_compile_definitions(UDPv6Tests
+                PRIVATE
+                    FASTRTPS_NO_LIB
+                    $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                    $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+                )
+            target_include_directories(UDPv6Tests
+                PRIVATE
+                    mock
+                    ${GTEST_INCLUDE_DIRS}
+                    ${GMOCK_INCLUDE_DIRS}
+                    ${MOCKS}
+                    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+                    ${PROJECT_SOURCE_DIR}/include
+                    ${PROJECT_BINARY_DIR}/include
+                    ${ASIO_INCLUDE_DIR}
+                )
+            target_link_libraries(UDPv6Tests
+                PRIVATE
+                    ${GTEST_LIBRARIES}
+                    ${MOCKS}
+                ${PRIVACY}
+                    $<$<PLATFORM_ID:Windows>:iphlpapi>
+                    $<$<PLATFORM_ID:Windows>:Shlwapi>
+                )
             add_gtest(UDPv6Tests SOURCES ${UDPV6TESTS_SOURCE})
 
-            #add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
-            #target_compile_definitions(TCPv6Tests PRIVATE FASTRTPS_NO_LIB)
-            #target_include_directories(TCPv6Tests PRIVATE
-            #    ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            #    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-            #    ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
-            #    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-            #    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            #    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-            #target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS}
-            #    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-            #if(MSVC OR MSVC_IDE)
-            #    target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr iphlpapi Shlwapi)
-            #else()
-            #    target_link_libraries(TCPv6Tests ${PRIVACY} fastcdr)
-            #endif()
-            #add_gtest(TCPv6Tests SOURCES ${TCPV6TESTS_SOURCE})
+#            add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
+#            set_common_compile_options(TCPv6Tests)
+#            target_compile_definitions(TCPv6Tests
+#                PRIVATE
+#                    FASTRTPS_NO_LIB
+#                    $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+#                    $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+#                )
+#            target_include_directories(TCPv6Tests
+#                PRIVATE
+#                    mock
+#                    ${GTEST_INCLUDE_DIRS}
+#                    ${GMOCK_INCLUDE_DIRS}
+#                    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+#                    ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+#                    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+#                    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+#                    ${PROJECT_SOURCE_DIR}/include
+#                    ${PROJECT_BINARY_DIR}/include
+#                    ${ASIO_INCLUDE_DIR}
+#                )
+#            target_link_libraries(TCPv6Tests
+#                PRIVATE
+#                    ${GTEST_LIBRARIES}
+#                    ${MOCKS}
+#                ${PRIVACY}
+#                    fastcdr
+#                    $<$<PLATFORM_ID:Windows>:iphlpapi>
+#                    $<$<PLATFORM_ID:Windows>:Shlwapi>
+#                )
+#            add_gtest(TCPv6Tests SOURCES ${TCPV6TESTS_SOURCE})
         endif()
 
         add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
-        target_compile_definitions(test_UDPv4Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(test_UDPv4Tests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(test_UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
-        else()
-            target_link_libraries(test_UDPv4Tests ${PRIVACY})
-        endif()
+        set_common_compile_options(test_UDPv4Tests)
+        target_compile_definitions(test_UDPv4Tests
+            PRIVATE
+                FASTRTPS_NO_LIB
+                $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0601>
+                $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+            )
+        target_include_directories(test_UDPv4Tests
+            PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(test_UDPv4Tests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${MOCKS}
+            ${PRIVACY}
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+            )
         add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
 
         add_executable(TCPv4Tests ${TCPV4TESTS_SOURCE})
-        target_compile_definitions(TCPv4Tests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(TCPv4Tests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS}
-            $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-        if(MSVC OR MSVC_IDE)
-            target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr iphlpapi Shlwapi)
-        else()
-            target_link_libraries(TCPv4Tests ${PRIVACY} fastcdr)
-        endif()
+        set_common_compile_options(TCPv4Tests)
+        target_compile_definitions(TCPv4Tests
+            PRIVATE
+                FASTRTPS_NO_LIB
+            )
+        target_include_directories(TCPv4Tests
+            PRIVATE
+                mock
+                ${GTEST_INCLUDE_DIRS}
+                ${GMOCK_INCLUDE_DIRS}
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+                ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${ASIO_INCLUDE_DIR}
+            )
+        target_link_libraries(TCPv4Tests
+            PRIVATE
+                ${GTEST_LIBRARIES}
+                ${MOCKS}
+                $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+            ${PRIVACY}
+                fastcdr
+                $<$<PLATFORM_ID:Windows>:iphlpapi>
+                $<$<PLATFORM_ID:Windows>:Shlwapi>
+            )
         add_gtest(TCPv4Tests SOURCES ${TCPV4TESTS_SOURCE})
     endif()
 endif()
