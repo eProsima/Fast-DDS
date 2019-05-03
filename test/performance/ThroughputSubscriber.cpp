@@ -204,7 +204,7 @@ void ThroughputSubscriber::processMessage()
 
                     Domain::registerType(mp_par, &m_DynType);
 
-                    m_DynData = DynamicDataFactory::get_instance()->create_data(m_up.m_pDynType);
+                    m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
                 }
                 else
                 {
