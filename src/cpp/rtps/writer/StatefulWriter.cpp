@@ -885,12 +885,12 @@ void StatefulWriter::check_acked_status()
             for(SequenceNumber_t current_seq = next_all_acked_notify_sequence_; current_seq <= min_low_mark; ++current_seq)
             {
                 std::vector<CacheChange_t*>::iterator history_end = mp_history->changesEnd();
-                std::vector<CacheChange_t*>::iterator cit = std::find_if(mp_history->changesBegin(), history_end,
-                    [current_seq](const CacheChange_t* change)
+                std::vector<CacheChange_t*>::iterator cit = std::lower_bound(mp_history->changesBegin(), history_end, current_seq,
+                    [](const CacheChange_t* change, const SequenceNumber_t& seq)
                     {
-                        return change->sequenceNumber == current_seq;
+                        return change->sequenceNumber < seq;
                     });
-                if(cit != history_end)
+                if(cit != history_end && (*cit)->sequenceNumber == current_seq)
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, *cit);
                 }
