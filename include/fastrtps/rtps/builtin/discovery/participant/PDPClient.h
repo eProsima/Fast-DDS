@@ -98,12 +98,6 @@ class PDPClient : public PDP
      */
     void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
-    //! Not currently need for DSClientEvent announcement
-    void stopParticipantAnnouncement() override {};
-
-    //! Not currently need for DSClientEvent announcement
-    void resetParticipantAnnouncement() override {};
-
     /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation) but must be implemented
      * to solve server shutdown situations.
@@ -127,6 +121,9 @@ class PDPClient : public PDP
     *   second stage: waiting PDP info is up to date before allowing EDP matching
     */
     DSClientEvent* mp_sync;
+
+    //! flag to hightlight we need a server ping announcement
+    bool _serverPing;
 };
 
 }

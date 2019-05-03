@@ -87,6 +87,7 @@ PDPClient::PDPClient(BuiltinProtocols* built)
     : PDP(built)
     , _msgbuffer(DISCOVERY_PARTICIPANT_DATA_MAX_SIZE, built->mp_participantImpl->getGuid().guidPrefix)
     , mp_sync(nullptr)
+    ,_serverPing(false)
 {
 
 }
@@ -454,8 +455,8 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose, WritePar
 
         CacheChange_t* change = nullptr;
 
-        if (change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key))
+        if ((change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
         {
             // update the sequence number
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
@@ -506,7 +507,9 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose, WritePar
 
                 for (auto & svr : mp_builtin->m_DiscoveryServers)
                 {
-                    if (svr.proxy == nullptr)
+                    // non-pinging announcements like lease duration ones must be
+                    // broadcast to all servers
+                    if (svr.proxy == nullptr || !_serverPing)
                     {
                         remote_readers.push_back(svr.GetPDPReader());
                         locators.push_back(svr.metatrafficMulticastLocatorList);
@@ -518,6 +521,10 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose, WritePar
                 {
                     logError(RTPS_PDP, "Error sending announcement from client to servers");
                 }
+
+                // ping done independtly of which triggered the announcement
+                // note all event callbacks are currently serialized
+                _serverPing = false;
             }
             else
             {

@@ -193,12 +193,6 @@ class PDPServer : public PDP
      */
     void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
-    //! Not currently need for DSClientEvent announcement
-    void stopParticipantAnnouncement() override {};
-
-    //! Not currently need for DSClientEvent announcement
-    void resetParticipantAnnouncement() override {};
-
     /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)
      * but must be implemented to solve server shutdown situations.

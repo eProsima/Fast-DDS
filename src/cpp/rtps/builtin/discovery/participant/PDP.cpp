@@ -73,6 +73,7 @@ const int32_t pdp_initial_reserved_caches = 20;
 
 PDP::PDP(BuiltinProtocols* built):
     mp_builtin(built),
+    mp_resendParticipantTimer(nullptr),
     mp_RTPSParticipant(nullptr),
     mp_PDPWriter(nullptr),
     mp_PDPReader(nullptr),
@@ -81,8 +82,7 @@ PDP::PDP(BuiltinProtocols* built):
     mp_listener(nullptr),
     mp_PDPWriterHistory(nullptr),
     mp_PDPReaderHistory(nullptr),
-    mp_mutex(new std::recursive_mutex()),
-    mp_resendParticipantTimer(nullptr)
+    mp_mutex(new std::recursive_mutex())
     {
 
     }

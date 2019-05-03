@@ -540,9 +540,8 @@ bool PDPServer::addRelayedChangeToHistory( CacheChange_t & c)
         // mp_PDPWriterHistory->reserve_Cache(&pCh, DISCOVERY_PARTICIPANT_DATA_MAX_SIZE)
         if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
         {
-            // keep the original sample identity
             pCh->writerGUID = mp_PDPWriter->getGuid();
-
+            // keep the original sample identity by using wp
             return mp_PDPWriterHistory->add_change(pCh,wp);
         }
     }
@@ -674,6 +673,9 @@ bool PDPServer::match_servers_EDP_endpoints()
 
 void PDPServer::announceParticipantState(bool new_change, bool dispose /* = false */, WriteParams& )
 {
+    StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
+    assert(pW);
+
     // Servers only send direct DATA(p) to servers in order to allow discovery
     if (new_change)
     {
@@ -695,14 +697,10 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
         {   // we must assure when the server is dying that all client are send at least a DATA(p)
             // note here we can no longer receive and DATA or ACKNACK from clients.
             // In order to avoid that we send the message directly as in the standard stateless PDP
-
-            StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
-            assert(pW);
-                        
             CacheChange_t* change = nullptr;
 
-            if (change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
-                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key))
+            if ((change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
             {
                 // update the sequence number
                 change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
@@ -749,6 +747,16 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
             std::vector<GUID_t> remote_readers;
             LocatorList_t locators;
 
+            for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+            {
+                RemoteReaderAttributes & att = (*it)->m_att;
+                remote_readers.push_back(att.guid);
+
+                EndpointAttributes & ep = att.endpoint;
+                locators.push_back(ep.unicastLocatorList);
+                locators.push_back(ep.multicastLocatorList);
+            }
+
             for (auto & svr : mp_builtin->m_DiscoveryServers)
             {
                 if (svr.proxy == nullptr)
@@ -773,14 +781,47 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
 
 bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
 {
+    // verify it's a known participant
+    ParticipantProxyData info;
+
+    if (!lookupParticipantProxyData(partGUID, info))
+    {
+        return false;
+    }
+
+    // Notify everybody of this demise if it's a lease Duration one
+    CacheChange_t *pC;
+
+    // Check if the DATA(p[UD]) is already in Reader
+    if (!mp_PDPReaderHistory->get_max_change(&pC))
+    {   // We must create the DATA(p[UD])
+        if ((pC = mp_PDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+            NOT_ALIVE_DISPOSED_UNREGISTERED, info.m_key)))
+        {
+            // Use this server identity in order to hint clients it's a lease duration demise
+            WriteParams wp;
+            SampleIdentity local;
+            local.writer_guid(mp_PDPWriter->getGuid());
+            local.sequence_number(mp_PDPWriterHistory->next_sequence_number());
+            wp.sample_identity(local);
+            wp.related_sample_identity(local);
+
+            if (mp_PDPWriterHistory->add_change(pC, wp))
+            {
+                // Impersonate
+                pC->writerGUID = GUID_t(info.m_guid.guidPrefix, c_EntityId_SPDPWriter);
+
+                logInfo(RTPS_PDP, "Server created a DATA(p[UD]) for a lease duration casualty.")
+            }
+        }
+    }
+    
+    // Trigger the WriterHistory cleaning mechanism of demised participants DATA. Note that
+    // only DATA acknowledge by all clients would be actually removed
     {   
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-        ParticipantProxyData info;
         InstanceHandle_t ih;
-
-        if (!lookupParticipantProxyData(partGUID, info))
-            return false;
 
         removeParticipantFromHistory(ih = partGUID);
         removeParticipantForEDPMatch(&info);

@@ -218,9 +218,22 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
+        // Assertion has to be done before call change_received,
+        // because this function can unlock the StatefulReader mutex.
+        if (pWP != nullptr)
+        {
+            pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
+
+            if (getGuid().entityId == c_EntityId_SPDPReader)
+            {
+                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
+            }
+        }
+
         // Check if CacheChange was received or is framework data
         if(!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
+            
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
             CacheChange_t* change_to_add;
@@ -259,22 +272,10 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
                 return false;
             }
 
-            // Assertion has to be done before call change_received,
-            // because this function can unlock the StatefulReader mutex.
-            if(pWP != nullptr)
-            {
-                pWP->assertLiveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-            }
-
             if(!change_received(change_to_add, pWP))
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
                 releaseCache(change_to_add);
-
-                if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
-                {
-                    mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
-                }
             }
         }
     }
