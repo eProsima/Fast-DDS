@@ -101,26 +101,15 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator=(const TCPTransportDesc
     return *this;
 }
 
+TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
+    : TransportInterface(transport_kind)
+    , alive_(true)
 #if TLS_FOUND
-TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
-    : TransportInterface(transport_kind)
-    , alive_(true)
     , ssl_context_(asio::ssl::context::sslv23)
-    , keep_alive_event_(nullptr)
-{
-}
-#else
-TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
-    : TransportInterface(transport_kind)
-    , alive_(true)
-    , keep_alive_event_(nullptr)
-{
-    if (configuration()->apply_security)
-    {
-        logError(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
-    }
-}
 #endif
+    , keep_alive_event_(nullptr)
+{
+}
 
 TCPTransportInterface::~TCPTransportInterface()
 {
