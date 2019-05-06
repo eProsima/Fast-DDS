@@ -162,8 +162,6 @@ bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
         }
     }
 
-    lock.unlock();
-
     if(wproxy != nullptr)
     {
         wproxy->stop();
@@ -223,7 +221,7 @@ bool StatefulReader::matched_writer_is_matched(const GUID_t& writer_guid)
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->guid() == writer_guid)
+        if(it->guid() == writer_guid && it->is_alive())
         {
             return true;
         }
@@ -261,7 +259,7 @@ bool StatefulReader::findWriterProxy(
 
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->guid() == writerGUID)
+        if(it->guid() == writerGUID && it->is_alive())
         {
             *WP = it;
             return true;
@@ -487,7 +485,7 @@ bool StatefulReader::acceptMsgFrom(
 
     for(WriterProxy* it : matched_writers_)
     {
-        if(it->guid() == writerId)
+        if(it->guid() == writerId && it->is_alive())
         {
             *wp = it;
             return true;
