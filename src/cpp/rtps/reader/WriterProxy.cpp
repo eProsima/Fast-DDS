@@ -165,6 +165,7 @@ void WriterProxy::stop()
 void WriterProxy::clear()
 {
     is_alive_ = false;
+    attributes_.guid(c_Guid_Unknown);
     last_heartbeat_count_ = 0;
     heartbeat_final_flag_ = false;
     guid_as_vector_.clear();

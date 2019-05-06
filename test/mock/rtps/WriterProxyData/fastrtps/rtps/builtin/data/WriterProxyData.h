@@ -47,6 +47,8 @@ class WriterProxyData
 
         GUID_t& guid() { return m_guid; }
 
+        void guid (const GUID_t& guid) { m_guid = guid; }
+
         void clear() { }
 
         void persistence_guid(const GUID_t& /*guid*/) { }
