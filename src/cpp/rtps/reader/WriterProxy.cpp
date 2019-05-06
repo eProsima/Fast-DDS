@@ -155,11 +155,11 @@ void WriterProxy::update(const WriterProxyData& attributes)
 
 void WriterProxy::stop()
 {
-    clear();
-
     writer_proxy_liveliness_->cancel_timer();
     initial_acknack_->cancel_timer();
     heartbeat_response_->cancel_timer();
+
+    clear();
 }
 
 void WriterProxy::clear()
