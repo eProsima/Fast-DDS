@@ -77,6 +77,13 @@ TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
         Locator_t locator(LOCATOR_KIND_TCPv6, port);
         create_acceptor_socket(locator);
     }
+
+#if !TLS_FOUND
+    if (descriptor.apply_security)
+    {
+        logError(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
+    }
+#endif
 }
 
 TCPv6Transport::TCPv6Transport()
