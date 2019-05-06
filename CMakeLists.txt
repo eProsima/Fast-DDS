@@ -229,8 +229,12 @@ else()
     find_package(OpenSSL)
 endif()
 
+if(OPENSSL_FOUND)
+    message(STATUS "OpenSSL library ${OPENSSL_VERSION} found...")
+endif()
+
 option(NO_TLS "Disables TLS Support" OFF)
-if(OpenSSL_FOUND AND NOT NO_TLS)
+if(OPENSSL_FOUND AND NOT NO_TLS)
     set(TLS_FOUND 1)
 else()
     set(TLS_FOUND 0)
