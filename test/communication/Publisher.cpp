@@ -55,19 +55,19 @@ class ParListener : public ParticipantListener
         {
             if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
-                std::cout << "Published discovered a participant" << std::endl;
+                std::cout << "Publisher discovered participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
             {
-                std::cout << "Published detected changes on a participant" << std::endl;
+                std::cout << "Publisher detected changes on participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
             {
-                std::cout << "Published removed a participant" << std::endl;
+                std::cout << "Publisher removed participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
-                std::cout << "Published dropped a participant" << std::endl;
+                std::cout << "Publisher dropped participant " << info.info.m_guid << std::endl;
                 if(exit_on_lost_liveliness_)
                 {
                     run = false;
@@ -93,12 +93,12 @@ class PubListener : public PublisherListener
             std::unique_lock<std::mutex> lock(mutex_);
             if(info.status == MATCHED_MATCHING)
             {
-                std::cout << "Subscriber matched" << std::endl;
+                std::cout << "Publisher matched with subscriber " << info.remoteEndpointGuid << std::endl;
                 ++matched_;
             }
             else
             {
-                std::cout << "Subscriber unmatched" << std::endl;
+                std::cout << "Publisher unmatched with subscriber " << info.remoteEndpointGuid << std::endl;
                 --matched_;
             }
             cv_.notify_all();

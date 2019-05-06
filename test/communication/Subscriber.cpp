@@ -54,19 +54,19 @@ class ParListener : public ParticipantListener
         {
             if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
-                std::cout << "Subscriber discovered a participant" << std::endl;
+                std::cout << "Subscriber discovered participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
             {
-                std::cout << "Subscriber detected changes on a participant" << std::endl;
+                std::cout << "Subscriber detected changes on participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
             {
-                std::cout << "Subscriber removed a participant" << std::endl;
+                std::cout << "Subscriber removed participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
-                std::cout << "Subscriber dropped a participant" << std::endl;
+                std::cout << "Subscriber dropped participant " << info.info.m_guid << std::endl;
             }
         }
 };
@@ -83,11 +83,11 @@ class SubListener : public SubscriberListener
         {
             if(info.status == MATCHED_MATCHING)
             {
-                std::cout << "Publisher matched" << std::endl;
+                std::cout << "Subscriber matched with publisher " << info.remoteEndpointGuid << std::endl;
             }
             else
             {
-                std::cout << "Publisher unmatched" << std::endl;
+                std::cout << "Subscriber unmatched with publisher " << info.remoteEndpointGuid << std::endl;
             }
         }
 
