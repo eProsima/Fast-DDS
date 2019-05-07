@@ -297,6 +297,8 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
 
+    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
@@ -485,6 +487,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
     logInfo(RTPS_LIVELINESS,W->getGuid().entityId
             <<" from Liveliness Protocol");
     t_WIT wToEraseIt;
+    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
     if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), temp_writer_proxy_data_))
     {
         LivelinessQosPolicyKind liveliness_kind = temp_writer_proxy_data_.m_qos.m_liveliness.kind;

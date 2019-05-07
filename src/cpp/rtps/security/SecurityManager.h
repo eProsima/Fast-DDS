@@ -459,6 +459,7 @@ class SecurityManager
         std::list<std::tuple<ReaderProxyData, GUID_t, GUID_t>> remote_reader_pending_discovery_messages_;
         std::list<std::tuple<WriterProxyData, GUID_t, GUID_t>> remote_writer_pending_discovery_messages_;
 
+        std::mutex temp_data_lock_;
         ReaderProxyData temp_reader_proxy_data_;
         WriterProxyData temp_writer_proxy_data_;
 };

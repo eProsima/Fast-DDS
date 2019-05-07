@@ -947,6 +947,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if(auxendp!=0)
     {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         temp_writer_data_.clear();
         temp_writer_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
@@ -960,6 +961,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     if(auxendp!=0)
     {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         temp_reader_data_.clear();
         temp_reader_data_.m_expectsInlineQos = false;
         temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;

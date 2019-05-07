@@ -653,6 +653,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     uint32_t auxendp = endp;
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 
+    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;

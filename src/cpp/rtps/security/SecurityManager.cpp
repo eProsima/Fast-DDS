@@ -1667,6 +1667,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
     if (participant_stateless_message_reader_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         temp_writer_proxy_data_.clear();
         temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_writer_proxy_data_.guid().entityId = participant_stateless_message_writer_entity_id;
@@ -1681,6 +1682,7 @@ void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& partic
     if (participant_stateless_message_writer_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
         temp_reader_proxy_data_.clear();
         temp_reader_proxy_data_.m_expectsInlineQos = false;
         temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
@@ -1701,6 +1703,7 @@ void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProx
     if(participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
+        std::lock_guard<std::mutex> guardPDP(temp_data_lock_);
         temp_writer_proxy_data_.clear();
         temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
         temp_writer_proxy_data_.guid().entityId = participant_volatile_message_secure_writer_entity_id;
@@ -1715,6 +1718,7 @@ void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProx
     if(participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
+        std::lock_guard<std::mutex> guardPDP(temp_data_lock_);
         temp_reader_proxy_data_.clear();
         temp_reader_proxy_data_.m_expectsInlineQos = false;
         temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;

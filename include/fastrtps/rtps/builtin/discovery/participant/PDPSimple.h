@@ -336,6 +336,8 @@ private:
     ReaderProxyData temp_reader_data_;
     //!WriterProxyData to allow preallocation of remote locators
     WriterProxyData temp_writer_data_;
+    //!To protect temo_writer_data_ and temp_reader_data_
+    std::mutex temp_data_lock_;
 
     std::recursive_mutex* mp_mutex;
 
