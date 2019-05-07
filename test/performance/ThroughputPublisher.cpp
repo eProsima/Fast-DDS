@@ -274,7 +274,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << " us"  << std::endl;
 
-    if (/*mp_datapub == nullptr || */mp_commandsub == nullptr || mp_commandpub == nullptr)
+    if (mp_commandsub == nullptr || mp_commandpub == nullptr)
     {
         ready = false;
     }
@@ -482,7 +482,6 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     }
     else
     {
-        //delete(latency_t);
         delete(latency);
     }
     pubAttr = mp_datapub->getAttributes();

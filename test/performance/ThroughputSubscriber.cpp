@@ -477,7 +477,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << std::endl;
 
-    if (/*mp_datasub == nullptr || */mp_commandsub == nullptr || mp_commandpubli == nullptr)
+    if (mp_commandsub == nullptr || mp_commandpubli == nullptr)
     {
         ready = false;
     }
