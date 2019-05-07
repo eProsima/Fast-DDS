@@ -139,21 +139,6 @@ public:
     virtual bool fillUnicastLocator(
         Locator_t &locator,
         uint32_t well_known_port) const override;
-
-    /**
-     * Performs the locator selection algorithm for this transport.
-     *
-     * It basically consists of the following steps
-     *   - selector.transport_starts is called
-     *   - transport handles the selection state of each locator
-     *   - if a locator from an entry is selected, selector.select is called for that entry
-     *
-     * For TCPv4, only unicast locators on the same WAN as the transport or with the WAN address
-     * of a connected channel are selected.
-     *
-     * @param [in, out] selector Locator selector.
-     */
-    virtual void select_locators(LocatorSelector& selector) const override;
 };
 
 } // namespace rtps

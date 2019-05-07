@@ -331,36 +331,6 @@ bool TCPv4Transport::fillUnicastLocator(
     return result;
 }
 
-void TCPv4Transport::select_locators(LocatorSelector& selector) const
-{
-    ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
-
-    for (size_t i = 0; i < entries.size(); ++i)
-    {
-        LocatorSelectorEntry* entry = entries[i];
-        if (entry->transport_should_process)
-        {
-            bool selected = false;
-            for (size_t j = 0; j < entry->unicast.size(); ++j)
-            {
-                if (IsLocatorSupported(entry->unicast[j]) &&
-                    !selector.is_selected(entry->unicast[j]) &&
-                    (!IPLocator::hasWan(entry->unicast[j]) || 
-                       memcmp(IPLocator::getWan(entry->unicast[j]), configuration_.wan_addr, 4) == 0) )
-                {
-                    entry->state.unicast.push_back(j);
-                    selected = true;
-                }
-            }
-
-            if (selected)
-            {
-                selector.select(i);
-            }
-        }
-    }
-}
-
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
