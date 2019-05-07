@@ -241,11 +241,13 @@ bool StatefulReader::matched_writer_lookup(
 
     if(returnedValue)
     {
-        logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers_.size());
+        logInfo(RTPS_READER, this->getGuid().entityId << " FINDS writerProxy " << writerGUID << " from "
+            << matched_writers_.size());
     }
     else
     {
-        logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers_.size());
+        logInfo(RTPS_READER, this->getGuid().entityId << " NOT FINDS writerProxy " << writerGUID << " from "
+            << matched_writers_.size());
     }
 
     return returnedValue;

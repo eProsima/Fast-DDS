@@ -812,7 +812,7 @@ ReaderProxyData* PDPSimple::addReaderProxyData(
                 }
                 else
                 {
-                    logWarning(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies << \
+                    logWarning(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies <<
                         ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
                     return nullptr;
                 }
@@ -902,7 +902,7 @@ WriterProxyData* PDPSimple::addWriterProxyData(
                 }
                 else
                 {
-                    logWarning(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies << \
+                    logWarning(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies <<
                         ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
                     return nullptr;
                 }

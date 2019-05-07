@@ -293,7 +293,8 @@ bool WriterProxy::received_change_set(
     // Check if CacheChange_t was already and it was already removed from changesFromW container.
     if(seq_num <= changes_from_writer_low_mark_)
     {
-        logInfo(RTPS_READER, "Change " << seq_num << " <= than max available sequence number " << changes_from_writer_low_mark_);
+        logInfo(RTPS_READER, "Change " << seq_num << " <= than max available sequence number "
+            << changes_from_writer_low_mark_);
         return false;
     }
 
@@ -463,7 +464,9 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
 
     if(seq_num > changes_from_writer_low_mark_)
     {
-        for(ChangeIterator ch = changes_from_writer_.begin(); ch != changes_from_writer_.end() && ch->getSequenceNumber() < seq_num; ++ch)
+        for(ChangeIterator ch = changes_from_writer_.begin();
+            ch != changes_from_writer_.end() && ch->getSequenceNumber() < seq_num;
+            ++ch)
         {
             if (ch->getStatus() == ChangeFromWriterStatus_t::UNKNOWN ||
                 ch->getStatus() == ChangeFromWriterStatus_t::MISSING)
@@ -546,8 +549,8 @@ bool WriterProxy::process_heartbeat(
             }
         }
 
-        //FIXME: livelinessFlag
-        if (liveliness_flag)//TODOG && attributes_->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        //TODO: liveliness implementation details
+        if (liveliness_flag)
         {
             assert_liveliness();
         }

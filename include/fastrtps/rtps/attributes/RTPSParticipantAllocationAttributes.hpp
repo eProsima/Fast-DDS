@@ -92,7 +92,8 @@ private:
     }
 };
 
-const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAttributes = RTPSParticipantAllocationAttributes();
+const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAttributes
+        = RTPSParticipantAllocationAttributes();
 
 } /* namespace rtps */
 } /* namespace fastrtps */

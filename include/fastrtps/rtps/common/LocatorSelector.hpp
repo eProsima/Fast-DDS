@@ -94,7 +94,7 @@ public:
     bool remove_entry(const GUID_t& guid)
     {
         return entries_.remove_if(
-            [guid](LocatorSelectorEntry* entry)
+            [& guid](LocatorSelectorEntry* entry)
             {
                 return entry->remote_guid == guid;
             });

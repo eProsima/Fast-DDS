@@ -338,7 +338,7 @@ bool StatelessReader::acceptMsgFrom(const GUID_t& writerId)
     }
 
     return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
-        [writerId](const RemoteWriterGuids_t& writer)
+        [& writerId](const RemoteWriterGuids_t& writer)
         {
             return writer.guid == writerId;
         });
