@@ -70,15 +70,15 @@ public:
     }
 
     /**
-     * @brief Method called when the livelivess of a reader is lost
-     * @param reader The reader
+     * @brief Method called when the livelivess of a writer is lost
+     * @param writer The writer
      * @param status The liveliness lost status
      */
     virtual void on_liveliness_lost(
-            RTPSWriter* reader,
+            RTPSWriter* writer,
             const LivelinessLostStatus& status)
     {
-        (void)reader;
+        (void)writer;
         (void)status;
     }
 };

@@ -386,6 +386,20 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
     }
 }
 
+void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
+        RTPSWriter *writer,
+        const LivelinessLostStatus &status)
+{
+    (void)writer;
+
+    if (mp_publisherImpl->mp_listener != nullptr)
+    {
+        mp_publisherImpl->mp_listener->on_liveliness_lost(
+                    mp_publisherImpl->mp_userPublisher,
+                    status);
+    }
+}
+
 bool PublisherImpl::wait_for_all_acked(const eprosima::fastrtps::Time_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);

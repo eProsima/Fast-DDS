@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/rtps/writer/LivelinessManager.h>
+#include <fastrtps/rtps/common/Time_t.h>
 #include <asio.hpp>
 #include <thread>
 #include <gtest/gtest.h>
@@ -74,9 +75,12 @@ class TimedEventEnvironment : public ::testing::Environment
 
 TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing::AddGlobalTestEnvironment(new TimedEventEnvironment));
 
-namespace eprosima {
+namespace  eprosima {
 namespace fastrtps {
-namespace rtps {
+
+using eprosima::fastrtps::rtps::LivelinessManager;
+using eprosima::fastrtps::rtps::GuidPrefix_t;
+using eprosima::fastrtps::rtps::GUID_t;
 
 TEST(LivelinessManagerTests, WriterCannotBeAddedTwice)
 {
@@ -384,9 +388,8 @@ TEST(LivelinessManagerTests, TimerOwnerRemoved)
     EXPECT_EQ(env->num_writers_lost, 1);
 }
 
-} // namespace rtps
-} // namespace fastrtps
-} // namespace eprosima
+}
+}
 
 int main(int argc, char **argv)
 {

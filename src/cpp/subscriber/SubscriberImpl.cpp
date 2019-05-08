@@ -233,6 +233,20 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
+void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
+        RTPSReader *reader,
+        const LivelinessChangedStatus &status)
+{
+    (void)reader;
+
+    if (mp_subscriberImpl->mp_listener != nullptr)
+    {
+        mp_subscriberImpl->mp_listener->on_liveliness_changed(
+                    mp_subscriberImpl->mp_userSubscriber,
+                    status);
+    }
+}
+
 bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
 {
     if (m_att.qos.m_deadline.period != c_TimeInfinite)

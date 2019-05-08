@@ -26,7 +26,6 @@
 #include <mutex>
 
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
-#include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
 #include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
 
 using namespace eprosima::fastrtps::rtps;

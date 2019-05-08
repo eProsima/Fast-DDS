@@ -27,9 +27,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-            )
+           )
 
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
@@ -63,7 +63,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 	  ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-	  ${PROJECT_SOURCE_DIR}/src/cpp/rtps/timedevent/TimedCallback.cpp)
+	  ${PROJECT_SOURCE_DIR}/src/cpp/rtps/timedevent/TimedCallback.cpp
+          ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 	add_executable(LivelinessManagerTests ${LIVELINESSMANAGERTESTS_SOURCE})
         target_compile_definitions(LivelinessManagerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LivelinessManagerTests PRIVATE
