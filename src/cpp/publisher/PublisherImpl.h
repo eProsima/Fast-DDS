@@ -141,6 +141,11 @@ class PublisherImpl
      */
     void get_liveliness_lost_status(LivelinessLostStatus& status);
 
+    /**
+     * @brief Asserts liveliness
+     */
+    void assert_liveliness();
+
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.

@@ -1108,11 +1108,6 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
 
 #endif
 
-PDPSimple* RTPSParticipantImpl::pdpsimple()
-{
-    return mp_builtinProtocols->mp_PDP;
-}
-
 bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
 {
     ParticipantProxyData pdata;

@@ -36,6 +36,7 @@ class ReaderQos;
 
 namespace rtps {
 
+class BuiltinProtocols;
 class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
@@ -195,6 +196,12 @@ public:
             ReaderProxyData& returnedInfo);
 
     ResourceEvent& get_resource_event() const;
+
+    /**
+     * @brief A method to retrieve the built-in protocols
+     * @return Built-in protocols
+     */
+    BuiltinProtocols* get_builtin_protocols() const;
 
 private:
 

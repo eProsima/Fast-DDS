@@ -239,8 +239,6 @@ public:
 
 #endif
 
-    PDPSimple* pdpsimple();
-
     bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
 
     bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
@@ -248,6 +246,12 @@ public:
     NetworkFactory& network_factory() { return m_network_Factory; }
 
     uint32_t get_min_network_send_buffer_size() { return m_network_Factory.get_min_send_buffer_size(); }
+
+    /**
+     * @brief A method to retrieve the built-in protocols
+     * @return Built-in protocols
+     */
+    BuiltinProtocols* get_builtin_protocols() const { return mp_builtinProtocols; }
 
 private:
     //!Attributes of the RTPSParticipant

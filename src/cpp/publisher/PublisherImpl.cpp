@@ -33,6 +33,8 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <functional>
 
@@ -503,4 +505,25 @@ void PublisherImpl::get_liveliness_lost_status(LivelinessLostStatus &status)
     status = mp_writer->liveliness_lost_status_;
 
     mp_writer->liveliness_lost_status_.total_count_change = 0u;
+}
+
+void PublisherImpl::assert_liveliness()
+{
+    if (!mp_rtpsParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(mp_writer->getGuid()))
+    {
+        logError(PUBLISHER, "Could not assert liveliness of writer " << mp_writer->getGuid());
+    }
+
+    if (m_att.qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        // As described in the RTPS specification if liveliness kind is manual by topic a heartbeat must be sent
+        // This only applies to stateful writers, as stateless writers do not send heartbeats
+
+        StatefulWriter* stateful_writer = dynamic_cast<StatefulWriter*>(mp_writer);
+
+        if (stateful_writer != nullptr)
+        {
+            stateful_writer->send_periodic_heartbeat(true);
+        }
+    }
 }

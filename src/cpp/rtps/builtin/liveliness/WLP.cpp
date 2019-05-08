@@ -755,6 +755,11 @@ bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
     return liveliness_manager_->assert_liveliness(kind);
 }
 
+bool WLP::assert_liveliness(GUID_t writer)
+{
+    return liveliness_manager_->assert_liveliness(writer);
+}
+
 void WLP::on_liveliness_lost(GUID_t writer)
 {
     for (const auto& w: automatic_writers_)

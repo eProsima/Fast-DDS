@@ -120,6 +120,11 @@ ResourceEvent& RTPSParticipant::get_resource_event() const
     return mp_impl->getEventResource();
 }
 
+BuiltinProtocols* RTPSParticipant::get_builtin_protocols() const
+{
+    return mp_impl->get_builtin_protocols();
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

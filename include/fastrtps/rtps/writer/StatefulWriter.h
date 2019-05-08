@@ -204,7 +204,12 @@ public:
 
     SequenceNumber_t next_sequence_number() const;
 
-    bool send_periodic_heartbeat();
+    /**
+     * @brief Sends a periodic heartbeat
+     * @param final Final flag
+     * @return True on success
+     */
+    bool send_periodic_heartbeat(bool final = false);
 
     /*!
      * @brief Sends a heartbeat to a remote reader.

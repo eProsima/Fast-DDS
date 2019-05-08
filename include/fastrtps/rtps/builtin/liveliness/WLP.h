@@ -106,7 +106,14 @@ public:
      * @return True if liveliness was asserted
      */
     bool assert_liveliness(LivelinessQosPolicyKind kind);
-	
+
+    /**
+     * @brief A method to assert liveliness of a given writer
+     * @param writer The writer, specified via its id
+     * @return True if liveliness was asserted
+     */
+    bool assert_liveliness(GUID_t writer);
+
 	/**
 	 * Get the builtin protocols
 	 * @return Builtin protocols

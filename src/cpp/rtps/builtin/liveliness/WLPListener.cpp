@@ -89,10 +89,8 @@ void WLPListener::onNewCacheChangeAdded(
 		if(!separateKey(change->instanceHandle,&guidP,&livelinessKind))
 			return;
 	}
-	logInfo(RTPS_LIVELINESS,"RTPSParticipant "<<guidP<< " assert liveliness of "
-			<<((livelinessKind == 0x00)?"AUTOMATIC":"")
-			<<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers");
-	if(guidP == reader->getGuid().guidPrefix)
+
+    if(guidP == reader->getGuid().guidPrefix)
 	{
 		logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
         history->remove_change(change);
