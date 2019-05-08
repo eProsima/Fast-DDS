@@ -24,6 +24,7 @@
 #include "../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/writer/LivelinessManager.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
@@ -756,12 +757,63 @@ bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 
 void WLP::on_liveliness_lost(GUID_t writer)
 {
-    // TODO raquel
+
+    for (const auto& w: automatic_writers_)
+    {
+        if (w->getGuid() == writer)
+        {
+            w->liveliness_lost_status_.total_count++;
+            w->liveliness_lost_status_.total_count_change++;
+            if (w->getListener() != nullptr)
+            {
+                w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
+            }
+            w->liveliness_lost_status_.total_count_change = 0u;
+
+            return;
+        }
+    }
+
+    for (const auto& w: manual_by_participant_writers_)
+    {
+        if (w->getGuid() == writer)
+        {
+            w->liveliness_lost_status_.total_count++;
+            w->liveliness_lost_status_.total_count_change++;
+            if (w->getListener() != nullptr)
+            {
+                w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
+            }
+            w->liveliness_lost_status_.total_count_change = 0u;
+
+            return;
+        }
+    }
+
+    for (const auto& w: manual_by_topic_writers_)
+    {
+        if (w->getGuid() == writer)
+        {
+            w->liveliness_lost_status_.total_count++;
+            w->liveliness_lost_status_.total_count_change++;
+            if (w->getListener() != nullptr)
+            {
+                w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
+            }
+            w->liveliness_lost_status_.total_count_change = 0u;
+
+            return;
+        }
+    }
+
+    // TODO raquel: this could be optimized if we added the liveliness kind as an argument to this method
 }
 
 void WLP::on_livelienss_recovered(GUID_t writer)
 {
-    // TODO raquel
+    // Nothing to do here
+
+    (void)writer;
 }
 
 } /* namespace rtps */

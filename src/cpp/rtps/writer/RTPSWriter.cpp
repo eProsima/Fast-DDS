@@ -50,10 +50,6 @@ RTPSWriter::RTPSWriter(
     , mp_listener(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
     , m_separateSendingEnabled(false)
-    , liveliness_data_(
-          guid,
-          att.liveliness_kind,
-          att.liveliness_lease_duration)
     , all_remote_readers_(att.matched_readers_allocation)
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
@@ -74,8 +70,10 @@ RTPSWriter::~RTPSWriter()
     mp_history->mp_mutex = nullptr;
 }
 
-CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
-    ChangeKind_t changeKind, InstanceHandle_t handle)
+CacheChange_t* RTPSWriter::new_change(
+        const std::function<uint32_t()>& dataCdrSerializedSize,
+        ChangeKind_t changeKind,
+        InstanceHandle_t handle)
 {
     logInfo(RTPS_WRITER, "Creating new change");
     CacheChange_t* ch = nullptr;

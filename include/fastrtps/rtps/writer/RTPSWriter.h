@@ -24,7 +24,6 @@
 #include "../attributes/WriterAttributes.h"
 #include "../../qos/LivelinessLostStatus.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
-#include "LivelinessData.h"
 
 #include <vector>
 #include <memory>
@@ -274,8 +273,6 @@ protected:
     bool is_async_;
     //!Separate sending activated
     bool m_separateSendingEnabled;
-    //! Liveliness data
-    LivelinessData liveliness_data_;
 
     LocatorList_t mAllShrinkedLocatorList;
 
