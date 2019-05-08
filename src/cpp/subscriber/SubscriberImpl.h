@@ -134,6 +134,12 @@ public:
      */
     void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
 
+    /**
+     * @brief Returns the liveliness changed status
+     * @param status Liveliness changed status
+     */
+    void get_liveliness_changed_status(LivelinessChangedStatus& status);
+
 private:
 
     //!Participant

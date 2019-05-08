@@ -229,6 +229,9 @@ public:
     */
     virtual bool isInCleanState() = 0;
 
+    //! The liveliness changed status struct as defined in the DDS
+    LivelinessChangedStatus liveliness_changed_status_;
+
 protected:
 
     void setTrustedWriter(EntityId_t writer)
@@ -307,9 +310,6 @@ protected:
     LivelinessManager* liveliness_manager_;
 
 private:
-
-    //! The liveliness changed status struct as defined in the DDS
-    LivelinessChangedStatus liveliness_changed_status_;
 
     /**
      * @brief A method invoked by the liveliness manager when a writer loses liveliness

@@ -135,6 +135,12 @@ class PublisherImpl
      */
     void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
 
+    /**
+     * @brief Returns the liveliness lost status
+     * @param status Liveliness lost status
+     */
+    void get_liveliness_lost_status(LivelinessLostStatus& status);
+
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.

@@ -97,8 +97,7 @@ void Publisher::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &
 
 void Publisher::get_liveliness_lost_status(LivelinessLostStatus &status)
 {
-    (void)status;
-    logWarning(PUBLISHER, "get_liveliness_lost_status() is not implemented yet");
+    mp_impl->get_liveliness_lost_status(status);
 }
 
 void Publisher::assert_liveliness()

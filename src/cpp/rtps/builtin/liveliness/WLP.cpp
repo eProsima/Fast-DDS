@@ -757,11 +757,12 @@ bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 
 void WLP::on_liveliness_lost(GUID_t writer)
 {
-
     for (const auto& w: automatic_writers_)
     {
         if (w->getGuid() == writer)
         {
+            std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
+
             w->liveliness_lost_status_.total_count++;
             w->liveliness_lost_status_.total_count_change++;
             if (w->getListener() != nullptr)
@@ -778,6 +779,8 @@ void WLP::on_liveliness_lost(GUID_t writer)
     {
         if (w->getGuid() == writer)
         {
+            std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
+
             w->liveliness_lost_status_.total_count++;
             w->liveliness_lost_status_.total_count_change++;
             if (w->getListener() != nullptr)
@@ -794,6 +797,8 @@ void WLP::on_liveliness_lost(GUID_t writer)
     {
         if (w->getGuid() == writer)
         {
+            std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
+
             w->liveliness_lost_status_.total_count++;
             w->liveliness_lost_status_.total_count_change++;
             if (w->getListener() != nullptr)

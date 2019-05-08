@@ -416,5 +416,15 @@ void SubscriberImpl::lifespan_expired()
     lifespan_timer_.restart_timer();
 }
 
+void SubscriberImpl::get_liveliness_changed_status(LivelinessChangedStatus &status)
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+
+    status = mp_reader->liveliness_changed_status_;
+
+    mp_reader->liveliness_changed_status_.alive_count_change = 0u;
+    mp_reader->liveliness_changed_status_.not_alive_count_change = 0u;
+}
+
 } /* namespace fastrtps */
 } /* namespace eprosima */

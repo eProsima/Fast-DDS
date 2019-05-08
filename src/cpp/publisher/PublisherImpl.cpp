@@ -495,3 +495,12 @@ void PublisherImpl::lifespan_expired()
     lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     lifespan_timer_.restart_timer();
 }
+
+void PublisherImpl::get_liveliness_lost_status(LivelinessLostStatus &status)
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+
+    status = mp_writer->liveliness_lost_status_;
+
+    mp_writer->liveliness_lost_status_.total_count_change = 0u;
+}
