@@ -189,11 +189,11 @@ bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
             wproxy = *it;
             matched_writers_.erase(it);
             remove_persistence_guid(wproxy->guid(), wproxy->attributes().persistence_guid());
-			if(mp_listener != nullptr)
-			{
-				MatchingInfo info(REMOVED_MATCHING, writer_guid);
+            if (mp_listener != nullptr)
+            {
+                MatchingInfo info(REMOVED_MATCHING, writer_guid);
                 mp_listener->onReaderMatched(this, info);
-			}
+            }
 
             wproxy->stop();
             matched_writers_pool_.push_back(wproxy);

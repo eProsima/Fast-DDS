@@ -246,7 +246,7 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(
 
 void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
 {
-    logInfo(RTPS_READER, attributes_.guid().entityId <<": up to seq_num: "<<seq_num);
+    logInfo(RTPS_READER, attributes_.guid().entityId << ": up to seq_num: " << seq_num);
     std::lock_guard<std::recursive_mutex> guard(mutex_);
 
     // Check was not removed from container.

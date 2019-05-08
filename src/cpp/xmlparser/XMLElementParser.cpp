@@ -49,25 +49,33 @@ XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         {
             // leaseDuration - durationType
             if (XMLP_ret::XML_OK != getXMLRemoteLocatorsAllocationAttributes(p_aux0, allocation.locators, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, TOTAL_PARTICIPANTS) == 0)
         {
             // total_participants - containerAllocationConfigType
             if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.participants, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, TOTAL_READERS) == 0)
         {
             // total_readers - containerAllocationConfigType
             if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.readers, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, TOTAL_WRITERS) == 0)
         {
             // total_writers - containerAllocationConfigType
             if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.writers, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -103,14 +111,18 @@ XMLP_ret XMLParser::getXMLRemoteLocatorsAllocationAttributes(
         {
             // max_unicast_locators - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation.max_unicast_locators = tmp;
         }
         else if (strcmp(name, MAX_MULTICAST_LOCATORS) == 0)
         {
             // max_multicast_locators - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation.max_multicast_locators = tmp;
         }
         else
@@ -155,13 +167,17 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         {
             // use_SIMPLE_RTPS_PDP - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, WRITER_LVESS_PROTOCOL) == 0)
         {
             // use_WriterLivelinessProtocol - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.use_WriterLivelinessProtocol, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, _EDP) == 0)
         {
@@ -199,19 +215,25 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         {
             // domainId - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.domainId, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LEASEDURATION) == 0)
         {
             // leaseDuration - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, builtin.leaseDuration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LEASE_ANNOUNCE) == 0)
         {
             // leaseAnnouncement - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, builtin.leaseDuration_announcementperiod, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, SIMPLE_EDP) == 0)
         {
@@ -223,13 +245,17 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
                 {
                     // PUBWRITER_SUBREADER - boolType
                     if (XMLP_ret::XML_OK != getXMLBool(p_aux1, &builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, ident + 1))
+                    {
                         return XMLP_ret::XML_ERROR;
+                    }
                 }
                 else if (strcmp(name, PUBREADER_SUBWRITER) == 0)
                 {
                     // PUBREADER_SUBWRITER - boolType
                     if (XMLP_ret::XML_OK != getXMLBool(p_aux1, &builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, ident + 1))
+                    {
                         return XMLP_ret::XML_ERROR;
+                    }
                 }
                 else
                 {
@@ -242,45 +268,59 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         {
             // metatrafficUnicastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, builtin.metatrafficUnicastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, META_MULTI_LOC_LIST) == 0)
         {
             // metatrafficMulticastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, builtin.metatrafficMulticastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, INIT_PEERS_LIST) == 0)
         {
             // initialPeersList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, builtin.initialPeersList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, STATIC_ENDPOINT_XML) == 0)
         {
             // staticEndpointXMLFilename - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             builtin.setStaticEndpointXMLFilename(s.c_str());
         }
         else if (strcmp(name, READER_HIST_MEM_POLICY) == 0)
         {
             // readerhistoryMemoryPolicy
             if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, builtin.readerHistoryMemoryPolicy, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, WRITER_HIST_MEM_POLICY) == 0)
         {
             // writerhistoryMemoryPolicy
             if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, builtin.writerHistoryMemoryPolicy, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MUTATION_TRIES) == 0)
         {
             // mutation_tries - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.mutation_tries, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -317,43 +357,57 @@ XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParamet
         {
             // portBase - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.portBase, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DOMAIN_ID_GAIN) == 0)
         {
             // domainIDGain - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.domainIDGain, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PARTICIPANT_ID_GAIN) == 0)
         {
             // participantIDGain - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.participantIDGain, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD0) == 0)
         {
             // offsetd0 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd0, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD1) == 0)
         {
             // offsetd1 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd1, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD2) == 0)
         {
             // offsetd2 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd2, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, OFFSETD3) == 0)
         {
             // offsetd3 - uint16Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port.offsetd3, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -432,13 +486,17 @@ XMLP_ret XMLParser::getXMLThroughputController(tinyxml2::XMLElement *elem,
         {
             // bytesPerPeriod - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &throughputController.bytesPerPeriod, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PERIOD_MILLISECS) == 0)
         {
             // periodMillisecs - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &throughputController.periodMillisecs, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -485,9 +543,13 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, _NO_KEY) == 0)
+            {
                 topic.topicKind = TopicKind_t::NO_KEY;
+            }
             else if (strcmp(text, _WITH_KEY) == 0)
+            {
                 topic.topicKind = TopicKind_t::WITH_KEY;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -520,13 +582,17 @@ XMLP_ret XMLParser::getXMLTopicAttributes(tinyxml2::XMLElement *elem, TopicAttri
         {
             // historyQos
             if (XMLP_ret::XML_OK != getXMLHistoryQosPolicy(p_aux0, topic.historyQos, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, RES_LIMITS_QOS) == 0)
         {
             // resourceLimitsQos
             if (XMLP_ret::XML_OK != getXMLResourceLimitsQos(p_aux0, topic.resourceLimitsQos, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -561,25 +627,33 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(tinyxml2::XMLElement *elem,
         {
             // max_samples - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.max_samples, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_INSTANCES) == 0)
         {
             // max_instances - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.max_instances, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_SAMPLES_INSTANCE) == 0)
         {
             // max_samples_per_instance - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.max_samples_per_instance, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ALLOCATED_SAMPLES) == 0)
         {
             // allocated_samples - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.allocated_samples, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -620,14 +694,18 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
         {
             // initial - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation_config.initial = static_cast<size_t>(aux_value);
         }
         else if (strcmp(name, MAXIMUM) == 0)
         {
             // maximum - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation_config.maximum = (aux_value == 0u) ? 
                 std::numeric_limits<size_t>::max() : static_cast<size_t>(aux_value);
         }
@@ -635,7 +713,9 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
         {
             // increment - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             allocation_config.increment = static_cast<size_t>(aux_value);
         }
         else
@@ -694,9 +774,13 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQo
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, KEEP_LAST) == 0)
+            {
                 historyQos.kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
+            }
             else if (strcmp(text, KEEP_ALL) == 0)
+            {
                 historyQos.kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -707,7 +791,9 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(tinyxml2::XMLElement *elem, HistoryQo
         {
             // depth - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &historyQos.depth, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -754,31 +840,41 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
         {
             // durability
             if (XMLP_ret::XML_OK != getXMLDurabilityQos(p_aux0, qos.m_durability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LIVELINESS) == 0)
         {
             // liveliness
             if (XMLP_ret::XML_OK != getXMLLivelinessQos(p_aux0, qos.m_liveliness, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, RELIABILITY) == 0)
         {
             // reliability
             if (XMLP_ret::XML_OK != getXMLReliabilityQos(p_aux0, qos.m_reliability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PARTITION) == 0)
         {
             // partition
             if (XMLP_ret::XML_OK != getXMLPartitionQos(p_aux0, qos.m_partition, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PUB_MODE) == 0)
         {
             // publishMode
             if (XMLP_ret::XML_OK != getXMLPublishModeQos(p_aux0, qos.m_publishMode, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DEADLINE) == 0)
         {
@@ -865,25 +961,33 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
         {
             // durability
             if (XMLP_ret::XML_OK != getXMLDurabilityQos(p_aux0, qos.m_durability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LIVELINESS) == 0)
         {
             // liveliness
             if (XMLP_ret::XML_OK != getXMLLivelinessQos(p_aux0, qos.m_liveliness, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, RELIABILITY) == 0)
         {
             // reliability
             if (XMLP_ret::XML_OK != getXMLReliabilityQos(p_aux0, qos.m_reliability, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PARTITION) == 0)
         {
             // partition
             if (XMLP_ret::XML_OK != getXMLPartitionQos(p_aux0, qos.m_partition, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DEADLINE) == 0)
         {
@@ -972,13 +1076,21 @@ XMLP_ret XMLParser::getXMLDurabilityQos(tinyxml2::XMLElement *elem, DurabilityQo
             }
             bKindDefined = true;
             if (strcmp(text, _VOLATILE) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
+            }
             else if (strcmp(text, _TRANSIENT_LOCAL) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
+            }
             else if (strcmp(text, _TRANSIENT) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS;
+            }
             else if (strcmp(text, _PERSISTENT) == 0)
+            {
                 durability.kind = DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1026,7 +1138,9 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
         {
             // service_cleanup_delay - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, durabilityService.service_cleanup_delay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HISTORY_KIND) == 0)
         {
@@ -1046,9 +1160,13 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, KEEP_LAST) == 0)
+            {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
+            }
             else if (strcmp(text, KEEP_ALL) == 0)
+            {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << HISTORY_KIND << "' with bad content");
@@ -1059,25 +1177,33 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(tinyxml2::XMLElement *elem,
         {
             // history_depth - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.history_depth, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_SAMPLES) == 0)
         {
             // max_samples - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.max_samples, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_INSTANCES) == 0)
         {
             // max_instances - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.max_instances, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MAX_SAMPLES_INSTANCE) == 0)
         {
             // max_samples_per_instance - uint32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &durabilityService.max_samples_per_instance, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1107,7 +1233,9 @@ XMLP_ret XMLParser::getXMLDeadlineQos(tinyxml2::XMLElement *elem, DeadlineQosPol
         {
             bPeriodDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, deadline.period, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1145,7 +1273,9 @@ XMLP_ret XMLParser::getXMLLatencyBudgetQos(tinyxml2::XMLElement *elem, LatencyBu
         {
             bDurationDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, latencyBudget.duration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1198,11 +1328,17 @@ XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQo
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, AUTOMATIC) == 0)
+            {
                 liveliness.kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+            }
             else if (strcmp(text, MANUAL_BY_PARTICIPANT) == 0)
+            {
                 liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+            }
             else if (strcmp(text, MANUAL_BY_TOPIC) == 0)
+            {
                 liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1213,13 +1349,17 @@ XMLP_ret XMLParser::getXMLLivelinessQos(tinyxml2::XMLElement *elem, LivelinessQo
         {
             // lease_duration
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, liveliness.lease_duration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ANNOUNCE_PERIOD) == 0)
         {
             // announcement_period
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, liveliness.announcement_period, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1265,9 +1405,13 @@ XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, Reliability
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, _BEST_EFFORT) == 0)
+            {
                 reliability.kind = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+            }
             else if (strcmp(text, _RELIABLE) == 0)
+            {
                 reliability.kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1278,7 +1422,9 @@ XMLP_ret XMLParser::getXMLReliabilityQos(tinyxml2::XMLElement *elem, Reliability
         {
             // max_blocking_time
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, reliability.max_blocking_time, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1309,7 +1455,9 @@ XMLP_ret XMLParser::getXMLLifespanQos(tinyxml2::XMLElement *elem, LifespanQosPol
         {
             bDurationDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, lifespan.duration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1392,7 +1540,9 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(tinyxml2::XMLElement *elem,
         {
             bSeparationDefined = true;
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, timeBasedFilter.minimum_separation, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1442,9 +1592,13 @@ XMLP_ret XMLParser::getXMLOwnershipQos(tinyxml2::XMLElement *elem, OwnershipQosP
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, SHARED) == 0)
+            {
                 ownership.kind = OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
+            }
             else if (strcmp(text, EXCLUSIVE) == 0)
+            {
                 ownership.kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
@@ -1488,7 +1642,9 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(tinyxml2::XMLElement *elem,
         {
             bValueDefined = true;
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &ownershipStrength.value, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1542,9 +1698,13 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(tinyxml2::XMLElement *elem,
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, BY_RECEPTION_TIMESTAMP) == 0)
+            {
                 destinationOrder.kind = DestinationOrderQosPolicyKind::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
+            }
             else if (strcmp(text, BY_SOURCE_TIMESTAMP) == 0)
+            {
                 destinationOrder.kind = DestinationOrderQosPolicyKind::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' bad content");
@@ -1603,11 +1763,17 @@ XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, Presentati
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, INSTANCE) == 0)
+            {
                 presentation.access_scope = PresentationQosPolicyAccessScopeKind::INSTANCE_PRESENTATION_QOS;
+            }
             else if (strcmp(text, TOPIC) == 0)
+            {
                 presentation.access_scope = PresentationQosPolicyAccessScopeKind::TOPIC_PRESENTATION_QOS;
+            }
             else if (strcmp(text, GROUP) == 0)
+            {
                 presentation.access_scope = PresentationQosPolicyAccessScopeKind::GROUP_PRESENTATION_QOS;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << ACCESS_SCOPE << "' bad content");
@@ -1618,13 +1784,17 @@ XMLP_ret XMLParser::getXMLPresentationQos(tinyxml2::XMLElement *elem, Presentati
         {
             // coherent_access - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &presentation.coherent_access, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ORDERED_ACCESS) == 0)
         {
             // ordered_access - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &presentation.ordered_access, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1666,7 +1836,10 @@ XMLP_ret XMLParser::getXMLPartitionQos(tinyxml2::XMLElement *elem, PartitionQosP
             while (nullptr != p_aux1)
             {
                 std::string sName = "";
-                if (XMLP_ret::XML_OK != getXMLString(p_aux1, &sName, ident)) return XMLP_ret::XML_ERROR;
+                if (XMLP_ret::XML_OK != getXMLString(p_aux1, &sName, ident))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
                 names.push_back(sName);
                 p_aux1 = p_aux1->NextSiblingElement(NAME);
             }
@@ -1721,9 +1894,13 @@ XMLP_ret XMLParser::getXMLPublishModeQos(tinyxml2::XMLElement *elem, PublishMode
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, SYNCHRONOUS) == 0)
+            {
                 publishMode.kind = PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
+            }
             else if (strcmp(text, ASYNCHRONOUS) == 0)
+            {
                 publishMode.kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
+            }
             else
             {
                 logError(XMLPARSER, "Node '" << KIND << "' bad content");
@@ -1778,9 +1955,13 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, DURATION_INFINITY) == 0)
+            {
                 duration = c_TimeInfinite;
+            }
             else if (strcmp(text, DURATION_INFINITE_SEC) == 0)
+            {
                 duration.seconds = c_TimeInfinite.seconds;
+            }
             else if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &duration.seconds, ident))
             {
                 logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
@@ -1803,9 +1984,13 @@ XMLP_ret XMLParser::getXMLDuration(tinyxml2::XMLElement *elem, Duration_t &durat
                 return XMLP_ret::XML_ERROR;
             }
             if (strcmp(text, DURATION_INFINITY) == 0)
+            {
                 duration = c_TimeInfinite;
+            }
             else if (strcmp(text, DURATION_INFINITE_NSEC) == 0)
+            {
                 duration.nanosec = c_TimeInfinite.nanosec;
+            }
             else if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &duration.nanosec, ident))
             {
                 logError(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
@@ -1842,25 +2027,33 @@ XMLP_ret XMLParser::getXMLWriterTimes(tinyxml2::XMLElement *elem, WriterTimes &t
         {
             // initialHeartbeatDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initialHeartbeatDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HEARTB_PERIOD) == 0)
         {
             // heartbeatPeriod
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeatPeriod, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, NACK_RESP_DELAY) == 0)
         {
             // nackResponseDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nackResponseDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, NACK_SUPRESSION) == 0)
         {
             // nackSupressionDuration
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.nackSupressionDuration, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1892,13 +2085,17 @@ XMLP_ret XMLParser::getXMLReaderTimes(tinyxml2::XMLElement *elem, ReaderTimes &t
         {
             // initialAcknackDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initialAcknackDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HEARTB_RESP_DELAY) == 0)
         {
             // heartbeatResponseDelay
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeatResponseDelay, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1931,14 +2128,18 @@ XMLP_ret XMLParser::getXMLLocatorUDPv4(tinyxml2::XMLElement* elem, rtps::Locator
         {
             // port - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ADDRESS) == 0)
         {
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv4(locator, s);
         }
         else
@@ -1971,14 +2172,18 @@ XMLP_ret XMLParser::getXMLLocatorUDPv6(tinyxml2::XMLElement* elem, rtps::Locator
         {
             // port - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &locator.port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, ADDRESS) == 0)
         {
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv6(locator, s);
         }
         else
@@ -2015,7 +2220,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setLogicalPort(locator, port);
         }
         else if (strcmp(name, PHYSICAL_PORT) == 0)
@@ -2023,7 +2230,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // physical_port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setPhysicalPort(locator, port);
         }
         else if (strcmp(name, ADDRESS) == 0)
@@ -2031,7 +2240,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv4(locator, s);
         }
         else if (strcmp(name, WAN_ADDRESS) == 0)
@@ -2039,7 +2250,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setWan(locator, s);
         }
         else if (strcmp(name, UNIQUE_LAN_ID) == 0)
@@ -2047,7 +2260,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv4(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setLanID(locator, s);
         }
         else
@@ -2082,7 +2297,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
             // port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setLogicalPort(locator, port);
         }
         else if (strcmp(name, PHYSICAL_PORT) == 0)
@@ -2090,7 +2307,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
             // physical_port - uint16Type
             uint16_t port(0);
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &port, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setPhysicalPort(locator, port);
         }
         else if (strcmp(name, ADDRESS) == 0)
@@ -2098,7 +2317,9 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
             // address - stringType
             std::string s = "";
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             IPLocator::setIPv6(locator, s);
         }
         else
@@ -2143,22 +2364,30 @@ XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t 
         if (nullptr != (p_aux1 = p_aux0->FirstChildElement(UDPv4_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorUDPv4(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(UDPv6_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorUDPv6(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(TCPv4_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorTCPv4(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement(TCPv6_LOCATOR)))
         {
             if (XMLP_ret::XML_OK != getXMLLocatorTCPv6(p_aux1, loc, ident + 1))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (nullptr != (p_aux1 = p_aux0->FirstChildElement()))
         {
@@ -2192,11 +2421,17 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(tinyxml2::XMLElement *elem,
         return XMLP_ret::XML_ERROR;
     }
     if (strcmp(text, PREALLOCATED) == 0)
+    {
         historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE;
+    }
     else if (strcmp(text, PREALLOCATED_WITH_REALLOC) == 0)
+    {
         historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
     else if (strcmp(text, DYNAMIC) == 0)
+    {
         historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE;
+    }
     else
     {
         logError(XMLPARSER, "Node '" << KIND << "' bad content");
@@ -2253,7 +2488,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // name - stringType
                         std::string s = "";
                         if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         prop.name(s);
                     }
                     else if (strcmp(sub_name, VALUE) == 0)
@@ -2261,7 +2498,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // value - stringType
                         std::string s = "";
                         if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         prop.value(s);
                     }
                     else if (strcmp(sub_name, PROPAGATE) == 0)
@@ -2269,7 +2508,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // propagate - boolType
                         bool b = false;
                         if (XMLP_ret::XML_OK != getXMLBool(p_aux2, &b, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         prop.propagate(b);
                     }
                 }
@@ -2308,7 +2549,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // name - stringType
                         std::string s = "";
                         if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         bin_prop.name(s);
                     }
                     else if (strcmp(sub_name, VALUE) == 0)
@@ -2325,7 +2568,9 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(tinyxml2::XMLElement *elem, PropertyP
                         // propagate - boolType
                         bool b = false;
                         if (XMLP_ret::XML_OK != getXMLBool(p_aux2, &b, ident + 2))
+                        {
                             return XMLP_ret::XML_ERROR;
+                        }
                         bin_prop.propagate(b);
                     }
                 }

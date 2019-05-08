@@ -327,18 +327,23 @@ class WriterProxyData
         /**
          * Check if this object can be updated with the information on another object.
          * @param wdata WriterProxyData object to be checked.
-         * @return true if this object can be updated with the information on rdata.
+         * @return true if this object can be updated with the information on wdata.
          */
         bool is_update_allowed(const WriterProxyData& wdata) const;
 
-        //!Update certain parameters from another object.
-        void update(WriterProxyData* rdata);
+        /**
+         * Update certain parameters from another object.
+         * @param wdata pointer to object with new information.
+         */
+        void update(WriterProxyData* wdata);
 
         //!Copy all information from another object.
-        void copy(WriterProxyData* rdata);
+        void copy(WriterProxyData* wdata);
 
         //!Write as a parameter list on a CDRMessage_t
-        bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
+        bool writeToCDRMessage(
+                CDRMessage_t* msg,
+                bool write_encapsulation);
 
         //!Read a parameter list from a CDRMessage_t.
         RTPS_DllAPI bool readFromCDRMessage(

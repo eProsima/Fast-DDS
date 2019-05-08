@@ -293,9 +293,11 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
         }
         else if (key == UNICAST_LOCATOR)
         {
+            // Empty but necessary to avoid warning on last else
         }
         else if (key == MULTICAST_LOCATOR)
         {
+            // Empty but necessary to avoid warning on last else
         }
         else if (key == TOPIC)
         {
@@ -541,9 +543,11 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
         }
         else if(key == UNICAST_LOCATOR)
         {
+            // Empty but necessary to avoid warning on last else
         }
         else if(key == MULTICAST_LOCATOR)
         {
+            // Empty but necessary to avoid warning on last else
         }
         else if(key == TOPIC)
         {
