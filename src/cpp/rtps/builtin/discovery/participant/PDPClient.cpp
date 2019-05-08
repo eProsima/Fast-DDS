@@ -337,20 +337,22 @@ void PDPClient::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
 
 void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    std::unique_lock<std::recursive_mutex> lock(*getMutex());
-
     // EDP endpoints have been already unmatch by the associated listener
     assert(!mp_EDP->areRemoteEndpointsMatched(pdata));
 
-    // Verify if this participant is a server
     bool is_server = false;
-    for (auto & svr : mp_builtin->m_DiscoveryServers)
-    {
-        if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+    { 
+        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+        // Verify if this participant is a server
+        for (auto & svr : mp_builtin->m_DiscoveryServers)
         {
-            svr.proxy = nullptr; // reasign when we receive again server DATA(p)
-            is_server = true;
-            mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
+            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+            {
+                svr.proxy = nullptr; // reasign when we receive again server DATA(p)
+                is_server = true;
+                mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
+            }
         }
     }
 

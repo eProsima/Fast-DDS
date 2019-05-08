@@ -345,12 +345,16 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
     // Verify if this participant is a server
     bool is_server = false;
-    for (auto & svr : mp_builtin->m_DiscoveryServers)
     {
-        if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+        for (auto & svr : mp_builtin->m_DiscoveryServers)
         {
-            svr.proxy = nullptr; // reasign when we receive again server DATA(p)
-            is_server = true;
+            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+            {
+                svr.proxy = nullptr; // reasign when we receive again server DATA(p)
+                is_server = true;
+            }
         }
     }
 
