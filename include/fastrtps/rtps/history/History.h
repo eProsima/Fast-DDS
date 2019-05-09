@@ -88,7 +88,11 @@ class History
          * Get the History size.
          * @return Size of the history.
          */
-        RTPS_DllAPI size_t getHistorySize() { return m_changes.size(); }
+        RTPS_DllAPI size_t getHistorySize() 
+        { 
+            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+            return m_changes.size();
+        }
 
         /**
          * Remove all changes from the History
