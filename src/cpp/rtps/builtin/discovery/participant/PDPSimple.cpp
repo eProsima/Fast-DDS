@@ -277,16 +277,15 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
     logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")");
     CacheChange_t* change = nullptr;
 
+    std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
     if(!dispose)
     {
         if(new_change || m_hasChangedLocalPDP)
         {
-            this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
             local_participant_data->m_manualLivelinessCount++;
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
-            this->mp_mutex->unlock();
 
             if(mp_SPDPWriterHistory->getHistorySize() > 0)
                 mp_SPDPWriterHistory->remove_min_change();
@@ -326,9 +325,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
     }
     else
     {
-        this->mp_mutex->lock();
         ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
-        this->mp_mutex->unlock();
 
         if(mp_SPDPWriterHistory->getHistorySize() > 0)
             mp_SPDPWriterHistory->remove_min_change();
