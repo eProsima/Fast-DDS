@@ -72,7 +72,7 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 * [Installation manual](http://eprosima-fast-rtps.readthedocs.io/en/latest/requirements.html)
 * [User manual](http://eprosima-fast-rtps.readthedocs.io/en/latest/introduction.html)
 * [FastRTPSGen manual](http://eprosima-fast-rtps.readthedocs.io/en/latest/geninfo.html)
-* [Release notes](http://eprosima-fast-rtps.readthedocs.io/notes.html)
+* [Release notes](http://eprosima-fast-rtps.readthedocs.io/en/latest/notes.html)
 
 ## Getting Help
 
