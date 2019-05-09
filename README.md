@@ -7,6 +7,7 @@
 [![Stars](https://img.shields.io/github/stars/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/stargazers)
 
 <a href="http://www.eprosima.com"><img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ" align="left" hspace="8" vspace="2" width="100" height="100" ></a>
+
 *eprosima Fast RTPS* is a C++ implementation of the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP, 
 as defined and maintained by the Object Management Group (OMG) consortium. RTPS is also the wire interoperability protocol defined for the Data Distribution
 Service (DDS) standard, again by the OMG. *eProsima Fast RTPS* holds the benefit of being standalone and up-to-date, as most vendor solutions either implement RTPS as a tool to implement 
@@ -24,7 +25,7 @@ network.
 system input/output channel combination for each deployment.
 * Two API Layers: a high-level Publisher-Subscriber one focused on usability and a lower-level Writer-Reader one that provides finer access to the inner workings of the RTPS protocol.
 
-eProsima Fast RTPS has been adopted by multiple organizations in many sectors including these important cases:
+*eProsima Fast RTPS* has been adopted by multiple organizations in many sectors including these important cases:
 
 * Robotics: ROS (Robotic Operating System) as their default middleware for ROS2.
 * EU R&D: FIWARE Incubated GE.
@@ -42,7 +43,7 @@ You can get either a binary distribution of *eprosima Fast RTPS* or compile the 
 The latest, up to date binary release of *eprosima Fast RTPS* can be obtained from the <a href='http://www.eprosima.com'>company website</a>.
 
 ### Installation from Source
-To compile *eprosima Fast RTPS* from source, at least Cmake version 2.8.12 is needed.
+To compile *eprosima Fast RTPS* from source, at least Cmake version 2.8.12 and Boost 1.61 are needed.
 Clone the project from GitHub:
 
     $ git clone https://github.com/eProsima/Fast-RTPS
@@ -52,13 +53,13 @@ Clone the project from GitHub:
 
 If you are on Linux, execute:
 
-    $ cmake -DTHIRDPARTY=ON ..
+    $ cmake ../ -DTHIRDPARTY=ON -DEPROSIMA_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install
     $ make
     $ make install
 
 If you are on Windows, choose your version of Visual Studio:
 
-    > cmake -G "Visual Studio 14 2015 Win64" -DTHIRDPARTY=ON ..
+    > cmake ../  -G "Visual Studio 14 2015 Win64" -DTHIRDPARTY=ON -DEPROSIMA_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=installationpath
     > cmake --build . --target install
 	
 If you want to compile the performance tests, you will need to add the argument `-DPERFORMANCE_TESTS=ON` when calling Cmake.
