@@ -183,15 +183,8 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
         return;
     }
 
-    //REGISTER THE TYPES
-    if (dynamic_data)
-    {
-        Domain::registerType(mp_par, &m_DynType);
-    }
-    else
-    {
-        Domain::registerType(mp_par, (TopicDataType*)&latency_t);
-    }
+    //REGISTER THE COMMAND TYPE
+    latency_t = nullptr;
     Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
     // Create Sending Publisher
@@ -224,19 +217,17 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_par, profile_name, (PublisherListener*)&this->m_DataPubListener);
+        if (xmlparser::XMLP_ret::XML_ERROR
+                == xmlparser::XMLProfileManager::fillPublisherAttributes(profile_name, pubAttr))
+        {
+            std::cout << "Cannot read publisher profile " << profile_name << std::endl;
+        }
     }
     else
     {
-        mp_datapub = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_DataPubListener);
+        pubAttr = Wparam;
     }
-
-    if (mp_datapub == nullptr)
-    {
-        std::cout << "ERROR creating publisher" << std::endl;
-        ready = false;
-        return;
-    }
+    mp_datapub = nullptr;
 
     // COMMAND SUBSCRIBER
     SubscriberAttributes Rparam;
@@ -283,17 +274,9 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << " us"  << std::endl;
 
-    if (mp_datapub == nullptr || mp_commandsub == nullptr || mp_commandpub == nullptr)
+    if (mp_commandsub == nullptr || mp_commandpub == nullptr)
     {
         ready = false;
-    }
-
-    if (dynamic_data)
-    {
-        DynamicTypeBuilderFactory::delete_instance();
-        pubAttr = mp_datapub->getAttributes();
-        Domain::removePublisher(mp_datapub);
-        Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
     }
 }
 
@@ -401,7 +384,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
     }
 }
 
-bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t size)
+bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t msg_size)
 {
     if (dynamic_data)
     {
@@ -412,7 +395,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
             DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), size
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), msg_size
             ));
         struct_type_builder->set_name("ThroughputType");
 
@@ -421,12 +404,12 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         m_DynType.SetDynamicType(m_pDynType);
 
         Domain::registerType(mp_par, &m_DynType);
-        mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
+
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
         DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
-        for (uint32_t i = 0; i < size; ++i)
+        for (uint32_t i = 0; i < msg_size; ++i)
         {
             my_data->insert_sequence_data(id);
             my_data->set_byte_value(0, id);
@@ -435,8 +418,11 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     }
     else
     {
-        latency = new ThroughputType((uint16_t)size);
+        latency_t = new ThroughputDataType(msg_size);
+        Domain::registerType(mp_par, latency_t);
+        latency = new ThroughputType((uint16_t)msg_size);
     }
+    mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
 
     t_end_ = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::micro> timewait_us(0);
@@ -493,13 +479,18 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     {
         DynamicTypeBuilderFactory::delete_instance();
         DynamicDataFactory::get_instance()->delete_data(m_DynData);
-        pubAttr = mp_datapub->getAttributes();
-        Domain::removePublisher(mp_datapub);
-        Domain::unregisterType(mp_par, "ThroughputType");
     }
     else
     {
         delete(latency);
+    }
+    pubAttr = mp_datapub->getAttributes();
+    Domain::removePublisher(mp_datapub);
+    mp_datapub = nullptr;
+    Domain::unregisterType(mp_par, "ThroughputType");
+    if (!dynamic_data)
+    {
+        delete latency_t;
     }
 
     mp_commandsub->waitForUnreadMessage();
@@ -511,7 +502,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
             //cout << "Received results from subscriber"<<endl;
             TroughputResults result;
             result.demand = demand;
-            result.payload_size = size + 4 + 4;
+            result.payload_size = msg_size + 4 + 4;
             result.publisher.send_samples = samples;
             result.publisher.totaltime_us = std::chrono::duration<double, std::micro>(t_end_ - t_start_) - timewait_us;
             result.subscriber.recv_samples = command.m_lastrecsample - command.m_lostsamples;
@@ -542,7 +533,8 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
                         "B_" + str_reliable + "_" + std::to_string(result.demand) + "demand.csv";
                 }
                 outFile.open(fileName);
-                outFile << "\"" << result.payload_size << " bytes; demand " << result.demand << " (" + str_reliable + ")\"" << std::endl;
+                outFile << "\"" << result.payload_size << " bytes; demand " << result.demand
+                    << " (" + str_reliable + ")\"" << std::endl;
                 outFile << "\"" << result.subscriber.MBitssec << "\"";
                 outFile.close();
             }

@@ -131,21 +131,21 @@ const option::Descriptor usage[] = {
     { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
     { SAMPLES,0,"s","samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
     { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
-    { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
-    { ECHO_OPT, 0,"e","echo",               Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
-    { HOSTNAME,0,"","hostname",             Arg::None,      "" },
-    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "" },
-    { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
-#if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",      Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",           Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
-#endif
+    { HOSTNAME,0,"","hostname",             Arg::None,      "\t--hostname \tAppend hostname to the topic." },
     { LARGE_DATA, 0, "l", "large",          Arg::None,      "  -l \t--large\tTest large data." },
     { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
     { FORCED_DOMAIN, 0, "", "domain",       Arg::Numeric,   "\t--RTPS Domain." },
     { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
+#if HAVE_SECURITY
+    { USE_SECURITY, 0, "", "security",      Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
+    { CERTS_PATH, 0, "", "certs",           Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
+#endif
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
+    { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
+    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "\t--export_cvs \tFlag to export a CSV file." },
+    { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
+    { ECHO_OPT, 0,"e","echo",               Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
 
     { 0, 0, 0, 0, 0, 0 }
 };
