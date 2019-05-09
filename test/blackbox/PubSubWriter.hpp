@@ -41,6 +41,7 @@
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+#include <thread>
 
 using eprosima::fastrtps::rtps::IPLocator;
 using eprosima::fastrtps::UDPv4TransportDescriptor;

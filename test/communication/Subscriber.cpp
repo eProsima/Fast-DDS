@@ -32,6 +32,7 @@
 
 #include <mutex>
 #include <fstream>
+#include <condition_variable>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

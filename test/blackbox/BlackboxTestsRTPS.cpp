@@ -19,6 +19,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
+#include <thread>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
