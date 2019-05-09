@@ -192,7 +192,7 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 #endif
 }
 
-bool PDP::initPDP(RTPSParticipantImpl* part)
+bool PDP::initPDP(RTPSParticipantImpl* part, bool enableReader)
 {
     logInfo(RTPS_PDP,"Beginning");
     mp_RTPSParticipant = part;
@@ -207,7 +207,7 @@ bool PDP::initPDP(RTPSParticipantImpl* part)
     m_participantProxies.push_back(new ParticipantProxyData());
     initializeParticipantProxyData(m_participantProxies.front());
 
-    if(!mp_RTPSParticipant->enableReader(mp_PDPReader))
+    if(enableReader && !mp_RTPSParticipant->enableReader(mp_PDPReader))
         return false;
 
     mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
