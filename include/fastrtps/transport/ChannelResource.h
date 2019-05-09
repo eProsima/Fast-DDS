@@ -47,12 +47,12 @@ public:
 
     inline bool alive() const
     {
-        return alive_;
+        return alive_.load();
     }
 
     inline virtual void disable()
     {
-        alive_ = false;
+        alive_.store(false);
     }
 
     inline CDRMessage_t& message_buffer()
