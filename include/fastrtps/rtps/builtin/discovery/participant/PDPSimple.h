@@ -235,7 +235,7 @@ class PDPSimple
     //!Registered RTPSParticipants (including the local one, that is the first one.)
     std::vector<ParticipantProxyData*> m_participantProxies;
     //!Variable to indicate if any parameter has changed.
-    bool m_hasChangedLocalPDP;
+    std::atomic_bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.
     ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
     //!Listener for the SPDP messages.
