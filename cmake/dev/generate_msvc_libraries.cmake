@@ -23,7 +23,17 @@ macro(generate_msvc_libraries platform)
     file(TO_CMAKE_PATH $ENV{EPROSIMA_OPENSSL_ROOT}/${platform} OPENSSL_ROOT_)
 
     if(IS_X64)
-        set(generator_ "${generator_} Win64")
+        if("${CMAKE_GENERATOR}" STREQUAL "Visual Studio 16 2019")
+            set(carch_def_ "-A")
+            set(carch_arg_ "x64")
+        else()
+            set(generator_ "${generator_} Win64")
+        endif()
+    else()
+        if("${CMAKE_GENERATOR}" STREQUAL "Visual Studio 16 2019")
+            set(carch_def_ "-A")
+            set(carch_arg_ "Win32")
+        endif()
     endif()
 
     if(IS_VS2013)
@@ -44,14 +54,14 @@ macro(generate_msvc_libraries platform)
         COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/eprosima_installer/${platform}_static")
 
     add_custom_target(${PROJECT_NAME}_${platform} ALL
-        COMMAND ${CMAKE_COMMAND} -G "${generator_}" -T "${toolset_}" -DEPROSIMA_BUILD=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
+        COMMAND ${CMAKE_COMMAND} -G "${generator_}" -T "${toolset_}" ${carch_def_} ${carch_arg_} -DEPROSIMA_BUILD=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}
         )
 
     add_custom_target(${PROJECT_NAME}_${platform}_static ALL
-        COMMAND ${CMAKE_COMMAND} -G "${generator_}" -T "${toolset_}" -DBUILD_SHARED_LIBS=OFF -DEPROSIMA_BUILD=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
+        COMMAND ${CMAKE_COMMAND} -G "${generator_}" -T "${toolset_}" ${carch_def_} ${carch_arg_} -DBUILD_SHARED_LIBS=OFF -DEPROSIMA_BUILD=ON -DEPROSIMA_INSTALLER_MINION=ON -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_} -DSECURITY=ON -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_BINARY_DIR}/eprosima_installer/${platform}/install ${PROJECT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Release
         COMMAND ${CMAKE_COMMAND} --build . --target install --config Debug
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/eprosima_installer/${platform}_static
