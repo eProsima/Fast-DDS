@@ -55,6 +55,7 @@ extern const char* TCP_WAN_ADDR;
 extern const char* RECEIVE_BUFFER_SIZE;
 extern const char* SEND_BUFFER_SIZE;
 extern const char* TTL;
+extern const char* NON_BLOCKING_SEND;
 extern const char* WHITE_LIST;
 extern const char* MAX_MESSAGE_SIZE;
 extern const char* MAX_INITIAL_PEERS_RANGE;

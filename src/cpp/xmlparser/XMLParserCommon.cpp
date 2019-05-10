@@ -40,6 +40,7 @@ const char* TCP_WAN_ADDR = "wan_addr";
 const char* RECEIVE_BUFFER_SIZE = "receiveBufferSize";
 const char* SEND_BUFFER_SIZE = "sendBufferSize";
 const char* TTL = "TTL";
+const char* NON_BLOCKING_SEND = "non_blocking_send";
 const char* WHITE_LIST = "interfaceWhiteList";
 const char* MAX_MESSAGE_SIZE = "maxMessageSize";
 const char* MAX_INITIAL_PEERS_RANGE = "maxInitialPeersRange";

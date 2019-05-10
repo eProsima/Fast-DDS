@@ -108,6 +108,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${TINYXML2_INCLUDE_DIR}
