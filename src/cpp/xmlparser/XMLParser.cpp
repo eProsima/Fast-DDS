@@ -247,6 +247,7 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
                 <xs:element name="sendBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="receiveBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="TTL" type="uint8Type" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="non_blocking_send" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="interfaceWhiteList" type="stringListType" minOccurs="0" maxOccurs="1"/>
@@ -292,33 +293,34 @@ XMLP_ret XMLParser::parseXMLTransportData(tinyxml2::XMLElement* p_root)
     else
     {
         std::string sType = p_aux0->GetText();
-        if (sType == UDPv4)
+        if (sType == UDPv4 || sType == UDPv6)
         {
-            pDescriptor = std::make_shared<rtps::UDPv4TransportDescriptor>();
-            std::shared_ptr<rtps::UDPv4TransportDescriptor> pUDPv4Desc =
-                std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(pDescriptor);
-            // Output UDP Socket
-            if (nullptr != (p_aux0 = p_root->FirstChildElement(UDP_OUTPUT_PORT)))
+            if (sType == UDPv4)
             {
-                int iSocket = 0;
-                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSocket, 0) || iSocket < 0 || iSocket > 65535)
-                    return XMLP_ret::XML_ERROR;
-                pUDPv4Desc->m_output_udp_socket = static_cast<uint16_t>(iSocket);
+                pDescriptor = std::make_shared<rtps::UDPv4TransportDescriptor>();
             }
-        }
-        else if (sType == UDPv6)
-        {
-            pDescriptor = std::make_shared<rtps::UDPv6TransportDescriptor>();
+            else
+            {
+                pDescriptor = std::make_shared<rtps::UDPv6TransportDescriptor>();
+            }
 
-            std::shared_ptr<rtps::UDPv6TransportDescriptor> pUDPv6Desc =
-                std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(pDescriptor);
+            std::shared_ptr<rtps::UDPTransportDescriptor> pUDPDesc =
+                std::dynamic_pointer_cast<rtps::UDPTransportDescriptor>(pDescriptor);
             // Output UDP Socket
             if (nullptr != (p_aux0 = p_root->FirstChildElement(UDP_OUTPUT_PORT)))
             {
                 int iSocket = 0;
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSocket, 0) || iSocket < 0 || iSocket > 65535)
                     return XMLP_ret::XML_ERROR;
-                pUDPv6Desc->m_output_udp_socket = static_cast<uint16_t>(iSocket);
+                pUDPDesc->m_output_udp_socket = static_cast<uint16_t>(iSocket);
+            }
+            // Non-blocking send
+            if (nullptr != (p_aux0 = p_root->FirstChildElement(NON_BLOCKING_SEND)))
+            {
+                if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pUDPDesc->non_blocking_send, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
             }
         }
         else if (sType == TCPv4)
