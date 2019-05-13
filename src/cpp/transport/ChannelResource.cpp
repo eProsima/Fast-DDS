@@ -31,7 +31,7 @@ ChannelResource::ChannelResource(ChannelResource&& channelResource)
     , thread_(std::move(channelResource.thread_))
 {
     bool b = channelResource.alive_;
-    alive_ = b;
+    alive_.store(b);
     //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
     //message_buffer_ = std::move(channelResource.message_buffer_);
 }
@@ -51,7 +51,7 @@ ChannelResource::~ChannelResource()
 
 void ChannelResource::clear()
 {
-    alive_ = false;
+    alive_.store(false);
     if(thread_.joinable())
     {
         thread_.join();

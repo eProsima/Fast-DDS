@@ -68,7 +68,7 @@ void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
     reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
 
     nack_supression_event_->reader_guid(reader_attributes_.guid);
-    timers_enabled_ = (reader_attributes_.endpoint.reliabilityKind == RELIABLE);
+    timers_enabled_.store(reader_attributes_.endpoint.reliabilityKind == RELIABLE);
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
 }
@@ -107,7 +107,7 @@ void ReaderProxy::add_change(
     assert(changes_for_reader_.empty() ? true :
         change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
 
-    if (restart_nack_supression && timers_enabled_)
+    if (restart_nack_supression && timers_enabled_.load())
     {
         nack_supression_event_->restart_timer();
     }
@@ -246,7 +246,7 @@ bool ReaderProxy::set_change_to_status(
 {
     if (restart_nack_supression && is_reliable())
     {
-        assert(timers_enabled_);
+        assert(timers_enabled_.load());
         nack_supression_event_->restart_timer();
     }
 
