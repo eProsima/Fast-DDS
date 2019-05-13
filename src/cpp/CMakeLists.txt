@@ -441,12 +441,16 @@ elseif(NOT EPROSIMA_INSTALLER)
             # Libraries from https://www.npcglib.org/~stathis/blog/precompiled-openssl/
             install(FILES ${OPENSSL_ROOT_DIR}/bin/libeay32MD.dll
                 ${OPENSSL_ROOT_DIR}/bin/libeay32MDd.dll
+                ${OPENSSL_ROOT_DIR}/bin/ssleay32MD.dll
+                ${OPENSSL_ROOT_DIR}/bin/ssleay32MDd.dll
                 DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
                 COMPONENT libraries${MSVCARCH_EXTENSION}
                 )
 
             install(FILES ${OPENSSL_ROOT_DIR}/lib/libeay32MD.lib
                 ${OPENSSL_ROOT_DIR}/lib/libeay32MDd.lib
+                ${OPENSSL_ROOT_DIR}/lib/ssleay32MD.lib
+                ${OPENSSL_ROOT_DIR}/lib/ssleay32MDd.lib
                 DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
                 COMPONENT libraries${MSVCARCH_EXTENSION}
                 )
