@@ -6,7 +6,7 @@ If you would like to learn about the overall Roadmap of FIWARE, please check sec
 ## Introduction
 
 This section elaborates on proposed new features or tasks which are expected to be added to the product in the
-oreseeable future.
+foreseeable future.
 There should be no assumption of a commitment to deliver these features on specific dates or in the order given.
 The development team will be doing their best to follow the proposed dates and priorities, but please bear in mind
 that plans to work on a given feature or task may be revised.
@@ -15,7 +15,7 @@ at any time.
 
 Disclaimer:
 
-* This section has been last updated in February 2019.
+* This section has been last updated in May 2019.
   Please take into account its content could be obsolete.
 
 ## Short term
@@ -24,13 +24,13 @@ The following list of features are planned to be addressed in the short term, an
 release(s) of the product:
 
 * QNX Support.
+* Liveliness QoS
 
 ## Medium term
 
 The following list of features are planned to be addressed in the medium term, typically within the subsequent
 release(s) generated in the next **9 months** after next planned release:
 
-* Deadline QoS
 * Realtime support: Decrease dynamic memory allocations
 
 ## Long term

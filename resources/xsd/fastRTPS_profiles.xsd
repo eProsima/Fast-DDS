@@ -658,6 +658,7 @@
             <xs:element name="sendBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="receiveBufferSize" type="int32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="TTL" type="uint8Type" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="non_blocking_send" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="interfaceWhiteList" type="stringListType" minOccurs="0" maxOccurs="1"/>

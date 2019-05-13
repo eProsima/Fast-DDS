@@ -24,7 +24,7 @@ namespace rtps{
 class TransportInterface;
 
 /**
- * Transport configuration
+ * UDP Transport configuration
  *
  * - bufferSize:    length of the buffers used for transmission. Passing
  *                  a buffer of different size will cause transmission to
@@ -42,6 +42,19 @@ typedef struct UDPTransportDescriptor: public SocketTransportDescriptor
    RTPS_DllAPI UDPTransportDescriptor(const UDPTransportDescriptor& t);
 
    uint16_t m_output_udp_socket;
+
+   /**
+    * Whether to use non-blocking calls to send_to().
+    *
+    * When set to true, calls to send_to() will return inmediately if the buffer is full, but
+    * no error will be returned to the upper layer. This means that the application will behave
+    * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
+    * specially useful on high-frequency best-effort writers.
+    *
+    * When set to false, calls to send_to() will block until the network buffer has space for the
+    * datagram. This may hinder performance on high-frequency writers.
+    */
+   bool non_blocking_send = false;
 } UDPTransportDescriptor;
 
 } // namespace rtps

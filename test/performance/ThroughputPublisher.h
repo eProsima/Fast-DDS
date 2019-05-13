@@ -131,8 +131,8 @@ class ThroughputPublisher
         bool dynamic_data = false;
         int m_forced_domain;
         // Static Data
-        ThroughputDataType latency_t;
-        ThroughputType *latency;
+        ThroughputDataType* latency_t;
+        ThroughputType* latency;
         // Dynamic Data
         eprosima::fastrtps::types::DynamicData* m_DynData;
         eprosima::fastrtps::types::DynamicPubSubType m_DynType;

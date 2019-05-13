@@ -76,6 +76,13 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
         Locator_t locator(LOCATOR_KIND_TCPv4, port);
         create_acceptor_socket(locator);
     }
+
+#if !TLS_FOUND
+    if (descriptor.apply_security)
+    {
+        logError(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
+    }
+#endif
 }
 
 TCPv4Transport::TCPv4Transport()

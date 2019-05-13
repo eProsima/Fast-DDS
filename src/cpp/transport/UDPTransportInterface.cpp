@@ -245,7 +245,7 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     }
     getSocketPtr(socket)->set_option(ip::multicast::hops(configuration()->TTL));
     getSocketPtr(socket)->bind(endpoint);
-    getSocketPtr(socket)->non_blocking(true);
+    getSocketPtr(socket)->non_blocking(configuration()->non_blocking_send);
 
     if (port == 0)
     {

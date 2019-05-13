@@ -28,9 +28,6 @@
 
 
 #include <asio.hpp>
-#if TLS_FOUND
-#include <asio/ssl.hpp>
-#endif
 #include <thread>
 #include <vector>
 #include <map>

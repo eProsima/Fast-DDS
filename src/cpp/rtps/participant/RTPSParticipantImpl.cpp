@@ -368,11 +368,7 @@ bool RTPSParticipantImpl::createWriter(
         }
     }
 
-    // Normalize unicast locators
-    if (!param.endpoint.unicastLocatorList.empty())
-    {
-        m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
-    }
+    normalize_endpoint_locators(param.endpoint);
 
     RTPSWriter* SWriter = nullptr;
     GUID_t guid(m_guid.guidPrefix,entId);
@@ -523,11 +519,7 @@ bool RTPSParticipantImpl::createReader(
         }
     }
 
-    // Normalize unicast locators
-    if (!param.endpoint.unicastLocatorList.empty())
-    {
-        m_network_Factory.NormalizeLocators(param.endpoint.unicastLocatorList);
-    }
+    normalize_endpoint_locators(param.endpoint);
 
     RTPSReader* SReader = nullptr;
     GUID_t guid(m_guid.guidPrefix,entId);
@@ -925,6 +917,25 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
     //	std::lock_guard<std::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
     delete(p_endpoint);
     return true;
+}
+
+void RTPSParticipantImpl::normalize_endpoint_locators(EndpointAttributes& endpoint_att)
+{
+    // Locators with port 0, calculate port.
+    for (Locator_t& loc : endpoint_att.unicastLocatorList)
+    {
+        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+    }
+    for (Locator_t& loc : endpoint_att.multicastLocatorList)
+    {
+        m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+    }
+
+    // Normalize unicast locators
+    if (!endpoint_att.unicastLocatorList.empty())
+    {
+        m_network_Factory.NormalizeLocators(endpoint_att.unicastLocatorList);
+    }
 }
 
 ResourceEvent& RTPSParticipantImpl::getEventResource()

@@ -74,8 +74,8 @@ private:
     using ReaderProxyIterator = ResourceLimitedVector<ReaderProxy*>::iterator;
     using ReaderProxyConstIterator = ResourceLimitedVector<ReaderProxy*>::const_iterator;
 
-    //!EntityId used to send the HB.(only for builtin types performance)
-    EntityId_t m_HBReaderEntityId;
+    //!To avoid notifying twice of the same sequence number
+    SequenceNumber_t next_all_acked_notify_sequence_;
     // TODO Join this mutex when main mutex would not be recursive.
     std::mutex all_acked_mutex_;
     std::condition_variable all_acked_cond_;
@@ -168,14 +168,6 @@ public:
     inline Count_t getHeartbeatCount() const
     {
         return this->m_heartbeatCount;
-    }
-
-    /** Get heartbeat reader entity id
-     * @return heartbeat reader entity id
-     */
-    inline EntityId_t getHBReaderEntityId()
-    {
-        return this->m_HBReaderEntityId;
     }
 
     /**
