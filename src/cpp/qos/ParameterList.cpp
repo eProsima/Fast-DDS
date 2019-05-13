@@ -788,11 +788,15 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     {
                         return false;
                     }
-                    octet temp(0);
-                    valid &= CDRMessage::readOctet(&msg, &temp);
-    
+                    octet value(0);
+					octet tmp(0);
+					valid &= CDRMessage::readOctet(&msg, &value);
+					valid &= CDRMessage::readOctet(&msg, &tmp);
+					valid &= CDRMessage::readOctet(&msg, &tmp);
+					valid &= CDRMessage::readOctet(&msg, &tmp);
+
                     DisablePositiveACKsQosPolicy p;
-                    p.enabled = (temp == 0)? false : true;
+                    p.enabled = (value == 0) ? false : true;
                     IF_VALID_CALL
                 }
 
