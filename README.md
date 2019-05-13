@@ -43,7 +43,7 @@ You can get either a binary distribution of *eprosima Fast RTPS* or compile the 
 The latest, up to date binary release of *eprosima Fast RTPS* can be obtained from the <a href='http://www.eprosima.com'>company website</a>.
 
 ### Installation from Source
-To compile *eprosima Fast RTPS* from source, at least Cmake version 2.8.12 and Boost 1.61 are needed.
+To compile *eprosima Fast RTPS* from source, at least Cmake version 2.8.12 is needed.
 Clone the project from GitHub:
 
     $ git clone https://github.com/eProsima/Fast-RTPS
@@ -53,13 +53,13 @@ Clone the project from GitHub:
 
 If you are on Linux, execute:
 
-    $ cmake ../ -DTHIRDPARTY=ON -DEPROSIMA_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install
+    $ cmake ../ -DTHIRDPARTY=ON
     $ make
     $ make install
 
 If you are on Windows, choose your version of Visual Studio:
 
-    > cmake ../  -G "Visual Studio 14 2015 Win64" -DTHIRDPARTY=ON -DEPROSIMA_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=installationpath
+    > cmake ../  -G "Visual Studio 14 2015 Win64" -DTHIRDPARTY=ON
     > cmake --build . --target install
 	
 If you want to compile the performance tests, you will need to add the argument `-DPERFORMANCE_TESTS=ON` when calling Cmake.
