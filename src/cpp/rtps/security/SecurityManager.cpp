@@ -253,14 +253,19 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
             if((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
                     (crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr))
             {
-                // Create RTPS entities
+				// Should be activated here, to enable encription buffer on created entities
+				security_activated = true;
+				
+				// Create RTPS entities
                 if(create_entities())
                 {
                     logInfo(SECURITY, "Initialized security manager for participant " << participant_->getGuid());
-                    security_activated = true;
                     return true;
                 }
-            }
+
+				// Deactivate security if there is an error while creating entities
+				security_activated = false;
+			}
 
             if(local_participant_crypto_handle_ != nullptr)
             {
