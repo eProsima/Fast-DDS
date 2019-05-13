@@ -1,4 +1,0 @@
-Soporte ARM:
-
-Linux raspberrypi 3.12.22+ #691 PREEMPT armv6l GNU/Linux
-Compilado con arm-gnueabi-gcc 4.7.3 (crosstool-ng 1.17.0) 
