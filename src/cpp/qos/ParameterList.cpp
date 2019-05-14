@@ -789,11 +789,11 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     octet value(0);
-					octet tmp(0);
-					valid &= CDRMessage::readOctet(&msg, &value);
-					valid &= CDRMessage::readOctet(&msg, &tmp);
-					valid &= CDRMessage::readOctet(&msg, &tmp);
-					valid &= CDRMessage::readOctet(&msg, &tmp);
+                    octet tmp(0);
+                    valid &= CDRMessage::readOctet(&msg, &value);
+                    valid &= CDRMessage::readOctet(&msg, &tmp);
+                    valid &= CDRMessage::readOctet(&msg, &tmp);
+                    valid &= CDRMessage::readOctet(&msg, &tmp);
 
                     DisablePositiveACKsQosPolicy p;
                     p.enabled = (value == 0) ? false : true;
