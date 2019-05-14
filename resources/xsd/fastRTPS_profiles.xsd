@@ -621,12 +621,6 @@
         <xs:attribute name="profile_name" type="stringType" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="StringSequenceType">
-      <xs:sequence>
-        <xs:element name="id" type="stringType"/>
-      </xs:sequence>
-    </xs:complexType>
-
     <xs:complexType name="TransportDescriptorListType">
       <xs:sequence>
         <xs:element name="transport_descriptor" type="rtpsTransportDescriptorType"/>
@@ -643,7 +637,7 @@
             <xs:element name="non_blocking_send" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="interfaceWhiteList" type="stringListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="interfaceWhiteList" type="addressListType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="wan_addr" type="stringType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="output_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="keep_alive_frequency_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
@@ -663,6 +657,12 @@
     <xs:complexType name="stringListType">
         <xs:sequence>
             <xs:element name="id" type="stringType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="addressListType">
+        <xs:sequence>
+            <xs:element name="address" type="stringType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
