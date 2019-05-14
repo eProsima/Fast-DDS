@@ -70,11 +70,6 @@ WLP::WLP(BuiltinProtocols* p)
     , mp_builtinReaderSecureHistory(nullptr)
 #endif
 {
-    liveliness_manager_ = new LivelinessManager(
-                std::bind(&WLP::on_liveliness_lost, this, std::placeholders::_1),
-                std::bind(&WLP::on_livelienss_recovered, this, std::placeholders::_1),
-                mp_participant->getEventResource().getIOService(),
-                mp_participant->getEventResource().getThread());
 }
 
 WLP::~WLP()
@@ -105,6 +100,12 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 {
     logInfo(RTPS_LIVELINESS,"Beginning Liveliness Protocol");
     mp_participant = p;
+
+    liveliness_manager_ = new LivelinessManager(
+                std::bind(&WLP::on_liveliness_lost, this, std::placeholders::_1),
+                std::bind(&WLP::on_livelienss_recovered, this, std::placeholders::_1),
+                mp_participant->getEventResource().getIOService(),
+                mp_participant->getEventResource().getThread());
 
     bool retVal = createEndpoints();
 #if HAVE_SECURITY
