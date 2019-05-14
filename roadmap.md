@@ -23,6 +23,7 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the coming
 release(s) of the product:
 
+* Discovery server
 * Liveliness QoS
 
 ## Medium term
@@ -30,10 +31,20 @@ release(s) of the product:
 The following list of features are planned to be addressed in the medium term, typically within the subsequent
 release(s) generated in the next **9 months** after next planned release:
 
-* Realtime support: Decrease dynamic memory allocations
+* Realtime support: Allocations QoS. See #344
+* Realtime support: Non-blocking calls. See #345
+* Transport priority QoS
+* DDS x-types 1.2
 
 ## Long term
 
 The following list of features are proposals regarding the longer-term evolution of the product even though development
 of these features has not yet been scheduled for a release in the near future.
-Please feel free to contact us if you wish to get involved in the implementation or influence the roadmap
+Please feel free to contact us if you wish to get involved in the implementation or influence the roadmap.
+
+* Full DDS API compliance
+* Shared memory transport
+* Intra-process zero-copy transport
+* Waitsets
+* Low bandwidth transports
+* ISO 26262 compliance
