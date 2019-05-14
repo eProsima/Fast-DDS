@@ -34,7 +34,7 @@ CFLAGS = $(COMMON_CFLAGS) -O2
 
 INCLUDES= -I.
 
-LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
+LIBS = -lfastcdr -lfastrtps $(shell test -x "$$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
